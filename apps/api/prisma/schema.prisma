@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  BARBER
+  RECEPTIONIST
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+}
+
+model Organization {
+  id String @id @default(uuid())
+
+  name String
+
+  slug String @unique
+
+  email String @unique
+
+  phone String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  deletedAt DateTime?
+
+  users User[]
+
+  professionals Professional[]
+
+  clients Client[]
+
+  services Service[]
+
+  bookings Booking[]
+
+  payments Payment[]
+  Invoice  Invoice[]
+}
+
+model User {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  email String
+
+  password String
+
+  role UserRole @default(BARBER)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, email])
+}
+
+model Professional {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  bio String?
+
+  phone String?
+
+  avatar String?
+
+  isActive Boolean @default(true)
+
+  professionalServices ProfessionalService[]
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  email String?
+
+  phone String?
+
+  notes String?
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  description String?
+
+  duration Int
+
+  price Decimal
+
+  professionalServices ProfessionalService[]
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  clientId String
+
+  client Client @relation(fields: [clientId], references: [id])
+
+  professionalId String
+
+  professional Professional @relation(fields: [professionalId], references: [id])
+
+  serviceId String
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  startTime DateTime
+
+  endTime DateTime
+
+  status BookingStatus @default(PENDING)
+
+  payment Payment?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+  Invoice   Invoice?
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  bookingId String @unique
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  amount Decimal
+
+  method PaymentMethod
+
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
+
+model ProfessionalService {
+  id String @id @default(uuid())
+
+  professionalId String
+
+  serviceId String
+
+  professional Professional @relation(fields: [professionalId], references: [id])
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  price Decimal?
+
+  commission Decimal?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([professionalId, serviceId])
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  userId String?
+
+  title String
+
+  message String
+
+  read Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  action String
+
+  entity String
+
+  entityId String?
+
+  createdAt DateTime @default(now())
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  bookingId      String        @unique
+  booking        Booking       @relation(fields: [bookingId], references: [id])
+  amount         Decimal
+  status         InvoiceStatus @default(UNPAID)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
