@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -11,6 +11,13 @@ export class OrganizationsController {
   @Post()
   create(@Body() createOrganizationDto: CreateOrganizationDto) {
     return this.organizationsService.create(createOrganizationDto);
+  }
+
+  // Público: usado por el frontend para resolver el slug de la barbería
+  // (ej. "elite-barber-shop") al organizationId que piden login/register.
+  @Get('by-slug/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.organizationsService.findBySlug(slug);
   }
 
   // 🛡️ Ruta protegida y aislada (Multi-tenant)

@@ -122,21 +122,56 @@ El modelo `Invoice` se había agregado a `schema.prisma` sin migración formal. 
 | Módulo | Endpoints | Estado |
 |---|---|---|
 | Auth | `POST /auth/register` (crea OWNER + organización), `POST /auth/login`, `POST /auth/invite` (OWNER/ADMIN, crea ADMIN/BARBER/RECEPTIONIST) | Funcional |
-| Organizations | `POST /organizations` (público), `GET /organizations/mine` (protegido) | Funcional, básico |
+| Organizations | `POST /organizations` (público), `GET /organizations/by-slug/:slug` (público), `GET /organizations/mine` (protegido) | Funcional, básico |
 | Professionals | `POST /professionals` (OWNER/ADMIN), `GET /professionals` | Funcional |
 | Services | `POST /services` (OWNER/ADMIN), `GET /services` | Funcional |
 | Clients | `POST /clients` (OWNER/ADMIN/RECEPTIONIST), `GET /clients` | Funcional |
 | Bookings | `POST /bookings`, `GET /bookings`, `PATCH /bookings/:id/status` (sin restricción de rol) | Funcional, el más completo |
 | Invoices | `POST /invoices`, `GET /invoices`, `PATCH /invoices/:id/pay` (todo: OWNER/ADMIN/RECEPTIONIST) | Funcional — migración resuelta (ver §10.1) |
 
-## 14. Frontend — estado real
+## 14. Frontend — reconstruido
 
-- `app/login/page.tsx`: única pantalla con lógica real, pero **con dos bugs que impiden que funcione contra el backend actual**:
-  1. No envía `organizationId` en el body, campo obligatorio en `LoginDto`.
-  2. Lee `data.access_token` de la respuesta, pero el backend responde `accessToken` — el token nunca se guarda correctamente.
-- `app/page.tsx`: dashboard puramente visual (tarjetas y botones sin funcionalidad, sin fetch de datos, sin verificación de sesión).
-- `app/layout.tsx`: conserva metadata por defecto de `create-next-app` (`title: "Create Next App"`), nunca personalizado.
-- No hay app `admin` separada, ni integración real con ningún endpoint del backend más allá del login (roto).
+El frontend fue reescrito por completo (el estado descrito en versiones anteriores de este documento — dashboard estático, login roto — ya no aplica). Estado actual:
+
+### Autenticación multi-tenant
+- El login pide **slug de la barbería + correo + contraseña** (no el `organizationId` en crudo). El flujo resuelve el slug a `organizationId` vía `GET /organizations/by-slug/:slug` (endpoint público agregado para esto) antes de llamar a `POST /auth/login`.
+- El registro (`/register`) crea la organización (`POST /organizations`) y el usuario `OWNER` (`POST /auth/register`) en un solo formulario, y encadena un login automático (el registro no devuelve token).
+- Sesión persistida en `localStorage` (token + usuario + organización), gestionada centralmente en `lib/auth-context.tsx` (`AuthProvider` / `useAuth()`).
+- `app/(dashboard)/layout.tsx` protege todas las rutas del panel: redirige a `/login` si no hay sesión.
+
+### Estructura
+```
+app/
+├── login/page.tsx
+├── register/page.tsx
+└── (dashboard)/            # route group protegido
+    ├── layout.tsx           # sidebar + guard de sesión
+    ├── page.tsx              # resumen (stats + agenda de hoy)
+    ├── bookings/page.tsx
+    ├── clients/page.tsx
+    ├── professionals/page.tsx
+    ├── services/page.tsx
+    ├── invoices/page.tsx
+    └── team/page.tsx         # invitar miembros (OWNER/ADMIN)
+lib/
+├── api.ts                    # cliente HTTP tipado, único punto de contacto con la API
+└── auth-context.tsx          # sesión, login, registro, logout
+components/
+├── Brand.tsx, Sidebar.tsx
+└── ui/                        # Button, Card, Badge, Modal, Field, EmptyState, PageHeader
+```
+
+### Cobertura funcional (limitada a lo que el backend expone)
+Cada página de módulo (Profesionales, Servicios, Clientes, Reservas, Facturación) tiene listado + creación, conectados a los endpoints reales. Los botones de creación se ocultan en el cliente según el rol (`RolesGuard` del backend es la protección real; la UI solo evita mostrar acciones que van a fallar). Reservas tiene acciones de cambio de estado (confirmar/completar/cancelar/no-show) según el estado actual. Facturación solo permite generar factura sobre citas `COMPLETED` sin factura previa, y marcar como pagada.
+
+**No se construyó** edición ni borrado de ningún recurso — el backend tampoco los expone todavía.
+
+### Identidad visual
+Paleta oscura inspirada en el oficio (cuero/carbón + acento de latón), tipografía `Fraunces` (títulos) + `Inter` (UI) + `IBM Plex Mono` (cifras). Tokens definidos como variables CSS en `app/globals.css` vía `@theme` (Tailwind v4).
+
+### Limitaciones conocidas
+- La sesión vive en `localStorage`, no en cookies — significa que no hay verificación de sesión en el servidor (SSR), todo el guard de rutas es client-side. Suficiente para el estado actual del producto, pero a reconsiderar si se necesita SSR con datos protegidos más adelante.
+- No hay página para listar miembros del equipo (el backend no expone ese endpoint todavía, solo invitar).
 
 ## 15. Organización por módulos
 
@@ -161,7 +196,8 @@ El modelo `Invoice` se había agregado a `schema.prisma` sin migración formal. 
 
 - ~~Alto: `JWT_SECRET` hardcodeado~~ — **resuelto**, la API ya no arranca sin esa variable.
 - ~~Medio: ausencia de autorización por rol~~ — **resuelto**, ver §11.
-- **Medio:** el frontend no está integrado funcionalmente con el backend; construir nuevas pantallas antes de corregir el login generaría más deuda. **Este es el siguiente foco de trabajo.**
+- ~~Medio: el frontend no estaba integrado funcionalmente con el backend~~ — **resuelto**, ver §14.
+- **Bajo:** la sesión del frontend vive en `localStorage`, sin verificación server-side — ver limitaciones conocidas en §14.
 - **Bajo:** credenciales de PostgreSQL en texto plano en `docker-compose.yml` — aceptable para desarrollo local, pero debe reemplazarse por secretos antes de cualquier entorno compartido.
 
 ## 18. Oportunidades de mejora
@@ -199,7 +235,8 @@ El modelo `Invoice` se había agregado a `schema.prisma` sin migración formal. 
 
 - Refresh Tokens.
 - Módulos NestJS para `Payment`, `Notification` y `AuditLog` (los modelos de Prisma ya existen, pero no tienen servicio/controlador propio).
-- Integración real del frontend con el backend (más allá del login, que además tiene bugs). **Próximo foco de trabajo.**
+- Endpoint para listar miembros del equipo de una organización (invitar ya existe; listar no).
+- Edición y borrado de recursos (professionals, services, clients) — ni backend ni frontend los tienen todavía.
 - App `admin` separada.
 - Paquetes compartidos (`packages/ui`, `packages/types`, etc.).
 - Integraciones futuras: Redis/BullMQ, Socket.IO, Cloudinary, pasarela de pagos.
@@ -211,10 +248,11 @@ Módulos avanzados: Inteligencia Artificial, Inventario de productos, CRM avanza
 
 ## 23. Próximos pasos recomendados
 
-1. **Reconstruir el frontend** (login funcional + dashboard conectado de verdad al backend). El backend quedó estabilizado y es la base sobre la que construir.
+1. Verificar en tu máquina que `pnpm dev` (web) y `pnpm start:dev` (api) levantan juntos sin conflicto de puertos, y probar el flujo completo: registrar barbería → login → crear profesional/servicio/cliente → crear reserva → completarla → facturarla → marcarla pagada.
 2. Empezar a construir pruebas unitarias sobre los módulos de mayor complejidad (`BookingsService`, `AuthService`).
 3. Definir si `Payment`, `Notification` y `AuditLog` entran en el alcance cercano o quedan para después.
 4. Evaluar Refresh Tokens si la sesión de 1 día resulta corta para el uso real.
+5. Agregar endpoint para listar miembros del equipo (complementa `/auth/invite`).
 
 ---
 
