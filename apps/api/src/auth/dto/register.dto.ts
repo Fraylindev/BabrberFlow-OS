@@ -5,6 +5,10 @@ import {
   MinLength,
   IsUUID,
 } from 'class-validator';
+import {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MIN_LENGTH_MESSAGE,
+} from '../auth.constants';
 
 export class RegisterDto {
   @IsString()
@@ -15,7 +19,7 @@ export class RegisterDto {
   email!: string;
 
   @IsString()
-  @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
+  @MinLength(PASSWORD_MIN_LENGTH, { message: PASSWORD_MIN_LENGTH_MESSAGE })
   password!: string;
 
   @IsUUID()

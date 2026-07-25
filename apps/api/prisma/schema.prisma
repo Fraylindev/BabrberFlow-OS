@@ -8,10 +8,14 @@ datasource db {
 }
 
 enum UserRole {
+  // B2B — personal interno con acceso al panel de gestión
   OWNER
   ADMIN
   BARBER
   RECEPTIONIST
+
+  // B2C — clientes finales, creados solo desde el flujo público de reservas
+  CUSTOMER
 }
 
 enum BookingStatus {
@@ -46,6 +50,18 @@ model Organization {
 
   phone String?
 
+  address String?
+
+  googleMapsUrl String?
+
+  aboutUs String?
+
+  heroImageUrl String?
+
+  socialLinks Json?
+
+  businessHours Json?
+
   isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
@@ -54,7 +70,7 @@ model Organization {
 
   deletedAt DateTime?
 
-  users User[]
+  memberships Membership[]
 
   professionals Professional[]
 
@@ -62,24 +78,57 @@ model Organization {
 
   services Service[]
 
+  galleryImages GalleryImage[]
+
   bookings Booking[]
 
   payments Payment[]
   Invoice  Invoice[]
 }
 
+// Identidad global — una sola cuenta, un solo password, puede pertenecer
+// a varias organizaciones a la vez a través de Membership. El rol y la
+// organización activa YA NO viven aquí (ver Membership).
 model User {
   id String @id @default(uuid())
 
-  organizationId String
+  email String @unique
 
-  organization Organization @relation(fields: [organizationId], references: [id])
+  password String
 
   name String
 
-  email String
+  // Última organización en la que operó — el login de un solo paso la usa
+  // para resolver el JWT sin pedirle al usuario que elija cada vez.
+  // register/invite la pueblan al crear la membresía nueva.
+  lastOrganizationId String?
 
-  password String
+  memberships Membership[]
+
+  // Vínculo opcional 1:1 — solo existe cuando este usuario tiene un
+  // perfil de Professional asociado (ej. un BARBER con acceso al panel).
+  professional Professional?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+// Representa la pertenencia de un User a una Organization, con el rol que
+// tiene ahí. Es la pieza que permite "un login, varias barberías, un rol
+// distinto en cada una". Cascade hacia ambos padres a propósito: un
+// Membership sin su User o sin su Organization no tiene ningún sentido
+// (a diferencia de Booking/Invoice, que nunca se borran en cascada).
+model Membership {
+  id String @id @default(uuid())
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   role UserRole @default(BARBER)
 
@@ -87,7 +136,7 @@ model User {
 
   updatedAt DateTime @updatedAt
 
-  @@unique([organizationId, email])
+  @@unique([userId, organizationId])
 }
 
 model Professional {
@@ -105,7 +154,19 @@ model Professional {
 
   avatar String?
 
+  specialty String?
+
+  experienceYears Int?
+
   isActive Boolean @default(true)
+
+  // Vínculo opcional y único hacia el User que puede iniciar sesión como
+  // este profesional (ej. un BARBER viendo su propia agenda). Un
+  // Professional puede existir sin cuenta de acceso — no todos los
+  // profesionales necesitan entrar al panel.
+  userId String? @unique
+
+  user User? @relation(fields: [userId], references: [id])
 
   professionalServices ProfessionalService[]
 
@@ -114,6 +175,25 @@ model Professional {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+}
+
+model GalleryImage {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  // Las fotos de la galería no tienen sentido sin su organización — si se
+  // borra la organización, se borran con ella (a diferencia de datos
+  // financieros como Booking/Invoice, que nunca deben desaparecer así).
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  url String
+
+  caption String?
+
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
 }
 
 model Client {
@@ -136,6 +216,11 @@ model Client {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  // Único por organización, no global — la misma persona puede ser
+  // cliente de varias barberías como registros independientes. email
+  // opcional para permitir walk-ins sin correo.
+  @@unique([organizationId, email])
 }
 
 model Service {
@@ -193,6 +278,10 @@ model Booking {
 
   updatedAt DateTime @updatedAt
   Invoice   Invoice?
+
+  // Acelera GET /bookings (listado filtrado por estado, ordenado por
+  // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
+  @@index([organizationId, status, createdAt])
 }
 
 model Payment {
@@ -283,4 +372,8 @@ model Invoice {
   status         InvoiceStatus @default(UNPAID)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+
+  // Misma razón que en Booking — soporta /analytics/dashboard (revenue
+  // por rango de fecha, filtrado por status=PAID) sin escanear toda la tabla.
+  @@index([organizationId, status, createdAt])
 }

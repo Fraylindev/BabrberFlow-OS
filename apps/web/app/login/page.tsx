@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth, ApiError } from "@/lib/auth-context";
 import { Button } from "@/components/ui/Button";
 import { InputField } from "@/components/ui/Field";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { Brand } from "@/components/Brand";
 
 export default function LoginPage() {
@@ -65,10 +66,9 @@ export default function LoginPage() {
             autoComplete="email"
             required
           />
-          <InputField
+          <PasswordField
             label="Contraseña"
             name="password"
-            type="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

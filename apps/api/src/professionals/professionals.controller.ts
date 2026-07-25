@@ -6,14 +6,17 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { UserRole } from '@prisma/client';
+import { B2B_ROLES } from '../auth/roles.constants';
 
-@UseGuards(JwtAuthGuard) // 🛡️ Protegemos TODO el controlador a la vez
+// Todo este controlador es de uso interno (B2B) — un CUSTOMER nunca
+// debe poder listar ni gestionar profesionales.
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(...B2B_ROLES)
 @Controller('professionals')
 export class ProfessionalsController {
   constructor(private readonly professionalsService: ProfessionalsService) {}
 
   // Solo OWNER/ADMIN pueden dar de alta profesionales (gestión de staff)
-  @UseGuards(RolesGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Post()
   create(
@@ -26,7 +29,7 @@ export class ProfessionalsController {
     );
   }
 
-  // Cualquier rol autenticado de la organización puede ver el listado
+  // Cualquier rol B2B autenticado de la organización puede ver el listado
   @Get()
   findAll(@GetUser('organizationId') organizationId: string) {
     return this.professionalsService.findAll(organizationId);

@@ -17,6 +17,9 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { InputField, SelectField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonListRows } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
+import { useAuth } from "@/lib/auth-context";
 
 const NEXT_ACTIONS: Partial<Record<BookingStatus, { label: string; to: BookingStatus; variant: "primary" | "danger" }[]>> = {
   PENDING: [
@@ -41,6 +44,8 @@ function formatDateTime(iso: string) {
 }
 
 export default function BookingsPage() {
+  const { toast } = useToast();
+  const { user } = useAuth();
   const [items, setItems] = useState<Booking[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,9 +68,10 @@ export default function BookingsPage() {
     setUpdatingId(id);
     try {
       await api.patch(`/bookings/${id}/status`, { status });
+      toast("Reserva actualizada.", "success");
       load();
     } catch {
-      setError("No se pudo actualizar el estado de la reserva.");
+      toast("No se pudo actualizar el estado de la reserva.", "error");
     } finally {
       setUpdatingId(null);
     }
@@ -74,8 +80,12 @@ export default function BookingsPage() {
   return (
     <div>
       <PageHeader
-        title="Reservas"
-        description="Agenda de citas de tu barbería."
+        title={user?.role === "BARBER" ? "Mi agenda" : "Reservas"}
+        description={
+          user?.role === "BARBER"
+            ? "Tus citas, no las de todo el equipo."
+            : "Agenda de citas de tu barbería."
+        }
         action={<Button onClick={() => setModalOpen(true)}>+ Nueva reserva</Button>}
       />
 
@@ -86,7 +96,9 @@ export default function BookingsPage() {
       )}
 
       {items === null ? (
-        <p className="text-sm text-[var(--color-muted)]">Cargando…</p>
+        <Card>
+          <SkeletonListRows />
+        </Card>
       ) : items.length === 0 ? (
         <EmptyState
           title="Todavía no hay reservas"
@@ -131,6 +143,7 @@ export default function BookingsPage() {
           onClose={() => setModalOpen(false)}
           onCreated={() => {
             setModalOpen(false);
+            toast("Reserva creada.", "success");
             load();
           }}
         />

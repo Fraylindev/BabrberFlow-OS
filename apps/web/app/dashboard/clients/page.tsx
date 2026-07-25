@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { InputField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonListRows } from "@/components/ui/Skeleton";
 
 const CAN_CREATE = ["OWNER", "ADMIN", "RECEPTIONIST"];
 
@@ -32,8 +33,12 @@ export default function ClientsPage() {
   return (
     <div>
       <PageHeader
-        title="Clientes"
-        description="Tu cartera de clientes."
+        title={user?.role === "BARBER" ? "Mis clientes" : "Clientes"}
+        description={
+          user?.role === "BARBER"
+            ? "Clientes con los que tienes citas."
+            : "Tu cartera de clientes."
+        }
         action={canCreate && <Button onClick={() => setModalOpen(true)}>+ Nuevo cliente</Button>}
       />
 
@@ -44,7 +49,9 @@ export default function ClientsPage() {
       )}
 
       {items === null ? (
-        <p className="text-sm text-[var(--color-muted)]">Cargando…</p>
+        <Card>
+          <SkeletonListRows />
+        </Card>
       ) : items.length === 0 ? (
         <EmptyState
           title="Todavía no hay clientes"

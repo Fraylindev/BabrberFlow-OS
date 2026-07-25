@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { InputField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonListRows } from "@/components/ui/Skeleton";
 
 const CAN_CREATE = ["OWNER", "ADMIN"];
 
@@ -48,7 +49,9 @@ export default function ProfessionalsPage() {
       )}
 
       {items === null ? (
-        <p className="text-sm text-[var(--color-muted)]">Cargando…</p>
+        <Card>
+          <SkeletonListRows />
+        </Card>
       ) : items.length === 0 ? (
         <EmptyState
           title="Todavía no hay profesionales"

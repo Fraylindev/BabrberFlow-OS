@@ -2,7 +2,10 @@ import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { B2B_ROLES } from '../auth/roles.constants';
 
 @Controller('organizations')
 export class OrganizationsController {
@@ -20,8 +23,9 @@ export class OrganizationsController {
     return this.organizationsService.findBySlug(slug);
   }
 
-  // 🛡️ Ruta protegida y aislada (Multi-tenant)
-  @UseGuards(JwtAuthGuard)
+  // 🛡️ Ruta protegida, aislada (multi-tenant) y exclusiva de personal B2B
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(...B2B_ROLES)
   @Get('mine')
   findMine(@GetUser('organizationId') organizationId: string) {
     return this.organizationsService.findMine(organizationId);

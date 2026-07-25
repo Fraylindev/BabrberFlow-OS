@@ -8,6 +8,8 @@ import { ServicesModule } from './services/services.module'; // <-- Importado
 import { ClientsModule } from './clients/clients.module'; // <-- Importado
 import { BookingsModule } from './bookings/bookings.module';
 import { InvoicesModule } from './invoices/invoices.module';
+import { PublicBookingModule } from './public-booking/public-booking.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { InvoicesModule } from './invoices/invoices.module';
     ClientsModule, // <-- Registrado
     BookingsModule, // <-- Registrado
     InvoicesModule,
+    PublicBookingModule,
+    AnalyticsModule,
   ],
   controllers: [],
   providers: [],

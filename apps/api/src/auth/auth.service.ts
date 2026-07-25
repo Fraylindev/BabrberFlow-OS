@@ -2,13 +2,16 @@ import {
   Injectable,
   BadRequestException,
   UnauthorizedException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { isUniqueConstraintError } from '../common/prisma-error.util';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +20,11 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  // Funda una organización nueva. Requiere un email global nuevo — si ya
+  // existe una cuenta en Kortek con ese correo, se rechaza con 409 en vez
+  // de crear una cuenta duplicada o reutilizar la existente en silencio.
+  // (Invitar a alguien que YA tiene cuenta a una organización adicional
+  // es un caso distinto, cubierto por inviteUser().)
   async register(registerDto: RegisterDto) {
     const { name, email, password, organizationId } = registerDto;
 
@@ -29,118 +37,268 @@ export class AuthService {
     }
 
     const existingUser = await this.prisma.db.user.findUnique({
-      where: {
-        organizationId_email: {
-          organizationId,
-          email,
-        },
-      },
+      where: { email },
     });
 
     if (existingUser) {
-      throw new BadRequestException(
-        'El usuario ya está registrado en esta organización',
+      throw new ConflictException(
+        'Ya existe una cuenta con este correo. Inicia sesión en vez de registrarte de nuevo.',
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await this.prisma.db.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        organizationId,
-        role: 'OWNER',
-      },
-    });
+    try {
+      const user = await this.prisma.db.$transaction(async (tx) => {
+        const createdUser = await tx.user.create({
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+            lastOrganizationId: organizationId,
+          },
+        });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+        await tx.membership.create({
+          data: {
+            userId: createdUser.id,
+            organizationId,
+            role: 'OWNER',
+          },
+        });
+
+        return createdUser;
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (err) {
+      if (isUniqueConstraintError(err, 'email')) {
+        throw new ConflictException(
+          'Ya existe una cuenta con este correo. Inicia sesión en vez de registrarte de nuevo.',
+        );
+      }
+      throw err;
+    }
   }
 
   /**
-   * Crea un usuario dentro de la organización de quien invita, con un rol
-   * distinto a OWNER. organizationId viene del token del usuario autenticado
-   * que hace la invitación (no del body), para que nadie pueda crear
-   * usuarios en una organización que no es la suya.
+   * Invita a alguien a la organización de quien invita (organizationId
+   * viene del token, nunca del body). Si el correo ya existe globalmente
+   * en Kortek, NO se crea un User duplicado — se le agrega una Membership
+   * nueva a su cuenta existente. Es el caso de uso real de la identidad
+   * global: una persona con acceso a varias barberías.
    */
   async inviteUser(organizationId: string, inviteUserDto: InviteUserDto) {
-    const { name, email, password, role } = inviteUserDto;
+    const { name, email, password, role, createPublicProfile } = inviteUserDto;
 
     const existingUser = await this.prisma.db.user.findUnique({
-      where: {
-        organizationId_email: {
-          organizationId,
-          email,
-        },
-      },
+      where: { email },
     });
 
+    const whatsappBaseUrl = process.env.WHATSAPP_BASE_URL || 'https://wa.me/';
+
     if (existingUser) {
-      throw new BadRequestException(
-        'El usuario ya está registrado en esta organización',
+      return this.attachMembershipToExistingUser(
+        existingUser.id,
+        organizationId,
+        role,
+        createPublicProfile,
+        name,
+        whatsappBaseUrl,
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await this.prisma.db.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        organizationId,
-        role,
-      },
-    });
+    try {
+      const user = await this.prisma.db.$transaction(async (tx) => {
+        const createdUser = await tx.user.create({
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+            lastOrganizationId: organizationId,
+          },
+        });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _p, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+        await tx.membership.create({
+          data: { userId: createdUser.id, organizationId, role },
+        });
+
+        if (createPublicProfile) {
+          await tx.professional.create({
+            data: { organizationId, name, userId: createdUser.id },
+          });
+        }
+
+        return createdUser;
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _p, ...userWithoutPassword } = user;
+      return {
+        ...userWithoutPassword,
+        professionalCreated: !!createPublicProfile,
+        whatsappBaseUrl,
+      };
+    } catch (err) {
+      if (isUniqueConstraintError(err, 'email')) {
+        // Carrera: alguien creó ese User entre el findUnique y el create.
+        throw new ConflictException(
+          'Ya existe una cuenta con este correo. Intenta de nuevo.',
+        );
+      }
+      throw err;
+    }
   }
 
-  async login(loginDto: LoginDto) {
-    const { email, password, organizationId } = loginDto;
+  // Un Professional solo puede estar vinculado a UN User globalmente
+  // (Professional.userId es único, diseñado antes de que existiera el
+  // multi-organización real). Si esta persona ya tiene un perfil público
+  // en OTRA organización, no se puede crear uno nuevo aquí todavía —
+  // limitación conocida y documentada, no un bug silencioso.
+  private async attachMembershipToExistingUser(
+    userId: string,
+    organizationId: string,
+    role: InviteUserDto['role'],
+    createPublicProfile: boolean | undefined,
+    name: string,
+    whatsappBaseUrl: string,
+  ) {
+    try {
+      await this.prisma.db.membership.create({
+        data: { userId, organizationId, role },
+      });
+    } catch (err) {
+      if (isUniqueConstraintError(err, 'userId')) {
+        throw new ConflictException(
+          'Esta persona ya es miembro de esta organización.',
+        );
+      }
+      throw err;
+    }
 
-    // 1. Buscar al usuario en la base de datos
-    const user = await this.prisma.db.user.findUnique({
-      where: {
-        organizationId_email: {
-          organizationId,
-          email,
-        },
-      },
+    let professionalCreated = false;
+    if (createPublicProfile) {
+      try {
+        await this.prisma.db.professional.create({
+          data: { organizationId, name, userId },
+        });
+        professionalCreated = true;
+      } catch (err) {
+        if (!isUniqueConstraintError(err, 'userId')) throw err;
+        // Limitación conocida (ver comentario del método): ya tiene un
+        // Professional en otra organización. La membresía igual se creó.
+        professionalCreated = false;
+      }
+    }
+
+    const user = await this.prisma.db.user.findUniqueOrThrow({
+      where: { id: userId },
     });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _p, ...userWithoutPassword } = user;
+    return { ...userWithoutPassword, professionalCreated, whatsappBaseUrl };
+  }
 
-    // Si no existe, lanzamos error 401
+  // Login de un solo paso. Resuelve la organización activa vía
+  // lastOrganizationId (o la primera membresía disponible si no hay
+  // ninguna guardada todavía — caso legacy) y emite el JWT ya con el
+  // contexto del tenant. Nunca pide organizationId en el body.
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    const user = await this.prisma.db.user.findUnique({ where: { email } });
+
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // 2. Verificar que la contraseña coincida
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // 3. Generar el payload del JWT con los datos críticos
+    let membership = user.lastOrganizationId
+      ? await this.prisma.db.membership.findUnique({
+          where: {
+            userId_organizationId: {
+              userId: user.id,
+              organizationId: user.lastOrganizationId,
+            },
+          },
+        })
+      : null;
+
+    if (!membership) {
+      // Caso legacy (o lastOrganizationId apuntando a una membresía que ya
+      // no existe): usa la primera membresía disponible y la guarda.
+      membership = await this.prisma.db.membership.findFirst({
+        where: { userId: user.id },
+        orderBy: { createdAt: 'asc' },
+      });
+
+      if (!membership) {
+        throw new UnauthorizedException(
+          'Esta cuenta no tiene ninguna organización asociada',
+        );
+      }
+
+      await this.prisma.db.user.update({
+        where: { id: user.id },
+        data: { lastOrganizationId: membership.organizationId },
+      });
+    }
+
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
-      organizationId: user.organizationId,
+      role: membership.role,
+      organizationId: membership.organizationId,
     };
-
-    // 4. Retornar el token y los datos del usuario
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userData } = user;
 
     return {
-      user: userData,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        organizationId: membership.organizationId,
+        role: membership.role,
+      },
       accessToken: await this.jwtService.signAsync(payload),
     };
+  }
+
+  // Cualquier usuario autenticado (cualquier rol, incluido CUSTOMER) puede
+  // cambiar su propia contraseña. userId sale del token, nunca del body.
+  async updatePassword(userId: string, dto: UpdatePasswordDto) {
+    const user = await this.prisma.db.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    const isCurrentValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.password,
+    );
+
+    if (!isCurrentValid) {
+      throw new BadRequestException('La contraseña actual no es correcta');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+    await this.prisma.db.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { success: true };
   }
 }

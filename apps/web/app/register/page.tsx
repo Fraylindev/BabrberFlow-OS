@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth, ApiError } from "@/lib/auth-context";
 import { Button } from "@/components/ui/Button";
 import { InputField } from "@/components/ui/Field";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { Brand } from "@/components/Brand";
 
 function slugify(value: string) {
@@ -122,10 +123,9 @@ export default function RegisterPage() {
             onChange={(e) => setOwnerEmail(e.target.value)}
             required
           />
-          <InputField
+          <PasswordField
             label="Contraseña"
             name="password"
-            type="password"
             placeholder="Mínimo 6 caracteres"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

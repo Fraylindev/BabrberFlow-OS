@@ -1,6 +1,6 @@
-# BarberFlow OS — Web
+# Kortek OS — Web
 
-Frontend Next.js del SaaS multi-tenant BarberFlow OS. Ver `MAESTRO.md` en la raíz del repositorio para la documentación completa del proyecto.
+Frontend Next.js del SaaS multi-tenant Kortek OS. Ver `MAESTRO.md` en la raíz del repositorio para la documentación completa del proyecto.
 
 ## Requisitos
 

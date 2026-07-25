@@ -1,3 +1,3 @@
-# BarberFlow Platform
+# Kortek OS
 
 Sistema SaaS de gestión para barberías.

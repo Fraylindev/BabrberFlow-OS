@@ -1,15 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { isUniqueConstraintError } from '../common/prisma-error.util';
 
 @Injectable()
 export class OrganizationsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createOrganizationDto: CreateOrganizationDto) {
-    return await this.prisma.db.organization.create({
-      data: createOrganizationDto,
-    });
+    try {
+      return await this.prisma.db.organization.create({
+        data: createOrganizationDto,
+      });
+    } catch (err) {
+      if (isUniqueConstraintError(err, 'slug')) {
+        throw new ConflictException(
+          'Ese enlace (slug) ya está en uso por otra barbería. Elige otro.',
+        );
+      }
+      if (isUniqueConstraintError(err, 'email')) {
+        throw new ConflictException(
+          'Ya existe una organización registrada con ese correo.',
+        );
+      }
+      throw err;
+    }
   }
 
   // 🔒 Multi-tenancy: Buscar únicamente la organización asociada al token

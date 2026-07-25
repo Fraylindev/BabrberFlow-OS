@@ -9,12 +9,15 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { InputField, SelectField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonListRows } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 
 function formatMoney(value: string | number) {
   return `RD$${Number(value).toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 }
 
 export default function InvoicesPage() {
+  const { toast } = useToast();
   const [items, setItems] = useState<Invoice[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,9 +36,10 @@ export default function InvoicesPage() {
     setPayingId(id);
     try {
       await api.patch(`/invoices/${id}/pay`);
+      toast("Factura marcada como pagada.", "success");
       load();
     } catch {
-      setError("No se pudo marcar la factura como pagada.");
+      toast("No se pudo marcar la factura como pagada.", "error");
     } finally {
       setPayingId(null);
     }
@@ -56,7 +60,9 @@ export default function InvoicesPage() {
       )}
 
       {items === null ? (
-        <p className="text-sm text-[var(--color-muted)]">Cargando…</p>
+        <Card>
+          <SkeletonListRows />
+        </Card>
       ) : items.length === 0 ? (
         <EmptyState
           title="Todavía no hay facturas"
@@ -105,6 +111,7 @@ export default function InvoicesPage() {
           onClose={() => setModalOpen(false)}
           onCreated={() => {
             setModalOpen(false);
+            toast("Factura generada.", "success");
             load();
           }}
         />

@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     saveSession(newSession);
     setSession(newSession);
-    router.push("/");
+    router.push("/dashboard");
   }
 
   async function registerOrganization(input: {

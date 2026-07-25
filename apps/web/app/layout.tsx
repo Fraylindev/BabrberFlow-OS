@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { ToastProvider } from "@/components/ui/Toast";
+import { BRAND } from "@/lib/brand";
 
 const fraunces = Fraunces({
   variable: "--font-display",
@@ -21,8 +23,8 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BarberFlow OS",
-  description: "El sistema operativo para barberías modernas.",
+  title: BRAND.name,
+  description: BRAND.description,
 };
 
 export default function RootLayout({
@@ -35,7 +37,9 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

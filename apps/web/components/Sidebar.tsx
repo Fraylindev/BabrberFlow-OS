@@ -6,13 +6,13 @@ import { useAuth } from "@/lib/auth-context";
 import { Brand } from "@/components/Brand";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Resumen", roles: null },
-  { href: "/bookings", label: "Reservas", roles: null },
-  { href: "/clients", label: "Clientes", roles: null },
-  { href: "/professionals", label: "Profesionales", roles: null },
-  { href: "/services", label: "Servicios", roles: null },
-  { href: "/invoices", label: "Facturación", roles: ["OWNER", "ADMIN", "RECEPTIONIST"] },
-  { href: "/team", label: "Equipo", roles: ["OWNER", "ADMIN"] },
+  { href: "/dashboard", label: "Resumen", roles: null },
+  { href: "/dashboard/bookings", label: "Reservas", roles: null },
+  { href: "/dashboard/clients", label: "Clientes", roles: null },
+  { href: "/dashboard/professionals", label: "Profesionales", roles: null },
+  { href: "/dashboard/services", label: "Servicios", roles: null },
+  { href: "/dashboard/invoices", label: "Facturación", roles: ["OWNER", "ADMIN", "RECEPTIONIST"] },
+  { href: "/dashboard/team", label: "Equipo", roles: ["OWNER", "ADMIN"] },
 ] as const;
 
 const ROLE_LABELS: Record<string, string> = {
