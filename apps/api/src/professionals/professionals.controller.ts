@@ -1,6 +1,16 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { ProfessionalsService } from './professionals.service';
 import { CreateProfessionalDto } from './dto/create-professional.dto';
+import { UpdateProfessionalDto } from './dto/update-professional.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -33,5 +43,30 @@ export class ProfessionalsController {
   @Get()
   findAll(@GetUser('organizationId') organizationId: string) {
     return this.professionalsService.findAll(organizationId);
+  }
+
+  // Solo OWNER/ADMIN editan profesionales
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+    @Body() updateProfessionalDto: UpdateProfessionalDto,
+  ) {
+    return this.professionalsService.update(
+      id,
+      organizationId,
+      updateProfessionalDto,
+    );
+  }
+
+  // Solo OWNER/ADMIN eliminan profesionales
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Delete(':id')
+  remove(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+  ) {
+    return this.professionalsService.remove(id, organizationId);
   }
 }

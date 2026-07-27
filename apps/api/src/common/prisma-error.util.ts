@@ -28,3 +28,16 @@ export function isUniqueConstraintError(
   const targets = Array.isArray(target) ? target : [target];
   return targets.some((t) => typeof t === 'string' && t.includes(field));
 }
+
+/**
+ * Detecta una violación de llave foránea al borrar (P2003) — ej. intentar
+ * eliminar un Professional que todavía tiene Bookings asociados. Sin este
+ * chequeo, Prisma deja pasar el error crudo de Postgres y NestJS lo
+ * convierte en un 500 genérico.
+ */
+export function isForeignKeyConstraintError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2003'
+  );
+}

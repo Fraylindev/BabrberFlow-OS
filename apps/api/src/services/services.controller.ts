@@ -1,6 +1,16 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
+import { UpdateServiceDto } from './dto/update-service.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -30,5 +40,24 @@ export class ServicesController {
   @Get()
   findAll(@GetUser('organizationId') organizationId: string) {
     return this.servicesService.findAll(organizationId);
+  }
+
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+  ) {
+    return this.servicesService.update(id, organizationId, updateServiceDto);
+  }
+
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Delete(':id')
+  remove(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+  ) {
+    return this.servicesService.remove(id, organizationId);
   }
 }

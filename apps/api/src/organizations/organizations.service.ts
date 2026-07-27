@@ -53,4 +53,36 @@ export class OrganizationsService {
 
     return organization;
   }
+
+  // 🔒 Lista el equipo consultando Membership (no User directamente —
+  // desde la identidad global, User ya no tiene organizationId propio).
+  // select explícito en `user`, nunca spread: así password queda
+  // excluido por construcción, no por un omit que alguien podría olvidar
+  // mantener si el modelo User gana campos sensibles en el futuro.
+  async findMembers(organizationId: string) {
+    const memberships = await this.prisma.db.membership.findMany({
+      where: { organizationId },
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        role: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            professional: true,
+          },
+        },
+      },
+    });
+
+    return memberships.map((m) => ({
+      membershipId: m.id,
+      role: m.role,
+      memberSince: m.createdAt,
+      user: m.user,
+    }));
+  }
 }

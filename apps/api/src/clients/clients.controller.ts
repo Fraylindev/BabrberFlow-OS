@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { ProfessionalsService } from '../professionals/professionals.service';
 import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -43,5 +53,24 @@ export class ClientsController {
       return this.clientsService.findAll(user.organizationId, professional.id);
     }
     return this.clientsService.findAll(user.organizationId);
+  }
+
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+    @Body() updateClientDto: UpdateClientDto,
+  ) {
+    return this.clientsService.update(id, organizationId, updateClientDto);
+  }
+
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
+  @Delete(':id')
+  remove(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+  ) {
+    return this.clientsService.remove(id, organizationId);
   }
 }

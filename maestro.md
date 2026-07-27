@@ -436,6 +436,117 @@ Decisión particular sobre la reserva pública: si falla la creación de cuenta 
 
 Es único **globalmente**, diseñado antes de que existiera el multi-organización real. Si alguien ya tiene un `Professional` en una organización y se le invita como `BARBER` con "crear perfil público" a otra, la `Membership` se crea bien, pero el segundo `Professional` no — se reporta sin abortar la invitación. Resolverlo de raíz (restricción compuesta `(userId, organizationId)`) es un cambio de modelo de datos que merece su propia decisión explícita, no se hizo en este ciclo por no estar pedido.
 
+## 27. CRUD completo — Profesionales, Servicios, Clientes (2026-07-25)
+
+Se completó Update (`PATCH :id`) y Delete (`DELETE :id`) para los tres módulos de catálogo. Mismo patrón en los tres, sin excepciones:
+
+- **Aislamiento multi-tenant:** `findFirst({ where: { id, organizationId } })` antes de cualquier mutación — si el registro existe pero es de otra organización, responde `404` exactamente igual que si no existiera. Nunca revela que un `id` pertenece a otra barbería.
+- **Roles:** Profesionales y Servicios → `OWNER`/`ADMIN`. Clientes → `OWNER`/`ADMIN`/`RECEPTIONIST` (mismo criterio que su endpoint de creación).
+- **Integridad referencial (P2003):** ninguno de los tres tiene `onDelete: Cascade` hacia `Booking` (a propósito, mismo principio que `Invoice`) — borrar un registro con historial asociado ahora devuelve `409 Conflict` sugiriendo desactivarlo (`isActive: false`) en vez de un 500 crudo de Postgres. Helper compartido: `isForeignKeyConstraintError` en `common/prisma-error.util.ts`, hermano de `isUniqueConstraintError`.
+- **`isActive`:** no existía en `Service` ni en `Client` — se agregó vía migración `20260725215619_service_client_is_active` (aditiva, verificada contra la cadena completa de 7 migraciones). `Professional` ya lo tenía desde antes.
+- **DTOs de actualización:** `UpdateProfessionalDto` se escribió a mano (todos los campos opcionales); `UpdateServiceDto`/`UpdateClientDto` usan `PartialType` de `@nestjs/mapped-types` (dependencia nueva, agregada a `package.json`) sobre sus DTOs de creación, extendidos con `isActive`.
+- **Nota de alcance:** este ciclo fue explícitamente solo backend — no se tocó ningún archivo de `apps/web`. El frontend de Reservas/Profesionales/Servicios/Clientes sigue sin UI para editar ni borrar (solo crear y listar) — es un pendiente frontend, no de este ciclo.
+
+## 28. `GET /organizations/mine/members` — listar el equipo (2026-07-25)
+
+Se agregó a `OrganizationsController` (no se creó un módulo `Team` aparte — es una sola consulta de lectura sobre `Membership`, un módulo dedicado hubiera sido abstracción sin necesidad real, YAGNI). Consulta `Membership` filtrado por `organizationId` (nunca `User` directamente — desde la identidad global, `User` no tiene `organizationId` propio), con `select` explícito en la relación `user` (nunca spread del objeto completo) para excluir `password` **por construcción**, no por un `omit` que alguien podría olvidar mantener si `User` gana campos sensibles más adelante. Incluye el `Professional` vinculado si existe (vía la relación `User.professional`).
+
+**Restricción de rol — decisión tomada, ajustable:** `OWNER`/`ADMIN` únicamente (más estricto que `B2B_ROLES`), mismo criterio que `/auth/invite`, que ya tenía esa restricción. Ver a quién más nombre/correo pertenece es información de gestión de staff — si se necesita que `RECEPTIONIST`/`BARBER` también lo vean, es cambiar el decorador `@Roles(...)`, no un rediseño.
+
+Respuesta: `[{ membershipId, role, memberSince, user: { id, name, email, professional } }]`.
+
+## 29. Auditoría Enterprise — Fase 1: Infraestructura (2026-07-25)
+
+### 29.1. Qué se encontró
+
+- **`app.enableShutdownHooks()` nunca se llamaba.** Sin esto, Nest no reenvía `SIGTERM`/`SIGINT` a los hooks de ciclo de vida — `PrismaService.onModuleDestroy()` (que llama `$disconnect()`) no tenía garantía de ejecutarse en un apagado real de contenedor/orquestador. Conexiones podían quedar colgadas en cada redeploy.
+- **Caché:** no existía ninguna capa de caché en el proyecto (confirmado — `Redis`/`BullMQ` figuran en `MAESTRO.md` §8 como "planeado, no implementado", y seguían sin ninguna dependencia real en `package.json`).
+- **Pool de conexiones de Prisma:** sin configuración explícita — usa el comportamiento implícito por defecto (basado en CPUs detectadas). **No se tocó** (ver §29.3).
+- **`ConfigService` instalado pero no usado:** `@nestjs/config` está registrado globalmente, pero todo el código lee `process.env.X` directamente en vez de inyectar `ConfigService`. **No se tocó** (ver §29.3).
+
+### 29.2. Qué se mejoró, y por qué
+
+1. **`main.ts`: `app.enableShutdownHooks()`** — una línea, cero riesgo, cierre limpio de conexiones garantizado en cada apagado del proceso.
+2. **Capa de caché (`@nestjs/cache-manager` + `cache-manager` + `keyv`, en memoria — sin Redis, mismo criterio ya aplicado al rate limiting de la reserva pública: no hay Redis en el stack, no se justifica agregarlo solo para esto).** Registrada **globalmente** en `AppModule` (`CacheModule.register({ isGlobal: true, ttl: 30000 })`) tal como se exigió, pero **aplicada explícitamente solo en un lugar**: `GET /public/:slug/booking-data` (TTL 15s). Es la única lectura del sistema que es simultáneamente pública, de alto tráfico repetido (cualquier visitante de la página de reservas la llama) y de baja frecuencia de cambio real (el catálogo de servicios/profesionales no cambia minuto a minuto). `CacheInterceptor` usa la URL completa como clave por defecto, y el `:slug` ya es parte de la URL — cada organización cachea por separado, sin riesgo de mezclar datos entre tenants. **No se aplicó a ningún endpoint autenticado ni de escritura** — cachear datos por-organización con mutación frecuente (reservas, clientes) sin una estrategia de invalidación es exactamente el tipo de "optimización porque sí" que se pidió evitar.
+
+### 29.3. Qué se decidió NO tocar, y por qué
+
+- **Pool de conexiones de Prisma:** cambiar el `connection_limit` en `DATABASE_URL` sin saber el proveedor de Postgres real de producción (managed, con su propio límite de `max_connections`) es adivinar un número sin base. Queda documentado como punto a decidir junto con la infraestructura de despliegue, no como código a cambiar ahora.
+- **Migrar todo `process.env.X` a `ConfigService` inyectado:** es el patrón "correcto" de NestJS, pero es un refactor invasivo (toca casi todos los módulos) para un beneficio marginal — el proyecto ya tiene una verificación de fallo rápido para `JWT_SECRET` (§11). Se registra como mejora de menor prioridad, no se ejecuta en esta fase para no introducir riesgo de regresión sobre código que ya funciona.
+- **`compression` middleware u otro paquete nuevo de rendimiento:** hubiera sido una dependencia nueva no cubierta por la única excepción explícita de esta fase (`@nestjs/cache-manager`). Se deja como recomendación, no como cambio.
+
+### 29.4. Riesgos
+
+- Ninguno de los cambios de esta fase toca lógica de negocio ni contratos de API existentes. El único cambio de comportamiento observable es que `GET /public/:slug/booking-data` puede devolver una respuesta de hasta 15 segundos de antigüedad bajo tráfico alto — aceptable para datos de catálogo público.
+- `npm audit` reporta 27 vulnerabilidades "high" — **todas preexistentes**, en la cadena de herramientas de desarrollo (`eslint`/`jest`/`@nestjs/cli`, vía `brace-expansion`), no relacionadas con las dependencias nuevas de esta fase. No se tocaron por estar fuera de alcance y requerir cambios disruptivos (`--force`) en versiones de herramientas de build/test.
+
+### 29.5. Validación
+
+`tsc --noEmit` y `npx nest build` completos ejecutados — únicamente los errores ya conocidos y documentados de `@prisma/client` sin generar en el entorno de verificación (no en el tuyo, donde `prisma generate` corre normal). `eslint` limpio sobre todos los archivos tocados. `npm test` y `prisma generate` reales requieren tu máquina — instrucciones abajo.
+
+## 30. Auditoría Enterprise — Fase 2: Seguridad (2026-07-25)
+
+### 30.1. Qué se encontró
+
+- **CORS completamente abierto:** `app.enableCors()` sin argumentos aceptaba peticiones de **cualquier origen**, sin restricción. Ningún dominio permitido explícito.
+- **Sin `Helmet`:** ninguna cabecera de seguridad HTTP estándar (`X-Content-Type-Options`, `X-Frame-Options`, HSTS, etc.) estaba configurada.
+- **Rate limiting real más limitado de lo que la directiva presuponía:** no existía ningún límite global — el único límite en todo el sistema era el de la reserva pública (5/min, registrado *dentro* de `PublicBookingModule`, no globalmente). `POST /auth/login` no tenía ningún límite — abierto a fuerza bruta sin restricción.
+- **JWT:** ya auditado y resuelto en ciclos anteriores — `JwtStrategy.validate()` re-verifica contra `Membership` en cada request (revocación inmediata, no espera a que expire el token), `JWT_SECRET` sin default inseguro, expiración de 1 día. **No se tocó**, ya cumple el estándar.
+- **Validaciones (`ValidationPipe`):** `whitelist` + `forbidNonWhitelisted` ya activos globalmente. **No se tocó**.
+- **Errores:** NestJS no filtra excepciones no capturadas hacia el cliente con stack trace por defecto (comportamiento nativo, ya seguro). **No se tocó**.
+- **Guards/Interceptors/Pipes:** `JwtAuthGuard` + `RolesGuard` aplicados de forma consistente en todos los endpoints internos (auditado exhaustivamente en ciclos anteriores — §24.5, §26, §27). **No se tocó**.
+
+### 30.2. Qué se mejoró, y por qué
+
+1. **`Helmet`** — `app.use(helmet())` con configuración por defecto (suficiente para una API REST que no sirve HTML propio).
+2. **CORS restringido** — `CORS_ALLOWED_ORIGINS` en `.env` (lista separada por coma). Sin configurar, cae a `localhost:3000`/`localhost:3001` (desarrollo local) — **nunca más abierto a cualquier origen por defecto**.
+3. **`ThrottlerModule` pasa a ser un registro global real** (antes vivía solo dentro de `PublicBookingModule`) — límite base genérico de 100 req/min/IP. El **guard** sigue sin aplicarse a ningún endpoint por defecto — cada controlador lo activa explícitamente, exactamente como ya funcionaba. Este cambio por sí solo no altera el comportamiento de ningún endpoint existente.
+4. **Límite estricto en `POST /auth/login`** (regla obligatoria de esta fase): `@Throttle({ default: { limit: 5, ttl: 60000 } })` — 5 intentos/minuto por IP contra fuerza bruta. Explícitamente **solo en login**, no en `register`/`invite`/`update-password` — se puede replicar donde se decida que hace falta, no se expandió por cuenta propia.
+5. **Reserva pública preservada exactamente igual** — el límite de 5/min que ya tenía se mantiene idéntico, ahora como *override* explícito sobre el nuevo default global de 100/min (antes era, por coincidencia, el único límite que existía). Verificado que el comportamiento no cambió.
+
+### 30.3. Qué se decidió NO tocar, y por qué
+
+- **`register()` sin rate limit propio:** el mandato fue específicamente sobre login. Se deja anotado como candidato al mismo tratamiento si se decide más adelante, no se implementa por cuenta propia.
+- **JWT, validaciones, manejo de errores, Guards existentes:** auditados y ya en buen estado — tocar código que funciona correctamente sin una razón concreta hubiera sido exactamente el tipo de cambio no justificado que se pidió evitar.
+
+### 30.4. Riesgos — uno de ellos requiere tu atención antes de desplegar
+
+- **⚠️ CORS puede romper tu frontend de producción si no configuras `CORS_ALLOWED_ORIGINS`.** Si tu frontend real corre en un dominio que no sea `localhost:3000`/`localhost:3001` (ej. Vercel, tu dominio propio) y esa variable no está seteada, el navegador va a bloquear las peticiones desde ahí — mismo patrón de advertencia que ya tuvimos con el cambio de login. **Configura esa variable con tu dominio real antes de desplegar a cualquier ambiente que no sea tu máquina local.**
+- El resto de los cambios de esta fase son aditivos y no alteran ningún contrato de API existente.
+
+### 30.5. Validación
+
+`tsc --noEmit` y `npx nest build` completos — mismo conteo de errores que en la Fase 1 (24), todos ya documentados como el artefacto conocido de `@prisma/client` sin generar en mi entorno de verificación. `eslint` limpio sobre todos los archivos tocados y sobre el proyecto completo. `npm test` y `prisma generate` reales requieren tu máquina.
+
+## 31. Parche — protección de fuerza bruta en todo el flujo de autenticación (2026-07-25)
+
+Pedido explícito antes de la Fase 3: extender la protección de `login` a todo el flujo (`register`, `invite`, `update-password`).
+
+### 31.1. Decisión de arquitectura
+
+**Dos capas independientes**, cada una cubriendo lo que la otra no:
+
+1. **Por IP** (`@nestjs/throttler`, ya existía solo en login) — extendido a `register` (10/min), `invite` (20/min, más holgado porque ya requiere sesión de OWNER/ADMIN) y `update-password` (10/min).
+2. **Por cuenta** (nuevo — `AttemptLimiter`, `apps/api/src/auth/attempt-limiter.ts`) — contador de fallos guardado en el `CACHE_MANAGER` ya instalado en la Fase 1 (reutilizado, cero dependencias nuevas). Solo cuenta intentos con **credencial incorrecta** (nunca cada request), se resetea en éxito. Aplicado a `login` (8 fallos/10min por email) y `update-password` (5 fallos/10min por `userId`) — los dos únicos endpoints donde hay un secreto existente que alguien podría intentar adivinar.
+
+**Por qué no un lockout persistido en `User` (`lockedUntil`):** descartado — introduce un vector de ataque nuevo (bloquear la cuenta de otra persona a propósito fallando su login) y requiere migración de schema para algo que el caché en memoria ya resuelve sin persistir nada.
+
+**Por qué `register`/`invite` no llevan la capa por-cuenta:** no hay una contraseña existente que adivinar en esos flujos — el riesgo ahí es spam/flooding, que el límite por IP ya cubre.
+
+### 31.2. Mejora incidental encontrada al implementar esto
+
+`AuthService.login()` verificaba `!user` y contraseña incorrecta por separado, con las mismas 401 pero en dos pasos — se unificó en una sola verificación (`!user || !isPasswordValid`) antes de registrar el fallo. Esto evita además una diferencia de comportamiento entre "el correo no existe" y "el correo existe pero la contraseña está mal" que, sin la unificación, el contador de intentos habría tratado de forma distinta. Cambio mínimo, mismo comportamiento externo (sigue devolviendo "Credenciales inválidas" en ambos casos, como ya hacía).
+
+### 31.3. Riesgos
+
+Ninguno de los límites por-IP nuevos debería afectar uso legítimo — 10-20 solicitudes/minuto es generoso para cualquier flujo humano real. El bloqueo por cuenta en login (8 fallos/10min) es razonable incluso para alguien que se equivoca varias veces de verdad; se resetea automáticamente pasada la ventana, no requiere intervención manual.
+
+### 31.4. Validación
+
+`tsc --noEmit` y `npx nest build` — mismo conteo de errores ya documentado (24, todos la cascada de Prisma sin generar). `auth.service.ts` y `attempt-limiter.ts` compilan sin ningún error, ni siquiera el de la cascada — confirmado explícitamente, no solo por inferencia. `eslint` limpio.
+
+
+
 ---
 
 *Este documento reemplaza integralmente las versiones anteriores. Toda la información aquí fue verificada directamente contra el código fuente del repositorio — nada se asumió a partir de documentación previa.*

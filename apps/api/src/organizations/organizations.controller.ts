@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { UserRole } from '@prisma/client';
 import { B2B_ROLES } from '../auth/roles.constants';
 
 @Controller('organizations')
@@ -29,5 +30,17 @@ export class OrganizationsController {
   @Get('mine')
   findMine(@GetUser('organizationId') organizationId: string) {
     return this.organizationsService.findMine(organizationId);
+  }
+
+  // Restringido a OWNER/ADMIN (más estricto que B2B_ROLES) — ver quién
+  // integra el equipo, con nombre y correo de cada persona, es
+  // información de gestión de staff, igual que /auth/invite (que ya
+  // tiene la misma restricción). Si se necesita que RECEPTIONIST/BARBER
+  // también lo vean, es cambiar un decorador, no un rediseño.
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Get('mine/members')
+  findMembers(@GetUser('organizationId') organizationId: string) {
+    return this.organizationsService.findMembers(organizationId);
   }
 }

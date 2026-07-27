@@ -3,7 +3,10 @@ import {
   BadRequestException,
   UnauthorizedException,
   ConflictException,
+  Inject,
 } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -12,13 +15,42 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
+import { AttemptLimiter } from './attempt-limiter';
+
+// Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
+// attempt-limiter.ts para el porqué de este enfoque (por cuenta, en
+// memoria, no persistido). 8/10min en login: generoso para alguien que
+// se equivoca de verdad, estricto contra un ataque sostenido. 5/10min en
+// cambio de contraseña: más estricto porque ya requiere un token robado
+// como precondición — cualquier intento ahí es más sospechoso de por sí.
+const LOGIN_MAX_ATTEMPTS = 8;
+const LOGIN_WINDOW_MS = 10 * 60 * 1000;
+const PASSWORD_CHANGE_MAX_ATTEMPTS = 5;
+const PASSWORD_CHANGE_WINDOW_MS = 10 * 60 * 1000;
 
 @Injectable()
 export class AuthService {
+  private readonly loginLimiter: AttemptLimiter;
+  private readonly passwordChangeLimiter: AttemptLimiter;
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+    @Inject(CACHE_MANAGER) private cache: Cache,
+  ) {
+    this.loginLimiter = new AttemptLimiter(
+      this.cache,
+      'login-attempts',
+      LOGIN_MAX_ATTEMPTS,
+      LOGIN_WINDOW_MS,
+    );
+    this.passwordChangeLimiter = new AttemptLimiter(
+      this.cache,
+      'password-change-attempts',
+      PASSWORD_CHANGE_MAX_ATTEMPTS,
+      PASSWORD_CHANGE_WINDOW_MS,
+    );
+  }
 
   // Funda una organización nueva. Requiere un email global nuevo — si ya
   // existe una cuenta en Kortek con ese correo, se rechaza con 409 en vez
@@ -207,20 +239,30 @@ export class AuthService {
   // lastOrganizationId (o la primera membresía disponible si no hay
   // ninguna guardada todavía — caso legacy) y emite el JWT ya con el
   // contexto del tenant. Nunca pide organizationId en el body.
+  //
+  // Fuerza bruta: bloqueo por cuenta (email) además del límite por IP ya
+  // aplicado en el controller. Solo cuenta intentos con contraseña
+  // incorrecta — nunca penaliza a alguien que ya inició sesión bien.
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
+    await this.loginLimiter.assertNotLocked(
+      email,
+      'Demasiados intentos fallidos para esta cuenta. Intenta de nuevo en unos minutos.',
+    );
+
     const user = await this.prisma.db.user.findUnique({ where: { email } });
 
-    if (!user) {
+    const isPasswordValid = user
+      ? await bcrypt.compare(password, user.password)
+      : false;
+
+    if (!user || !isPasswordValid) {
+      await this.loginLimiter.recordFailure(email);
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
+    await this.loginLimiter.reset(email);
 
     let membership = user.lastOrganizationId
       ? await this.prisma.db.membership.findUnique({
@@ -274,7 +316,17 @@ export class AuthService {
 
   // Cualquier usuario autenticado (cualquier rol, incluido CUSTOMER) puede
   // cambiar su propia contraseña. userId sale del token, nunca del body.
+  //
+  // Fuerza bruta: mismo patrón que login — bloqueo por cuenta (userId)
+  // contando solo intentos con currentPassword incorrecta. El escenario
+  // que protege es un token robado usado para adivinar la contraseña
+  // real por fuerza bruta.
   async updatePassword(userId: string, dto: UpdatePasswordDto) {
+    await this.passwordChangeLimiter.assertNotLocked(
+      userId,
+      'Demasiados intentos fallidos. Intenta de nuevo en unos minutos.',
+    );
+
     const user = await this.prisma.db.user.findUnique({
       where: { id: userId },
     });
@@ -289,8 +341,11 @@ export class AuthService {
     );
 
     if (!isCurrentValid) {
+      await this.passwordChangeLimiter.recordFailure(userId);
       throw new BadRequestException('La contraseña actual no es correcta');
     }
+
+    await this.passwordChangeLimiter.reset(userId);
 
     const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
 

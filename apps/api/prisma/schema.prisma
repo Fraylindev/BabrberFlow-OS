@@ -211,6 +211,8 @@ model Client {
 
   notes String?
 
+  isActive Boolean @default(true)
+
   bookings Booking[]
 
   createdAt DateTime @default(now())
@@ -237,6 +239,8 @@ model Service {
   duration Int
 
   price Decimal
+
+  isActive Boolean @default(true)
 
   professionalServices ProfessionalService[]
 
