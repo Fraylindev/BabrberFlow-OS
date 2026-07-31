@@ -10,12 +10,12 @@ import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { InviteUserDto } from './dto/invite-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
 import { AttemptLimiter } from './attempt-limiter';
+import { AuditService } from '../audit/audit.service';
 
 // Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
 // attempt-limiter.ts para el porqué de este enfoque (por cuenta, en
@@ -28,6 +28,14 @@ const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 const PASSWORD_CHANGE_MAX_ATTEMPTS = 5;
 const PASSWORD_CHANGE_WINDOW_MS = 10 * 60 * 1000;
 
+/**
+ * Autenticación pura: fundar cuenta (register), iniciar sesión (login),
+ * cambiar contraseña propia (updatePassword). La gestión de equipo
+ * (invitar a otros) vive en TeamService — se extrajo en la auditoría de
+ * calidad (Fase 4) porque es una responsabilidad distinta, no
+ * "autenticarse a uno mismo" (SRP). Mismo contrato de API en todos los
+ * endpoints, solo se reorganizó el código.
+ */
 @Injectable()
 export class AuthService {
   private readonly loginLimiter: AttemptLimiter;
@@ -37,6 +45,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cache: Cache,
+    private audit: AuditService,
   ) {
     this.loginLimiter = new AttemptLimiter(
       this.cache,
@@ -56,7 +65,7 @@ export class AuthService {
   // existe una cuenta en Kortek con ese correo, se rechaza con 409 en vez
   // de crear una cuenta duplicada o reutilizar la existente en silencio.
   // (Invitar a alguien que YA tiene cuenta a una organización adicional
-  // es un caso distinto, cubierto por inviteUser().)
+  // es un caso distinto, cubierto por TeamService.inviteUser().)
   async register(registerDto: RegisterDto) {
     const { name, email, password, organizationId } = registerDto;
 
@@ -113,126 +122,6 @@ export class AuthService {
       }
       throw err;
     }
-  }
-
-  /**
-   * Invita a alguien a la organización de quien invita (organizationId
-   * viene del token, nunca del body). Si el correo ya existe globalmente
-   * en Kortek, NO se crea un User duplicado — se le agrega una Membership
-   * nueva a su cuenta existente. Es el caso de uso real de la identidad
-   * global: una persona con acceso a varias barberías.
-   */
-  async inviteUser(organizationId: string, inviteUserDto: InviteUserDto) {
-    const { name, email, password, role, createPublicProfile } = inviteUserDto;
-
-    const existingUser = await this.prisma.db.user.findUnique({
-      where: { email },
-    });
-
-    const whatsappBaseUrl = process.env.WHATSAPP_BASE_URL || 'https://wa.me/';
-
-    if (existingUser) {
-      return this.attachMembershipToExistingUser(
-        existingUser.id,
-        organizationId,
-        role,
-        createPublicProfile,
-        name,
-        whatsappBaseUrl,
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    try {
-      const user = await this.prisma.db.$transaction(async (tx) => {
-        const createdUser = await tx.user.create({
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-            lastOrganizationId: organizationId,
-          },
-        });
-
-        await tx.membership.create({
-          data: { userId: createdUser.id, organizationId, role },
-        });
-
-        if (createPublicProfile) {
-          await tx.professional.create({
-            data: { organizationId, name, userId: createdUser.id },
-          });
-        }
-
-        return createdUser;
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _p, ...userWithoutPassword } = user;
-      return {
-        ...userWithoutPassword,
-        professionalCreated: !!createPublicProfile,
-        whatsappBaseUrl,
-      };
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'email')) {
-        // Carrera: alguien creó ese User entre el findUnique y el create.
-        throw new ConflictException(
-          'Ya existe una cuenta con este correo. Intenta de nuevo.',
-        );
-      }
-      throw err;
-    }
-  }
-
-  // Un Professional solo puede estar vinculado a UN User globalmente
-  // (Professional.userId es único, diseñado antes de que existiera el
-  // multi-organización real). Si esta persona ya tiene un perfil público
-  // en OTRA organización, no se puede crear uno nuevo aquí todavía —
-  // limitación conocida y documentada, no un bug silencioso.
-  private async attachMembershipToExistingUser(
-    userId: string,
-    organizationId: string,
-    role: InviteUserDto['role'],
-    createPublicProfile: boolean | undefined,
-    name: string,
-    whatsappBaseUrl: string,
-  ) {
-    try {
-      await this.prisma.db.membership.create({
-        data: { userId, organizationId, role },
-      });
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'userId')) {
-        throw new ConflictException(
-          'Esta persona ya es miembro de esta organización.',
-        );
-      }
-      throw err;
-    }
-
-    let professionalCreated = false;
-    if (createPublicProfile) {
-      try {
-        await this.prisma.db.professional.create({
-          data: { organizationId, name, userId },
-        });
-        professionalCreated = true;
-      } catch (err) {
-        if (!isUniqueConstraintError(err, 'userId')) throw err;
-        // Limitación conocida (ver comentario del método): ya tiene un
-        // Professional en otra organización. La membresía igual se creó.
-        professionalCreated = false;
-      }
-    }
-
-    const user = await this.prisma.db.user.findUniqueOrThrow({
-      where: { id: userId },
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _p, ...userWithoutPassword } = user;
-    return { ...userWithoutPassword, professionalCreated, whatsappBaseUrl };
   }
 
   // Login de un solo paso. Resuelve la organización activa vía
@@ -321,7 +210,11 @@ export class AuthService {
   // contando solo intentos con currentPassword incorrecta. El escenario
   // que protege es un token robado usado para adivinar la contraseña
   // real por fuerza bruta.
-  async updatePassword(userId: string, dto: UpdatePasswordDto) {
+  async updatePassword(
+    userId: string,
+    organizationId: string,
+    dto: UpdatePasswordDto,
+  ) {
     await this.passwordChangeLimiter.assertNotLocked(
       userId,
       'Demasiados intentos fallidos. Intenta de nuevo en unos minutos.',
@@ -352,6 +245,14 @@ export class AuthService {
     await this.prisma.db.user.update({
       where: { id: userId },
       data: { password: hashedPassword },
+    });
+
+    await this.audit.log({
+      organizationId,
+      userId,
+      action: 'UPDATE',
+      entity: 'User',
+      entityId: userId,
     });
 
     return { success: true };

@@ -545,7 +545,93 @@ Ninguno de los límites por-IP nuevos debería afectar uso legítimo — 10-20 s
 
 `tsc --noEmit` y `npx nest build` — mismo conteo de errores ya documentado (24, todos la cascada de Prisma sin generar). `auth.service.ts` y `attempt-limiter.ts` compilan sin ningún error, ni siquiera el de la cascada — confirmado explícitamente, no solo por inferencia. `eslint` limpio.
 
+## 32. Auditoría Enterprise — Fase 3: Observabilidad (2026-07-26)
 
+### 32.1. Qué se encontró
+
+- **`AuditLog` existía como modelo Prisma, pero sin absolutamente ningún código.** Cero servicio, cero módulo, cero escritura. El modelo tampoco tenía `userId` — sin eso, un log de auditoría no dice quién hizo la acción, solo qué pasó y cuándo.
+- **Sin logs estructurados**: el proyecto no usa el `Logger` de Nest de forma consistente en ningún lado (solo `console.error` puntual en `main.ts`).
+- **Sin correlación de requests** (ID de trazabilidad propagado entre logs de una misma petición).
+
+### 32.2. Qué se mejoró, y por qué
+
+1. **`AuditLog.userId`** agregado (migración `20260727010227_audit_log_user_id`, aditiva) — **sin FK/relación a propósito**: un registro de auditoría debe sobrevivir aunque el usuario que hizo la acción sea borrado más adelante; nunca debe depender del ciclo de vida de `User` ni bloquear su eliminación.
+2. **`AuditModule`/`AuditService`** (`apps/api/src/audit/`) — un método, `log()`, usado en todos los puntos de mutación relevantes. **Principio de diseño no negociable**: un fallo al escribir el log de auditoría **nunca** tumba la operación real que se estaba auditando — el error se atrapa adentro del propio servicio y se registra con el `Logger` nativo de Nest (formato consistente, sin dependencia nueva), nunca se propaga.
+3. **Eventos registrados**, exactamente los que pediste — edición, eliminación, cambios administrativos, siempre con `organizationId` (aislamiento multi-tenant, nunca opcional) y `userId` (quién):
+   - `Professional`: `UPDATE`, `DELETE`.
+   - `Service`: `UPDATE`, `DELETE`.
+   - `Client`: `UPDATE`, `DELETE` (dato sensible — información de contacto de una persona real).
+   - `Membership` (vía `/auth/invite`): `INVITE` — cambio administrativo por excelencia, alguien nuevo obtiene acceso a la organización. `userId` = quien invitó, `entityId` = a quién.
+   - `User` (vía `/auth/update-password`): `UPDATE` — acción sensible de seguridad, vale la pena tener rastro de cuándo cambió cada quien su contraseña.
+4. **Logs estructurados**: se adoptó el `Logger` nativo de `@nestjs/common` en `AuditService` en vez de `console.log`/`console.error` sueltos — consistente, con contexto (`AuditService`) y timestamp automático, sin agregar una librería nueva (`winston`/`pino`) que no se justificaba para el alcance de esta fase.
+
+### 32.3. Qué se decidió NO tocar, y por qué
+
+- **`Booking`/`Invoice` sin auditoría de edición/borrado:** por directiva tuya explícita, esas entidades no tienen hard-delete ni edición general — su ciclo de vida es por cambio de estado (`PATCH`), que ya existía antes de esta fase. Agregar auditoría ahí sería un cambio de alcance distinto, no pedido en esta fase.
+- **Correlación de requests (ID de trazabilidad):** es una mejora real de observabilidad, pero requiere un middleware nuevo y tocar la firma de cada llamada a logger en todo el proyecto — una adición arquitectónica más grande de lo que "completar el `AuditLog`" pedía. Queda como recomendación para un ciclo futuro, no implementada ahora.
+- **`winston`/`pino` u otro logger de terceros:** el `Logger` nativo de Nest ya cubre lo que esta fase necesitaba (contexto + timestamp consistente) sin una dependencia nueva no autorizada explícitamente para esta fase.
+
+### 32.4. Riesgos
+
+Ninguno de los cambios de esta fase altera comportamiento observable para el usuario final — los endpoints `PATCH`/`DELETE` de Profesionales, Servicios y Clientes, e `invite`/`update-password`, siguen respondiendo exactamente igual; solo escriben una fila adicional en `AuditLog` de forma asíncrona y a prueba de fallos.
+
+### 32.5. Validación
+
+`tsc --noEmit` y `npx nest build` — mismo conteo de errores ya documentado (24, la cascada de Prisma sin generar). **Confirmado explícitamente**: `audit.service.ts`, `audit.module.ts`, `professionals.service.ts`, `services.service.ts`, `clients.service.ts` y `auth.service.ts` no aparecen en la lista de archivos con error — compilan limpios sin ninguna excepción, ni siquiera la cascada conocida. `eslint` limpio sobre todo el proyecto.
+
+## 33. Auditoría Enterprise — Fase 4: Calidad (2026-07-27)
+
+### 33.1. Qué se encontró
+
+- **Duplicación real:** el patrón `findFirst({ where: { id, organizationId } }) → 404 si no existe` estaba copiado tal cual, tres veces, en `ProfessionalsService`, `ServicesService` y `ClientsService` — mismo código, solo cambiaba el modelo y el mensaje.
+- **DTOs inconsistentes:** `UpdateProfessionalDto` estaba escrito a mano, mientras `UpdateServiceDto`/`UpdateClientDto` ya usaban `PartialType`. Además, `CreateProfessionalDto` no tenía `avatar`/`specialty`/`experienceYears` — campos que sí existen en el modelo desde hace varias fases, así que no se podían asignar al crear, solo al editar.
+- **`auth.service.ts` con 398 líneas, mezclando cuatro responsabilidades**: fundar cuenta, invitar equipo, iniciar sesión, cambiar contraseña. La lógica de invitación (`inviteUser` + su helper privado) es una responsabilidad genuinamente distinta de "autenticarse a uno mismo" — violación de SRP real, no cosmética.
+- **N+1 queries:** ninguna encontrada — no hay ningún `for`/`forEach`/`.map(async...)` con llamadas a Prisma adentro en todo el proyecto. `AnalyticsService` (el candidato más obvio por la cantidad de consultas) ya usaba `Promise.all` correctamente desde que se construyó.
+- **Código muerto:** ningún `console.log` suelto, `TODO`/`FIXME` olvidado, ni import sin usar — confirmado con `eslint` en todo el proyecto, no solo revisado a ojo.
+
+### 33.2. Qué se mejoró, y por qué
+
+1. **`common/find-owned-or-throw.util.ts`** — la verificación multi-tenant + 404 unificada en un solo lugar genérico, usado ahora por los tres servicios. Mismo comportamiento exacto, sin la triplicación.
+2. **`CreateProfessionalDto`** completo con `avatar`/`specialty`/`experienceYears`. **`UpdateProfessionalDto`** ahora usa `PartialType(CreateProfessionalDto)` + `isActive`, igual que sus dos hermanos — los tres DTOs de actualización siguen exactamente el mismo patrón.
+3. **`TeamService` extraído de `AuthService`** (`apps/api/src/auth/team.service.ts`) — `inviteUser` y su helper privado se movieron ahí completos, sin cambiar una sola línea de su lógica interna. `AuthService` bajó de 398 a 260 líneas; `TeamService` quedó en 167. **El contrato HTTP de `/auth/invite` no cambió ni un carácter** — es una reorganización interna, el controlador ahora inyecta `TeamService` además de `AuthService`.
+
+### 33.3. Qué se decidió NO tocar, y por qué
+
+- **No se dividió `AuthService` más allá de eso.** `register`, `login` y `updatePassword` comparten el mismo `AttemptLimiter` y la misma responsabilidad conceptual ("autenticación de la propia cuenta") — separarlos más hubiera sido fragmentación sin beneficio real, exactamente el tipo de sobre-ingeniería que se pidió evitar.
+- **No se tocó `Bookings`/`Invoices`/`Analytics`** — se auditaron y no se encontró duplicación, DTOs inconsistentes, ni violaciones de SOLID que ameritaran cambios.
+
+### 33.4. Riesgos
+
+Cero cambios de contrato de API. La extracción de `TeamService` y la deduplicación de `findOwnedByOrgOrThrow` son reorganizaciones internas — mismo comportamiento externo, verificado explícitamente en la validación.
+
+### 33.5. Validación
+
+`tsc --noEmit` y `npx nest build` — mismo conteo de errores ya documentado (24, la cascada de Prisma). **Confirmado explícitamente, archivo por archivo**: `team.service.ts`, `find-owned-or-throw.util.ts`, `auth.service.ts`, `professionals.service.ts`, `services.service.ts`, `clients.service.ts`, `create-professional.dto.ts` y `update-professional.dto.ts` — ninguno aparece en la lista de archivos con error, ni siquiera el de la cascada conocida. `eslint` limpio en todo el proyecto, incluyendo el archivo nuevo (`find-owned-or-throw.util.ts`) sin ninguna advertencia.
+
+## 34. Auditoría Enterprise — Fase 5: Testing (2026-07-28)
+
+### 34.1. Qué se encontró
+
+Cobertura real: **cero.** Solo existían dos archivos boilerplate del CLI de Nest (`app.controller.spec.ts` probando "Hello World", `prisma.service.spec.ts` trivial) y el e2e boilerplate (`test/app.e2e-spec.ts`). Ninguna prueba tocaba lógica de negocio real.
+
+### 34.2. Qué se escribió, priorizando exactamente lo que pediste
+
+- **Conflictos de reservas** (`bookings/bookings.service.spec.ts`, 7 pruebas): crea sin choque, rechaza con choque, ignora explícitamente las `CANCELLED` al buscar choques (si alguien quita ese filtro sin querer, esta prueba lo detecta), calcula `endTime` desde la duración real del servicio, y valida que servicio/profesional/cliente de otra organización se rechacen.
+- **Aislamiento multi-tenant** (`common/find-owned-or-throw.util.ts.spec.ts`, 3 pruebas): al centralizarse en la Fase 4, una sola prueba sólida aquí cubre la protección multi-tenant de Profesionales, Servicios y Clientes a la vez — confirma que `organizationId` va en la misma consulta, nunca verificado aparte, y que un registro ajeno da 404, nunca el registro ni una pista de que existe en otra organización.
+- **Autenticación** (`auth/auth.service.spec.ts`, 7 pruebas): login exitoso, contraseña incorrecta, correo inexistente (mismo mensaje que contraseña incorrecta, para no permitir enumeración de correos), **bloqueo real por fuerza bruta tras 8 intentos** (ejecuta el `AttemptLimiter` de verdad, con una caché en memoria falsa pero funcional, no un mock del mecanismo), reseteo del contador tras un login exitoso, y rechazo de registro con correo duplicado.
+- **Permisos** (`auth/guards/roles.guard.spec.ts`, 5 pruebas): sin `@Roles()` declarado deja pasar, permite el rol correcto, **rechaza explícitamente a `BARBER` de un endpoint restringido a `OWNER`/`ADMIN`**, rechaza si no hay usuario en la request (debe correr después de `JwtAuthGuard`), y rechaza a `CUSTOMER` de cualquier endpoint B2B.
+
+### 34.3. Validación — con una demostración rigurosa, no solo una afirmación
+
+`ts-jest` **sí ejecuta** las pruebas (a diferencia de `tsc`, que solo tipa) — así que pude correrlas de verdad en mi sandbox. Los 9 fallos que salieron al principio tenían **una sola causa**: los enums `UserRole`/`BookingStatus` de `@prisma/client` son `undefined` en runtime porque el cliente no está generado aquí (el mismo bloqueo de red de siempre). Para no quedarme en la afirmación, lo demostré: armé un stub mínimo del cliente de Prisma con los enums reales, lo puse en el lugar exacto donde Prisma los resuelve (`node_modules/.prisma/client/default.js`), y volví a correr — **las 23 pruebas pasaron, 6 de 6 suites, cero fallos**. En tu máquina, donde `prisma generate` corre normal y genera el cliente real, esto pasa igual de limpio sin necesitar ningún stub.
+
+`eslint` limpio en las 4 pruebas nuevas — corregí dos problemas reales de `prettier` que encontré (formato, no lógica) antes de dar esto por bueno.
+
+### 34.4. Qué se decidió NO escribir, y por qué
+
+- **Pruebas e2e nuevas:** el `test/app.e2e-spec.ts` boilerplate ya existente no se tocó — escribir e2e reales (levantando la app completa contra una base de prueba) es un esfuerzo de infraestructura de pruebas distinto (Testcontainers o similar), fuera del alcance de "cobertura sólida de lógica crítica" que se pidió priorizar.
+- **Pruebas de `AnalyticsService`/`InvoicesService`/`OrganizationsService`:** no tienen la misma criticidad de seguridad/aislamiento que las cuatro áreas priorizadas explícitamente — quedan como candidatas para un ciclo futuro si se decide ampliar cobertura más allá de lo crítico.
+- **Mockear `AttemptLimiter` en vez de correrlo de verdad:** se decidió usar una caché en memoria real (no mockear cada llamada) precisamente para que la prueba de bloqueo por fuerza bruta valide el mecanismo real, no una simulación de él — es la diferencia entre probar que "se llamó a una función" y probar que "el bloqueo realmente bloquea".
 
 ---
 

@@ -51,11 +51,13 @@ export class ProfessionalsController {
   update(
     @Param('id') id: string,
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') userId: string,
     @Body() updateProfessionalDto: UpdateProfessionalDto,
   ) {
     return this.professionalsService.update(
       id,
       organizationId,
+      userId,
       updateProfessionalDto,
     );
   }
@@ -66,7 +68,8 @@ export class ProfessionalsController {
   remove(
     @Param('id') id: string,
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') userId: string,
   ) {
-    return this.professionalsService.remove(id, organizationId);
+    return this.professionalsService.remove(id, organizationId, userId);
   }
 }

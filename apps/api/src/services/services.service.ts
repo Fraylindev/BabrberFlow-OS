@@ -1,16 +1,17 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { isForeignKeyConstraintError } from '../common/prisma-error.util';
+import { findOwnedByOrgOrThrow } from '../common/find-owned-or-throw.util';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ServicesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private audit: AuditService,
+  ) {}
 
   async create(organizationId: string, createServiceDto: CreateServiceDto) {
     return await this.prisma.db.service.create({
@@ -27,39 +28,55 @@ export class ServicesService {
     });
   }
 
-  // 🔒 findFirst con organizationId en el mismo where — si el servicio
-  // existe pero es de otra organización, se comporta igual que si no
-  // existiera (404), nunca revela que el id pertenece a otra barbería.
-  private async findOwnedByOrgOrThrow(id: string, organizationId: string) {
-    const service = await this.prisma.db.service.findFirst({
-      where: { id, organizationId },
-    });
-
-    if (!service) {
-      throw new NotFoundException('Servicio no encontrado');
-    }
-
-    return service;
-  }
-
   async update(
     id: string,
     organizationId: string,
+    userId: string,
     updateServiceDto: UpdateServiceDto,
   ) {
-    await this.findOwnedByOrgOrThrow(id, organizationId);
+    await findOwnedByOrgOrThrow(
+      this.prisma.db.service,
+      id,
+      organizationId,
+      'Servicio no encontrado',
+    );
 
-    return await this.prisma.db.service.update({
+    const updated = await this.prisma.db.service.update({
       where: { id },
       data: updateServiceDto,
     });
+
+    await this.audit.log({
+      organizationId,
+      userId,
+      action: 'UPDATE',
+      entity: 'Service',
+      entityId: id,
+    });
+
+    return updated;
   }
 
-  async remove(id: string, organizationId: string) {
-    await this.findOwnedByOrgOrThrow(id, organizationId);
+  async remove(id: string, organizationId: string, userId: string) {
+    await findOwnedByOrgOrThrow(
+      this.prisma.db.service,
+      id,
+      organizationId,
+      'Servicio no encontrado',
+    );
 
     try {
-      return await this.prisma.db.service.delete({ where: { id } });
+      const removed = await this.prisma.db.service.delete({ where: { id } });
+
+      await this.audit.log({
+        organizationId,
+        userId,
+        action: 'DELETE',
+        entity: 'Service',
+        entityId: id,
+      });
+
+      return removed;
     } catch (err) {
       if (isForeignKeyConstraintError(err)) {
         // Restrict a propósito: un servicio con reservas asociadas no se

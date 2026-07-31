@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty, IsInt } from 'class-validator';
 
 export class CreateProfessionalDto {
   @IsString()
@@ -12,4 +12,16 @@ export class CreateProfessionalDto {
   @IsString()
   @IsOptional()
   phone?: string;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+
+  @IsString()
+  @IsOptional()
+  specialty?: string;
+
+  @IsInt()
+  @IsOptional()
+  experienceYears?: number;
 }

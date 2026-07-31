@@ -47,9 +47,15 @@ export class ServicesController {
   update(
     @Param('id') id: string,
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') userId: string,
     @Body() updateServiceDto: UpdateServiceDto,
   ) {
-    return this.servicesService.update(id, organizationId, updateServiceDto);
+    return this.servicesService.update(
+      id,
+      organizationId,
+      userId,
+      updateServiceDto,
+    );
   }
 
   @Roles(UserRole.OWNER, UserRole.ADMIN)
@@ -57,7 +63,8 @@ export class ServicesController {
   remove(
     @Param('id') id: string,
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') userId: string,
   ) {
-    return this.servicesService.remove(id, organizationId);
+    return this.servicesService.remove(id, organizationId, userId);
   }
 }

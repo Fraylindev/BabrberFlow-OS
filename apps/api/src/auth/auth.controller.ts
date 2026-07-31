@@ -1,6 +1,7 @@
 import { Controller, Post, Patch, Body, UseGuards } from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
+import { TeamService } from './team.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
@@ -13,7 +14,10 @@ import { UserRole } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly teamService: TeamService,
+  ) {}
 
   // Límite por IP: 10/min. No hay contraseña que adivinar aquí (es
   // creación de cuenta), así que no lleva la capa de bloqueo por cuenta
@@ -51,9 +55,14 @@ export class AuthController {
   @Post('invite')
   invite(
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') invitedBy: string,
     @Body() inviteUserDto: InviteUserDto,
   ) {
-    return this.authService.inviteUser(organizationId, inviteUserDto);
+    return this.teamService.inviteUser(
+      organizationId,
+      invitedBy,
+      inviteUserDto,
+    );
   }
 
   // Cualquier usuario autenticado, de cualquier rol, cambia su propia
@@ -66,8 +75,13 @@ export class AuthController {
   @Patch('update-password')
   updatePassword(
     @GetUser('id') userId: string,
+    @GetUser('organizationId') organizationId: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.authService.updatePassword(userId, updatePasswordDto);
+    return this.authService.updatePassword(
+      userId,
+      organizationId,
+      updatePasswordDto,
+    );
   }
 }

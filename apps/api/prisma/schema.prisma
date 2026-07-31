@@ -351,6 +351,12 @@ model AuditLog {
 
   organizationId String
 
+  // Sin relación/FK a propósito: un registro de auditoría debe sobrevivir
+  // aunque el usuario que hizo la acción deje de existir más adelante —
+  // nunca debe bloquear ni depender del ciclo de vida de User. Campo
+  // denormalizado simple, no un FK.
+  userId String?
+
   action String
 
   entity String

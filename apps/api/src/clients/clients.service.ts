@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -10,10 +6,15 @@ import {
   isUniqueConstraintError,
   isForeignKeyConstraintError,
 } from '../common/prisma-error.util';
+import { findOwnedByOrgOrThrow } from '../common/find-owned-or-throw.util';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ClientsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private audit: AuditService,
+  ) {}
 
   async create(organizationId: string, createClientDto: CreateClientDto) {
     try {
@@ -45,33 +46,36 @@ export class ClientsService {
     });
   }
 
-  // 🔒 findFirst con organizationId en el mismo where — si el cliente
-  // existe pero es de otra organización, se comporta igual que si no
-  // existiera (404), nunca revela que el id pertenece a otra barbería.
-  private async findOwnedByOrgOrThrow(id: string, organizationId: string) {
-    const client = await this.prisma.db.client.findFirst({
-      where: { id, organizationId },
-    });
-
-    if (!client) {
-      throw new NotFoundException('Cliente no encontrado');
-    }
-
-    return client;
-  }
-
   async update(
     id: string,
     organizationId: string,
+    userId: string,
     updateClientDto: UpdateClientDto,
   ) {
-    await this.findOwnedByOrgOrThrow(id, organizationId);
+    await findOwnedByOrgOrThrow(
+      this.prisma.db.client,
+      id,
+      organizationId,
+      'Cliente no encontrado',
+    );
 
     try {
-      return await this.prisma.db.client.update({
+      const updated = await this.prisma.db.client.update({
         where: { id },
         data: updateClientDto,
       });
+
+      // Datos de contacto de una persona real (PII) — auditar quién los
+      // editó importa tanto o más que en el resto de los catálogos.
+      await this.audit.log({
+        organizationId,
+        userId,
+        action: 'UPDATE',
+        entity: 'Client',
+        entityId: id,
+      });
+
+      return updated;
     } catch (err) {
       if (isUniqueConstraintError(err, 'email')) {
         throw new ConflictException(
@@ -82,11 +86,26 @@ export class ClientsService {
     }
   }
 
-  async remove(id: string, organizationId: string) {
-    await this.findOwnedByOrgOrThrow(id, organizationId);
+  async remove(id: string, organizationId: string, userId: string) {
+    await findOwnedByOrgOrThrow(
+      this.prisma.db.client,
+      id,
+      organizationId,
+      'Cliente no encontrado',
+    );
 
     try {
-      return await this.prisma.db.client.delete({ where: { id } });
+      const removed = await this.prisma.db.client.delete({ where: { id } });
+
+      await this.audit.log({
+        organizationId,
+        userId,
+        action: 'DELETE',
+        entity: 'Client',
+        entityId: id,
+      });
+
+      return removed;
     } catch (err) {
       if (isForeignKeyConstraintError(err)) {
         // Restrict a propósito: un cliente con historial de reservas no

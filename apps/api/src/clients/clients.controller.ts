@@ -60,9 +60,15 @@ export class ClientsController {
   update(
     @Param('id') id: string,
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') userId: string,
     @Body() updateClientDto: UpdateClientDto,
   ) {
-    return this.clientsService.update(id, organizationId, updateClientDto);
+    return this.clientsService.update(
+      id,
+      organizationId,
+      userId,
+      updateClientDto,
+    );
   }
 
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
@@ -70,7 +76,8 @@ export class ClientsController {
   remove(
     @Param('id') id: string,
     @GetUser('organizationId') organizationId: string,
+    @GetUser('id') userId: string,
   ) {
-    return this.clientsService.remove(id, organizationId);
+    return this.clientsService.remove(id, organizationId, userId);
   }
 }
