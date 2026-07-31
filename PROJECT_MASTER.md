@@ -1,10 +1,33 @@
-# DOCUMENTO MAESTRO DEL PROYECTO: KORTEK OS
+# PROJECT_MASTER.md — KORTEK OS
 
-> **Nota de rebranding:** el proyecto se llamó originalmente BarberFlow OS. A partir de esta actualización el nombre oficial es **Kortek OS** — es la evolución del mismo producto, no un proyecto nuevo. Todo el código nuevo referencia el nombre desde `apps/web/lib/brand.ts` (branding centralizado, ver §24).
+> **Nota de renombramiento:** este documento se llamaba `MAESTRO.md`. A partir de esta actualización pasa a llamarse **`PROJECT_MASTER.md`** — es una evolución del mismo documento, no uno nuevo. **No se eliminó ni se resumió ningún contenido histórico**; todo lo que existía en `MAESTRO.md` sigue aquí, con su numeración de sección original intacta (para que ninguna referencia cruzada existente — en código, commits o conversaciones previas — se rompa). Se agregaron seis secciones nuevas (§35 a §40) y un índice de navegación.
 
-> **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en la versión anterior de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio.
+> **Nota de rebranding (histórica):** el proyecto se llamó originalmente BarberFlow OS. Desde la actualización de la Fase de Fundación Kortek, el nombre oficial es **Kortek OS** — es la evolución del mismo producto, no un proyecto nuevo. Todo el código nuevo referencia el nombre desde `apps/web/lib/brand.ts` (branding centralizado, ver §24).
+
+> **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
 ---
+
+## Índice
+
+**Parte I — Visión y negocio**
+[§1 Resumen](#1-resumen-del-proyecto) · [§2 Objetivo](#2-objetivo) · [§3 Visión](#3-visión) · [§4 Alcance](#4-alcance) · [§5 Documento de negocio](#5-documento-de-negocio)
+
+**Parte II — Estado y arquitectura actuales**
+[§6 Estado real](#6-estado-real-del-proyecto-auditoría-de-código) · [§7 Arquitectura](#7-arquitectura) · [§8 Tecnologías](#8-tecnologías-utilizadas-verificado-contra-packagejson) · [§9 Estructura del monorepo](#9-estructura-real-del-monorepo) · [§10 Base de datos](#10-base-de-datos) · [§11 Autenticación y multi-tenancy](#11-autenticación-y-multi-tenancy) · [§12 Flujo de reservas](#12-flujo-de-reservas-bookings--módulo-más-maduro-del-backend) · [§13 Módulos backend](#13-módulos-implementados-backend) · [§14 Frontend](#14-frontend--reconstruido) · [§15 Organización por módulos](#15-organización-por-módulos)
+
+**Parte III — Gestión del proyecto**
+[§16 Deuda técnica](#16-deuda-técnica-identificada) · [§17 Riesgos técnicos](#17-riesgos-técnicos) · [§18 Oportunidades de mejora](#18-oportunidades-de-mejora) · [§19 Decisiones inamovibles](#19-registro-de-decisiones-técnicas-inamovibles) · [§20 Funcionalidades completadas](#20-funcionalidades-completadas-verificado-en-código) · [§21 Funcionalidades pendientes](#21-funcionalidades-pendientes) · [§22 Ideas futuras](#22-ideas-futuras) · [§23 Próximos pasos](#23-próximos-pasos-recomendados)
+
+**Parte IV — Historial técnico completo (decisiones y auditorías, en orden cronológico)**
+[§24 Reestructuración Enterprise / rebranding Kortek](#24-kortek-os--decisiones-de-arquitectura-de-la-reestructuración-enterprise) · [§25 Fundación Kortek — pivote a plataforma matriz](#25-fundación-kortek--pivote-a-plataforma-matriz-backend-lead) · [§26 Identidad global](#26-identidad-global--implementación-completa-2026-07-24) · [§27 CRUD Profesionales/Servicios/Clientes](#27-crud-completo--profesionales-servicios-clientes-2026-07-25) · [§28 Listar equipo](#28-get-organizationsminemembers--listar-el-equipo-2026-07-25) · [§29 Auditoría Fase 1 — Infraestructura](#29-auditoría-enterprise--fase-1-infraestructura-2026-07-25) · [§30 Auditoría Fase 2 — Seguridad](#30-auditoría-enterprise--fase-2-seguridad-2026-07-25) · [§31 Parche fuerza bruta](#31-parche--protección-de-fuerza-bruta-en-todo-el-flujo-de-autenticación-2026-07-25) · [§32 Auditoría Fase 3 — Observabilidad](#32-auditoría-enterprise--fase-3-observabilidad-2026-07-26) · [§33 Auditoría Fase 4 — Calidad](#33-auditoría-enterprise--fase-4-calidad-2026-07-27) · [§34 Auditoría Fase 5 — Testing](#34-auditoría-enterprise--fase-5-testing-2026-07-28)
+
+**Parte V — Memoria técnica permanente (nuevo en esta actualización)**
+[§35 Estado global del proyecto](#35-estado-global-del-proyecto) · [§36 Historial de evolución](#36-historial-de-evolución) · [§37 Intentos fallidos](#37-intentos-fallidos) · [§38 Lecciones aprendidas](#38-lecciones-aprendidas) · [§39 RFC / Decisiones pendientes](#39-rfc--decisiones-pendientes) · [§40 Onboarding para nuevos desarrolladores](#40-onboarding-para-nuevos-desarrolladores)
+
+---
+
+# PARTE I — VISIÓN Y NEGOCIO
 
 ## 1. Resumen del proyecto
 
@@ -29,6 +52,9 @@ Convertirse en la plataforma de gestión para barberías más completa de Latino
 - **Modelo:** SaaS Empresarial Multi-tenant.
 - **Mercado inicial:** República Dominicana, con miras a Latinoamérica.
 - **Filosofía de trabajo:** "Mide dos veces, corta una." Diseño previo riguroso; código limpio, reutilizable y escalable.
+
+
+# PARTE II — ESTADO Y ARQUITECTURA ACTUALES
 
 ## 6. Estado real del proyecto (auditoría de código)
 
@@ -183,6 +209,9 @@ Paleta oscura inspirada en el oficio (cuero/carbón + acento de latón), tipogra
 - **Futuro (sin iniciar):** Billing avanzado, Inventory, AI, Marketing, Analytics, WhatsApp, Loyalty, Files.
 - **Frontend:** prácticamente todo pendiente — solo existe un login (con bugs) y un dashboard decorativo.
 
+
+# PARTE III — GESTIÓN DEL PROYECTO
+
 ## 16. Deuda técnica identificada
 
 1. ~~Migración faltante para `Invoice`~~ — **resuelto**, ver §10.1.
@@ -256,6 +285,9 @@ Módulos avanzados: Inteligencia Artificial, Inventario de productos, CRM avanza
 3. Definir si `Payment`, `Notification` y `AuditLog` entran en el alcance cercano o quedan para después.
 4. Evaluar Refresh Tokens si la sesión de 1 día resulta corta para el uso real.
 5. Agregar endpoint para listar miembros del equipo (complementa `/auth/invite`).
+
+
+# PARTE IV — HISTORIAL TÉCNICO COMPLETO (orden cronológico)
 
 ## 24. Kortek OS — decisiones de arquitectura de la reestructuración Enterprise
 
@@ -460,7 +492,7 @@ Respuesta: `[{ membershipId, role, memberSince, user: { id, name, email, profess
 ### 29.1. Qué se encontró
 
 - **`app.enableShutdownHooks()` nunca se llamaba.** Sin esto, Nest no reenvía `SIGTERM`/`SIGINT` a los hooks de ciclo de vida — `PrismaService.onModuleDestroy()` (que llama `$disconnect()`) no tenía garantía de ejecutarse en un apagado real de contenedor/orquestador. Conexiones podían quedar colgadas en cada redeploy.
-- **Caché:** no existía ninguna capa de caché en el proyecto (confirmado — `Redis`/`BullMQ` figuran en `MAESTRO.md` §8 como "planeado, no implementado", y seguían sin ninguna dependencia real en `package.json`).
+- **Caché:** no existía ninguna capa de caché en el proyecto (confirmado — `Redis`/`BullMQ` figuran en `PROJECT_MASTER.md` §8 como "planeado, no implementado", y seguían sin ninguna dependencia real en `package.json`).
 - **Pool de conexiones de Prisma:** sin configuración explícita — usa el comportamiento implícito por defecto (basado en CPUs detectadas). **No se tocó** (ver §29.3).
 - **`ConfigService` instalado pero no usado:** `@nestjs/config` está registrado globalmente, pero todo el código lee `process.env.X` directamente en vez de inyectar `ConfigService`. **No se tocó** (ver §29.3).
 
@@ -635,4 +667,224 @@ Cobertura real: **cero.** Solo existían dos archivos boilerplate del CLI de Nes
 
 ---
 
-*Este documento reemplaza integralmente las versiones anteriores. Toda la información aquí fue verificada directamente contra el código fuente del repositorio — nada se asumió a partir de documentación previa.*
+# PARTE V — MEMORIA TÉCNICA PERMANENTE
+
+
+## 35. Estado global del proyecto
+
+Estimaciones basadas en lo verificado contra el código y la documentación existente en este documento — no son una medición automatizada, son la evaluación honesta de quien acaba de auditar cada área.
+
+| Área | % | Estado | Notas |
+|---|---|---|---|
+| **Backend** | 85% | 🟢 Sólido | CRUD completo en catálogo, auth con identidad global, multi-tenant estricto en todos lados. Faltan módulos `Payment`/`Notification` (modelo existe, sin código — §21), y la limitación de `Professional.userId` (§39.1). |
+| **Frontend** | 60% | 🟡 Desactualizado respecto al backend | Dashboard, landing B2B y flujo B2C completos (§14), pero el login todavía no se actualizó al flujo de un solo paso sin slug (el usuario indicó que lo resolvió por su cuenta, no verificado por auditoría — ver §37.4). Sin UI para editar/borrar catálogo, sin listado de equipo, sin adoptar `whatsappBaseUrl`. |
+| **Testing** | 30% | 🟡 Cobertura crítica, no total | 22 pruebas unitarias reales cubriendo conflictos de reservas, aislamiento multi-tenant, autenticación y permisos (§34). Sin e2e, sin cobertura de `AnalyticsService`/`InvoicesService`/`OrganizationsService`, sin ninguna prueba de frontend. |
+| **DevOps** | 20% | 🔴 Manual | `docker-compose.yml` solo para Postgres local. Sin pipeline de CI/CD, sin definición de entornos de staging/producción, sin despliegue automatizado. Todo el *Definition of Done* de cada fase se corre a mano. |
+| **Infraestructura** | 55% | 🟡 Parcial | Caché en memoria, cierre limpio de conexiones, índices compuestos (§29) — resueltos. Pool de conexiones de Prisma sin configurar y `ConfigService` sin adoptar, ambos pendientes de decisión (§39.2, §39.3). |
+| **CI/CD** | 5% | 🔴 Inexistente | No hay ningún pipeline automatizado — ni lint, ni test, ni build, ni deploy corren solos en ningún punto del flujo. |
+| **Documentación** | 90% | 🟢 Muy sólida | Este documento, `CHANGELOG.md` y `BACKEND_CHANGES.md` cubren cada decisión de arquitectura y cambio de contrato desde el origen del proyecto. |
+| **IA** | 0% | ⚪ No iniciado | Solo mencionado como idea futura (§22) — ninguna funcionalidad de IA implementada todavía. |
+| **Seguridad** | 80% | 🟢 Sólido | JWT re-verificado contra `Membership` en cada request, `RolesGuard` consistente, bloqueo de fuerza bruta por cuenta e IP, `Helmet`, CORS restringido, `AuditLog` activo (§30-32). Pendientes: adopción de `ConfigService`, límite de forzado de contraseña en primer login post-invitación. |
+| **Observabilidad** | 45% | 🟡 Parcial | `AuditLog` completo para ediciones/borrados/cambios administrativos, `Logger` estructurado nativo de Nest. Sin correlación de requests (trazabilidad end-to-end) — pendiente (§39.4). |
+| **Escalabilidad** | 50% | 🟡 Vertical, no horizontal todavía | Aislamiento multi-tenant sólido, índices en las consultas más comunes. Caché y rate limiting son **en memoria, de una sola instancia** — no soportan múltiples instancias del backend corriendo a la vez sin migrar a Redis (decisión consciente de YAGNI, no un descuido — ver §39.5). |
+
+---
+
+## 36. Historial de evolución
+
+Línea de tiempo de cambios importantes, construida a partir de las fechas ya documentadas en cada sección de la Parte IV.
+
+| Fecha | Qué cambió | Por qué | Impacto / Arquitectura afectada | Documentación actualizada |
+|---|---|---|---|---|
+| 2026-07-19 | Migración inicial del schema (`initial_schema`) | Arranque del proyecto | Base de datos completa: Organization, User, Professional, Client, Service, Booking, Payment, ProfessionalService, Notification, AuditLog | — |
+| 2026-07-20 | Resolución de migración faltante de `Invoice`; limpieza de backend (RolesGuard, módulo Prisma duplicado, JWT_SECRET sin default) | `Invoice` existía en el schema sin migración aplicada — riesgo de romper facturación en cualquier entorno | Backend: seguridad y consistencia de base de datos | §10.1, §24 |
+| 2026-07-20/22 | Rebranding completo BarberFlow OS → Kortek OS; branding centralizado (`lib/brand.ts`) | Decisión de negocio: Kortek pasa a ser la plataforma matriz, BarberFlow su primer producto | Frontend: identidad visual centralizada, sin strings de marca sueltos | §24 |
+| 2026-07-22 | Vínculo `Professional.userId` ↔ `User` (FK opcional 1:1); rol `CUSTOMER` agregado; endpoint público de reservas B2C | Habilitar que un `BARBER` tenga cuenta de acceso, y que clientes finales reserven sin ser parte del staff | Modelo de datos + nuevo módulo `public-booking` con rate limiting | §24 |
+| 2026-07-23 | Fundación Kortek (P0/P1): campos de micro-sitio en `Organization`/`Professional`, `GalleryImage`, `GET /analytics/dashboard`, `PATCH /auth/update-password`, política de contraseñas centralizada, `whatsappBaseUrl` | Pivote oficial: Kortek como plataforma multi-producto, no solo BarberFlow | Modelo de datos ampliado, primera API de métricas | §25 |
+| 2026-07-24 | Identidad global: `User` + `Membership` — un login, varias organizaciones | Necesidad real de negocio: una persona puede tener acceso a más de una barbería | **Cambio de contrato:** `POST /auth/login` deja de pedir `organizationId` — rompe el frontend hasta que se actualice | §26 |
+| 2026-07-25 | CRUD completo (`PATCH`/`DELETE`) en Profesionales, Servicios, Clientes; endpoint para listar equipo; Auditoría Enterprise Fase 1 (Infraestructura) y Fase 2 (Seguridad); parche de protección de fuerza bruta en todo el flujo de auth | Backend "100% completo y robusto" antes de tocar frontend, por directiva explícita | Backend: gestión completa de catálogo, caché, Helmet, CORS restringido, rate limiting extendido | §27, §28, §29, §30, §31 |
+| 2026-07-26 | Auditoría Enterprise Fase 3 (Observabilidad): `AuditModule` completo | El modelo `AuditLog` existía desde el origen del proyecto sin ningún código que lo usara | Backend: trazabilidad de ediciones/borrados/cambios administrativos | §32 |
+| 2026-07-27 | Auditoría Enterprise Fase 4 (Calidad): deduplicación (`findOwnedByOrgOrThrow`), DTOs consistentes, `TeamService` extraído de `AuthService` (SRP) | Reducir deuda técnica antes de seguir escalando funcionalidad | Backend: `AuthService` 398→260 líneas, sin cambios de contrato | §33 |
+| 2026-07-28 | Auditoría Enterprise Fase 5 (Testing): 22 pruebas unitarias nuevas | Cobertura real era cero — priorizado lo crítico: reservas, multi-tenant, auth, permisos | Backend: confianza para seguir iterando sin regresiones silenciosas | §34 |
+
+---
+
+## 37. Intentos fallidos
+
+Memoria técnica permanente — cada entrada documenta qué se intentó, por qué, qué salió mal, cómo se resolvió, y qué no debe volver a intentarse.
+
+### 37.1. Migración de `Invoice` — tabla parcialmente creada por un intento anterior no documentado
+
+- **Qué se intentó:** aplicar `prisma migrate deploy` asumiendo que la tabla `Invoice` simplemente no existía todavía (el modelo estaba en `schema.prisma` sin migración correspondiente).
+- **Por qué se intentó:** el modelo se había agregado al schema en algún momento sin generar su migración — comportamiento típico cuando se edita el schema a mano sin correr `prisma migrate dev` de inmediato.
+- **Qué salió mal:** la migración falló con `type "InvoiceStatus" already exists` — resultó que un intento previo (no documentado, el propio usuario no recordaba haberlo hecho) ya había creado el enum a medias antes de interrumpirse.
+- **Cómo se resolvió:** diagnóstico manual con `psql` dentro del contenedor Docker (`SELECT typname FROM pg_type...`, `SELECT * FROM "_prisma_migrations"`), confirmación de que la tabla `Invoice` sí existía completa con un registro real de prueba, y resolución con `prisma migrate resolve --applied` en vez de reintentar el SQL de creación.
+- **Qué se decidió finalmente:** marcar la migración como aplicada sin ejecutar su contenido, preservando el dato de prueba existente.
+- **Qué NO debe volver a intentarse:** correr `migrate deploy`/`migrate dev` sobre un estado de base de datos sin verificar primero con `migrate status` (y, si hay sospecha de drift, con una consulta directa a `_prisma_migrations` y a las tablas involucradas) que la base realmente está en el estado que la herramienta cree que está.
+
+### 37.2. Entrega de cambios como parches de Git (`.patch` + `git apply`)
+
+- **Qué se intentó:** entregar cada tanda de cambios como un archivo `.patch` para que el usuario corriera `git apply` sobre su copia local.
+- **Por qué se intentó:** parecía más preciso que copiar archivos completos, y permitía ver exactamente qué líneas cambiaban.
+- **Qué salió mal:** el primer patch se generó como un diff completo desde el commit inicial del repositorio, no desde el estado real en el que ya estaba el proyecto del usuario (que ya tenía una ronda de cambios previa aplicada) — `git apply` rechazó todo por conflictos. Un segundo intento, ya corregido en el cálculo del diff, siguió fallando por diferencias de manejo de saltos de línea entre el entorno del asistente (Linux) y el del usuario (Windows).
+- **Cómo se resolvió:** se abandonó el enfoque de parches por completo y se pasó a entregar `.zip` con los archivos finales completos, listos para extraer y reemplazar directamente — sin ninguna dependencia de `git apply` ni de líneas de contexto que coincidan carácter por carácter.
+- **Qué se decidió finalmente:** todos los entregables de código desde ese punto en adelante son `.zip` con archivos completos, nunca diffs.
+- **Qué NO debe volver a intentarse:** generar un `.patch` para que alguien lo aplique con `git apply` cuando no se tiene certeza absoluta de que el estado base coincide byte a byte con el remoto real, especialmente entre entornos Linux/Windows.
+
+### 37.3. `npx prisma migrate deploy` — conflicto con `devEngines` forzando `pnpm`
+
+- **Qué se intentó:** correr los comandos de verificación tal como se habían indicado en un *Definition of Done*, usando `npx`.
+- **Por qué se intentó:** `npx` es el comando genérico más común para ejecutar binarios de paquetes sin instalarlos globalmente.
+- **Qué salió mal:** el `package.json` del proyecto declara `devEngines.packageManager` forzando `pnpm` — `npx` intenta resolver con `npm` y falla con `EBADDEVENGINES`.
+- **Cómo se resolvió:** reemplazar `npx` por `pnpm exec` (o el script equivalente vía `pnpm prisma ...`) en todos los comandos de verificación.
+- **Qué se decidió finalmente:** toda instrucción de comando entregada al usuario a partir de ese punto usa `pnpm exec`/`pnpm <script>`, nunca `npx`, para este proyecto específico.
+- **Qué NO debe volver a intentarse:** asumir `npx` como comando genérico seguro en un proyecto sin revisar primero si tiene `devEngines`/`packageManager` forzado en su `package.json`.
+
+### 37.4. Auto-resolución del usuario del login de un solo paso — no verificada por auditoría
+
+- **Qué se intentó:** el propio usuario reportó haber corregido `auth-context.tsx`/`login/page.tsx` para dejar de enviar `organizationId` tras el cambio de contrato del login (§26.2), sin que el asistente revisara el código resultante.
+- **Por qué se intentó:** el rol del asistente en ese momento del proyecto era explícitamente "Backend Lead, no tocar frontend" — la corrección quedó fuera de su alcance de trabajo directo.
+- **Qué salió mal:** nada confirmado — pero tampoco nada verificado. Es un punto ciego real de este documento.
+- **Cómo se resolvió:** no se resolvió con auditoría propia, se aceptó la palabra del usuario.
+- **Qué se decidió finalmente:** queda anotado en §35 (Frontend, 60%) y en §39.6 como pendiente de verificación, no como hecho confirmado.
+- **Qué NO debe volver a intentarse:** dar por buena una corrección de frontend reportada por el usuario sin, al menos, pedir confirmación explícita del comportamiento observado (¿el login funciona de punta a punta hoy?) antes de declarar el riesgo cerrado en la documentación.
+
+---
+
+## 38. Lecciones aprendidas
+
+- **`bcrypt` nativo falla en Windows** — se usa `bcryptjs` (puro JavaScript) en todo el proyecto desde el origen, decisión inamovible (§19.3).
+- **Prisma no genera un cliente real sin acceso de red a `binaries.prisma.sh`** — en cualquier entorno restringido de red (sandboxes de CI, contenedores sin salida a internet completa), `prisma generate`/`migrate dev` fallan. La forma de trabajar alrededor de esto que funcionó bien: escribir el SQL de la migración a mano siguiendo exactamente la convención de nombres que Prisma genera, y verificarlo contra un Postgres real antes de entregarlo — nunca asumir que compila solo porque el código "se ve bien".
+- **Los errores P2002 (violación de restricción única) y P2003 (violación de llave foránea) de Prisma no se atrapan solos** — sin manejo explícito, cualquier duplicado o intento de borrar un registro con dependencias termina en un `500` crudo. Centralizar la detección en un helper compartido (`isUniqueConstraintError`/`isForeignKeyConstraintError`) ahorró tiempo real al reutilizarse en cinco módulos distintos sin reescribir la lógica cada vez.
+- **CORS y rate limiting no vienen seguros por defecto en NestJS** — `enableCors()` sin argumentos permite cualquier origen; sin registrar `ThrottlerModule` no hay ningún límite de solicitudes. Hay que configurarlos explícitamente, nunca asumir que "ya viene protegido".
+- **Cambiar el contrato de un endpoint de autenticación (`/auth/login`) rompe el frontend hasta que se actualiza en paralelo** — este tipo de cambio necesita coordinación explícita de despliegue entre backend y frontend, no puede tratarse como "solo un cambio de backend".
+- **Diseñar pensando en multi-tenancy desde el principio evita relaciones únicas globales que después chocan** — el caso de `Professional.userId` (único globalmente, diseñado antes de que existiera el concepto de identidad multi-organización) es el ejemplo concreto: una restricción que tenía sentido en su momento se convirtió en una limitación real varias fases después (§39.1).
+- **Reutilizar infraestructura ya instalada evita deuda técnica nueva** — el `CACHE_MANAGER` instalado para cachear la reserva pública terminó resolviendo también el bloqueo de fuerza bruta por cuenta, sin agregar ninguna dependencia nueva para eso.
+- **Extraer un patrón duplicado a un helper genérico en cuanto aparece la tercera copia** (no antes, no después) — `findOwnedByOrgOrThrow` se dejó duplicado mientras solo existía en dos servicios; en cuanto apareció la tercera copia idéntica (Fase 4), se consolidó. Extraerlo antes de tiempo hubiera sido abstracción prematura sobre un patrón que todavía podía cambiar de forma.
+- **Verificar antes de migrar, siempre** — la regla explícita del proyecto de "si hay correos duplicados entre organizaciones, detente y reporta, no resuelvas automáticamente" evitó corromper datos reales durante el refactor de identidad global (§26). Es una disciplina que vale la pena mantener para cualquier migración estructural futura, no solo esa vez.
+- **Un log de auditoría no debe depender del ciclo de vida de las entidades que audita** — `AuditLog.userId` se diseñó explícitamente sin relación de llave foránea hacia `User`, para que el registro sobreviva aunque la cuenta que hizo la acción sea borrada más adelante.
+
+---
+
+## 39. RFC / Decisiones pendientes
+
+Decisiones que todavía no están cerradas — a diferencia de la Parte IV, que documenta decisiones ya tomadas e implementadas.
+
+### 39.1. `Professional.userId` — ¿único global o único compuesto por organización?
+
+- **Contexto:** hoy `Professional.userId` es único globalmente (`@unique`). Esto impide que una misma persona tenga un perfil `Professional` (con página pública, agenda propia) en más de una organización — un caso de uso real desde que existe la identidad global multi-organización (§26).
+- **Opciones:**
+  1. Mantener único global (estado actual).
+  2. Cambiar a restricción compuesta `@@unique([userId, organizationId])`.
+- **Ventajas de la opción 2:** habilita que un `BARBER` con acceso a varias barberías tenga perfil público en cada una, de forma coherente con el resto del modelo de identidad global.
+- **Desventajas de la opción 2:** requiere migración de datos existentes (revisar si hay `Professional` con `userId` repetido, aunque hoy es imposible por la restricción actual, así que la migración en sí sería de bajo riesgo); toca un modelo ya usado en varios módulos (`ProfessionalsService.findByUserId`, `BookingsController`/`ClientsController` para "mi agenda"/"mis clientes" de un `BARBER`).
+- **Estado actual:** limitación documentada y aceptada (§26.5, §31.1), no resuelta. `TeamService.inviteUser()` maneja el caso de colisión de forma controlada (no crashea, reporta `professionalCreated: false`).
+- **Recomendación:** cambiar a restricción compuesta cuando haya evidencia real de que alguien lo necesita (un `BARBER` real pidiendo perfil público en una segunda organización) — no antes, para no gastar el cambio en una necesidad todavía hipotética.
+- **Impacto arquitectónico:** medio — migración de schema aditiva/de bajo riesgo, pero exige revisar cada lugar que hoy asume "un `Professional` por `User`".
+
+### 39.2. Migrar `process.env.X` a `ConfigService` inyectado
+
+- **Contexto:** `@nestjs/config` está instalado y registrado globalmente, pero ningún servicio lo inyecta — todo el código lee `process.env` directamente.
+- **Opciones:** (1) dejarlo como está; (2) migrar todo a `ConfigService`, opcionalmente con un schema de validación (`Joi`/`zod`) al arrancar.
+- **Ventajas de migrar:** variables de entorno validadas y tipadas al arrancar, más fácil de testear (se puede inyectar un `ConfigService` falso en pruebas).
+- **Desventajas de migrar:** refactor invasivo que toca casi todos los módulos, para un beneficio marginal dado que ya existe una verificación de fallo rápido para `JWT_SECRET`.
+- **Estado actual:** no iniciado, evaluado y descartado explícitamente en la Fase 1 de auditoría (§29.3) por la relación costo/beneficio.
+- **Recomendación:** revisar de nuevo si el proyecto crece a un punto donde la cantidad de variables de entorno y la necesidad de testear configuración se vuelva un problema real.
+- **Impacto arquitectónico:** bajo por variable individual, pero el esfuerzo total de migrarlo todo de una vez es alto.
+
+### 39.3. Pool de conexiones de Prisma
+
+- **Contexto:** sin configuración explícita — usa el comportamiento implícito por defecto de Prisma (basado en CPUs detectadas), que puede comportarse de forma impredecible en entornos contenedorizados con visibilidad de CPU limitada.
+- **Opciones:** dejar el default; o fijar `connection_limit`/`pool_timeout` explícitos en `DATABASE_URL`.
+- **Estado actual:** no decidido — depende del proveedor real de Postgres en producción (managed, con su propio límite de `max_connections`), que todavía no está definido.
+- **Recomendación:** decidir junto con la elección de infraestructura de despliegue real, no en abstracto.
+- **Impacto arquitectónico:** bajo — es un parámetro de conexión, no un cambio de código.
+
+### 39.4. Correlación de requests (trazabilidad end-to-end)
+
+- **Contexto:** no existe ningún ID de correlación propagado entre los logs de una misma petición HTTP.
+- **Opciones:** agregar un middleware que genere/propague un `X-Request-Id`, incorporado en cada llamada al `Logger`.
+- **Estado actual:** evaluado en la Fase 3 de auditoría (§32.3) y descartado por ahora — requiere tocar la firma de logging en todo el proyecto, alcance mayor al de "completar `AuditLog`".
+- **Recomendación:** implementar cuando se decida centralizar logs en una herramienta externa (Datadog, Grafana Loki, etc.) — sin esa pieza, la trazabilidad por sí sola aporta menos valor.
+- **Impacto arquitectónico:** medio — un middleware nuevo + tocar cada punto de logging existente.
+
+### 39.5. Migrar caché/rate limiting a Redis para escalabilidad horizontal
+
+- **Contexto:** tanto el caché (`@nestjs/cache-manager`) como el rate limiting (`@nestjs/throttler`) y el bloqueo de fuerza bruta por cuenta (`AttemptLimiter`) usan almacenamiento **en memoria**, válido solo mientras el backend corre en una sola instancia.
+- **Opciones:** mantener en memoria (estado actual); o migrar a un backend compartido (Redis) cuando se despliegue en más de una instancia.
+- **Estado actual:** decisión consciente de YAGNI — no hay Redis en el stack porque no hay necesidad real de escalar horizontalmente todavía.
+- **Recomendación:** revisar en cuanto se planee correr más de una instancia del backend en producción — sin un almacenamiento compartido, cada instancia tendría su propio caché/límite independiente, debilitando la protección real.
+- **Impacto arquitectónico:** medio — agregar Redis como dependencia de infraestructura nueva, y adaptar los tres mecanismos (caché, throttler, `AttemptLimiter`) a un store compartido.
+
+### 39.6. Verificar el login del frontend de un solo paso
+
+- **Contexto:** el usuario reportó haber corregido el frontend para el nuevo contrato de login (§37.4), sin que el asistente lo haya podido revisar directamente.
+- **Estado actual:** no verificado.
+- **Recomendación:** confirmar explícitamente (con una prueba real de login de punta a punta, o revisando el código de `apps/web/lib/auth-context.tsx`/`app/login/page.tsx`) antes de asumir que este riesgo está cerrado.
+- **Impacto arquitectónico:** ninguno si ya está resuelto — pero es información desactualizada en este documento si no lo está.
+
+---
+
+## 40. Onboarding para nuevos desarrolladores
+
+### Qué leer primero
+
+1. Este documento completo — es la única fuente de verdad. Presta especial atención a la Parte IV (Historial técnico completo) para entender *por qué* el código es como es, no solo qué hace.
+2. `CHANGELOG.md` — cambios importantes en orden cronológico inverso, más rápido de escanear que este documento para "qué pasó últimamente".
+3. `BACKEND_CHANGES.md` — específicamente los contratos de API que cambiaron, con el detalle de request/response.
+
+### Cómo levantar el proyecto
+
+```bash
+# 1. Base de datos local
+docker compose up -d
+
+# 2. Variables de entorno
+cp .env.example apps/api/.env       # completar JWT_SECRET, WHATSAPP_BASE_URL, CORS_ALLOWED_ORIGINS
+cp apps/web/.env.example apps/web/.env.local
+
+# 3. Instalar dependencias (el proyecto exige pnpm — ver §37.3, nunca npx)
+pnpm install
+
+# 4. Base de datos
+cd apps/api
+pnpm exec prisma generate
+pnpm exec prisma migrate deploy
+
+# 5. Levantar ambas apps
+pnpm start:dev     # apps/api — puerto definido por PORT en .env (recomendado 3001)
+pnpm dev           # apps/web — puerto 3000
+```
+
+### Cómo entender la arquitectura
+
+- Monorepo `pnpm` + Turborepo — `apps/api` (NestJS) y `apps/web` (Next.js), sin paquetes compartidos todavía (`packages/*` es aspiracional, ver §9).
+- Backend: un módulo NestJS por dominio de negocio (`auth`, `organizations`, `professionals`, `services`, `clients`, `bookings`, `invoices`, `public-booking`, `analytics`, `audit`). Cada uno sigue controller → service → Prisma.
+- Identidad: `User` es la cuenta global (un solo login); `Membership` conecta un `User` a una `Organization` con un rol específico (§26). No asumas que `User` tiene `organizationId`/`role` directos — ya no los tiene.
+- Multi-tenant: **todo** query de negocio filtra por `organizationId` en el mismo `where` que busca el registro — nunca como una verificación aparte después (ver `findOwnedByOrgOrThrow`, §33/§39).
+
+### Dónde empezar a desarrollar
+
+Antes de escribir código nuevo, revisa si el patrón que necesitas ya existe:
+- ¿Necesitas verificar que un registro pertenece a la organización antes de editarlo/borrarlo? → `common/find-owned-or-throw.util.ts`.
+- ¿Necesitas atrapar un error de Prisma (duplicado o violación de llave foránea)? → `common/prisma-error.util.ts` (`isUniqueConstraintError`/`isForeignKeyConstraintError`).
+- ¿Necesitas registrar una acción administrativa? → `AuditService.log()` (nunca dejes que un fallo de auditoría tumbe la operación real — ver el patrón en `audit/audit.service.ts`).
+- ¿Necesitas restringir un endpoint por rol? → `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles(...)`, o `B2B_ROLES` si aplica a cualquier rol interno.
+
+### Errores comunes
+
+- Usar `npx` en vez de `pnpm exec` — el proyecto tiene `devEngines` forzando `pnpm`, `npx` falla con `EBADDEVENGINES` (§37.3).
+- Olvidar filtrar por `organizationId` en un query nuevo — es la regla más repetida de todo este documento porque es la más fácil de olvidar y la más grave si se olvida.
+- Asumir que una migración se puede generar sin verificar el estado real de la base primero (§37.1).
+- Dejar un endpoint de uso interno solo con `JwtAuthGuard` sin `@Roles(...)` — queda abierto a cualquier usuario autenticado, incluido un `CUSTOMER` (§30).
+
+### Buenas prácticas ya establecidas en el proyecto
+
+- Nunca cascadear el borrado en datos financieros/operativos (`Booking`, `Invoice`) — su ciclo de vida es por cambio de estado, nunca hard-delete.
+- Todo P2002/P2003 de Prisma se atrapa explícitamente y se traduce a un `409 Conflict` con mensaje claro — nunca se deja crashear como `500`.
+- Todo cambio de contrato de API se documenta en `BACKEND_CHANGES.md` con el impacto exacto en frontend, incluso si el frontend no se toca en el mismo ciclo.
+- Antes de escribir una migración estructural (no solo aditiva), verificarla con datos de prueba representativos, no solo contra un schema vacío (§26.1 es el ejemplo de referencia).
+
+---
+
+*Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo.*

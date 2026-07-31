@@ -1,6 +1,6 @@
 # BACKEND_CHANGES.md
 
-Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada indica endpoint, qué cambió, por qué, y el impacto en frontend. Complementa a `MAESTRO.md` (que es la referencia completa del proyecto) con un formato enfocado solo en contratos.
+Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada indica endpoint, qué cambió, por qué, y el impacto en frontend. Complementa a `PROJECT_MASTER.md` (que es la referencia completa del proyecto) con un formato enfocado solo en contratos.
 
 ---
 
@@ -47,7 +47,7 @@ Afecta la validación de `POST /auth/register`, `POST /auth/invite`, y `POST /pu
 Se agregaron campos a `Organization` (`address`, `googleMapsUrl`, `aboutUs`, `heroImageUrl`, `socialLinks`, `businessHours`) y a `Professional` (`specialty`, `experienceYears`), y el modelo nuevo `GalleryImage`. **Ningún endpoint los expone ni los acepta todavía** — es la base de datos preparada para el micro-sitio público, sin la capa de API sobre ella. No hay impacto de contrato en esta entrega.
 
 ### Pendiente — NO incluido en esta entrega
-El refactor `User` + `Membership` (identidad global multi-organización) y el cambio de `/auth/login` siguen **bloqueados** a la espera de que se confirme si existen correos duplicados entre organizaciones en la base real (regla explícita del CTO: detener y reportar, no resolver automáticamente). Ver `MAESTRO.md` §24.14 para el detalle y la consulta de verificación pendiente.
+El refactor `User` + `Membership` (identidad global multi-organización) y el cambio de `/auth/login` siguen **bloqueados** a la espera de que se confirme si existen correos duplicados entre organizaciones en la base real (regla explícita del CTO: detener y reportar, no resolver automáticamente). Ver `PROJECT_MASTER.md` §24.14 para el detalle y la consulta de verificación pendiente.
 
 ---
 
@@ -92,4 +92,3 @@ El refactor `User` + `Membership` (identidad global multi-organización) y el ca
 
 ### Limitación conocida y documentada: `Professional.userId` no soporta perfiles públicos en múltiples organizaciones
 `Professional.userId` es único **globalmente** (se diseñó antes de que existiera el concepto de multi-organización real). Si una persona ya tiene un perfil `Professional` en la Organización A y es invitada como `BARBER` con "crear perfil público" a la Organización B, la `Membership` se crea correctamente, pero el segundo `Professional` **no** se crea — se reporta `professionalCreated: false` sin abortar la invitación. Es una limitación real, no un bug silencioso: para resolverla de raíz habría que cambiar `Professional.userId` a una restricción compuesta `(userId, organizationId)`, lo cual es en sí mismo un cambio de modelo de datos que merece su propia decisión explícita antes de tocarlo — no se hizo en este ciclo por no estar dentro del alcance pedido.
-
