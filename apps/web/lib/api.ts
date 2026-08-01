@@ -1,5 +1,5 @@
 /**
- * Cliente HTTP centralizado para la API de Kortek OS.
+ * Cliente HTTP centralizado para la API de Kortek Booking.
  * Toda la app pasa por aquí — un solo lugar para adjuntar el token,
  * manejar errores del backend (NestJS ValidationPipe) y tipar respuestas.
  */
@@ -154,4 +154,15 @@ export interface PublicBookingResult {
   booking: Booking;
   client: Client;
   accountCreated: boolean;
+}
+
+export interface PublicAvailabilitySlot {
+  time: string; // "HH:mm"
+  professionalId: string; // a quién quedaría asignada la cita en este bloque
+}
+
+export interface PublicAvailabilityResponse {
+  date: string;
+  serviceId: string;
+  slots: PublicAvailabilitySlot[];
 }

@@ -26,6 +26,18 @@
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* --- Motion: un solo ritmo en todo el producto, nunca improvisado por
+     componente --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
+
+  /* --- Elevación: profundidad cálida (sombra con tinte de tinta, no
+     gris genérico) --- */
+  --shadow-card: 0 1px 2px rgba(10, 8, 5, 0.4), 0 12px 32px -12px rgba(10, 8, 5, 0.55);
+  --shadow-raised: 0 4px 8px rgba(10, 8, 5, 0.45), 0 24px 48px -16px rgba(10, 8, 5, 0.6);
 }
 
 body {
@@ -45,4 +57,43 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* --- Firma visual: grano de cuero muy sutil. Un solo elemento memorable,
+   reutilizado (nunca reinventado) detrás de héroes y secciones oscuras
+   en los 3 productos — landing, sitio público, panel. SVG inline, sin
+   petición de red ni imagen externa. --- */
+.leather-grain {
+  position: relative;
+}
+.leather-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Barrido de brillo sobre latón — usado con moderación en CTAs primarios
+   al hacer hover, nunca en reposo. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes brass-sheen {
+  from { background-position: -150% 0; }
+  to { background-position: 250% 0; }
+}
+.brass-sheen-hover:hover {
+  background-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  animation: brass-sheen var(--duration-slow) var(--ease-out);
 }

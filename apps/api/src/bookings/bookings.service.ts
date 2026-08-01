@@ -88,6 +88,29 @@ export class BookingsService {
     });
   }
 
+  // Reutilizado por PublicBookingService para calcular disponibilidad:
+  // trae solo lo estrictamente necesario (horario + profesional) de las
+  // citas no canceladas de un rango de fecha, para uno o varios
+  // profesionales a la vez. Nunca expone cliente ni servicio — quien
+  // llama esto es un endpoint público y esos datos no deben salir de ahí.
+  async findActiveBookingsInRange(
+    organizationId: string,
+    professionalIds: string[],
+    rangeStart: Date,
+    rangeEnd: Date,
+  ) {
+    return await this.prisma.db.booking.findMany({
+      where: {
+        organizationId,
+        professionalId: { in: professionalIds },
+        status: { not: BookingStatus.CANCELLED },
+        startTime: { lt: rangeEnd },
+        endTime: { gt: rangeStart },
+      },
+      select: { professionalId: true, startTime: true, endTime: true },
+    });
+  }
+
   async updateStatus(
     id: string,
     organizationId: string,

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Brand } from "@/components/Brand";
 import { BRAND } from "@/lib/brand";
+import { Container } from "@/components/ui/Container";
 
 const COLUMNS = [
   {
@@ -23,8 +24,8 @@ const COLUMNS = [
 
 export function LandingFooter() {
   return (
-    <footer className="border-t border-[var(--color-border)] px-4 py-14 sm:px-6">
-      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-10 sm:grid-cols-3">
+    <footer className="border-t border-[var(--color-border)] py-14">
+      <Container size="wide" className="grid grid-cols-1 gap-10 sm:grid-cols-3">
         <div>
           <Brand compact={false} />
           <p className="mt-3 max-w-xs text-sm text-[var(--color-muted)]">
@@ -42,7 +43,7 @@ export function LandingFooter() {
                 <li key={l.label}>
                   <Link
                     href={l.href}
-                    className="text-sm text-[var(--color-muted)] hover:text-[var(--color-paper)]"
+                    className="text-sm text-[var(--color-muted)] transition-colors hover:text-[var(--color-paper)]"
                   >
                     {l.label}
                   </Link>
@@ -51,11 +52,11 @@ export function LandingFooter() {
             </ul>
           </div>
         ))}
-      </div>
+      </Container>
 
-      <div className="mx-auto mt-12 max-w-5xl border-t border-[var(--color-border)] pt-6 text-xs text-[var(--color-faint)]">
+      <Container size="wide" className="mt-12 border-t border-[var(--color-border)] pt-6 text-xs text-[var(--color-faint)]">
         {BRAND.footer.copyright()}
-      </div>
+      </Container>
     </footer>
   );
 }

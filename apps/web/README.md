@@ -1,6 +1,6 @@
-# Kortek OS — Web
+# Kortek Booking — Web
 
-Frontend Next.js del SaaS multi-tenant Kortek OS. Ver `MAESTRO.md` en la raíz del repositorio para la documentación completa del proyecto.
+Frontend Next.js del SaaS multi-tenant Kortek Booking. Ver `maestro.md` en la raíz del repositorio para la documentación completa del proyecto.
 
 ## Requisitos
 
@@ -18,4 +18,4 @@ Escucha en el puerto 3000 por defecto — si la API también usa 3000 en tu `.en
 
 ## Estado actual
 
-En reconstrucción activa. La versión anterior era en gran parte un scaffold estático sin integración real con la API.
+Landing, autenticación, dashboard multi-tenant (Reservas, Clientes, Profesionales, Servicios, Facturación, Equipo) y flujo público de reservas por `slug` conectados a la API real. En proceso de realineación visual/comercial contra el sistema de diseño y el modelo de precio oficiales — ver `maestro.md` para el detalle por fase.

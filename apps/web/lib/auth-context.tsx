@@ -13,7 +13,7 @@ interface StoredSession {
 interface AuthContextValue {
   user: AuthUser | null;
   organization: StoredSession["organization"] | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, redirectTo?: string) => Promise<void>;
   registerOrganization: (input: {
     orgName: string;
     orgSlug: string;
@@ -29,9 +29,22 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const STORAGE_KEY = "bf_session";
 
+// El JWT real vive solo en localStorage (lo usa lib/api.ts en cada request).
+// Esta cookie NO lleva el token — es únicamente una bandera de presencia de
+// sesión para que middleware.ts (Edge, sin acceso a localStorage) pueda
+// decidir si redirige a /login antes de renderizar /dashboard/*. La
+// autorización real sigue validándose siempre contra el backend (JwtAuthGuard).
+const SESSION_FLAG_COOKIE = "kb_session";
+
+function setSessionFlagCookie(present: boolean) {
+  const maxAge = present ? 60 * 60 * 24 * 7 : 0; // 7 días, o borrar
+  document.cookie = `${SESSION_FLAG_COOKIE}=1; path=/; max-age=${maxAge}; SameSite=Lax`;
+}
+
 function saveSession(session: StoredSession) {
   window.localStorage.setItem("bf_token", session.token);
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  setSessionFlagCookie(true);
 }
 
 function loadSession(): StoredSession | null {
@@ -51,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
   const router = useRouter();
 
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, redirectTo?: string) {
     // El backend ahora resuelve la organización activa internamente
     const response = await api.post<{
       user: AuthUser;
@@ -64,10 +77,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: response.user,
       organization: response.organization,
     };
-    
+
     saveSession(newSession);
     setSession(newSession);
-    router.push("/dashboard");
+    // Solo se acepta un destino interno al dashboard (evita open-redirect
+    // si alguien manipula ?next= con una URL externa).
+    const safeRedirect =
+      redirectTo && redirectTo.startsWith("/dashboard") ? redirectTo : "/dashboard";
+    router.push(safeRedirect);
   }
 
   async function registerOrganization(input: {
@@ -98,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function logout() {
     window.localStorage.removeItem("bf_token");
     window.localStorage.removeItem(STORAGE_KEY);
+    setSessionFlagCookie(false);
     setSession(null);
     router.push("/login");
   }

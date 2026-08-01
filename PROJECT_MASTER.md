@@ -2,7 +2,9 @@
 
 > **Nota de renombramiento:** este documento se llamaba `MAESTRO.md`. A partir de esta actualización pasa a llamarse **`PROJECT_MASTER.md`** — es una evolución del mismo documento, no uno nuevo. **No se eliminó ni se resumió ningún contenido histórico**; todo lo que existía en `MAESTRO.md` sigue aquí, con su numeración de sección original intacta (para que ninguna referencia cruzada existente — en código, commits o conversaciones previas — se rompa). Se agregaron seis secciones nuevas (§35 a §40) y un índice de navegación.
 
-> **Nota de rebranding (histórica):** el proyecto se llamó originalmente BarberFlow OS. Desde la actualización de la Fase de Fundación Kortek, el nombre oficial es **Kortek OS** — es la evolución del mismo producto, no un proyecto nuevo. Todo el código nuevo referencia el nombre desde `apps/web/lib/brand.ts` (branding centralizado, ver §24).
+> **Nota de rebranding (histórica):** el proyecto se llamó originalmente BarberFlow OS. Desde la actualización de la Fase de Fundación Kortek, el nombre oficial pasó a ser **Kortek OS**.
+
+> **Nota de rebranding (Fase 0 de construcción de frontend):** **Kortek OS** (también "Kortek Studio") es el nombre de la **empresa** — tiene su propio landing corporativo en un repositorio aparte, fuera de este proyecto. Este producto — el SaaS que este repositorio construye — se llama **Kortek Booking**. `apps/web/lib/brand.ts` (branding centralizado, ver §24.1) ya refleja esta separación: `BRAND.name`/`BRAND.legalName` = "Kortek Booking", `BRAND.company` = "Kortek Studio" (solo para el crédito del footer).
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
@@ -884,6 +886,104 @@ Antes de escribir código nuevo, revisa si el patrón que necesitas ya existe:
 - Todo P2002/P2003 de Prisma se atrapa explícitamente y se traduce a un `409 Conflict` con mensaje claro — nunca se deja crashear como `500`.
 - Todo cambio de contrato de API se documenta en `BACKEND_CHANGES.md` con el impacto exacto en frontend, incluso si el frontend no se toca en el mismo ciclo.
 - Antes de escribir una migración estructural (no solo aditiva), verificarla con datos de prueba representativos, no solo contra un schema vacío (§26.1 es el ejemplo de referencia).
+
+---
+
+# PARTE VI — CONSTRUCCIÓN DEL FRONTEND (Kortek Booking)
+
+## 41. Fase 0 — Fundamentos de diseño (2026-07-31)
+
+Primera fase del plan de construcción del frontend acordado: Fundamentos → Landing → Panel administrativo → Sitio público de cada barbería. El panel administrativo se prioriza antes que el sitio público de la barbería porque el sitio público muestra contenido (galería, promociones, bios) que solo el panel puede producir — construirlo antes significaría maquetarlo contra datos mock que luego habría que rehacer.
+
+### 41.1. Qué se hizo
+
+- **Branding corregido:** `apps/web/lib/brand.ts` — `BRAND.name`/`legalName` pasan de "Kortek OS" a **"Kortek Booking"** (el producto), `BRAND.company` pasa a **"Kortek Studio"** (la empresa, con landing propio en otro repositorio). Footer actualizado al copy exacto pedido: `© {año} Kortek Booking · Una creación de Kortek Studio. Todos los derechos reservados.`
+- **Tokens de motion y elevación** (`app/globals.css`, `@theme`): `--ease-out`, `--duration-fast/base/slow` (un solo ritmo de animación para todo el producto, no improvisado por componente); `--shadow-card`/`--shadow-raised` con tinte de tinta (no gris genérico), coherentes con la paleta cuero/latón ya existente.
+- **Firma visual del producto** (`.leather-grain`): textura de grano sutil (SVG de ruido inline, sin petición de red ni imagen externa), pensada para reutilizarse detrás de héroes y secciones oscuras en los 3 productos — es el "elemento memorable" de la dirección visual, no decoración repetida sin criterio. Complementada con `.brass-sheen-hover`, un barrido de brillo sobre latón solo en hover de CTAs primarios.
+- **4 primitivos nuevos** en `components/ui/`, siguiendo exactamente las convenciones ya establecidas (`var(--color-*)`, `rounded-sm`, sin librería de iconos/animación nueva):
+  - `Reveal.tsx` — scroll-reveal (fundido + desplazamiento) vía `IntersectionObserver`, sin dependencia nueva. `prefers-reduced-motion` ya se maneja globalmente, así que no necesita lógica propia para respetarlo.
+  - `Container.tsx` — ancho máximo consistente (`narrow`/`default`/`wide`), reemplaza el patrón repetido a mano en cada sección del landing.
+  - `Avatar.tsx` — imagen o iniciales de respaldo sobre fondo de latón apagado, para profesionales/equipo/perfil.
+  - `Stat.tsx` — cifra destacada + etiqueta, para hero del landing y resúmenes del panel.
+
+### 41.2. Qué se decidió NO tocar en esta fase
+
+- La paleta cuero/latón y la pareja tipográfica (Fraunces/Inter/IBM Plex Mono) ya existentes se mantienen intactas — ya cumplían el criterio de identidad propia (no son la paleta/tipografía por defecto de un frontend genérico de IA), así que esta fase construye sobre ellas en vez de reemplazarlas.
+- No se instaló ninguna librería de animación (Framer Motion, GSAP) — `Reveal.tsx` cubre el caso de uso real con `IntersectionObserver` nativo. Se revisará si aparece una necesidad de coreografía más compleja (parallax, timelines) en una fase posterior.
+
+### 41.3. Huecos de backend detectados y pendientes de esta ronda (ver también §21)
+
+Confirmados contra el código en esta auditoría, quedan para proponerse uno por uno según se necesiten en la Fase 2 (decisión del usuario — construir en paralelo con el frontend de esa fase):
+- Galería: `GalleryImage` existe en `schema.prisma`, cero módulo/controlador/servicio.
+- Promociones: no existe ni el modelo.
+- `Organization`: no hay ningún endpoint `PATCH` para editar `aboutUs`/`heroImageUrl`/`socialLinks`/`businessHours`/`address`/`googleMapsUrl` (los campos ya existen en el modelo).
+- Subida de archivos: decidido implementar Cloudinary (estaba planeado, no implementado — ver §8/§22) para avatar, galería y hero de la barbería.
+- Horario individual por profesional (turnos/días libres) no existe como modelo — solo `Organization.businessHours` a nivel de negocio completo.
+
+### 41.4. Validación
+
+`tsc --noEmit` y `eslint .` sobre `apps/web` — limpios, sin errores ni advertencias. `next build` no se pudo completar en el entorno de esta sesión porque no tiene salida de red hacia `fonts.googleapis.com` (usado por `next/font/google` para Fraunces/Inter/IBM Plex Mono) — no es un error de código; se debe confirmar con un build local real antes de dar la fase por cerrada.
+
+### 41.5. Nota aparte — bug de tooling detectado (no corregido, pendiente de tu aprobación)
+
+Al intentar `pnpm install` en este entorno con `pnpm@11.15.0` exacto (la misma versión que exige `devEngines.packageManager` en el `package.json` raíz), la instalación falla con `Invalid package manager specification in package.json (pnpm@^11.15.0); expected a semver version` — pnpm 11.15.0 no acepta un rango (`^11.15.0`) en ese campo, solo una versión exacta. Esto bloquearía `pnpm install` para cualquier desarrollador nuevo que siga el onboarding de §40 al pie de la letra. No se corrigió en esta sesión (es un archivo de configuración raíz, no parte del alcance de esta fase) — queda anotado para que decidas si cambiarlo a `"11.15.0"` exacto.
+
+## 42. Fase 1 — Landing de Kortek Booking (2026-07-31)
+
+### 42.1. Reglas de diseño de todo el proyecto (dadas antes de esta fase)
+
+Antes de esta fase el usuario fijó 8 reglas válidas para las 3 fases de frontend que quedan (Landing, Panel, Sitio público): consistencia visual entre productos, cada pantalla debe responder a un objetivo de negocio explícito, diseño editorial (evitar apilar tarjetas uniformes, alternar composición), microinteracciones en todo componente importante, accesibilidad estricta, rendimiento (sin animación pesada, sin imágenes innecesarias), convertir en componente reutilizable cualquier patrón que se repita 2+ veces, y no dar una pantalla por terminada si no alcanza nivel excepcional. Se aplican explícitamente en esta fase y quedan como criterio de aceptación para las siguientes.
+
+### 42.2. Qué se hizo
+
+- **Sección nueva `Story.tsx`:** contraste editorial "antes/después" (caos de WhatsApp/cuaderno vs. agenda única), con el objetivo de negocio explícito de generar empatía con el dolor real del dueño antes de pedirle que se registre.
+- **Rediseño editorial de las secciones existentes**, todas ahora sobre `Container`/`Reveal`: `Hero` (cifras reales del producto, no métricas de uso inventadas — evita falso social proof para un producto que aún no lanza), `Benefits`/`Modules` (bento asimétrico, con un elemento destacado más grande en vez de una grilla uniforme), `Features` (dos columnas editoriales en vez de checklist centrado), `Testimonials` (una cita destacada + dos secundarias, en vez de 3 tarjetas idénticas), `Pricing` (2 planes, el superior destacado — se retiró el tercer plan "Business" como tarjeta, queda como enlace de contacto debajo, según la instrucción explícita de "dos planes de suscripción"), `FAQ`/`CTASection` (mismo contenido, con motion y la textura de firma visual).
+- **Microinteracciones:** `Button` (barrido de latón en hover del CTA primario, compresión leve al presionar), `Card` (prop `interactive` — eleva y resalta borde en hover/foco, opt-in para no cambiar el resto de la app que ya usa `Card`), `LandingNav` (sombra al hacer scroll, menú móvil animado con `grid-template-rows` en vez de aparecer/desaparecer instantáneo).
+- **Sin imágenes externas:** se evaluó usar fotografía de stock (Unsplash) como sugería el brief original, pero las búsquedas disponibles solo devolvían resultados de sitios como Pinterest sin licencia clara de uso — se decidió no arriesgar derechos de autor en un producto comercial y mantener la convención ya establecida en el proyecto (§24.8) de construir todo con tipografía, gradientes y composición propia. Ver §42.4.
+
+### 42.3. Qué se decidió NO tocar en esta fase
+
+- No se agregó ninguna librería de animación ni de iconos — mismo criterio YAGNI de siempre en este proyecto; `Reveal.tsx` (Fase 0) cubre el scroll-reveal, y los iconos siguen siendo tipográficos (✓/✕/+) o formas simples, consistente con el resto del producto.
+- El acordeón de `FAQ` se mantiene sobre `<details>` nativo (accesible por teclado sin JS adicional) en vez de un componente propio — cambiar a un patrón animado con `max-height` en JS hubiera sido una dependencia de complejidad nueva sin beneficio real sobre lo que Tailwind + `<details>` ya resuelven.
+
+### 42.4. Pendiente real — fotografía de marca
+
+La landing sigue sin fotografía real (mockups y composición tipográfica únicamente). Cuando haya fotografía propia de Kortek Booking (o del estudio) lista para usar, se puede incorporar directamente — `Avatar.tsx` (Fase 0) ya acepta una URL de imagen real como reemplazo de las iniciales.
+
+### 42.5. Validación
+
+`tsc --noEmit` y `eslint .` sobre `apps/web` — limpios. `next build` se confirmó exitoso en este entorno **quitando temporalmente `next/font/google`** como diagnóstico (el entorno de esta sesión no tiene salida de red hacia `fonts.googleapis.com`, ver §41.4) — se revirtió ese cambio de diagnóstico antes de entregar, no forma parte del código entregado. Se debe correr `pnpm build` real, con las fuentes de Google, en tu máquina antes de dar la fase por cerrada.
+
+> **Nota:** esta primera versión de la Fase 1 fue rechazada por el usuario y reemplazada por completo — ver §43.
+
+## 43. Fase 1 — Reconstrucción total (2026-08-01)
+
+La primera entrega de la Fase 1 (§42) fue rechazada: era un rediseño incremental sobre la estructura visual existente, y el usuario pidió explícitamente una landing construida desde cero, sin obligación de conservar nada de lo anterior. Esta sección reemplaza §42 como la versión vigente de la landing.
+
+### 43.1. Qué cambió respecto a la versión anterior
+
+- **Fotografía real.** Se abandonó la restricción de "sin imágenes externas" (§24.8) para esta landing por instrucción explícita del usuario. Se usaron 3 fotos de Unsplash (licencia libre, uso comercial permitido), centralizadas en `lib/landing-photos.ts` con crédito al fotógrafo: interior de barbería (hero, a sangre completa), interior con reflejo de vitrina (sección `Story` y fondo del `CTASection` final), y un barbero cortando cabello con máquina (celda fotográfica dentro de `Benefits`). `next.config.ts` ahora permite `images.unsplash.com` vía `remotePatterns`.
+- **Hero rehecho por completo:** de un split copy/mockup sobre fondo plano, a una sección a sangre completa (foto + degradado + grano de cuero) con la tarjeta del producto flotando superpuesta y rotada sobre el borde de la imagen, no como panel lateral.
+- **2 secciones nuevas** que no existían: `Marquee.tsx` (cinta de texto en movimiento continuo, CSS puro, quiebra el ritmo justo después del hero) y `Proof.tsx` (banda de cifras con la textura de firma visual, antes de los testimonios).
+- **`Modules` cambió de tipo de layout completo:** de bento de tarjetas (parecido a `Benefits`) a un índice editorial numerado tipo revista — deliberado para que dos secciones consecutivas nunca se sientan iguales.
+- **`Benefits`** ahora incluye una celda fotográfica dentro del bento, no son puras tarjetas de texto.
+- **`Pricing`** ahora tiene un toggle mensual/anual funcional (microinteracción real, no decorativa) — 2 planes de suscripción como pide el brief, con el superior destacado.
+- **`CTASection` y `FAQ`** rehechos: el CTA final pasó de tarjeta centrada a banda fotográfica a sangre completa; el FAQ pasó de columna centrada a dos columnas asimétricas.
+- **`Features.tsx` se eliminó por completo** — su contenido (checklist de funcionalidades) quedó redundante y contradecía la instrucción de "contar una historia, no listar funciones"; lo que tenía de único se repartió entre `Story` y `Modules`.
+- **Arco narrativo explícito de principio a fin:** Hero (atención) → Marquee (energía) → Story (problema/frustración) → Benefits (solución) → Modules (detalle de lo que se obtiene) → Proof (resultado/confianza en cifras) → Testimonials (confianza social) → Pricing (planes) → FAQ (última objeción) → CTA (llamado a la acción).
+
+### 43.2. Qué se decidió NO tocar
+
+- Los tokens de marca (paleta cuero/latón, tipografía Fraunces/Inter/IBM Plex Mono) y los primitivos de la Fase 0 (`Reveal`, `Container`, `Stat`, `Avatar`) siguen siendo la base — la reconstrucción es de la **composición y el contenido visual** de la landing, no de la identidad de marca que ya se había aprobado.
+- `Testimonials.tsx` se mantiene sin fotos de personas: los testimonios son ficticios (ver nota en el propio archivo) y poner una fotografía de stock de una persona real junto a un nombre y una cita inventada sería presentar a alguien como cliente real sin serlo — ahí sí se sostiene la restricción de no usar fotografía, por ser un tema de honestidad hacia el visitante, no de licencia.
+
+### 43.3. Sobre las capturas de pantalla pedidas
+
+No pude generarlas: este entorno no tiene navegador ni forma de instalar uno (la descarga de Chromium/Playwright requiere dominios fuera de la lista permitida de red del sandbox). Lo que sí pude validar con certeza es que el código compila, tipa y construye correctamente — la revisión visual real solo la puedo confiarte con un `pnpm dev` local. Avísame qué ves y ajusto sobre eso.
+
+### 43.4. Validación
+
+`tsc --noEmit` y `eslint .` sobre `apps/web` — limpios. `next build` confirmado exitoso con el mismo diagnóstico temporal de fuentes que en §42.5 (revertido antes de entregar). Falta tu build real local con fuentes de Google y tu revisión visual — ninguna de las dos se puede hacer desde este entorno.
 
 ---
 

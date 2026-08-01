@@ -8,7 +8,13 @@ import { UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
+import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
+import {
+  generateCandidateSlots,
+  rangesOverlap,
+  resolveBusinessHours,
+} from './availability.util';
 
 @Injectable()
 export class PublicBookingService {
@@ -60,6 +66,106 @@ export class PublicBookingService {
       services,
       professionals,
     };
+  }
+
+  // Bloques de horario disponibles para un servicio, en una fecha, para un
+  // profesional específico o (si se omite professionalId) para "cualquiera
+  // disponible" del equipo activo. Nunca devuelve nombres de clientes,
+  // IDs de citas, ni ningún otro dato de la agenda — solo la hora y, si
+  // aplica, qué profesional quedaría asignado.
+  async getAvailability(slug: string, query: GetAvailabilityQueryDto) {
+    const organization = await this.resolveOrganization(slug);
+
+    const service = await this.prisma.db.service.findFirst({
+      where: { id: query.serviceId, organizationId: organization.id },
+      select: { duration: true },
+    });
+    if (!service) {
+      throw new BadRequestException('Servicio no encontrado en esta barbería');
+    }
+
+    let candidateProfessionalIds: string[];
+    if (query.professionalId) {
+      const professional = await this.prisma.db.professional.findFirst({
+        where: {
+          id: query.professionalId,
+          organizationId: organization.id,
+          isActive: true,
+        },
+        select: { id: true },
+      });
+      if (!professional) {
+        throw new BadRequestException(
+          'Profesional no encontrado en esta barbería',
+        );
+      }
+      candidateProfessionalIds = [professional.id];
+    } else {
+      const activeProfessionals = await this.prisma.db.professional.findMany({
+        where: { organizationId: organization.id, isActive: true },
+        select: { id: true },
+        orderBy: { name: 'asc' },
+      });
+      candidateProfessionalIds = activeProfessionals.map((p) => p.id);
+    }
+
+    if (candidateProfessionalIds.length === 0) {
+      return { date: query.date, serviceId: query.serviceId, slots: [] };
+    }
+
+    const dayStart = new Date(`${query.date}T00:00:00`);
+    const dayEnd = new Date(`${query.date}T23:59:59.999`);
+    if (Number.isNaN(dayStart.getTime())) {
+      throw new BadRequestException('Fecha inválida');
+    }
+
+    const businessHours = resolveBusinessHours(organization.businessHours);
+    const candidateTimes = generateCandidateSlots(
+      businessHours,
+      service.duration,
+    );
+
+    const existingBookings =
+      await this.bookingsService.findActiveBookingsInRange(
+        organization.id,
+        candidateProfessionalIds,
+        dayStart,
+        dayEnd,
+      );
+
+    const now = new Date();
+    const slots: { time: string; professionalId: string }[] = [];
+
+    for (const time of candidateTimes) {
+      const slotStart = new Date(`${query.date}T${time}:00`);
+      const slotEnd = new Date(slotStart.getTime() + service.duration * 60000);
+
+      // No ofrecer horarios que ya pasaron si la fecha consultada es hoy.
+      if (slotStart <= now) continue;
+
+      // Primer profesional candidato sin choque para este bloque — el
+      // orden de candidateProfessionalIds ya viene alfabético por nombre,
+      // así "cualquiera disponible" siempre resuelve de forma determinista.
+      const freeProfessionalId = candidateProfessionalIds.find(
+        (professionalId) =>
+          !existingBookings.some(
+            (booking) =>
+              booking.professionalId === professionalId &&
+              rangesOverlap(
+                slotStart,
+                slotEnd,
+                booking.startTime,
+                booking.endTime,
+              ),
+          ),
+      );
+
+      if (freeProfessionalId) {
+        slots.push({ time, professionalId: freeProfessionalId });
+      }
+    }
+
+    return { date: query.date, serviceId: query.serviceId, slots };
   }
 
   async createBooking(slug: string, dto: CreatePublicBookingDto) {

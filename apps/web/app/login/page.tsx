@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAuth, ApiError } from "@/lib/auth-context";
 import { Button } from "@/components/ui/Button";
 import { InputField } from "@/components/ui/Field";
@@ -9,7 +10,17 @@ import { PasswordField } from "@/components/ui/PasswordField";
 import { Brand } from "@/components/Brand";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const { login } = useAuth();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") ?? undefined;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +32,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       // El backend ahora resuelve la organización automáticamente usando el correo
-      await login(email.trim(), password);
+      await login(email.trim(), password, next);
     } catch (err) {
       setError(
         err instanceof ApiError

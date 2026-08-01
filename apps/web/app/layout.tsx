@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth-context";
-import { ToastProvider } from "@/components/ui/Toast";
+import { Providers } from "@/components/Providers";
 import { BRAND } from "@/lib/brand";
 
 const fraunces = Fraunces({
@@ -37,9 +36,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} antialiased`}
       >
-        <ToastProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </ToastProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

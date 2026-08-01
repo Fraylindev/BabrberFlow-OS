@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Param,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { PublicBookingService } from './public-booking.service';
 import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
+import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
 
 // Sin JwtAuthGuard a propósito — esta es la puerta de entrada para
 // clientes anónimos. El aislamiento por organización se resuelve
@@ -35,6 +37,20 @@ export class PublicBookingController {
   @Get('booking-data')
   getBookingData(@Param('slug') slug: string) {
     return this.publicBookingService.getBookingData(slug);
+  }
+
+  // Sin CacheInterceptor a propósito: a diferencia de booking-data, esta
+  // respuesta depende de reservas que pueden crearse en cualquier momento
+  // — cachearla arriesga mostrar un horario ya ocupado como disponible.
+  // 30 solicitudes/minuto por IP: generoso para el uso normal de la UI
+  // (cambiar de fecha/profesional varias veces), no para abusarlo.
+  @Throttle({ default: { limit: 30, ttl: 60000 } })
+  @Get('availability')
+  getAvailability(
+    @Param('slug') slug: string,
+    @Query() query: GetAvailabilityQueryDto,
+  ) {
+    return this.publicBookingService.getAvailability(slug, query);
   }
 
   // 5 solicitudes/minuto por IP — override explícito, más estricto que
