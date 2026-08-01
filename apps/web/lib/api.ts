@@ -1,5 +1,5 @@
 /**
- * Cliente HTTP centralizado para la API de BarberFlow.
+ * Cliente HTTP centralizado para la API de Kortek OS.
  * Toda la app pasa por aquí — un solo lugar para adjuntar el token,
  * manejar errores del backend (NestJS ValidationPipe) y tipar respuestas.
  */
@@ -92,6 +92,7 @@ export interface Professional {
   name: string;
   bio?: string | null;
   phone?: string | null;
+  avatar?: string | null;
   isActive?: boolean;
   organizationId: string;
 }
@@ -134,4 +135,23 @@ export interface Invoice {
   bookingId: string;
   createdAt: string;
   booking?: Booking;
+}
+
+// === Flujo público B2C (sin autenticación) ===
+
+export interface PublicBookingData {
+  organization: {
+    id: string;
+    name: string;
+    slug: string;
+    phone: string | null;
+  };
+  services: Pick<Service, "id" | "name" | "description" | "duration" | "price">[];
+  professionals: Pick<Professional, "id" | "name" | "bio" | "avatar">[];
+}
+
+export interface PublicBookingResult {
+  booking: Booking;
+  client: Client;
+  accountCreated: boolean;
 }

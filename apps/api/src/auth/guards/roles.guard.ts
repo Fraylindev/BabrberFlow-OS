@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from '@prisma/client';
 import { ROLES_KEY } from '../decorators/roles.decorator';
+import { AuthenticatedRequest } from '../types/authenticated-request';
 
 /**
  * Debe usarse SIEMPRE después de JwtAuthGuard, ya que depende de que
@@ -25,9 +26,8 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const user = request.user as { role?: UserRole } | undefined;
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const user = request.user;
 
     return !!user?.role && requiredRoles.includes(user.role);
   }

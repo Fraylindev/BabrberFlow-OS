@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ProfessionalsService } from './professionals.service';
 import { ProfessionalsController } from './professionals.controller';
+import { AuditModule } from '../audit/audit.module';
 
 @Module({
+  imports: [AuditModule],
   controllers: [ProfessionalsController],
   providers: [ProfessionalsService],
+  exports: [ProfessionalsService], // Usado por BookingsModule/ClientsModule para resolver "mi propia agenda/clientes" de un BARBER
 })
 export class ProfessionalsModule {}

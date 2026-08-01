@@ -1,6 +1,6 @@
-# BarberFlow OS — API
+# Kortek OS — API
 
-Backend NestJS del SaaS multi-tenant BarberFlow OS. Ver `MAESTRO.md` en la raíz del repositorio para la documentación completa del proyecto.
+Backend NestJS del SaaS multi-tenant Kortek OS. Ver `MAESTRO.md` en la raíz del repositorio para la documentación completa del proyecto.
 
 ## Requisitos
 

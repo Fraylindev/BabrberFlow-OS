@@ -13,11 +13,7 @@ interface StoredSession {
 interface AuthContextValue {
   user: AuthUser | null;
   organization: StoredSession["organization"] | null;
-  login: (
-    orgSlug: string,
-    email: string,
-    password: string,
-  ) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   registerOrganization: (input: {
     orgName: string;
     orgSlug: string;
@@ -48,36 +44,30 @@ function loadSession(): StoredSession | null {
   }
 }
 
-async function resolveOrganization(slug: string) {
-  return api.get<Pick<Organization, "id" | "name" | "slug">>(
-    `/organizations/by-slug/${encodeURIComponent(slug)}`,
-  );
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Inicialización perezosa: se ejecuta durante el mount (incluida la
-  // hidratación en cliente), nunca dentro de un efecto — evita el
-  // anti-patrón de "setState síncrono en un efecto".
+  // Inicialización perezosa para evitar el anti-patrón de setState síncrono
   const [session, setSession] = useState<StoredSession | null>(() =>
     typeof window === "undefined" ? null : loadSession(),
   );
   const router = useRouter();
 
-  async function login(orgSlug: string, email: string, password: string) {
-    const organization = await resolveOrganization(orgSlug);
-    const { user, accessToken } = await api.post<{
+  async function login(email: string, password: string) {
+    // El backend ahora resuelve la organización activa internamente
+    const response = await api.post<{
       user: AuthUser;
       accessToken: string;
-    }>("/auth/login", { email, password, organizationId: organization.id });
+      organization: Pick<Organization, "id" | "name" | "slug">;
+    }>("/auth/login", { email, password });
 
     const newSession: StoredSession = {
-      token: accessToken,
-      user,
-      organization,
+      token: response.accessToken,
+      user: response.user,
+      organization: response.organization,
     };
+    
     saveSession(newSession);
     setSession(newSession);
-    router.push("/");
+    router.push("/dashboard");
   }
 
   async function registerOrganization(input: {
@@ -101,9 +91,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       organizationId: organization.id,
     });
 
-    // El registro no devuelve token — encadenamos un login para que el
-    // dueño entre directo a su panel sin escribir sus datos dos veces.
-    await login(input.orgSlug, input.ownerEmail, input.password);
+    // Encadenamos el nuevo login de un solo paso
+    await login(input.ownerEmail, input.password);
   }
 
   function logout() {

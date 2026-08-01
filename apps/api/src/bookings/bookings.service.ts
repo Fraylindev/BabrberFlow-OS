@@ -71,9 +71,15 @@ export class BookingsService {
     });
   }
 
-  async findAll(organizationId: string) {
+  // professionalId opcional: cuando se pasa, restringe el listado a la
+  // agenda de ese profesional únicamente — así es como un BARBER ve "mi
+  // agenda" en vez de la de toda la barbería.
+  async findAll(organizationId: string, professionalId?: string) {
     return await this.prisma.db.booking.findMany({
-      where: { organizationId },
+      where: {
+        organizationId,
+        ...(professionalId ? { professionalId } : {}),
+      },
       include: {
         client: true,
         professional: true,

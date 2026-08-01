@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useAuth, ApiError } from "@/lib/auth-context";
 import { Button } from "@/components/ui/Button";
 import { InputField } from "@/components/ui/Field";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { Brand } from "@/components/Brand";
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const [orgSlug, setOrgSlug] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,8 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await login(orgSlug.trim(), email.trim(), password);
+      // El backend ahora resuelve la organización automáticamente usando el correo
+      await login(email.trim(), password);
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -38,7 +39,7 @@ export default function LoginPage() {
         <div className="mb-8 flex flex-col items-center gap-3">
           <Brand />
           <p className="text-sm text-[var(--color-muted)]">
-            Entra al panel de tu barbería
+            Entra a tu panel de control
           </p>
         </div>
 
@@ -46,15 +47,6 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 rounded-sm border border-[var(--color-border)] bg-[var(--color-surface)] p-6"
         >
-          <InputField
-            label="Barbería (slug)"
-            name="orgSlug"
-            placeholder="elite-barber-shop"
-            value={orgSlug}
-            onChange={(e) => setOrgSlug(e.target.value)}
-            autoComplete="organization"
-            required
-          />
           <InputField
             label="Correo"
             name="email"
@@ -65,10 +57,9 @@ export default function LoginPage() {
             autoComplete="email"
             required
           />
-          <InputField
+          <PasswordField
             label="Contraseña"
             name="password"
-            type="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -96,7 +87,7 @@ export default function LoginPage() {
             href="/register"
             className="text-[var(--color-brass)] hover:text-[var(--color-brass-hover)]"
           >
-            Registra tu barbería
+            Registra tu negocio
           </Link>
         </p>
       </div>
