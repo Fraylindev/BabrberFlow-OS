@@ -27,6 +27,15 @@
 **Parte V — Memoria técnica permanente (nuevo en esta actualización)**
 [§35 Estado global del proyecto](#35-estado-global-del-proyecto) · [§36 Historial de evolución](#36-historial-de-evolución) · [§37 Intentos fallidos](#37-intentos-fallidos) · [§38 Lecciones aprendidas](#38-lecciones-aprendidas) · [§39 RFC / Decisiones pendientes](#39-rfc--decisiones-pendientes) · [§40 Onboarding para nuevos desarrolladores](#40-onboarding-para-nuevos-desarrolladores)
 
+**Parte VI — Fase 0/1: Landing pública (histórico, cronológico)**
+[§41 Fase 0 — Fundamentos de diseño](#41-fase-0--fundamentos-de-diseño-2026-07-31) · [§42 Fase 1 — Landing](#42-fase-1--landing-de-kortek-booking-2026-07-31) · [§43 Fase 1 — Reconstrucción total](#43-fase-1--reconstrucción-total-2026-08-01) · [§44 Fase 1 — Identidad negro/blanco/rojo](#44-fase-1--identidad-negroblancorojo--carrusel-de-testimonios--precios-definitivos-2026-08-01) · [§45 Fase 1 — Pulido final](#45-fase-1--pulido-final-acordeón-de-faq--reveal-de-scroll-2026-08-01--cierre-de-fase)
+
+**Parte VII — Fase 2: Panel administrativo (en curso)**
+[§46 Nota de reconciliación](#46-nota-de-reconciliación-2026-08-02) · [§47 Arquitectura de temas](#47-arquitectura-de-temas-dashboard-clarografito-vs-marketing-oscuro-2026-08-02) · [§48 Deuda de tooling resuelta](#48-deuda-de-tooling-resuelta-2026-08-02) · [§49 Validación](#49-validación-2026-08-02)
+
+**Parte VIII — Visión ampliada del producto (nuevo en esta actualización)**
+[§50 Kortek Booking como mini-sitio comercial por barbería](#50-visión-ampliada-del-sitio-público--de-página-de-reservas-a-mini-sitio-comercial-2026-08-02)
+
 ---
 
 # PARTE I — VISIÓN Y NEGOCIO
@@ -275,10 +284,13 @@ Paleta oscura inspirada en el oficio (cuero/carbón + acento de latón), tipogra
 - Paquetes compartidos (`packages/ui`, `packages/types`, etc.).
 - Integraciones futuras: Redis/BullMQ, Socket.IO, Cloudinary, pasarela de pagos.
 - Pruebas unitarias e integración sobre los módulos de negocio (cobertura actual: prácticamente nula).
+- **(Agregado 2026-08-02, ver §50 para el detalle completo)** Foto por servicio (`Service.imageUrl` — no existe todavía en el schema), subida de imágenes desde dispositivo o cámara con compresión/optimización responsive, módulo de Promociones (nuevo modelo `Promotion`), módulo de métodos de pago con cuentas bancarias configurables (nuevo modelo `BankAccount`, máximo 3 por organización) y selección de método de pago (local vs. transferencia + comprobante) en el flujo de confirmación de reserva, integración con Google Calendar por profesional.
 
 ## 22. Ideas futuras
 
 Módulos avanzados: Inteligencia Artificial, Inventario de productos, CRM avanzado, integraciones directas con WhatsApp para reservas automáticas, analíticas y sistemas de fidelización.
+
+**(Agregado 2026-08-02)** La visión de `/[slug]` se amplió de "página de reservas" a "mini-sitio comercial por barbería" (CMS + Booking Engine + CRM + Payments + Marketing) — ver §50 para el desglose completo y el roadmap de fases (Dashboard → CMS del negocio → Pagos → Integraciones) acordado para no implementar todo de golpe.
 
 ## 23. Próximos pasos recomendados
 
@@ -1045,4 +1057,164 @@ El usuario pidió que, de aquí en adelante, cada entrega sea un `.zip` **sin ca
 
 ---
 
-*Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo.*
+# PARTE VII — FASE 2: PANEL ADMINISTRATIVO
+
+## 46. Nota de reconciliación (2026-08-02)
+
+Antes de continuar, una aclaración honesta necesaria: en sesiones previas de este mismo proyecto se diseñaron y entregaron en `.zip` un módulo de Resumen (sobre `GET /analytics/dashboard`) y una primera versión del shell (`Sidebar`/`Topbar`) con tema oscuro. **Ninguno de los dos llegó a aplicarse a este repositorio** — al auditar el código real antes de esta tarea, `app/dashboard/page.tsx` seguía siendo la versión simple original y `components/Sidebar.tsx` seguía siendo el componente plano original, sin agrupar y sin versión móvil. Lo que sí se aplicó y está confirmado en el código: el rebranding de la landing a "Kortek Booking" y una implementación considerable del sitio público de reserva (`app/[slug]/`, con `@tanstack/react-query`) construida por fuera de este hilo de trabajo. A partir de aquí, todo lo documentado en esta parte del documento refleja únicamente lo que existe verificado en el repositorio.
+
+## 47. Arquitectura de temas: Dashboard claro/grafito vs. Marketing oscuro (2026-08-02)
+
+### 47.1. El problema
+
+Se pidió que el Dashboard tenga fondo claro, sidebar grafito y rojo únicamente como acento — pero `app/globals.css` define `--color-ink` (negro) directamente en `body`, global a toda la aplicación, por decisión explícita de una fase anterior ("negro/blanco/rojo es la identidad de TODO Kortek Booking"). La landing y el futuro sitio público (`app/[slug]`) deben conservar esa identidad sin cambios.
+
+### 47.2. La solución — scope de tema aislado, sin tocar nada existente
+
+Se agregó un bloque completo de variables nuevas en `app/globals.css`, con prefijo `--dash-*`, dentro de un selector `.dashboard-shell`. Ningún `--color-*` existente se renombró, eliminó ni sobrescribió — son dos namespaces completamente separados que conviven en el mismo archivo. `--dash-accent` no duplica el hex del rojo de marca: lo referencia con `var(--color-brass)`, así que ambos temas comparten la misma fuente de verdad para el color de marca.
+
+`app/dashboard/layout.tsx` envuelve todo el árbol del panel en `<div className="dashboard-shell">` — solo los elementos dentro de ese contenedor resuelven las variables `--dash-*`. La landing (`app/page.tsx`) y `app/[slug]` nunca entran en ese scope, así que siguen resolviendo exactamente las mismas variables `--color-*` de siempre, con los mismos valores.
+
+### 47.3. Qué se reconstruyó dentro del nuevo scope
+
+- **`components/dashboard/Sidebar.tsx`** (nuevo — reemplaza `components/Sidebar.tsx`, eliminado): navegación agrupada por función (General / Operación diaria / Negocio / Organización), fondo grafito (`--dash-sidebar-bg`, no `--color-ink`), colapsable a solo íconos con `Tooltip`, drawer real en móvil (fondo oscuro, cierra al navegar), menú de usuario con `Dropdown`.
+- **`components/dashboard/Topbar.tsx`** (nuevo): fondo claro, migaja de pan con la sección actual, botón de menú y acceso al usuario en móvil.
+- **`components/dashboard/NavIcons.tsx`** y **`nav-items.ts`** (nuevos): set de íconos propio (SVG inline, sin librería) y la única fuente de verdad de qué existe en la navegación — igual que se había planteado en el intento anterior, ahora sí aplicado.
+- **`components/ui/Dropdown.tsx`** y **`components/ui/Tooltip.tsx`**: extendidos de forma aditiva (`placement`, `fullWidth`, `panelClassName`, `itemClassName` en `Dropdown`; `side` en `Tooltip`) — el comportamiento y estilo por defecto de ambos se mantiene idéntico al original para no arriesgar ningún consumidor futuro que no pase esas props nuevas. Ninguno de los dos tenía consumidores existentes en el repositorio al momento de extenderlos.
+
+### 47.4. Qué se decidió NO tocar
+
+- Ninguna página de módulo (`bookings`, `clients`, `professionals`, `services`, `invoices`, `team`) — siguen usando `--color-*` (oscuro) hasta que les toque su propio módulo de rediseño. Es un estado transicional esperado: el shell ya es claro/grafito, el contenido interior de cada módulo todavía no.
+- `components/ui/Card.tsx`, `Button.tsx`, `Avatar.tsx`, `Badge.tsx` — no forman parte del "shell", quedan para cuando se rediseñen los módulos de contenido.
+- `app/[slug]/**`, `components/booking/*`, `lib/queries/*` — congelados por instrucción explícita, sin ningún cambio.
+
+## 48. Deuda de tooling resuelta (2026-08-02)
+
+- **`packageManager` en el `package.json` raíz**: `"pnpm@^11.15.0"` (un rango, inválido para el campo `devEngines.packageManager.version` de pnpm 11.x, que exige versión exacta) → `"11.18.0"` exacto, coincidiendo con la versión real que usa el usuario en su máquina (confirmada en su propia terminal).
+- **`type-check` sin efecto**: `turbo.json` ya definía la tarea, pero ni `apps/web/package.json` ni `apps/api/package.json` declaraban el script — Turbo corría 0 tareas en silencio. Se agregó `"type-check": "tsc --noEmit"` a ambos.
+
+## 49. Validación (2026-08-02)
+
+- `pnpm --filter web lint` → **limpio**.
+- `pnpm --filter web type-check` (`tsc --noEmit`) → **limpio**.
+- `pnpm --filter web build` → **exitoso** (mismo diagnóstico temporal de fuentes de Google de siempre en este entorno, revertido antes de entregar).
+- `pnpm lint` / `pnpm type-check` / `pnpm build` a nivel raíz → **fallan, pero exclusivamente por `api#*`**, no por nada de esta tarea ni por `web`. Causa demostrada con evidencia dura: `apps/api` no tiene el cliente de Prisma generado en este entorno porque la descarga del motor de Prisma está bloqueada por la política de red del sandbox —
+
+  ```
+  Error: Failed to fetch the engine file at
+  https://binaries.prisma.sh/... - 403 Forbidden
+  ```
+
+  `binaries.prisma.sh` no está en la lista de dominios permitidos de este entorno. Sin cliente generado, `@prisma/client` no exporta ningún tipo (`UserRole`, `PrismaClient`, etc.), y esos ~24-456 errores (según el comando) son *todos* sombra de esa única causa — ninguno es un error de código real, y no se tocó una sola línea de `apps/api` en esta tarea. En la máquina del usuario, donde `prisma generate` sí tiene salida de red, este bloqueo no existe.
+---
+
+# PARTE VIII — VISIÓN AMPLIADA DEL PRODUCTO
+
+## 50. Visión ampliada del sitio público — de página de reservas a mini-sitio comercial (2026-08-02)
+
+> **Naturaleza de esta sección:** a diferencia de la mayoría del documento, esto **no** es una auditoría de código — es visión de producto, capturada en una sesión de conversación previa a la implementación. Se documenta aquí, íntegra, porque cambia decisiones de modelado de base de datos que conviene anticipar aunque no se construyan todavía (galería, fotos por servicio, promociones, pagos). Nada de lo descrito en esta sección debe asumirse como implementado hasta que aparezca verificado en una sección posterior con fecha y auditoría de código, siguiendo la misma convención que el resto de este documento.
+
+### 50.1. Redefinición de `/[slug]`
+
+`/[slug]` deja de pensarse como una simple página de reservas y pasa a ser **un mini-sitio comercial personalizado por barbería, generado dinámicamente desde el dashboard**:
+
+```
+                    KORTEK BOOKING
+                         |
+        ---------------------------------
+        |                               |
+        ↓                               ↓
+   Dashboard Admin                Página Pública /[slug]
+   Dueño configura                 Cliente visualiza
+   el negocio                      y reserva
+
+- Fotos                         - Galería
+- Servicios                     - Catálogo
+- Profesionales                 - Profesionales
+- Promociones                   - Promociones
+- Horarios                      - Reservas
+- Pagos                         - Pagos
+- Información                   - Contacto
+```
+
+Todo lo configurado en el dashboard debe ser **parametrizable** (nada hardcodeado) y toda subida de imagen (desde archivo o desde cámara del dispositivo) debe resolverse de forma responsive — el sitio público nunca debe perder formato sin importar la relación de aspecto de lo que suba el barbero.
+
+### 50.2. Hero del negocio
+
+Configurado desde el dashboard: imagen principal, logo, nombre, descripción, ubicación, botón de reservar. Los campos `Organization.heroImageUrl` y `Organization.aboutUs` ya existen en el schema desde la Fundación Kortek (§25.2) — este punto es en gran parte modelado de datos ya resuelto; falta la superficie de dashboard para editarlos y el consumo real en `/[slug]`.
+
+### 50.3. Galería de trabajos realizados
+
+El administrador sube fotos de cortes, barbas, dreadlocks, trenzas y otros estilos realizados; se muestran en una cuadrícula pública ("Nuestros trabajos"). El modelo `GalleryImage` (`organizationId`, `url`, `caption?`, `order`) ya existe desde §25.2 con `onDelete: Cascade` sobre `Organization` — este punto es principalmente de **API + frontend** (subida, no modelo de datos nuevo).
+
+**Arquitectura de subida de imágenes (aplica también a §50.4 y a fotos de perfil de profesionales):** las imágenes **no** se guardan en PostgreSQL. El flujo es:
+
+```
+Usuario sube imagen (archivo o cámara)
+        ↓
+Storage externo (Cloudinary / AWS S3 / similar)
+        ↓
+Base de datos guarda solo la URL + metadata
+        ↓
+Frontend renderiza optimizado y responsive
+```
+
+Esto ya estaba anticipado como integración pendiente en §21 ("Cloudinary"); esta sección solo detalla el flujo de datos concreto. Requisitos funcionales: subida desde archivo del dispositivo, captura directa desde cámara (móvil), compresión/optimización automática antes o después de subir, y renderizado responsive en el sitio público.
+
+### 50.4. Catálogo de servicios con foto — requiere extender `Service`
+
+El catálogo público (Corte clásico, Barba, Dreadlocks, Trenzas, Otros) debe mostrar, por cada servicio: imagen, nombre, descripción, duración y precio — no solo nombre y precio como hoy. El modelo `Service` actual **no tiene** campo de imagen — se necesita agregar `imageUrl` (mismo patrón de storage externo de §50.3) más un estado `activo/inactivo` para poder ocultar servicios del catálogo público sin borrarlos. El barbero debe poder subir la foto del servicio desde el mismo formulario de creación/edición en el dashboard.
+
+### 50.5. Profesionales — foto, especialidad, bio corta
+
+`Professional.avatar`, `specialty` y `experienceYears` ya existen (§25.1, §25.2); `bio` también existe como campo previo a la Fundación Kortek. Lo que falta es exponer estos campos en la ficha pública del profesional (foto, nombre, especialidad, bio corta) y, opcionalmente, la relación de qué servicios realiza cada profesional — no confirmada todavía en el schema actual, pendiente de auditoría antes de asumir que existe.
+
+### 50.6. Promociones / ofertas — módulo nuevo
+
+No existe modelo hoy. Se necesitaría un nuevo modelo `Promotion` (nombre tentativo), con: `organizationId`, `title`, `imageUrl`, `description`, `startDate`, `endDate`, `active`. Aparecerían públicamente en `/[slug]` mientras estén dentro de su rango de fechas y `active = true`. Administradas desde Dashboard → Promociones.
+
+### 50.7. Información del negocio — mayormente ya modelado
+
+Dirección, teléfono, WhatsApp, redes sociales y horarios: `Organization.address`, `Organization.phone` (ya existía antes de la Fundación Kortek, §25.1), `Organization.socialLinks` (Json) y `Organization.businessHours` (Json) ya existen desde §25.2. `whatsappBaseUrl` como configuración global de la plataforma ya existe (§25.6), pero el **número de WhatsApp propio de cada barbería** para el botón de contacto público no está confirmado como campo separado — verificar contra schema real antes de asumir que falta o que ya está cubierto por `Organization.phone`.
+
+### 50.8. Métodos de pago — módulo nuevo (bancos + selección en el flujo de reserva)
+
+Idea central: el barbero configura desde el dashboard sus cuentas bancarias, y el cliente elige el método de pago al confirmar una reserva.
+
+**Configuración (dashboard):**
+- Activar/desactivar "Pago en local".
+- Activar/desactivar "Transferencia bancaria".
+- Hasta **3 cuentas bancarias** por organización, cada una con: banco, número de cuenta, titular, cédula, y prioridad/orden de aparición.
+
+**Modelo de datos propuesto:** nuevo `BankAccount` (`organizationId`, `bankName`, `accountNumber`, `accountHolderName`, `idNumber`, `order`, `active`), más un flag de configuración en `Organization` (o modelo de configuración de pagos aparte) para los dos toggles de método. Este módulo debe integrarse con el modelo `Payment` que **ya existe en Prisma pero sin servicio/controlador propio** (§21) — evitar crear un módulo paralelo duplicado; extender `Payment` (o el flujo de `Booking`) en lugar de reinventar.
+
+**Flujo en la reserva del cliente:**
+1. Cliente confirma reserva → elige método: "Pagar en local" o "Transferencia bancaria".
+2. Si elige transferencia: se le muestran los bancos configurados por el barbero (banco, cuenta, titular) y puede subir un comprobante de pago (imagen — mismo flujo de storage externo de §50.3; requiere un campo tipo `proofOfPaymentUrl` en `Booking` o `Payment`).
+
+### 50.9. Google Calendar — integración por profesional (fase posterior, no inmediata)
+
+Cada profesional podría conectar su propio Google Calendar. Flujo previsto:
+
+```
+Reserva creada → Booking confirmado → Google Calendar API → Evento creado
+```
+
+Requeriría almacenar credenciales/tokens OAuth por profesional (campo nuevo, ej. en `Professional` o tabla aparte) — sin diseñar el detalle todavía, solo se deja registrada la intención para no cerrar el modelo de datos de `Professional` de forma que lo bloquee después.
+
+### 50.10. Roadmap de fases acordado
+
+Para no intentar construir todo esto de golpe, se acordó el siguiente orden — coherente con el estado real del proyecto (Parte VII está en la Fase Dashboard/Panel administrativo ahora mismo):
+
+1. **Fase Dashboard** (en curso — Parte VII): reservas, servicios, profesionales, clientes.
+2. **Fase CMS del negocio**: galería (§50.3), fotos de servicios (§50.4), promociones (§50.6), configuración pública del negocio (§50.7), branding por barbería.
+3. **Fase Pagos**: cuentas bancarias, selección de método de pago, comprobantes (§50.8).
+4. **Fase Integraciones**: Google Calendar (§50.9), WhatsApp, notificaciones.
+
+### 50.11. Por qué se documenta ahora aunque no se implemente todavía
+
+Aunque la implementación sigue el roadmap de §50.10, el diseño de base de datos debe anticipar estos módulos desde ya para no forzar migraciones destructivas después. En síntesis, lo que falta modelar (más allá de lo que §25.2 ya resolvió con `GalleryImage` y los campos de `Organization`/`Professional`) es: `Service.imageUrl` + estado activo/inactivo, el modelo `Promotion`, el modelo `BankAccount` + configuración de métodos de pago, la extensión de `Payment`/`Booking` para comprobante de transferencia, y espacio para credenciales de Google Calendar por profesional. Con esto, Kortek Booking deja de pensarse solo como motor de reservas y pasa a diseñarse como plataforma **CMS + Booking Engine + CRM + Payments + Marketing** para barberías — consistente con la Visión ya declarada en §3, ahora con el detalle concreto de qué implica a nivel de producto y de datos.
+
+---
+
+*Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo. La única excepción es la Parte VIII (§50), marcada explícitamente como visión de producto pendiente de implementación y auditoría.*

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { Sidebar } from "@/components/Sidebar";
+import { Sidebar } from "@/components/dashboard/Sidebar";
+import { Topbar } from "@/components/dashboard/Topbar";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashboardLayout({
 }) {
   const { user } = useAuth();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -21,16 +23,19 @@ export default function DashboardLayout({
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-[var(--color-muted)]">
+      <div className="dashboard-shell flex min-h-screen items-center justify-center text-sm text-[var(--dash-text-muted)]">
         Cargando…
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto px-8 py-8">{children}</main>
+    <div className="dashboard-shell flex min-h-screen">
+      <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
+      <div className="flex min-h-screen flex-1 flex-col">
+        <Topbar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
+        <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">{children}</main>
+      </div>
     </div>
   );
 }
