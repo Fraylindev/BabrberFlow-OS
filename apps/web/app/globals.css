@@ -1,27 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  /* --- Paleta: cuero oscuro + latón de barbería, usado con moderación --- */
-  --color-ink: #14120f;          /* fondo principal, casi negro cálido */
-  --color-surface: #1c1914;      /* tarjetas, paneles */
-  --color-surface-raised: #242019; /* elementos elevados, inputs */
-  --color-border: #332c22;       /* bordes sutiles */
-  --color-border-strong: #4a4030;
+  /* --- Paleta: negro / blanco / rojo — identidad de todo el producto,
+     no solo de la landing (decisión explícita del usuario, reemplaza la
+     paleta cuero/latón de la Fase 0). Los nombres de variable
+     (--color-brass, etc.) se conservan tal cual para no tener que tocar
+     cada archivo que ya las consume (dashboard, login, register) — solo
+     cambia el valor. --- */
+  --color-ink: #0a0a0a;           /* fondo principal, negro real */
+  --color-surface: #131313;       /* tarjetas, paneles */
+  --color-surface-raised: #1c1c1c; /* elementos elevados, inputs */
+  --color-border: #262626;        /* bordes sutiles */
+  --color-border-strong: #383838;
 
-  --color-paper: #f2ece1;        /* texto principal, cálido casi-blanco */
-  --color-muted: #a89b86;        /* texto secundario */
-  --color-faint: #6f6552;        /* texto terciario / placeholders */
+  --color-paper: #fafafa;         /* texto principal, blanco */
+  --color-muted: #a3a3a3;         /* texto secundario */
+  --color-faint: #6b6b6b;         /* texto terciario / placeholders */
 
-  --color-brass: #c89b4a;        /* acento principal — latón */
-  --color-brass-hover: #ddb262;
-  --color-brass-dim: #8a6d38;
+  --color-brass: #e11d2e;         /* acento principal — rojo */
+  --color-brass-hover: #ff3344;
+  --color-brass-dim: #8f1420;
 
-  --color-success: #5c8266;      /* verde cuero — pagado / confirmado */
-  --color-success-bg: #1c2620;
-  --color-danger: #b2554b;       /* cancelado / no-show */
-  --color-danger-bg: #2a1c19;
-  --color-pending: #b0904a;      /* pendiente */
-  --color-pending-bg: #2a2416;
+  --color-success: #3f9a5c;       /* pagado / confirmado */
+  --color-success-bg: #10201a;
+  --color-danger: #ff5c3d;        /* cancelado / no-show — distinto del rojo de marca */
+  --color-danger-bg: #26140f;
+  --color-pending: #d4a13d;       /* pendiente */
+  --color-pending-bg: #241d10;
 
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -34,10 +39,10 @@
   --duration-base: 300ms;
   --duration-slow: 600ms;
 
-  /* --- Elevación: profundidad cálida (sombra con tinte de tinta, no
-     gris genérico) --- */
-  --shadow-card: 0 1px 2px rgba(10, 8, 5, 0.4), 0 12px 32px -12px rgba(10, 8, 5, 0.55);
-  --shadow-raised: 0 4px 8px rgba(10, 8, 5, 0.45), 0 24px 48px -16px rgba(10, 8, 5, 0.6);
+  /* --- Elevación: sombra neutra sobre negro real --- */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px -12px rgba(0, 0, 0, 0.7);
+  --shadow-raised: 0 4px 8px rgba(0, 0, 0, 0.55), 0 24px 48px -16px rgba(0, 0, 0, 0.75);
+  --shadow-glow: 0 0 60px -12px rgba(225, 29, 46, 0.45);
 }
 
 body {
@@ -59,35 +64,39 @@ body {
   }
 }
 
-/* --- Firma visual: grano de cuero muy sutil. Un solo elemento memorable,
-   reutilizado (nunca reinventado) detrás de héroes y secciones oscuras
-   en los 3 productos — landing, sitio público, panel. SVG inline, sin
-   petición de red ni imagen externa. --- */
-.leather-grain {
+/* --- Firma visual: grano de película muy sutil (antes "leather-grain").
+   Un solo elemento memorable, reutilizado detrás de héroes y secciones
+   oscuras en los 3 productos. SVG inline, sin petición de red. --- */
+.film-grain {
   position: relative;
 }
-.leather-grain::before {
+.film-grain::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.06;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Barrido de brillo sobre latón — usado con moderación en CTAs primarios
-   al hacer hover, nunca en reposo. */
+@keyframes fade-price {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
 
-@keyframes brass-sheen {
+/* Barrido de brillo — usado con moderación en CTAs primarios al hacer
+   hover, nunca en reposo. (Antes "brass-sheen".) */
+@keyframes cta-sheen {
   from { background-position: -150% 0; }
   to { background-position: 250% 0; }
 }
-.brass-sheen-hover:hover {
+.cta-sheen-hover:hover {
   background-image: linear-gradient(
     100deg,
     transparent 40%,
@@ -95,5 +104,30 @@ body {
     transparent 60%
   );
   background-size: 250% 100%;
-  animation: brass-sheen var(--duration-slow) var(--ease-out);
+  animation: cta-sheen var(--duration-slow) var(--ease-out);
+}
+
+/* Barber pole animado — SVG inline, girando en bucle. Firma visual
+   secundaria, usada con moderación (una vez por vista como mucho). */
+.barber-pole {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-brass) 0 14px,
+    var(--color-paper) 14px 28px,
+    var(--color-ink) 28px 42px
+  );
+  background-size: 200% 200%;
+  animation: barber-pole-spin 6s linear infinite;
+}
+@keyframes barber-pole-spin {
+  from { background-position: 0 0; }
+  to { background-position: 80px 0; }
+}
+
+/* Gradación cinematográfica: toda la fotografía de la landing pasa por
+   este mismo tratamiento (blanco y negro de base + velo rojo sutil) en
+   vez de mostrarse a color crudo — así fotos de fuentes distintas se
+   sienten como una sola dirección de arte, no un collage de stock. */
+.cinematic-grade {
+  filter: grayscale(0.55) contrast(1.15) brightness(0.85);
 }

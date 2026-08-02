@@ -1,24 +1,39 @@
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Stat } from "@/components/ui/Stat";
 import { Reveal } from "@/components/ui/Reveal";
+import { LANDING_PHOTOS } from "@/lib/landing-photos";
 
 export function Proof() {
   return (
-    <section className="leather-grain relative overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-surface)]/60 py-20">
+    <section className="relative overflow-hidden border-y border-[var(--color-border)] py-24 sm:py-32">
+      <Image
+        src={LANDING_PHOTOS.vintageInterior.src}
+        alt=""
+        fill
+        sizes="100vw"
+        className="cinematic-grade object-cover opacity-40"
+      />
+      <div aria-hidden className="absolute inset-0 bg-[var(--color-ink)]/80" />
+      <div aria-hidden className="film-grain absolute inset-0" />
+      {/* Barber pole animado — firma visual secundaria, una sola vez en
+          toda la landing */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[120px]"
-        style={{ background: "var(--color-brass)" }}
+        className="barber-pole absolute -right-6 top-0 h-full w-3 opacity-70 sm:w-4"
       />
+
       <Container size="wide" className="relative">
         <Reveal>
-          <p className="max-w-xl font-[family-name:var(--font-display)] text-2xl leading-snug text-[var(--color-paper)] sm:text-3xl">
-            Construido para resolver lo que de verdad frena a una barbería —
-            no una lista de funciones genéricas.
+          <p className="max-w-xl font-[family-name:var(--font-display)] text-3xl leading-snug text-[var(--color-paper)] sm:text-4xl">
+            Menos archivos. <span className="text-[var(--color-brass)]">Más control.</span>
+          </p>
+          <p className="mt-4 max-w-lg text-base text-[var(--color-muted)]">
+           Creado para resolver los verdaderos obstáculos de una barbería
           </p>
         </Reveal>
 
-        <div className="mt-14 grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="mt-16 grid grid-cols-2 gap-10 sm:grid-cols-4">
           <Reveal delay={0}>
             <Stat value="< 1 min" label="para que un cliente reserve" />
           </Reveal>
@@ -29,7 +44,7 @@ export function Proof() {
             <Stat value="4 roles" label="dueño, admin, recepción, barbero" />
           </Reveal>
           <Reveal delay={180}>
-            <Stat value="0" label="hojas de cálculo necesarias" />
+            <Stat value="1 lugar" label="para toda tu operación" />
           </Reveal>
         </div>
       </Container>

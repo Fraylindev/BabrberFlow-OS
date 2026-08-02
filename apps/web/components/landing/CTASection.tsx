@@ -13,13 +13,13 @@ export function CTASection() {
         alt=""
         fill
         sizes="100vw"
-        className="object-cover"
+        className="cinematic-grade object-cover"
       />
       <div
         aria-hidden
         className="absolute inset-0 bg-[var(--color-ink)]/85"
       />
-      <div aria-hidden className="leather-grain absolute inset-0" />
+      <div aria-hidden className="film-grain absolute inset-0" />
 
       <Container className="relative text-center">
         <Reveal>

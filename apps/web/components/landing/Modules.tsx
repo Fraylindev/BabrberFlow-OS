@@ -23,7 +23,7 @@ export function Modules() {
         <SectionHeading
           eyebrow="Qué incluye"
           title="Un módulo para cada parte del negocio"
-          description="Nada que instalar por separado — todo conectado desde el primer día."
+          description="Nada que instalar por separado, todo conectado desde el primer día."
         />
 
         <div className="mx-auto mt-14 max-w-4xl divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">

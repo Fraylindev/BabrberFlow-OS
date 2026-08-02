@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, ReactNode } from "react";
+import { useEffect, useRef, useState, ReactNode, HTMLAttributes } from "react";
 
 type Direction = "up" | "none";
 
@@ -20,12 +20,13 @@ export function Reveal({
   direction = "up",
   delay = 0,
   className = "",
+  ...rest
 }: {
   children: ReactNode;
   direction?: Direction;
   delay?: number;
   className?: string;
-}) {
+} & Omit<HTMLAttributes<HTMLDivElement>, "className" | "children">) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -56,6 +57,7 @@ export function Reveal({
       className={`transition-[opacity,transform] duration-[var(--duration-slow)] ease-[var(--ease-out)] ${
         visible ? "opacity-100 translate-y-0" : `opacity-0 ${hiddenTransform}`
       } ${className}`}
+      {...rest}
     >
       {children}
     </div>

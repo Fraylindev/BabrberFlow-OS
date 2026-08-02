@@ -985,6 +985,64 @@ No pude generarlas: este entorno no tiene navegador ni forma de instalar uno (la
 
 `tsc --noEmit` y `eslint .` sobre `apps/web` — limpios. `next build` confirmado exitoso con el mismo diagnóstico temporal de fuentes que en §42.5 (revertido antes de entregar). Falta tu build real local con fuentes de Google y tu revisión visual — ninguna de las dos se puede hacer desde este entorno.
 
+> **Nota:** esta versión también fue reemplazada — ver §44.
+
+## 44. Fase 1 — Identidad negro/blanco/rojo + carrusel de testimonios + precios definitivos (2026-08-01)
+
+Reconstrucción sobre la base de §43, con tres cambios de fondo pedidos explícitamente por el usuario, más una serie de mejoras puntuales por sección.
+
+### 44.1. Cambio de identidad de marca — afecta TODO el producto, no solo la landing
+
+El usuario confirmó explícitamente que negro/blanco/rojo es la nueva identidad de **todo** Kortek Booking (landing, panel, sitio público), no solo de esta pantalla. Se cambió en `app/globals.css`, que es compartido por las 3 fases:
+
+- `--color-ink/surface/border` pasaron de negro cálido con tinte cuero a negro neutro real (`#0a0a0a`).
+- `--color-paper/muted/faint` pasaron de blanco cálido (cream) a blanco/gris neutro.
+- `--color-brass` (el acento principal) pasó de latón (`#c89b4a`) a rojo (`#e11d2e`). **Se conservó el nombre de la variable** — `--color-brass`, `--color-brass-hover`, `--color-brass-dim` — para no tener que tocar cada archivo que ya la consume fuera de la landing (`Sidebar.tsx`, `app/login`, `app/register`, `app/dashboard/*`, todos preexistentes a estas fases). Es deuda cosmética menor (el nombre ya no describe el color), documentada aquí para quien lea el código más adelante.
+- `--color-danger` se separó deliberadamente del nuevo rojo de marca (tono más anaranjado) para que un estado de error/cancelado nunca se confunda visualmente con un botón o acento de marca.
+- `.leather-grain` → renombrado `.film-grain` (mismo mecanismo, sin relación temática con cuero). `.brass-sheen-hover` → `.cta-sheen-hover`. Ambos renombrados de forma segura: solo se usaban dentro de los archivos de landing que ya controla esta fase.
+- Nueva utilidad `.cinematic-grade` (blanco y negro parcial + contraste) aplicada a **toda** la fotografía de la landing, para que fotos de fuentes distintas se sientan gradadas bajo una sola dirección de arte en vez de un collage de stock a color crudo.
+- Nueva utilidad `.barber-pole` — barber pole animado en CSS puro (gradiente diagonal en bucle), usado una sola vez en `Proof.tsx`.
+
+### 44.2. Hero sin mockup
+
+Se eliminó por completo la tarjeta flotante "Agenda de hoy". El Hero ahora es 100% fotografía a sangre completa (nueva foto, más cinematográfica) + tipografía a mayor escala + CTA primario más fuerte y un enlace de texto en vez de un segundo botón secundario.
+
+### 44.3. Testimonios — carrusel con fotos
+
+`Testimonials.tsx` se reescribió como carrusel con autoplay (6s), pausa al pasar el mouse/foco, navegación por puntos, `aria-live` para lectores de pantalla. Se usaron 3 retratos de archivo (Unsplash, licencia libre) como avatar. **Nota de honestidad, sin cambios respecto a §43.2:** son fotos de archivo genéricas, no de las personas reales detrás de cada nombre ficticio — el usuario pidió explícitamente fotografía aquí, así que se incluyó, pero sigue siendo contenido de marcador de posición que debe reemplazarse por clientes reales antes de un lanzamiento real.
+
+### 44.4. Precios definitivos y CTA de WhatsApp
+
+`Pricing.tsx`: Estándar US$29/mes, Pro US$59/mes (el Pro ahora dice explícitamente "Todo lo del plan Estándar, más..."). El toggle se cambió de switch a dos botones ("Mensual" / "Anual"). El enlace "Hablemos" se convirtió en un CTA con ícono de WhatsApp, apuntando a `BRAND.contact.whatsapp` (`wa.me/XXXXXXXXXX` — placeholder, pendiente de que el usuario coloque el número real).
+
+### 44.5. Footer completo
+
+`LandingFooter.tsx` ahora incluye iconos de Facebook, Instagram, TikTok y WhatsApp (SVG inline, sin librería de iconos — mismo criterio del proyecto), apuntando a `BRAND.social.*`/`BRAND.contact.whatsapp` — todos placeholders pendientes de los enlaces reales del usuario.
+
+### 44.6. Capturas de pantalla — ahora sí
+
+A diferencia de §43.3, esta vez sí se consiguieron capturas reales: se instaló temporalmente `puppeteer-core` + `@sparticuz/chromium` (paquete de Chromium empaquetado como tarball de npm, no requiere descarga desde un CDN fuera de la lista permitida de red del sandbox), se levantó `next start` localmente y se navegó con el navegador headless a 4 anchos (1920, 1440, 768, 390px). Ambas dependencias se instalaron con `--no-save` y se eliminaron después de generar las capturas — no forman parte del código entregado ni tocaron `package.json`/`pnpm-lock.yaml`. Limitación real de esas capturas: se generaron con las fuentes de Google deshabilitadas (mismo motivo de red de siempre), así que la tipografía Fraunces/IBM Plex Mono no aparece — el resto (color, composición, fotografía, spacing) sí es fiel al código entregado.
+
+### 44.7. Validación
+
+`tsc --noEmit` y `eslint .` — limpios. `next build` confirmado exitoso (mismo diagnóstico temporal de fuentes, revertido antes de entregar). Capturas de pantalla generadas y adjuntas — ver §44.6 sobre su única limitación conocida.
+
+## 45. Fase 1 — Pulido final: acordeón de FAQ + reveal de scroll (2026-08-01) — CIERRE DE FASE
+
+- **`FAQ.tsx`** pasó de `<details>` nativo (cada pregunta independiente) a un acordeón controlado por estado de React: solo un índice abierto a la vez, la anterior se cierra automáticamente al abrir otra. La animación de alto usa la misma técnica `grid-template-rows` (`0fr` → `1fr`) que ya usaba el menú móvil de `LandingNav` — reutilizada, no reinventada.
+- **`Reveal.tsx`** (Fase 0) ahora acepta y reenvía props adicionales de `div` (`onMouseEnter`, `onFocus`, etc.) — mejora genérica del primitivo, necesaria para poder envolver el carrusel de `Testimonials.tsx` en `Reveal` sin perder su lógica de pausa al pasar el mouse/foco.
+- **Auditoría de scroll-reveal:** `Testimonials.tsx` era la única sección del landing sin `Reveal` (encabezado y carrusel aparecían de golpe). Ya queda cubierta — las 9 secciones del landing (`Hero`, `Story`, `Benefits`, `Modules`, `Proof`, `Testimonials`, `Pricing`, `FAQ`, `CTASection`) tienen entrada progresiva.
+
+**Con esto se da por cerrada la Fase 1 (Landing de Kortek Booking).** Sigue la Fase 2: Panel administrativo.
+
+### 45.1. Validación
+
+`tsc --noEmit` y `eslint .` — limpios. `next build` confirmado exitoso (mismo diagnóstico temporal de fuentes). Se verificó visualmente con capturas que el acordeón abre una pregunta y cierra la anterior correctamente.
+
+### 45.2. Convención de entrega — vigente desde esta fase en adelante
+
+El usuario pidió que, de aquí en adelante, cada entrega sea un `.zip` **sin carpeta contenedora** — el contenido empieza directo en la raíz del repo (`apps/`, `PROJECT_MASTER.md`, etc.), listo para extraer y reemplazar sobre la copia local sin mover nada a mano. Todo archivo nuevo (imágenes, iconos, SVG) debe ubicarse en su carpeta definitiva del proyecto, nunca suelto.
+
 ---
 
 *Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo.*

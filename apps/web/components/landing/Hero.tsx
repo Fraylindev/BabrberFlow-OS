@@ -1,94 +1,68 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { LANDING_PHOTOS } from "@/lib/landing-photos";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[92vh] overflow-hidden">
-      {/* Fondo fotográfico a sangre completa, no un panel de color plano */}
+    <section className="relative flex min-h-[100svh] items-end overflow-hidden">
       <Image
         src={LANDING_PHOTOS.heroInterior.src}
         alt={LANDING_PHOTOS.heroInterior.alt}
         fill
         priority
         sizes="100vw"
-        className="object-cover"
+        className="cinematic-grade object-cover"
+      />
+      {/* Velo negro con acento rojo en la base — la gradación se hace
+          una sola vez a nivel de imagen (.cinematic-grade); este overlay
+          solo controla legibilidad y el resplandor de marca. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.35)_0%,rgba(10,10,10,0.55)_40%,var(--color-ink)_100%)]"
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,5,0.55)_0%,rgba(10,8,5,0.75)_45%,var(--color-ink)_100%)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
+        style={{ background: "linear-gradient(0deg, rgba(225,29,46,0.18), transparent)" }}
       />
-      <div aria-hidden className="leather-grain absolute inset-0" />
+      <div aria-hidden className="film-grain absolute inset-0" />
 
-      <Container size="wide" className="relative flex min-h-[92vh] flex-col justify-end pb-16 pt-32 sm:pb-24">
-        <Reveal className="max-w-3xl">
-          <span className="inline-block rounded-full border border-[var(--color-brass)]/50 bg-[var(--color-ink)]/60 px-3 py-1 text-xs text-[var(--color-brass)] backdrop-blur">
-            Para barberías y salones que quieren verse tan bien como cortan
+      <Container size="wide" className="relative w-full pb-20 pt-40 sm:pb-28">
+        <Reveal className="max-w-4xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-brass)]/40 bg-[var(--color-ink)]/50 px-3 py-1 text-xs uppercase tracking-wider text-[var(--color-brass)] backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-brass)]" />
+            Para barberías que se toman en serio su negocio
           </span>
 
-          <h1 className="mt-6 font-[family-name:var(--font-display)] text-5xl font-semibold leading-[0.98] text-[var(--color-paper)] sm:text-6xl lg:text-7xl">
+          <h1 className="mt-7 font-[family-name:var(--font-display)] text-6xl font-semibold leading-[0.94] text-[var(--color-paper)] sm:text-7xl lg:text-8xl">
             Tu barbería,
             <br />
-            <span className="text-[var(--color-brass)]">organizada de verdad.</span>
+            organizada <span className="text-[var(--color-brass)]">de verdad.</span>
           </h1>
 
-          <p className="mt-6 max-w-lg text-base text-[var(--color-paper)]/80 sm:text-lg">
+          <p className="mt-7 max-w-xl text-lg text-[var(--color-paper)]/75 sm:text-xl">
             Reservas sin fricción para tus clientes, un panel real para tu equipo,
             y los números claros para ti. Con tu marca al frente, siempre.
           </p>
 
-          <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <Link href="/register">
-              <Button className="w-full px-6 py-3 text-base sm:w-auto">
+              <Button className="w-full px-8 py-4 text-base sm:w-auto">
                 Registra tu barbería gratis
               </Button>
             </Link>
-            <a href="#planes">
-              <Button variant="secondary" className="w-full border-[var(--color-paper)]/30 bg-[var(--color-ink)]/50 px-6 py-3 text-base backdrop-blur sm:w-auto">
-                Ver planes
-              </Button>
+            <a
+              href="#planes"
+              className="text-sm font-medium text-[var(--color-paper)] underline decoration-[var(--color-brass)] underline-offset-4 transition-colors hover:text-[var(--color-brass)]"
+            >
+              Ver planes →
             </a>
           </div>
         </Reveal>
       </Container>
-
-      {/* Tarjeta flotante del producto, superpuesta al borde de la foto —
-          rompe la composición plana y da profundidad real. */}
-      <Reveal
-        delay={200}
-        className="absolute bottom-0 right-4 z-10 hidden w-[22rem] -translate-y-10 rotate-1 sm:block lg:right-16"
-      >
-        <div className="rounded-sm border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-raised)] transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out)] hover:rotate-0">
-          <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
-            <p className="font-[family-name:var(--font-display)] text-sm text-[var(--color-paper)]">
-              Agenda de hoy
-            </p>
-            <span className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-muted)]">
-              Elite Barber Shop
-            </span>
-          </div>
-          <div className="mt-3 flex flex-col divide-y divide-[var(--color-border)]">
-            {[
-              { client: "Josué M.", detail: "Corte + barba con Ana", time: "10:00 AM", status: "CONFIRMED" },
-              { client: "Ramón P.", detail: "Fade clásico con Luis", time: "11:30 AM", status: "PENDING" },
-            ].map((row) => (
-              <div key={row.client} className="flex items-center justify-between py-3">
-                <div className="text-left">
-                  <p className="text-sm text-[var(--color-paper)]">{row.client}</p>
-                  <p className="text-xs text-[var(--color-muted)]">
-                    {row.time} · {row.detail}
-                  </p>
-                </div>
-                <Badge status={row.status} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </Reveal>
     </section>
   );
 }

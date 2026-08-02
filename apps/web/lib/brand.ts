@@ -31,7 +31,19 @@ export const BRAND = {
     credit: "Una creación de Kortek Studio",
   },
   colors: {
-    accent: "#c89b4a",
+    accent: "#e11d2e",
+  },
+  /**
+   * Placeholders — el usuario colocará los valores definitivos
+   * (número de WhatsApp real, handles de redes) más adelante.
+   */
+  contact: {
+    whatsapp: "https://wa.me/8297290386",
+  },
+  social: {
+    facebook: "https://facebook.com/kortekbooking",
+    instagram: "https://instagram.com/kortekbooking",
+    tiktok: "https://tiktok.com/@kortekbooking",
   },
 } as const;
 

@@ -16,7 +16,7 @@ const BENEFITS = [
   {
     title: "Tu marca al frente",
     description:
-      "Tu barbería tiene su propia página de reservas — Kortek es la infraestructura, no el protagonista.",
+      "Tu barbería tiene su propia página de reservas. Kortek es la infraestructura, no el protagonista.",
     goal: "Objetivo: construir tu marca, no la nuestra",
     span: "",
   },
@@ -54,17 +54,17 @@ export function Benefits() {
 
           {/* Celda fotográfica — rompe la monotonía de tarjetas de texto */}
           <Reveal delay={240} className="lg:col-span-3">
-            <div className="relative flex h-64 items-end overflow-hidden rounded-sm border border-[var(--color-border-strong)] sm:h-80">
+            <div className="group relative flex h-64 items-end overflow-hidden rounded-sm border border-[var(--color-border-strong)] sm:h-80">
               <Image
                 src={LANDING_PHOTOS.clippers.src}
                 alt={LANDING_PHOTOS.clippers.alt}
                 fill
                 sizes="100vw"
-                className="object-cover"
+                className="cinematic-grade object-cover transition-transform duration-[1200ms] ease-[var(--ease-out)] group-hover:scale-105"
               />
               <div
                 aria-hidden
-                className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,8,5,0.85)_0%,rgba(10,8,5,0.15)_55%,transparent_100%)]"
+                className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,10,10,0.9)_0%,rgba(10,10,10,0.2)_55%,transparent_100%)]"
               />
               <p className="relative max-w-xs p-6 font-[family-name:var(--font-display)] text-xl text-[var(--color-paper)] sm:p-10 sm:text-2xl">
                 Diseñado para el ritmo real de una barbería, no para una demo.

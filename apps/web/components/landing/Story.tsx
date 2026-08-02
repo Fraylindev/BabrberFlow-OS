@@ -27,9 +27,13 @@ export function Story() {
             alt={LANDING_PHOTOS.storyInterior.alt}
             fill
             sizes="(min-width: 1024px) 45vw, 100vw"
-            className="object-cover"
+            className="cinematic-grade object-cover"
           />
-          <div className="leather-grain absolute inset-0" aria-hidden />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(0deg,rgba(10,10,10,0.65)_0%,transparent_55%)]"
+          />
+          <div className="film-grain absolute inset-0" aria-hidden />
         </Reveal>
 
         <div className="lg:order-1">
