@@ -34,7 +34,9 @@ export default function DashboardLayout({
       <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
       <div className="flex min-h-screen flex-1 flex-col">
         <Topbar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
-        <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">{children}</main>
+        <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">
+          <div className="mx-auto max-w-6xl">{children}</div>
+        </main>
       </div>
     </div>
   );

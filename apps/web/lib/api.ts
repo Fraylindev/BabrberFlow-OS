@@ -166,3 +166,24 @@ export interface PublicAvailabilityResponse {
   serviceId: string;
   slots: PublicAvailabilitySlot[];
 }
+
+// === Analítica del panel — GET /analytics/dashboard ===
+// Refleja exactamente lo que arma AnalyticsService en el backend.
+export interface AnalyticsDashboard {
+  generatedAt: string;
+  revenue: {
+    today: number;
+    yesterday: number;
+    last7Days: number;
+  };
+  bookings: {
+    today: number;
+    pending: number;
+    cancelled: number;
+  };
+  topProfessional: {
+    id: string;
+    name: string;
+    completedBookings: number;
+  } | null;
+}

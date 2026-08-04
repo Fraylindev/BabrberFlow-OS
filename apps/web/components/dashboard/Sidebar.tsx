@@ -74,7 +74,7 @@ export function Sidebar({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`group flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors duration-150 ${
+                    className={`group relative flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors duration-150 ${
                       collapsed ? "justify-center" : ""
                     } ${
                       active
@@ -82,6 +82,12 @@ export function Sidebar({
                         : "text-[var(--dash-sidebar-text)] hover:bg-[var(--dash-sidebar-surface)] hover:text-[var(--dash-sidebar-text-active)]"
                     }`}
                   >
+                    {active && (
+                      <span
+                        aria-hidden
+                        className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-[var(--dash-accent)]"
+                      />
+                    )}
                     <Icon
                       className={`h-[18px] w-[18px] shrink-0 transition-colors duration-150 ${
                         active

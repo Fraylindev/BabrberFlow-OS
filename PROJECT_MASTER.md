@@ -1106,6 +1106,18 @@ Se agregó un bloque completo de variables nuevas en `app/globals.css`, con pref
   ```
 
   `binaries.prisma.sh` no está en la lista de dominios permitidos de este entorno. Sin cliente generado, `@prisma/client` no exporta ningún tipo (`UserRole`, `PrismaClient`, etc.), y esos ~24-456 errores (según el comando) son *todos* sombra de esa única causa — ninguno es un error de código real, y no se tocó una sola línea de `apps/api` en esta tarea. En la máquina del usuario, donde `prisma generate` sí tiene salida de red, este bloqueo no existe.
+
+## 49.1. Pulido del shell — jerarquía y contenedor de contenido (2026-08-02)
+
+Continuación directa de §47, dentro del mismo alcance (solo shell, ningún módulo interno tocado):
+
+- **`app/dashboard/layout.tsx`**: `<main>` ahora envuelve `{children}` en un contenedor `max-w-6xl mx-auto`. Ninguna página de módulo definía su propio ancho (verificado antes de tocar nada) — todas dependían 100% del shell, así que las 6 heredan el límite sin necesidad de modificarlas una por una.
+- **`components/dashboard/Topbar.tsx`**: el nombre de la sección actual pasa de texto plano a tipografía de título (`font-display`, `text-lg font-semibold`) — se lee como el título real de la página, no como una migaja de pan más.
+- **`components/dashboard/Sidebar.tsx`**: se agregó una barra vertical roja de 2px sobre el ítem de navegación activo — refuerzo de "dónde estoy" más allá del tinte de fondo, que por sí solo es sutil sobre el grafito. Confirmadas las duraciones de transición: 150ms en hover/color de ítems, 200ms en el drawer móvil y en el giro del ícono de colapsar — dentro del rango pedido (150-200ms) de forma consistente en todo el shell.
+
+### Validación
+
+`pnpm --filter web lint` → limpio. `pnpm --filter web exec tsc --noEmit` → limpio. `pnpm --filter web build` → exitoso (mismo diagnóstico temporal de fuentes, revertido antes de entregar). Mismo bloqueo de `apps/api` en este entorno que en §49, sin relación con este cambio — no se tocó backend.
 ---
 
 # PARTE VIII — VISIÓN AMPLIADA DEL PRODUCTO
@@ -1214,6 +1226,45 @@ Para no intentar construir todo esto de golpe, se acordó el siguiente orden —
 ### 50.11. Por qué se documenta ahora aunque no se implemente todavía
 
 Aunque la implementación sigue el roadmap de §50.10, el diseño de base de datos debe anticipar estos módulos desde ya para no forzar migraciones destructivas después. En síntesis, lo que falta modelar (más allá de lo que §25.2 ya resolvió con `GalleryImage` y los campos de `Organization`/`Professional`) es: `Service.imageUrl` + estado activo/inactivo, el modelo `Promotion`, el modelo `BankAccount` + configuración de métodos de pago, la extensión de `Payment`/`Booking` para comprobante de transferencia, y espacio para credenciales de Google Calendar por profesional. Con esto, Kortek Booking deja de pensarse solo como motor de reservas y pasa a diseñarse como plataforma **CMS + Booking Engine + CRM + Payments + Marketing** para barberías — consistente con la Visión ya declarada en §3, ahora con el detalle concreto de qué implica a nivel de producto y de datos.
+
+---
+
+# PARTE IX — MÓDULO RESUMEN (BACKOFFICE, TEMA CLARO)
+
+## 51. Resumen rediseñado como producto, no como CRUD (2026-08-02)
+
+### 51.1. Contexto de reconciliación
+
+Al auditar el código antes de esta tarea, `app/dashboard/page.tsx` seguía siendo la versión mínima original (4 stats genéricas + agenda), sin `AnalyticsDashboard` en `lib/api.ts` ni `TrendStat`/`format.ts` — ninguna entrega previa de ese módulo específico había llegado a aplicarse (mismo patrón de §46). Esta sección documenta lo que sí quedó implementado y verificado.
+
+### 51.2. Propuesta UX/UI aprobada (resumen)
+
+Antes de programar se presentó y aprobó una propuesta de arquitectura de información, con 6 ajustes del usuario incorporados: acciones rápidas por rol, widget de "Profesional del mes" (sin cifra de ingresos — el endpoint no la expone, se mantuvo honesto en vez de inventarla), "Copiar enlace" junto a "Ver página pública", estados vacíos diferenciados (agenda vacía vs. negocio recién creado sin profesionales ni citas), comportamiento responsive explícito, y "Canceladas hoy" movido de KPI a Alertas.
+
+### 51.3. Qué se implementó
+
+- **KPIs (4, solo roles con visión de negocio):** Ingresos hoy (con variación % vs. ayer), Ingresos 7 días, Reservas hoy, Pendientes por confirmar. "Canceladas hoy" ya no es KPI — vive en Alertas.
+- **Acciones rápidas filtradas por rol real:** "Nueva reserva" (todos los roles — `@Roles(...B2B_ROLES)` en el backend incluye a `BARBER`), "Nuevo cliente" (no `BARBER`), "Nuevo servicio"/"Nuevo profesional" (solo `OWNER`/`ADMIN`, igual que el backend). Enlazan al módulo correspondiente — no abren su modal de creación directamente, porque eso requeriría tocar los módulos internos, fuera de alcance hoy.
+- **Alertas de hoy:** reservas canceladas, pendientes por confirmar, profesionales activos sin ninguna cita hoy — las tres derivadas de datos reales (`/analytics/dashboard` + `/professionals` + `/bookings`), ninguna inventada.
+- **Agenda de hoy:** la próxima cita (por hora, calculada una sola vez al cargar los datos) se resalta con un borde de acento.
+- **"Carga de hoy" (nuevo widget):** cuenta de citas por profesional activo, calculada cruzando `/professionals` con `/bookings` — permite ver quién tiene el día lleno y quién no, sin fingir un estado de presencia en vivo que no existe.
+- **"Profesional del mes":** consume `topProfessional` de `/analytics/dashboard` tal cual — nombre y citas completadas, sin cifra de ingresos (el endpoint no la devuelve).
+- **Estado "negocio recién creado":** si no hay profesionales ni citas, la pantalla reemplaza la agenda/widgets por un bloque de onboarding con 3 CTAs (agregar profesional, agregar servicio, compartir la página pública) en vez de mostrar paneles vacíos sin guía.
+- **"Ver página pública" + "Copiar enlace":** en el encabezado, usando `organization.slug` del contexto de auth — `/${organization.slug}` en pestaña nueva, y `navigator.clipboard` para copiar la URL completa con feedback por `Toast`.
+- **"Cerrar sesión"**: ya existía en el menú del `Sidebar`/`Topbar` (§47) — no requería cambios.
+
+### 51.4. Tema claro — extensión aditiva de componentes compartidos, no un rediseño global
+
+Como el shell (§47) ya envuelve todo `/dashboard` en `.dashboard-shell`, pero los componentes compartidos (`Card`, `Button`, `Badge`, `PageHeader`, `EmptyState`, `Skeleton`) seguían coloreados exclusivamente para el tema oscuro, usarlos tal cual en esta página los habría vuelto ilegibles (ej. texto casi blanco sobre fondo casi blanco). Se extendió cada uno con una prop `tone?: "dark" | "light"` (por defecto `"dark"` — cero cambio de comportamiento para los módulos que aún no migran), con las clases completas y literales por combinación variante+tono en vez de compuestas en runtime (Tailwind necesita verlas enteras en el código fuente para generarlas). `TrendStat` es la única excepción: no tenía consumidores en el tema oscuro, así que se construyó nativa en `--dash-*` sin variante `"dark"`.
+
+### 51.5. Qué se decidió NO tocar
+
+- Ninguna página de módulo (Reservas, Clientes, Profesionales, Servicios, Facturación, Equipo) — siguen en tema oscuro, sin cambios, tal como se acordó.
+- `Avatar.tsx` — su combinación actual de colores (borde oscuro sutil + fondo rojo apagado al 25%) se mantiene legible sobre fondo claro sin necesitar una variante `tone` propia; se dejó así para no ampliar el alcance sin necesidad real.
+
+### 51.6. Validación
+
+`pnpm --filter web lint` → limpio (se corrigieron en el camino dos errores reales de las reglas de pureza de `react-hooks`: una llamada a `Date.now()` durante el render, y un `setState` síncrono dentro de un efecto reaccionando a otro estado — ambos resueltos calculando `nextBookingId` dentro del mismo efecto que ya carga los datos, no en un efecto derivado aparte). `pnpm --filter web exec tsc --noEmit` → limpio. `pnpm --filter web build` → exitoso (mismo diagnóstico temporal de fuentes de Google, revertido antes de entregar). Sin cambios de backend.
 
 ---
 

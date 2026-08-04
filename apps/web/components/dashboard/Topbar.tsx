@@ -37,10 +37,11 @@ export function Topbar({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
         >
           <MenuIcon className="h-5 w-5" />
         </button>
-        <nav aria-label="Ubicación actual" className="flex items-center gap-1.5 text-sm">
-          <span className="text-[var(--dash-text-faint)]">Panel</span>
-          <span className="text-[var(--dash-text-faint)]">/</span>
-          <span className="font-medium text-[var(--dash-text)]">{section}</span>
+        <nav aria-label="Ubicación actual" className="flex items-baseline gap-2">
+          <span className="hidden text-sm text-[var(--dash-text-faint)] sm:inline">Panel /</span>
+          <span className="font-[family-name:var(--font-display)] text-lg font-semibold text-[var(--dash-text)]">
+            {section}
+          </span>
         </nav>
       </div>
 
