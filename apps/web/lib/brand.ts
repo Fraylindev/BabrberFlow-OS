@@ -14,6 +14,11 @@
  * necesita para generar utilidades — brand.ts solo referencia el acento
  * principal para los lugares que lo necesitan fuera de clases CSS (ej.
  * theme-color de metadata, SVGs generados dinámicamente).
+ *
+ * IMPORTANTE: `legalName` y `footer.copyright`/`footer.credit` deben
+ * SIEMPRE referenciar `BRAND.name`/`BRAND.company` (getters), nunca
+ * repetir el literal — esa es la única forma real de que "una sola
+ * constante" siga siendo cierto si el nombre cambia mañana.
  */
 
 export const BRAND = {
@@ -24,11 +29,15 @@ export const BRAND = {
     "Kortek Booking es la plataforma todo-en-uno para gestionar reservas, equipo, clientes y pagos de tu barbería o salón.",
   author: "Fraylin",
   company: "Kortek Studio",
-  legalName: "Kortek Booking",
+  get legalName() {
+    return this.name;
+  },
   footer: {
     copyright: (year: number = new Date().getFullYear()) =>
-      `© ${year} Kortek Booking · Una creación de Kortek Studio. Todos los derechos reservados.`,
-    credit: "Una creación de Kortek Studio",
+      `© ${year} ${BRAND.name} · Una creación de ${BRAND.company}. Todos los derechos reservados.`,
+    get credit() {
+      return `Una creación de ${BRAND.company}`;
+    },
   },
   colors: {
     accent: "#e11d2e",

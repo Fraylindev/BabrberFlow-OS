@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 import { SectionHeading } from "./Section";
 
 const PRINCIPLES = [
@@ -21,12 +22,12 @@ const PRINCIPLES = [
 export function FoundersManifesto() {
   return (
     <section id="manifiesto" className="px-4 py-20 sm:px-6">
-      <SectionHeading eyebrow="El manifiesto" title="Por qué construimos Kortek Booking" />
+      <SectionHeading eyebrow="El manifiesto" title={`Por qué construimos ${BRAND.name}`} />
 
       <div className="mx-auto mt-10 max-w-2xl text-center">
         <p className="font-[family-name:var(--font-display)] text-xl leading-relaxed text-[var(--color-paper)] sm:text-2xl">
           Las barberías mueven cuero, acero y horas de pie — no hojas de cálculo.
-          Construimos Kortek Booking para que la tecnología se quede en segundo plano
+          Construimos {BRAND.name} para que la tecnología se quede en segundo plano
           y el oficio vuelva a ser lo único que importa en la silla.
         </p>
       </div>

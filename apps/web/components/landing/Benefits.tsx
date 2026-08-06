@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/Card";
+import { BRAND } from "@/lib/brand";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { LANDING_PHOTOS } from "@/lib/landing-photos";
@@ -34,7 +35,7 @@ export function Benefits() {
     <section id="beneficios" className="py-20 sm:py-28">
       <Container size="wide">
         <SectionHeading
-          eyebrow="Por qué Kortek Booking"
+          eyebrow={`Por qué ${BRAND.name}`}
           title="Menos fricción, más sillas ocupadas"
         />
         <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-3">

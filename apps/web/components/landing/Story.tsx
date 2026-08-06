@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { LANDING_PHOTOS } from "@/lib/landing-photos";
+import { BRAND } from "@/lib/brand";
 
 const CHAOS = [
   "Un cuaderno para las citas de mañana",
@@ -49,7 +50,7 @@ export function Story() {
           <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
             <Reveal delay={80}>
               <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider text-[var(--color-faint)]">
-                Sin Kortek Booking
+                Sin {BRAND.name}
               </p>
               <ul className="mt-4 flex flex-col gap-3">
                 {CHAOS.map((item) => (
@@ -63,7 +64,7 @@ export function Story() {
 
             <Reveal delay={160}>
               <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider text-[var(--color-brass)]">
-                Con Kortek Booking
+                Con {BRAND.name}
               </p>
               <ul className="mt-4 flex flex-col gap-3">
                 {ORDER.map((item) => (

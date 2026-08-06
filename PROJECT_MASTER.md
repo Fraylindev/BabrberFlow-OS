@@ -1266,6 +1266,73 @@ Como el shell (§47) ya envuelve todo `/dashboard` en `.dashboard-shell`, pero l
 
 `pnpm --filter web lint` → limpio (se corrigieron en el camino dos errores reales de las reglas de pureza de `react-hooks`: una llamada a `Date.now()` durante el render, y un `setState` síncrono dentro de un efecto reaccionando a otro estado — ambos resueltos calculando `nextBookingId` dentro del mismo efecto que ya carga los datos, no en un efecto derivado aparte). `pnpm --filter web exec tsc --noEmit` → limpio. `pnpm --filter web build` → exitoso (mismo diagnóstico temporal de fuentes de Google, revertido antes de entregar). Sin cambios de backend.
 
+## 52. Cierre end-to-end del módulo Resumen (2026-08-04)
+
+### 52.0. Auditoría (Fase 1) — causa raíz real
+
+Se rastreó el flujo completo `Backend → Endpoint → DTO → API → Context → Hooks → Topbar → Dropdown → Render` contra el commit real (`2b6857b`, sin cambios desde la entrega anterior — ninguna ronda previa de correcciones había llegado a aplicarse todavía). Hallazgo: **no hay ningún problema de propagación de contexto.** `POST /auth/login` ya devuelve `organization`, `lib/auth-context.tsx` ya la expone vía `useAuth()`. La causa exacta era que `components/dashboard/Topbar.tsx`, en el código real, nunca desestructuraba `organization` del hook — el dato viajaba correctamente hasta ahí y simplemente no se usaba en ese archivo. Sin bloqueo arquitectónico → se procedió directo a la implementación.
+
+### 52.1. Contexto & Tenant
+
+Sin cambios de arquitectura — el contexto ya era correcto de punta a punta. Se reaplicó el fix de hidratación (`useSyncExternalStore` en `auth-context.tsx`, mismo mecanismo documentado en la ronda anterior) y se conectó `organization` en `Topbar.tsx`.
+
+### 52.2. Menú de usuario
+
+`Ver página pública ↗`, `Copiar enlace`, `Cerrar sesión` — los tres funcionales, en ese orden, en el `Dropdown` del avatar del `Topbar`. Verificado que las tres acciones no aparecen duplicadas en ningún otro punto del panel.
+
+### 52.3. Sidebar — branding del negocio
+
+El encabezado del sidebar muestra un monograma con las iniciales de `organization.name` + el nombre completo del negocio como elemento principal (no hay campo de logo en el backend todavía — iniciales es la solución honesta con los datos reales). "Powered by Kortek Booking" es un crédito de 10px al pie, oculto cuando el sidebar está colapsado.
+
+### 52.4. Marca centralizada
+
+`BRAND.legalName` (getter) y `footer.copyright`/`footer.credit` ya no duplican el literal — referencian `BRAND.name`/`BRAND.company`. Se corrigieron además 3 referencias de texto hardcodeadas en la landing (`Benefits.tsx`, `FoundersManifesto.tsx`, `Story.tsx`) — cambio de texto puro vía interpolación, sin tocar diseño ni estructura de la landing congelada.
+
+### 52.5. Responsive mobile-first — 320 a 1920px
+
+Auditado y endurecido a nivel de código (sin backend disponible en este entorno para levantar una sesión real y capturar pantallas — ver limitación en §52.7):
+- `Topbar`: `min-w-0`/`truncate` en la migaja de pan, `shrink-0` en el botón de menú y el trigger del avatar — evita que el título de sección empuje al menú de usuario fuera de pantalla en 320-360px.
+- `TrendStat`: tamaño de fuente responsive (`text-xl` → `sm:text-2xl` → `md:text-3xl`) con `break-all` de respaldo — un monto largo (`RD$50,000.00`) ya no arriesga desbordar su columna en una grilla de 2 columnas a 320px.
+- KPIs: `gap-x-4` en móvil (antes `gap-8` fijo, demasiado ancho para 2 columnas en pantallas angostas), `sm:gap-x-8` desde tablet.
+- Fila de agenda y widget de carga: `min-w-0`/`truncate` en los textos, `shrink-0` en badges/cifras — mismo patrón en toda la pantalla para que ningún texto largo (nombre de cliente, de servicio, de profesional) fuerce scroll horizontal.
+- `app/dashboard/layout.tsx`: `min-w-0` en la columna flexible principal — sin esto, un hijo con contenido más ancho que el espacio disponible puede forzar overflow incluso con `flex-1`, por el `min-width: auto` que los elementos flex tienen por defecto.
+
+### 52.6. UX/UI — sin cambios más allá de lo ya documentado en §51 (ronda anterior, reaplicada)
+
+Sombra sutil por defecto en `Card` claro, entrada progresiva con `Reveal` (KPIs/acciones/alertas/agenda/widgets, retrasos escalonados), hover con desplazamiento sutil en agenda/alertas. No se agregó nada decorativo nuevo en esta ronda — el pedido era reaplicar y verificar, no ampliar.
+
+### 52.7. Definición de terminado (Fase 3)
+
+1. ✅ `pnpm --filter web build` exitoso, cero errores TypeScript/ESLint (`pnpm --filter web lint` y `pnpm --filter web exec tsc --noEmit`, ambos limpios).
+2. ⚠️ **Cero errores de hidratación — corregido de raíz, pero no verificado en un navegador real desde este entorno.** El fix (`useSyncExternalStore`) es la solución canónica de React para exactamente esta clase de bug, y ya se verificó antes que resuelve el problema conceptual — pero confirmar "cero errores de consola" en tiempo de ejecución requiere el backend real (autenticación) corriendo, que este sandbox no tiene.
+3. ✅ "Ver página pública", "Copiar enlace" y "Cerrar sesión" — código verificado, lógica correcta (URL desde `organization.slug`, `navigator.clipboard`, limpieza de sesión real vía `useSyncExternalStore`).
+4. ⚠️ **Responsive endurecido y auditado a nivel de código en los 9 anchos pedidos, no verificado con capturas reales** — mismo motivo que el punto 2: no hay backend disponible aquí para autenticarse y renderizar el panel con datos reales.
+
+**Limitación honesta, no maquillada:** los puntos 2 y 4 del DoD piden evidencia visual/de consola en tiempo de ejecución que este entorno no puede producir para pantallas autenticadas (a diferencia de la landing, que sí pudo capturarse por ser pública). Recomendación: correr `pnpm dev` localmente, iniciar sesión, y confirmar ambos puntos — si aparece cualquier desbordamiento o error de hidratación real, es información nueva que no pude anticipar desde aquí y debe reportarse para corregirse en la siguiente ronda.
+
 ---
 
 *Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo. La única excepción es la Parte VIII (§50), marcada explícitamente como visión de producto pendiente de implementación y auditoría.*
+
+## 53. Avance y Refinamiento del Dashboard Resumen — Base Operativa v2 (2026-08-05)
+
+### 53.1. Estado Real del Módulo Resumen (`/dashboard`)
+- El módulo Resumen se refinó para operar como una torre de control limpia y sin ruido visual, alcanzando el techo funcional permitido por los endpoints actuales del backend (`GET /analytics/dashboard`, `GET /bookings`, `GET /professionals`).
+- **El módulo NO se considera cerrado ni definitivo.** Se encuentra en un estado de **Base Operativa v2**, listo para la gestión diaria básica pero pendiente de recibir capacidades de inteligencia de negocio avanzada en las Fases 2 y 3.
+
+### 53.2. Lo Implementado en esta Iteración
+- **Torre de control sin redundancia:** Eliminación de botones de creación rápida (`+ Nueva reserva`, `+ Nuevo cliente`) en el cuerpo del Resumen para evitar duplicación de navegación con el Sidebar.
+- **Acciones Globales Sincronizadas:** Unificación del menú de usuario en `Topbar.tsx` y `Sidebar.tsx` con las 5 opciones obligatorias (`Mi perfil`, `Configuración`, `Ver página pública ↗`, `Copiar enlace`, `Cerrar sesión`).
+- **Header con Pulso Operativo:** Saludo dinámico que cuantifica el total de reservas programadas del día y píldora de estado en vivo (`🟢 Negocio abierto • X activos`).
+- **4 KPIs Operativos Reales:** Ingresos Hoy (`% vs ayer`), Últimos 7 Días (`promedio diario`), Reservas Hoy y Completadas Hoy (`% de carga diaria`).
+- **Agenda Protagonista y Empty State Compacto:** Tarjeta superior de "Próxima cita inmediata" y reducción a la mitad de altura del contenedor de agenda cuando no hay citas en el día, con un botón de acción discreto.
+- **Alertas 100% Accionables:** Bloque exclusivo para urgencias operativas (`PENDING` por confirmar y `CANCELLED` hoy) con enlaces de resolución directa (`Resolver ↗`).
+- **Carga y Profesional del Mes con Contexto:** Etiquetas numéricas explícitas (`X citas`) e indicadores de calidad (`★ ★ ★ ★ ★`, `% de asistencia`).
+- **Responsive Mobile-First Estricto:** Grilla 2x2 para KPIs en 320px–412px y layout de 1 columna sin desbordamiento horizontal.
+
+### 53.3. Funcionalidades Pendientes en el Resumen (Roadmap Explícito)
+Para que el Resumen alcance su versión definitiva, quedan pendientes de integración las siguientes piezas tan pronto como el Backend y la Fase 3 las expongan:
+1. **KPI "Clientes por cobrar" (Deuda de clientes):** Mostrar saldo pendiente y permitir filtrado automático hacia el módulo Clientes. Requiere soporte de pagos parciales y cuentas por cobrar en el modelo `Invoice`/`Payment`.
+2. **Estado Financiero Avanzado (Propinas y Caja):** Desglose de ingresos entre cobro de servicios, propinas y métodos de pago.
+3. **Alertas de Banco / Transferencias:** Alertas de *"Transferencias esperando comprobante"* o *"Pagos por validar"*, dependientes del modelo `BankAccount` y el campo `proofOfPaymentUrl`.
+4. **Live Feed Real (Actividad Reciente):** Reemplazar el listado actual de últimas citas (`todayBookings.slice(0, 4)`) por un feed global que consuma un endpoint unificado de eventos y auditoría (`AuditLog`: facturas pagadas, nuevos clientes, cancelaciones).

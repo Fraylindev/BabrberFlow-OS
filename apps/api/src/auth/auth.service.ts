@@ -191,6 +191,21 @@ export class AuthService {
       organizationId: membership.organizationId,
     };
 
+    const organization = await this.prisma.db.organization.findUnique({
+      where: {
+        id: membership.organizationId,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
+
+    if (!organization) {
+      throw new UnauthorizedException('La organización no existe');
+    }
+
     return {
       user: {
         id: user.id,
@@ -200,6 +215,7 @@ export class AuthService {
         role: membership.role,
       },
       accessToken: await this.jwtService.signAsync(payload),
+      organization,
     };
   }
 

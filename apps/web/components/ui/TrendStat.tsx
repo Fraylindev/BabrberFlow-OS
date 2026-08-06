@@ -37,8 +37,8 @@ export function TrendStat({
       <p className="text-xs font-medium uppercase tracking-wider text-[var(--dash-text-muted)]">
         {label}
       </p>
-      <div className="mt-2 flex items-baseline gap-2">
-        <p className="font-[family-name:var(--font-mono)] text-3xl text-[var(--dash-text)]">
+      <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <p className="break-all font-[family-name:var(--font-mono)] text-xl text-[var(--dash-text)] sm:text-2xl md:text-3xl">
           {displayValue}
         </p>
         {delta && (

@@ -21,7 +21,7 @@ export function Card({
   if (tone === "light") {
     return (
       <div
-        className={`rounded-sm border border-[var(--dash-border)] bg-[var(--dash-surface)] ${
+        className={`rounded-sm border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-card)] ${
           interactive
             ? "transition-[transform,box-shadow,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)] hover:-translate-y-1 hover:border-[var(--dash-border-strong)] hover:shadow-[var(--dash-shadow-raised)] focus-within:-translate-y-1 focus-within:shadow-[var(--dash-shadow-raised)]"
             : ""
