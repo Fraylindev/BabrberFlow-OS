@@ -16,6 +16,19 @@ function currentSectionLabel(pathname: string): string {
   return match?.label ?? "Panel";
 }
 
+/**
+ * Barra superior clara, visible en todos los tamaños. En escritorio es
+ * solo la migaja de pan (siempre queda claro en qué sección se está,
+ * incluso con el sidebar colapsado a solo íconos). En móvil suma el
+ * botón de menú y el acceso al usuario, ya que ahí el sidebar está
+ * oculto por defecto.
+ *
+ * El menú de usuario también es donde viven "Ver página pública" y
+ * "Copiar enlace" — visibles desde cualquier pantalla del panel (no
+ * solo Resumen), junto a "Cerrar sesión". Cuando exista una página de
+ * Perfil/Configuración, su entrada va aquí también — un solo lugar
+ * para las acciones de cuenta/negocio, sin duplicarlas en otra parte.
+ */
 export function Topbar({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
   const pathname = usePathname();
   const { user, organization, logout } = useAuth();
@@ -30,7 +43,7 @@ export function Topbar({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
   async function copyPublicLink() {
     try {
       await navigator.clipboard.writeText(publicUrl);
-      toast("Enlace copiado correctamente", "success");
+      toast("Enlace copiado", "success");
     } catch {
       toast("No pudimos copiar el enlace", "error");
     }

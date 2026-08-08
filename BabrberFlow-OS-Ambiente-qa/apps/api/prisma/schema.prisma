@@ -1,0 +1,389 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  // B2B — personal interno con acceso al panel de gestión
+  OWNER
+  ADMIN
+  BARBER
+  RECEPTIONIST
+
+  // B2C — clientes finales, creados solo desde el flujo público de reservas
+  CUSTOMER
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+}
+
+model Organization {
+  id String @id @default(uuid())
+
+  name String
+
+  slug String @unique
+
+  email String @unique
+
+  phone String?
+
+  address String?
+
+  googleMapsUrl String?
+
+  aboutUs String?
+
+  heroImageUrl String?
+
+  socialLinks Json?
+
+  businessHours Json?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  deletedAt DateTime?
+
+  memberships Membership[]
+
+  professionals Professional[]
+
+  clients Client[]
+
+  services Service[]
+
+  galleryImages GalleryImage[]
+
+  bookings Booking[]
+
+  payments Payment[]
+  Invoice  Invoice[]
+}
+
+// Identidad global — una sola cuenta, un solo password, puede pertenecer
+// a varias organizaciones a la vez a través de Membership. El rol y la
+// organización activa YA NO viven aquí (ver Membership).
+model User {
+  id String @id @default(uuid())
+
+  email String @unique
+
+  password String
+
+  name String
+
+  // Última organización en la que operó — el login de un solo paso la usa
+  // para resolver el JWT sin pedirle al usuario que elija cada vez.
+  // register/invite la pueblan al crear la membresía nueva.
+  lastOrganizationId String?
+
+  memberships Membership[]
+
+  // Vínculo opcional 1:1 — solo existe cuando este usuario tiene un
+  // perfil de Professional asociado (ej. un BARBER con acceso al panel).
+  professional Professional?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+// Representa la pertenencia de un User a una Organization, con el rol que
+// tiene ahí. Es la pieza que permite "un login, varias barberías, un rol
+// distinto en cada una". Cascade hacia ambos padres a propósito: un
+// Membership sin su User o sin su Organization no tiene ningún sentido
+// (a diferencia de Booking/Invoice, que nunca se borran en cascada).
+model Membership {
+  id String @id @default(uuid())
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  role UserRole @default(BARBER)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, organizationId])
+}
+
+model Professional {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  bio String?
+
+  phone String?
+
+  avatar String?
+
+  specialty String?
+
+  experienceYears Int?
+
+  isActive Boolean @default(true)
+
+  // Vínculo opcional y único hacia el User que puede iniciar sesión como
+  // este profesional (ej. un BARBER viendo su propia agenda). Un
+  // Professional puede existir sin cuenta de acceso — no todos los
+  // profesionales necesitan entrar al panel.
+  userId String? @unique
+
+  user User? @relation(fields: [userId], references: [id])
+
+  professionalServices ProfessionalService[]
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryImage {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  // Las fotos de la galería no tienen sentido sin su organización — si se
+  // borra la organización, se borran con ella (a diferencia de datos
+  // financieros como Booking/Invoice, que nunca deben desaparecer así).
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  url String
+
+  caption String?
+
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  email String?
+
+  phone String?
+
+  notes String?
+
+  isActive Boolean @default(true)
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  // Único por organización, no global — la misma persona puede ser
+  // cliente de varias barberías como registros independientes. email
+  // opcional para permitir walk-ins sin correo.
+  @@unique([organizationId, email])
+}
+
+model Service {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  name String
+
+  description String?
+
+  duration Int
+
+  price Decimal
+
+  isActive Boolean @default(true)
+
+  professionalServices ProfessionalService[]
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  clientId String
+
+  client Client @relation(fields: [clientId], references: [id])
+
+  professionalId String
+
+  professional Professional @relation(fields: [professionalId], references: [id])
+
+  serviceId String
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  startTime DateTime
+
+  endTime DateTime
+
+  status BookingStatus @default(PENDING)
+
+  payment Payment?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+  Invoice   Invoice?
+
+  // Acelera GET /bookings (listado filtrado por estado, ordenado por
+  // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
+  @@index([organizationId, status, createdAt])
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  bookingId String @unique
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  amount Decimal
+
+  method PaymentMethod
+
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
+
+model ProfessionalService {
+  id String @id @default(uuid())
+
+  professionalId String
+
+  serviceId String
+
+  professional Professional @relation(fields: [professionalId], references: [id])
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  price Decimal?
+
+  commission Decimal?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([professionalId, serviceId])
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  userId String?
+
+  title String
+
+  message String
+
+  read Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  // Sin relación/FK a propósito: un registro de auditoría debe sobrevivir
+  // aunque el usuario que hizo la acción deje de existir más adelante —
+  // nunca debe bloquear ni depender del ciclo de vida de User. Campo
+  // denormalizado simple, no un FK.
+  userId String?
+
+  action String
+
+  entity String
+
+  entityId String?
+
+  createdAt DateTime @default(now())
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  bookingId      String        @unique
+  booking        Booking       @relation(fields: [bookingId], references: [id])
+  amount         Decimal
+  status         InvoiceStatus @default(UNPAID)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Misma razón que en Booking — soporta /analytics/dashboard (revenue
+  // por rango de fecha, filtrado por status=PAID) sin escanear toda la tabla.
+  @@index([organizationId, status, createdAt])
+}

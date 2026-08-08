@@ -33,7 +33,7 @@ export function FAQ() {
   // técnica grid-template-rows (0fr → 1fr) para animar la altura sin
   // medirla en JS — el mismo mecanismo que ya usa el menú móvil de
   // LandingNav, reutilizado en vez de reinventado.
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
 
   return (
     <section id="faq" className="py-20 sm:py-28">

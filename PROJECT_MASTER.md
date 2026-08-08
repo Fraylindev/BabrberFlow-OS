@@ -2,9 +2,9 @@
 
 > **Nota de renombramiento:** este documento se llamaba `MAESTRO.md`. A partir de esta actualización pasa a llamarse **`PROJECT_MASTER.md`** — es una evolución del mismo documento, no uno nuevo. **No se eliminó ni se resumió ningún contenido histórico**; todo lo que existía en `MAESTRO.md` sigue aquí, con su numeración de sección original intacta (para que ninguna referencia cruzada existente — en código, commits o conversaciones previas — se rompa). Se agregaron seis secciones nuevas (§35 a §40) y un índice de navegación.
 
-> **Nota de rebranding (histórica):** el proyecto se llamó originalmente BarberFlow OS. Desde la actualización de la Fase de Fundación Kortek, el nombre oficial pasó a ser **Kortek OS**.
+> **Nota de rebranding (histórica):** el proyecto se llamó originalmente BarberFlow OS. Desde la actualización de la Fase de Fundación Kortek, el nombre oficial pasó a ser **Kortek Booking**.
 
-> **Nota de rebranding (Fase 0 de construcción de frontend):** **Kortek OS** (también "Kortek Studio") es el nombre de la **empresa** — tiene su propio landing corporativo en un repositorio aparte, fuera de este proyecto. Este producto — el SaaS que este repositorio construye — se llama **Kortek Booking**. `apps/web/lib/brand.ts` (branding centralizado, ver §24.1) ya refleja esta separación: `BRAND.name`/`BRAND.legalName` = "Kortek Booking", `BRAND.company` = "Kortek Studio" (solo para el crédito del footer).
+> **Nota de rebranding (Fase 0 de construcción de frontend):** **Kortek** (también "Kortek Studio") es el nombre de la **empresa** — tiene su propio landing corporativo en un repositorio aparte, fuera de este proyecto. Este producto — el SaaS que este repositorio construye — se llama **Kortek Booking**. `apps/web/lib/brand.ts` (branding centralizado, ver §24.1) ya refleja esta separación: `BRAND.name`/`BRAND.legalName` = "Kortek Booking", `BRAND.company` = "Kortek Studio" (solo para el crédito del footer).
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
@@ -42,7 +42,7 @@
 
 ## 1. Resumen del proyecto
 
-Kortek OS es una plataforma SaaS empresarial para la gestión completa de barberías y salones. Opera bajo un modelo **multi-tenant**: cada negocio (`Organization`) administra sus propios clientes, reservas, profesionales y pagos en un entorno de datos aislado mediante `organizationId`.
+Kortek Booking es una plataforma SaaS empresarial para la gestión completa de barberías y salones. Opera bajo un modelo **multi-tenant**: cada negocio (`Organization`) administra sus propios clientes, reservas, profesionales y pagos en un entorno de datos aislado mediante `organizationId`.
 
 ## 2. Objetivo
 
@@ -101,7 +101,7 @@ Existe **un problema crítico sin resolver**: el modelo `Invoice` fue agregado a
 ## 9. Estructura real del monorepo
 
 ```
-Kortek-OS/
+Kortek-Booking/
 ├── apps/
 │   ├── web/            # Next.js — solo login parcial + dashboard estático
 │   └── api/             # NestJS — backend multi-tenant
@@ -1313,26 +1313,3 @@ Sombra sutil por defecto en `Card` claro, entrada progresiva con `Reveal` (KPIs/
 ---
 
 *Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo. La única excepción es la Parte VIII (§50), marcada explícitamente como visión de producto pendiente de implementación y auditoría.*
-
-## 53. Avance y Refinamiento del Dashboard Resumen — Base Operativa v2 (2026-08-05)
-
-### 53.1. Estado Real del Módulo Resumen (`/dashboard`)
-- El módulo Resumen se refinó para operar como una torre de control limpia y sin ruido visual, alcanzando el techo funcional permitido por los endpoints actuales del backend (`GET /analytics/dashboard`, `GET /bookings`, `GET /professionals`).
-- **El módulo NO se considera cerrado ni definitivo.** Se encuentra en un estado de **Base Operativa v2**, listo para la gestión diaria básica pero pendiente de recibir capacidades de inteligencia de negocio avanzada en las Fases 2 y 3.
-
-### 53.2. Lo Implementado en esta Iteración
-- **Torre de control sin redundancia:** Eliminación de botones de creación rápida (`+ Nueva reserva`, `+ Nuevo cliente`) en el cuerpo del Resumen para evitar duplicación de navegación con el Sidebar.
-- **Acciones Globales Sincronizadas:** Unificación del menú de usuario en `Topbar.tsx` y `Sidebar.tsx` con las 5 opciones obligatorias (`Mi perfil`, `Configuración`, `Ver página pública ↗`, `Copiar enlace`, `Cerrar sesión`).
-- **Header con Pulso Operativo:** Saludo dinámico que cuantifica el total de reservas programadas del día y píldora de estado en vivo (`🟢 Negocio abierto • X activos`).
-- **4 KPIs Operativos Reales:** Ingresos Hoy (`% vs ayer`), Últimos 7 Días (`promedio diario`), Reservas Hoy y Completadas Hoy (`% de carga diaria`).
-- **Agenda Protagonista y Empty State Compacto:** Tarjeta superior de "Próxima cita inmediata" y reducción a la mitad de altura del contenedor de agenda cuando no hay citas en el día, con un botón de acción discreto.
-- **Alertas 100% Accionables:** Bloque exclusivo para urgencias operativas (`PENDING` por confirmar y `CANCELLED` hoy) con enlaces de resolución directa (`Resolver ↗`).
-- **Carga y Profesional del Mes con Contexto:** Etiquetas numéricas explícitas (`X citas`) e indicadores de calidad (`★ ★ ★ ★ ★`, `% de asistencia`).
-- **Responsive Mobile-First Estricto:** Grilla 2x2 para KPIs en 320px–412px y layout de 1 columna sin desbordamiento horizontal.
-
-### 53.3. Funcionalidades Pendientes en el Resumen (Roadmap Explícito)
-Para que el Resumen alcance su versión definitiva, quedan pendientes de integración las siguientes piezas tan pronto como el Backend y la Fase 3 las expongan:
-1. **KPI "Clientes por cobrar" (Deuda de clientes):** Mostrar saldo pendiente y permitir filtrado automático hacia el módulo Clientes. Requiere soporte de pagos parciales y cuentas por cobrar en el modelo `Invoice`/`Payment`.
-2. **Estado Financiero Avanzado (Propinas y Caja):** Desglose de ingresos entre cobro de servicios, propinas y métodos de pago.
-3. **Alertas de Banco / Transferencias:** Alertas de *"Transferencias esperando comprobante"* o *"Pagos por validar"*, dependientes del modelo `BankAccount` y el campo `proofOfPaymentUrl`.
-4. **Live Feed Real (Actividad Reciente):** Reemplazar el listado actual de últimas citas (`todayBookings.slice(0, 4)`) por un feed global que consuma un endpoint unificado de eventos y auditoría (`AuditLog`: facturas pagadas, nuevos clientes, cancelaciones).

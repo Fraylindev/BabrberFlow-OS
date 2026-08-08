@@ -32,7 +32,8 @@ export function Hero() {
 
       <Container size="wide" className="relative w-full pb-20 pt-40 sm:pb-28">
         <Reveal className="max-w-4xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-brass)]/40 bg-[var(--color-ink)]/50 px-3 py-1 text-xs uppercase tracking-wider text-[var(--color-brass)] backdrop-blur">
+          {/* AQUÍ ESTÁ EL CAMBIO 1: text-white font-semibold para la frase */}
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-brass)]/40 bg-[var(--color-ink)]/50 px-3 py-1 text-xs uppercase tracking-wider text-white font-semibold backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-brass)]" />
             Para barberías que se toman en serio su negocio
           </span>
@@ -50,7 +51,8 @@ export function Hero() {
 
           <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <Link href="/register">
-              <Button className="w-full px-8 py-4 text-base sm:w-auto">
+              {/* AQUÍ ESTÁ EL CAMBIO 2: text-white font-semibold agregado al botón */}
+              <Button className="w-full px-8 py-4 text-base sm:w-auto text-white font-semibold">
                 Registra tu barbería gratis
               </Button>
             </Link>

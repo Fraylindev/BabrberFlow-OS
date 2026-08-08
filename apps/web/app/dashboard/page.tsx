@@ -7,11 +7,13 @@ import { formatMoney } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { TrendStat } from "@/components/ui/TrendStat";
 import { Reveal } from "@/components/ui/Reveal";
+import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/lib/auth-context";
 
 function isToday(dateStr: string) {
@@ -39,25 +41,24 @@ const TODAY_LABEL = new Date().toLocaleDateString("es-DO", {
 
 export default function DashboardHome() {
   const { user, organization } = useAuth();
+  const { toast } = useToast();
+  // Analytics es solo para roles con visión de negocio — un BARBER
+  // recibe 403 de este endpoint (ve únicamente su propia agenda).
   const canSeeAnalytics = user?.role !== "BARBER";
+  const canCreateClient = user?.role !== "BARBER";
+  const canCreateCatalog = user?.role === "OWNER" || user?.role === "ADMIN";
 
   const [bookings, setBookings] = useState<Booking[] | null>(null);
-  const [professionals, setProfessionals] = useState<Professional[] | null>(
-    null
-  );
+  const [professionals, setProfessionals] = useState<Professional[] | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsDashboard | null>(null);
-  const [nextBookingId, setNextBookingId] = useState<string | undefined>(
-    undefined
-  );
+  const [nextBookingId, setNextBookingId] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
       api.get<Booking[]>("/bookings"),
       api.get<Professional[]>("/professionals"),
-      canSeeAnalytics
-        ? api.get<AnalyticsDashboard>("/analytics/dashboard")
-        : Promise.resolve(null),
+      canSeeAnalytics ? api.get<AnalyticsDashboard>("/analytics/dashboard") : Promise.resolve(null),
     ])
       .then(([b, p, a]) => {
         setBookings(b);
@@ -65,11 +66,9 @@ export default function DashboardHome() {
         setAnalytics(a);
         const now = Date.now();
         const todayList = b
-          .filter((x) => isToday(x.startTime) && x.status !== "CANCELLED")
+          .filter((x) => isToday(x.startTime))
           .sort((x, y) => x.startTime.localeCompare(y.startTime));
-        setNextBookingId(
-          todayList.find((x) => new Date(x.startTime).getTime() >= now)?.id
-        );
+        setNextBookingId(todayList.find((x) => new Date(x.startTime).getTime() >= now)?.id);
       })
       .catch(() => setError("No pudimos cargar el resumen. Intenta recargar."));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,99 +78,79 @@ export default function DashboardHome() {
   const todayBookings = (bookings || [])
     .filter((b) => isToday(b.startTime))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
-  const completedToday = todayBookings.filter(
-    (b) => b.status === "COMPLETED"
-  ).length;
+  const completedToday = todayBookings.filter((b) => b.status === "COMPLETED").length;
 
-  const activeProfessionals = (professionals || []).filter(
-    (p) => p.isActive !== false
-  );
+  const activeProfessionals = (professionals || []).filter((p) => p.isActive !== false);
   const workload = activeProfessionals.map((p) => ({
     professional: p,
     count: todayBookings.filter((b) => b.professionalId === p.id).length,
   }));
+  const idleProfessionals = workload.filter((w) => w.count === 0);
 
-  const isBrandNew =
-    !loading &&
-    (professionals?.length ?? 0) === 0 &&
-    (bookings?.length ?? 0) === 0;
+  const publicUrl =
+    typeof window !== "undefined" && organization
+      ? `${window.location.origin}/${organization.slug}`
+      : "";
 
-  // Alertas accionables de negocio reales (Sin inventar flujos bancarios)
-  const alerts: { text: string; subtext: string; href: string }[] = [];
+  async function copyPublicLink() {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      toast("Enlace copiado", "success");
+    } catch {
+      toast("No pudimos copiar el enlace", "error");
+    }
+  }
+
+  // Negocio recién creado: sin profesionales y sin ninguna cita todavía
+  // — la agenda vacía y los widgets de carga no aportan nada útil
+  // todavía, mejor guiar los primeros pasos.
+  const isBrandNew = !loading && (professionals?.length ?? 0) === 0 && (bookings?.length ?? 0) === 0;
+
+  const alerts: { text: string; href: string }[] = [];
   if (analytics) {
-    if (analytics.bookings.pending > 0) {
+    if (analytics.bookings.cancelled > 0) {
       alerts.push({
-        text: `${analytics.bookings.pending} reserva${
-          analytics.bookings.pending > 1 ? "s" : ""
-        } pendiente${analytics.bookings.pending > 1 ? "s" : ""} por confirmar`,
-        subtext: "Revisa y confirma las citas entrantes en tu agenda.",
+        text: `${analytics.bookings.cancelled} reserva${analytics.bookings.cancelled > 1 ? "s" : ""} cancelada${
+          analytics.bookings.cancelled > 1 ? "s" : ""
+        } hoy`,
         href: "/dashboard/bookings",
       });
     }
-    if (analytics.bookings.cancelled > 0) {
+    if (analytics.bookings.pending > 0) {
       alerts.push({
-        text: `${analytics.bookings.cancelled} reserva${
-          analytics.bookings.cancelled > 1 ? "s" : ""
-        } cancelada${analytics.bookings.cancelled > 1 ? "s" : ""} hoy`,
-        subtext:
-          "Horarios liberados disponibles para clientes sin cita previa.",
+        text: `${analytics.bookings.pending} reserva${analytics.bookings.pending > 1 ? "s" : ""} pendiente${
+          analytics.bookings.pending > 1 ? "s" : ""
+        } por confirmar`,
         href: "/dashboard/bookings",
+      });
+    }
+    if (!isBrandNew && idleProfessionals.length > 0) {
+      const names = idleProfessionals.map((w) => w.professional.name).join(", ");
+      alerts.push({
+        text: `${idleProfessionals.length === 1 ? names : `${idleProfessionals.length} profesionales`} sin citas hoy`,
+        href: "/dashboard/professionals",
       });
     }
   }
 
-  // Porcentaje de carga operativa completada hoy
-  const completionRate =
-    todayBookings.length > 0
-      ? Math.round((completedToday / todayBookings.length) * 100)
-      : 0;
-
-  // Próxima cita del día para resaltar como protagonista
-  const nextBooking = todayBookings.find((b) => b.id === nextBookingId);
-
   return (
-    <div className="space-y-6 max-w-6xl mx-auto min-w-0">
-      {/* ENCABEZADO SAAS LIMPIO CON JERARQUÍA VISUAL */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[var(--dash-border)] pb-5">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
-            <span>{organization?.name || "Kortek Booking"}</span>
-            <span>•</span>
-            <span className="capitalize">{TODAY_LABEL}</span>
-          </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-gray-900">
-            {greeting()}, {user?.name?.split(" ")[0] ?? ""}
-          </h1>
-        </div>
+    <div>
+      {/* "Ver página pública" / "Copiar enlace" viven únicamente en el
+          menú de usuario del Topbar — visibles desde cualquier
+          pantalla. No se duplican aquí. */}
+      <PageHeader
+        tone="light"
+        title={`${greeting()}, ${user?.name?.split(" ")[0] ?? ""}`}
+        description={TODAY_LABEL}
+      />
 
-        {/* Píldora de estado operativo limpia y separada */}
-        <div className="flex items-center gap-2.5 self-start sm:self-center rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-medium text-gray-700 shadow-2xs">
-          <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500 animate-pulse" />
-          <span>
-            {todayBookings.length === 0
-              ? "Sin citas programadas hoy"
-              : `${todayBookings.length} reserva${
-                  todayBookings.length !== 1 ? "s" : ""
-                } hoy`}
-          </span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-600 font-semibold">
-            {activeProfessionals.length} activo{activeProfessionals.length !== 1 ? "s" : ""}
-          </span>
-        </div>
-      </div>
-
-      {/* RENDERIZADO DEL ESTADO ERROR */}
       {error && (
-        <p className="rounded-sm bg-[#fee2e2] px-3 py-2 text-sm text-[#b91c1c]">
-          {error}
-        </p>
+        <p className="mb-6 rounded-sm bg-[#fee2e2] px-3 py-2 text-sm text-[#b91c1c]">{error}</p>
       )}
 
-      {/* 4 KPIS OPERATIVOS CON CONTEXTO (GRID RESPONSIVE 2x2 en móvil) */}
       {canSeeAnalytics && (
         <Reveal>
-          <Card tone="light" className="p-4 sm:p-6 transition-all duration-200">
+          <Card tone="light" className="mb-6 p-4 sm:p-6">
             {loading || !analytics ? (
               <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-x-8">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -188,29 +167,28 @@ export default function DashboardHome() {
                   value={analytics.revenue.today}
                   displayValue={formatMoney(analytics.revenue.today)}
                   previousValue={analytics.revenue.yesterday}
-                  previousLabel={`Ayer: ${formatMoney(
-                    analytics.revenue.yesterday
-                  )}`}
+                  previousLabel={`Ayer: ${formatMoney(analytics.revenue.yesterday)}`}
                 />
                 <TrendStat
                   label="Últimos 7 días"
                   value={analytics.revenue.last7Days}
                   displayValue={formatMoney(analytics.revenue.last7Days)}
-                  previousLabel={`Promedio: ${formatMoney(
-                    Math.round(analytics.revenue.last7Days / 7)
-                  )}/día`}
                 />
                 <TrendStat
                   label="Reservas hoy"
                   value={analytics.bookings.today}
                   displayValue={String(analytics.bookings.today)}
-                  previousLabel="Citas agendadas en total"
                 />
+                {/* Reemplaza "Pendientes por confirmar": ese número ya
+                    vive en Alertas (con acceso directo a resolverlo).
+                    "Completadas hoy" da la señal de productividad del
+                    día que Ingresos ya no puede dar por sí sola, ahora
+                    que completar una cita no factura automáticamente
+                    (ver PROJECT_MASTER.md §52.1/§52.2). */}
                 <TrendStat
                   label="Completadas hoy"
                   value={completedToday}
                   displayValue={String(completedToday)}
-                  previousLabel={`${completionRate}% de la carga diaria`}
                 />
               </div>
             )}
@@ -218,34 +196,46 @@ export default function DashboardHome() {
         </Reveal>
       )}
 
-      {/* ALERTAS Y PRIORIDADES ACCIONABLES */}
+      {/* Acciones rápidas — las acciones más frecuentes a un clic desde
+          el resumen, filtradas por lo que el rol realmente puede hacer. */}
+      <Reveal delay={80}>
+        <div className="mb-6 flex flex-wrap gap-3">
+          <Link href="/dashboard/bookings">
+            <Button tone="light">+ Nueva reserva</Button>
+          </Link>
+          {canCreateClient && (
+            <Link href="/dashboard/clients">
+              <Button variant="secondary" tone="light">+ Nuevo cliente</Button>
+            </Link>
+          )}
+          {canCreateCatalog && (
+            <>
+              <Link href="/dashboard/services">
+                <Button variant="secondary" tone="light">+ Nuevo servicio</Button>
+              </Link>
+              <Link href="/dashboard/professionals">
+                <Button variant="secondary" tone="light">+ Nuevo profesional</Button>
+              </Link>
+            </>
+          )}
+        </div>
+      </Reveal>
+
       {alerts.length > 0 && (
-        <Reveal delay={80}>
-          <Card tone="light" className="p-5 border-red-100 bg-red-50/30">
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-red-800">
-              Alertas y Prioridades de hoy
+        <Reveal delay={120}>
+          <Card tone="light" className="mb-6 p-5">
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--dash-text-muted)]">
+              Alertas de hoy
             </p>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <ul className="flex flex-col gap-2">
               {alerts.map((a) => (
                 <li key={a.text}>
                   <Link
                     href={a.href}
-                    className="group flex flex-col justify-center rounded-md border border-gray-200/80 bg-white p-3.5 shadow-2xs transition-all duration-150 hover:border-red-500 hover:shadow-sm"
+                    className="group flex items-center gap-2 text-sm text-[var(--dash-text)] transition-[color,transform] duration-150 hover:translate-x-0.5 hover:text-[var(--dash-accent)]"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-red-600" />
-                        <span className="truncate text-sm font-semibold text-gray-900">
-                          {a.text}
-                        </span>
-                      </div>
-                      <span className="text-xs font-bold text-red-600 group-hover:underline shrink-0">
-                        Resolver ↗
-                      </span>
-                    </div>
-                    <p className="mt-1 pl-4 text-xs text-gray-500">
-                      {a.subtext}
-                    </p>
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--dash-accent)] transition-transform duration-150 group-hover:scale-125" />
+                    <span className="min-w-0 truncate">{a.text}</span>
                   </Link>
                 </li>
               ))}
@@ -254,9 +244,8 @@ export default function DashboardHome() {
         </Reveal>
       )}
 
-      {/* ESTADO ONBOARDING (Negocio nuevo sin datos) */}
       {isBrandNew ? (
-        <Reveal delay={120}>
+        <Reveal delay={160}>
           <Card tone="light" className="p-6 sm:p-8">
             <EmptyState
               tone="light"
@@ -268,143 +257,88 @@ export default function DashboardHome() {
                     <Button tone="light">Agregar profesional</Button>
                   </Link>
                   <Link href="/dashboard/services">
-                    <Button variant="secondary" tone="light">
-                      Agregar servicio
-                    </Button>
+                    <Button variant="secondary" tone="light">Agregar servicio</Button>
                   </Link>
+                  {organization && (
+                    <Button variant="secondary" tone="light" onClick={copyPublicLink}>
+                      Compartir tu página
+                    </Button>
+                  )}
                 </div>
               }
             />
           </Card>
         </Reveal>
       ) : (
-        /* ÁREA DE TRABAJO PRINCIPAL */
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <div className="space-y-6 min-w-0">
-            {/* PRÓXIMA CITA INMEDIATA */}
-            {nextBooking && (
-              <Reveal delay={120}>
-                <Card
-                  tone="light"
-                  className="p-4 border-l-4 border-l-red-600 bg-red-50/20 transition-all duration-200"
-                >
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-red-700">
-                    Próxima cita inmediata • Hoy
-                  </p>
-                  <div className="mt-1.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <p className="font-display text-base font-bold text-gray-900">
-                        {new Date(nextBooking.startTime).toLocaleTimeString(
-                          "es-DO",
-                          { hour: "2-digit", minute: "2-digit" }
-                        )}{" "}
-                        — {nextBooking.client?.name ?? "Cliente"}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {nextBooking.service?.name ?? "Servicio"} con{" "}
-                        <span className="font-semibold text-gray-900">
-                          {nextBooking.professional?.name ?? "Profesional"}
-                        </span>
-                      </p>
-                    </div>
-                    <Badge status={nextBooking.status} tone="light" />
-                  </div>
-                </Card>
-              </Reveal>
-            )}
-
-            {/* AGENDA DE HOY */}
-            <Reveal delay={140}>
-              <Card
-                tone="light"
-                className="overflow-hidden transition-all duration-200"
-              >
-                <div className="border-b border-[var(--dash-border)] px-5 py-4 flex items-center justify-between">
-                  <h2 className="font-display text-base font-bold text-[var(--dash-text)]">
-                    Agenda de hoy
-                  </h2>
-                  <span className="text-xs font-medium text-gray-500">
-                    {todayBookings.length} citas en total
-                  </span>
-                </div>
-
-                <div className="p-5">
-                  {loading ? (
-                    <div className="flex flex-col divide-y divide-[var(--dash-border)]">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center justify-between py-3"
-                        >
-                          <div className="flex flex-col gap-2">
-                            <Skeleton tone="light" className="h-4 w-40" />
-                            <Skeleton tone="light" className="h-3 w-24" />
-                          </div>
-                          <Skeleton tone="light" className="h-6 w-20" />
+          <Reveal delay={160}>
+            <Card tone="light">
+              <div className="border-b border-[var(--dash-border)] px-5 py-4">
+                <h2 className="font-[family-name:var(--font-display)] text-base text-[var(--dash-text)]">
+                  Agenda de hoy
+                </h2>
+              </div>
+              <div className="p-5">
+                {loading ? (
+                  <div className="flex flex-col divide-y divide-[var(--dash-border)]">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="flex items-center justify-between py-3">
+                        <div className="flex flex-col gap-2">
+                          <Skeleton tone="light" className="h-4 w-40" />
+                          <Skeleton tone="light" className="h-3 w-24" />
                         </div>
-                      ))}
-                    </div>
-                  ) : todayBookings.length === 0 ? (
-                    /* EMPTY STATE COMPACTO */
-                    <div className="py-8 text-center flex flex-col items-center justify-center">
-                      <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-lg mb-3">
-                        🗓️
+                        <Skeleton tone="light" className="h-6 w-20" />
                       </div>
-                      <p className="text-sm font-semibold text-gray-800">
-                        No tienes reservas para hoy
-                      </p>
-                      <p className="text-xs text-gray-500 max-w-xs mt-1 mb-4">
-                        Cuando se agenden citas, aparecerán organizadas aquí
-                        automáticamente.
-                      </p>
+                    ))}
+                  </div>
+                ) : todayBookings.length === 0 ? (
+                  <EmptyState
+                    tone="light"
+                    title="Sin citas para hoy"
+                    description="Cuando se agenden citas para hoy, aparecerán aquí."
+                    action={
                       <Link href="/dashboard/bookings">
-                        <Button variant="secondary" tone="light">
-                          + Crear reserva rápida
-                        </Button>
+                        <Button variant="secondary" tone="light">Crear una reserva</Button>
                       </Link>
-                    </div>
-                  ) : (
-                    <ul className="flex flex-col divide-y divide-[var(--dash-border)]">
-                      {todayBookings.map((b) => (
-                        <li
-                          key={b.id}
-                          className={`flex items-center justify-between gap-3 py-3 pl-3 transition-all duration-150 hover:translate-x-0.5 hover:bg-[var(--dash-surface-raised)] ${
-                            b.id === nextBookingId
-                              ? "border-l-2 border-red-600 bg-red-50/10"
-                              : "border-l-2 border-transparent"
-                          }`}
-                        >
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-[var(--dash-text)]">
-                              {b.client?.name ?? "Cliente"} ·{" "}
-                              {b.service?.name ?? "Servicio"}
-                            </p>
-                            <p className="truncate text-xs text-[var(--dash-text-muted)]">
-                              {new Date(b.startTime).toLocaleTimeString(
-                                "es-DO",
-                                { hour: "2-digit", minute: "2-digit" }
-                              )}{" "}
-                              con {b.professional?.name ?? "profesional"}
-                            </p>
-                          </div>
-                          <div className="shrink-0">
-                            <Badge status={b.status} tone="light" />
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </Card>
-            </Reveal>
-          </div>
+                    }
+                  />
+                ) : (
+                  <ul className="flex flex-col divide-y divide-[var(--dash-border)]">
+                    {todayBookings.map((b) => (
+                      <li
+                        key={b.id}
+                        className={`flex items-center justify-between gap-3 py-3 pl-3 transition-[background-color,transform] duration-150 hover:translate-x-0.5 hover:bg-[var(--dash-surface-raised)] ${
+                          b.id === nextBookingId ? "border-l-2 border-[var(--dash-accent)]" : "border-l-2 border-transparent"
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm text-[var(--dash-text)]">
+                            {b.client?.name ?? "Cliente"} · {b.service?.name ?? "Servicio"}
+                          </p>
+                          <p className="truncate text-xs text-[var(--dash-text-muted)]">
+                            {new Date(b.startTime).toLocaleTimeString("es-DO", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}{" "}
+                            con {b.professional?.name ?? "profesional"}
+                          </p>
+                        </div>
+                        <div className="shrink-0">
+                          <Badge status={b.status} tone="light" />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </Card>
+          </Reveal>
 
-          {/* COLUMNA DERECHA: CARGA DE HOY, PROFESIONAL DEL MES & MOVIMIENTOS */}
-          <Reveal delay={160} className="flex flex-col gap-6">
+          <Reveal delay={220} className="flex flex-col gap-6">
             {canSeeAnalytics && (
-              <Card tone="light" className="p-5 transition-all duration-200">
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                  Carga operativa de hoy
+              <Card tone="light" className="p-5">
+                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--dash-text-muted)]">
+                  Carga de hoy
                 </p>
                 {loading ? (
                   <div className="flex flex-col gap-3">
@@ -421,18 +355,15 @@ export default function DashboardHome() {
                 ) : (
                   <ul className="flex flex-col gap-3">
                     {workload.map((w) => (
-                      <li
-                        key={w.professional.id}
-                        className="flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Avatar name={w.professional.name} size="sm" />
-                          <p className="truncate text-sm font-medium text-[var(--dash-text)]">
+                      <li key={w.professional.id} className="flex items-center gap-3">
+                        <Avatar name={w.professional.name} size="sm" />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm text-[var(--dash-text)]">
                             {w.professional.name}
                           </p>
                         </div>
-                        <span className="shrink-0 font-mono text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded-sm">
-                          {w.count} cita{w.count !== 1 ? "s" : ""}
+                        <span className="shrink-0 font-[family-name:var(--font-mono)] text-sm text-[var(--dash-text-muted)]">
+                          {w.count}
                         </span>
                       </li>
                     ))}
@@ -442,8 +373,8 @@ export default function DashboardHome() {
             )}
 
             {canSeeAnalytics && (
-              <Card tone="light" className="p-6 transition-all duration-200">
-                <p className="text-xs font-bold uppercase tracking-wider text-[var(--dash-text-muted)]">
+              <Card tone="light" className="p-6">
+                <p className="text-xs font-medium uppercase tracking-wider text-[var(--dash-text-muted)]">
                   Profesional del mes
                 </p>
                 {loading || !analytics ? (
@@ -458,15 +389,11 @@ export default function DashboardHome() {
                   <div className="mt-4 flex items-center gap-3">
                     <Avatar name={analytics.topProfessional.name} size="lg" />
                     <div className="min-w-0">
-                      <p className="truncate font-display text-lg font-bold text-[var(--dash-text)]">
+                      <p className="truncate font-[family-name:var(--font-display)] text-lg text-[var(--dash-text)]">
                         {analytics.topProfessional.name}
                       </p>
-                      <p className="text-xs text-amber-500 font-bold mt-0.5">
-                        ★ ★ ★ ★ ★
-                      </p>
-                      <p className="text-xs text-[var(--dash-text-muted)] mt-1">
-                        {analytics.topProfessional.completedBookings} citas
-                        completadas • últimos 30 días
+                      <p className="text-xs text-[var(--dash-text-muted)]">
+                        {analytics.topProfessional.completedBookings} citas completadas · últimos 30 días
                       </p>
                     </div>
                   </div>
@@ -475,36 +402,6 @@ export default function DashboardHome() {
                     Todavía no hay suficientes citas completadas este mes.
                   </p>
                 )}
-              </Card>
-            )}
-
-            {/* ACTIVIDAD DEL DÍA */}
-            {todayBookings.length > 0 && (
-              <Card
-                tone="light"
-                className="p-5 border-gray-200/80 bg-gray-50/50"
-              >
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                  Movimientos de hoy
-                </p>
-                <ul className="space-y-2.5">
-                  {todayBookings.slice(0, 4).map((b) => (
-                    <li
-                      key={b.id}
-                      className="flex items-center justify-between text-xs text-gray-600"
-                    >
-                      <span className="truncate min-w-0 font-medium">
-                        • {b.client?.name ?? "Cliente"} ({b.service?.name})
-                      </span>
-                      <span className="shrink-0 font-mono text-[10px] text-gray-400">
-                        {new Date(b.startTime).toLocaleTimeString("es-DO", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
               </Card>
             )}
           </Reveal>
