@@ -1515,3 +1515,11 @@ El último defecto visual observado durante QA estaba aislado al menú `…` de 
 **Validación técnica:** `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build` finalizaron con exit 0. El build de Next.js 16.2.10 compiló y generó `/dashboard/bookings` correctamente.
 
 **Estado vigente:** corrección implementada; QA manual final y aprobación explícita siguen pendientes. Reservas NO está cerrada. Clientes continúa NO autorizado.
+
+### 55.12. Affordance de Limpiar filtros (2026-08-11)
+
+El control `Limpiar filtros` ya utilizaba `Button`, permanecía debajo de los campos y solo se renderizaba con `hasActiveFilters`. Sin alterar esa estructura ni su llamada a `clearFilters`, se reforzó exclusivamente su reconocimiento visual con superficie blanca, borde neutro, sombra mínima, hover gris claro, contraste de texto y anillo de foco. Se mantiene como acción ghost discreta para no competir con `+ Nueva reserva`.
+
+**Validación técnica:** `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build` finalizaron con exit 0. Next.js generó `/dashboard/bookings` correctamente.
+
+**Alcance:** sin cambios de comportamiento, filtros, requests, estado, backend, otros módulos, dependencias ni lockfile. Reservas sigue pendiente de QA manual final y aprobación explícita; NO está cerrada. Clientes continúa NO autorizado.

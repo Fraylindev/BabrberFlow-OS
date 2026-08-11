@@ -273,7 +273,7 @@ export default function BookingsPage() {
             <Button
               tone="light"
               variant="ghost"
-              className="min-h-10 w-full self-end text-xs sm:w-auto"
+              className="min-h-10 w-full self-end border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 text-xs text-[var(--dash-text-muted)] shadow-sm outline-none hover:border-[var(--dash-border-strong)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)] sm:w-auto"
               onClick={clearFilters}
             >
               Limpiar filtros

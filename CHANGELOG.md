@@ -2,6 +2,12 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-11 — Reservas: affordance de Limpiar filtros
+
+- `Limpiar filtros` conserva exactamente su ubicación, texto, condición `hasActiveFilters` y comportamiento, pero ahora se reconoce como acción mediante un tratamiento ghost discreto con fondo claro, borde sutil, sombra mínima, hover y foco visible.
+- **Validación:** `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build` finalizaron con exit 0; `/dashboard/bookings` fue generado correctamente.
+- No se modificaron filtros, requests, estado, backend, otros módulos, dependencias ni lockfile. Reservas continúa pendiente de aprobación final; Clientes continúa no autorizado.
+
 ## 2026-08-11 — Reservas: corrección del menú contextual desktop
 
 - **Causa raíz:** el portal de `BookingActions` se montaba en `document.body`, fuera de `.dashboard-shell`, por lo que perdía las variables visuales `--dash-*` y su superficie podía quedar transparente sobre otras filas. Además, la apertura arriba/abajo dependía de una altura estimada, no de las dimensiones renderizadas del menú.
