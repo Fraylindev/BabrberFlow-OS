@@ -2,6 +2,14 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-11 — Reservas: correcciones finales de layout, acciones y Turbopack
+
+- **Overflow resuelto en la causa:** cards hasta 768 px inclusive; tabla desde 1024 px con layout fijo, columnas proporcionadas y truncado accesible. Se elimina la combinación de tabla mínima de 640 px y cuatro botones que excedía el área útil del dashboard.
+- **Sidebar largo:** en desktop conserva `h-screen` pero pasa a `sticky top-0 self-start`, evitando que el fondo grafito termine después del primer viewport sin rediseñar el shell.
+- **Acciones compactas:** `BookingActions` mantiene la acción principal visible en desktop y agrupa secundarias en un menú contextual accesible renderizado en portal. Mobile conserva los botones grandes existentes y no cambian permisos, estados ni acciones.
+- **Diagnóstico Turbopack:** el panic decía `Next.js package not found`, pero Next 16.2.10 estaba instalado y resolvía correctamente. La reproducción con el `.next` previo produjo 404; después de regenerar esa caché, `pnpm run dev` sirvió `/login` y `/dashboard/bookings` con HTTP 200 y sin nuevo panic. No se cambiaron scripts, configuración, versiones, dependencias ni lockfile.
+- **Alcance:** frontend de Reservas y ajuste mínimo demostrado del Sidebar. Backend y `BACKEND_CHANGES.md` intactos. Correcciones finales implementadas; QA manual de cierre pendiente; Reservas no aprobada todavía; Clientes no autorizado todavía.
+
 ## 2026-08-11 — Reservas: implementación final candidata a QA manual
 
 - **Cliente sin select gigante:** nuevo `ClientAutocomplete` filtra el catálogo real ya cargado por nombre/teléfono, limita la lista visible con scroll y permite teclado, `Enter`, `Escape`, limpieza y resumen de la selección. No se agregó ni simuló ningún endpoint.

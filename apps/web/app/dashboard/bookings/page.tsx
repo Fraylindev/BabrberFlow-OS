@@ -327,7 +327,7 @@ export default function BookingsPage() {
       {!isLoading && !isError && sorted.length > 0 && (
         <div className="overflow-hidden rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-card)]">
           {/* Vista móvil (Cards) */}
-          <div className="grid grid-cols-1 gap-3 bg-[var(--dash-surface-raised)]/60 p-3 md:hidden">
+          <div className="grid grid-cols-1 gap-3 bg-[var(--dash-surface-raised)]/60 p-3 lg:hidden">
             {sorted.map((b) => (
               <article
                 key={b.id}
@@ -406,15 +406,23 @@ export default function BookingsPage() {
           </div>
 
           {/* Vista desktop (Tabla) */}
-          <div className="hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[640px] border-collapse text-sm">
+          <div className="hidden lg:block">
+            <table className="w-full table-fixed border-collapse text-sm">
+              <colgroup>
+                <col className="w-[18%]" />
+                <col className="w-[18%]" />
+                <col className="w-[14%]" />
+                <col className="w-[15%]" />
+                <col className="w-[15%]" />
+                <col className="w-[20%]" />
+              </colgroup>
               <thead className="border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)]">
                 <tr>
                   {['Fecha / hora', 'Cliente', 'Profesional', 'Servicio', 'Estado', 'Acciones'].map(
                     (h) => (
                       <th
                         key={h}
-                        className="px-4 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-[var(--dash-text-muted)]"
+                        className="px-3 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-[var(--dash-text-muted)] xl:px-4"
                       >
                         {h}
                       </th>
@@ -428,15 +436,18 @@ export default function BookingsPage() {
                     key={b.id}
                     className="transition-colors duration-150 hover:bg-[var(--dash-surface-raised)]"
                   >
-                    <td className="min-w-0 px-4 py-3">
-                      <p className="whitespace-nowrap font-medium text-[var(--dash-text)]">
+                    <td className="overflow-hidden px-3 py-3 xl:px-4">
+                      <p
+                        title={formatDateTime(b.startTime)}
+                        className="truncate font-medium text-[var(--dash-text)]"
+                      >
                         {formatDateTime(b.startTime)}
                       </p>
-                      <p className="text-xs text-[var(--dash-text-muted)]">
+                      <p className="truncate text-xs text-[var(--dash-text-muted)]">
                         hasta {formatTimeOnly(b.endTime)}
                       </p>
                     </td>
-                    <td className="min-w-0 px-4 py-3">
+                    <td className="overflow-hidden px-3 py-3 xl:px-4">
                       <div className="flex min-w-0 items-center gap-2.5">
                         <span
                           aria-hidden="true"
@@ -445,7 +456,10 @@ export default function BookingsPage() {
                           {getInitials(b.client?.name)}
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-[var(--dash-text)]">
+                          <p
+                            title={b.client?.name}
+                            className="truncate font-medium text-[var(--dash-text)]"
+                          >
                             {b.client?.name ?? '—'}
                           </p>
                           {b.client?.phone && (
@@ -456,23 +470,25 @@ export default function BookingsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="min-w-0 px-4 py-3">
-                      <p className="truncate text-[var(--dash-text)]">
+                    <td className="overflow-hidden px-3 py-3 xl:px-4">
+                      <p title={b.professional?.name} className="truncate text-[var(--dash-text)]">
                         {b.professional?.name ?? '—'}
                       </p>
                     </td>
-                    <td className="min-w-0 px-4 py-3">
-                      <p className="truncate text-[var(--dash-text)]">{b.service?.name ?? '—'}</p>
+                    <td className="overflow-hidden px-3 py-3 xl:px-4">
+                      <p title={b.service?.name} className="truncate text-[var(--dash-text)]">
+                        {b.service?.name ?? '—'}
+                      </p>
                       {b.service?.duration && (
                         <p className="text-xs text-[var(--dash-text-muted)]">
                           {b.service.duration} min
                         </p>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="overflow-hidden px-2 py-3 xl:px-4">
                       <Badge status={b.status} tone="light" />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 py-3 xl:px-4">
                       <BookingActions
                         booking={b}
                         isBarber={isBarber}

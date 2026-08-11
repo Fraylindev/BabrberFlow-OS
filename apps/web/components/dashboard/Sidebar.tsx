@@ -180,7 +180,7 @@ export function Sidebar({
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-[var(--dash-sidebar-border)] bg-[var(--dash-sidebar-bg)] px-4 py-6 transition-transform duration-200 ease-out md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-[var(--dash-sidebar-border)] bg-[var(--dash-sidebar-bg)] px-4 py-6 transition-transform duration-200 ease-out md:sticky md:top-0 md:bottom-auto md:self-start md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         } ${collapsed ? "md:w-20" : "md:w-64"}`}
       >
