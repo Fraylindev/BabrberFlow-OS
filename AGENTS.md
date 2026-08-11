@@ -787,17 +787,7 @@ No usar frases como “100% terminado” si aún falta QA manual o aprobación.
 - Reportes al propietario del proyecto: español.
 - Mensajes de UI: según el idioma definido por el producto.
 
-# Git y sincronización con GitHub
 
-La rama de trabajo autorizada para agentes es:
-
-`ai/antigravity-qa`
-
-Antes de modificar código:
-
-```bash
-git branch --show-current
-git status
 
 ---
 
@@ -820,3 +810,153 @@ Antes de declarar terminado:
 **valida.**
 
 Kortek Booking se construye como producto comercial real, no como demo.
+
+# 31. Git, ramas y sincronización obligatoria con GitHub
+
+La rama autorizada para trabajo asistido por agentes es:
+
+`ai/antigravity-qa`
+
+Esta rama funciona como checkpoint remoto auditable del estado actual del proyecto.
+
+## Antes de modificar cualquier archivo
+
+Ejecutar obligatoriamente:
+
+```bash
+git branch --show-current
+git status
+```
+
+La rama actual debe ser:
+
+```text
+ai/antigravity-qa
+```
+
+Si no lo es:
+
+**DETENTE y repórtalo.**
+
+No continúes modificando código desde otra rama.
+
+---
+
+## Antes de cerrar cualquier entrega
+
+Después de implementar y ejecutar las validaciones correspondientes:
+
+```bash
+git status
+git diff --stat
+git diff
+```
+
+Revisar explícitamente:
+
+* todos los archivos modificados;
+* archivos nuevos;
+* cambios fuera de alcance;
+* documentación pendiente;
+* cambios accidentales en dependencias;
+* archivos temporales;
+* secretos o variables de entorno.
+
+Actualizar cuando corresponda:
+
+* `PROJECT_MASTER.md`
+* `CHANGELOG.md`
+* `BACKEND_CHANGES.md`
+
+No crear el commit hasta que el estado del repositorio represente exactamente la entrega que se está reportando.
+
+---
+
+## Commit y push
+
+Después de validar la entrega:
+
+1. agregar únicamente los archivos correspondientes;
+2. revisar nuevamente `git status`;
+3. crear un commit descriptivo;
+4. usar Conventional Commits cuando tenga sentido;
+5. hacer push únicamente a:
+
+```text
+origin/ai/antigravity-qa
+```
+
+El agente tiene autorización para hacer:
+
+* commit en `ai/antigravity-qa`;
+* push a `origin/ai/antigravity-qa`.
+
+---
+
+## Operaciones Git prohibidas para agentes
+
+Sin autorización explícita del propietario del proyecto, ningún agente puede:
+
+* hacer merge a `main`;
+* hacer push directo a `main`;
+* hacer force-push;
+* reescribir historial;
+* borrar ramas locales o remotas relevantes;
+* ejecutar `git reset --hard` sobre trabajo existente;
+* descartar cambios del usuario;
+* cambiar de rama para adelantar otro módulo;
+* subir `.env`, `.env.local`, secretos o credenciales;
+* versionar `node_modules`;
+* versionar archivos temporales o artefactos internos de herramientas de IA.
+
+Si una operación Git puede eliminar o sobrescribir trabajo existente:
+
+**detente y solicita autorización.**
+
+---
+
+## Dependencias
+
+Si durante una entrega se ejecuta `pnpm install`, verificar antes del commit:
+
+```bash
+git diff -- package.json apps/web/package.json apps/api/package.json pnpm-lock.yaml
+```
+
+Cualquier modificación debe corresponder a una dependencia realmente autorizada.
+
+No incluir cambios accidentales del lockfile.
+
+---
+
+## Reporte obligatorio después del push
+
+Toda entrega debe informar:
+
+* rama actual;
+* commit SHA;
+* mensaje del commit;
+* archivos modificados;
+* archivos nuevos;
+* validaciones ejecutadas;
+* resultado real de las validaciones;
+* resultado final de `git status`;
+* confirmación de que el push terminó correctamente.
+
+---
+
+## Regla de aprobación
+
+Un commit o un push **NO significa que una entrega esté aprobada**.
+
+GitHub únicamente mantiene un checkpoint remoto verificable.
+
+Una entrega o módulo solo puede considerarse aprobado después de:
+
+1. revisión técnica;
+2. validaciones requeridas;
+3. documentación sincronizada;
+4. QA manual cuando corresponda;
+5. aprobación explícita del propietario del proyecto.
+
+No avanzar al siguiente módulo únicamente porque el código fue commiteado o subido a GitHub.

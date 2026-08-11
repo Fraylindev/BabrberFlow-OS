@@ -1418,7 +1418,20 @@ Reconstrucción del módulo de Reservas (`app/dashboard/bookings/page.tsx`) sobr
 - **No se inventaron endpoints** — todo consume contratos ya aprobados.
 - **No se adelantaron módulos** — los selectores de Clientes/Profesionales/Servicios son solo selectores, no CRUD completo.
 
-### 55.6. Evidencia de validación
+### 55.6. Estado de QA (2026-08-10)
+
+- **Reservas Frontend continúa en QA manual.**
+- **QA no aprobado.**
+- El componente `DateTimePicker` actual presenta un blocker funcional y de UX: el contenido se extiende hacia abajo fuera del área visible, lo que impide acceder cómodamente al selector de hora.
+- No existe un flujo claro Fecha → Hora → Confirmar; este flujo requiere corrección antes de repetir QA.
+- La experiencia visual del modal/picker carece de jerarquía (superficies, inputs y fondos son muy similares y la experiencia se percibe plana); se requiere mejor separación visual manteniendo el tema claro.
+- Turbopack entra repetidamente en panic (`FATAL: An unexpected Turbopack error occurred`) durante el desarrollo local.
+- `next dev --webpack` permite ejecutar correctamente el frontend y continuar el diagnóstico.
+- **Módulo Reservas no cerrado.**
+- **Módulo Clientes continúa no autorizado.**
+- No se debe presentar todavía el nuevo `DateTimePicker` ni las cards responsive como una entrega funcional aprobada.
+
+### 55.7. Evidencia de validación
 
 Corrida desde el sandbox (sin limitación de Prisma en el frontend):
 
