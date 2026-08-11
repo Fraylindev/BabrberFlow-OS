@@ -170,17 +170,17 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 
 ## Reservas
 
-- Entrega A Backend: implementada y ajustada.
-- Entrega B Frontend: implementada.
-- UX de fecha/hora y responsive móvil: en proceso de cierre.
-- QA manual: **pendiente de aprobación final**.
-- Reservas **NO debe considerarse oficialmente cerrada todavía** hasta completar QA y recibir aprobación explícita.
+- Entrega A Backend: **CERRADO / APROBADO**.
+- Entrega B Frontend: **CERRADO / APROBADO**.
+- Módulo Reservas: **CERRADO oficialmente**.
+- QA manual final: **APROBADO por el propietario**.
+- Checkpoint funcional aprobado: `9a30f2abb37857dbbbf15e34df1cbaec576121b6`.
 
 ## Clientes
 
-**No autorizado todavía.**
-
-No iniciar auditoría ni implementación de Clientes hasta que Reservas sea aprobada oficialmente.
+- Autorizado únicamente para **Auditoría/Diagnóstico Backend**.
+- La implementación Backend y Frontend de Clientes **todavía no está autorizada**.
+- No iniciar implementación de Clientes sin autorización explícita posterior.
 
 ## Resumen / Dashboard
 
