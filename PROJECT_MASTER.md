@@ -1312,4 +1312,119 @@ Sombra sutil por defecto en `Card` claro, entrada progresiva con `Reveal` (KPIs/
 
 ---
 
+# PARTE XI — METODOLOGÍA POR MÓDULOS (backend primero, frontend después)
+
+## 53. Cambio de estrategia (2026-08-08)
+
+A partir de esta fecha el proyecto se trabaja módulo por módulo, en dos entregas separadas por módulo: **Entrega A (Backend)** primero, aprobada explícitamente, y solo entonces **Entrega B (Frontend)** consumiendo ese contrato ya cerrado. El módulo Resumen/Dashboard queda **congelado** hasta que todos los módulos que lo alimentan (Reservas, Clientes, Profesionales, Servicios, Facturación, Equipo, Configuración, Analytics) estén completos — no se le agregan KPIs, widgets, gráficos ni datos nuevos mientras tanto. Orden de trabajo acordado: Reservas → Clientes → Profesionales → Servicios → Facturación → Equipo → Configuración/negocio → Analytics (si aplica como módulo propio) → Resumen al final.
+
+## 54. Reservas — Entrega A (Backend) (2026-08-08)
+
+### 54.1. Diagnóstico previo (resumen — ver la conversación para el detalle completo)
+
+Backend real antes de esta entrega: `POST /bookings`, `GET /bookings`, `PATCH /bookings/:id/status` — nada más. Dos modelos del schema completamente sin usar y directamente relevantes a Reservas: `ProfessionalService` (qué servicio ofrece cada profesional, con precio/comisión propios) y `Payment` (método y estado de pago) — este segundo se deja intencionalmente fuera de esta entrega, es responsabilidad de Facturación (próximo módulo tras Reservas en el orden acordado, no el inmediato siguiente pero sí antes que Resumen).
+
+### 54.2. Qué se implementó
+
+- **`POST /bookings` — validaciones nuevas:**
+  - ~~Rechaza si el profesional no ofrece el servicio solicitado.~~ **(Revocado 2026-08-10):** Decisión de producto: cualquier profesional activo puede ser reservado con cualquier servicio activo de la misma organización. `ProfessionalService` se conserva para precio/comisión específica, pero ya no bloquea reservas.
+  - Rechaza si `startTime` ya pasó.
+- **`GET /bookings?from=&to=&status=`** — filtro de rango real en el backend (`QueryBookingsDto`), compatible hacia atrás (sin parámetros, mismo comportamiento de siempre). Resuelve el gap que el propio frontend ya había autodocumentado (`lib/queries/bookings.ts`).
+- **`PATCH /bookings/:id` (nuevo) — reprogramar:** cambia fecha/hora y, opcionalmente, profesional y/o servicio de una reserva existente (`RescheduleBookingDto`, todos los campos opcionales). Reutiliza la misma lógica de choque de horario que `create()` (se extrajo a un método privado `assertNoConflict`, ahora compartido, excluyendo la propia reserva de la comprobación al reprogramar). Rechaza reprogramar una reserva `CANCELLED` o inexistente en la organización.
+- **Tests extendidos** (`bookings.service.spec.ts`): cobertura nueva para las dos validaciones de `create()` y los 4 casos de `reschedule()` (éxito, reserva inexistente, reserva cancelada, choque de horario).
+
+### 54.3. Qué se decidió NO tocar en esta entrega
+
+- **`Payment`** — sigue sin conectarse al flujo de reservas. Corresponde a Facturación, no a Reservas.
+- **`DELETE /bookings/:id`** — se preguntó explícitamente si hace falta o si "cancelada" ya cubre el caso de negocio; sin respuesta todavía, no se implementó para no asumir.
+
+### 54.4. Validación
+
+**Limitación de entorno, no del código:** `pnpm --filter api exec tsc --noEmit`/`eslint` no pueden correr limpios en este sandbox porque `prisma generate` sigue bloqueado por la política de red (mismo bloqueo documentado en rondas anteriores, evidencia: `binaries.prisma.sh` responde 403). Se validó lo que sí es posible sin el cliente generado:
+- `eslint src/bookings/` → limpio de errores reales; los únicos que aparecen son la cascada conocida de "Unsafe ..." (por no tener el cliente de Prisma generado, no un error de código) — confirmado explícitamente filtrando cualquier error que no sea de esa categoría ni de formato (cero encontrados).
+- Compilación aislada de los 4 archivos tocados con `tsc` fuera del proyecto (sin tipos de Prisma) → cero errores en el código nuevo.
+- Revisión manual línea por línea de las validaciones nuevas y de `reschedule()`.
+
+Pendiente de tu confirmación real: `pnpm --filter api exec tsc --noEmit`, `pnpm --filter api lint` y los tests (`pnpm --filter api test`) en tu entorno, donde `prisma generate` sí funciona.
+
+### 54.5. Correcciones a partir de tu validación real (2026-08-09)
+
+Corriste los 5 comandos en tu entorno (donde `prisma generate` sí funciona) y encontraste 2 problemas reales, ninguno relacionado con Prisma sin generar:
+
+1. **`TS2698` en `bookings.service.spec.ts:203`** — `Promise.resolve({ id: EXISTING_BOOKING.id, ...args.data })` con `args.data` tipado como `unknown` (spread inválido sobre `unknown`). Corregido tipando `booking.update` en el mock de Prisma con el mismo patrón que ya usaban `findFirst`/`create` (`jest.fn<Respuesta, Args>()`), en vez de una función anónima con un tipo inline débil. Sin `as any`, sin degradar el tipado de producción — el error estaba únicamente en el test.
+2. **2 tests fallando en `auth.service.spec.ts` → `AuthService.login()`** — causa raíz: `login()` en producción ya hace `organization.findUnique(...)` y lanza `UnauthorizedException` si no existe (código correcto, sin tocar), pero `mockValidUser()` en el test nunca mockeaba esa llamada — Jest la resolvía `undefined` por defecto, y `login()` fallaba exactamente como se esperaría en ese escenario. Corregido agregando el mock de `organization.findUnique` dentro de `mockValidUser()` (afecta a los 5 tests de `login` que la usan, todos con la organización mockeada correctamente ahora) y se agregó un test nuevo que verifica explícitamente la forma completa de la respuesta (`user` + `accessToken` + `organization { id, name, slug }`), tal como se pidió.
+
+**Evidencia real de los 5 comandos, corridos en este entorno (con las limitaciones ya documentadas de `prisma generate` bloqueado por red):**
+
+- `pnpm --filter api exec tsc --noEmit` → 25 errores, **el `TS2698` ya no aparece** (confirmado explícitamente); los 25 restantes son 100% `TS2305: Module "@prisma/client" has no exported member 'UserRole'/'BookingStatus'/'PrismaClient'/...` — el cliente de Prisma no está generado en este sandbox, no existe como módulo en disco.
+- `pnpm --filter api lint` → 537 problemas, todos `no-unsafe-*` sobre valores que "no se pueden resolver" — mismo origen (tipos de Prisma ausentes), repartidos por *todo* `apps/api`, no concentrados en los archivos de esta entrega.
+- `pnpm --filter api test` → `Cannot find module '.prisma/client/default'` en 4 de 7 suites (las que importan algo de `@prisma/client`, directa o transitivamente) — el cliente generado no existe físicamente en `node_modules` aquí. Las 3 suites que no dependen de él (`availability.util.spec.ts`, `find-owned-or-throw.util.spec.ts`, `app.controller.spec.ts`) sí corrieron: **13/13 tests pasaron**. Los tests de `bookings.service.spec.ts`/`auth.service.spec.ts` no pudieron ejecutarse aquí por esta misma razón — no puedo mostrarte "36 passed, 0 failed" con evidencia real desde este entorno.
+- `pnpm lint` (raíz) → `web:lint` exitoso; `api:lint` falla, mismo motivo.
+- `pnpm build` (raíz) → `api:build` falla primero (`Found 25 error(s)`, mismos `TS2305`) y aborta el pipeline antes de llegar a `web:build`. Verificado aparte: `pnpm --filter web build` en aislado — **exitoso**.
+
+**No puedo entregarte los 5 comandos en verde desde aquí** — la causa es 100% que este sandbox no puede descargar el motor de Prisma (`binaries.prisma.sh` bloqueado por política de red, mismo bloqueo de siempre). Necesito que corras tú los 5 comandos reales en tu entorno y me confirmes el resultado antes de dar la Entrega A por cerrada.
+
+---
+
 *Este documento reemplaza integralmente las versiones anteriores, incluyendo `MAESTRO.md`. Toda la información aquí fue verificada directamente contra el código fuente del repositorio y contra el historial real de este proyecto — nada se asumió ni se inventó al escribirlo. La única excepción es la Parte VIII (§50), marcada explícitamente como visión de producto pendiente de implementación y auditoría.*
+
+---
+
+## §55. Reservas — Entrega B: Frontend (2026-08-09)
+
+### 55.1. Alcance implementado
+
+Reconstrucción del módulo de Reservas (`app/dashboard/bookings/page.tsx`) sobre los contratos reales aprobados en la Entrega A. Sin mocks, sin datos inventados.
+
+**Endpoints consumidos (todos aprobados en Entrega A):**
+- `GET /bookings?from=&to=&status=` — listado con filtros de rango y estado
+- `POST /bookings` — creación de reserva (sin cambios de contrato)
+- `PATCH /bookings/:id` — reprogramar reserva (nuevo en Entrega A)
+- `PATCH /bookings/:id/status` — cambio de estado (existente)
+- `GET /clients`, `GET /professionals`, `GET /services` — selectores de formulario
+
+### 55.2. Archivos modificados / creados
+
+| Archivo | Operación | Cambio |
+|---|---|---|
+| `lib/api.ts` | Modificado | `api.get()` acepta `params?: Record<string, string>` (retrocompatible); tipos nuevos `BookingFilters`, `RescheduleBookingInput`; campo `notes?` en `Booking` |
+| `lib/queries/bookings.ts` | Modificado | `useBookingsQuery(filters?)` con query key dinámica; `useRescheduleBooking()` nuevo; `useCreateBooking`/`useUpdateBookingStatus` sin cambios |
+| `app/dashboard/bookings/page.tsx` | Reconstruido | Ver §55.3 |
+
+### 55.3. Funcionalidades de la página de Reservas
+
+- **Barra de filtros:** rango `desde/hasta` (por defecto: semana actual) + selector de estado. Botón "Limpiar filtros" solo cuando hay filtros no-default activos.
+- **Tabla de reservas:** columnas Fecha/Hora, Cliente, Profesional, Servicio, Estado, Acciones. Responsive: `min-w-[640px]` + `overflow-x-auto`. Hora de fin visible. `tone="light"` coherente con el dashboard.
+- **Acciones de estado por estado actual y rol:**
+  - `OWNER`/`ADMIN`/`RECEPTIONIST`: PENDING → confirmar / cancelar; CONFIRMED → completar / no-show / cancelar
+  - `BARBER`: PENDING → confirmar; CONFIRMED → completar / no-show (sin cancelar — decisión administrativa)
+  - `COMPLETED`/`CANCELLED`/`NO_SHOW` → solo lectura
+- **Botón "Reprogramar":** visible para OWNER/ADMIN/RECEPTIONIST en reservas PENDING y CONFIRMED. Oculto para BARBER (no es su responsabilidad logística).
+- **Modal de creación:** extendido con `min` en datetime-local (backend rechaza startTime pasado). Reset del servicio al cambiar profesional. `useState` lazy init para `nowLocal`.
+- **Modal de reprogramación:** formulario con profesional, servicio y nueva fecha/hora. Solo envía al backend los campos que cambiaron respecto al valor original. Valida que hubo al menos un cambio antes de enviar.
+- **Estados de UI:** loading (Skeleton 5 filas), empty (sin reservas en absoluto → CTA crear), empty-filtered (sin resultados en el rango → CTA limpiar filtros), error (mensaje + botón reintentar), success (tabla + contador de resultados).
+- **Contador de resultados** al pie de la tabla: "N reserva(s) en este rango / en total".
+
+### 55.4. Decisiones técnicas
+
+- La tabla se construyó con HTML semántico inline (no con el componente `Table` de la UI) para tener control total sobre el tema claro (`--dash-*`) sin tener que extender `Table` con `tone="light"` en este ciclo — eso queda para cuando se migre al tema claro en todos los módulos simultáneamente.
+- `Date.now()` movido a `useState(() => ...)` (lazy initializer) en vez de calcularlo en cada render — elimina el error `react-hooks/purity` del lint de Next.js 16.
+- `useBookingsQuery` acepta `filters?` opcionales. La query key incluye los filtros (`[...queryKeys.bookings.all, filters ?? {}]`) para que React Query cachee y re-fetch correctamente por cada combinación de filtros, sin invalidar todo.
+- La invalidación de cache tras mutaciones usa `queryKeys.bookings.all` (sin los filtros), lo que invalida todas las queries de bookings activas — comportamiento correcto: después de crear/reprogramar/cambiar estado, todas las vistas deben refrescarse.
+
+### 55.5. Límites respetados
+
+- **`Payment` no implementado** — pertenece a Facturación, módulo posterior.
+- **No se inventaron endpoints** — todo consume contratos ya aprobados.
+- **No se adelantaron módulos** — los selectores de Clientes/Profesionales/Servicios son solo selectores, no CRUD completo.
+
+### 55.6. Evidencia de validación
+
+Corrida desde el sandbox (sin limitación de Prisma en el frontend):
+
+- `pnpm --filter web exec tsc --noEmit` → **exit 0, 0 errores**
+- `pnpm --filter web lint` → **exit 0, 0 errores, 0 warnings**
+- `pnpm --filter web build` → **exit 0**, Turbopack compila limpio. Ruta `/dashboard/bookings` generada como static (`○`).
+
+Los 3 comandos del backend siguen pasando en tu entorno (39/39 tests OK, confirmado antes de iniciar esta entrega).
+

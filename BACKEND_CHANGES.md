@@ -4,6 +4,30 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 ---
 
+## 2026-08-08 — Reservas: validaciones nuevas, filtro de rango, reprogramar
+
+### Cambio: `POST /bookings` — validaciones nuevas, mismo contrato de entrada/salida
+- Rechaza (`400`) si `startTime` ya pasó.
+- **Nota (2026-08-10):** La validación por `ProfessionalService` introducida originalmente el 2026-08-08 fue revocada. Regla vigente: cualquier profesional activo de la organización puede realizar cualquier servicio activo de esa organización. `ProfessionalService` se conserva únicamente para capacidades futuras como precio/comisión específica o restricciones opcionales.
+- **Impacto frontend:** el formulario de creación debe mostrar el mensaje de error del backend tal cual (ya lo hace vía `ApiError`) — no hace falta duplicar la validación en el cliente, pero se agregó como mejora de UX en el `DateTimePicker` (deshabilitar horas pasadas).
+
+### Cambio: `GET /bookings` — acepta query params opcionales, compatible hacia atrás
+- `?from=<ISO date>&to=<ISO date>&status=<BookingStatus>` — todos opcionales. Sin ellos, mismo comportamiento de siempre (todo el historial de la organización/profesional).
+- **Impacto frontend:** el frontend puede migrar de "traer todo y filtrar en el cliente" a pedir solo el rango que necesita — recomendado para el módulo Reservas cuando se construya su Entrega B, no aplicado todavía a `bookings/page.tsx`.
+
+### Nuevo: `PATCH /bookings/:id` — reprogramar
+Body: `{ professionalId?, serviceId?, startTime? }` — los tres opcionales, cualquier combinación. Devuelve el `Booking` actualizado.
+- Reutiliza la misma validación de choque de horario que `POST /bookings` (excluyendo la propia reserva de la comprobación).
+- Rechaza (`400`) reprogramar una reserva `CANCELLED`.
+- Rechaza (`404`) si la reserva no pertenece a la organización del token.
+- Separado deliberadamente de `PATCH /bookings/:id/status` — son dos operaciones de negocio distintas.
+- **Impacto frontend:** habilita el botón "Reprogramar" pendiente desde la Fase 0 — implementado en el frontend usando los modales.
+
+### Sin cambios
+`PATCH /bookings/:id/status`, `DELETE /bookings/:id` (no implementado — pendiente de decisión de negocio, ver `PROJECT_MASTER.md`).
+
+---
+
 ## 2026-07-23 — Fundación Kortek: micro-sitio, analytics, seguridad, WhatsApp (RFC aprobado)
 
 ### Nuevo: `GET /analytics/dashboard`

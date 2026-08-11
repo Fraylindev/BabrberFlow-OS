@@ -2,6 +2,54 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-10 — Reservas: corrección ProfessionalService + tema claro en modales + DateTimePicker propio
+
+**Decisión de producto:** cualquier profesional activo puede ser reservado con cualquier servicio activo de la organización. `ProfessionalService` se conserva para precio/comisión individual y futuras restricciones opcionales, pero no bloquea reservas en esta fase. Se descarta input `datetime-local` nativo por experiencia pobre y se construye un `DateTimePicker` a medida sin dependencias.
+
+- **`bookings.service.ts` (backend):** eliminadas las llamadas a `prisma.db.professionalService.findUnique()` en `create()` y `reschedule()`. Todas las demás validaciones permanecen: tenant, profesional pertenece a la org, servicio pertenece a la org, cliente pertenece a la org, startTime no en el pasado, sin conflicto de horario.
+- **`bookings.service.spec.ts` (backend):** eliminado el mock de `professionalService` y el test "rechaza si el profesional no ofrece el servicio seleccionado". Tests: **38/38** (era 39 — el test 39 era precisamente el de esa validación eliminada). Comentario explícito documenta la decisión de producto.
+- **`app/dashboard/bookings/page.tsx` (frontend):** 
+  - Modales `CreateBookingModal` y `RescheduleBookingModal` migrados a tema claro (`--dash-*`). Selectores de servicio muestran todos los servicios activos de la organización, sin filtrar por profesional.
+  - Se implementó vista responsive: listado en forma de Cards para móvil (`md:hidden`) y tabla original para desktop (`hidden md:block`), eliminando el scroll horizontal forzado en pantallas pequeñas.
+- **`components/ui/DateTimePicker.tsx` (frontend):** Creado componente custom para selección de fecha y hora. Funciona internamente con objetos `Date` locales, deshabilita días pasados y horas pasadas para el día actual. Se integra visualmente con el tema claro (`tone="light"`).
+- **`lib/api.ts` (frontend):** campo `isActive?: boolean` agregado al tipo `Service` — reflejaba un campo real del schema de Prisma que faltaba en el tipo del frontend.
+- **Validación:** `tsc --noEmit` → exit 0, `lint` → exit 0 (0 errores), `tests` → 38/38 passed, `build` → exit 0.
+
+## 2026-08-09 — Reservas Entrega B: Frontend
+
+- **`app/dashboard/bookings/page.tsx` reconstruido** sobre los contratos reales aprobados en Entrega A: consume `GET /bookings?from=&to=&status=`, `POST /bookings`, `PATCH /bookings/:id` (reprogramar), `PATCH /bookings/:id/status`, y los selectores de Clientes/Profesionales/Servicios para los formularios.
+- **Filtros de rango de fecha y estado:** por defecto muestra la semana actual. Botón "Limpiar filtros" solo cuando hay filtros activos.
+- **Tabla responsive** (min-w-640px + overflow-x-auto): columnas Fecha/Hora, Cliente, Profesional, Servicio, Estado, Acciones. Hora de fin visible. Tema claro (`--dash-*`) coherente con el dashboard.
+- **Acciones de estado con permisos por rol:** `BARBER` no puede cancelar (decisión administrativa). `COMPLETED`/`CANCELLED`/`NO_SHOW` son solo lectura. Botón "Reprogramar" oculto para `BARBER`.
+- **Modal de reprogramación nuevo** — consume `PATCH /bookings/:id`. Solo envía al backend los campos que cambiaron; valida que hubo al menos un cambio antes de enviar.
+- **Modal de creación extendido:** fecha mínima = ahora (anticipa el 400 del backend), reset de servicio al cambiar profesional, `useState` lazy init para `Date.now()`.
+- **Estados de UI completos:** loading (Skeleton), empty (sin reservas), empty-filtered (sin resultados en rango), error (+ reintentar), success (tabla + contador).
+- **`lib/api.ts`:** `api.get()` retrocompatiblemente extendido con `params?`; tipos nuevos `BookingFilters` y `RescheduleBookingInput`.
+- **`lib/queries/bookings.ts`:** `useBookingsQuery(filters?)` con query key dinámica; `useRescheduleBooking()` nuevo.
+- **`Payment` no implementado** — pertenece a Facturación. Sin mocks, sin endpoints inventados.
+- **Validación real en sandbox:**
+  - `pnpm --filter web exec tsc --noEmit` → exit 0, 0 errores
+  - `pnpm --filter web lint` → exit 0, 0 errores, 0 warnings
+  - `pnpm --filter web build` → exit 0, `/dashboard/bookings` generado como static
+
+## 2026-08-09 — Reservas Entrega A: corrección de 2 problemas reales encontrados en validación
+
+- **`TS2698` en `bookings.service.spec.ts`** — spread sobre `unknown` en el mock de `booking.update`. Corregido tipando el mock igual que `findFirst`/`create` (sin `as any`).
+- **2 tests fallando en `auth.service.spec.ts`** — `mockValidUser()` no mockeaba `organization.findUnique`, que `AuthService.login()` sí llama en producción (código correcto, sin tocar). Agregado el mock y un test nuevo que verifica la respuesta completa (`user`+`accessToken`+`organization`).
+- Ningún cambio de lógica de producción — ambos fixes son exclusivamente de tests.
+- **Entrega A sigue sin cerrarse**: `pnpm --filter api exec tsc --noEmit`/`lint`/`test` no pueden correr limpios en este sandbox porque el cliente de Prisma no está generado (bloqueo de red conocido) — confirmado que el `TS2698` ya no aparece y que los 25/537 errores restantes son 100% la cascada de `@prisma/client` sin generar, no relacionados con esta entrega. Pendiente de que el usuario confirme los 5 comandos reales en su entorno. Detalle en `PROJECT_MASTER.md` §54.5.
+
+## 2026-08-08 — Reservas, Entrega A (Backend) — nueva metodología por módulos
+
+- **Cambio de estrategia:** de aquí en adelante cada módulo se entrega en dos partes (Backend primero, aprobado explícitamente; Frontend después). Resumen/Dashboard queda congelado hasta que los módulos que lo alimentan estén completos. Detalle en `PROJECT_MASTER.md` §53.
+- **`POST /bookings`:** valida que el profesional ofrezca el servicio (`ProfessionalService`, existía sin usarse) y que la fecha no sea pasada.
+- **`GET /bookings?from=&to=&status=`:** filtro de rango real en el backend, compatible hacia atrás.
+- **`PATCH /bookings/:id` (nuevo):** reprogramar fecha/hora/profesional/servicio de una reserva existente, reutilizando la validación de choque de horario.
+- Tests extendidos para las validaciones nuevas y `reschedule()`.
+- **`Payment` sigue sin conectarse** — es de Facturación, no de Reservas. `DELETE /bookings/:id` no implementado, pendiente de tu confirmación de si hace falta.
+- Contrato completo documentado en `BACKEND_CHANGES.md`.
+- **Validación con limitación de entorno:** `prisma generate` sigue bloqueado en este sandbox (red) — verificado todo lo posible sin el cliente generado (`eslint` limpio salvo la cascada conocida, compilación aislada del código nuevo sin errores). `tsc`/`lint`/tests reales del backend pendientes de confirmarse en tu entorno.
+
 ## 2026-08-04 — Cierre end-to-end del módulo Resumen
 
 - **Auditoría de causa raíz:** no había ningún problema de propagación de contexto de tenant — `Topbar.tsx` simplemente no consumía `organization` del hook, que ya llegaba correcto desde el login. Detalle en `PROJECT_MASTER.md` §52.0.

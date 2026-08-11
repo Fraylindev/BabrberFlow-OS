@@ -51,11 +51,17 @@ async function request<T>(
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>(path, { method: "GET" }),
+  get: <T>(path: string, params?: Record<string, string>) => {
+    const url = params
+      ? `${path}?${new URLSearchParams(params).toString()}`
+      : path;
+    return request<T>(url, { method: "GET" });
+  },
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: "POST", body: JSON.stringify(body) }),
   patch: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
+  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
 };
 
 // === Tipos que reflejan las entidades reales del backend (Prisma) ===
@@ -103,6 +109,7 @@ export interface Service {
   description?: string | null;
   duration: number; // minutos
   price: string | number;
+  isActive?: boolean;
   organizationId: string;
 }
 
@@ -123,9 +130,30 @@ export interface Booking {
   clientId: string;
   professionalId: string;
   serviceId: string;
+  notes?: string | null;
   client?: Client;
   professional?: Professional;
   service?: Service;
+}
+
+/**
+ * Parámetros opcionales de GET /bookings — refleja QueryBookingsDto del backend.
+ * Todos opcionales: sin ellos, el backend devuelve todo el historial.
+ */
+export interface BookingFilters {
+  from?: string;   // ISO date — inicio del rango
+  to?: string;     // ISO date — fin del rango
+  status?: BookingStatus;
+}
+
+/**
+ * Body de PATCH /bookings/:id — reprogramar.
+ * Refleja RescheduleBookingDto: todos los campos opcionales.
+ */
+export interface RescheduleBookingInput {
+  professionalId?: string;
+  serviceId?: string;
+  startTime?: string; // ISO datetime
 }
 
 export interface Invoice {

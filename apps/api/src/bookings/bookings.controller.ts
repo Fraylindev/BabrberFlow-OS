@@ -6,11 +6,14 @@ import {
   UseGuards,
   Patch,
   Param,
+  Query,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { ProfessionalsService } from '../professionals/professionals.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
+import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
+import { QueryBookingsDto } from './dto/query-bookings.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -42,16 +45,55 @@ export class BookingsController {
   // Un BARBER ve únicamente su propia agenda (resuelta vía su vínculo
   // Professional.userId). El resto de los roles B2B ve la agenda completa
   // de la organización, como siempre.
+  // Un BARBER ve únicamente su propia agenda (resuelta vía su vínculo
+  // Professional.userId). El resto de los roles B2B ve la agenda completa
+  // de la organización, como siempre. from/to/status son opcionales — sin
+  // ellos, mismo comportamiento de siempre (todo el historial).
   @Get()
-  async findAll(@GetUser() user: RequestUser) {
+  async findAll(
+    @GetUser() user: RequestUser,
+    @Query() query: QueryBookingsDto,
+  ) {
+    const from = query.from ? new Date(query.from) : undefined;
+    const to = query.to ? new Date(query.to) : undefined;
+
     if (user.role === UserRole.BARBER) {
       const professional = await this.professionalsService.findByUserId(
         user.id,
       );
       if (!professional) return [];
-      return this.bookingsService.findAll(user.organizationId, professional.id);
+      return this.bookingsService.findAll(
+        user.organizationId,
+        professional.id,
+        from,
+        to,
+        query.status,
+      );
     }
-    return this.bookingsService.findAll(user.organizationId);
+    return this.bookingsService.findAll(
+      user.organizationId,
+      undefined,
+      from,
+      to,
+      query.status,
+    );
+  }
+
+  // Reprogramar: cambia fecha/hora y, opcionalmente, profesional/servicio
+  // de una cita existente. Separado de :id/status a propósito — son dos
+  // operaciones de negocio distintas (mover una cita vs. cambiar su
+  // estado), cada una con su propia validación.
+  @Patch(':id')
+  reschedule(
+    @Param('id') id: string,
+    @GetUser('organizationId') organizationId: string,
+    @Body() rescheduleBookingDto: RescheduleBookingDto,
+  ) {
+    return this.bookingsService.reschedule(
+      id,
+      organizationId,
+      rescheduleBookingDto,
+    );
   }
 
   @Patch(':id/status')

@@ -87,6 +87,15 @@ describe('AuthService — autenticación', () => {
         organizationId: 'org-1',
         role: 'BARBER',
       });
+      // login() ahora resuelve la organización activa vía
+      // organization.findUnique (ver auth.service.ts) para devolverla en
+      // la respuesta — sin este mock, la llamada real resuelve
+      // `undefined` y login() rechaza con 'La organización no existe'.
+      prisma.db.organization.findUnique.mockResolvedValue({
+        id: 'org-1',
+        name: 'Elite Barber Shop',
+        slug: 'elite-barber-shop',
+      });
     }
 
     it('devuelve un accessToken con credenciales correctas', async () => {
@@ -97,6 +106,28 @@ describe('AuthService — autenticación', () => {
       expect(result.accessToken).toBe('fake.jwt.token');
       expect(result.user.email).toBe(EMAIL);
       expect(result.user.role).toBe('BARBER');
+    });
+
+    it('un login exitoso devuelve user, accessToken y organization completos', async () => {
+      await mockValidUser();
+
+      const result = await service.login({ email: EMAIL, password: PASSWORD });
+
+      expect(result).toEqual({
+        user: {
+          id: 'user-1',
+          name: 'Ana',
+          email: EMAIL,
+          organizationId: 'org-1',
+          role: 'BARBER',
+        },
+        accessToken: 'fake.jwt.token',
+        organization: {
+          id: 'org-1',
+          name: 'Elite Barber Shop',
+          slug: 'elite-barber-shop',
+        },
+      });
     });
 
     it('rechaza con 401 cuando la contraseña es incorrecta', async () => {
