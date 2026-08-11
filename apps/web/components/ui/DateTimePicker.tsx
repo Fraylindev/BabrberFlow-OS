@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useId, useRef, useState } from "react";
-import { Button } from "./Button";
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Button } from './Button';
 
 interface DateTimePickerProps {
   id?: string;
@@ -12,22 +12,22 @@ interface DateTimePickerProps {
   required?: boolean;
 }
 
-type PickerStep = "date" | "time";
+type PickerStep = 'date' | 'time';
 
-const DAYS = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
+const DAYS = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
 const MONTHS = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
 ];
 const MINUTE_OPTIONS = [0, 15, 30, 45];
 
@@ -91,16 +91,16 @@ function getDateForSelectedDay(
 }
 
 function formatTrigger(date: Date | null) {
-  if (!isValidDate(date)) return "Seleccionar fecha y hora";
+  if (!isValidDate(date)) return 'Seleccionar fecha y hora';
 
-  const formattedDate = date.toLocaleDateString("es-DO", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
+  const formattedDate = date.toLocaleDateString('es-DO', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
   });
-  const formattedTime = date.toLocaleTimeString("es-DO", {
-    hour: "2-digit",
-    minute: "2-digit",
+  const formattedTime = date.toLocaleTimeString('es-DO', {
+    hour: '2-digit',
+    minute: '2-digit',
   });
 
   return `${formattedDate} · ${formattedTime}`;
@@ -108,26 +108,27 @@ function formatTrigger(date: Date | null) {
 
 function formatSelectedDate(date: Date) {
   return capitalize(
-    date.toLocaleDateString("es-DO", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
+    date.toLocaleDateString('es-DO', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
     }),
   );
 }
 
 function formatAccessibleDate(date: Date) {
-  return date.toLocaleDateString("es-DO", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  return date.toLocaleDateString('es-DO', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
 }
 
-function formatHourLabel(hour: number) {
-  return new Date(2026, 0, 1, hour).toLocaleTimeString("es-DO", {
-    hour: "numeric",
+function formatTimeSlot(date: Date) {
+  return date.toLocaleTimeString('es-DO', {
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -143,17 +144,19 @@ export function DateTimePicker({
   const controlId = id ?? `datetime-${generatedId}`;
   const dialogTitleId = `${controlId}-dialog-title`;
   const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState<PickerStep>("date");
+  const [step, setStep] = useState<PickerStep>('date');
   const [tempDate, setTempDate] = useState<Date | null>(null);
   const [viewMonth, setViewMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [referenceNow, setReferenceNow] = useState(() => new Date());
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstDialogControlRef = useRef<HTMLButtonElement>(null);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const selectedSlotRef = useRef<HTMLButtonElement>(null);
 
   const committedDate = value ? new Date(value) : null;
 
@@ -164,8 +167,9 @@ export function DateTimePicker({
 
     setTempDate(current);
     setViewMonth(new Date(visibleDate.getFullYear(), visibleDate.getMonth(), 1));
+    setReferenceNow(now);
     setValidationError(null);
-    setStep("date");
+    setStep('date');
     setIsOpen(true);
   }
 
@@ -181,11 +185,12 @@ export function DateTimePicker({
     if (!isOpen) return;
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     window.setTimeout(() => firstDialogControlRef.current?.focus(), 0);
+    const clockInterval = window.setInterval(() => setReferenceNow(new Date()), 30_000);
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
@@ -193,7 +198,7 @@ export function DateTimePicker({
         return;
       }
 
-      if (event.key !== "Tab" || !dialogRef.current) return;
+      if (event.key !== 'Tab' || !dialogRef.current) return;
 
       const focusable = Array.from(
         dialogRef.current.querySelectorAll<HTMLElement>(
@@ -213,16 +218,20 @@ export function DateTimePicker({
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      window.clearInterval(clockInterval);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && step === "time") {
-      window.setTimeout(() => stepHeadingRef.current?.focus(), 0);
+    if (isOpen && step === 'time') {
+      window.setTimeout(() => {
+        stepHeadingRef.current?.focus();
+        selectedSlotRef.current?.scrollIntoView({ block: 'center' });
+      }, 0);
     }
   }, [isOpen, step]);
 
@@ -230,18 +239,37 @@ export function DateTimePicker({
   const month = viewMonth.getMonth();
   const firstDay = getFirstDayOfMonth(year, month);
   const daysInMonth = getDaysInMonth(year, month);
-  const renderNow = new Date();
-  const currentMonth = new Date(renderNow.getFullYear(), renderNow.getMonth(), 1);
+  const currentMonth = new Date(referenceNow.getFullYear(), referenceNow.getMonth(), 1);
   const canNavigateToPreviousMonth = viewMonth > currentMonth;
-  const selectableMinutes = tempDate
-    ? Array.from(new Set([...MINUTE_OPTIONS, tempDate.getMinutes()])).sort(
-        (left, right) => left - right,
-      )
-    : MINUTE_OPTIONS;
+  const timeSlots = useMemo(() => {
+    if (!tempDate) return [];
+
+    const slots = Array.from({ length: 24 * MINUTE_OPTIONS.length }, (_, index) => {
+      const hour = Math.floor(index / MINUTE_OPTIONS.length);
+      const minute = MINUTE_OPTIONS[index % MINUTE_OPTIONS.length];
+      return new Date(
+        tempDate.getFullYear(),
+        tempDate.getMonth(),
+        tempDate.getDate(),
+        hour,
+        minute,
+        0,
+        0,
+      );
+    });
+
+    if (tempDate.getMinutes() % 15 !== 0) {
+      const exactExistingTime = new Date(tempDate);
+      exactExistingTime.setSeconds(0, 0);
+      slots.push(exactExistingTime);
+    }
+
+    return slots.sort((left, right) => left.getTime() - right.getTime());
+  }, [tempDate]);
 
   function isDayDisabled(day: number) {
     const lastQuarter = new Date(year, month, day, 23, 45, 0, 0);
-    return lastQuarter <= renderNow;
+    return lastQuarter <= referenceNow;
   }
 
   function handleDaySelect(day: number) {
@@ -249,50 +277,17 @@ export function DateTimePicker({
     const selected = getDateForSelectedDay(year, month, day, tempDate, now);
 
     if (selected <= now) {
-      setValidationError("Ya no quedan horarios disponibles para este día.");
+      setValidationError('Ya no quedan horarios disponibles para este día.');
       return;
     }
 
     setTempDate(selected);
     setValidationError(null);
-    setStep("time");
+    setStep('time');
   }
 
-  function isTimeOptionDisabled(hour: number, minute: number, now = renderNow) {
-    if (!tempDate || !isSameDay(tempDate, now)) return false;
-    const candidate = new Date(tempDate);
-    candidate.setHours(hour, minute, 0, 0);
-    return candidate <= now;
-  }
-
-  function isHourDisabled(hour: number) {
-    return MINUTE_OPTIONS.every((minute) => isTimeOptionDisabled(hour, minute));
-  }
-
-  function handleHourChange(hour: number) {
-    if (!tempDate) return;
-
-    const now = new Date();
-    const nextDate = new Date(tempDate);
-    nextDate.setHours(hour, tempDate.getMinutes(), 0, 0);
-
-    if (isTimeOptionDisabled(hour, nextDate.getMinutes(), now)) {
-      const firstValidMinute = MINUTE_OPTIONS.find(
-        (minute) => !isTimeOptionDisabled(hour, minute, now),
-      );
-      if (firstValidMinute === undefined) return;
-      nextDate.setMinutes(firstValidMinute);
-    }
-
-    setTempDate(nextDate);
-    setValidationError(null);
-  }
-
-  function handleMinuteChange(minute: number) {
-    if (!tempDate) return;
-    const nextDate = new Date(tempDate);
-    nextDate.setMinutes(minute, 0, 0);
-    setTempDate(nextDate);
+  function handleTimeSlotSelect(slot: Date) {
+    setTempDate(new Date(slot));
     setValidationError(null);
   }
 
@@ -300,7 +295,7 @@ export function DateTimePicker({
     const now = new Date();
     if (!tempDate || tempDate <= now) {
       setValidationError(
-        "La fecha y hora deben ser posteriores al momento actual. Elige otro horario.",
+        'La fecha y hora deben ser posteriores al momento actual. Elige otro horario.',
       );
       return;
     }
@@ -321,7 +316,7 @@ export function DateTimePicker({
         </label>
       )}
 
-      <input type="hidden" name={name} value={value || ""} />
+      <input type="hidden" name={name} value={value || ''} />
 
       <button
         ref={triggerRef}
@@ -332,7 +327,9 @@ export function DateTimePicker({
         aria-expanded={isOpen}
         className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md border border-[var(--dash-border-strong)] bg-[var(--dash-surface-raised)] px-3 py-2.5 text-left text-sm text-[var(--dash-text)] shadow-sm outline-none transition-[border-color,box-shadow,background-color] hover:bg-[var(--dash-surface)] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
       >
-        <span className={isValidDate(committedDate) ? "font-medium" : "text-[var(--dash-text-muted)]"}>
+        <span
+          className={isValidDate(committedDate) ? 'font-medium' : 'text-[var(--dash-text-muted)]'}
+        >
           {formatTrigger(committedDate)}
         </span>
         <svg
@@ -363,7 +360,7 @@ export function DateTimePicker({
             role="dialog"
             aria-modal="true"
             aria-labelledby={dialogTitleId}
-            className="w-full max-w-sm overflow-hidden rounded-xl border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-raised)]"
+            className="max-h-[calc(100dvh-1.5rem)] w-full max-w-sm overflow-hidden rounded-xl border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-raised)]"
           >
             <div className="border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3.5 sm:px-5">
               <div className="flex items-start justify-between gap-4">
@@ -377,7 +374,7 @@ export function DateTimePicker({
                     tabIndex={-1}
                     className="mt-1 text-lg font-semibold text-[var(--dash-text)] outline-none"
                   >
-                    {step === "date" ? "Selecciona una fecha" : "Selecciona una hora"}
+                    {step === 'date' ? 'Selecciona una fecha' : 'Selecciona una hora'}
                   </h2>
                 </div>
                 <button
@@ -394,9 +391,9 @@ export function DateTimePicker({
               <div className="mt-3 flex items-center gap-2" aria-label="Paso del selector">
                 <span
                   className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                    step === "date"
-                      ? "bg-[var(--dash-accent)] text-white"
-                      : "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]"
+                    step === 'date'
+                      ? 'bg-[var(--dash-accent)] text-white'
+                      : 'bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]'
                   }`}
                 >
                   1
@@ -405,9 +402,9 @@ export function DateTimePicker({
                 <span className="h-px flex-1 bg-[var(--dash-border-strong)]" />
                 <span
                   className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                    step === "time"
-                      ? "bg-[var(--dash-accent)] text-white"
-                      : "border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] text-[var(--dash-text-muted)]"
+                    step === 'time'
+                      ? 'bg-[var(--dash-accent)] text-white'
+                      : 'border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] text-[var(--dash-text-muted)]'
                   }`}
                 >
                   2
@@ -416,7 +413,7 @@ export function DateTimePicker({
               </div>
             </div>
 
-            {step === "date" ? (
+            {step === 'date' ? (
               <div className="p-4 sm:p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <button
@@ -426,8 +423,19 @@ export function DateTimePicker({
                     className="flex h-9 w-9 items-center justify-center rounded-md text-[var(--dash-text-muted)] outline-none transition-colors hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)] disabled:cursor-not-allowed disabled:opacity-25"
                     aria-label="Mes anterior"
                   >
-                    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <svg
+                      aria-hidden="true"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
                     </svg>
                   </button>
                   <p className="text-sm font-semibold text-[var(--dash-text)]">
@@ -439,8 +447,19 @@ export function DateTimePicker({
                     className="flex h-9 w-9 items-center justify-center rounded-md text-[var(--dash-text-muted)] outline-none transition-colors hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]"
                     aria-label="Mes siguiente"
                   >
-                    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg
+                      aria-hidden="true"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -469,7 +488,7 @@ export function DateTimePicker({
                       tempDate.getDate() === day &&
                       tempDate.getMonth() === month &&
                       tempDate.getFullYear() === year;
-                    const today = isSameDay(date, renderNow);
+                    const today = isSameDay(date, referenceNow);
 
                     return (
                       <button
@@ -479,15 +498,15 @@ export function DateTimePicker({
                         onClick={() => handleDaySelect(day)}
                         aria-label={formatAccessibleDate(date)}
                         aria-pressed={selected}
-                        aria-current={today ? "date" : undefined}
+                        aria-current={today ? 'date' : undefined}
                         className={`flex aspect-square min-h-9 items-center justify-center rounded-md text-sm outline-none transition-[background-color,color,box-shadow] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)] focus-visible:ring-offset-1 ${
                           disabled
-                            ? "cursor-not-allowed text-[var(--dash-text-faint)] opacity-40"
+                            ? 'cursor-not-allowed text-[var(--dash-text-faint)] opacity-40'
                             : selected
-                              ? "bg-[var(--dash-accent)] font-semibold text-white shadow-sm"
+                              ? 'bg-[var(--dash-accent)] font-semibold text-white shadow-sm'
                               : today
-                                ? "bg-[var(--dash-accent-soft)] font-semibold text-[var(--dash-accent)] hover:bg-[var(--dash-accent)] hover:text-white"
-                                : "text-[var(--dash-text)] hover:bg-[var(--dash-surface-raised)]"
+                                ? 'bg-[var(--dash-accent-soft)] font-semibold text-[var(--dash-accent)] hover:bg-[var(--dash-accent)] hover:text-white'
+                                : 'text-[var(--dash-text)] hover:bg-[var(--dash-surface-raised)]'
                         }`}
                       >
                         {day}
@@ -515,7 +534,7 @@ export function DateTimePicker({
                         type="button"
                         onClick={() => {
                           setValidationError(null);
-                          setStep("date");
+                          setStep('date');
                         }}
                         className="shrink-0 rounded-sm px-1 py-1 text-xs font-semibold text-[var(--dash-accent)] outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]"
                       >
@@ -526,51 +545,52 @@ export function DateTimePicker({
 
                   <fieldset className="mt-5">
                     <legend className="text-xs font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                      Hora
+                      Selecciona una hora
                     </legend>
-                    <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                      <div>
-                        <label htmlFor={`${controlId}-hour`} className="sr-only">
-                          Hora
-                        </label>
-                        <select
-                          id={`${controlId}-hour`}
-                          value={tempDate.getHours()}
-                          onChange={(event) => handleHourChange(Number(event.target.value))}
-                          className="min-h-12 w-full rounded-md border border-[var(--dash-border-strong)] bg-[var(--dash-surface-raised)] px-3 text-base font-medium text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
-                        >
-                          {Array.from({ length: 24 }).map((_, hour) => (
-                            <option key={hour} value={hour} disabled={isHourDisabled(hour)}>
-                              {formatHourLabel(hour)}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <span aria-hidden="true" className="text-lg font-semibold text-[var(--dash-text-muted)]">
-                        :
-                      </span>
-                      <div>
-                        <label htmlFor={`${controlId}-minute`} className="sr-only">
-                          Minutos
-                        </label>
-                        <select
-                          id={`${controlId}-minute`}
-                          value={tempDate.getMinutes()}
-                          onChange={(event) => handleMinuteChange(Number(event.target.value))}
-                          className="min-h-12 w-full rounded-md border border-[var(--dash-border-strong)] bg-[var(--dash-surface-raised)] px-3 text-base font-medium text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
-                        >
-                          {selectableMinutes.map((minute) => (
-                            <option
-                              key={minute}
-                              value={minute}
-                              disabled={isTimeOptionDisabled(tempDate.getHours(), minute)}
+                    <div className="mt-2 max-h-[min(18rem,40dvh)] overflow-y-auto overscroll-contain rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface-raised)] p-2 pr-1">
+                      <div
+                        className="grid grid-cols-3 gap-2 sm:grid-cols-4"
+                        role="group"
+                        aria-label="Horarios del día"
+                      >
+                        {timeSlots.map((slot) => {
+                          const isSelected = slot.getTime() === tempDate.getTime();
+                          const isPast = slot <= referenceNow;
+                          const isExistingMinute = slot.getMinutes() % 15 !== 0;
+
+                          return (
+                            <button
+                              key={slot.toISOString()}
+                              ref={isSelected ? selectedSlotRef : undefined}
+                              type="button"
+                              disabled={isPast}
+                              aria-pressed={isSelected}
+                              aria-label={`${formatTimeSlot(slot)}${isExistingMinute ? ', horario actual' : ''}`}
+                              onClick={() => handleTimeSlotSelect(slot)}
+                              className={`min-h-10 rounded-md border px-2 py-2 text-xs font-semibold outline-none transition-[background-color,border-color,color,box-shadow] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)] focus-visible:ring-offset-1 ${
+                                isPast
+                                  ? 'cursor-not-allowed border-transparent bg-[var(--dash-surface)] text-[var(--dash-text-faint)] opacity-45'
+                                  : isSelected
+                                    ? 'border-[var(--dash-accent)] bg-[var(--dash-accent)] text-white shadow-sm'
+                                    : isExistingMinute
+                                      ? 'border-[var(--dash-accent)]/35 bg-[var(--dash-accent-soft)] text-[var(--dash-text)] hover:border-[var(--dash-accent)]'
+                                      : 'border-[var(--dash-border-strong)] bg-[var(--dash-surface)] text-[var(--dash-text)] hover:border-[var(--dash-accent)] hover:bg-[var(--dash-accent-soft)]'
+                              }`}
                             >
-                              {String(minute).padStart(2, "0")}
-                            </option>
-                          ))}
-                        </select>
+                              {formatTimeSlot(slot)}
+                              {isExistingMinute && (
+                                <span className="mt-0.5 block text-[9px] font-medium opacity-80">
+                                  Hora actual
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
+                    <p className="mt-2 text-xs text-[var(--dash-text-muted)]">
+                      Intervalos de 15 minutos. El conflicto de agenda se valida al guardar.
+                    </p>
                   </fieldset>
 
                   {validationError && (

@@ -2,6 +2,16 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-11 — Reservas: implementación final candidata a QA manual
+
+- **Cliente sin select gigante:** nuevo `ClientAutocomplete` filtra el catálogo real ya cargado por nombre/teléfono, limita la lista visible con scroll y permite teclado, `Enter`, `Escape`, limpieza y resumen de la selección. No se agregó ni simuló ningún endpoint.
+- **Fecha → Hora → Confirmar definitivo:** `DateTimePicker` reemplaza los selects nativos de hora/minutos por slots visuales de 15 minutos, deshabilita horarios pasados y preserva exactamente minutos no estándar existentes durante reprogramación.
+- **Crear y reprogramar:** modales claros, responsive y organizados por bloques; estados loading/error/retry/sin catálogos; resumen de la reserva actual; envío exclusivo de campos modificados al reprogramar.
+- **Agenda operativa:** filtros compactos, fecha final inclusiva, orden cronológico, tabla desktop refinada, cards móviles deliberadas y acciones por rol/estado centralizadas en `BookingActions`.
+- **Decisión de producto:** no se añadió resumen operativo porque el conjunto está limitado por rango/estado y sus conteos podían parecer métricas globales. No se adelantaron Analytics ni Resumen.
+- **Alcance:** cero cambios de backend, contratos, dependencias, lockfile, Payment, `/[slug]` o módulos posteriores. `BACKEND_CHANGES.md` no requiere modificación.
+- **Validación:** TypeScript exit 0; lint exit 0; build de producción exit 0. Implementación final candidata a cierre; QA manual final pendiente; Reservas todavía no aprobada oficialmente; Clientes continúa no autorizado.
+
 ## 2026-08-10 — Reservas: corrección ProfessionalService + DateTimePicker guiado y responsive
 
 **Decisión de producto:** cualquier profesional activo puede ser reservado con cualquier servicio activo de la organización. `ProfessionalService` se conserva para precio/comisión individual y futuras restricciones opcionales, pero no bloquea reservas en esta fase. Se descarta input `datetime-local` nativo por experiencia pobre y se construye un `DateTimePicker` a medida sin dependencias.

@@ -1393,6 +1393,8 @@ Reconstrucción del módulo de Reservas (`app/dashboard/bookings/page.tsx`) sobr
 
 ### 55.3. Funcionalidades de la página de Reservas
 
+> Fotografía de la Entrega B inicial del 2026-08-09. La implementación vigente incorpora y sustituye estos detalles con las correcciones de §55.8 y §55.9.
+
 - **Barra de filtros:** rango `desde/hasta` (por defecto: semana actual) + selector de estado. Botón "Limpiar filtros" solo cuando hay filtros no-default activos.
 - **Tabla de reservas:** columnas Fecha/Hora, Cliente, Profesional, Servicio, Estado, Acciones. Responsive: `min-w-[640px]` + `overflow-x-auto`. Hora de fin visible. `tone="light"` coherente con el dashboard.
 - **Acciones de estado por estado actual y rol:**
@@ -1419,6 +1421,8 @@ Reconstrucción del módulo de Reservas (`app/dashboard/bookings/page.tsx`) sobr
 - **No se adelantaron módulos** — los selectores de Clientes/Profesionales/Servicios son solo selectores, no CRUD completo.
 
 ### 55.6. Estado de QA (2026-08-10)
+
+> Estado histórico previo a las correcciones de §55.8 y §55.9; los blockers descritos a continuación ya fueron implementados, pero su QA manual final continúa pendiente.
 
 - **Reservas Frontend continúa en QA manual.**
 - **QA no aprobado.**
@@ -1463,3 +1467,26 @@ Se corrigió el blocker detectado en QA sin cambiar contratos ni código backend
 **QA pendiente:** el intento de QA automatizado en el navegador integrado quedó bloqueado antes de abrir la app por una restricción ambiental de permisos (`EPERM` al acceder a la configuración local). Debe repetirse QA manual real con `next dev --webpack`, incluyendo 320/360/390 px, tablet, desktop, teclado, `Escape`, cancelación, creación, reprogramación, conflictos, consola y Network.
 
 **Estado:** corrección implementada y validaciones técnicas en verde; Reservas sigue en QA manual, no está aprobada ni cerrada. Clientes continúa no autorizado.
+
+### 55.9. Implementación final candidata a cierre (2026-08-11)
+
+Se completó la última ronda de implementación frontend de Reservas sobre los contratos reales ya aprobados, sin modificar backend, `api.ts`, queries, dependencias ni lockfile:
+
+- **Cliente:** el selector masivo fue reemplazado por `ClientAutocomplete`, un combobox que filtra en memoria el listado real de `GET /clients` por nombre o teléfono. Incluye máximo visual de 20 coincidencias con scroll interno, estado sin resultados, selección resumida, limpieza, `ArrowUp`/`ArrowDown`, `Enter`, `Escape`, foco visible y semántica combobox/listbox. No se inventó un endpoint de búsqueda ni se abrió el módulo Clientes.
+- **Nueva reserva:** el modal se organizó en tres bloques operativos —Cliente, Profesional y servicio, Fecha y hora— con jerarquía, superficies secundarias, validaciones, estados loading/error/retry/sin catálogos y CTA responsive. Se mantienen únicamente profesionales y servicios activos; `ProfessionalService` no filtra ni bloquea.
+- **Fecha y hora:** el paso Hora dejó de usar selects nativos y muestra slots visuales cada 15 minutos. Los horarios pasados de hoy están deshabilitados y el dato existente con minutos no estándar se agrega como opción exacta al reprogramar para evitar normalización silenciosa. El backend sigue siendo la autoridad para conflictos y fechas pasadas.
+- **Reprogramación:** muestra un resumen explícito de la reserva actual y reutiliza el mismo `DateTimePicker`. Solo habilita Guardar cuando existe un cambio y solo envía los campos modificados. Los catálogos inactivos o no disponibles se presentan honestamente.
+- **Pantalla principal:** toolbar compacta de rango/estado, límites de fecha coherentes, orden cronológico ascendente, rango final inclusivo hasta las 23:59:59.999 locales, tabla desktop con mejor jerarquía y cards móviles deliberadas sin tabla comprimida. Las reglas de acciones se centralizaron en `BookingActions` para evitar divergencias entre desktop y móvil.
+- **Estados:** loading, error/retry, vacío del rango, vacío filtrado, success, errores reales de mutación y catálogos faltantes se distinguen sin datos simulados. `NO_SHOW` tiene tratamiento visual distinto de `CANCELLED`.
+- **Resumen operativo:** no se implementó. Los conteos del conjunto ya filtrado podían confundirse con métricas globales y no justificaban una petición adicional ni adelantar Analytics/Resumen.
+- **Responsive y accesibilidad:** header/CTA adaptables, modal ancho contenido por viewport, cards móviles, slots con scroll interno, labels reales, botones nativos, focus visible, `aria-pressed`, combobox/listbox, ciclo de `Tab`, `Escape` y retorno de foco.
+
+**Contratos y alcance:** se conservan `GET /bookings?from=&to=&status=`, `POST /bookings`, `PATCH /bookings/:id`, `PATCH /bookings/:id/status` y los catálogos existentes. No se tocó backend, `BACKEND_CHANGES.md`, Payment, `/[slug]`, Resumen ni ningún módulo posterior.
+
+**Validación técnica:**
+
+- `pnpm --filter web exec tsc --noEmit` → exit 0.
+- `pnpm --filter web lint` → exit 0, 0 errores y 0 warnings.
+- `pnpm --filter web build` → exit 0; compilación de producción correcta y `/dashboard/bookings` generada.
+
+**Estado vigente:** Implementación final candidata a cierre. QA manual final pendiente. Reservas aún NO aprobada oficialmente. Clientes continúa NO autorizado. El panic conocido de `next dev` con Turbopack permanece separado; no se cambiaron bundler, configuración ni dependencias para ocultarlo.

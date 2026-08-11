@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef } from 'react';
 
-type Tone = "dark" | "light";
+type Tone = 'dark' | 'light';
+type Size = 'md' | 'lg';
 
 export function Modal({
   title,
   onClose,
   children,
-  tone = "dark",
+  tone = 'dark',
+  size = 'md',
 }: {
   title: string;
   onClose: () => void;
@@ -16,6 +18,8 @@ export function Modal({
   /** "dark" (default — marketing, landing) o "light" (backoffice/dashboard).
    * Retrocompatible: existingconsumers sin tone siguen usando el tema oscuro. */
   tone?: Tone;
+  /** Ancho máximo del panel. `md` conserva el comportamiento existente. */
+  size?: Size;
 }) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -24,17 +28,17 @@ export function Modal({
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     window.setTimeout(() => closeButtonRef.current?.focus(), 0);
 
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
         return;
       }
 
-      if (e.key !== "Tab" || !panelRef.current) return;
+      if (e.key !== 'Tab' || !panelRef.current) return;
 
       const focusable = Array.from(
         panelRef.current.querySelectorAll<HTMLElement>(
@@ -53,44 +57,49 @@ export function Modal({
         first.focus();
       }
     }
-    window.addEventListener("keydown", onKey);
+    window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener('keydown', onKey);
       previouslyFocused?.focus();
     };
   }, [onClose]);
 
-  const isLight = tone === "light";
+  const isLight = tone === 'light';
 
-  const overlayBg = isLight ? "bg-black/40" : "bg-black/60";
+  const overlayBg = isLight ? 'bg-black/40' : 'bg-black/60';
   const panelBg = isLight
-    ? "border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-raised)]"
-    : "border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-xl";
+    ? 'border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-raised)]'
+    : 'border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-xl';
   const titleCls = isLight
-    ? "text-base font-semibold text-[var(--dash-text)]"
-    : "font-[family-name:var(--font-display)] text-lg text-[var(--color-paper)]";
+    ? 'text-base font-semibold text-[var(--dash-text)]'
+    : 'font-[family-name:var(--font-display)] text-lg text-[var(--color-paper)]';
   const closeCls = isLight
-    ? "flex h-9 w-9 items-center justify-center rounded-md text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] cursor-pointer outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]"
-    : "text-[var(--color-muted)] hover:text-[var(--color-paper)] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brass)]";
-  const overlayLayout = isLight ? "p-3 backdrop-blur-[1px] sm:p-4" : "p-4";
-  const panelLayout = isLight ? "rounded-xl" : "rounded-sm p-6";
+    ? 'flex h-9 w-9 items-center justify-center rounded-md text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] cursor-pointer outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]'
+    : 'text-[var(--color-muted)] hover:text-[var(--color-paper)] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brass)]';
+  const overlayLayout = isLight ? 'p-3 backdrop-blur-[1px] sm:p-4' : 'p-4';
+  const panelLayout = isLight ? 'rounded-xl' : 'rounded-sm p-6';
   const headerLayout = isLight
-    ? "border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3.5 sm:px-5"
-    : "mb-5";
-  const contentLayout = isLight ? "p-4 sm:p-5" : "";
+    ? 'border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3.5 sm:px-5'
+    : 'mb-5';
+  const contentLayout = isLight ? 'p-4 sm:p-5' : '';
+  const panelWidth = size === 'lg' ? 'max-w-2xl' : 'max-w-md';
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg} ${overlayLayout}`}>
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg} ${overlayLayout}`}
+    >
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`max-h-[calc(100dvh-1.5rem)] w-full max-w-md overflow-y-auto ${panelLayout} ${panelBg}`}
+        className={`max-h-[calc(100dvh-1.5rem)] w-full overflow-y-auto ${panelWidth} ${panelLayout} ${panelBg}`}
       >
         <div className={`flex items-center justify-between gap-4 ${headerLayout}`}>
-          <h2 id={titleId} className={titleCls}>{title}</h2>
+          <h2 id={titleId} className={titleCls}>
+            {title}
+          </h2>
           <button
             ref={closeButtonRef}
             type="button"
