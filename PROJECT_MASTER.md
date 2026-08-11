@@ -1502,3 +1502,16 @@ Intervención quirúrgica posterior a la candidata de §55.9, sin cambios de con
 - **Decisión de tooling:** `"dev": "next dev"` permanece intacto. No se cambió Next, Webpack, Turbopack, configuración, dependencias ni lockfile. El procedimiento seguro ante la misma firma es detener el servidor, regenerar `.next` y volver a ejecutar `pnpm run dev`; `next dev --webpack` permanece como alternativa diagnóstica, no como script oficial.
 
 **Estado:** Correcciones finales implementadas. QA manual de cierre pendiente. Reservas NO aprobada todavía. Clientes NO autorizado todavía. La inspección autenticada de los viewports y flujos continúa pendiente porque el navegador de QA disponible no tenía una sesión iniciada ni existían credenciales de prueba autorizadas.
+
+### 55.11. Corrección del menú contextual desktop (2026-08-11)
+
+El último defecto visual observado durante QA estaba aislado al menú `…` de `BookingActions` en la tabla desktop:
+
+- **Causa raíz:** aunque el portal evitaba el recorte por el `overflow` de la tabla, se renderizaba en `document.body`, fuera de `.dashboard-shell`. El menú dejaba de heredar `--dash-surface`, `--dash-border-strong`, `--dash-shadow-raised` y los demás tokens claros, de modo que su superficie podía resultar transparente y mezclarse visualmente con acciones de filas posteriores. El posicionamiento también calculaba una altura teórica antes del render en lugar de medir el elemento real.
+- **Solución:** el portal ahora se monta dentro de `.dashboard-shell` y conserva coordenadas `fixed`; el menú se renderiza inicialmente oculto, se mide con `getBoundingClientRect()` y solo entonces se muestra. Abre debajo cuando cabe, encima cuando no, y restringe `top`/`left` a un margen seguro del viewport. Tiene fondo blanco opaco, borde, sombra y `z-index` alto con fallbacks explícitos.
+- **Interacción:** se mantienen clic externo, `Escape`, navegación por teclado y cierre en scroll/resize; el foco se mueve al primer item después de posicionar y vuelve al trigger cuando corresponde.
+- **Alcance:** no cambiaron reglas de acciones, vista mobile, backend, contratos, dependencias, lockfile ni otros módulos.
+
+**Validación técnica:** `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build` finalizaron con exit 0. El build de Next.js 16.2.10 compiló y generó `/dashboard/bookings` correctamente.
+
+**Estado vigente:** corrección implementada; QA manual final y aprobación explícita siguen pendientes. Reservas NO está cerrada. Clientes continúa NO autorizado.

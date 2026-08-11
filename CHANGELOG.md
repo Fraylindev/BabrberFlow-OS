@@ -2,6 +2,13 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-11 — Reservas: corrección del menú contextual desktop
+
+- **Causa raíz:** el portal de `BookingActions` se montaba en `document.body`, fuera de `.dashboard-shell`, por lo que perdía las variables visuales `--dash-*` y su superficie podía quedar transparente sobre otras filas. Además, la apertura arriba/abajo dependía de una altura estimada, no de las dimensiones renderizadas del menú.
+- **Corrección quirúrgica:** el portal se monta dentro del shell del dashboard, mide el menú real antes de mostrarlo, prioriza abrir debajo y usa arriba cuando no cabe, limita ambos ejes al viewport y conserva cierre por scroll, resize, clic externo y `Escape`, con retorno de foco cuando corresponde. La superficie tiene fondo opaco, borde, sombra y `z-index` propios con fallback seguro.
+- **Validación:** `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build` finalizaron con exit 0; `/dashboard/bookings` fue generado correctamente.
+- **Alcance:** solo rendering/positioning del menú desktop. Sin cambios en reglas de acciones, mobile, backend, contratos, otros módulos, dependencias ni lockfile. Reservas sigue pendiente de aprobación final; Clientes continúa no autorizado.
+
 ## 2026-08-11 — Reservas: correcciones finales de layout, acciones y Turbopack
 
 - **Overflow resuelto en la causa:** cards hasta 768 px inclusive; tabla desde 1024 px con layout fijo, columnas proporcionadas y truncado accesible. Se elimina la combinación de tabla mínima de 640 px y cuatro botones que excedía el área útil del dashboard.

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { Booking, BookingStatus } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
@@ -56,10 +56,11 @@ function ContextActionsMenu({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
 
   function closeMenu({ restoreFocus = false } = {}) {
     setOpen(false);
+    setPosition(null);
     if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus(), 0);
   }
 
@@ -69,30 +70,60 @@ function ContextActionsMenu({
       return;
     }
 
-    const trigger = triggerRef.current;
-    if (!trigger) return;
+    if (!triggerRef.current) return;
 
-    const rect = trigger.getBoundingClientRect();
-    const menuWidth = 176;
-    const estimatedHeight = actions.length * 40 + 8;
-    const availableBelow = window.innerHeight - rect.bottom;
-    const top =
-      availableBelow >= estimatedHeight + 8
-        ? rect.bottom + 4
-        : Math.max(8, rect.top - estimatedHeight - 4);
-    const left = Math.min(
-      Math.max(8, rect.right - menuWidth),
-      Math.max(8, window.innerWidth - menuWidth - 8),
-    );
-
-    setPosition({ top, left });
+    setPosition(null);
     setOpen(true);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return;
 
+    const trigger = triggerRef.current;
+    const menu = menuRef.current;
+    if (!trigger || !menu) return;
+
+    const viewportMargin = 8;
+    const triggerGap = 4;
+    const triggerRect = trigger.getBoundingClientRect();
+    const menuRect = menu.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+    const belowTop = triggerRect.bottom + triggerGap;
+    const aboveTop = triggerRect.top - menuRect.height - triggerGap;
+    const fitsBelow = belowTop + menuRect.height <= viewportHeight - viewportMargin;
+    const fitsAbove = aboveTop >= viewportMargin;
+
+    let top: number;
+    if (fitsBelow) {
+      top = belowTop;
+    } else if (fitsAbove) {
+      top = aboveTop;
+    } else {
+      const maximumTop = Math.max(
+        viewportMargin,
+        viewportHeight - menuRect.height - viewportMargin,
+      );
+      top = Math.min(Math.max(viewportMargin, belowTop), maximumTop);
+    }
+
+    const maximumLeft = Math.max(viewportMargin, viewportWidth - menuRect.width - viewportMargin);
+    const left = Math.min(
+      Math.max(viewportMargin, triggerRect.right - menuRect.width),
+      maximumLeft,
+    );
+
+    setPosition({ top, left });
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !position) return;
+
     menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+  }, [open, position]);
+
+  useEffect(() => {
+    if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
       const target = event.target as Node;
@@ -109,7 +140,7 @@ function ContextActionsMenu({
     }
 
     function handleViewportChange() {
-      closeMenu();
+      closeMenu({ restoreFocus: menuRef.current?.contains(document.activeElement) ?? false });
     }
 
     document.addEventListener('mousedown', handlePointerDown);
@@ -145,6 +176,11 @@ function ContextActionsMenu({
     items[nextIndex]?.focus();
   }
 
+  const portalTarget =
+    typeof document === 'undefined'
+      ? null
+      : (document.querySelector<HTMLElement>('.dashboard-shell') ?? document.body);
+
   return (
     <>
       <button
@@ -161,14 +197,23 @@ function ContextActionsMenu({
       </button>
 
       {open &&
+        portalTarget &&
         createPortal(
           <div
             ref={menuRef}
             role="menu"
             aria-label="Acciones secundarias"
             onKeyDown={handleMenuKeyDown}
-            style={{ top: position.top, left: position.left }}
-            className="fixed z-[80] w-44 overflow-hidden rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] p-1 shadow-[var(--dash-shadow-raised)]"
+            style={{
+              top: position?.top ?? 0,
+              left: position?.left ?? 0,
+              visibility: position ? 'visible' : 'hidden',
+              backgroundColor: 'var(--dash-surface, #ffffff)',
+              borderColor: 'var(--dash-border-strong, #d4d4d8)',
+              boxShadow:
+                'var(--dash-shadow-raised, 0 4px 6px rgba(24, 24, 27, 0.05), 0 10px 24px -8px rgba(24, 24, 27, 0.12))',
+            }}
+            className="fixed z-[120] max-h-[calc(100dvh-1rem)] w-44 overflow-y-auto rounded-lg border p-1"
           >
             {actions.map((action) => (
               <button
@@ -189,7 +234,7 @@ function ContextActionsMenu({
               </button>
             ))}
           </div>,
-          document.body,
+          portalTarget,
         )}
     </>
   );
