@@ -2,7 +2,7 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
-## 2026-08-10 — Reservas: corrección ProfessionalService + tema claro en modales + DateTimePicker propio
+## 2026-08-10 — Reservas: corrección ProfessionalService + DateTimePicker guiado y responsive
 
 **Decisión de producto:** cualquier profesional activo puede ser reservado con cualquier servicio activo de la organización. `ProfessionalService` se conserva para precio/comisión individual y futuras restricciones opcionales, pero no bloquea reservas en esta fase. Se descarta input `datetime-local` nativo por experiencia pobre y se construye un `DateTimePicker` a medida sin dependencias.
 
@@ -11,9 +11,10 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **`app/dashboard/bookings/page.tsx` (frontend):** 
   - Modales `CreateBookingModal` y `RescheduleBookingModal` migrados a tema claro (`--dash-*`). Selectores de servicio muestran todos los servicios activos de la organización, sin filtrar por profesional.
   - Se implementó vista responsive: listado en forma de Cards para móvil (`md:hidden`) y tabla original para desktop (`hidden md:block`), eliminando el scroll horizontal forzado en pantallas pequeñas.
-- **`components/ui/DateTimePicker.tsx` (frontend):** Creado componente custom para selección de fecha y hora. Funciona internamente con objetos `Date` locales, deshabilita días pasados y horas pasadas para el día actual. Se integra visualmente con el tema claro (`tone="light"`).
+- **`components/ui/DateTimePicker.tsx` (frontend):** el componente custom se corrigió después del blocker encontrado en QA. Reemplaza el popover absoluto apilado por un diálogo compacto contenido en el viewport y un flujo explícito `Fecha → Hora → Confirmar`; deshabilita días y horarios pasados, muestra la fecha elegida con `Cambiar fecha`, conserva minutos no estándar existentes y valida nuevamente contra la hora real al confirmar. `Cancelar`, clic fuera y `Escape` no publican la selección temporal; `Escape` no cierra accidentalmente el modal padre.
+- **`components/ui/Modal.tsx` (frontend):** el tono claro gana separación visual de encabezado/superficie, contención por `100dvh`, bloqueo de scroll, foco inicial, retorno de foco y ciclo de `Tab`. El layout visual del tono oscuro se conserva para no alterar otros módulos.
 - **`lib/api.ts` (frontend):** campo `isActive?: boolean` agregado al tipo `Service` — reflejaba un campo real del schema de Prisma que faltaba en el tipo del frontend.
-- **Validación:** `tsc --noEmit` → exit 0, `lint` → exit 0 (0 errores), `tests` → 38/38 passed, `build` → exit 0.
+- **Validación:** `tsc --noEmit` → exit 0, `lint` → exit 0 (0 errores, 0 warnings), `tests` backend previos → 38/38 passed, `build` → exit 0. QA visual de la corrección sigue pendiente: el navegador integrado no pudo iniciar por una restricción ambiental `EPERM`; debe repetirse manualmente con `next dev --webpack`. Reservas no se considera aprobada ni cerrada.
 
 ## 2026-08-09 — Reservas Entrega B: Frontend
 

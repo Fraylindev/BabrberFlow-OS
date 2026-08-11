@@ -1441,3 +1441,25 @@ Corrida desde el sandbox (sin limitación de Prisma en el frontend):
 
 Los 3 comandos del backend siguen pasando en tu entorno (39/39 tests OK, confirmado antes de iniciar esta entrega).
 
+### 55.8. Corrección del blocker de fecha/hora implementada (2026-08-10)
+
+Se corrigió el blocker detectado en QA sin cambiar contratos ni código backend:
+
+- `DateTimePicker` dejó de ser un popover absoluto que crecía hacia abajo desde el formulario. Ahora abre una capa compacta, centrada y contenida por el viewport, compatible con móvil y desktop.
+- El flujo quedó dividido en dos vistas excluyentes y explícitas: **Fecha → Hora → Confirmar**. Elegir una fecha válida avanza a Hora; la segunda vista muestra la fecha completa y ofrece `Cambiar fecha`.
+- Los días pasados están deshabilitados. Para hoy, las horas/minutos ya transcurridos se deshabilitan y la confirmación vuelve a comparar contra un `new Date()` creado en el instante real del clic; el backend conserva su validación autoritativa.
+- `Cancelar`, clic en el fondo y `Escape` descartan la selección temporal. El manejo de `Escape` del picker detiene el evento para no cerrar también el modal de reserva.
+- La fecha/hora solo se publica al formulario con `Confirmar fecha y hora`; el CTA final del formulario continúa siendo `Reservar`.
+- Se preservan minutos no estándar de reservas existentes al reprogramar (por ejemplo, `10:10`) para no introducir cambios silenciosos.
+- `Modal` incorporó contención de viewport, bloqueo de scroll del documento, foco inicial, retorno de foco, ciclo de `Tab` y una jerarquía visual más clara para `tone="light"`. El layout visual oscuro existente se conservó para los otros módulos.
+- No se agregaron dependencias y no se modificaron `api.ts`, `bookings.ts`, `BACKEND_CHANGES.md`, backend ni lockfile.
+
+**Validación técnica de esta corrección:**
+
+- `pnpm --filter web exec tsc --noEmit` → exit 0.
+- `pnpm --filter web lint` → exit 0, 0 errores y 0 warnings.
+- `pnpm --filter web build` → exit 0; `/dashboard/bookings` generado correctamente.
+
+**QA pendiente:** el intento de QA automatizado en el navegador integrado quedó bloqueado antes de abrir la app por una restricción ambiental de permisos (`EPERM` al acceder a la configuración local). Debe repetirse QA manual real con `next dev --webpack`, incluyendo 320/360/390 px, tablet, desktop, teclado, `Escape`, cancelación, creación, reprogramación, conflictos, consola y Network.
+
+**Estado:** corrección implementada y validaciones técnicas en verde; Reservas sigue en QA manual, no está aprobada ni cerrada. Clientes continúa no autorizado.

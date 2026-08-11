@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId, useRef } from "react";
 
 type Tone = "dark" | "light";
 
@@ -17,12 +17,48 @@ export function Modal({
    * Retrocompatible: existingconsumers sin tone siguen usando el tema oscuro. */
   tone?: Tone;
 }) {
+  const titleId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
+
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (e.key !== "Tab" || !panelRef.current) return;
+
+      const focusable = Array.from(
+        panelRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+      previouslyFocused?.focus();
+    };
   }, [onClose]);
 
   const isLight = tone === "light";
@@ -35,24 +71,37 @@ export function Modal({
     ? "text-base font-semibold text-[var(--dash-text)]"
     : "font-[family-name:var(--font-display)] text-lg text-[var(--color-paper)]";
   const closeCls = isLight
-    ? "text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] cursor-pointer transition-colors"
-    : "text-[var(--color-muted)] hover:text-[var(--color-paper)] cursor-pointer";
+    ? "flex h-9 w-9 items-center justify-center rounded-md text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] cursor-pointer outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]"
+    : "text-[var(--color-muted)] hover:text-[var(--color-paper)] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brass)]";
+  const overlayLayout = isLight ? "p-3 backdrop-blur-[1px] sm:p-4" : "p-4";
+  const panelLayout = isLight ? "rounded-xl" : "rounded-sm p-6";
+  const headerLayout = isLight
+    ? "border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3.5 sm:px-5"
+    : "mb-5";
+  const contentLayout = isLight ? "p-4 sm:p-5" : "";
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg} p-4`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg} ${overlayLayout}`}>
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
-        className={`w-full max-w-md rounded-sm p-6 ${panelBg}`}
+        aria-labelledby={titleId}
+        className={`max-h-[calc(100dvh-1.5rem)] w-full max-w-md overflow-y-auto ${panelLayout} ${panelBg}`}
       >
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className={titleCls}>{title}</h2>
-          <button onClick={onClose} aria-label="Cerrar" className={closeCls}>
-            ✕
+        <div className={`flex items-center justify-between gap-4 ${headerLayout}`}>
+          <h2 id={titleId} className={titleCls}>{title}</h2>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar"
+            className={closeCls}
+          >
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
-        {children}
+        <div className={contentLayout}>{children}</div>
       </div>
     </div>
   );
