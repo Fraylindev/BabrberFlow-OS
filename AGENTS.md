@@ -787,6 +787,18 @@ No usar frases como “100% terminado” si aún falta QA manual o aprobación.
 - Reportes al propietario del proyecto: español.
 - Mensajes de UI: según el idioma definido por el producto.
 
+# Git y sincronización con GitHub
+
+La rama de trabajo autorizada para agentes es:
+
+`ai/antigravity-qa`
+
+Antes de modificar código:
+
+```bash
+git branch --show-current
+git status
+
 ---
 
 # 30. Principio rector
