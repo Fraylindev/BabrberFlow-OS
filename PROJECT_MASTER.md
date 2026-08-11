@@ -8,6 +8,8 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
+> **Estado vigente de módulos (2026-08-11):** Reservas Backend y Reservas Frontend están **CERRADOS / APROBADOS**; el módulo Reservas está **CERRADO oficialmente** después de que el propietario aprobara el QA manual final. El checkpoint funcional aprobado es `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. El siguiente módulo autorizado es **Clientes**, exclusivamente para **Auditoría/Diagnóstico Backend**; todavía no está autorizada su implementación Backend ni Frontend. Resumen continúa congelado hasta el final del orden de módulos. Ver §56.
+
 ---
 
 ## Índice
@@ -1523,3 +1525,20 @@ El control `Limpiar filtros` ya utilizaba `Button`, permanecía debajo de los ca
 **Validación técnica:** `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build` finalizaron con exit 0. Next.js generó `/dashboard/bookings` correctamente.
 
 **Alcance:** sin cambios de comportamiento, filtros, requests, estado, backend, otros módulos, dependencias ni lockfile. Reservas sigue pendiente de QA manual final y aprobación explícita; NO está cerrada. Clientes continúa NO autorizado.
+
+## 56. Cierre oficial del módulo Reservas (2026-08-11)
+
+Esta sección registra el estado vigente y **supersede exclusivamente los estados transitorios de QA pendiente** documentados en §55.6 y §55.8–§55.12. Esas secciones se conservan como historial cronológico de implementación y diagnóstico.
+
+- **Reservas Backend:** **CERRADO / APROBADO**.
+- **Reservas Frontend:** **CERRADO / APROBADO**.
+- **Módulo Reservas:** **CERRADO oficialmente**.
+- **QA manual final:** **APROBADO por el propietario**.
+- **Checkpoint funcional aprobado:** `9a30f2abb37857dbbbf15e34df1cbaec576121b6`.
+- **Blockers:** no quedan blockers funcionales conocidos que impidan avanzar al siguiente módulo.
+- **Tooling local:** `pnpm run dev` vuelve a funcionar después de regenerar `.next`. Se mantiene el diagnóstico documentado en §55.10: la firma reproducida correspondía a una caché `.next` corrupta/inconsistente; no se cambiaron scripts, configuración, Turbopack, versiones ni dependencias.
+- **Siguiente módulo autorizado:** **Clientes**, únicamente en fase de **Auditoría/Diagnóstico Backend**.
+- **Alcance todavía no autorizado en Clientes:** no iniciar implementación Backend ni Frontend hasta una autorización posterior explícita.
+- **Resumen/Dashboard:** continúa congelado hasta el final del orden de módulos; no se autorizan KPIs, gráficos, métricas, widgets ni nuevas agregaciones durante las fases intermedias.
+
+Este checkpoint es únicamente documental: no modifica código, contratos, Prisma, dependencias ni configuración. El cierre oficial no implica adelantar trabajo de Clientes más allá de su próxima auditoría backend.

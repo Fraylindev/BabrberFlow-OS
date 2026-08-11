@@ -2,6 +2,12 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-11 — Cierre oficial del módulo Reservas
+
+- Reservas completó el QA manual final y fue aprobado oficialmente por el propietario; Backend y Frontend quedan cerrados como módulo sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`.
+- No quedan blockers funcionales conocidos que impidan avanzar. Se autoriza iniciar Clientes únicamente en fase de Auditoría/Diagnóstico Backend; su implementación Backend y Frontend todavía no está autorizada.
+- Este cierre es exclusivamente de gestión y documentación: no incorpora cambios funcionales, de backend, contratos, frontend, dependencias ni configuración. Resumen continúa congelado hasta el final del orden de módulos.
+
 ## 2026-08-11 — Reservas: affordance de Limpiar filtros
 
 - `Limpiar filtros` conserva exactamente su ubicación, texto, condición `hasActiveFilters` y comportamiento, pero ahora se reconoce como acción mediante un tratamiento ghost discreto con fondo claro, borde sutil, sombra mínima, hover y foco visible.
