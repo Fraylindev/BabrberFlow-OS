@@ -2,13 +2,22 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
-## 2026-08-11 — Clientes Entrega A: Backend implementado, pendiente de aprobación
+## 2026-08-11 — Clientes Entrega B: candidato implementado y en revisión
+
+- La auditoría del checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732` aprobó oficialmente la Entrega A Backend de Clientes.
+- Se autoriza exclusivamente la Entrega B Frontend conectada a los contratos aprobados. El módulo Clientes todavía no está cerrado y Resumen continúa congelado.
+- Se implementó la integración real de listado, búsqueda/filtro, paginación por headers, detalle, creación, edición, archivo/restauración, permisos y responsive. El fallback defensivo no inventa totales ni páginas cuando una respuesta inesperada carece de metadata.
+- Se añadió únicamente `X-Total-Count`, `X-Page`, `X-Limit` y `X-Total-Pages` a `Access-Control-Expose-Headers` en la configuración CORS existente. No cambiaron orígenes, credenciales, métodos, contratos, Prisma, migraciones ni cuerpos de respuesta.
+- QA autenticado completado para CRUD, normalización/duplicados, búsqueda, filtros, paginación real, archivo/restauración, alcance de `BARBER`, privacidad, desktop y móvil; consola sin errores ni advertencias. La regresión pública mantiene atomicidad y respuesta sin PII interna.
+- Backend TypeScript/lint/tests (76/76) y web TypeScript/lint/build pasaron con exit 0. La Entrega B queda implementada y pendiente de revisión/aprobación explícita; Clientes todavía no está cerrado.
+
+## 2026-08-11 — Clientes Entrega A: Backend implementado y aprobado
 
 - Se completó el contrato backend de Clientes: detalle, búsqueda, filtro activo/inactivo, paginación, orden estable, UUIDs, límites, rechazo de PATCH vacío y respuestas proyectadas; `DELETE` ahora archiva y se añadió reactivación explícita, sin hard-delete.
 - Se reforzaron privacidad y multi-tenancy: BARBER solo accede a clientes de su agenda y nunca recibe notas; las mutaciones finales incluyen `organizationId`; Reservas usa una proyección segura de Cliente y rechaza inactivos en creación interna.
 - `POST /public/:slug/bookings` deja de exponer `Client`/PII y crea o reactiva Cliente junto con Booking en una transacción. La cuenta CUSTOMER opcional sigue siendo secundaria/fail-open.
 - Entradas de Cliente normalizadas, deduplicación operativa por correo/teléfono y auditoría `CREATE`/`UPDATE`/`ARCHIVE`/`RESTORE` sin valores PII. Sin migración, backfill, cambios de Prisma, dependencias o lockfile.
-- Se añadieron pruebas de servicio/controlador/flujo público y regresiones de Reservas: backend TypeScript/lint en exit 0 y 76/76 tests; web TypeScript/lint/build en exit 0. Solo se sincronizó el tipo web `PublicBookingResult`; no se rediseñó Clientes Frontend. Entrega A aún no aprobada; Entrega B y Resumen continúan congelados.
+- Se añadieron pruebas de servicio/controlador/flujo público y regresiones de Reservas: backend TypeScript/lint en exit 0 y 76/76 tests; web TypeScript/lint/build en exit 0. Solo se sincronizó el tipo web `PublicBookingResult`; no se rediseñó Clientes Frontend en esa entrega. La auditoría posterior del checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732` aprobó la Entrega A.
 
 ## 2026-08-11 — Cierre oficial del módulo Reservas
 

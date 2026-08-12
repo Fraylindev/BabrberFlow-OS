@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-11):** Reservas Backend y Reservas Frontend están **CERRADOS / APROBADOS**; el módulo Reservas está **CERRADO oficialmente** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. La **Entrega A Backend de Clientes está implementada sobre `e9dacc348da4b9c507a248530af4782c0d757156`, pendiente de revisión y aprobación explícita del propietario**; no está autorizada todavía la Entrega B Frontend. Resumen continúa congelado hasta el final del orden de módulos. Ver §56–57.
+> **Estado vigente de módulos (2026-08-11):** Reservas Backend y Reservas Frontend están **CERRADOS / APROBADOS**; el módulo Reservas está **CERRADO oficialmente** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. La **Entrega A Backend de Clientes está APROBADA** sobre el checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732`; la **Entrega B Frontend está IMPLEMENTADA / EN REVISIÓN**. El módulo Clientes todavía **NO está cerrado**. Resumen continúa congelado hasta el final del orden de módulos. Ver §56–58.
 
 ---
 
@@ -1545,7 +1545,7 @@ Este checkpoint es únicamente documental: no modifica código, contratos, Prism
 
 ## 57. Clientes — Entrega A Backend (2026-08-11)
 
-Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248530af4782c0d757156`, después de completar la Auditoría/Diagnóstico Backend. Esta sección describe comportamiento implementado; **Clientes Backend todavía no está aprobado** y la Entrega B Frontend continúa no autorizada.
+Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248530af4782c0d757156`, después de completar la Auditoría/Diagnóstico Backend. La auditoría del checkpoint candidato `18a3605329ad0ce708a44ac8fcd5db1dd1665732` fue aprobada por el propietario: **Clientes Backend queda APROBADO** y la Entrega B Frontend queda autorizada.
 
 ### 57.1. Contrato de Clientes
 
@@ -1583,4 +1583,25 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - No se rediseñó Clientes Frontend. El único cambio web es la sincronización del tipo `PublicBookingResult` con la respuesta pública segura.
 - No se modificaron Prisma, migraciones, dependencias, configuración ni lockfile.
 - Validación técnica: backend TypeScript exit 0, lint exit 0 y 76/76 tests; web TypeScript exit 0, lint exit 0 y build de producción exit 0 por la sincronización mínima de `PublicBookingResult`.
-- La Entrega A Backend queda **implementada y técnicamente validada, pendiente de revisión y aprobación explícita del propietario**. No iniciar frontend ni declarar Clientes aprobado.
+- La Entrega A Backend queda **APROBADA por el propietario** sobre el checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732`.
+- La Entrega B Frontend está **autorizada y en progreso**. Esta autorización no cierra el módulo Clientes ni autoriza avanzar a módulos posteriores.
+
+## 58. Clientes — Entrega B Frontend (2026-08-11)
+
+### 58.1. Estado autorizado
+
+- **Clientes Backend:** **APROBADO** sobre `18a3605329ad0ce708a44ac8fcd5db1dd1665732`.
+- **Clientes Frontend:** **IMPLEMENTADO / EN REVISIÓN** sobre los contratos de §57 y `BACKEND_CHANGES.md`; pendiente de aprobación explícita del propietario.
+- **Módulo Clientes:** **NO CERRADO**; requiere implementación, validaciones técnicas, QA funcional/visual y aprobación explícita posterior del propietario.
+- **Resumen/Dashboard:** continúa congelado. No se autorizan cambios en Reservas, Prisma, backend ni otros módulos dentro de esta entrega frontend.
+
+### 58.2. Implementación y validación del candidato
+
+- Se implementó el frontend sobre contratos reales: listado con búsqueda/filtro, metadata de paginación, detalle, creación, edición, archivo/restauración, permisos por rol, estados de interfaz y vistas diferenciadas para desktop/móvil.
+- Se aplicó la corrección CORS mínima autorizada en `apps/api/src/main.ts`: `Access-Control-Expose-Headers` expone únicamente `X-Total-Count`, `X-Page`, `X-Limit` y `X-Total-Pages`. No cambiaron orígenes, credenciales, métodos, DTOs, servicios, Prisma, migraciones ni cuerpos de respuesta.
+- El frontend usa la metadata real para el total y las páginas. Conserva un fallback defensivo para respuestas inesperadas sin metadata, pero en ese caso informa que la metadata no está disponible y no presenta una paginación inventada.
+- QA autenticado completado con una organización local aislada: paginación real de 25 clientes en 2 páginas, búsqueda por correo/teléfono, filtros activo/archivado, creación, normalización, edición, conflicto por duplicado, archivo y restauración. `BARBER` quedó limitado a clientes vinculados a su agenda, sin notas, timestamps ni acciones de gestión.
+- QA visual realizado en desktop (1440×900) y móvil (390×844): tabla de escritorio y cards móviles sin overflow; estados y acciones operativos; consola del navegador sin errores ni advertencias.
+- Regresión crítica previa de reserva pública confirmada: un conflicto no deja Cliente creado o reactivado sin Booking, y la respuesta pública no expone `client`, `clientId`, correo, teléfono, notas, `organizationId` ni timestamps.
+- Validación técnica del candidato: backend TypeScript, lint y 76/76 tests con exit 0; web TypeScript, lint y build de producción con exit 0.
+- La Entrega B queda **IMPLEMENTADA / EN REVISIÓN**, pendiente de aprobación explícita del propietario. El módulo Clientes **NO está cerrado** y no se autoriza avanzar al siguiente módulo.

@@ -25,6 +25,7 @@ async function bootstrap() {
   app.enableCors({
     origin: allowedOrigins,
     credentials: true,
+    exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Limit', 'X-Total-Pages'],
   });
 
   // Sin esto, Nest no reenvía SIGTERM/SIGINT a los hooks de ciclo de vida

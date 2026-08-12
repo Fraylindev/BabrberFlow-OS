@@ -20,10 +20,15 @@ function getToken(): string | null {
   return window.localStorage.getItem("bf_token");
 }
 
-async function request<T>(
+export interface ApiResponse<T> {
+  data: T;
+  headers: Headers;
+}
+
+async function requestWithHeaders<T>(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<ApiResponse<T>> {
   const token = getToken();
 
   const res = await fetch(`${API_URL}${path}`, {
@@ -47,7 +52,15 @@ async function request<T>(
     throw new ApiError(res.status, message);
   }
 
-  return data as T;
+  return { data: data as T, headers: res.headers };
+}
+
+async function request<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const response = await requestWithHeaders<T>(path, options);
+  return response.data;
 }
 
 export const api = {
@@ -56,6 +69,12 @@ export const api = {
       ? `${path}?${new URLSearchParams(params).toString()}`
       : path;
     return request<T>(url, { method: "GET" });
+  },
+  getWithHeaders: <T>(path: string, params?: Record<string, string>) => {
+    const url = params
+      ? `${path}?${new URLSearchParams(params).toString()}`
+      : path;
+    return requestWithHeaders<T>(url, { method: "GET" });
   },
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: "POST", body: JSON.stringify(body) }),
@@ -113,13 +132,18 @@ export interface Service {
   organizationId: string;
 }
 
-export interface Client {
+export interface ClientContact {
   id: string;
   name: string;
   email?: string | null;
   phone?: string | null;
+}
+
+export interface Client extends ClientContact {
   notes?: string | null;
-  organizationId: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Booking {
@@ -131,7 +155,7 @@ export interface Booking {
   professionalId: string;
   serviceId: string;
   notes?: string | null;
-  client?: Client;
+  client?: ClientContact;
   professional?: Professional;
   service?: Service;
 }

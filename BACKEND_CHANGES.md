@@ -4,7 +4,7 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 ---
 
-## 2026-08-11 — Clientes: Entrega A Backend
+## 2026-08-11 — Clientes: Entrega A Backend aprobada
 
 ### Contrato interno `/clients`
 
@@ -50,7 +50,9 @@ La respuesta ya no contiene `client`, `clientId`, `organizationId` ni PII intern
 - `AuditLog`: `CREATE`, `UPDATE`, `ARCHIVE`, `RESTORE`; solo IDs/contexto, nunca valores PII; fail-open.
 - **Sin migración/backfill:** no cambió Prisma y no se fusionaron, eliminaron ni reescribieron registros existentes.
 - El vínculo `Client ↔ User CUSTOMER` no se implementa; queda como requisito futuro para historial/autoservicio B2C.
-- Impacto frontend limitado a sincronizar `PublicBookingResult`; Clientes UI no fue modificada. Entrega A todavía pendiente de aprobación explícita.
+- La auditoría del checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732` fue aprobada por el propietario: **Clientes Backend está aprobado**.
+- La Entrega B Frontend está implementada y en revisión, pendiente de aprobación explícita del propietario. Esto no modifica el contrato backend ni cierra el módulo Clientes.
+- **Integración CORS de paginación resuelta:** `apps/api/src/main.ts` expone únicamente `X-Total-Count`, `X-Page`, `X-Limit` y `X-Total-Pages` mediante `Access-Control-Expose-Headers`, por lo que el frontend cross-origin puede leer la metadata real de `GET /clients`. No cambiaron orígenes permitidos, `credentials`, métodos, DTOs, servicios, Prisma, migraciones ni cuerpos de respuesta.
 
 ---
 
