@@ -2,6 +2,18 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-12 — Profesionales Entrega A: Checkpoint A1 implementado / en revisión
+
+- A0 `8964c981223ba3f4a1e780103cbc0d20e4c602eb` queda registrado como **CERRADO / APROBADO** después de auditoría técnica sin bloqueantes.
+- Profesionales incorpora estados `ACTIVE/INACTIVE/ARCHIVED`, publicación independiente, archivo sin hard-delete, restauración a `INACTIVE`, bloqueo de archivo con reservas futuras abiertas y vínculo explícito a una Membership BARBER del mismo tenant.
+- Se reemplazó la unicidad global Professional–User por `(organizationId, userId)` después de verificar 0 colisiones locales; la migración preserva los 5 perfiles existentes sin fusionar ni eliminar datos.
+- Se completó el contrato backend con búsqueda, filtro de estado, paginación/orden estable, detalle, proyecciones por rol, perfil propio de BARBER, UUIDs, límites, trim y rechazo de PATCH vacío.
+- Booking interno exige Professional `ACTIVE`; catálogo, disponibilidad y creación pública final exigen `ACTIVE + isPublic=true`. `ProfessionalService` continúa sin bloquear reservas.
+- AuditLog registra CREATE, UPDATE, STATUS_CHANGE, ARCHIVE, RESTORE, LINK y UNLINK sin valores de PII. `/auth/invite` solo honra `createPublicProfile` para BARBER.
+- Se añadieron pruebas específicas de servicio/controlador/DTO/Equipo y regresiones de Reservas, booking público y aislamiento de Equipo. Frontend de Profesionales, Cloudinary, Servicios y otros módulos no fueron iniciados.
+- Validación final: API TypeScript, lint y suite estándar en exit 0 (141 tests aprobados y 1 integración PostgreSQL opt-in omitida); Prisma reportó las 10 migraciones aplicadas y el schema local actualizado.
+- Estado: A1 Backend **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no aprobado. Profesionales no está cerrado, Frontend no está autorizado y Resumen continúa congelado.
+
 ## 2026-08-11 — Profesionales Entrega A: Checkpoint A0 implementado / en revisión
 
 - Se cerró la fuga cross-tenant de Professional en `GET /organizations/mine/members` mediante consulta por organización y proyección explícita sin IDs internos, teléfono ni timestamps del perfil.

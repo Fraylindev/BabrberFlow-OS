@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { BookingStatus, Prisma } from '@prisma/client';
+import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 
 // 1. Tipados estrictos de entrada para los métodos evaluados
 type FindFirstArgs = [{ where: { status?: { not?: BookingStatus } } }];
@@ -60,7 +60,12 @@ const SERVICE = {
   duration: 30,
   isActive: true,
 };
-const PROFESSIONAL = { id: 'prof-1', organizationId: ORG_ID, isActive: true };
+const PROFESSIONAL = {
+  id: 'prof-1',
+  organizationId: ORG_ID,
+  status: ProfessionalStatus.ACTIVE,
+  isPublic: true,
+};
 const CLIENT = { id: 'client-1', organizationId: ORG_ID };
 
 // Fecha futura fija — evita que los tests dependan del reloj real y
@@ -126,10 +131,8 @@ describe('BookingsService — conflictos de reservas', () => {
     ).toBeUndefined();
   });
 
-  // ── isActive — rechazar inactivos ─────────────────────────────────────────
-  it('rechaza si el profesional está inactivo (isActive: false)', async () => {
-    // Cuando isActive: true está en el where, Prisma devuelve null para
-    // un profesional inactivo. Simulamos ese comportamiento aquí.
+  // ── estado operativo — rechazar inactivos ──────────────────────────────────
+  it('rechaza si el profesional no está ACTIVE', async () => {
     prisma.db.professional.findUnique.mockResolvedValue(null);
 
     await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
@@ -145,6 +148,19 @@ describe('BookingsService — conflictos de reservas', () => {
       BadRequestException,
     );
     expect(prisma.db.booking.create).not.toHaveBeenCalled();
+  });
+
+  it('exige isPublic solo cuando la reserva proviene del flujo público', async () => {
+    await service.create(ORG_ID, VALID_DTO, undefined, true);
+
+    expect(prisma.db.professional.findUnique).toHaveBeenCalledWith({
+      where: {
+        id: PROFESSIONAL.id,
+        organizationId: ORG_ID,
+        status: ProfessionalStatus.ACTIVE,
+        isPublic: true,
+      },
+    });
   });
 
   // ── Conflictos de horario ─────────────────────────────────────────────────
@@ -308,7 +324,7 @@ describe('BookingsService — reprogramar (reschedule)', () => {
     const OTHER_PROFESSIONAL = {
       id: 'prof-2',
       organizationId: ORG_ID,
-      isActive: true,
+      status: ProfessionalStatus.ACTIVE,
     };
     prisma.db.professional.findUnique.mockResolvedValue(OTHER_PROFESSIONAL);
     prisma.db.booking.findFirst

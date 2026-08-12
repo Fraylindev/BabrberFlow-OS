@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
+import { ProfessionalStatus } from '@prisma/client';
 
 @Injectable()
 export class OrganizationsService {
@@ -91,7 +92,8 @@ export class OrganizationsService {
               avatar: true,
               specialty: true,
               experienceYears: true,
-              isActive: true,
+              status: true,
+              isPublic: true,
             },
           });
     const professionalByUserId = new Map(
@@ -116,7 +118,9 @@ export class OrganizationsService {
                 avatar: professional.avatar,
                 specialty: professional.specialty,
                 experienceYears: professional.experienceYears,
-                isActive: professional.isActive,
+                status: professional.status,
+                isActive: professional.status === ProfessionalStatus.ACTIVE,
+                isPublic: professional.isPublic,
               }
             : null,
         },

@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
+import { ProfessionalStatus, UserRole } from '@prisma/client';
 
 /**
  * Gestión de equipo (invitar miembros) — antes vivía dentro de
@@ -33,6 +34,8 @@ export class TeamService {
     inviteUserDto: InviteUserDto,
   ) {
     const { name, email, password, role, createPublicProfile } = inviteUserDto;
+    const shouldCreatePublicProfile =
+      role === UserRole.BARBER && createPublicProfile === true;
 
     const existingUser = await this.prisma.db.user.findUnique({
       where: { email },
@@ -46,7 +49,7 @@ export class TeamService {
         organizationId,
         invitedBy,
         role,
-        createPublicProfile,
+        shouldCreatePublicProfile,
         name,
         whatsappBaseUrl,
       );
@@ -55,7 +58,7 @@ export class TeamService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
-      const user = await this.prisma.db.$transaction(async (tx) => {
+      const result = await this.prisma.db.$transaction(async (tx) => {
         const createdUser = await tx.user.create({
           data: {
             name,
@@ -69,13 +72,20 @@ export class TeamService {
           data: { userId: createdUser.id, organizationId, role },
         });
 
-        if (createPublicProfile) {
-          await tx.professional.create({
-            data: { organizationId, name, userId: createdUser.id },
-          });
-        }
+        const professional = shouldCreatePublicProfile
+          ? await tx.professional.create({
+              data: {
+                organizationId,
+                name: name.trim(),
+                userId: createdUser.id,
+                status: ProfessionalStatus.ACTIVE,
+                isPublic: true,
+              },
+              select: { id: true },
+            })
+          : null;
 
-        return createdUser;
+        return { user: createdUser, professional };
       });
 
       // Cambio administrativo: alguien nuevo obtiene acceso a la
@@ -86,14 +96,23 @@ export class TeamService {
         userId: invitedBy,
         action: 'INVITE',
         entity: 'Membership',
-        entityId: user.id,
+        entityId: result.user.id,
       });
+      if (result.professional) {
+        await this.audit.log({
+          organizationId,
+          userId: invitedBy,
+          action: 'CREATE',
+          entity: 'Professional',
+          entityId: result.professional.id,
+        });
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _p, ...userWithoutPassword } = user;
+      const { password: _p, ...userWithoutPassword } = result.user;
       return {
         ...userWithoutPassword,
-        professionalCreated: !!createPublicProfile,
+        professionalCreated: shouldCreatePublicProfile,
         whatsappBaseUrl,
       };
     } catch (err) {
@@ -107,17 +126,14 @@ export class TeamService {
     }
   }
 
-  // Un Professional solo puede estar vinculado a UN User globalmente
-  // (Professional.userId es único, diseñado antes de que existiera el
-  // multi-organización real). Si esta persona ya tiene un perfil público
-  // en OTRA organización, no se puede crear uno nuevo aquí todavía —
-  // limitación conocida y documentada, no un bug silencioso.
+  // Un User puede tener un Professional por organización. La unicidad
+  // compuesta permite identidad global sin mezclar perfiles entre tenants.
   private async attachMembershipToExistingUser(
     userId: string,
     organizationId: string,
     invitedBy: string,
     role: InviteUserDto['role'],
-    createPublicProfile: boolean | undefined,
+    shouldCreatePublicProfile: boolean,
     name: string,
     whatsappBaseUrl: string,
   ) {
@@ -143,18 +159,36 @@ export class TeamService {
     });
 
     let professionalCreated = false;
-    if (createPublicProfile) {
+    let professionalId: string | null = null;
+    if (shouldCreatePublicProfile) {
       try {
-        await this.prisma.db.professional.create({
-          data: { organizationId, name, userId },
+        const professional = await this.prisma.db.professional.create({
+          data: {
+            organizationId,
+            name: name.trim(),
+            userId,
+            status: ProfessionalStatus.ACTIVE,
+            isPublic: true,
+          },
+          select: { id: true },
         });
         professionalCreated = true;
+        professionalId = professional.id;
       } catch (err) {
         if (!isUniqueConstraintError(err, 'userId')) throw err;
-        // Limitación conocida (ver comentario del método): ya tiene un
-        // Professional en otra organización. La membresía igual se creó.
+        // Puede existir ya el vínculo compuesto dentro de esta organización.
         professionalCreated = false;
       }
+    }
+
+    if (professionalId) {
+      await this.audit.log({
+        organizationId,
+        userId: invitedBy,
+        action: 'CREATE',
+        entity: 'Professional',
+        entityId: professionalId,
+      });
     }
 
     const user = await this.prisma.db.user.findUniqueOrThrow({

@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
-import { BookingStatus } from '@prisma/client';
+import { BookingStatus, ProfessionalStatus } from '@prisma/client';
 import { PublicBookingService } from './public-booking.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
@@ -99,6 +99,7 @@ describe('PublicBookingService - secure public creation', () => {
       ORGANIZATION.id,
       expect.objectContaining({ clientId: CLIENT_ID }),
       dependencies.transaction,
+      true,
     );
     expect(dependencies.audit.log).toHaveBeenCalledWith({
       organizationId: ORGANIZATION.id,
@@ -138,6 +139,7 @@ describe('PublicBookingService - secure public creation', () => {
       ORGANIZATION.id,
       expect.objectContaining({ clientId: CLIENT_ID }),
       dependencies.transaction,
+      true,
     );
     expect(dependencies.audit.log).toHaveBeenCalledWith(
       expect.objectContaining({ action: 'RESTORE', entityId: CLIENT_ID }),
@@ -218,6 +220,29 @@ describe('PublicBookingService - active public catalog', () => {
     expect(dependencies.prisma.db.service.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { organizationId: ORGANIZATION.id, isActive: true },
+      }),
+    );
+  });
+
+  it('lists only ACTIVE and published professionals', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+    );
+    dependencies.prisma.db.service.findMany.mockResolvedValue([]);
+    dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+
+    await service.getBookingData(ORGANIZATION.slug);
+
+    expect(dependencies.prisma.db.professional.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          organizationId: ORGANIZATION.id,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
+        },
       }),
     );
   });

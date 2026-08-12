@@ -1,5 +1,5 @@
 import { ForbiddenException } from '@nestjs/common';
-import { BookingStatus, UserRole } from '@prisma/client';
+import { BookingStatus, ProfessionalStatus, UserRole } from '@prisma/client';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 import { ProfessionalsService } from '../professionals/professionals.service';
@@ -43,7 +43,7 @@ describe('BookingsController - BARBER authorization', () => {
     const { controller, bookings, professionals } = createController();
     professionals.findByUserId.mockResolvedValue({
       id: DTO.professionalId,
-      isActive: true,
+      status: ProfessionalStatus.ACTIVE,
     });
     bookings.create.mockResolvedValue({ id: 'booking-id' });
 
@@ -58,11 +58,17 @@ describe('BookingsController - BARBER authorization', () => {
 
   it.each([
     {
-      professional: { id: 'other-professional', isActive: true },
+      professional: {
+        id: 'other-professional',
+        status: ProfessionalStatus.ACTIVE,
+      },
       scenario: 'another professional',
     },
     {
-      professional: { id: DTO.professionalId, isActive: false },
+      professional: {
+        id: DTO.professionalId,
+        status: ProfessionalStatus.INACTIVE,
+      },
       scenario: 'an inactive profile',
     },
     { professional: null, scenario: 'an unlinked account' },
@@ -80,7 +86,7 @@ describe('BookingsController - BARBER authorization', () => {
     const { controller, bookings, professionals } = createController();
     professionals.findByUserId.mockResolvedValue({
       id: DTO.professionalId,
-      isActive: false,
+      status: ProfessionalStatus.INACTIVE,
     });
     bookings.updateStatus.mockResolvedValue({ id: 'booking-id' });
     const update = { status: BookingStatus.CONFIRMED };

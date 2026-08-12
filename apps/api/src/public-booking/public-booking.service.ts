@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { Prisma, UserRole } from '@prisma/client';
+import { Prisma, ProfessionalStatus, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { AuditService } from '../audit/audit.service';
@@ -61,7 +61,11 @@ export class PublicBookingService {
         },
       }),
       this.prisma.db.professional.findMany({
-        where: { organizationId: organization.id, isActive: true },
+        where: {
+          organizationId: organization.id,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
+        },
         select: { id: true, name: true, bio: true, avatar: true },
       }),
     ]);
@@ -99,7 +103,8 @@ export class PublicBookingService {
         where: {
           id: query.professionalId,
           organizationId: organization.id,
-          isActive: true,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
         },
         select: { id: true },
       });
@@ -111,7 +116,11 @@ export class PublicBookingService {
       candidateProfessionalIds = [professional.id];
     } else {
       const activeProfessionals = await this.prisma.db.professional.findMany({
-        where: { organizationId: organization.id, isActive: true },
+        where: {
+          organizationId: organization.id,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
+        },
         select: { id: true },
         orderBy: { name: 'asc' },
       });
@@ -205,6 +214,7 @@ export class PublicBookingService {
           startTime: dto.startTime,
         },
         transaction,
+        true,
       );
       return { booking, clientResult };
     });

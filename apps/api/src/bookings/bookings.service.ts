@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
-import { BookingStatus, type Prisma } from '@prisma/client';
+import { BookingStatus, ProfessionalStatus, type Prisma } from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 
 export const bookingClientResponseSelect = {
@@ -36,6 +36,7 @@ export class BookingsService {
     organizationId: string,
     createBookingDto: CreateBookingDto,
     transaction?: Prisma.TransactionClient,
+    requirePublicProfessional = false,
   ) {
     const db = transaction ?? this.prisma.db;
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
@@ -50,7 +51,12 @@ export class BookingsService {
     }
 
     const professional = await db.professional.findUnique({
-      where: { id: professionalId, organizationId, isActive: true },
+      where: {
+        id: professionalId,
+        organizationId,
+        status: ProfessionalStatus.ACTIVE,
+        ...(requirePublicProfessional ? { isPublic: true } : {}),
+      },
     });
     if (!professional) {
       throw new BadRequestException(
@@ -216,7 +222,11 @@ export class BookingsService {
     }
 
     const professional = await this.prisma.db.professional.findUnique({
-      where: { id: professionalId, organizationId, isActive: true },
+      where: {
+        id: professionalId,
+        organizationId,
+        status: ProfessionalStatus.ACTIVE,
+      },
     });
     if (!professional) {
       throw new BadRequestException(

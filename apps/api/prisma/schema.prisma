@@ -26,6 +26,12 @@ enum BookingStatus {
   NO_SHOW
 }
 
+enum ProfessionalStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
 enum PaymentStatus {
   PENDING
   PAID
@@ -105,9 +111,9 @@ model User {
 
   memberships Membership[]
 
-  // Vínculo opcional 1:1 — solo existe cuando este usuario tiene un
-  // perfil de Professional asociado (ej. un BARBER con acceso al panel).
-  professional Professional?
+  // Un User puede tener como máximo un Professional por organización,
+  // y por tanto varios perfiles si pertenece a organizaciones distintas.
+  professionals Professional[]
 
   createdAt DateTime @default(now())
 
@@ -158,13 +164,15 @@ model Professional {
 
   experienceYears Int?
 
-  isActive Boolean @default(true)
+  status ProfessionalStatus @default(INACTIVE)
 
-  // Vínculo opcional y único hacia el User que puede iniciar sesión como
-  // este profesional (ej. un BARBER viendo su propia agenda). Un
+  isPublic Boolean @default(false)
+
+  // Vínculo opcional hacia el User que puede iniciar sesión como este
+  // profesional (ej. un BARBER viendo su propia agenda). Un
   // Professional puede existir sin cuenta de acceso — no todos los
   // profesionales necesitan entrar al panel.
-  userId String? @unique
+  userId String?
 
   user User? @relation(fields: [userId], references: [id])
 
@@ -175,6 +183,9 @@ model Professional {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, userId])
+  @@index([organizationId, status, name, id])
 }
 
 model GalleryImage {

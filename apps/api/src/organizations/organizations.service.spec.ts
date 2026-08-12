@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client';
+import { ProfessionalStatus, UserRole } from '@prisma/client';
 import { OrganizationsService } from './organizations.service';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -39,7 +39,8 @@ describe('OrganizationsService - member tenant isolation', () => {
         avatar: 'https://example.com/avatar.jpg',
         specialty: 'Fades',
         experienceYears: 4,
-        isActive: true,
+        status: ProfessionalStatus.ACTIVE,
+        isPublic: true,
         phone: '+18095550101',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -58,7 +59,8 @@ describe('OrganizationsService - member tenant isolation', () => {
         avatar: true,
         specialty: true,
         experienceYears: true,
-        isActive: true,
+        status: true,
+        isPublic: true,
       },
     });
     expect(result[0].user.professional).toEqual({
@@ -68,7 +70,9 @@ describe('OrganizationsService - member tenant isolation', () => {
       avatar: 'https://example.com/avatar.jpg',
       specialty: 'Fades',
       experienceYears: 4,
+      status: ProfessionalStatus.ACTIVE,
       isActive: true,
+      isPublic: true,
     });
     expect(result[0].user.professional).not.toHaveProperty('organizationId');
     expect(result[0].user.professional).not.toHaveProperty('userId');

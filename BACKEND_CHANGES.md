@@ -4,6 +4,39 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 ---
 
+## 2026-08-12 — Profesionales A1: contrato backend candidato a auditoría
+
+### Modelo y estados
+
+- `Professional.status`: `ACTIVE | INACTIVE | ARCHIVED`; reemplaza `isActive`. `isPublic` es independiente y solo `ACTIVE + isPublic=true` es elegible públicamente.
+- `Professional.userId` deja de ser único global y pasa a `@@unique([organizationId, userId])`. El vínculo continúa opcional y no crea identidades.
+- Migración `20260812010000_professionals_backend_a1`: preserva activos como `ACTIVE/publicados`, inactivos como `INACTIVE/privados`, sin hard-delete, fusión ni backfill de PII.
+
+### Endpoints internos `/professionals`
+
+- **`POST /professionals`** — `OWNER`, `ADMIN`. Crea `INACTIVE`/privado. Campos: `name` obligatorio; `bio`, `phone`, `avatar`, `specialty`, `experienceYears` opcionales.
+- **`GET /professionals`** — roles B2B. Query: `search`, `status`, `page`, `limit`; por defecto excluye `ARCHIVED`, página 1, 20 elementos, máximo 100, orden `name ASC, id ASC`. Cuerpo array y headers `X-Total-Count`, `X-Page`, `X-Limit`, `X-Total-Pages`. El filtro `ARCHIVED` solo produce resultados para `OWNER`/`ADMIN`; el directorio de `BARBER`/`RECEPTIONIST` no expone archivados.
+- **`GET /professionals/:id`**, **`PATCH /professionals/:id`** — `OWNER`, `ADMIN`; UUID, PATCH no vacío, proyección de gestión y consulta/mutación final por `id + organizationId`.
+- **`PATCH /professionals/:id/status`** — `OWNER`, `ADMIN`; body `{ status: "ACTIVE" | "INACTIVE" }`. Un archivado debe restaurarse primero.
+- **`PATCH /professionals/:id/visibility`** — `OWNER`, `ADMIN`; body `{ isPublic: boolean }`.
+- **`DELETE /professionals/:id`** — archiva; devuelve `409` si hay Booking futuro `PENDING`/`CONFIRMED`. No elimina filas.
+- **`PATCH /professionals/:id/restore`** — restaura un archivado a `INACTIVE`.
+- **`PATCH /professionals/:id/link`** — body `{ userId: UUID }`; exige Membership BARBER del mismo tenant. **`DELETE /professionals/:id/link`** desvincula. Colisión de cuenta ya vinculada: `409`.
+- **`GET /professionals/me`**, **`PATCH /professionals/me`** — solo `BARBER`; el tenant y User provienen del token. Campos editables: `name`, `bio`, `avatar`, `specialty`, `experienceYears`.
+
+### Respuestas, integraciones y límites
+
+- Directorio `BARBER`/`RECEPTIONIST`: `{ id, name, avatar, specialty, status, isActive }`. Gestión `OWNER`/`ADMIN`: perfil completo seguro y `linkedUser`, sin `organizationId`/`userId` crudo. Perfil propio BARBER no incluye teléfono interno ni cuenta vinculada. Un vínculo `ARCHIVED` no resuelve agenda ni clientes operativos para BARBER.
+- Booking interno/reprogramación exige `status=ACTIVE`. Booking público exige además `isPublic=true` en la consulta final dentro de su transacción. `ProfessionalService` no se consulta como barrera.
+- `/auth/invite`: `createPublicProfile=true` solo tiene efecto para `BARBER`; crea `ACTIVE/publicado`. ADMIN/RECEPTIONIST se ignoran por autoridad backend.
+- Límites: nombre 120, bio 2000, teléfono 30, especialidad 120, avatar HTTP(S) 2048, experiencia entera ≥0, búsqueda 120; strings con trim, UUIDs validados, Base64 no aceptado.
+- Auditoría: `CREATE`, `UPDATE`, `STATUS_CHANGE`, `ARCHIVE`, `RESTORE`, `LINK`, `UNLINK`, sin valores PII y con fail-open.
+- **Impacto frontend:** el frontend actual de Profesionales no fue modificado y todavía no está autorizado. Debe adaptarse al contrato A1 únicamente después de aprobación explícita del backend.
+
+**Estado:** A0 aprobado sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`. A1 implementado / en revisión, todavía no aprobado. Profesionales no está cerrado.
+
+---
+
 ## 2026-08-11 — Profesionales A0: seguridad transversal e integridad de agenda
 
 ### `GET /organizations/mine/members`

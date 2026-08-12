@@ -21,7 +21,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { B2B_ROLES } from '../auth/roles.constants';
 import type { RequestUser } from '../auth/types/authenticated-request';
-import { UserRole } from '@prisma/client';
+import { ProfessionalStatus, UserRole } from '@prisma/client';
 
 // Uso interno (B2B) — la reserva de clientes externos pasa por el módulo
 // público (/public/:slug/bookings), no por aquí. Un CUSTOMER autenticado
@@ -46,7 +46,7 @@ export class BookingsController {
         user.organizationId,
       );
       if (
-        !professional?.isActive ||
+        professional?.status !== ProfessionalStatus.ACTIVE ||
         professional.id !== createBookingDto.professionalId
       ) {
         throw new ForbiddenException(

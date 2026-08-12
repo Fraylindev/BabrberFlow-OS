@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-11):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. La auditoría de Profesionales fue aceptada como base y su Checkpoint A0 Backend está **IMPLEMENTADO / EN REVISIÓN**; A1 no se ha iniciado y Frontend no está autorizado. Resumen continúa congelado. Ver §56–59.
+> **Estado vigente de módulos (2026-08-12):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`; A1 Backend está **IMPLEMENTADO / EN REVISIÓN**, todavía no aprobado. Frontend de Profesionales no está autorizado y el módulo no está cerrado. Resumen continúa congelado. Ver §56–60.
 
 ---
 
@@ -1625,8 +1625,43 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 ### 59.3. Estado y límites
 
 - Validación final: API TypeScript exit 0, lint exit 0 sin warnings y suite estándar exit 0 con 96 tests aprobados + 1 integración opt-in omitida; la integración PostgreSQL se ejecutó aparte y aprobó 1/1 con exit 0.
-- Checkpoint A0: **IMPLEMENTADO / EN REVISIÓN**, no aprobado todavía.
-- Checkpoint A1: **NO INICIADO** y bloqueado hasta revisión/aprobación explícita de A0.
+- Checkpoint A0: **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb` después de auditoría técnica independiente sin bloqueantes.
+- Checkpoint A1: autorizado posteriormente e implementado como candidato; su contrato vigente se documenta en §60.
 - Frontend de Profesionales: **NO AUTORIZADO**. No se modificó `apps/web`.
 - No se implementaron todavía los estados `ACTIVE / INACTIVE / ARCHIVED`, la relación compuesta Professional–User, el CRUD completo ni `ProfessionalService`; pertenecen a A1 o fases posteriores según el mandato aprobado.
 - Resumen/Dashboard continúa congelado.
+
+## 60. Profesionales — Entrega A Backend, Checkpoint A1 (2026-08-12)
+
+### 60.1. Modelo y migración
+
+- `Professional` adopta el estado explícito `ACTIVE | INACTIVE | ARCHIVED` y una bandera independiente `isPublic`. Solo `ACTIVE + isPublic=true` aparece y puede reservarse por el flujo público.
+- La migración `20260812010000_professionals_backend_a1` preserva los registros existentes: antiguos activos pasan a `ACTIVE` y publicados; antiguos inactivos pasan a `INACTIVE` y privados. No fusiona ni elimina filas.
+- Se reemplaza la unicidad global de `Professional.userId` por `@@unique([organizationId, userId])`. Un `User` puede vincularse como máximo a un Professional por organización, pero puede tener perfiles distintos en tenants distintos. `Professional` sigue pudiendo existir sin cuenta.
+- La inspección previa local encontró 5 Professionals, 2 vinculados, 0 duplicados `(organizationId, userId)` y 0 vínculos sin Membership BARBER del mismo tenant. No hubo colisiones ni necesidad de detener la migración.
+
+### 60.2. Contrato backend de Profesionales
+
+- `POST /professionals`: `OWNER`/`ADMIN`; crea un perfil `INACTIVE` y privado, con campos normalizados y respuesta explícita sin `organizationId` ni `userId` crudo.
+- `GET /professionals`: todos los roles B2B; acepta `search`, `status`, `page` y `limit` (20 por defecto, máximo 100), orden estable por nombre e ID, excluye `ARCHIVED` por defecto y publica metadata real en los cuatro headers de paginación existentes. Solo `OWNER`/`ADMIN` pueden consultar el filtro `ARCHIVED`; el directorio de `BARBER`/`RECEPTIONIST` devuelve un conjunto vacío para ese estado.
+- `GET /professionals/:id` y `PATCH /professionals/:id`: solo `OWNER`/`ADMIN`; UUID obligatorio, PATCH no vacío, detalle/mutación final aislados por `organizationId` y mismo `404` para recurso ajeno o inexistente.
+- `PATCH /professionals/:id/status`, `PATCH /professionals/:id/visibility`, `DELETE /professionals/:id` y `PATCH /professionals/:id/restore`: gestión explícita de estado, publicación, archivo sin hard-delete y restauración a `INACTIVE`. Archivar se bloquea con `409` si existen reservas futuras `PENDING` o `CONFIRMED`.
+- `PATCH /professionals/:id/link` y `DELETE /professionals/:id/link`: vinculan/desvinculan explícitamente una cuenta existente. El destino debe tener Membership `BARBER` en la misma organización; no se crean identidades y una colisión concurrente del vínculo devuelve `409`.
+- `GET /professionals/me` y `PATCH /professionals/me`: `BARBER` consulta/edita únicamente su perfil ligado en el tenant del token y solo los campos públicos autorizados (`name`, `bio`, `avatar`, `specialty`, `experienceYears`). No puede modificar teléfono interno, estado, archivo, publicación ni vínculo.
+
+### 60.3. Privacidad, reservas y auditoría
+
+- `OWNER`/`ADMIN` reciben la proyección de gestión. `BARBER`/`RECEPTIONIST` reciben un directorio mínimo sin teléfono, bio, cuenta vinculada, tenant ni timestamps. Un perfil `ARCHIVED` tampoco resuelve agenda ni clientes operativos para su cuenta BARBER vinculada. Ningún endpoint devuelve directamente un objeto Prisma.
+- Nuevas reservas internas y reprogramaciones exigen Professional `ACTIVE`. Un Professional `INACTIVE` conserva sus reservas asignadas y un BARBER ligado puede continuar las transiciones permitidas de su agenda.
+- Catálogo, disponibilidad y creación pública final exigen Professional `ACTIVE + isPublic=true`; la validación autoritativa ocurre dentro de la operación transaccional que crea la reserva.
+- `ProfessionalService` continúa sin bloquear reservas: cualquier Professional activo puede realizar cualquier Service activo de su organización.
+- `AuditLog` registra `CREATE`, `UPDATE`, `STATUS_CHANGE`, `ARCHIVE`, `RESTORE`, `LINK` y `UNLINK` solo con contexto e IDs, sin valores de perfil/PII; conserva el comportamiento fail-open centralizado.
+- `/auth/invite` respeta `createPublicProfile` únicamente para rol `BARBER`; crea el perfil `ACTIVE` y publicado y permite un perfil por organización sin mezclar tenants.
+
+### 60.4. Límites y estado
+
+- Entradas con `trim`; nombre máximo 120, bio 2000, teléfono 30, especialidad 120, avatar URL HTTP(S) máximo 2048, experiencia entera no negativa y búsqueda máxima 120. No se aceptan Base64 ni uploads de imagen.
+- No se implementaron horarios, vacaciones, bloqueos manuales, Cloudinary, páginas públicas individuales, CRUD de `ProfessionalService` ni frontend de Profesionales.
+- Validación final del candidato: `pnpm --filter api exec tsc --noEmit`, `pnpm --filter api lint` y `pnpm --filter api test` finalizaron con exit 0; 141 tests aprobados y 1 integración PostgreSQL opt-in omitida en la suite estándar. `prisma migrate status` confirmó 10 migraciones y schema local al día.
+- Checkpoint A1 Backend: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; **NO APROBADO**. Entrega B Frontend continúa **NO AUTORIZADA** y el módulo Profesionales **NO está cerrado**.
+- Resumen/Dashboard continúa congelado y no se inicia ningún módulo posterior.

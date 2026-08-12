@@ -30,10 +30,8 @@ export class InviteUserDto {
   @IsEnum([UserRole.ADMIN, UserRole.BARBER, UserRole.RECEPTIONIST])
   role!: 'ADMIN' | 'BARBER' | 'RECEPTIONIST';
 
-  // Checkbox "Crear perfil público" — cuando viene en true, además del
-  // User se crea un Professional vinculado (ver Professional.userId),
-  // para que esta persona aparezca en la reserva pública y tenga "mi
-  // agenda"/"mis clientes" en el panel (Fase 7).
+  // Solo tiene efecto cuando role=BARBER. El backend ignora true para
+  // ADMIN/RECEPTIONIST; la UI no es la autoridad de esta regla.
   @IsOptional()
   @IsBoolean()
   createPublicProfile?: boolean;

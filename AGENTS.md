@@ -186,8 +186,8 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 ## Profesionales
 
 - Auditoría/Diagnóstico: **COMPLETADO y aceptado como base**.
-- Entrega A Backend — Checkpoint A0 (seguridad e integridad transversal): **IMPLEMENTADO / EN REVISIÓN**.
-- Entrega A Backend — Checkpoint A1: **NO INICIADO**; requiere revisión y aprobación explícita de A0.
+- Entrega A Backend — Checkpoint A0 (seguridad e integridad transversal): **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`.
+- Entrega A Backend — Checkpoint A1: **IMPLEMENTADO / EN REVISIÓN**; candidato a auditoría, todavía no aprobado.
 - Entrega B Frontend: **NO AUTORIZADA** hasta que A0 y A1 sean auditados y aprobados.
 - Módulo Profesionales: **NO CERRADO / NO APROBADO**.
 
