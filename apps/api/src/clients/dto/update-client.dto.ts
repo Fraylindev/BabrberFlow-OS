@@ -1,11 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsBoolean, IsOptional } from 'class-validator';
 import { CreateClientDto } from './create-client.dto';
 
-// PartialType hace opcionales todos los campos de CreateClientDto.
-// isActive se agrega aparte porque no existía en el DTO de creación.
-export class UpdateClientDto extends PartialType(CreateClientDto) {
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
-}
+// isActive se gestiona exclusivamente mediante archive/restore para que
+// autorización y auditoría no dependan de un PATCH genérico.
+export class UpdateClientDto extends PartialType(CreateClientDto) {}

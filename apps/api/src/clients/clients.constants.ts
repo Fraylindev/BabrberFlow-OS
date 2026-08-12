@@ -1,0 +1,7 @@
+export const CLIENT_NAME_MAX_LENGTH = 120;
+export const CLIENT_EMAIL_MAX_LENGTH = 254;
+export const CLIENT_PHONE_INPUT_MAX_LENGTH = 30;
+export const CLIENT_NOTES_MAX_LENGTH = 2000;
+export const CLIENT_SEARCH_MAX_LENGTH = 120;
+export const CLIENT_DEFAULT_PAGE_SIZE = 20;
+export const CLIENT_MAX_PAGE_SIZE = 100;

@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-11):** Reservas Backend y Reservas Frontend están **CERRADOS / APROBADOS**; el módulo Reservas está **CERRADO oficialmente** después de que el propietario aprobara el QA manual final. El checkpoint funcional aprobado es `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. El siguiente módulo autorizado es **Clientes**, exclusivamente para **Auditoría/Diagnóstico Backend**; todavía no está autorizada su implementación Backend ni Frontend. Resumen continúa congelado hasta el final del orden de módulos. Ver §56.
+> **Estado vigente de módulos (2026-08-11):** Reservas Backend y Reservas Frontend están **CERRADOS / APROBADOS**; el módulo Reservas está **CERRADO oficialmente** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. La **Entrega A Backend de Clientes está implementada sobre `e9dacc348da4b9c507a248530af4782c0d757156`, pendiente de revisión y aprobación explícita del propietario**; no está autorizada todavía la Entrega B Frontend. Resumen continúa congelado hasta el final del orden de módulos. Ver §56–57.
 
 ---
 
@@ -1542,3 +1542,45 @@ Esta sección registra el estado vigente y **supersede exclusivamente los estado
 - **Resumen/Dashboard:** continúa congelado hasta el final del orden de módulos; no se autorizan KPIs, gráficos, métricas, widgets ni nuevas agregaciones durante las fases intermedias.
 
 Este checkpoint es únicamente documental: no modifica código, contratos, Prisma, dependencias ni configuración. El cierre oficial no implica adelantar trabajo de Clientes más allá de su próxima auditoría backend.
+
+## 57. Clientes — Entrega A Backend (2026-08-11)
+
+Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248530af4782c0d757156`, después de completar la Auditoría/Diagnóstico Backend. Esta sección describe comportamiento implementado; **Clientes Backend todavía no está aprobado** y la Entrega B Frontend continúa no autorizada.
+
+### 57.1. Contrato de Clientes
+
+- `POST /clients`: `OWNER`, `ADMIN` y `RECEPTIONIST`; normaliza nombre/notas con `trim`, correo con `trim + lowercase` y teléfono a una representación canónica. Rechaza duplicados operativos por correo o teléfono dentro de la organización y devuelve una proyección explícita sin `organizationId`.
+- `GET /clients`: todos los roles B2B. Excluye inactivos por defecto; acepta `search`, `isActive=true|false`, `page` y `limit` (20 por defecto, máximo 100), con orden estable por `name` e `id`. Conserva un arreglo como cuerpo para compatibilidad con el frontend actual y expone paginación en `X-Total-Count`, `X-Page`, `X-Limit` y `X-Total-Pages`.
+- `GET /clients/:id`: nuevo detalle con UUID validado y consulta final aislada por `organizationId`. Un recurso inexistente, ajeno o fuera de la agenda autorizada del `BARBER` produce el mismo `404`.
+- `PATCH /clients/:id`: `OWNER`, `ADMIN` y `RECEPTIONIST`; rechaza bodies vacíos, normaliza campos, mantiene `organizationId` en la mutación final y registra `UPDATE`.
+- `DELETE /clients/:id`: ya no elimina filas; archiva mediante `isActive=false`, con mutación final multi-tenant y evento `ARCHIVE`.
+- `PATCH /clients/:id/restore`: nuevo endpoint para reactivar, limitado a `OWNER`, `ADMIN` y `RECEPTIONIST`, con evento `RESTORE`.
+- Límites vigentes: nombre 120, correo 254, teléfono de entrada 30 caracteres y 7–15 dígitos normalizados, notas 2000, búsqueda 120; IDs de ruta y de reserva validados como UUID.
+
+### 57.2. Privacidad, roles y multi-tenancy
+
+- `BARBER` continúa limitado a clientes con reservas en su propia agenda y organización. Su respuesta contiene únicamente `id`, `name`, `email`, `phone` e `isActive`; nunca `notes`, `organizationId` ni timestamps.
+- Los roles de gestión reciben una proyección explícita de Cliente; ningún endpoint de Clientes devuelve directamente el objeto Prisma completo ni expone `organizationId`.
+- Las respuestas de `GET /bookings` sustituyen `client: true` por una proyección segura de contacto (`id`, `name`, `email`, `phone`), excluyendo notas, tenant y timestamps sin cambiar las funciones aprobadas de Reservas.
+- Las reservas internas rechazan clientes inactivos en la consulta autoritativa que incluye `id + organizationId + isActive=true`.
+- La resolución `User → Professional` para agenda/clientes de `BARBER` queda además acotada por `organizationId`.
+
+### 57.3. Reserva pública y atomicidad
+
+- `POST /public/:slug/bookings` ya no devuelve `Client`, `clientId`, `organizationId`, notas ni timestamps. La respuesta pública explícita contiene solo un resumen de reserva (`id`, `serviceId`, `professionalId`, `startTime`, `endTime`, `status`) y el resultado no sensible de la creación opcional de cuenta.
+- La búsqueda/creación/reactivación de `Client` y la creación de `Booking` ocurren dentro de la misma transacción Prisma. Si falla la reserva, la operación de Cliente no se confirma.
+- Un Cliente inactivo que regresa con una reserva pública válida se reactiva dentro de esa transacción. Un conflicto donde teléfono y correo identifican registros diferentes devuelve `409` y no asocia datos ambiguos.
+- La creación opcional de la cuenta `CUSTOMER` sigue siendo secundaria y fail-open: se ejecuta después de confirmar la transacción principal y su fallo no invalida la reserva.
+
+### 57.4. Auditoría y datos
+
+- `AuditLog` registra `CREATE`, `UPDATE`, `ARCHIVE` y `RESTORE` de Cliente con `organizationId`, actor cuando existe, entidad e ID; no persiste nombres, correos, teléfonos ni notas. Conserva el comportamiento fail-open de `AuditService`.
+- No se añadió migración ni backfill: el schema vigente ya soportaba `isActive` y el alcance aprobado no requiere fusionar o eliminar registros. Los datos históricos no fueron modificados. La normalización se aplica a todas las nuevas entradas y actualizaciones gestionadas por estos contratos.
+- El vínculo `Client ↔ User CUSTOMER` continúa **no implementado**. Es requisito futuro para historial/autoservicio B2C y necesita una decisión de producto y modelo propia.
+
+### 57.5. Estado de entrega
+
+- No se rediseñó Clientes Frontend. El único cambio web es la sincronización del tipo `PublicBookingResult` con la respuesta pública segura.
+- No se modificaron Prisma, migraciones, dependencias, configuración ni lockfile.
+- Validación técnica: backend TypeScript exit 0, lint exit 0 y 76/76 tests; web TypeScript exit 0, lint exit 0 y build de producción exit 0 por la sincronización mínima de `PublicBookingResult`.
+- La Entrega A Backend queda **implementada y técnicamente validada, pendiente de revisión y aprobación explícita del propietario**. No iniciar frontend ni declarar Clientes aprobado.

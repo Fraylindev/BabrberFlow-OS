@@ -47,6 +47,7 @@ function createMockPrisma() {
           Promise<{ id: string; [key: string]: unknown }>,
           UpdateBookingArgs
         >(),
+        findMany: jest.fn<Promise<unknown[]>, [unknown]>(),
       },
     },
   };
@@ -360,5 +361,46 @@ describe('BookingsService — reprogramar (reschedule)', () => {
         startTime: FUTURE_DATE,
       }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+});
+
+describe('BookingsService - Client security regressions', () => {
+  let service: BookingsService;
+  let prisma: ReturnType<typeof createMockPrisma>;
+
+  beforeEach(() => {
+    prisma = createMockPrisma();
+    service = new BookingsService(prisma as unknown as PrismaService);
+    prisma.db.service.findUnique.mockResolvedValue(SERVICE);
+    prisma.db.professional.findUnique.mockResolvedValue(PROFESSIONAL);
+    prisma.db.booking.findFirst.mockResolvedValue(null);
+  });
+
+  it('requires an active client in the authoritative tenant query', async () => {
+    prisma.db.client.findUnique.mockResolvedValue(null);
+
+    await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(prisma.db.client.findUnique).toHaveBeenCalledWith({
+      where: { id: CLIENT.id, organizationId: ORG_ID, isActive: true },
+    });
+    expect(prisma.db.booking.create).not.toHaveBeenCalled();
+  });
+
+  it('selects only safe client contact fields in booking lists', async () => {
+    prisma.db.booking.findMany.mockResolvedValue([]);
+
+    await service.findAll(ORG_ID);
+
+    const args = prisma.db.booking.findMany.mock.calls[0][0] as {
+      include: { client: { select: Record<string, boolean> } };
+    };
+    expect(args.include.client.select).toEqual({
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+    });
   });
 });

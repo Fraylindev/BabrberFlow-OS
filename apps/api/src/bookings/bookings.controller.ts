@@ -60,6 +60,7 @@ export class BookingsController {
     if (user.role === UserRole.BARBER) {
       const professional = await this.professionalsService.findByUserId(
         user.id,
+        user.organizationId,
       );
       if (!professional) return [];
       return this.bookingsService.findAll(

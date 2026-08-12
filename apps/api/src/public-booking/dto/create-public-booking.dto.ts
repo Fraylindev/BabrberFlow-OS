@@ -1,54 +1,68 @@
 import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
+  IsBoolean,
   IsEmail,
   IsISO8601,
-  IsBoolean,
-  MinLength,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
   MaxLength,
+  MinLength,
   ValidateIf,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MIN_LENGTH_MESSAGE,
 } from '../../auth/auth.constants';
+import {
+  CLIENT_EMAIL_MAX_LENGTH,
+  CLIENT_NAME_MAX_LENGTH,
+  CLIENT_PHONE_INPUT_MAX_LENGTH,
+} from '../../clients/clients.constants';
 
 export class CreatePublicBookingDto {
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   serviceId!: string;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   professionalId!: string;
 
   @IsISO8601()
   startTime!: string;
 
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @IsNotEmpty()
+  @Matches(/\S/, { message: 'clientName no puede contener solo espacios' })
+  @MaxLength(CLIENT_NAME_MAX_LENGTH)
   clientName!: string;
 
-  // Validación básica de formato — la regla de "máximo 11 caracteres" del
-  // brief se aplica en el frontend sobre el input; aquí solo garantizamos
-  // que no llegue vacío ni absurdamente largo.
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @IsNotEmpty()
-  @MaxLength(20)
+  @MaxLength(CLIENT_PHONE_INPUT_MAX_LENGTH)
   clientPhone!: string;
 
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value,
+  )
   @IsOptional()
   @IsEmail()
+  @MaxLength(CLIENT_EMAIL_MAX_LENGTH)
   clientEmail?: string;
 
-  // Checkbox "Crear cuenta para reservar más rápido" del flujo B2C.
   @IsOptional()
   @IsBoolean()
   createAccount?: boolean;
 
-  // Solo se exige si createAccount viene en true. La cuenta se crea con
-  // rol CUSTOMER — nunca con acceso al panel interno.
   @ValidateIf((dto: CreatePublicBookingDto) => dto.createAccount === true)
   @IsString()
   @MinLength(PASSWORD_MIN_LENGTH, { message: PASSWORD_MIN_LENGTH_MESSAGE })

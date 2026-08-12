@@ -34,9 +34,9 @@ export class ProfessionalsService {
   // Resuelve qué Professional corresponde a un User dado (vínculo opcional
   // 1:1, ver schema.prisma). Usado para que un BARBER solo vea su propia
   // agenda/clientes, nunca los de sus compañeros.
-  async findByUserId(userId: string) {
-    return await this.prisma.db.professional.findUnique({
-      where: { userId },
+  async findByUserId(userId: string, organizationId: string) {
+    return await this.prisma.db.professional.findFirst({
+      where: { userId, organizationId },
     });
   }
 

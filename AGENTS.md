@@ -178,9 +178,11 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 
 ## Clientes
 
-- Autorizado únicamente para **Auditoría/Diagnóstico Backend**.
-- La implementación Backend y Frontend de Clientes **todavía no está autorizada**.
-- No iniciar implementación de Clientes sin autorización explícita posterior.
+- Auditoría/Diagnóstico Backend: **COMPLETADO**.
+- Entrega A Backend: **IMPLEMENTADA sobre el checkpoint `e9dacc348da4b9c507a248530af4782c0d757156`, pendiente de revisión y aprobación explícita del propietario**.
+- Clientes Backend **NO debe considerarse aprobado todavía**.
+- La implementación Frontend de Clientes **todavía no está autorizada**.
+- No iniciar Entrega B Frontend ni avanzar al módulo siguiente sin autorización explícita posterior.
 
 ## Resumen / Dashboard
 

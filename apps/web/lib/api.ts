@@ -179,9 +179,16 @@ export interface PublicBookingData {
 }
 
 export interface PublicBookingResult {
-  booking: Booking;
-  client: Client;
+  booking: {
+    id: string;
+    serviceId: string;
+    professionalId: string;
+    startTime: string;
+    endTime: string;
+    status: BookingStatus;
+  };
   accountCreated: boolean;
+  accountCreationError: "EMAIL_ALREADY_EXISTS" | "ACCOUNT_CREATION_FAILED" | null;
 }
 
 export interface PublicAvailabilitySlot {

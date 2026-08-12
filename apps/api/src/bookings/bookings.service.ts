@@ -8,25 +8,37 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
-import { BookingStatus } from '@prisma/client'; // 🛡️ Importamos el Enum oficial de Prisma
+import { BookingStatus, type Prisma } from '@prisma/client';
+
+export const bookingClientResponseSelect = {
+  id: true,
+  name: true,
+  email: true,
+  phone: true,
+} satisfies Prisma.ClientSelect;
 
 @Injectable()
 export class BookingsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(organizationId: string, createBookingDto: CreateBookingDto) {
+  async create(
+    organizationId: string,
+    createBookingDto: CreateBookingDto,
+    transaction?: Prisma.TransactionClient,
+  ) {
+    const db = transaction ?? this.prisma.db;
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
 
     // isActive: true — rechaza servicios o profesionales dados de baja.
     // No afecta reservas históricas ya creadas (no se tocan registros existentes).
-    const service = await this.prisma.db.service.findUnique({
+    const service = await db.service.findUnique({
       where: { id: serviceId, organizationId, isActive: true },
     });
     if (!service) {
       throw new BadRequestException('Servicio no encontrado en esta barbería');
     }
 
-    const professional = await this.prisma.db.professional.findUnique({
+    const professional = await db.professional.findUnique({
       where: { id: professionalId, organizationId, isActive: true },
     });
     if (!professional) {
@@ -35,8 +47,8 @@ export class BookingsService {
       );
     }
 
-    const client = await this.prisma.db.client.findUnique({
-      where: { id: clientId, organizationId },
+    const client = await db.client.findUnique({
+      where: { id: clientId, organizationId, isActive: true },
     });
     if (!client) {
       throw new BadRequestException('Cliente no encontrado en esta barbería');
@@ -61,9 +73,11 @@ export class BookingsService {
       professionalId,
       startDate,
       endDate,
+      undefined,
+      transaction,
     );
 
-    return await this.prisma.db.booking.create({
+    return await db.booking.create({
       data: {
         organizationId,
         clientId,
@@ -81,8 +95,10 @@ export class BookingsService {
     startDate: Date,
     endDate: Date,
     excludeBookingId?: string,
+    transaction?: Prisma.TransactionClient,
   ) {
-    const conflictingBooking = await this.prisma.db.booking.findFirst({
+    const db = transaction ?? this.prisma.db;
+    const conflictingBooking = await db.booking.findFirst({
       where: {
         organizationId,
         professionalId,
@@ -123,7 +139,7 @@ export class BookingsService {
         ...(to ? { endTime: { lte: to } } : {}),
       },
       include: {
-        client: true,
+        client: { select: bookingClientResponseSelect },
         professional: true,
         service: true,
       },

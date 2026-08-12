@@ -4,6 +4,56 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 ---
 
+## 2026-08-11 — Clientes: Entrega A Backend
+
+### Contrato interno `/clients`
+
+- **`POST /clients`** — `OWNER`, `ADMIN`, `RECEPTIONIST`. Normaliza nombre/notas (`trim`), correo (`trim + lowercase`) y teléfono (formato canónico, 7–15 dígitos). Devuelve `{ id, name, email, phone, notes, isActive, createdAt, updatedAt }`; nunca devuelve `organizationId`. Un correo o teléfono ya asociado a otro Cliente de la organización produce `409`.
+- **`GET /clients`** — roles B2B. Query opcional: `search` (nombre/correo/teléfono), `isActive=true|false`, `page` y `limit`. Por defecto: activos, página 1, 20 elementos; `limit` máximo 100; orden estable `name ASC, id ASC`. El cuerpo continúa siendo `ClientResponse[]` por compatibilidad y la metadata está en `X-Total-Count`, `X-Page`, `X-Limit`, `X-Total-Pages`.
+- **`GET /clients/:id` (nuevo)** — UUID obligatorio. Devuelve la misma proyección explícita; `404` idéntico para inexistente o tenant ajeno.
+- **`PATCH /clients/:id`** — `OWNER`, `ADMIN`, `RECEPTIONIST`; UUID obligatorio, body parcial no vacío, mismas normalizaciones/límites. La mutación final incluye `id + organizationId`.
+- **`DELETE /clients/:id` (cambio semántico)** — deja de hacer hard-delete y archiva (`isActive=false`). Es idempotente y mantiene el mismo aislamiento `404`.
+- **`PATCH /clients/:id/restore` (nuevo)** — reactiva (`isActive=true`), roles de gestión y aislamiento idénticos al archivo.
+- Límites: nombre 120, correo 254, teléfono de entrada 30 caracteres, notas 2000, búsqueda 120; `page >= 1`, `limit 1..100`.
+
+Para `BARBER`, listado y detalle se restringen a clientes con una reserva vinculada a su `Professional` dentro del tenant. La respuesta reducida es `{ id, name, email, phone, isActive }` y nunca incluye `notes`, `organizationId` ni timestamps.
+
+### Integración con Reservas
+
+- **`POST /bookings`** rechaza Clientes inactivos mediante la consulta conjunta `{ id, organizationId, isActive: true }`.
+- **`GET /bookings`** ya no usa `client: true`; `client` queda proyectado a `{ id, name, email, phone }`, sin notas, tenant ni timestamps. El resto del comportamiento aprobado de Reservas no cambia.
+- La resolución del perfil `Professional` de un `BARBER` ahora incluye `userId + organizationId`.
+
+### Contrato público seguro
+
+**`POST /public/:slug/bookings`** valida `serviceId`/`professionalId` como UUID y devuelve:
+
+```json
+{
+  "booking": {
+    "id": "uuid",
+    "serviceId": "uuid",
+    "professionalId": "uuid",
+    "startTime": "ISO-8601",
+    "endTime": "ISO-8601",
+    "status": "PENDING"
+  },
+  "accountCreated": false,
+  "accountCreationError": null
+}
+```
+
+La respuesta ya no contiene `client`, `clientId`, `organizationId` ni PII interna. Cliente y Reserva se crean/reutilizan en una sola transacción; un Cliente inactivo se reactiva en esa misma operación. La cuenta `CUSTOMER` opcional permanece secundaria/fail-open y puede reportar `EMAIL_ALREADY_EXISTS` o `ACCOUNT_CREATION_FAILED` sin abortar una reserva confirmada.
+
+### Auditoría, persistencia e impacto frontend
+
+- `AuditLog`: `CREATE`, `UPDATE`, `ARCHIVE`, `RESTORE`; solo IDs/contexto, nunca valores PII; fail-open.
+- **Sin migración/backfill:** no cambió Prisma y no se fusionaron, eliminaron ni reescribieron registros existentes.
+- El vínculo `Client ↔ User CUSTOMER` no se implementa; queda como requisito futuro para historial/autoservicio B2C.
+- Impacto frontend limitado a sincronizar `PublicBookingResult`; Clientes UI no fue modificada. Entrega A todavía pendiente de aprobación explícita.
+
+---
+
 ## 2026-08-08 — Reservas: validaciones nuevas, filtro de rango, reprogramar
 
 ### Cambio: `POST /bookings` — validaciones nuevas, mismo contrato de entrada/salida

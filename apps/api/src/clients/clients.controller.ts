@@ -1,27 +1,36 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
   Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import type { Response } from 'express';
+import { UserRole } from '@prisma/client';
 import { ClientsService } from './clients.service';
 import { ProfessionalsService } from '../professionals/professionals.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { QueryClientsDto } from './dto/query-clients.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
-import { UserRole } from '@prisma/client';
 import { B2B_ROLES } from '../auth/roles.constants';
 import type { RequestUser } from '../auth/types/authenticated-request';
 
-// Uso interno (B2B) — la cartera de clientes es información sensible del
-// negocio. Un CUSTOMER jamás debe poder listar clientes de otros.
+const CLIENT_MANAGEMENT_ROLES = [
+  UserRole.OWNER,
+  UserRole.ADMIN,
+  UserRole.RECEPTIONIST,
+];
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(...B2B_ROLES)
 @Controller('clients')
@@ -31,53 +40,77 @@ export class ClientsController {
     private readonly professionalsService: ProfessionalsService,
   ) {}
 
-  // Registrar clientes es tarea de recepción/administración
-  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
+  @Roles(...CLIENT_MANAGEMENT_ROLES)
   @Post()
-  create(
-    @GetUser('organizationId') organizationId: string,
-    @Body() createClientDto: CreateClientDto,
-  ) {
-    return this.clientsService.create(organizationId, createClientDto);
+  create(@GetUser() user: RequestUser, @Body() dto: CreateClientDto) {
+    return this.clientsService.create(user.organizationId, user.id, dto);
   }
 
-  // Un BARBER ve únicamente los clientes con los que tiene al menos una
-  // cita — "mis clientes", no toda la cartera de la barbería.
   @Get()
-  async findAll(@GetUser() user: RequestUser) {
-    if (user.role === UserRole.BARBER) {
-      const professional = await this.professionalsService.findByUserId(
-        user.id,
-      );
-      if (!professional) return [];
-      return this.clientsService.findAll(user.organizationId, professional.id);
-    }
-    return this.clientsService.findAll(user.organizationId);
+  async findAll(
+    @GetUser() user: RequestUser,
+    @Query() query: QueryClientsDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const professionalId = await this.resolveProfessionalId(user);
+    const result = await this.clientsService.findAll(
+      user.organizationId,
+      query,
+      professionalId,
+    );
+
+    response.setHeader('X-Total-Count', result.pagination.total);
+    response.setHeader('X-Page', result.pagination.page);
+    response.setHeader('X-Limit', result.pagination.limit);
+    response.setHeader('X-Total-Pages', result.pagination.totalPages);
+    return result.data;
   }
 
-  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
+  @Get(':id')
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
+  ) {
+    const professionalId = await this.resolveProfessionalId(user);
+    return this.clientsService.findOne(id, user.organizationId, professionalId);
+  }
+
+  @Roles(...CLIENT_MANAGEMENT_ROLES)
+  @Patch(':id/restore')
+  restore(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
+  ) {
+    return this.clientsService.restore(id, user.organizationId, user.id);
+  }
+
+  @Roles(...CLIENT_MANAGEMENT_ROLES)
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @GetUser('organizationId') organizationId: string,
-    @GetUser('id') userId: string,
-    @Body() updateClientDto: UpdateClientDto,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
+    @Body() dto: UpdateClientDto,
   ) {
-    return this.clientsService.update(
-      id,
-      organizationId,
-      userId,
-      updateClientDto,
-    );
+    return this.clientsService.update(id, user.organizationId, user.id, dto);
   }
 
-  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
+  @Roles(...CLIENT_MANAGEMENT_ROLES)
   @Delete(':id')
-  remove(
-    @Param('id') id: string,
-    @GetUser('organizationId') organizationId: string,
-    @GetUser('id') userId: string,
+  archive(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
   ) {
-    return this.clientsService.remove(id, organizationId, userId);
+    return this.clientsService.archive(id, user.organizationId, user.id);
+  }
+
+  private async resolveProfessionalId(
+    user: RequestUser,
+  ): Promise<string | undefined> {
+    if (user.role !== UserRole.BARBER) return undefined;
+    const professional = await this.professionalsService.findByUserId(
+      user.id,
+      user.organizationId,
+    );
+    return professional?.id ?? '__unlinked_barber__';
   }
 }
