@@ -2,6 +2,17 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-11 — Profesionales Entrega A: Checkpoint A0 implementado / en revisión
+
+- Se cerró la fuga cross-tenant de Professional en `GET /organizations/mine/members` mediante consulta por organización y proyección explícita sin IDs internos, teléfono ni timestamps del perfil.
+- `BARBER` queda limitado a crear reservas para su propio perfil activo, cambiar estado solo en su agenda y con transiciones permitidas, y no puede reprogramar. Los roles administrativos conservan sus operaciones vigentes.
+- Catálogo y disponibilidad públicos excluyen servicios inactivos.
+- La migración `20260811180000_booking_schedule_exclusion` agrega una garantía PostgreSQL real contra solapamientos concurrentes y el backend traduce la colisión a `409`. La inspección previa encontró 0 solapamientos; la prueba concurrente real confirmó una inserción aceptada y una rechazada.
+- Se añadieron regresiones de tenant, roles/agenda BARBER, servicio inactivo, traducción del conflicto y concurrencia PostgreSQL. No se modificó frontend ni se inició A1.
+- Validación final: API TypeScript y lint en exit 0; suite estándar con 96 tests aprobados y la integración PostgreSQL ejecutada por separado con 1/1 aprobada, ambas en exit 0.
+- Clientes Backend/Frontend y el módulo Clientes quedan registrados como cerrados/aprobados sobre `c0764e9a98e3876339152763bf9b0fc98fe43aae`; Resumen continúa congelado.
+- Estado de Profesionales: A0 implementado / en revisión, no aprobado; A1 no iniciado; Frontend no autorizado.
+
 ## 2026-08-11 — Clientes Entrega B: candidato implementado y en revisión
 
 - La auditoría del checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732` aprobó oficialmente la Entrega A Backend de Clientes.
@@ -9,7 +20,7 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - Se implementó la integración real de listado, búsqueda/filtro, paginación por headers, detalle, creación, edición, archivo/restauración, permisos y responsive. El fallback defensivo no inventa totales ni páginas cuando una respuesta inesperada carece de metadata.
 - Se añadió únicamente `X-Total-Count`, `X-Page`, `X-Limit` y `X-Total-Pages` a `Access-Control-Expose-Headers` en la configuración CORS existente. No cambiaron orígenes, credenciales, métodos, contratos, Prisma, migraciones ni cuerpos de respuesta.
 - QA autenticado completado para CRUD, normalización/duplicados, búsqueda, filtros, paginación real, archivo/restauración, alcance de `BARBER`, privacidad, desktop y móvil; consola sin errores ni advertencias. La regresión pública mantiene atomicidad y respuesta sin PII interna.
-- Backend TypeScript/lint/tests (76/76) y web TypeScript/lint/build pasaron con exit 0. La Entrega B queda implementada y pendiente de revisión/aprobación explícita; Clientes todavía no está cerrado.
+- Backend TypeScript/lint/tests (76/76) y web TypeScript/lint/build pasaron con exit 0. La Entrega B fue aprobada posteriormente por el propietario y el módulo Clientes quedó cerrado sobre `c0764e9a98e3876339152763bf9b0fc98fe43aae`.
 
 ## 2026-08-11 — Clientes Entrega A: Backend implementado y aprobado
 

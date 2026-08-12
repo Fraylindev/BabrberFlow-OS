@@ -51,7 +51,7 @@ export class PublicBookingService {
     const organization = await this.resolveOrganization(slug);
     const [services, professionals] = await Promise.all([
       this.prisma.db.service.findMany({
-        where: { organizationId: organization.id },
+        where: { organizationId: organization.id, isActive: true },
         select: {
           id: true,
           name: true,
@@ -82,7 +82,11 @@ export class PublicBookingService {
   async getAvailability(slug: string, query: GetAvailabilityQueryDto) {
     const organization = await this.resolveOrganization(slug);
     const service = await this.prisma.db.service.findFirst({
-      where: { id: query.serviceId, organizationId: organization.id },
+      where: {
+        id: query.serviceId,
+        organizationId: organization.id,
+        isActive: true,
+      },
       select: { duration: true },
     });
     if (!service) {

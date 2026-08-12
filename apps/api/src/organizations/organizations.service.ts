@@ -72,17 +72,55 @@ export class OrganizationsService {
             id: true,
             name: true,
             email: true,
-            professional: true,
           },
         },
       },
     });
 
-    return memberships.map((m) => ({
-      membershipId: m.id,
-      role: m.role,
-      memberSince: m.createdAt,
-      user: m.user,
-    }));
+    const userIds = memberships.map((membership) => membership.user.id);
+    const professionals =
+      userIds.length === 0
+        ? []
+        : await this.prisma.db.professional.findMany({
+            where: { organizationId, userId: { in: userIds } },
+            select: {
+              id: true,
+              userId: true,
+              name: true,
+              bio: true,
+              avatar: true,
+              specialty: true,
+              experienceYears: true,
+              isActive: true,
+            },
+          });
+    const professionalByUserId = new Map(
+      professionals.flatMap((professional) =>
+        professional.userId ? [[professional.userId, professional]] : [],
+      ),
+    );
+
+    return memberships.map((membership) => {
+      const professional = professionalByUserId.get(membership.user.id);
+      return {
+        membershipId: membership.id,
+        role: membership.role,
+        memberSince: membership.createdAt,
+        user: {
+          ...membership.user,
+          professional: professional
+            ? {
+                id: professional.id,
+                name: professional.name,
+                bio: professional.bio,
+                avatar: professional.avatar,
+                specialty: professional.specialty,
+                experienceYears: professional.experienceYears,
+                isActive: professional.isActive,
+              }
+            : null,
+        },
+      };
+    });
   }
 }

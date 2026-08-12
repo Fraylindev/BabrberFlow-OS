@@ -9,6 +9,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
 import { BookingStatus, type Prisma } from '@prisma/client';
+import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 
 export const bookingClientResponseSelect = {
   id: true,
@@ -16,6 +17,16 @@ export const bookingClientResponseSelect = {
   email: true,
   phone: true,
 } satisfies Prisma.ClientSelect;
+
+const BARBER_STATUS_TRANSITIONS: Partial<
+  Record<BookingStatus, readonly BookingStatus[]>
+> = {
+  [BookingStatus.PENDING]: [BookingStatus.CONFIRMED],
+  [BookingStatus.CONFIRMED]: [BookingStatus.COMPLETED, BookingStatus.NO_SHOW],
+};
+
+const SCHEDULE_CONFLICT_MESSAGE =
+  'El profesional ya tiene una cita reservada en este horario';
 
 @Injectable()
 export class BookingsService {
@@ -77,16 +88,20 @@ export class BookingsService {
       transaction,
     );
 
-    return await db.booking.create({
-      data: {
-        organizationId,
-        clientId,
-        professionalId,
-        serviceId,
-        startTime: startDate,
-        endTime: endDate,
-      },
-    });
+    try {
+      return await db.booking.create({
+        data: {
+          organizationId,
+          clientId,
+          professionalId,
+          serviceId,
+          startTime: startDate,
+          endTime: endDate,
+        },
+      });
+    } catch (error) {
+      this.rethrowScheduleConflict(error);
+    }
   }
 
   private async assertNoConflict(
@@ -110,9 +125,7 @@ export class BookingsService {
     });
 
     if (conflictingBooking) {
-      throw new ConflictException(
-        'El profesional ya tiene una cita reservada en este horario',
-      );
+      throw new ConflictException(SCHEDULE_CONFLICT_MESSAGE);
     }
   }
 
@@ -232,33 +245,66 @@ export class BookingsService {
       id,
     );
 
-    return await this.prisma.db.booking.update({
-      where: { id },
-      data: {
-        professionalId,
-        serviceId,
-        startTime: startDate,
-        endTime: endDate,
-      },
-    });
+    try {
+      return await this.prisma.db.booking.update({
+        where: { id, organizationId },
+        data: {
+          professionalId,
+          serviceId,
+          startTime: startDate,
+          endTime: endDate,
+        },
+      });
+    } catch (error) {
+      this.rethrowScheduleConflict(error);
+    }
   }
 
   async updateStatus(
     id: string,
     organizationId: string,
     updateBookingStatusDto: UpdateBookingStatusDto,
+    professionalId?: string,
   ) {
     const booking = await this.prisma.db.booking.findFirst({
-      where: { id, organizationId },
+      where: {
+        id,
+        organizationId,
+        ...(professionalId ? { professionalId } : {}),
+      },
     });
 
     if (!booking) {
       throw new NotFoundException('Reserva no encontrada en esta barbería');
     }
 
-    return await this.prisma.db.booking.update({
-      where: { id },
-      data: { status: updateBookingStatusDto.status },
-    });
+    if (professionalId) {
+      const allowedStatuses = BARBER_STATUS_TRANSITIONS[booking.status] ?? [];
+      if (!allowedStatuses.includes(updateBookingStatusDto.status)) {
+        throw new BadRequestException(
+          'Transición de estado no permitida para BARBER',
+        );
+      }
+    }
+
+    try {
+      return await this.prisma.db.booking.update({
+        where: {
+          id,
+          organizationId,
+          ...(professionalId ? { professionalId } : {}),
+        },
+        data: { status: updateBookingStatusDto.status },
+      });
+    } catch (error) {
+      this.rethrowScheduleConflict(error);
+    }
+  }
+
+  private rethrowScheduleConflict(error: unknown): never {
+    if (isBookingScheduleConflictError(error)) {
+      throw new ConflictException(SCHEDULE_CONFLICT_MESSAGE);
+    }
+    throw error;
   }
 }

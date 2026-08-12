@@ -286,6 +286,9 @@ model Booking {
   // Acelera GET /bookings (listado filtrado por estado, ordenado por
   // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
   @@index([organizationId, status, createdAt])
+
+  // The 20260811180000_booking_schedule_exclusion migration also adds a
+  // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
 }
 
 model Payment {

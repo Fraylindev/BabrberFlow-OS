@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { BookingStatus } from '@prisma/client';
 import { PublicBookingService } from './public-booking.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -49,6 +49,8 @@ function createDependencies() {
   const prisma = {
     db: {
       organization: { findUnique: jest.fn().mockResolvedValue(ORGANIZATION) },
+      service: { findMany: jest.fn(), findFirst: jest.fn() },
+      professional: { findMany: jest.fn(), findFirst: jest.fn() },
       user: { findFirst: jest.fn() },
       $transaction: jest.fn(
         async (callback: (tx: typeof transaction) => Promise<unknown>) =>
@@ -197,5 +199,51 @@ describe('PublicBookingService - secure public creation', () => {
     expect(result.booking.id).toBe(BOOKING.id);
     expect(result.accountCreated).toBe(false);
     expect(result.accountCreationError).toBe('ACCOUNT_CREATION_FAILED');
+  });
+});
+
+describe('PublicBookingService - active public catalog', () => {
+  it('lists only active services from the resolved organization', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+    );
+    dependencies.prisma.db.service.findMany.mockResolvedValue([]);
+    dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+
+    await service.getBookingData(ORGANIZATION.slug);
+
+    expect(dependencies.prisma.db.service.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { organizationId: ORGANIZATION.id, isActive: true },
+      }),
+    );
+  });
+
+  it('rejects availability for an inactive service', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+    );
+    dependencies.prisma.db.service.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.getAvailability(ORGANIZATION.slug, {
+        date: '2099-01-01',
+        serviceId: BOOKING.serviceId,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(dependencies.prisma.db.service.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: BOOKING.serviceId,
+        organizationId: ORGANIZATION.id,
+        isActive: true,
+      },
+      select: { duration: true },
+    });
   });
 });

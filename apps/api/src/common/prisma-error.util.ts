@@ -48,3 +48,28 @@ export function isRecordNotFoundError(error: unknown): boolean {
     error.code === 'P2025'
   );
 }
+
+/**
+ * Prisma can expose an unmapped PostgreSQL EXCLUDE violation as an unknown
+ * request error (current engine) or P2004 (other engines/versions). Keep this
+ * check specific to the schedule constraint so unrelated integrity errors are
+ * never converted to HTTP 409.
+ */
+export function isBookingScheduleConflictError(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+    return error.message.includes('Booking_professional_schedule_excl');
+  }
+
+  if (
+    !(error instanceof Prisma.PrismaClientKnownRequestError) ||
+    error.code !== 'P2004'
+  ) {
+    return false;
+  }
+
+  const databaseError = error.meta?.database_error;
+  return (
+    typeof databaseError === 'string' &&
+    databaseError.includes('Booking_professional_schedule_excl')
+  );
+}

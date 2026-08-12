@@ -179,10 +179,17 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 ## Clientes
 
 - Auditoría/Diagnóstico Backend: **COMPLETADO**.
-- Entrega A Backend: **IMPLEMENTADA sobre el checkpoint `e9dacc348da4b9c507a248530af4782c0d757156`, pendiente de revisión y aprobación explícita del propietario**.
-- Clientes Backend **NO debe considerarse aprobado todavía**.
-- La implementación Frontend de Clientes **todavía no está autorizada**.
-- No iniciar Entrega B Frontend ni avanzar al módulo siguiente sin autorización explícita posterior.
+- Entrega A Backend: **CERRADA / APROBADA** sobre el checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732`.
+- Entrega B Frontend: **CERRADA / APROBADA** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`.
+- Módulo Clientes: **CERRADO oficialmente**.
+
+## Profesionales
+
+- Auditoría/Diagnóstico: **COMPLETADO y aceptado como base**.
+- Entrega A Backend — Checkpoint A0 (seguridad e integridad transversal): **IMPLEMENTADO / EN REVISIÓN**.
+- Entrega A Backend — Checkpoint A1: **NO INICIADO**; requiere revisión y aprobación explícita de A0.
+- Entrega B Frontend: **NO AUTORIZADA** hasta que A0 y A1 sean auditados y aprobados.
+- Módulo Profesionales: **NO CERRADO / NO APROBADO**.
 
 ## Resumen / Dashboard
 
@@ -871,6 +878,21 @@ Actualizar cuando corresponda:
 * `BACKEND_CHANGES.md`
 
 No crear el commit hasta que el estado del repositorio represente exactamente la entrega que se está reportando.
+
+---
+
+## Política permanente de publicación de checkpoints
+
+Solo se autoriza commit + push al terminar un alcance coherente cuando:
+
+* todas las validaciones requeridas finalizan con exit code `0`;
+* el QA aplicable está completado;
+* el diff está limpio y limitado al alcance autorizado;
+* la documentación de control refleja el estado real.
+
+No publicar si la entrega está a mitad de implementación, existe un blocker real sin resolver, falla una validación obligatoria, falta QA aplicable, hay archivos ajenos/temporales o la documentación está desactualizada.
+
+El push significa únicamente **implementado / en revisión**. Nunca implica aprobación, cierre ni autorización para iniciar el checkpoint, entrega o módulo siguiente.
 
 ---
 

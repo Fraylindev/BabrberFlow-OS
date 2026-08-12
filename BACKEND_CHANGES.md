@@ -4,6 +4,31 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 ---
 
+## 2026-08-11 — Profesionales A0: seguridad transversal e integridad de agenda
+
+### `GET /organizations/mine/members`
+
+- El perfil Professional ya no se resuelve mediante la relación global `User.professional`. Se consulta con `organizationId + userId`, evitando que una Membership de un tenant arrastre un perfil perteneciente a otro.
+- La proyección del perfil se limita a `id`, nombre público, bio, avatar, especialidad, experiencia e indicador activo. No devuelve `organizationId`, `userId`, teléfono ni timestamps.
+
+### Autorización interna de Reservas
+
+- **`POST /bookings`**: `BARBER` solo puede crear para su propio Professional vinculado y activo. `OWNER`, `ADMIN` y `RECEPTIONIST` conservan la operación administrativa vigente.
+- **`PATCH /bookings/:id`**: queda limitado a `OWNER`, `ADMIN` y `RECEPTIONIST`; `BARBER` no puede reprogramar.
+- **`PATCH /bookings/:id/status`**: para `BARBER`, la consulta y la mutación se restringen a su `professionalId`; agenda ajena e ID inexistente devuelven el mismo `404`. Solo permite `PENDING → CONFIRMED` y `CONFIRMED → COMPLETED | NO_SHOW`. Los roles administrativos conservan el contrato vigente.
+
+### Catálogo público y concurrencia
+
+- **`GET /public/:slug/booking-data`** devuelve únicamente servicios con `isActive=true`.
+- **`GET /public/:slug/availability`** rechaza servicios inactivos y no genera horarios para ellos.
+- La migración `20260811180000_booking_schedule_exclusion` agrega la restricción PostgreSQL `Booking_professional_schedule_excl`: impide rangos solapados para el mismo profesional mientras el estado no sea `CANCELLED`, incluso ante inserciones concurrentes.
+- Una violación autoritativa de esa restricción se traduce a HTTP `409`; la comprobación previa permanece como optimización, no como única garantía.
+- **Impacto frontend:** no cambia ningún body exitoso ni tipo web. Los nuevos `403/404/409` reflejan autorización o integridad backend; `apps/web` no fue modificado.
+
+**Estado:** Checkpoint A0 implementado / en revisión. No implica aprobación, no inicia A1 y no autoriza Frontend de Profesionales.
+
+---
+
 ## 2026-08-11 — Clientes: Entrega A Backend aprobada
 
 ### Contrato interno `/clients`
@@ -51,7 +76,7 @@ La respuesta ya no contiene `client`, `clientId`, `organizationId` ni PII intern
 - **Sin migración/backfill:** no cambió Prisma y no se fusionaron, eliminaron ni reescribieron registros existentes.
 - El vínculo `Client ↔ User CUSTOMER` no se implementa; queda como requisito futuro para historial/autoservicio B2C.
 - La auditoría del checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732` fue aprobada por el propietario: **Clientes Backend está aprobado**.
-- La Entrega B Frontend está implementada y en revisión, pendiente de aprobación explícita del propietario. Esto no modifica el contrato backend ni cierra el módulo Clientes.
+- La Entrega B Frontend y el módulo Clientes fueron aprobados/cerrados posteriormente por el propietario sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`.
 - **Integración CORS de paginación resuelta:** `apps/api/src/main.ts` expone únicamente `X-Total-Count`, `X-Page`, `X-Limit` y `X-Total-Pages` mediante `Access-Control-Expose-Headers`, por lo que el frontend cross-origin puede leer la metadata real de `GET /clients`. No cambiaron orígenes permitidos, `credentials`, métodos, DTOs, servicios, Prisma, migraciones ni cuerpos de respuesta.
 
 ---

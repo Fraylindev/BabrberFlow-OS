@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { BookingStatus } from '@prisma/client';
+import { BookingStatus, Prisma } from '@prisma/client';
 
 // 1. Tipados estrictos de entrada para los métodos evaluados
 type FindFirstArgs = [{ where: { status?: { not?: BookingStatus } } }];
@@ -158,6 +158,36 @@ describe('BookingsService — conflictos de reservas', () => {
       ConflictException,
     );
     expect(prisma.db.booking.create).not.toHaveBeenCalled();
+  });
+
+  it('traduce la restriccion PostgreSQL de agenda a ConflictException', async () => {
+    prisma.db.booking.create.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('Exclusion constraint failed', {
+        code: 'P2004',
+        clientVersion: '6.16.3',
+        meta: {
+          database_error:
+            'ERROR: conflicting key value violates exclusion constraint "Booking_professional_schedule_excl" (SQLSTATE 23P01)',
+        },
+      }),
+    );
+
+    await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
+  });
+
+  it('traduce el error desconocido que Prisma emite para EXCLUDE a 409', async () => {
+    prisma.db.booking.create.mockRejectedValue(
+      new Prisma.PrismaClientUnknownRequestError(
+        'violates exclusion constraint "Booking_professional_schedule_excl" (SQLSTATE 23P01)',
+        { clientVersion: '6.16.3' },
+      ),
+    );
+
+    await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
   });
 
   it('ignora las citas CANCELLED al buscar choques de horario', async () => {
@@ -361,6 +391,119 @@ describe('BookingsService — reprogramar (reschedule)', () => {
         startTime: FUTURE_DATE,
       }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+});
+
+describe('BookingsService - BARBER status authorization', () => {
+  let service: BookingsService;
+  let prisma: ReturnType<typeof createMockPrisma>;
+
+  beforeEach(() => {
+    prisma = createMockPrisma();
+    service = new BookingsService(prisma as unknown as PrismaService);
+    prisma.db.booking.update.mockResolvedValue({ id: 'booking-id' });
+  });
+
+  it('allows PENDING to CONFIRMED only on the BARBER own agenda', async () => {
+    prisma.db.booking.findFirst.mockResolvedValue({
+      id: 'booking-id',
+      status: BookingStatus.PENDING,
+    });
+
+    await service.updateStatus(
+      'booking-id',
+      ORG_ID,
+      { status: BookingStatus.CONFIRMED },
+      PROFESSIONAL.id,
+    );
+
+    expect(prisma.db.booking.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: 'booking-id',
+        organizationId: ORG_ID,
+        professionalId: PROFESSIONAL.id,
+      },
+    });
+    expect(prisma.db.booking.update).toHaveBeenCalledWith({
+      where: {
+        id: 'booking-id',
+        organizationId: ORG_ID,
+        professionalId: PROFESSIONAL.id,
+      },
+      data: { status: BookingStatus.CONFIRMED },
+    });
+  });
+
+  it('returns the same 404 for another BARBER agenda', async () => {
+    prisma.db.booking.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.updateStatus(
+        'other-booking',
+        ORG_ID,
+        { status: BookingStatus.CONFIRMED },
+        PROFESSIONAL.id,
+      ),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(prisma.db.booking.update).not.toHaveBeenCalled();
+  });
+
+  it.each([BookingStatus.COMPLETED, BookingStatus.NO_SHOW])(
+    'allows a BARBER to close CONFIRMED as %s',
+    async (status) => {
+      prisma.db.booking.findFirst.mockResolvedValue({
+        id: 'booking-id',
+        status: BookingStatus.CONFIRMED,
+      });
+
+      await service.updateStatus(
+        'booking-id',
+        ORG_ID,
+        { status },
+        PROFESSIONAL.id,
+      );
+
+      expect(prisma.db.booking.update).toHaveBeenCalledWith({
+        where: {
+          id: 'booking-id',
+          organizationId: ORG_ID,
+          professionalId: PROFESSIONAL.id,
+        },
+        data: { status },
+      });
+    },
+  );
+
+  it.each([
+    BookingStatus.COMPLETED,
+    BookingStatus.CANCELLED,
+    BookingStatus.NO_SHOW,
+  ])('rejects PENDING to %s for BARBER', async (status) => {
+    prisma.db.booking.findFirst.mockResolvedValue({
+      id: 'booking-id',
+      status: BookingStatus.PENDING,
+    });
+
+    await expect(
+      service.updateStatus('booking-id', ORG_ID, { status }, PROFESSIONAL.id),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.db.booking.update).not.toHaveBeenCalled();
+  });
+
+  it('keeps administrative status operations available without BARBER scope', async () => {
+    prisma.db.booking.findFirst.mockResolvedValue({
+      id: 'booking-id',
+      status: BookingStatus.PENDING,
+    });
+
+    await service.updateStatus('booking-id', ORG_ID, {
+      status: BookingStatus.CANCELLED,
+    });
+
+    expect(prisma.db.booking.update).toHaveBeenCalledWith({
+      where: { id: 'booking-id', organizationId: ORG_ID },
+      data: { status: BookingStatus.CANCELLED },
+    });
   });
 });
 

@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-11):** Reservas Backend y Reservas Frontend están **CERRADOS / APROBADOS**; el módulo Reservas está **CERRADO oficialmente** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. La **Entrega A Backend de Clientes está APROBADA** sobre el checkpoint `18a3605329ad0ce708a44ac8fcd5db1dd1665732`; la **Entrega B Frontend está IMPLEMENTADA / EN REVISIÓN**. El módulo Clientes todavía **NO está cerrado**. Resumen continúa congelado hasta el final del orden de módulos. Ver §56–58.
+> **Estado vigente de módulos (2026-08-11):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. La auditoría de Profesionales fue aceptada como base y su Checkpoint A0 Backend está **IMPLEMENTADO / EN REVISIÓN**; A1 no se ha iniciado y Frontend no está autorizado. Resumen continúa congelado. Ver §56–59.
 
 ---
 
@@ -1591,8 +1591,8 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 ### 58.1. Estado autorizado
 
 - **Clientes Backend:** **APROBADO** sobre `18a3605329ad0ce708a44ac8fcd5db1dd1665732`.
-- **Clientes Frontend:** **IMPLEMENTADO / EN REVISIÓN** sobre los contratos de §57 y `BACKEND_CHANGES.md`; pendiente de aprobación explícita del propietario.
-- **Módulo Clientes:** **NO CERRADO**; requiere implementación, validaciones técnicas, QA funcional/visual y aprobación explícita posterior del propietario.
+- **Clientes Frontend:** **CERRADO / APROBADO** sobre `c0764e9a98e3876339152763bf9b0fc98fe43aae`.
+- **Módulo Clientes:** **CERRADO oficialmente** por aprobación explícita del propietario.
 - **Resumen/Dashboard:** continúa congelado. No se autorizan cambios en Reservas, Prisma, backend ni otros módulos dentro de esta entrega frontend.
 
 ### 58.2. Implementación y validación del candidato
@@ -1604,4 +1604,29 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - QA visual realizado en desktop (1440×900) y móvil (390×844): tabla de escritorio y cards móviles sin overflow; estados y acciones operativos; consola del navegador sin errores ni advertencias.
 - Regresión crítica previa de reserva pública confirmada: un conflicto no deja Cliente creado o reactivado sin Booking, y la respuesta pública no expone `client`, `clientId`, correo, teléfono, notas, `organizationId` ni timestamps.
 - Validación técnica del candidato: backend TypeScript, lint y 76/76 tests con exit 0; web TypeScript, lint y build de producción con exit 0.
-- La Entrega B queda **IMPLEMENTADA / EN REVISIÓN**, pendiente de aprobación explícita del propietario. El módulo Clientes **NO está cerrado** y no se autoriza avanzar al siguiente módulo.
+- La Entrega B y el módulo Clientes fueron **APROBADOS / CERRADOS** posteriormente por el propietario. El siguiente trabajo autorizado pasó a ser la Auditoría/Diagnóstico de Profesionales.
+
+## 59. Profesionales — Entrega A Backend, Checkpoint A0 (2026-08-11)
+
+### 59.1. Seguridad multi-tenant y permisos de Reservas
+
+- `GET /organizations/mine/members` dejó de seguir la relación global `User.professional`. Los perfiles se consultan mediante `organizationId + userId` y se proyectan explícitamente; la respuesta no expone `organizationId`, `userId`, teléfono ni timestamps del Professional.
+- `BARBER` puede crear una reserva interna únicamente para su propio Professional vinculado y activo. Para cambiar estado, la consulta autoritativa incluye su `professionalId`: una reserva inexistente o de agenda ajena produce el mismo `404`.
+- Las transiciones de `BARBER` quedan limitadas a `PENDING → CONFIRMED` y `CONFIRMED → COMPLETED | NO_SHOW`. No puede cancelar ni reprogramar. `OWNER`, `ADMIN` y `RECEPTIONIST` conservan las operaciones administrativas vigentes.
+- El catálogo y la disponibilidad públicos ahora exigen `Service.isActive=true`; un servicio inactivo no se presenta ni genera horarios.
+
+### 59.2. Garantía PostgreSQL de agenda
+
+- La migración `20260811180000_booking_schedule_exclusion` habilita `btree_gist` y agrega `Booking_professional_schedule_excl`, una restricción `EXCLUDE` sobre `professionalId` y `tsrange(startTime, endTime, '[)')` para reservas cuyo estado no sea `CANCELLED`.
+- La comprobación previa de conflictos se conserva para respuesta temprana, pero PostgreSQL es la autoridad ante carreras concurrentes. Las violaciones reales de la restricción se traducen a HTTP `409` en creación, reprogramación y cambios de estado que vuelvan a ocupar agenda.
+- Antes de aplicar la migración se comprobaron los datos locales: **0 pares solapados**, sin fusiones, eliminaciones ni backfill.
+- Una prueba de integración opt-in usa PostgreSQL real y dos conexiones concurrentes: exactamente una inserción se confirma y la otra es rechazada por la restricción.
+
+### 59.3. Estado y límites
+
+- Validación final: API TypeScript exit 0, lint exit 0 sin warnings y suite estándar exit 0 con 96 tests aprobados + 1 integración opt-in omitida; la integración PostgreSQL se ejecutó aparte y aprobó 1/1 con exit 0.
+- Checkpoint A0: **IMPLEMENTADO / EN REVISIÓN**, no aprobado todavía.
+- Checkpoint A1: **NO INICIADO** y bloqueado hasta revisión/aprobación explícita de A0.
+- Frontend de Profesionales: **NO AUTORIZADO**. No se modificó `apps/web`.
+- No se implementaron todavía los estados `ACTIVE / INACTIVE / ARCHIVED`, la relación compuesta Professional–User, el CRUD completo ni `ProfessionalService`; pertenecen a A1 o fases posteriores según el mandato aprobado.
+- Resumen/Dashboard continúa congelado.

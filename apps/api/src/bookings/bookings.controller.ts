@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { ProfessionalsService } from '../professionals/professionals.service';
@@ -35,11 +36,26 @@ export class BookingsController {
   ) {}
 
   @Post()
-  create(
-    @GetUser('organizationId') organizationId: string,
+  async create(
+    @GetUser() user: RequestUser,
     @Body() createBookingDto: CreateBookingDto,
   ) {
-    return this.bookingsService.create(organizationId, createBookingDto);
+    if (user.role === UserRole.BARBER) {
+      const professional = await this.professionalsService.findByUserId(
+        user.id,
+        user.organizationId,
+      );
+      if (
+        !professional?.isActive ||
+        professional.id !== createBookingDto.professionalId
+      ) {
+        throw new ForbiddenException(
+          'Solo puedes crear reservas para tu propio perfil profesional activo',
+        );
+      }
+    }
+
+    return this.bookingsService.create(user.organizationId, createBookingDto);
   }
 
   // Un BARBER ve únicamente su propia agenda (resuelta vía su vínculo
@@ -84,6 +100,7 @@ export class BookingsController {
   // de una cita existente. Separado de :id/status a propósito — son dos
   // operaciones de negocio distintas (mover una cita vs. cambiar su
   // estado), cada una con su propia validación.
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
   @Patch(':id')
   reschedule(
     @Param('id') id: string,
@@ -98,15 +115,30 @@ export class BookingsController {
   }
 
   @Patch(':id/status')
-  updateStatus(
+  async updateStatus(
     @Param('id') id: string,
-    @GetUser('organizationId') organizationId: string,
+    @GetUser() user: RequestUser,
     @Body() updateBookingStatusDto: UpdateBookingStatusDto,
   ) {
+    let professionalId: string | undefined;
+    if (user.role === UserRole.BARBER) {
+      const professional = await this.professionalsService.findByUserId(
+        user.id,
+        user.organizationId,
+      );
+      if (!professional) {
+        throw new ForbiddenException(
+          'No tienes un perfil profesional vinculado en esta organización',
+        );
+      }
+      professionalId = professional.id;
+    }
+
     return this.bookingsService.updateStatus(
       id,
-      organizationId,
+      user.organizationId,
       updateBookingStatusDto,
+      professionalId,
     );
   }
 }
