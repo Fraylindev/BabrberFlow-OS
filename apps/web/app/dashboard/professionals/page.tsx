@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   ApiError,
   Professional,
@@ -36,6 +36,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton, SkeletonListRows } from "@/components/ui/Skeleton";
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 const TEXTAREA_CLASS =
   "min-h-28 w-full resize-y rounded-sm border border-[var(--dash-border-strong)] bg-[var(--dash-surface-raised)] px-3 py-2 text-sm text-[var(--dash-text)] placeholder:text-[var(--dash-text-faint)] outline-none transition-colors focus:border-[var(--dash-accent)]";
 
@@ -131,6 +132,15 @@ export default function ProfessionalsPage() {
   const professionals = query.data?.professionals ?? [];
   const pagination = query.data?.pagination;
   const hasFilters = Boolean(search) || status !== "ALL";
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setSearch(draftSearch.trim());
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [draftSearch]);
 
   function submitSearch(event: FormEvent) {
     event.preventDefault();

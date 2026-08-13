@@ -2,6 +2,13 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-13 — Profesionales: búsqueda automática candidata
+
+- La búsqueda del directorio ahora aplica el texto automáticamente con debounce de 300 ms y vuelve a la primera página, conservando el botón `Buscar` como alternativa inmediata.
+- Se reutilizan la búsqueda backend, paginación y query keys tenant/rol existentes; no cambian API, contratos, Prisma, dependencias ni otros módulos.
+- Web TypeScript y lint pasaron con exit 0. QA autenticado desktop/móvil confirmó actualización tras la pausa, envío inmediato con el botón, ausencia de overflow y consola sin errores/advertencias.
+- Estado: ajuste **IMPLEMENTADO / EN REVISIÓN** dentro de Entrega B. Profesionales continúa pendiente de QA/aprobación final y no está cerrado.
+
 ## 2026-08-12 — Profesionales Entrega B Frontend implementada / en revisión
 
 - La auditoría técnica de `60919ee94eb27f628906c9b86ce7a43b2fa09237` cerró/aprobó A1 Backend y autorizó exclusivamente Frontend de Profesionales.

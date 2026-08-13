@@ -1696,3 +1696,10 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - Se comprobó empty filtrado, caída de API + reintento, consola sin errores/advertencias y viewports 1440×900, 768×1024 y 390×844 sin overflow horizontal.
 - Validaciones web finales: TypeScript, lint y build en exit 0.
 - Entrega B Frontend: **IMPLEMENTADA / EN REVISIÓN**, candidata a auditoría; **NO APROBADA**. El módulo Profesionales **NO está cerrado**. No se iniciaron Servicios, Facturación, Equipo, Configuración, Cloudinary, Analytics ni Resumen.
+
+### 61.4. Ajuste candidato de búsqueda automática (2026-08-13)
+
+- La búsqueda mantiene el endpoint y paginación reales, pero deja de exigir el botón: el texto se aplica automáticamente tras un debounce de 300 ms y reinicia la vista en la primera página.
+- El botón `Buscar` permanece como alternativa inmediata. Las query keys conservan aislamiento por organización, vista de rol, filtros y página; no cambian backend, contratos, Prisma ni dependencias.
+- TypeScript y lint web finalizaron con exit 0. El QA autenticado comprobó en desktop y 390×844 que pulsaciones sucesivas por debajo de 300 ms conservan el listado y generan un único resultado tras la pausa; el botón aplica de inmediato, no existe overflow horizontal y la consola no reporta errores ni advertencias.
+- Estado: ajuste **IMPLEMENTADO / EN REVISIÓN**, pendiente de auditoría y aprobación explícita. Entrega B y el módulo Profesionales continúan **NO CERRADOS**; no se autoriza avanzar a Servicios ni a otro módulo.
