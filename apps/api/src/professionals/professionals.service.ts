@@ -37,6 +37,7 @@ import {
   PROFESSIONAL_DEFAULT_PAGE_SIZE,
   PROFESSIONAL_MAX_PAGE_SIZE,
 } from './professionals.constants';
+import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
 
 type ProfessionalListResponse =
   ProfessionalDirectoryResponseDto | ProfessionalManagementResponseDto;
@@ -264,32 +265,49 @@ export class ProfessionalsService {
     organizationId: string,
     userId: string,
   ): Promise<ProfessionalManagementResponseDto> {
-    const current = await this.findOwnedOrThrow(id, organizationId);
-    if (current.status === ProfessionalStatus.ARCHIVED) {
-      return toProfessionalManagement(current);
-    }
-
-    const futureBookings = await this.prisma.db.booking.count({
-      where: {
+    const result = await this.prisma.db.$transaction(async (transaction) => {
+      const locked = await lockProfessionalForBookingIntegrity(
+        transaction,
+        id,
         organizationId,
-        professionalId: id,
-        startTime: { gt: new Date() },
-        status: { in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
-      },
-    });
-    if (futureBookings > 0) {
-      throw new ConflictException(
-        'No se puede archivar: el profesional tiene reservas futuras pendientes o confirmadas',
       );
-    }
+      if (!locked) throw new NotFoundException('Profesional no encontrado');
 
-    return this.setStatus(
-      id,
-      organizationId,
-      userId,
-      ProfessionalStatus.ARCHIVED,
-      'ARCHIVE',
-    );
+      const current = await transaction.professional.findUnique({
+        where: { id, organizationId },
+        select: professionalManagementSelect,
+      });
+      if (!current) throw new NotFoundException('Profesional no encontrado');
+      if (current.status === ProfessionalStatus.ARCHIVED) {
+        return { professional: current, archived: false };
+      }
+
+      const futureBookings = await transaction.booking.count({
+        where: {
+          organizationId,
+          professionalId: id,
+          startTime: { gt: new Date() },
+          status: { in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
+        },
+      });
+      if (futureBookings > 0) {
+        throw new ConflictException(
+          'No se puede archivar: el profesional tiene reservas futuras pendientes o confirmadas',
+        );
+      }
+
+      const professional = await transaction.professional.update({
+        where: { id, organizationId },
+        data: { status: ProfessionalStatus.ARCHIVED },
+        select: professionalManagementSelect,
+      });
+      return { professional, archived: true };
+    });
+
+    if (result.archived) {
+      await this.auditAction(organizationId, userId, 'ARCHIVE', id);
+    }
+    return toProfessionalManagement(result.professional);
   }
 
   async restore(

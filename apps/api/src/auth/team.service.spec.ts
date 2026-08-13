@@ -16,16 +16,20 @@ const EXISTING_USER = {
 };
 
 function createDependencies() {
-  const prisma = {
-    db: {
-      user: {
-        findUnique: jest.fn(),
-        findUniqueOrThrow: jest.fn().mockResolvedValue(EXISTING_USER),
-      },
-      membership: { create: jest.fn().mockResolvedValue({ id: 'member-id' }) },
-      professional: { create: jest.fn() },
-      $transaction: jest.fn(),
+  const db = {
+    user: {
+      findUnique: jest.fn(),
+      findUniqueOrThrow: jest.fn().mockResolvedValue(EXISTING_USER),
     },
+    membership: { create: jest.fn().mockResolvedValue({ id: 'member-id' }) },
+    professional: { create: jest.fn() },
+    $transaction: jest.fn(),
+  };
+  db.$transaction.mockImplementation(
+    (callback: (transaction: typeof db) => Promise<unknown>) => callback(db),
+  );
+  const prisma = {
+    db,
   };
   const audit = { log: jest.fn().mockResolvedValue(undefined) };
   return {
@@ -92,4 +96,27 @@ describe('TeamService - optional public professional creation', () => {
       expect(result.professionalCreated).toBe(false);
     },
   );
+
+  it('keeps Membership and automatic Professional in one transaction for existing User', async () => {
+    const { prisma, audit, service } = createDependencies();
+    prisma.db.user.findUnique.mockResolvedValue(EXISTING_USER);
+    prisma.db.professional.create.mockRejectedValue(
+      new Error('unexpected profile failure'),
+    );
+
+    await expect(
+      service.inviteUser(ORGANIZATION_ID, ACTOR_ID, {
+        name: 'Ana',
+        email: EXISTING_USER.email,
+        password: 'Password123!',
+        role: UserRole.BARBER,
+        createPublicProfile: true,
+      }),
+    ).rejects.toThrow('unexpected profile failure');
+
+    expect(prisma.db.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.db.membership.create).toHaveBeenCalled();
+    expect(prisma.db.professional.create).toHaveBeenCalled();
+    expect(audit.log).not.toHaveBeenCalled();
+  });
 });

@@ -8,8 +8,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
-import { BookingStatus, ProfessionalStatus, type Prisma } from '@prisma/client';
+import {
+  BookingStatus,
+  ProfessionalStatus,
+  type Booking,
+  type Prisma,
+} from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
+import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
 
 export const bookingClientResponseSelect = {
   id: true,
@@ -25,6 +31,23 @@ const BARBER_STATUS_TRANSITIONS: Partial<
   [BookingStatus.CONFIRMED]: [BookingStatus.COMPLETED, BookingStatus.NO_SHOW],
 };
 
+const ADMIN_STATUS_TRANSITIONS: Partial<
+  Record<BookingStatus, readonly BookingStatus[]>
+> = {
+  [BookingStatus.PENDING]: [BookingStatus.CONFIRMED, BookingStatus.CANCELLED],
+  [BookingStatus.CONFIRMED]: [
+    BookingStatus.COMPLETED,
+    BookingStatus.NO_SHOW,
+    BookingStatus.CANCELLED,
+  ],
+  [BookingStatus.CANCELLED]: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
+};
+
+const FUTURE_OPERATIONAL_STATUSES: readonly BookingStatus[] = [
+  BookingStatus.PENDING,
+  BookingStatus.CONFIRMED,
+];
+
 const SCHEDULE_CONFLICT_MESSAGE =
   'El profesional ya tiene una cita reservada en este horario';
 
@@ -37,9 +60,48 @@ export class BookingsService {
     createBookingDto: CreateBookingDto,
     transaction?: Prisma.TransactionClient,
     requirePublicProfessional = false,
-  ) {
-    const db = transaction ?? this.prisma.db;
+  ): Promise<Booking> {
+    if (transaction) {
+      return this.createInTransaction(
+        transaction,
+        organizationId,
+        createBookingDto,
+        requirePublicProfessional,
+      );
+    }
+
+    return this.prisma.db.$transaction((tx) =>
+      this.createInTransaction(
+        tx,
+        organizationId,
+        createBookingDto,
+        requirePublicProfessional,
+      ),
+    );
+  }
+
+  private async createInTransaction(
+    transaction: Prisma.TransactionClient,
+    organizationId: string,
+    createBookingDto: CreateBookingDto,
+    requirePublicProfessional: boolean,
+  ): Promise<Booking> {
+    const db = transaction;
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
+
+    const lockedProfessional = await lockProfessionalForBookingIntegrity(
+      transaction,
+      professionalId,
+      organizationId,
+    );
+    if (
+      lockedProfessional?.status !== ProfessionalStatus.ACTIVE ||
+      (requirePublicProfessional && !lockedProfessional.isPublic)
+    ) {
+      throw new BadRequestException(
+        'Profesional no encontrado en esta barbería',
+      );
+    }
 
     // isActive: true — rechaza servicios o profesionales dados de baja.
     // No afecta reservas históricas ya creadas (no se tocan registros existentes).
@@ -48,20 +110,6 @@ export class BookingsService {
     });
     if (!service) {
       throw new BadRequestException('Servicio no encontrado en esta barbería');
-    }
-
-    const professional = await db.professional.findUnique({
-      where: {
-        id: professionalId,
-        organizationId,
-        status: ProfessionalStatus.ACTIVE,
-        ...(requirePublicProfessional ? { isPublic: true } : {}),
-      },
-    });
-    if (!professional) {
-      throw new BadRequestException(
-        'Profesional no encontrado en esta barbería',
-      );
     }
 
     const client = await db.client.findUnique({
@@ -91,7 +139,7 @@ export class BookingsService {
       startDate,
       endDate,
       undefined,
-      transaction,
+      db,
     );
 
     try {
@@ -116,9 +164,8 @@ export class BookingsService {
     startDate: Date,
     endDate: Date,
     excludeBookingId?: string,
-    transaction?: Prisma.TransactionClient,
+    db: Prisma.TransactionClient = this.prisma.db,
   ) {
-    const db = transaction ?? this.prisma.db;
     const conflictingBooking = await db.booking.findFirst({
       where: {
         organizationId,
@@ -197,8 +244,19 @@ export class BookingsService {
     id: string,
     organizationId: string,
     dto: RescheduleBookingDto,
-  ) {
-    const booking = await this.prisma.db.booking.findFirst({
+  ): Promise<Booking> {
+    return this.prisma.db.$transaction((tx) =>
+      this.rescheduleInTransaction(tx, id, organizationId, dto),
+    );
+  }
+
+  private async rescheduleInTransaction(
+    transaction: Prisma.TransactionClient,
+    id: string,
+    organizationId: string,
+    dto: RescheduleBookingDto,
+  ): Promise<Booking> {
+    const booking = await transaction.booking.findFirst({
       where: { id, organizationId },
     });
     if (!booking) {
@@ -214,24 +272,22 @@ export class BookingsService {
     const serviceId = dto.serviceId ?? booking.serviceId;
 
     // isActive: true — rechaza servicios o profesionales dados de baja.
-    const service = await this.prisma.db.service.findUnique({
+    const lockedProfessional = await lockProfessionalForBookingIntegrity(
+      transaction,
+      professionalId,
+      organizationId,
+    );
+    if (lockedProfessional?.status !== ProfessionalStatus.ACTIVE) {
+      throw new BadRequestException(
+        'Profesional no encontrado en esta barbería',
+      );
+    }
+
+    const service = await transaction.service.findUnique({
       where: { id: serviceId, organizationId, isActive: true },
     });
     if (!service) {
       throw new BadRequestException('Servicio no encontrado en esta barbería');
-    }
-
-    const professional = await this.prisma.db.professional.findUnique({
-      where: {
-        id: professionalId,
-        organizationId,
-        status: ProfessionalStatus.ACTIVE,
-      },
-    });
-    if (!professional) {
-      throw new BadRequestException(
-        'Profesional no encontrado en esta barbería',
-      );
     }
 
     // ProfessionalService NO se usa como barrera de negocio en esta fase
@@ -253,10 +309,11 @@ export class BookingsService {
       startDate,
       endDate,
       id,
+      transaction,
     );
 
     try {
-      return await this.prisma.db.booking.update({
+      return await transaction.booking.update({
         where: { id, organizationId },
         data: {
           professionalId,
@@ -275,8 +332,26 @@ export class BookingsService {
     organizationId: string,
     updateBookingStatusDto: UpdateBookingStatusDto,
     professionalId?: string,
-  ) {
-    const booking = await this.prisma.db.booking.findFirst({
+  ): Promise<Booking> {
+    return this.prisma.db.$transaction((tx) =>
+      this.updateStatusInTransaction(
+        tx,
+        id,
+        organizationId,
+        updateBookingStatusDto,
+        professionalId,
+      ),
+    );
+  }
+
+  private async updateStatusInTransaction(
+    transaction: Prisma.TransactionClient,
+    id: string,
+    organizationId: string,
+    updateBookingStatusDto: UpdateBookingStatusDto,
+    professionalId?: string,
+  ): Promise<Booking> {
+    const booking = await transaction.booking.findFirst({
       where: {
         id,
         organizationId,
@@ -288,17 +363,38 @@ export class BookingsService {
       throw new NotFoundException('Reserva no encontrada en esta barbería');
     }
 
-    if (professionalId) {
-      const allowedStatuses = BARBER_STATUS_TRANSITIONS[booking.status] ?? [];
-      if (!allowedStatuses.includes(updateBookingStatusDto.status)) {
-        throw new BadRequestException(
-          'Transición de estado no permitida para BARBER',
+    if (booking.status === updateBookingStatusDto.status) return booking;
+
+    const allowedStatuses = professionalId
+      ? (BARBER_STATUS_TRANSITIONS[booking.status] ?? [])
+      : (ADMIN_STATUS_TRANSITIONS[booking.status] ?? []);
+    if (!allowedStatuses.includes(updateBookingStatusDto.status)) {
+      throw new BadRequestException(
+        professionalId
+          ? 'Transición de estado no permitida para BARBER'
+          : 'Transición administrativa de estado no permitida',
+      );
+    }
+
+    const reactivatesFutureSchedule =
+      booking.status === BookingStatus.CANCELLED &&
+      FUTURE_OPERATIONAL_STATUSES.includes(updateBookingStatusDto.status) &&
+      booking.startTime.getTime() > Date.now();
+    if (reactivatesFutureSchedule) {
+      const lockedProfessional = await lockProfessionalForBookingIntegrity(
+        transaction,
+        booking.professionalId,
+        organizationId,
+      );
+      if (lockedProfessional?.status !== ProfessionalStatus.ACTIVE) {
+        throw new ConflictException(
+          'No se puede reactivar una reserva futura de un profesional inactivo o archivado',
         );
       }
     }
 
     try {
-      return await this.prisma.db.booking.update({
+      return await transaction.booking.update({
         where: {
           id,
           organizationId,

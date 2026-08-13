@@ -35,18 +35,31 @@ const MANAGEMENT_RECORD = {
 };
 
 function createDependencies() {
-  const prisma = {
-    db: {
-      professional: {
-        create: jest.fn(),
-        count: jest.fn(),
-        findMany: jest.fn(),
-        findFirst: jest.fn(),
-        update: jest.fn(),
+  const db = {
+    $queryRaw: jest.fn().mockResolvedValue([
+      {
+        id: PROFESSIONAL_ID,
+        status: ProfessionalStatus.ACTIVE,
+        isPublic: true,
       },
-      booking: { count: jest.fn() },
-      membership: { findFirst: jest.fn() },
+    ]),
+    professional: {
+      create: jest.fn(),
+      count: jest.fn(),
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
+    booking: { count: jest.fn() },
+    membership: { findFirst: jest.fn() },
+    $transaction: jest.fn(),
+  };
+  db.$transaction.mockImplementation(
+    (callback: (transaction: typeof db) => Promise<unknown>) => callback(db),
+  );
+  const prisma = {
+    db,
   };
   const audit = { log: jest.fn().mockResolvedValue(undefined) };
   const service = new ProfessionalsService(
@@ -62,6 +75,9 @@ describe('ProfessionalsService', () => {
   beforeEach(() => {
     dependencies = createDependencies();
     dependencies.prisma.db.professional.findFirst.mockResolvedValue(
+      MANAGEMENT_RECORD,
+    );
+    dependencies.prisma.db.professional.findUnique.mockResolvedValue(
       MANAGEMENT_RECORD,
     );
     dependencies.prisma.db.professional.update.mockResolvedValue(

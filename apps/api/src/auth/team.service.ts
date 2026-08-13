@@ -4,7 +4,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
-import { ProfessionalStatus, UserRole } from '@prisma/client';
+import { ProfessionalStatus, User, UserRole } from '@prisma/client';
+
+type InvitedTeamMember = Omit<User, 'password'> & {
+  professionalCreated: boolean;
+  whatsappBaseUrl: string;
+};
 
 /**
  * Gestión de equipo (invitar miembros) — antes vivía dentro de
@@ -32,7 +37,7 @@ export class TeamService {
     organizationId: string,
     invitedBy: string,
     inviteUserDto: InviteUserDto,
-  ) {
+  ): Promise<InvitedTeamMember> {
     const { name, email, password, role, createPublicProfile } = inviteUserDto;
     const shouldCreatePublicProfile =
       role === UserRole.BARBER && createPublicProfile === true;
@@ -136,15 +141,42 @@ export class TeamService {
     shouldCreatePublicProfile: boolean,
     name: string,
     whatsappBaseUrl: string,
-  ) {
+  ): Promise<InvitedTeamMember> {
+    let result: {
+      user: User;
+      professionalId: string | null;
+    };
     try {
-      await this.prisma.db.membership.create({
-        data: { userId, organizationId, role },
+      result = await this.prisma.db.$transaction<{
+        user: User;
+        professionalId: string | null;
+      }>(async (transaction) => {
+        await transaction.membership.create({
+          data: { userId, organizationId, role },
+        });
+
+        const professional = shouldCreatePublicProfile
+          ? await transaction.professional.create({
+              data: {
+                organizationId,
+                name: name.trim(),
+                userId,
+                status: ProfessionalStatus.ACTIVE,
+                isPublic: true,
+              },
+              select: { id: true },
+            })
+          : null;
+
+        const user = await transaction.user.findUniqueOrThrow({
+          where: { id: userId },
+        });
+        return { user, professionalId: professional?.id ?? null };
       });
     } catch (err) {
       if (isUniqueConstraintError(err, 'userId')) {
         throw new ConflictException(
-          'Esta persona ya es miembro de esta organización.',
+          'Esta persona ya es miembro de esta organización o ya tiene un perfil vinculado.',
         );
       }
       throw err;
@@ -157,45 +189,22 @@ export class TeamService {
       entity: 'Membership',
       entityId: userId,
     });
-
-    let professionalCreated = false;
-    let professionalId: string | null = null;
-    if (shouldCreatePublicProfile) {
-      try {
-        const professional = await this.prisma.db.professional.create({
-          data: {
-            organizationId,
-            name: name.trim(),
-            userId,
-            status: ProfessionalStatus.ACTIVE,
-            isPublic: true,
-          },
-          select: { id: true },
-        });
-        professionalCreated = true;
-        professionalId = professional.id;
-      } catch (err) {
-        if (!isUniqueConstraintError(err, 'userId')) throw err;
-        // Puede existir ya el vínculo compuesto dentro de esta organización.
-        professionalCreated = false;
-      }
-    }
-
-    if (professionalId) {
+    if (result.professionalId) {
       await this.audit.log({
         organizationId,
         userId: invitedBy,
         action: 'CREATE',
         entity: 'Professional',
-        entityId: professionalId,
+        entityId: result.professionalId,
       });
     }
 
-    const user = await this.prisma.db.user.findUniqueOrThrow({
-      where: { id: userId },
-    });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _p, ...userWithoutPassword } = user;
-    return { ...userWithoutPassword, professionalCreated, whatsappBaseUrl };
+    const { password: _p, ...userWithoutPassword } = result.user;
+    return {
+      ...userWithoutPassword,
+      professionalCreated: result.professionalId !== null,
+      whatsappBaseUrl,
+    };
   }
 }

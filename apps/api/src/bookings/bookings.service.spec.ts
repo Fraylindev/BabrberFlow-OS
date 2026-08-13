@@ -9,6 +9,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 
 // 1. Tipados estrictos de entrada para los métodos evaluados
+type TestBooking = {
+  id: string;
+  status: BookingStatus;
+  professionalId?: string;
+  startTime?: Date;
+  organizationId?: string;
+  serviceId?: string;
+};
 type FindFirstArgs = [{ where: { status?: { not?: BookingStatus } } }];
 type CreateBookingArgs = [
   { data: { startTime: Date; endTime: Date; [key: string]: unknown } },
@@ -29,27 +37,36 @@ type UpdateBookingArgs = [
 // (decisión de producto 2026-08-10). Cualquier profesional activo puede
 // realizar cualquier servicio activo de la organización.
 function createMockPrisma() {
-  return {
-    db: {
-      service: { findUnique: jest.fn() },
-      professional: { findUnique: jest.fn() },
-      client: { findUnique: jest.fn() },
-      booking: {
-        findFirst: jest.fn<
-          Promise<{ id: string; status: BookingStatus } | null>,
-          FindFirstArgs
-        >(),
-        create: jest.fn<
-          Promise<{ id: string; [key: string]: unknown }>,
-          CreateBookingArgs
-        >(),
-        update: jest.fn<
-          Promise<{ id: string; [key: string]: unknown }>,
-          UpdateBookingArgs
-        >(),
-        findMany: jest.fn<Promise<unknown[]>, [unknown]>(),
+  const db = {
+    $queryRaw: jest.fn().mockResolvedValue([
+      {
+        id: 'prof-1',
+        status: ProfessionalStatus.ACTIVE,
+        isPublic: true,
       },
+    ]),
+    service: { findUnique: jest.fn() },
+    professional: { findUnique: jest.fn() },
+    client: { findUnique: jest.fn() },
+    booking: {
+      findFirst: jest.fn<Promise<TestBooking | null>, FindFirstArgs>(),
+      create: jest.fn<
+        Promise<{ id: string; [key: string]: unknown }>,
+        CreateBookingArgs
+      >(),
+      update: jest.fn<
+        Promise<{ id: string; [key: string]: unknown }>,
+        UpdateBookingArgs
+      >(),
+      findMany: jest.fn<Promise<unknown[]>, [unknown]>(),
     },
+    $transaction: jest.fn(),
+  };
+  db.$transaction.mockImplementation(
+    (callback: (transaction: typeof db) => Promise<unknown>) => callback(db),
+  );
+  return {
+    db,
   };
 }
 
@@ -133,7 +150,7 @@ describe('BookingsService — conflictos de reservas', () => {
 
   // ── estado operativo — rechazar inactivos ──────────────────────────────────
   it('rechaza si el profesional no está ACTIVE', async () => {
-    prisma.db.professional.findUnique.mockResolvedValue(null);
+    prisma.db.$queryRaw.mockResolvedValue([]);
 
     await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
       BadRequestException,
@@ -151,16 +168,14 @@ describe('BookingsService — conflictos de reservas', () => {
   });
 
   it('exige isPublic solo cuando la reserva proviene del flujo público', async () => {
-    await service.create(ORG_ID, VALID_DTO, undefined, true);
+    prisma.db.$queryRaw.mockResolvedValue([
+      { ...PROFESSIONAL, isPublic: false },
+    ]);
 
-    expect(prisma.db.professional.findUnique).toHaveBeenCalledWith({
-      where: {
-        id: PROFESSIONAL.id,
-        organizationId: ORG_ID,
-        status: ProfessionalStatus.ACTIVE,
-        isPublic: true,
-      },
-    });
+    await expect(
+      service.create(ORG_ID, VALID_DTO, undefined, true),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.db.$queryRaw).toHaveBeenCalledTimes(1);
   });
 
   // ── Conflictos de horario ─────────────────────────────────────────────────
@@ -240,7 +255,7 @@ describe('BookingsService — conflictos de reservas', () => {
   });
 
   it('rechaza si el profesional no pertenece a la organización del token', async () => {
-    prisma.db.professional.findUnique.mockResolvedValue(null);
+    prisma.db.$queryRaw.mockResolvedValue([]);
 
     await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
       BadRequestException,
@@ -326,7 +341,9 @@ describe('BookingsService — reprogramar (reschedule)', () => {
       organizationId: ORG_ID,
       status: ProfessionalStatus.ACTIVE,
     };
-    prisma.db.professional.findUnique.mockResolvedValue(OTHER_PROFESSIONAL);
+    prisma.db.$queryRaw.mockResolvedValue([
+      { ...OTHER_PROFESSIONAL, isPublic: false },
+    ]);
     prisma.db.booking.findFirst
       .mockResolvedValueOnce(EXISTING_BOOKING)
       .mockResolvedValueOnce(null);
@@ -345,7 +362,13 @@ describe('BookingsService — reprogramar (reschedule)', () => {
   });
 
   it('rechaza reprogramar a un profesional inactivo', async () => {
-    prisma.db.professional.findUnique.mockResolvedValue(null);
+    prisma.db.$queryRaw.mockResolvedValue([
+      {
+        id: 'prof-inactivo',
+        status: ProfessionalStatus.INACTIVE,
+        isPublic: false,
+      },
+    ]);
     prisma.db.booking.findFirst.mockResolvedValueOnce(EXISTING_BOOKING);
 
     await expect(
@@ -521,6 +544,76 @@ describe('BookingsService - BARBER status authorization', () => {
       data: { status: BookingStatus.CANCELLED },
     });
   });
+
+  it.each([
+    [ProfessionalStatus.ARCHIVED, BookingStatus.PENDING],
+    [ProfessionalStatus.ARCHIVED, BookingStatus.CONFIRMED],
+    [ProfessionalStatus.INACTIVE, BookingStatus.PENDING],
+    [ProfessionalStatus.INACTIVE, BookingStatus.CONFIRMED],
+  ])(
+    'rejects CANCELLED to %s/%s for a future booking',
+    async (professionalStatus, targetStatus) => {
+      prisma.db.booking.findFirst.mockResolvedValue({
+        id: 'booking-id',
+        status: BookingStatus.CANCELLED,
+        professionalId: PROFESSIONAL.id,
+        startTime: new Date(FUTURE_DATE),
+      });
+      prisma.db.$queryRaw.mockResolvedValue([
+        {
+          id: PROFESSIONAL.id,
+          status: professionalStatus,
+          isPublic: false,
+        },
+      ]);
+
+      await expect(
+        service.updateStatus('booking-id', ORG_ID, { status: targetStatus }),
+      ).rejects.toBeInstanceOf(ConflictException);
+      expect(prisma.db.booking.update).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([BookingStatus.PENDING, BookingStatus.CONFIRMED])(
+    'allows administrative recovery CANCELLED to %s only with ACTIVE Professional',
+    async (targetStatus) => {
+      prisma.db.booking.findFirst.mockResolvedValue({
+        id: 'booking-id',
+        status: BookingStatus.CANCELLED,
+        professionalId: PROFESSIONAL.id,
+        startTime: new Date(FUTURE_DATE),
+      });
+
+      await service.updateStatus('booking-id', ORG_ID, {
+        status: targetStatus,
+      });
+
+      expect(prisma.db.$queryRaw).toHaveBeenCalledTimes(1);
+      expect(prisma.db.booking.update).toHaveBeenCalledWith({
+        where: { id: 'booking-id', organizationId: ORG_ID },
+        data: { status: targetStatus },
+      });
+    },
+  );
+
+  it.each([
+    [BookingStatus.COMPLETED, BookingStatus.PENDING],
+    [BookingStatus.NO_SHOW, BookingStatus.CONFIRMED],
+    [BookingStatus.CANCELLED, BookingStatus.COMPLETED],
+  ])(
+    'rejects unsupported administrative transition %s to %s',
+    async (currentStatus, targetStatus) => {
+      prisma.db.booking.findFirst.mockResolvedValue({
+        id: 'booking-id',
+        status: currentStatus,
+      });
+
+      await expect(
+        service.updateStatus('booking-id', ORG_ID, { status: targetStatus }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.db.booking.update).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe('BookingsService - Client security regressions', () => {

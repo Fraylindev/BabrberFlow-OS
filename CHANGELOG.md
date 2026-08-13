@@ -9,9 +9,11 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - Se reemplazó la unicidad global Professional–User por `(organizationId, userId)` después de verificar 0 colisiones locales; la migración preserva los 5 perfiles existentes sin fusionar ni eliminar datos.
 - Se completó el contrato backend con búsqueda, filtro de estado, paginación/orden estable, detalle, proyecciones por rol, perfil propio de BARBER, UUIDs, límites, trim y rechazo de PATCH vacío.
 - Booking interno exige Professional `ACTIVE`; catálogo, disponibilidad y creación pública final exigen `ACTIVE + isPublic=true`. `ProfessionalService` continúa sin bloquear reservas.
+- Se corrigió la carrera entre archivo y agenda: archivo, creación interna/pública, reprogramación y recuperación de canceladas futuras comparten un bloqueo de fila PostgreSQL tenant-scoped dentro de transacciones. Una reserva futura no puede quedar `PENDING`/`CONFIRMED` sobre un Professional `ARCHIVED`; la recuperación también rechaza `INACTIVE`.
+- Se explicitó la matriz administrativa de estados y se hizo atómica la creación de Membership + Professional automático al invitar un User existente como BARBER, evitando Membership parcial si falla el perfil.
 - AuditLog registra CREATE, UPDATE, STATUS_CHANGE, ARCHIVE, RESTORE, LINK y UNLINK sin valores de PII. `/auth/invite` solo honra `createPublicProfile` para BARBER.
 - Se añadieron pruebas específicas de servicio/controlador/DTO/Equipo y regresiones de Reservas, booking público y aislamiento de Equipo. Frontend de Profesionales, Cloudinary, Servicios y otros módulos no fueron iniciados.
-- Validación final: API TypeScript, lint y suite estándar en exit 0 (141 tests aprobados y 1 integración PostgreSQL opt-in omitida); Prisma reportó las 10 migraciones aplicadas y el schema local actualizado.
+- Validación final de la corrección: API TypeScript, lint y suite estándar en exit 0 (151 tests aprobados; 5 pruebas PostgreSQL opt-in omitidas). La integración PostgreSQL real pasó 5/5 casos de exclusión y carreras archivo↔creación interna/pública, reprogramación y reactivación; Prisma reportó las 10 migraciones aplicadas y el schema local actualizado.
 - Estado: A1 Backend **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no aprobado. Profesionales no está cerrado, Frontend no está autorizado y Resumen continúa congelado.
 
 ## 2026-08-11 — Profesionales Entrega A: Checkpoint A0 implementado / en revisión

@@ -28,12 +28,14 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 - Directorio `BARBER`/`RECEPTIONIST`: `{ id, name, avatar, specialty, status, isActive }`. Gestión `OWNER`/`ADMIN`: perfil completo seguro y `linkedUser`, sin `organizationId`/`userId` crudo. Perfil propio BARBER no incluye teléfono interno ni cuenta vinculada. Un vínculo `ARCHIVED` no resuelve agenda ni clientes operativos para BARBER.
 - Booking interno/reprogramación exige `status=ACTIVE`. Booking público exige además `isPublic=true` en la consulta final dentro de su transacción. `ProfessionalService` no se consulta como barrera.
-- `/auth/invite`: `createPublicProfile=true` solo tiene efecto para `BARBER`; crea `ACTIVE/publicado`. ADMIN/RECEPTIONIST se ignoran por autoridad backend.
+- **Coordinación agenda/archivo:** creación interna, creación pública, reprogramación, recuperación futura de una reserva cancelada y archivo adquieren el mismo bloqueo de fila PostgreSQL sobre `Professional(id, organizationId)` dentro de sus transacciones. El orden serializado garantiza que el archivo devuelve `409` si ya quedó una reserva futura operativa, o que la operación de agenda rechaza al Professional ya archivado.
+- **`PATCH /bookings/:id/status`:** para roles administrativos la matriz vigente es `PENDING → CONFIRMED/CANCELLED`, `CONFIRMED → COMPLETED/NO_SHOW/CANCELLED` y `CANCELLED → PENDING/CONFIRMED`; `COMPLETED`/`NO_SHOW` son terminales. Si una cancelada futura vuelve a `PENDING` o `CONFIRMED`, el Professional tenant-scoped debe seguir `ACTIVE`; `INACTIVE`/`ARCHIVED` producen `409`. Las reglas BARBER de A0 no cambian.
+- `/auth/invite`: `createPublicProfile=true` solo tiene efecto para `BARBER`; crea `ACTIVE/publicado`. ADMIN/RECEPTIONIST se ignoran por autoridad backend. Para un User existente, Membership y perfil automático son atómicos; cualquier fallo inesperado del Professional revierte la Membership.
 - Límites: nombre 120, bio 2000, teléfono 30, especialidad 120, avatar HTTP(S) 2048, experiencia entera ≥0, búsqueda 120; strings con trim, UUIDs validados, Base64 no aceptado.
 - Auditoría: `CREATE`, `UPDATE`, `STATUS_CHANGE`, `ARCHIVE`, `RESTORE`, `LINK`, `UNLINK`, sin valores PII y con fail-open.
 - **Impacto frontend:** el frontend actual de Profesionales no fue modificado y todavía no está autorizado. Debe adaptarse al contrato A1 únicamente después de aprobación explícita del backend.
 
-**Estado:** A0 aprobado sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`. A1 implementado / en revisión, todavía no aprobado. Profesionales no está cerrado.
+**Estado:** A0 aprobado sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`. La corrección de integridad de A1 está implementada y validada; A1 permanece implementado / en revisión y requiere auditoría, todavía no está aprobado. Profesionales no está cerrado.
 
 ---
 

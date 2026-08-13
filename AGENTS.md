@@ -188,6 +188,7 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 - Auditoría/Diagnóstico: **COMPLETADO y aceptado como base**.
 - Entrega A Backend — Checkpoint A0 (seguridad e integridad transversal): **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`.
 - Entrega A Backend — Checkpoint A1: **IMPLEMENTADO / EN REVISIÓN**; candidato a auditoría, todavía no aprobado.
+- Corrección de integridad A1: implementada y validada como parte del candidato. Archivo y operaciones que ocupan agenda se coordinan transaccionalmente mediante bloqueo PostgreSQL de la fila Professional; A1 requiere nueva auditoría antes de aprobarse.
 - Entrega B Frontend: **NO AUTORIZADA** hasta que A0 y A1 sean auditados y aprobados.
 - Módulo Profesionales: **NO CERRADO / NO APROBADO**.
 
