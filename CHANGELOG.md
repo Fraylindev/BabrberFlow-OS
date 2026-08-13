@@ -2,6 +2,15 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-12 — Profesionales Entrega B Frontend implementada / en revisión
+
+- La auditoría técnica de `60919ee94eb27f628906c9b86ce7a43b2fa09237` cerró/aprobó A1 Backend y autorizó exclusivamente Frontend de Profesionales.
+- `/dashboard/professionals` consume el contrato real completo: listado/búsqueda/filtros/paginación/detalle, crear/editar, estados, publicación, archivo/restauración y vínculo/desvínculo de Membership BARBER.
+- OWNER/ADMIN gestionan; RECEPTIONIST tiene directorio mínimo de solo lectura; BARBER edita exclusivamente `/professionals/me` y nunca recibe teléfono interno, linkedUser ni controles administrativos.
+- Se implementaron loading, empty, empty filtrado, error/reintento y success; tabla desktop y cards tablet/móvil sin overflow. Las query keys quedaron aisladas por tenant, vista y usuario para evitar reutilización de PII de gestión al cambiar de sesión/rol.
+- QA real completado sobre organización local aislada: todos los flujos de gestión, paginación 20+3, roles, privacidad, error/reintento, consola limpia y viewports 1440/768/390. Web TypeScript, lint y build finalizaron con exit 0.
+- Estado: Entrega B **IMPLEMENTADA / EN REVISIÓN**, candidata a auditoría; no aprobada. Profesionales no está cerrado y no se inició ningún módulo posterior.
+
 ## 2026-08-12 — Profesionales Entrega A: Checkpoint A1 implementado / en revisión
 
 - A0 `8964c981223ba3f4a1e780103cbc0d20e4c602eb` queda registrado como **CERRADO / APROBADO** después de auditoría técnica sin bloqueantes.

@@ -95,6 +95,7 @@ export type BookingStatus =
   | "NO_SHOW";
 
 export type InvoiceStatus = "UNPAID" | "PAID" | "REFUNDED";
+export type ProfessionalStatus = "ACTIVE" | "INACTIVE" | "ARCHIVED";
 
 export interface Organization {
   id: string;
@@ -116,10 +117,38 @@ export interface Professional {
   id: string;
   name: string;
   bio?: string | null;
-  phone?: string | null;
-  avatar?: string | null;
-  isActive?: boolean;
-  organizationId: string;
+  avatar: string | null;
+  specialty: string | null;
+  status: ProfessionalStatus;
+  isActive: boolean;
+}
+
+export interface ProfessionalManagement extends Professional {
+  bio: string | null;
+  phone: string | null;
+  experienceYears: number | null;
+  isPublic: boolean;
+  createdAt: string;
+  updatedAt: string;
+  linkedUser: { id: string; name: string; email: string } | null;
+}
+
+export interface ProfessionalOwnProfile extends Professional {
+  bio: string | null;
+  experienceYears: number | null;
+  isPublic: boolean;
+}
+
+export interface TeamMember {
+  membershipId: string;
+  role: UserRole;
+  memberSince: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    professional: ProfessionalOwnProfile | null;
+  };
 }
 
 export interface Service {

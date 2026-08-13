@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-12):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`; A1 Backend está **IMPLEMENTADO / EN REVISIÓN**, todavía no aprobado. Frontend de Profesionales no está autorizado y el módulo no está cerrado. Resumen continúa congelado. Ver §56–60.
+> **Estado vigente de módulos (2026-08-12):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb` y A1 Backend está **CERRADO / APROBADO** sobre `60919ee94eb27f628906c9b86ce7a43b2fa09237`. Entrega B Frontend está implementada / en revisión; el módulo todavía no está cerrado. Resumen continúa congelado. Ver §56–61.
 
 ---
 
@@ -1665,5 +1665,34 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - Entradas con `trim`; nombre máximo 120, bio 2000, teléfono 30, especialidad 120, avatar URL HTTP(S) máximo 2048, experiencia entera no negativa y búsqueda máxima 120. No se aceptan Base64 ni uploads de imagen.
 - No se implementaron horarios, vacaciones, bloqueos manuales, Cloudinary, páginas públicas individuales, CRUD de `ProfessionalService` ni frontend de Profesionales.
 - Validación final de la corrección candidata: `pnpm --filter api exec tsc --noEmit`, `pnpm --filter api lint` y `pnpm --filter api test` finalizaron con exit 0; 151 tests aprobados y 5 pruebas PostgreSQL opt-in omitidas en la suite estándar. La ejecución opt-in real aprobó las 5/5 pruebas: exclusión de solapamientos y carreras de archivo contra creación interna, creación dentro de la transacción pública, reprogramación y reactivación. `prisma migrate status` confirmó 10 migraciones y schema local al día.
-- Checkpoint A1 Backend: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; **NO APROBADO**. Entrega B Frontend continúa **NO AUTORIZADA** y el módulo Profesionales **NO está cerrado**.
+- Estado al publicar originalmente el candidato A1: **IMPLEMENTADO / EN REVISIÓN**, todavía no aprobado y Frontend no autorizado. La aprobación posterior y el estado vigente se registran en §60.5 y §61; el módulo Profesionales todavía no está cerrado.
 - Resumen/Dashboard continúa congelado y no se inicia ningún módulo posterior.
+
+### 60.5. Aprobación posterior
+
+- La auditoría técnica del correctivo `60919ee94eb27f628906c9b86ce7a43b2fa09237` aprobó y cerró A1 Backend.
+- Quedaron aprobadas la coordinación PostgreSQL tenant-scoped de archivo/agenda, la matriz administrativa, la revalidación `ACTIVE` de reservas futuras recuperadas y la atomicidad Membership + Professional automático.
+- Esta aprobación autorizó exclusivamente la Entrega B Frontend; no cerró el módulo ni autorizó Servicios u otros módulos.
+
+## 61. Profesionales — Entrega B Frontend (2026-08-12)
+
+### 61.1. Pantalla y contratos consumidos
+
+- `/dashboard/professionals` fue reconstruido sobre los contratos A1 reales, sin mocks: listado, búsqueda, filtro de estado, paginación por headers, detalle, creación, edición, `ACTIVE/INACTIVE`, publicación, archivo/restauración y vínculo/desvínculo con una Membership BARBER existente.
+- `OWNER`/`ADMIN` administran el contrato completo. `RECEPTIONIST` recibe un directorio de solo lectura. `BARBER` recibe el directorio mínimo y administra únicamente `/professionals/me`; nunca ve teléfono interno, linkedUser ni acciones administrativas.
+- Crear muestra explícitamente que el perfil nace `INACTIVE` y privado. Restaurar vuelve a `INACTIVE`; activar y publicar son decisiones separadas. Los errores reales de backend —incluido el `409` de archivo con reservas futuras— se presentan dentro de la confirmación correspondiente.
+- La selección para vincular cuenta consume `GET /organizations/mine/members`, filtra roles BARBER y excluye cuentas con otro Professional ya vinculado. No se inventaron endpoints.
+
+### 61.2. UX, privacidad y responsive
+
+- Estados completos: loading, empty inicial, empty filtrado, error con reintento, success con toasts y estados pendientes en mutaciones.
+- Desktop usa tabla; tablet y móvil usan cards sin scroll horizontal. Modales claros, con contenido desplazable dentro de `100dvh`, acciones legibles y controles accesibles por label/rol.
+- Las query keys incluyen organización, vista de gestión/directorio y usuario para `/me`. Esto impide reutilizar en otro rol/tenant una respuesta de gestión con linkedUser después de cambiar sesión.
+- La metadata de paginación es autoritativa cuando están presentes los cuatro headers. El fallback defensivo informa que falta metadata y no presenta páginas falsas.
+
+### 61.3. QA y estado
+
+- QA real sobre organización local aislada: OWNER/ADMIN probaron crear, editar, activar/inactivar, publicar/ocultar, vincular/desvincular, archivar/restaurar, búsqueda, filtros y paginación de 23 registros (20 + 3). RECEPTIONIST no recibió correos ni acciones; BARBER editó su perfil sin teléfono interno y no recibió PII del directorio.
+- Se comprobó empty filtrado, caída de API + reintento, consola sin errores/advertencias y viewports 1440×900, 768×1024 y 390×844 sin overflow horizontal.
+- Validaciones web finales: TypeScript, lint y build en exit 0.
+- Entrega B Frontend: **IMPLEMENTADA / EN REVISIÓN**, candidata a auditoría; **NO APROBADA**. El módulo Profesionales **NO está cerrado**. No se iniciaron Servicios, Facturación, Equipo, Configuración, Cloudinary, Analytics ni Resumen.

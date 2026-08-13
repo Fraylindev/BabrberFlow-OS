@@ -33,9 +33,11 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 - `/auth/invite`: `createPublicProfile=true` solo tiene efecto para `BARBER`; crea `ACTIVE/publicado`. ADMIN/RECEPTIONIST se ignoran por autoridad backend. Para un User existente, Membership y perfil automático son atómicos; cualquier fallo inesperado del Professional revierte la Membership.
 - Límites: nombre 120, bio 2000, teléfono 30, especialidad 120, avatar HTTP(S) 2048, experiencia entera ≥0, búsqueda 120; strings con trim, UUIDs validados, Base64 no aceptado.
 - Auditoría: `CREATE`, `UPDATE`, `STATUS_CHANGE`, `ARCHIVE`, `RESTORE`, `LINK`, `UNLINK`, sin valores PII y con fail-open.
-- **Impacto frontend:** el frontend actual de Profesionales no fue modificado y todavía no está autorizado. Debe adaptarse al contrato A1 únicamente después de aprobación explícita del backend.
+- **Impacto frontend al publicar A1:** el frontend de Profesionales todavía no se había modificado y requería aprobación explícita del backend. Esa aprobación llegó posteriormente y el consumo vigente de Entrega B se registra debajo.
 
-**Estado:** A0 aprobado sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`. La corrección de integridad de A1 está implementada y validada; A1 permanece implementado / en revisión y requiere auditoría, todavía no está aprobado. Profesionales no está cerrado.
+**Estado:** A0 aprobado sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`. A1 quedó **CERRADO / APROBADO** después de la auditoría del correctivo `60919ee94eb27f628906c9b86ce7a43b2fa09237`. Entrega B Frontend está implementada / en revisión; Profesionales todavía no está cerrado.
+
+**Consumo frontend Entrega B:** `/dashboard/professionals` consume sin alterar estos contratos: paginación por headers, proyecciones management/directory/own, estados, visibilidad, archivo/restauración y vínculo BARBER. No hubo cambios de backend, Prisma, migraciones ni cuerpos de respuesta en Entrega B.
 
 ---
 
