@@ -1,6 +1,10 @@
 # BACKEND_CHANGES.md
 
-Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada indica endpoint, qué cambió, por qué, y el impacto en frontend. Complementa a `PROJECT_MASTER.md` (que es la referencia completa del proyecto) con un formato enfocado solo en contratos.
+Registro de cambios de contrato de API de Kortek Booking. Cada entrada indica endpoint, cambio, motivo e impacto en consumidores.
+
+> Leer de arriba hacia abajo: la entrada más reciente aplicable define el contrato vigente. Los estados dentro de entradas antiguas son fotografías de su fecha. El estado actual del producto vive en [`PROJECT_MASTER.md`](PROJECT_MASTER.md) y las referencias a secciones numeradas antiguas se conservan en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+
+G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobierno y documentación.
 
 ---
 

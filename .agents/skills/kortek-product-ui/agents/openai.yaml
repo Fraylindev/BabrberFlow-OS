@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kortek Product UI"
+  short_description: "Gobierno de producto y calidad frontend"
+  default_prompt: "Usa $kortek-product-ui para definir y validar este trabajo frontend de Kortek Booking."

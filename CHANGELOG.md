@@ -2,6 +2,17 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+> Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+
+## 2026-08-13 — G0: gobierno documental candidato
+
+- `AGENTS.md` se redujo a reglas permanentes, flujo de aprobación, seguridad, validación, Git, relevo y rutas especializadas; se añadieron instrucciones locales para `apps/web` y `apps/api`.
+- `PROJECT_MASTER.md` se reescribió como verdad vigente de visión, arquitectura, módulos, decisiones, riesgos y próximo paso. El contenido anterior se preservó íntegro en `docs/history/` junto con el AGENTS legado.
+- Se crearon estándares separados de producto, frontend, patrones UI y Definition of Done. El proceso vigente comienza por definición de producto/UX y continúa por contrato, backend, frontend y QA.
+- Se creó la skill repo-scoped `$kortek-product-ui`, obligatoria para todo trabajo frontend, con definición previa del usuario/objetivo, auditoría de reutilización, privacidad, roles, responsive, accesibilidad, estados completos y QA visual con evidencia.
+- Quedó explícito que compilar no aprueba una interfaz y que los errores esperados del API deben traducirse a lenguaje útil, sin jerga técnica.
+- G0 no modifica código funcional, contratos, Prisma, dependencias ni estado de módulos. Profesionales y Frontend A2 permanecen **EN REVISIÓN / NO CERRADOS**; Servicios no se inició.
+
 ## 2026-08-13 — Profesionales A2 Frontend: disponibilidad individual candidata
 
 - La aprobación del checkpoint backend `ad633e9864e6e20869d0db248861f01b935d5a6f` cerró A2 Backend y autorizó exclusivamente su frontend.
