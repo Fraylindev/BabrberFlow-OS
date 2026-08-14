@@ -208,7 +208,7 @@ export default function ProfessionalsPage() {
               setPage(1);
             }}
           >
-            <option value="ALL">Operativos (sin archivados)</option>
+            <option value="ALL">Todos (sin archivados)</option>
             <option value="ACTIVE">Activos</option>
             <option value="INACTIVE">Inactivos</option>
             {isManager && <option value="ARCHIVED">Archivados</option>}
