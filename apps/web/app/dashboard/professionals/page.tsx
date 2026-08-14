@@ -11,6 +11,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import {
   CreateProfessionalInput,
+  ProfessionalAvailabilityTarget,
   UpdateOwnProfessionalInput,
   useArchiveProfessional,
   useBarberMembersQuery,
@@ -26,6 +27,7 @@ import {
   useUpdateProfessionalStatus,
   useUpdateProfessionalVisibility,
 } from "@/lib/queries/professionals";
+import { ProfessionalAvailabilityModal } from "./ProfessionalAvailabilityModal";
 import { useToast } from "@/components/ui/Toast";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -53,6 +55,10 @@ type ConfirmationKind =
 type Confirmation = {
   professional: ProfessionalManagement;
   kind: ConfirmationKind;
+};
+type AvailabilitySelection = {
+  target: ProfessionalAvailabilityTarget;
+  professionalName: string;
 };
 
 function errorMessage(error: unknown, fallback: string) {
@@ -116,6 +122,8 @@ export default function ProfessionalsPage() {
   const [editOwnOpen, setEditOwnOpen] = useState(false);
   const [linking, setLinking] = useState<ProfessionalManagement | null>(null);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [availabilitySelection, setAvailabilitySelection] =
+    useState<AvailabilitySelection | null>(null);
 
   const query = useProfessionalsPageQuery({
     search: search || undefined,
@@ -180,6 +188,17 @@ export default function ProfessionalsPage() {
         <OwnProfilePanel
           query={ownQuery}
           onEdit={() => setEditOwnOpen(true)}
+          onAvailability={(professionalName) =>
+            setAvailabilitySelection({
+              professionalName,
+              target: {
+                kind: "own",
+                organizationId: organization?.id,
+                userId: user?.id,
+                role: user?.role,
+              },
+            })
+          }
         />
       )}
 
@@ -402,6 +421,26 @@ export default function ProfessionalsPage() {
             setDetailId(null);
             setLinking(professional);
           }}
+          onAvailability={(professional) => {
+            setDetailId(null);
+            setAvailabilitySelection({
+              professionalName: professional.name,
+              target: {
+                kind: "management",
+                professionalId: professional.id,
+                organizationId: organization?.id,
+                role: user?.role,
+              },
+            });
+          }}
+        />
+      )}
+
+      {availabilitySelection && (isManager || isBarber) && (
+        <ProfessionalAvailabilityModal
+          target={availabilitySelection.target}
+          professionalName={availabilitySelection.professionalName}
+          onClose={() => setAvailabilitySelection(null)}
         />
       )}
 
@@ -434,9 +473,11 @@ export default function ProfessionalsPage() {
 function OwnProfilePanel({
   query,
   onEdit,
+  onAvailability,
 }: {
   query: ReturnType<typeof useOwnProfessionalQuery>;
   onEdit: () => void;
+  onAvailability: (professionalName: string) => void;
 }) {
   if (query.isLoading) {
     return (
@@ -469,9 +510,18 @@ function OwnProfilePanel({
             </p>
           </div>
         </div>
-        <Button tone="light" variant="secondary" onClick={onEdit}>
-          Editar mi perfil
-        </Button>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button
+            tone="light"
+            variant="secondary"
+            onClick={() => onAvailability(query.data.name)}
+          >
+            Mi disponibilidad
+          </Button>
+          <Button tone="light" variant="secondary" onClick={onEdit}>
+            Editar mi perfil
+          </Button>
+        </div>
       </div>
     </Card>
   );
@@ -720,12 +770,14 @@ function ProfessionalDetailModal({
   onEdit,
   onConfirm,
   onLink,
+  onAvailability,
 }: {
   id: string;
   onClose: () => void;
   onEdit: (professional: ProfessionalManagement) => void;
   onConfirm: (professional: ProfessionalManagement, kind: ConfirmationKind) => void;
   onLink: (professional: ProfessionalManagement) => void;
+  onAvailability: (professional: ProfessionalManagement) => void;
 }) {
   const { organization } = useAuth();
   const query = useProfessionalDetailQuery(id, organization?.id);
@@ -778,6 +830,12 @@ function ProfessionalDetailModal({
           </dl>
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Button
+              tone="light"
+              onClick={() => onAvailability(query.data)}
+            >
+              Gestionar disponibilidad
+            </Button>
             <Button tone="light" variant="secondary" onClick={() => onEdit(query.data)}>
               Editar información
             </Button>

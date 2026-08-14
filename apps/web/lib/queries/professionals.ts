@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   api,
   Professional,
+  ProfessionalAvailability,
+  ProfessionalAvailabilityBlock,
+  ProfessionalAvailabilityBlockStatus,
   ProfessionalManagement,
   ProfessionalOwnProfile,
   ProfessionalStatus,
@@ -127,6 +130,128 @@ export function useBarberMembersQuery(enabled: boolean, organizationId?: string)
       return members.filter((member) => member.role === "BARBER");
     },
     enabled,
+  });
+}
+
+export type ProfessionalAvailabilityTarget =
+  | {
+      kind: "management";
+      professionalId: string;
+      organizationId?: string;
+      role?: string;
+    }
+  | {
+      kind: "own";
+      organizationId?: string;
+      userId?: string;
+      role?: string;
+    };
+
+export interface WeeklyShiftInput {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface AvailabilityBlockInput {
+  startTime: string;
+  endTime: string;
+  note?: string | null;
+}
+
+export interface UpdateAvailabilityBlockInput
+  extends Partial<AvailabilityBlockInput> {
+  status?: ProfessionalAvailabilityBlockStatus;
+}
+
+function availabilityPath(target: ProfessionalAvailabilityTarget) {
+  return target.kind === "own"
+    ? "/professionals/me/availability"
+    : `/professionals/${target.professionalId}/availability`;
+}
+
+function availabilityQueryKey(target: ProfessionalAvailabilityTarget) {
+  return [
+    ...queryKeys.professionals.all,
+    "availability",
+    target.organizationId,
+    target.role,
+    target.kind,
+    target.kind === "own" ? target.userId : target.professionalId,
+  ] as const;
+}
+
+export function useProfessionalAvailabilityQuery(
+  target: ProfessionalAvailabilityTarget | null,
+) {
+  return useQuery({
+    queryKey: target
+      ? availabilityQueryKey(target)
+      : [...queryKeys.professionals.all, "availability", "disabled"],
+    queryFn: () =>
+      api.get<ProfessionalAvailability>(availabilityPath(target!)),
+    enabled: Boolean(target),
+  });
+}
+
+function useInvalidateAvailability() {
+  const queryClient = useQueryClient();
+  return (target: ProfessionalAvailabilityTarget) =>
+    queryClient.invalidateQueries({ queryKey: availabilityQueryKey(target) });
+}
+
+export function useReplaceProfessionalWeeklySchedule() {
+  const invalidateAvailability = useInvalidateAvailability();
+  return useMutation({
+    mutationFn: ({
+      target,
+      shifts,
+    }: {
+      target: ProfessionalAvailabilityTarget;
+      shifts: WeeklyShiftInput[];
+    }) =>
+      api.put<ProfessionalAvailability>(`${availabilityPath(target)}/weekly`, {
+        shifts,
+      }),
+    onSuccess: (_data, variables) => invalidateAvailability(variables.target),
+  });
+}
+
+export function useCreateProfessionalAvailabilityBlock() {
+  const invalidateAvailability = useInvalidateAvailability();
+  return useMutation({
+    mutationFn: ({
+      target,
+      input,
+    }: {
+      target: ProfessionalAvailabilityTarget;
+      input: AvailabilityBlockInput;
+    }) =>
+      api.post<ProfessionalAvailabilityBlock>(
+        `${availabilityPath(target)}/blocks`,
+        input,
+      ),
+    onSuccess: (_data, variables) => invalidateAvailability(variables.target),
+  });
+}
+
+export function useUpdateProfessionalAvailabilityBlock() {
+  const invalidateAvailability = useInvalidateAvailability();
+  return useMutation({
+    mutationFn: ({
+      target,
+      blockId,
+      input,
+    }: {
+      target: ProfessionalAvailabilityTarget;
+      blockId: string;
+      input: UpdateAvailabilityBlockInput;
+    }) =>
+      api.patch<ProfessionalAvailabilityBlock>(
+        `${availabilityPath(target)}/blocks/${blockId}`,
+        input,
+      ),
+    onSuccess: (_data, variables) => invalidateAvailability(variables.target),
   });
 }
 

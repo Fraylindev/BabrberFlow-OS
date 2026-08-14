@@ -32,9 +32,9 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 - AuditLog: `WEEKLY_UPDATE`, `BLOCK_CREATE`, `BLOCK_UPDATE`; solo contexto e IDs, sin nota/PII, con fail-open.
 - Validación: Prisma generate/validate, TypeScript, lint y suite API estándar en exit 0 (173 aprobadas; 9 PostgreSQL opt-in omitidas). La ejecución PostgreSQL real pasó 9/9 casos y `prisma migrate status` confirmó 12 migraciones aplicadas.
 
-**Impacto frontend:** no se implementó Frontend A2. Los contratos están disponibles para una entrega posterior únicamente tras auditoría/aprobación explícita. La pantalla general de Profesionales continúa en revisión y el módulo no está cerrado.
+**Impacto frontend vigente:** tras la aprobación explícita de A2 Backend sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`, el Frontend A2 consume estos contratos sin modificarlos. OWNER/ADMIN gestionan la disponibilidad de cualquier Professional del tenant; BARBER usa exclusivamente las rutas `/me`; RECEPTIONIST conserva solo lectura. La pantalla muestra la zona IANA, herencia/turnos múltiples y bloqueos `ACTIVE/CANCELLED` con nota interna. El módulo continúa abierto.
 
-**Estado:** A2 Backend **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no aprobado. A0/A1 siguen cerrados/aprobados y no se autoriza iniciar Servicios ni otro módulo.
+**Estado vigente:** A2 Backend **CERRADO / APROBADO** sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`. Frontend A2 está **IMPLEMENTADO / EN REVISIÓN** como candidato; no aprobado. A0/A1 siguen cerrados/aprobados y no se autoriza iniciar Servicios ni otro módulo.
 
 ---
 

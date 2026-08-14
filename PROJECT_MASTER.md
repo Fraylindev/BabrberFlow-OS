@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-13):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb` y A1 Backend está **CERRADO / APROBADO** sobre `60919ee94eb27f628906c9b86ce7a43b2fa09237`. Entrega B Frontend y su ajuste de búsqueda siguen implementados / en revisión. A2 Backend de disponibilidad individual está implementado como candidato a auditoría, todavía no aprobado; el módulo no está cerrado. Resumen continúa congelado. Ver §56–62.
+> **Estado vigente de módulos (2026-08-13):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb`, A1 Backend está **CERRADO / APROBADO** sobre `60919ee94eb27f628906c9b86ce7a43b2fa09237` y A2 Backend está **CERRADO / APROBADO** sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`. Entrega B Frontend general y Frontend A2 de disponibilidad están implementados / en revisión; el módulo no está cerrado. Resumen continúa congelado. Ver §56–63.
 
 ---
 
@@ -1732,7 +1732,7 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 ### 62.4. Estado
 
 - Validación candidata: Prisma generate/validate, API TypeScript, lint y suite estándar finalizaron con exit 0; 173 tests aprobados y 9 casos PostgreSQL opt-in omitidos en la suite estándar. La ejecución PostgreSQL real aprobó 9/9, incluyendo A0/A1, FK tenant-scoped y carreras de disponibilidad. `prisma migrate status` confirmó 12 migraciones y base local al día.
-- A2 Backend está **IMPLEMENTADO / EN REVISIÓN**, como checkpoint candidato; **NO APROBADO / NO CERRADO**. Frontend A2 no fue iniciado.
+- A2 Backend fue **CERRADO / APROBADO** posteriormente por el propietario sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`; esa aprobación autorizó exclusivamente Frontend A2.
 - A0 y A1 conservan su aprobación. Entrega B Frontend general continúa en revisión y el módulo Profesionales sigue **NO CERRADO**.
 - No se iniciaron Servicios, Facturación, Equipo, Configuración, Cloudinary, Analytics ni Resumen; Dashboard continúa congelado.
 
@@ -1741,4 +1741,26 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - Se cerró la ambigüedad de `@IsISO8601`: los bloqueos ya no aceptan timestamps locales sin zona. Solo se admiten instantes ISO-8601 con `Z` o `±HH:mm`, tanto al crear como al actualizar parcialmente.
 - La validación se mantiene en el DTO y defensivamente en el servicio antes de abrir la transacción. Se añadieron regresiones para rechazo sin zona, aceptación UTC `Z`, aceptación con offset y preservación del instante UTC.
 - Validación final del correctivo: API TypeScript, lint y suite estándar finalizaron con exit 0; 180 pruebas aprobadas y 9 integraciones PostgreSQL opt-in omitidas, sin cambios de migración o persistencia.
-- Estado: correctivo **IMPLEMENTADO / EN REVISIÓN** dentro del candidato A2. A2 no queda aprobado ni cerrado y Frontend A2 continúa sin iniciar.
+- Estado histórico al publicar el correctivo: **IMPLEMENTADO / EN REVISIÓN**. La auditoría posterior aprobó A2 Backend sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`.
+
+## 63. Profesionales — Frontend A2: disponibilidad individual (2026-08-13)
+
+### 63.1. Integración y permisos
+
+- `/dashboard/professionals` consume exclusivamente los contratos A2 aprobados. OWNER/ADMIN abren “Gestionar disponibilidad” desde el detalle de cualquier Professional del tenant; BARBER accede mediante “Mi disponibilidad” y las rutas `/professionals/me`; RECEPTIONIST no recibe controles de modificación.
+- Las query keys incluyen organización, rol, tipo de alcance y Professional/User, evitando reutilizar disponibilidad entre tenants, roles o sesiones. El cliente HTTP central incorpora `PUT` para el reemplazo semanal sin crear un cliente paralelo.
+- La vista carga `timeZone`, `inheritsOrganizationHours`, `weeklySchedule` y `blocks` desde backend; no usa mocks ni inventa endpoints o datos.
+
+### 63.2. UX implementada
+
+- El editor semanal permite heredar el horario global o definir varios turnos por día. Valida localmente fin posterior al inicio, al menos un turno cuando se desactiva la herencia y ausencia de solapamientos; los `409` autoritativos del backend se muestran sin ocultarlos.
+- Los bloqueos temporales se crean/editan y cambian entre `ACTIVE`/`CANCELLED`; no hay hard-delete. La nota se presenta inequívocamente como interna y nunca se incorpora a superficies públicas.
+- `datetime-local` se interpreta en `Organization.timeZone`, se valida por round-trip y se envía como ISO UTC con `Z`. Las respuestas se convierten nuevamente a hora local para mostrar/editar sin depender de la zona del navegador.
+- Incluye loading, error/reintento, vacío de bloqueos, feedback success/error y layout responsive por cards/formularios. En 390×844 el modal mide 366 px, el documento conserva 390 px de ancho y no existe overflow horizontal.
+
+### 63.3. Validación y estado
+
+- `pnpm --filter web exec tsc --noEmit`, `pnpm --filter web lint` y `pnpm --filter web build`: exit code 0.
+- QA autenticado local: OWNER y ADMIN acceden a gestión tenant-scoped; BARBER guarda su horario solo desde `/me`; RECEPTIONIST no ve acciones. Se comprobaron guardado/herencia semanal, turnos múltiples, lectura, edición, cancelación y reactivación de bloqueos, conversión `America/Santo_Domingo`, desktop, móvil 390×844 y consola sin errores/advertencias. El bloqueo QA se dejó `CANCELLED`.
+- Frontend A2 queda **IMPLEMENTADO / EN REVISIÓN**, como checkpoint candidato; **NO APROBADO / NO CERRADO**. El módulo Profesionales continúa abierto.
+- No se modificó backend, Prisma, migraciones, Reservas, Servicios ni otros módulos; Resumen continúa congelado.

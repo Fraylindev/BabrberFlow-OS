@@ -2,6 +2,15 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-13 — Profesionales A2 Frontend: disponibilidad individual candidata
+
+- La aprobación del checkpoint backend `ad633e9864e6e20869d0db248861f01b935d5a6f` cerró A2 Backend y autorizó exclusivamente su frontend.
+- `/dashboard/professionals` integra los contratos reales de disponibilidad: OWNER/ADMIN gestionan cualquier Professional del tenant y BARBER únicamente su perfil vinculado; RECEPTIONIST no recibe acciones de modificación.
+- La UI permite heredar el horario global o definir varios turnos por día, y crear/editar/cancelar/reactivar bloqueos temporales. Las fechas se presentan en `Organization.timeZone`, se convierten a ISO con `Z` al enviar y las notas permanecen identificadas como internas.
+- Se añadieron loading, error/reintento, estado vacío y feedback de éxito/error; el diseño usa cards y formularios adaptables sin tabla ni overflow en móvil.
+- Web TypeScript, lint y build finalizaron con exit 0. QA autenticado comprobó OWNER, ADMIN, BARBER y RECEPTIONIST, guardado semanal, turnos múltiples, lectura/edición/cancelación/reactivación de bloqueos, conversión `America/Santo_Domingo`, viewport 390×844 y consola sin errores ni advertencias.
+- Estado: Frontend A2 **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no aprobado. Profesionales continúa abierto y no se inició ningún otro módulo.
+
 ## 2026-08-13 — Profesionales A2: correctivo de zona explícita
 
 - Los timestamps de bloqueos temporales ahora exigen ISO-8601 con `Z` u offset `±HH:mm`; una fecha sin zona se rechaza con `400` en creación y actualización.
