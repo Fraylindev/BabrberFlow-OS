@@ -4,10 +4,11 @@ Aplica a todo `apps/api/**` y complementa el [`AGENTS.md`](../../AGENTS.md) raí
 
 ## Antes del código
 
-1. Confirmar la definición de producto y UX que origina el contrato.
-2. Auditar schema Prisma, migraciones, DTOs, controladores, servicios, roles, multi-tenancy, AuditLog, integraciones y pruebas.
-3. Definir contrato, errores, transacciones, privacidad, compatibilidad y criterios de aceptación antes de implementar.
-4. No iniciar frontend; el backend requiere validación y aprobación explícita primero.
+1. Usar [`$kortek-delivery`](../../.agents/skills/kortek-delivery/SKILL.md) y comprobar [`DELIVERY_GATES.md`](../../docs/quality/DELIVERY_GATES.md).
+2. Confirmar la definición de producto y UX que origina el contrato.
+3. Auditar schema Prisma, migraciones, DTOs, controladores, servicios, roles, multi-tenancy, AuditLog, integraciones y pruebas.
+4. Definir contrato, errores, transacciones, privacidad, compatibilidad y criterios de aceptación antes de implementar.
+5. No iniciar frontend; el backend requiere validación y aprobación explícita primero.
 
 ## Implementación
 
@@ -20,6 +21,7 @@ Aplica a todo `apps/api/**` y complementa el [`AGENTS.md`](../../AGENTS.md) raí
 - Diseñar transacciones y garantías PostgreSQL para invariantes concurrentes; una consulta previa aislada no garantiza atomicidad.
 - Mantener AuditLog fail-open cuando ese sea el patrón, sin PII ni valores privados.
 - No hard-delete datos operativos o financieros sin decisión explícita.
+- Aplicar [`SECURITY_STANDARD.md`](../../docs/quality/SECURITY_STANDARD.md) al tocar autenticación, roles, sesiones, PII o rutas públicas.
 - Si cambia el contrato, actualizar [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) y consumidores autorizados.
 
 ## Pruebas y validación

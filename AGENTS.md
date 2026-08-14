@@ -5,13 +5,15 @@ Estas reglas son obligatorias en todo el repositorio. Las instrucciones más cer
 - Frontend: [`apps/web/AGENTS.md`](apps/web/AGENTS.md)
 - Backend: [`apps/api/AGENTS.md`](apps/api/AGENTS.md)
 
+[`docs/README.md`](docs/README.md) es la entrada universal al sistema documental. Usar [`$kortek-delivery`](.agents/skills/kortek-delivery/SKILL.md) en cualquier entrega; para frontend usar además [`$kortek-product-ui`](.agents/skills/kortek-product-ui/SKILL.md).
+
 ## 1. Fuentes de verdad
 
 Antes de proponer o modificar:
 
-1. inspeccionar el código real;
-2. leer [`PROJECT_MASTER.md`](PROJECT_MASTER.md);
-3. leer el documento especializado aplicable;
+1. leer [`docs/README.md`](docs/README.md) y [`PROJECT_MASTER.md`](PROJECT_MASTER.md);
+2. inspeccionar el código real;
+3. leer los documentos especializados aplicables;
 4. revisar [`CHANGELOG.md`](CHANGELOG.md) y [`BACKEND_CHANGES.md`](BACKEND_CHANGES.md) cuando aporten contexto.
 
 El código prueba qué existe. `PROJECT_MASTER.md` define el estado y las decisiones vigentes. Los historiales explican cómo se llegó allí, pero no revocan una regla vigente.
@@ -23,7 +25,7 @@ No inventar endpoints, campos, permisos, datos, métricas, estados ni integracio
 Toda capacidad de producto sigue este orden:
 
 1. **Definición de producto y UX:** usuario, problema, resultado, roles, privacidad, lenguaje, estados y criterios de aceptación.
-2. **Contrato y arquitectura:** datos, permisos, multi-tenancy, integraciones, errores y riesgos.
+2. **Contrato, arquitectura y seguridad:** datos, permisos, multi-tenancy, integraciones, errores y riesgos.
 3. **Backend:** implementación, pruebas y contrato documentado.
 4. **Aprobación explícita del backend.**
 5. **Frontend:** consumo del contrato aprobado, sin mocks ni endpoints inventados.
@@ -32,7 +34,7 @@ Toda capacidad de producto sigue este orden:
 
 No iniciar una etapa posterior por inferencia. Un commit o push significa solamente “implementado / en revisión”.
 
-Para cualquier trabajo frontend se debe usar la skill repo-scoped [`$kortek-product-ui`](.agents/skills/kortek-product-ui/SKILL.md).
+Aplicar los gates de [`docs/quality/DELIVERY_GATES.md`](docs/quality/DELIVERY_GATES.md). Las skills conducen el proceso; las reglas autoritativas permanecen en Markdown neutral.
 
 ## 3. Seguridad e integridad
 
@@ -44,6 +46,7 @@ Para cualquier trabajo frontend se debe usar la skill repo-scoped [`$kortek-prod
 - No registrar PII, notas privadas ni secretos en AuditLog o logs técnicos.
 - No degradar validaciones, tipos o transacciones para hacer pasar una entrega.
 - No usar datos ficticios que aparenten capacidades o métricas reales.
+- Aplicar [`docs/quality/SECURITY_STANDARD.md`](docs/quality/SECURITY_STANDARD.md) cuando el alcance toque autenticación, roles, sesiones, endpoints públicos o PII.
 
 ## 4. Alcance y cambios
 
@@ -55,7 +58,7 @@ Para cualquier trabajo frontend se debe usar la skill repo-scoped [`$kortek-prod
 
 ## 5. Calidad y validación
 
-La definición completa está en [`docs/quality/DEFINITION_OF_DONE.md`](docs/quality/DEFINITION_OF_DONE.md).
+Los gates están en [`docs/quality/DELIVERY_GATES.md`](docs/quality/DELIVERY_GATES.md) y la terminación completa en [`docs/quality/DEFINITION_OF_DONE.md`](docs/quality/DEFINITION_OF_DONE.md).
 
 Reglas mínimas:
 
@@ -109,11 +112,15 @@ Si falta tiempo, contexto, acceso o validación para terminar con seguridad:
 
 ## 8. Mapa documental
 
+- Entrada universal: [`docs/README.md`](docs/README.md)
 - Estado y decisiones vigentes: [`PROJECT_MASTER.md`](PROJECT_MASTER.md)
+- Producto vigente: [`docs/product/PRD.md`](docs/product/PRD.md) y [`docs/product/APP_FLOWS.md`](docs/product/APP_FLOWS.md)
+- Arquitectura y modelo: [`docs/architecture/TRD.md`](docs/architecture/TRD.md) y [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md)
 - Estándar de producto: [`docs/product/PRODUCT_STANDARD.md`](docs/product/PRODUCT_STANDARD.md)
 - Estándar frontend: [`docs/product/FRONTEND_STANDARD.md`](docs/product/FRONTEND_STANDARD.md)
 - Patrones UI: [`docs/product/UI_PATTERNS.md`](docs/product/UI_PATTERNS.md)
 - Definition of Done: [`docs/quality/DEFINITION_OF_DONE.md`](docs/quality/DEFINITION_OF_DONE.md)
+- Gates y seguridad: [`docs/quality/DELIVERY_GATES.md`](docs/quality/DELIVERY_GATES.md) y [`docs/quality/SECURITY_STANDARD.md`](docs/quality/SECURITY_STANDARD.md)
 - Contratos backend: [`BACKEND_CHANGES.md`](BACKEND_CHANGES.md)
 - Historial cronológico: [`CHANGELOG.md`](CHANGELOG.md)
 - Snapshots históricos: [`docs/history/`](docs/history/)

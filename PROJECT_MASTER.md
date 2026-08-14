@@ -18,10 +18,17 @@ Kortek Studio es la empresa; Kortek Booking es este producto.
 
 Gobierno y estándares:
 
+- [`docs/README.md`](docs/README.md)
 - [`AGENTS.md`](AGENTS.md)
+- [`docs/product/PRD.md`](docs/product/PRD.md)
+- [`docs/product/APP_FLOWS.md`](docs/product/APP_FLOWS.md)
 - [`docs/product/PRODUCT_STANDARD.md`](docs/product/PRODUCT_STANDARD.md)
 - [`docs/product/FRONTEND_STANDARD.md`](docs/product/FRONTEND_STANDARD.md)
 - [`docs/product/UI_PATTERNS.md`](docs/product/UI_PATTERNS.md)
+- [`docs/architecture/TRD.md`](docs/architecture/TRD.md)
+- [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md)
+- [`docs/quality/SECURITY_STANDARD.md`](docs/quality/SECURITY_STANDARD.md)
+- [`docs/quality/DELIVERY_GATES.md`](docs/quality/DELIVERY_GATES.md)
 - [`docs/quality/DEFINITION_OF_DONE.md`](docs/quality/DEFINITION_OF_DONE.md)
 
 ## 3. Arquitectura vigente
@@ -48,6 +55,7 @@ Gobierno y estándares:
 - Guards y roles backend son el límite real; la UI solo representa permisos.
 - Recurso ajeno e inexistente comparten respuesta cuando revelar existencia sería un riesgo.
 - AuditLog es fail-open en los flujos donde ya se adoptó y no debe guardar PII.
+- La estrategia de autenticación vigente es propia; [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) registra un riesgo crítico confirmado y propone Security A0 sin modificar todavía el sistema.
 
 ### Frontend
 
@@ -73,7 +81,7 @@ Gobierno y estándares:
 
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 
-Estado de G0: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no es aprobación funcional de ningún módulo.
+Estado de G0: **IMPLEMENTADO / EN REVISIÓN**. G0.1 corrige y completa sus fuentes como checkpoint documental candidato; ninguno de los dos es aprobación funcional de un módulo.
 
 ## 5. Decisiones activas de dominio
 
@@ -101,6 +109,15 @@ Estado de G0: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no es apr
 - Bloqueos usan timestamps con `Z` u offset explícito, estado `ACTIVE/CANCELLED` y nota interna.
 - Cambios que afectarían reservas futuras abiertas devuelven `409`.
 - La disponibilidad pública nunca expone notas o motivos internos.
+- IANA, UTC, offsets y conversiones son detalles internos. La UI debe presentar fechas y horas naturales en el contexto del negocio.
+
+### Autenticación
+
+- La implementación actual usa JWT propio de un día en `localStorage` y revalida Membership en cada request.
+- `POST /organizations` es público; `GET /organizations/by-slug/:slug` expone el ID; `/auth/register` acepta `organizationId` y crea Membership OWNER.
+- Esa composición permite escalamiento de privilegios sobre un tenant existente y es un riesgo crítico abierto.
+- Recuperación, verificación de correo, MFA, refresh rotativo y revocación general de sesiones no existen; los límites actuales son locales al proceso, no distribuidos.
+- La recomendación vigente es endurecer autenticación propia en Security A0 antes de evaluar una migración de proveedor. No hay cambio de autenticación autorizado durante G0.1.
 
 ### Clientes y privacidad
 
@@ -122,6 +139,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 7. Riesgos y límites conocidos
 
+- **Autenticación / OWNER:** el onboarding público acepta un tenant elegido por el cliente y puede conceder OWNER sobre una Organization existente. Ver [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md). Requiere Security A0 tras auditoría de G0.1.
+- JWT en `localStorage`, falta de recuperación/verificación/MFA/revocación general y rate limiting no distribuido amplían el riesgo de cuenta y sesión.
 - Frontend general y A2 de Profesionales siguen pendientes de aprobación; el módulo no puede cerrar todavía.
 - `Organization.timeZone` existe en persistencia/contratos de disponibilidad, pero todavía no hay UI/endpoint autorizado de configuración general.
 - El vínculo B2C `Client ↔ User CUSTOMER` no está implementado.
@@ -131,13 +150,15 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el checkpoint documental G0.
-2. Mantener Frontend A2 de Profesionales en revisión hasta QA/aprobación explícita del propietario.
-3. No corregir A2, cerrar Profesionales ni iniciar Servicios sin un mandato posterior.
+1. Auditar el checkpoint documental G0.1; G0 continúa **EN REVISIÓN**.
+2. Después de aprobación explícita de G0.1, la siguiente etapa propuesta es **Security A0**, siguiendo el ADR y sus gates.
+3. Mantener Frontend A2 de Profesionales en revisión, sin corregirlo ni cerrarlo dentro de G0.1.
+4. No iniciar Servicios ni cambios funcionales durante este checkpoint.
 
 ## 9. Política de lenguaje y evidencia
 
 - La UI habla de tareas y consecuencias, no de Prisma, SQL, constraints o códigos internos.
+- La UI nunca muestra identificadores IANA, UTC, offsets o detalles de conversión; usa fechas, horas y explicaciones naturales.
 - Los errores esperados del API se traducen a mensajes útiles y seguros.
 - Toda afirmación de QA indica entorno, rol, acción y resultado real.
 - TypeScript, lint, tests y build son necesarios cuando aplican, pero no sustituyen revisión funcional/visual.

@@ -70,7 +70,8 @@ La UI no es el límite de seguridad; el backend debe rechazar la misma acción.
 
 ## Fechas y zonas horarias
 
-- Mostrar la zona del negocio cuando afecte la interpretación.
-- Enviar instantes inequívocos (`Z` u offset) cuando el contrato lo exija.
-- No depender silenciosamente de la zona del navegador.
+- Mostrar fechas y horas naturales en el contexto del negocio, por ejemplo “lunes, 9:30 a. m.”.
+- Nunca mostrar identificadores IANA, `UTC`, offsets ni detalles de conversión al usuario.
+- Resolver internamente la zona autoritativa y enviar instantes inequívocos cuando el contrato lo exija.
+- No depender silenciosamente de la zona del navegador; si existe ambigüedad, explicarla con lenguaje cotidiano, como “hora del negocio”.
 - Mantener motivos/notas de bloqueos fuera del flujo público; usar un mensaje genérico de falta de horarios.

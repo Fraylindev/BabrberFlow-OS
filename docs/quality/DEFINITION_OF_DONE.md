@@ -2,6 +2,8 @@
 
 Una entrega está lista para checkpoint candidato solo si cumple las secciones aplicables.
 
+La entrada y el paso entre etapas se evalúan primero con [`DELIVERY_GATES.md`](DELIVERY_GATES.md).
+
 ## 1. Producto y UX
 
 - Usuario, problema, resultado y no-alcance definidos.
@@ -37,6 +39,7 @@ Prisma/migraciones/integración PostgreSQL se validan cuando el alcance las toca
 - Caché aislada por tenant/rol/usuario cuando corresponde.
 - Estados completos, errores útiles y privacidad por rol.
 - Responsive y accesibilidad básica implementados.
+- Fechas y horas se muestran naturalmente, sin identificadores IANA, UTC, offsets ni detalles técnicos.
 
 ```bash
 pnpm --filter web exec tsc --noEmit

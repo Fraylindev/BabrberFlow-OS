@@ -24,6 +24,7 @@
 - No esconder funciones necesarias para resolver responsive.
 - Evitar scroll horizontal cuando cards o composición vertical sean más claras.
 - Reutilizar patrones de [`UI_PATTERNS.md`](UI_PATTERNS.md).
+- Presentar fechas y horas de forma natural en el contexto del negocio. No mostrar identificadores IANA, `UTC`, offsets ni detalles de conversión; esa lógica es interna.
 
 ## Estados y errores
 

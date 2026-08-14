@@ -4,6 +4,8 @@
 
 Cada cambio debe resolver un problema real de barberías y salones sin sacrificar seguridad, claridad ni mantenibilidad. La definición de producto y UX precede al contrato y al código.
 
+La definición vigente vive en [`PRD.md`](PRD.md); usar [`FEATURE_BRIEF_TEMPLATE.md`](../features/FEATURE_BRIEF_TEMPLATE.md) y comprobar [`DELIVERY_GATES.md`](../quality/DELIVERY_GATES.md).
+
 ## Brief obligatorio antes de implementar
 
 Registrar de forma breve:
@@ -31,6 +33,7 @@ Si una decisión cambia contrato, permisos, persistencia o alcance, obtener apro
 - Las acciones irreversibles o sensibles requieren contexto y confirmación claros.
 - Un estado vacío debe ayudar a continuar; un error debe explicar qué ocurrió y qué puede hacer la persona.
 - Los nombres de tablas, constraints, códigos Prisma y términos internos no pertenecen al lenguaje de UI.
+- Identificadores IANA, UTC, offsets y detalles de conversión tampoco pertenecen a la UI; presentar fechas y horas en lenguaje natural del negocio.
 
 ## Secuencia de producto
 

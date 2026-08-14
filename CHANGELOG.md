@@ -4,6 +4,16 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-13 — G0.1: fuentes de gobierno y riesgo de autenticación
+
+- Se añadió `docs/README.md` como entrada universal y se separaron PRD, flujos, arquitectura, modelo de datos, seguridad, gates de entrega, plantilla de brief y ADR de autenticación.
+- `DELIVERY_GATES.md` define Ready y gates de producto, arquitectura/seguridad, backend, frontend, QA, checkpoint, auditoría y relevo; enlaza el DoD existente.
+- Se creó `$kortek-delivery` para cualquier entrega y se conservó `$kortek-product-ui`; las reglas esenciales siguen en Markdown neutral.
+- La auditoría confirmó el riesgo de componer creación/resolución pública de Organization con `/auth/register` para conceder OWNER a un `organizationId` aportado por el cliente. También registra JWT en `localStorage`, carencias de recuperación/verificación/MFA/revocación y límites no distribuidos.
+- ADR-001 compara autenticación propia, Clerk y Supabase; recomienda endurecer la propia en Security A0 sin cambiar autenticación durante G0.1.
+- Los estándares prohíben mostrar identificadores IANA, UTC, offsets o detalles técnicos; las horas se presentan naturalmente y la conversión permanece interna.
+- G0 y Profesionales continúan **EN REVISIÓN**. No se modificó A2, no se cerró Profesionales y no se inició Servicios.
+
 ## 2026-08-13 — G0: gobierno documental candidato
 
 - `AGENTS.md` se redujo a reglas permanentes, flujo de aprobación, seguridad, validación, Git, relevo y rutas especializadas; se añadieron instrucciones locales para `apps/web` y `apps/api`.
@@ -171,11 +181,11 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **`TS2698` en `bookings.service.spec.ts`** — spread sobre `unknown` en el mock de `booking.update`. Corregido tipando el mock igual que `findFirst`/`create` (sin `as any`).
 - **2 tests fallando en `auth.service.spec.ts`** — `mockValidUser()` no mockeaba `organization.findUnique`, que `AuthService.login()` sí llama en producción (código correcto, sin tocar). Agregado el mock y un test nuevo que verifica la respuesta completa (`user`+`accessToken`+`organization`).
 - Ningún cambio de lógica de producción — ambos fixes son exclusivamente de tests.
-- **Entrega A sigue sin cerrarse**: `pnpm --filter api exec tsc --noEmit`/`lint`/`test` no pueden correr limpios en este sandbox porque el cliente de Prisma no está generado (bloqueo de red conocido) — confirmado que el `TS2698` ya no aparece y que los 25/537 errores restantes son 100% la cascada de `@prisma/client` sin generar, no relacionados con esta entrega. Pendiente de que el usuario confirme los 5 comandos reales en su entorno. Detalle en `PROJECT_MASTER.md` §54.5.
+- **Entrega A sigue sin cerrarse**: `pnpm --filter api exec tsc --noEmit`/`lint`/`test` no pueden correr limpios en este sandbox porque el cliente de Prisma no está generado (bloqueo de red conocido) — confirmado que el `TS2698` ya no aparece y que los 25/537 errores restantes son 100% la cascada de `@prisma/client` sin generar, no relacionados con esta entrega. Pendiente de que el usuario confirme los 5 comandos reales en su entorno. Detalle en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §54.5.
 
 ## 2026-08-08 — Reservas, Entrega A (Backend) — nueva metodología por módulos
 
-- **Cambio de estrategia:** de aquí en adelante cada módulo se entrega en dos partes (Backend primero, aprobado explícitamente; Frontend después). Resumen/Dashboard queda congelado hasta que los módulos que lo alimentan estén completos. Detalle en `PROJECT_MASTER.md` §53.
+- **Cambio de estrategia:** de aquí en adelante cada módulo se entrega en dos partes (Backend primero, aprobado explícitamente; Frontend después). Resumen/Dashboard queda congelado hasta que los módulos que lo alimentan estén completos. Detalle en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §53.
 - **`POST /bookings`:** valida que el profesional ofrezca el servicio (`ProfessionalService`, existía sin usarse) y que la fecha no sea pasada.
 - **`GET /bookings?from=&to=&status=`:** filtro de rango real en el backend, compatible hacia atrás.
 - **`PATCH /bookings/:id` (nuevo):** reprogramar fecha/hora/profesional/servicio de una reserva existente, reutilizando la validación de choque de horario.
@@ -186,27 +196,27 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 ## 2026-08-04 — Cierre end-to-end del módulo Resumen
 
-- **Auditoría de causa raíz:** no había ningún problema de propagación de contexto de tenant — `Topbar.tsx` simplemente no consumía `organization` del hook, que ya llegaba correcto desde el login. Detalle en `PROJECT_MASTER.md` §52.0.
+- **Auditoría de causa raíz:** no había ningún problema de propagación de contexto de tenant — `Topbar.tsx` simplemente no consumía `organization` del hook, que ya llegaba correcto desde el login. Detalle en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §52.0.
 - **Menú de usuario completo y funcional:** Ver página pública, Copiar enlace, Cerrar sesión — sin duplicados en ningún otro punto del panel.
 - **Hydration mismatch corregido de raíz** (`useSyncExternalStore`, reaplicado).
 - **Sidebar:** la barbería es el elemento principal (monograma + nombre), "Powered by Kortek Booking" como crédito discreto al pie.
 - **Marca centralizada de verdad:** `BRAND.legalName`/`footer.*` referencian `BRAND.name`/`BRAND.company`, cero literales duplicados en todo `apps/web`.
 - **Responsive endurecido en código** para 320–1920px: `min-w-0`/`truncate`/`shrink-0` en Topbar, agenda y widgets; tamaño de fuente responsive en `TrendStat`; gaps de grilla ajustados en KPIs.
 - ⚠️ **Limitación honesta:** cero errores de hidratación en consola y overflow visual no se pudieron verificar con un navegador real en este entorno — no hay backend disponible aquí para autenticarse. Confirmado a nivel de código/build; verificación en vivo pendiente del lado del usuario.
-- Sin cambios de backend. Detalle completo en `PROJECT_MASTER.md` §52.
+- Sin cambios de backend. Detalle completo en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §52.
 
 ## 2026-08-02 — Fase 2 (Panel Administrativo): módulo Resumen (Backoffice, tema claro)
 
 - **`/dashboard` (Resumen) reconstruido como producto**, no como CRUD: KPIs (ingresos hoy/7 días, reservas hoy/pendientes), acciones rápidas filtradas por rol real del backend, alertas de hoy (canceladas, pendientes, profesionales sin citas), "Carga de hoy" (nuevo widget, cruza `/professionals` con `/bookings`), "Profesional del mes" (`topProfessional` de `/analytics/dashboard`), "Copiar enlace" + "Ver página pública" (`organization.slug`), y un estado de onboarding para negocios recién creados sin profesionales ni citas.
 - **`Card`, `Button`, `Badge`, `PageHeader`, `EmptyState`, `Skeleton` ganaron una prop `tone` ("dark"/"light")** — extensión aditiva, cero cambio de comportamiento por defecto para los módulos que aún no migran al tema claro. `TrendStat` (nuevo) es nativo del tema claro, sin consumidores en oscuro.
-- Sin cambios de backend. Detalle completo, incluyendo la propuesta UX/UI aprobada, en `PROJECT_MASTER.md` §51.
+- Sin cambios de backend. Detalle completo, incluyendo la propuesta UX/UI aprobada, en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §51.
 
 ## 2026-08-02 — Fase 2 (Panel Administrativo): pulido del shell
 
 - **Contenedor de contenido a nivel de shell** (`app/dashboard/layout.tsx`, `max-w-6xl`) — todos los módulos lo heredan automáticamente, ninguno definía su propio ancho.
 - **`Topbar`**: el título de sección actual pasa a tipografía de página real (`font-display`, más peso), no solo breadcrumb plano.
 - **`Sidebar`**: barra vertical roja de 2px en el ítem activo, refuerzo de jerarquía. Confirmadas todas las microinteracciones del shell en 150-200ms.
-- Sin cambios de backend ni de ningún módulo interno (Reservas, Clientes, etc.). Detalle en `PROJECT_MASTER.md` §49.1.
+- Sin cambios de backend ni de ningún módulo interno (Reservas, Clientes, etc.). Detalle en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §49.1.
 
 ## 2026-08-02 — Fase 2 (Panel Administrativo): arquitectura de temas + deuda de tooling
 
@@ -214,7 +224,7 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Shell del Dashboard reconstruido:** `components/dashboard/Sidebar.tsx` (nuevo, reemplaza `components/Sidebar.tsx`) con navegación agrupada, colapsable, drawer móvil real; `components/dashboard/Topbar.tsx` (nuevo) con breadcrumb de sección actual. `Dropdown` y `Tooltip` extendidos de forma aditiva (sin cambiar su comportamiento por defecto).
 - **`app/[slug]` queda intacto** — congelado por instrucción explícita, cero archivos tocados ahí.
 - **Deuda de tooling resuelta:** `packageManager` del root fijado a versión exacta (`11.18.0`); agregado el script `type-check` a `apps/web` y `apps/api` (antes `pnpm type-check` corría 0 tareas).
-- Sin cambios de backend. Detalle completo en `PROJECT_MASTER.md` §47-49, incluyendo la nota de reconciliación en §46 sobre entregas previas que nunca llegaron a aplicarse al repositorio.
+- Sin cambios de backend. Detalle completo en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §47-49, incluyendo la nota de reconciliación en §46 sobre entregas previas que nunca llegaron a aplicarse al repositorio.
 
 ## 2026-07-29 — `MAESTRO.md` evoluciona a `PROJECT_MASTER.md`
 
@@ -226,7 +236,7 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 ## 2026-07-28 — Auditoría Enterprise, Fase 5: Testing (cierre del plan)
 
 - **Nuevo:** 22 pruebas unitarias reales (0 existían antes de esta fase, solo boilerplate) cubriendo exactamente lo priorizado: conflictos de reservas, aislamiento multi-tenant, autenticación (incluyendo bloqueo real por fuerza bruta), y permisos por rol.
-- **Validación rigurosa:** las pruebas se ejecutaron de verdad (no solo se tipa-verificaron) mediante un stub temporal del cliente de Prisma que demuestra que los 9 fallos iniciales eran 100% el bloqueo de red conocido — 23/23 pruebas pasan cuando el cliente está generado, como pasará en tu máquina. Detalle completo en `PROJECT_MASTER.md` §34.
+- **Validación rigurosa:** las pruebas se ejecutaron de verdad (no solo se tipa-verificaron) mediante un stub temporal del cliente de Prisma que demuestra que los 9 fallos iniciales eran 100% el bloqueo de red conocido — 23/23 pruebas pasan cuando el cliente está generado, como pasará en tu máquina. Detalle completo en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §34.
 - Con esto se cierran las 5 fases de la auditoría Enterprise (Infraestructura, Seguridad, Observabilidad, Calidad, Testing).
 
 ## 2026-07-27 — Auditoría Enterprise, Fase 4: Calidad
@@ -241,7 +251,7 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Nuevo:** `AuditModule`/`AuditService` — el modelo `AuditLog` existía en el schema desde hace mucho pero no tenía absolutamente ningún código. Ahora registra `UPDATE`/`DELETE` en Profesionales, Servicios y Clientes, `INVITE` en `/auth/invite`, y `UPDATE` en `/auth/update-password` — siempre con `organizationId` y `userId`.
 - **Cambiado (schema):** `AuditLog` suma `userId` (sin FK a propósito — un log de auditoría no debe depender del ciclo de vida de `User`).
 - **Principio de diseño:** un fallo al escribir el log de auditoría nunca tumba la operación real que se estaba auditando.
-- **Evaluado y descartado (con justificación):** correlación de requests (ID de trazabilidad) y logger de terceros (`winston`/`pino`) — el `Logger` nativo de Nest ya cubre lo que esta fase pedía. Detalle completo en `PROJECT_MASTER.md` §32.
+- **Evaluado y descartado (con justificación):** correlación de requests (ID de trazabilidad) y logger de terceros (`winston`/`pino`) — el `Logger` nativo de Nest ya cubre lo que esta fase pedía. Detalle completo en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §32.
 
 ## 2026-07-25 — Parche: protección de fuerza bruta en todo el flujo de auth
 
@@ -255,13 +265,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Nuevo:** `Helmet` — cabeceras de seguridad HTTP estándar, no existían antes.
 - **Nuevo:** límite estricto de 5 intentos/minuto en `POST /auth/login` contra fuerza bruta (única ruta con este mandato explícito).
 - **Corregido:** `ThrottlerModule` pasa de estar registrado solo dentro de `PublicBookingModule` a ser un registro global real — sin cambiar el comportamiento de ningún endpoint existente (el guard sigue siendo opt-in por controlador).
-- **Auditado y sin cambios (ya cumplía el estándar):** JWT, validaciones globales, manejo de errores, Guards existentes. Detalle completo en `PROJECT_MASTER.md` §30.
+- **Auditado y sin cambios (ya cumplía el estándar):** JWT, validaciones globales, manejo de errores, Guards existentes. Detalle completo en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §30.
 
 ## 2026-07-25 — Auditoría Enterprise, Fase 1: Infraestructura
 
 - **Nuevo:** capa de caché (`@nestjs/cache-manager`, en memoria, sin Redis), registrada globalmente, aplicada explícitamente solo en `GET /public/:slug/booking-data` (TTL 15s) — la única lectura pública de alto tráfico y baja frecuencia de cambio del sistema.
 - **Corregido:** `app.enableShutdownHooks()` faltaba en `main.ts` — sin esto, el cierre limpio de conexiones de Prisma no estaba garantizado en un apagado real de contenedor.
-- **Evaluado y descartado (con justificación):** ajustar el pool de conexiones de Prisma sin conocer el proveedor de Postgres real; migrar todo `process.env` a `ConfigService` inyectado (refactor invasivo, beneficio marginal); agregar `compression` (dependencia nueva no autorizada para esta fase). Detalle completo en `PROJECT_MASTER.md` §29.
+- **Evaluado y descartado (con justificación):** ajustar el pool de conexiones de Prisma sin conocer el proveedor de Postgres real; migrar todo `process.env` a `ConfigService` inyectado (refactor invasivo, beneficio marginal); agregar `compression` (dependencia nueva no autorizada para esta fase). Detalle completo en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §29.
 
 ## 2026-07-24 — Identidad global: User + Membership
 
@@ -279,9 +289,9 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Cambiado:** `POST /auth/invite` y `GET /public/:slug/booking-data` ahora incluyen `whatsappBaseUrl`, configurable vía `WHATSAPP_BASE_URL` — el frontend deja de depender de un dominio hardcodeado.
 - **Nuevo (modelo de datos):** campos de micro-sitio en `Organization` y `Professional`, y modelo `GalleryImage` — base de datos lista para el futuro micro-sitio público, sin API todavía sobre ella.
 - **Nuevo (rendimiento):** índices compuestos `(organizationId, status, createdAt)` en `Booking` e `Invoice`.
-- **Rebranding:** el proyecto pasó de BarberFlow OS a **Kortek OS**. Kortek es la plataforma matriz; BarberFlow es su primer producto SaaS. Ver `PROJECT_MASTER.md` §24 para el historial completo de decisiones de este rebranding y de toda la reconstrucción del frontend.
-- **Bloqueado, pendiente de aprobación manual:** refactor `User` + `Membership` para soportar un usuario perteneciendo a varias organizaciones con una sola identidad. Requiere confirmar primero que no existan correos duplicados entre organizaciones en la base real — ver `PROJECT_MASTER.md` §24.14.
+- **Rebranding:** el proyecto pasó de BarberFlow OS a **Kortek OS**. Kortek es la plataforma matriz; BarberFlow es su primer producto SaaS. Ver el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §24 para las decisiones registradas entonces sobre rebranding y reconstrucción frontend.
+- **Bloqueado en la fecha de esta entrada:** el refactor `User` + `Membership` requería confirmar primero que no existieran correos duplicados entre organizaciones. La verificación y resolución posterior están preservadas en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §26; no es un bloqueo vigente.
 
 ## Historial anterior
 
-El detalle completo de las Fases 0 a 9 (rebranding, limpieza de backend, reconstrucción de frontend, rol `CUSTOMER`, flujo B2C, roles refinados, gestión de equipo) está documentado en `PROJECT_MASTER.md` §24 — no se duplica aquí para evitar que las dos fuentes se desincronicen. Este changelog empieza a llevar entradas propias a partir del ciclo "Fundación Kortek OS".
+El detalle completo de las Fases 0 a 9 (rebranding, limpieza de backend, reconstrucción de frontend, rol `CUSTOMER`, flujo B2C, roles refinados, gestión de equipo) está preservado en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §24. Ese snapshot conserva el contexto de su fecha; el estado actual vive en [`PROJECT_MASTER.md`](PROJECT_MASTER.md).

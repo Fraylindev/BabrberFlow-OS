@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kortek Delivery"
+  short_description: "Gobierno integral de entregas Kortek"
+  default_prompt: "Usa $kortek-delivery para gobernar esta entrega de Kortek Booking de definicion a checkpoint."

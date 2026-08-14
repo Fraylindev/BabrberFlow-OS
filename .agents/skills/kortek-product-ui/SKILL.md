@@ -11,11 +11,11 @@ Aplicar este flujo antes, durante y después de cualquier cambio frontend del re
 
 Leer, en este orden:
 
-1. `PROJECT_MASTER.md` para estado, decisiones y alcance;
-2. `docs/product/PRODUCT_STANDARD.md` para definir el resultado;
-3. `docs/product/FRONTEND_STANDARD.md` para implementación y evidencia;
-4. `docs/product/UI_PATTERNS.md` para patrones de interacción;
-5. `docs/quality/DEFINITION_OF_DONE.md` para cierre.
+1. [`docs/README.md`](../../../docs/README.md) y `PROJECT_MASTER.md` para alcance y estado;
+2. `docs/product/PRD.md` y `docs/product/APP_FLOWS.md` para producto y recorridos;
+3. `docs/product/PRODUCT_STANDARD.md` para definir el resultado;
+4. `docs/product/FRONTEND_STANDARD.md` y `docs/product/UI_PATTERNS.md` para implementación;
+5. `docs/quality/DELIVERY_GATES.md` y `docs/quality/DEFINITION_OF_DONE.md` para gates y cierre.
 
 Inspeccionar además `apps/web/AGENTS.md`, el código, componentes, hooks y contratos reales relacionados.
 
@@ -48,6 +48,7 @@ No escribir código mientras una decisión pendiente pueda cambiar contrato, per
 
 - Usar lenguaje centrado en la tarea, sin Prisma, SQL, constraints, códigos HTTP ni jerga técnica.
 - Traducir errores esperados del API a una explicación útil y una acción siguiente.
+- Presentar fechas y horas naturalmente; nunca mostrar identificadores IANA, UTC, offsets ni detalles de conversión.
 - Mantener notas internas y PII fuera de superficies públicas, logs y mensajes innecesarios.
 - Diseñar responsive real; no resolver móvil ocultando acciones necesarias.
 - Asegurar labels, semántica, foco visible, teclado, contraste y anuncios de estado/error.
@@ -58,6 +59,7 @@ No escribir código mientras una decisión pendiente pueda cambiar contrato, per
 - Reutilizar componentes y variables visuales antes de introducir variantes.
 - Usar `apps/web/lib/api.ts` y React Query según el patrón vigente.
 - Mantener autorización en backend; la UI solo refleja el permiso.
+- Mantener zona autoritativa y conversiones temporales dentro de la capa técnica.
 - Evitar dependencias nuevas, clientes HTTP paralelos, casts inseguros y datos ficticios.
 - Limitar el cambio al módulo y etapa autorizados.
 
@@ -70,6 +72,7 @@ Ejecutar TypeScript, lint y build web con exit code `0`. Después hacer QA real 
 - loading, empty, pending y success;
 - desktop y móvil pequeño sin overflow;
 - foco, teclado y labels;
+- fechas/horas naturales sin detalles técnicos;
 - consola sin errores o warnings relevantes;
 - privacidad y datos realmente recibidos.
 

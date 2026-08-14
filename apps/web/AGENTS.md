@@ -4,8 +4,8 @@ Aplica a todo `apps/web/**` y complementa el [`AGENTS.md`](../../AGENTS.md) raí
 
 ## Antes del código
 
-1. Usar obligatoriamente [`$kortek-product-ui`](../../.agents/skills/kortek-product-ui/SKILL.md).
-2. Definir usuario, objetivo, roles, privacidad, lenguaje, estados, responsive y criterios de aceptación.
+1. Usar [`$kortek-delivery`](../../.agents/skills/kortek-delivery/SKILL.md) y obligatoriamente [`$kortek-product-ui`](../../.agents/skills/kortek-product-ui/SKILL.md).
+2. Comprobar [`DELIVERY_GATES.md`](../../docs/quality/DELIVERY_GATES.md) y definir usuario, objetivo, roles, privacidad, lenguaje, estados, responsive y criterios de aceptación.
 3. Leer [`PRODUCT_STANDARD.md`](../../docs/product/PRODUCT_STANDARD.md), [`FRONTEND_STANDARD.md`](../../docs/product/FRONTEND_STANDARD.md) y [`UI_PATTERNS.md`](../../docs/product/UI_PATTERNS.md).
 4. Auditar componentes, hooks, query keys y contratos existentes antes de crear otros.
 5. Detenerse si el backend aprobado no expone lo necesario; no usar mocks permanentes ni inventar endpoints.
@@ -21,6 +21,7 @@ Aplica a todo `apps/web/**` y complementa el [`AGENTS.md`](../../AGENTS.md) raí
 - Reutilizar design system y variables `--dash-*`; no introducir dependencias UI por comodidad.
 - Implementar loading, empty, empty filtrado, error, success y estados disabled/pending aplicables.
 - Traducir errores esperados a acciones o mensajes comprensibles. No mostrar jerga del API.
+- Mostrar horarios con lenguaje natural del negocio; IANA, UTC, offsets y conversiones permanecen internos.
 - Mantener responsive desde móvil pequeño hasta desktop; evitar tablas rotas y overflow horizontal.
 - Asegurar labels, foco, teclado, contraste, semántica y anuncios de error/estado.
 

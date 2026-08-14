@@ -6,6 +6,8 @@ Registro de cambios de contrato de API de Kortek Booking. Cada entrada indica en
 
 G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobierno y documentación.
 
+G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
+
 ---
 
 ## 2026-08-13 — Profesionales A2: disponibilidad individual candidata
@@ -36,7 +38,7 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 - AuditLog: `WEEKLY_UPDATE`, `BLOCK_CREATE`, `BLOCK_UPDATE`; solo contexto e IDs, sin nota/PII, con fail-open.
 - Validación: Prisma generate/validate, TypeScript, lint y suite API estándar en exit 0 (173 aprobadas; 9 PostgreSQL opt-in omitidas). La ejecución PostgreSQL real pasó 9/9 casos y `prisma migrate status` confirmó 12 migraciones aplicadas.
 
-**Impacto frontend vigente:** tras la aprobación explícita de A2 Backend sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`, el Frontend A2 consume estos contratos sin modificarlos. OWNER/ADMIN gestionan la disponibilidad de cualquier Professional del tenant; BARBER usa exclusivamente las rutas `/me`; RECEPTIONIST conserva solo lectura. La pantalla muestra la zona IANA, herencia/turnos múltiples y bloqueos `ACTIVE/CANCELLED` con nota interna. El módulo continúa abierto.
+**Impacto frontend vigente:** tras la aprobación explícita de A2 Backend sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`, el Frontend A2 consume estos contratos sin modificarlos. OWNER/ADMIN gestionan la disponibilidad de cualquier Professional del tenant; BARBER usa exclusivamente las rutas `/me`; RECEPTIONIST conserva solo lectura. `timeZone`, UTC y offsets son datos técnicos para conversión interna; la UI debe presentar horas naturales sin esos identificadores. El módulo continúa abierto y su frontend sigue en revisión.
 
 **Estado vigente:** A2 Backend **CERRADO / APROBADO** sobre `ad633e9864e6e20869d0db248861f01b935d5a6f`. Frontend A2 está **IMPLEMENTADO / EN REVISIÓN** como candidato; no aprobado. A0/A1 siguen cerrados/aprobados y no se autoriza iniciar Servicios ni otro módulo.
 
@@ -223,7 +225,7 @@ Afecta la validación de `POST /auth/register`, `POST /auth/invite`, y `POST /pu
 Se agregaron campos a `Organization` (`address`, `googleMapsUrl`, `aboutUs`, `heroImageUrl`, `socialLinks`, `businessHours`) y a `Professional` (`specialty`, `experienceYears`), y el modelo nuevo `GalleryImage`. **Ningún endpoint los expone ni los acepta todavía** — es la base de datos preparada para el micro-sitio público, sin la capa de API sobre ella. No hay impacto de contrato en esta entrega.
 
 ### Pendiente — NO incluido en esta entrega
-El refactor `User` + `Membership` (identidad global multi-organización) y el cambio de `/auth/login` siguen **bloqueados** a la espera de que se confirme si existen correos duplicados entre organizaciones en la base real (regla explícita del CTO: detener y reportar, no resolver automáticamente). Ver `PROJECT_MASTER.md` §24.14 para el detalle y la consulta de verificación pendiente.
+El refactor `User` + `Membership` (identidad global multi-organización) y el cambio de `/auth/login` estaban **bloqueados en la fecha de esta entrada** hasta verificar correos duplicados (regla explícita del CTO: detener y reportar, no resolver automáticamente). La verificación y resolución posterior están en el [`PROJECT_MASTER` histórico](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md) §26; no interpretar este bloqueo como estado vigente.
 
 ---
 
