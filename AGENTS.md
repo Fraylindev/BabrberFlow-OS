@@ -190,6 +190,8 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 - Entrega A Backend — Checkpoint A1: **CERRADO / APROBADO** sobre `60919ee94eb27f628906c9b86ce7a43b2fa09237`.
 - La garantía de integridad aprobada coordina archivo y operaciones que ocupan agenda mediante bloqueo PostgreSQL tenant-scoped dentro de transacciones.
 - Entrega B Frontend: **IMPLEMENTADA / EN REVISIÓN**; candidata a auditoría, todavía no aprobada.
+- Ajustes de búsqueda automática y etiqueta `Todos (sin archivados)`: **IMPLEMENTADOS / EN REVISIÓN**.
+- Checkpoint A2 Backend — Disponibilidad individual: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; todavía no aprobado. Frontend A2 no iniciado.
 - Módulo Profesionales: **NO CERRADO / NO APROBADO**.
 
 ## Resumen / Dashboard

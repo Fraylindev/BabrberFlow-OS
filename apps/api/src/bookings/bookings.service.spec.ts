@@ -7,6 +7,13 @@ import {
 import { BookingsService } from './bookings.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
+import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+
+function createMockAvailability() {
+  return {
+    assertAvailableForBooking: jest.fn().mockResolvedValue(undefined),
+  };
+}
 
 // 1. Tipados estrictos de entrada para los métodos evaluados
 type TestBooking = {
@@ -14,6 +21,7 @@ type TestBooking = {
   status: BookingStatus;
   professionalId?: string;
   startTime?: Date;
+  endTime?: Date;
   organizationId?: string;
   serviceId?: string;
 };
@@ -99,14 +107,17 @@ const VALID_DTO = {
 describe('BookingsService — conflictos de reservas', () => {
   let service: BookingsService;
   let prisma: ReturnType<typeof createMockPrisma>;
+  let availability: ReturnType<typeof createMockAvailability>;
 
   beforeEach(async () => {
     prisma = createMockPrisma();
+    availability = createMockAvailability();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BookingsService,
         { provide: PrismaService, useValue: prisma },
+        { provide: ProfessionalAvailabilityService, useValue: availability },
       ],
     }).compile();
 
@@ -126,6 +137,24 @@ describe('BookingsService — conflictos de reservas', () => {
 
     expect(result.id).toBe('booking-nuevo');
     expect(prisma.db.booking.create).toHaveBeenCalledTimes(1);
+    expect(availability.assertAvailableForBooking).toHaveBeenCalledWith(
+      prisma.db,
+      ORG_ID,
+      PROFESSIONAL.id,
+      new Date(FUTURE_DATE),
+      new Date('2099-01-01T10:30:00.000Z'),
+    );
+  });
+
+  it('rechaza la creación cuando queda fuera de la disponibilidad efectiva', async () => {
+    availability.assertAvailableForBooking.mockRejectedValue(
+      new ConflictException('El profesional no está disponible'),
+    );
+
+    await expect(service.create(ORG_ID, VALID_DTO)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
+    expect(prisma.db.booking.create).not.toHaveBeenCalled();
   });
 
   // ── Nueva regla: sin ProfessionalService ─────────────────────────────────
@@ -284,6 +313,7 @@ describe('BookingsService — conflictos de reservas', () => {
 describe('BookingsService — reprogramar (reschedule)', () => {
   let service: BookingsService;
   let prisma: ReturnType<typeof createMockPrisma>;
+  let availability: ReturnType<typeof createMockAvailability>;
 
   const EXISTING_BOOKING = {
     id: 'booking-1',
@@ -296,11 +326,13 @@ describe('BookingsService — reprogramar (reschedule)', () => {
 
   beforeEach(async () => {
     prisma = createMockPrisma();
+    availability = createMockAvailability();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BookingsService,
         { provide: PrismaService, useValue: prisma },
+        { provide: ProfessionalAvailabilityService, useValue: availability },
       ],
     }).compile();
 
@@ -393,6 +425,24 @@ describe('BookingsService — reprogramar (reschedule)', () => {
     expect(prisma.db.booking.update).not.toHaveBeenCalled();
   });
 
+  it('valida la disponibilidad efectiva antes de reprogramar', async () => {
+    prisma.db.booking.findFirst
+      .mockResolvedValueOnce(EXISTING_BOOKING)
+      .mockResolvedValueOnce(null);
+
+    await service.reschedule(EXISTING_BOOKING.id, ORG_ID, {
+      startTime: FUTURE_DATE,
+    });
+
+    expect(availability.assertAvailableForBooking).toHaveBeenCalledWith(
+      prisma.db,
+      ORG_ID,
+      PROFESSIONAL.id,
+      new Date(FUTURE_DATE),
+      new Date('2099-01-01T10:30:00.000Z'),
+    );
+  });
+
   // ── Validaciones existentes ───────────────────────────────────────────────
   it('rechaza reprogramar una reserva que no existe en la organización', async () => {
     prisma.db.booking.findFirst.mockResolvedValueOnce(null);
@@ -436,10 +486,15 @@ describe('BookingsService — reprogramar (reschedule)', () => {
 describe('BookingsService - BARBER status authorization', () => {
   let service: BookingsService;
   let prisma: ReturnType<typeof createMockPrisma>;
+  let availability: ReturnType<typeof createMockAvailability>;
 
   beforeEach(() => {
     prisma = createMockPrisma();
-    service = new BookingsService(prisma as unknown as PrismaService);
+    availability = createMockAvailability();
+    service = new BookingsService(
+      prisma as unknown as PrismaService,
+      availability as unknown as ProfessionalAvailabilityService,
+    );
     prisma.db.booking.update.mockResolvedValue({ id: 'booking-id' });
   });
 
@@ -558,6 +613,7 @@ describe('BookingsService - BARBER status authorization', () => {
         status: BookingStatus.CANCELLED,
         professionalId: PROFESSIONAL.id,
         startTime: new Date(FUTURE_DATE),
+        endTime: new Date('2099-01-01T10:30:00.000Z'),
       });
       prisma.db.$queryRaw.mockResolvedValue([
         {
@@ -582,6 +638,7 @@ describe('BookingsService - BARBER status authorization', () => {
         status: BookingStatus.CANCELLED,
         professionalId: PROFESSIONAL.id,
         startTime: new Date(FUTURE_DATE),
+        endTime: new Date('2099-01-01T10:30:00.000Z'),
       });
 
       await service.updateStatus('booking-id', ORG_ID, {
@@ -589,12 +646,39 @@ describe('BookingsService - BARBER status authorization', () => {
       });
 
       expect(prisma.db.$queryRaw).toHaveBeenCalledTimes(1);
+      expect(availability.assertAvailableForBooking).toHaveBeenCalledWith(
+        prisma.db,
+        ORG_ID,
+        PROFESSIONAL.id,
+        new Date(FUTURE_DATE),
+        new Date('2099-01-01T10:30:00.000Z'),
+      );
       expect(prisma.db.booking.update).toHaveBeenCalledWith({
         where: { id: 'booking-id', organizationId: ORG_ID },
         data: { status: targetStatus },
       });
     },
   );
+
+  it('rechaza reactivar una reserva futura fuera de disponibilidad efectiva', async () => {
+    prisma.db.booking.findFirst.mockResolvedValue({
+      id: 'booking-id',
+      status: BookingStatus.CANCELLED,
+      professionalId: PROFESSIONAL.id,
+      startTime: new Date(FUTURE_DATE),
+      endTime: new Date('2099-01-01T10:30:00.000Z'),
+    });
+    availability.assertAvailableForBooking.mockRejectedValue(
+      new ConflictException('El profesional no está disponible'),
+    );
+
+    await expect(
+      service.updateStatus('booking-id', ORG_ID, {
+        status: BookingStatus.CONFIRMED,
+      }),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(prisma.db.booking.update).not.toHaveBeenCalled();
+  });
 
   it.each([
     [BookingStatus.COMPLETED, BookingStatus.PENDING],
@@ -622,7 +706,10 @@ describe('BookingsService - Client security regressions', () => {
 
   beforeEach(() => {
     prisma = createMockPrisma();
-    service = new BookingsService(prisma as unknown as PrismaService);
+    service = new BookingsService(
+      prisma as unknown as PrismaService,
+      createMockAvailability() as unknown as ProfessionalAvailabilityService,
+    );
     prisma.db.service.findUnique.mockResolvedValue(SERVICE);
     prisma.db.professional.findUnique.mockResolvedValue(PROFESSIONAL);
     prisma.db.booking.findFirst.mockResolvedValue(null);

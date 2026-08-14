@@ -16,6 +16,7 @@ import {
 } from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
+import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
 
 export const bookingClientResponseSelect = {
   id: true,
@@ -53,7 +54,10 @@ const SCHEDULE_CONFLICT_MESSAGE =
 
 @Injectable()
 export class BookingsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly availabilityService: ProfessionalAvailabilityService,
+  ) {}
 
   async create(
     organizationId: string,
@@ -131,6 +135,14 @@ export class BookingsService {
       );
     }
     const endDate = new Date(startDate.getTime() + service.duration * 60000);
+
+    await this.availabilityService.assertAvailableForBooking(
+      transaction,
+      organizationId,
+      professionalId,
+      startDate,
+      endDate,
+    );
 
     // 🛡️ Buscamos choques, pero IGNORAMOS las citas canceladas usando el Enum oficial
     await this.assertNoConflict(
@@ -303,6 +315,14 @@ export class BookingsService {
     }
     const endDate = new Date(startDate.getTime() + service.duration * 60000);
 
+    await this.availabilityService.assertAvailableForBooking(
+      transaction,
+      organizationId,
+      professionalId,
+      startDate,
+      endDate,
+    );
+
     await this.assertNoConflict(
       organizationId,
       professionalId,
@@ -391,6 +411,13 @@ export class BookingsService {
           'No se puede reactivar una reserva futura de un profesional inactivo o archivado',
         );
       }
+      await this.availabilityService.assertAvailableForBooking(
+        transaction,
+        organizationId,
+        booking.professionalId,
+        booking.startTime,
+        booking.endTime,
+      );
     }
 
     try {

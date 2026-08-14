@@ -4,6 +4,7 @@ import { PublicBookingService } from './public-booking.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { AuditService } from '../audit/audit.service';
+import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
 
 const ORGANIZATION = {
   id: '00000000-0000-4000-8000-000000000001',
@@ -12,6 +13,7 @@ const ORGANIZATION = {
   phone: null,
   isActive: true,
   businessHours: null,
+  timeZone: 'America/Santo_Domingo',
 };
 const CLIENT_ID = '00000000-0000-4000-8000-000000000002';
 const BOOKING = {
@@ -63,7 +65,15 @@ function createDependencies() {
     findActiveBookingsInRange: jest.fn(),
   };
   const audit = { log: jest.fn().mockResolvedValue(undefined) };
-  return { transaction, prisma, bookings, audit };
+  const availability = {
+    getUtcRangeForLocalDate: jest.fn().mockReturnValue({
+      start: new Date('2099-01-01T04:00:00.000Z'),
+      end: new Date('2099-01-02T04:00:00.000Z'),
+    }),
+    getPublicContext: jest.fn().mockResolvedValue({}),
+    isAvailableInContext: jest.fn().mockReturnValue(true),
+  };
+  return { transaction, prisma, bookings, audit, availability };
 }
 
 describe('PublicBookingService - secure public creation', () => {
@@ -76,6 +86,7 @@ describe('PublicBookingService - secure public creation', () => {
       dependencies.prisma as unknown as PrismaService,
       dependencies.bookings as unknown as BookingsService,
       dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
     );
   });
 
@@ -211,6 +222,7 @@ describe('PublicBookingService - active public catalog', () => {
       dependencies.prisma as unknown as PrismaService,
       dependencies.bookings as unknown as BookingsService,
       dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
     );
     dependencies.prisma.db.service.findMany.mockResolvedValue([]);
     dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
@@ -230,6 +242,7 @@ describe('PublicBookingService - active public catalog', () => {
       dependencies.prisma as unknown as PrismaService,
       dependencies.bookings as unknown as BookingsService,
       dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
     );
     dependencies.prisma.db.service.findMany.mockResolvedValue([]);
     dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
@@ -253,6 +266,7 @@ describe('PublicBookingService - active public catalog', () => {
       dependencies.prisma as unknown as PrismaService,
       dependencies.bookings as unknown as BookingsService,
       dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
     );
     dependencies.prisma.db.service.findFirst.mockResolvedValue(null);
 
@@ -270,5 +284,41 @@ describe('PublicBookingService - active public catalog', () => {
       },
       select: { duration: true },
     });
+  });
+
+  it('filters public slots through effective availability without exposing internal notes', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
+    );
+    dependencies.prisma.db.service.findFirst.mockResolvedValue({
+      duration: 30,
+    });
+    dependencies.prisma.db.professional.findMany.mockResolvedValue([
+      { id: BOOKING.professionalId },
+    ]);
+    dependencies.bookings.findActiveBookingsInRange.mockResolvedValue([]);
+    dependencies.availability.isAvailableInContext.mockReturnValue(false);
+
+    const result = await service.getAvailability(ORGANIZATION.slug, {
+      date: '2099-01-01',
+      serviceId: BOOKING.serviceId,
+    });
+
+    expect(dependencies.availability.getPublicContext).toHaveBeenCalledWith(
+      ORGANIZATION.id,
+      [BOOKING.professionalId],
+      new Date('2099-01-01T04:00:00.000Z'),
+      new Date('2099-01-02T04:00:00.000Z'),
+    );
+    expect(result).toEqual({
+      date: '2099-01-01',
+      serviceId: BOOKING.serviceId,
+      slots: [],
+    });
+    expect(JSON.stringify(result)).not.toContain('note');
   });
 });

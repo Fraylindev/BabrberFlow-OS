@@ -5,6 +5,11 @@ import { CreateProfessionalDto } from './create-professional.dto';
 import { LinkProfessionalUserDto } from './link-professional-user.dto';
 import { QueryProfessionalsDto } from './query-professionals.dto';
 import { UpdateOwnProfessionalDto } from './update-own-professional.dto';
+import {
+  CreateAvailabilityBlockDto,
+  ReplaceWeeklyScheduleDto,
+  UpdateAvailabilityBlockDto,
+} from './professional-availability.dto';
 
 describe('Professional DTO validation', () => {
   it('trims string fields before applying validation limits', () => {
@@ -84,5 +89,36 @@ describe('Professional DTO validation', () => {
     expect(validateSync(invalid).length).toBeGreaterThan(0);
     expect(validateSync(valid)).toEqual([]);
     expect(valid.userId).toBe('00000000-0000-4000-8000-000000000001');
+  });
+
+  it('validates multiple weekly shifts with strict HH:mm values', () => {
+    const valid = plainToInstance(ReplaceWeeklyScheduleDto, {
+      shifts: [
+        { dayOfWeek: 1, startTime: '09:00', endTime: '12:00' },
+        { dayOfWeek: 1, startTime: '13:00', endTime: '17:00' },
+      ],
+    });
+    const invalid = plainToInstance(ReplaceWeeklyScheduleDto, {
+      shifts: [{ dayOfWeek: 7, startTime: '9:00', endTime: '25:00' }],
+    });
+
+    expect(validateSync(valid)).toEqual([]);
+    expect(validateSync(invalid).length).toBeGreaterThan(0);
+  });
+
+  it('validates block timestamps, status and internal note limit', () => {
+    const valid = plainToInstance(CreateAvailabilityBlockDto, {
+      startTime: '2099-01-05T14:00:00.000Z',
+      endTime: '2099-01-05T15:00:00.000Z',
+      note: 'Interna',
+    });
+    const invalid = plainToInstance(UpdateAvailabilityBlockDto, {
+      startTime: 'tomorrow',
+      status: 'DELETED',
+      note: 'x'.repeat(501),
+    });
+
+    expect(validateSync(valid)).toEqual([]);
+    expect(validateSync(invalid).length).toBeGreaterThan(0);
   });
 });

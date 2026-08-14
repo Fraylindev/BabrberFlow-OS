@@ -24,6 +24,8 @@ import {
   rangesOverlap,
   resolveBusinessHours,
 } from './availability.util';
+import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import { zonedLocalDateTimeToUtc } from '../professionals/professional-availability.util';
 
 type PublicClientAction = 'CREATE' | 'RESTORE' | null;
 
@@ -35,6 +37,7 @@ export class PublicBookingService {
     private prisma: PrismaService,
     private bookingsService: BookingsService,
     private audit: AuditService,
+    private availabilityService: ProfessionalAvailabilityService,
   ) {}
 
   private async resolveOrganization(slug: string) {
@@ -131,11 +134,10 @@ export class PublicBookingService {
       return { date: query.date, serviceId: query.serviceId, slots: [] };
     }
 
-    const dayStart = new Date(`${query.date}T00:00:00`);
-    const dayEnd = new Date(`${query.date}T23:59:59.999`);
-    if (Number.isNaN(dayStart.getTime())) {
-      throw new BadRequestException('Fecha inválida');
-    }
+    const dayRange = this.availabilityService.getUtcRangeForLocalDate(
+      query.date,
+      organization.timeZone,
+    );
 
     const businessHours = resolveBusinessHours(organization.businessHours);
     const candidateTimes = generateCandidateSlots(
@@ -146,19 +148,36 @@ export class PublicBookingService {
       await this.bookingsService.findActiveBookingsInRange(
         organization.id,
         candidateProfessionalIds,
-        dayStart,
-        dayEnd,
+        dayRange.start,
+        dayRange.end,
       );
+    const availabilityContext = await this.availabilityService.getPublicContext(
+      organization.id,
+      candidateProfessionalIds,
+      dayRange.start,
+      dayRange.end,
+    );
 
     const now = new Date();
     const slots: { time: string; professionalId: string }[] = [];
     for (const time of candidateTimes) {
-      const slotStart = new Date(`${query.date}T${time}:00`);
+      const slotStart = zonedLocalDateTimeToUtc(
+        query.date,
+        time,
+        organization.timeZone,
+      );
+      if (!slotStart) continue;
       const slotEnd = new Date(slotStart.getTime() + service.duration * 60000);
       if (slotStart <= now) continue;
 
       const freeProfessionalId = candidateProfessionalIds.find(
         (professionalId) =>
+          this.availabilityService.isAvailableInContext(
+            availabilityContext,
+            professionalId,
+            slotStart,
+            slotEnd,
+          ) &&
           !existingBookings.some(
             (booking) =>
               booking.professionalId === professionalId &&

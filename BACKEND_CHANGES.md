@@ -4,6 +4,38 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 
 ---
 
+## 2026-08-13 — Profesionales A2: disponibilidad individual candidata
+
+### Persistencia
+
+- `Organization.timeZone`: zona horaria IANA autoritativa, con default/backfill inicial `America/Santo_Domingo`.
+- `ProfessionalWeeklySchedule`: múltiples turnos por `dayOfWeek` (`0..6`) y minutos desde medianoche. Sin filas hereda el horario global; con filas, solo esos turnos forman el horario individual. PostgreSQL valida rangos y usa `EXCLUDE USING gist` para impedir solapamientos del mismo Professional/día.
+- `ProfessionalAvailabilityBlock`: rango UTC, `status: ACTIVE | CANCELLED` y `note` interna opcional (máximo 500). No hay hard-delete.
+- Ambos modelos incluyen `organizationId`; la FK compuesta `(professionalId, organizationId)` referencia al Professional del mismo tenant y evita asociaciones cross-tenant desde la base de datos.
+
+### Endpoints `/professionals`
+
+- **`GET /professionals/:id/availability`** — `OWNER`, `ADMIN`. Query opcional `from`, `to`, `status`; rango por defecto de 90 días y máximo 366. Devuelve `{ professionalId, timeZone, inheritsOrganizationHours, weeklySchedule, blocks }` sin `organizationId`.
+- **`PUT /professionals/:id/availability/weekly`** — `OWNER`, `ADMIN`. Body `{ shifts: [{ dayOfWeek, startTime: "HH:mm", endTime: "HH:mm" }] }`; máximo 35, varios turnos diarios y reemplazo atómico. `shifts: []` restablece herencia del horario global.
+- **`POST /professionals/:id/availability/blocks`** y **`PATCH /professionals/:id/availability/blocks/:blockId`** — `OWNER`, `ADMIN`. Body de creación `{ startTime, endTime, note? }`; PATCH permite rango, `status` y nota, pero no vacío. Un bloqueo activo debe terminar en el futuro.
+- Las variantes **`/professionals/me/availability`**, **`/professionals/me/availability/weekly`** y **`/professionals/me/availability/blocks[/:blockId]`** ofrecen el mismo contrato solo a `BARBER`, resolviendo el perfil vinculado por `userId + organizationId` del JWT. `RECEPTIONIST` no modifica disponibilidad.
+- IDs de Professional/bloqueo pasan `ParseUUIDPipe`. Recurso ajeno o inexistente conserva el mismo `404` tenant-scoped.
+
+### Reservas, privacidad y concurrencia
+
+- Disponibilidad efectiva: horario global ∩ horario individual − bloqueos activos − reservas no canceladas. La zona horaria de Organization se usa para transformar fecha/hora local a UTC.
+- `POST /bookings`, `POST /public/:slug/bookings`, `PATCH /bookings/:id` y la recuperación futura `CANCELLED → PENDING/CONFIRMED` validan horario global, horario individual y bloqueos dentro de la misma transacción que escribe la reserva.
+- Las operaciones anteriores y las mutaciones de disponibilidad comparten el bloqueo `Professional(id, organizationId) FOR UPDATE` aprobado en A1. Un cambio de horario/bloqueo que afecte reservas futuras `PENDING`/`CONFIRMED` devuelve `409`; las carreras no pueden dejar una reserva operativa fuera de disponibilidad efectiva.
+- **`GET /public/:slug/availability`** filtra slots por horario individual y bloqueos usando `Organization.timeZone`. Conserva el cuerpo público `{ date, serviceId, slots }`; la nota interna y el motivo del bloqueo nunca se seleccionan ni exponen. Cuando no hay slots, el frontend público conserva el mensaje genérico existente.
+- AuditLog: `WEEKLY_UPDATE`, `BLOCK_CREATE`, `BLOCK_UPDATE`; solo contexto e IDs, sin nota/PII, con fail-open.
+- Validación: Prisma generate/validate, TypeScript, lint y suite API estándar en exit 0 (173 aprobadas; 9 PostgreSQL opt-in omitidas). La ejecución PostgreSQL real pasó 9/9 casos y `prisma migrate status` confirmó 12 migraciones aplicadas.
+
+**Impacto frontend:** no se implementó Frontend A2. Los contratos están disponibles para una entrega posterior únicamente tras auditoría/aprobación explícita. La pantalla general de Profesionales continúa en revisión y el módulo no está cerrado.
+
+**Estado:** A2 Backend **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no aprobado. A0/A1 siguen cerrados/aprobados y no se autoriza iniciar Servicios ni otro módulo.
+
+---
+
 ## 2026-08-12 — Profesionales A1: contrato backend candidato a auditoría
 
 ### Modelo y estados

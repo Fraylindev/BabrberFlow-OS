@@ -4,6 +4,7 @@ import { ROLES_KEY } from '../auth/decorators/roles.decorator';
 import type { RequestUser } from '../auth/types/authenticated-request';
 import { ProfessionalsController } from './professionals.controller';
 import { ProfessionalsService } from './professionals.service';
+import { ProfessionalAvailabilityService } from './professional-availability.service';
 
 const USER: RequestUser = {
   id: '00000000-0000-4000-8000-000000000001',
@@ -28,10 +29,22 @@ function createController() {
     linkUser: jest.fn(),
     unlinkUser: jest.fn(),
   };
+  const availability = {
+    getForProfessional: jest.fn(),
+    getForOwnProfile: jest.fn(),
+    replaceWeeklySchedule: jest.fn(),
+    replaceOwnWeeklySchedule: jest.fn(),
+    createBlock: jest.fn(),
+    createOwnBlock: jest.fn(),
+    updateBlock: jest.fn(),
+    updateOwnBlock: jest.fn(),
+  };
   return {
     professionals,
+    availability,
     controller: new ProfessionalsController(
       professionals as unknown as ProfessionalsService,
+      availability as unknown as ProfessionalAvailabilityService,
     ),
   };
 }
@@ -61,6 +74,10 @@ describe('ProfessionalsController', () => {
       'restore',
       'linkUser',
       'unlinkUser',
+      'getAvailability',
+      'replaceWeeklySchedule',
+      'createAvailabilityBlock',
+      'updateAvailabilityBlock',
     ] as const) {
       expect(rolesFor(method)).toEqual([UserRole.OWNER, UserRole.ADMIN]);
     }
@@ -69,6 +86,10 @@ describe('ProfessionalsController', () => {
   it('limits own profile endpoints to BARBER', () => {
     expect(rolesFor('findMe')).toEqual([UserRole.BARBER]);
     expect(rolesFor('updateMe')).toEqual([UserRole.BARBER]);
+    expect(rolesFor('getMyAvailability')).toEqual([UserRole.BARBER]);
+    expect(rolesFor('replaceMyWeeklySchedule')).toEqual([UserRole.BARBER]);
+    expect(rolesFor('createMyAvailabilityBlock')).toEqual([UserRole.BARBER]);
+    expect(rolesFor('updateMyAvailabilityBlock')).toEqual([UserRole.BARBER]);
   });
 
   it('returns management list for OWNER and writes real pagination headers', async () => {
@@ -148,6 +169,52 @@ describe('ProfessionalsController', () => {
       USER.organizationId,
       USER.id,
       barberId,
+    );
+  });
+
+  it('routes management availability with tenant and actor from the token', async () => {
+    const { controller, availability } = createController();
+    const professionalId = '00000000-0000-4000-8000-000000000003';
+    const blockId = '00000000-0000-4000-8000-000000000004';
+    const block = {
+      startTime: '2099-01-05T14:00:00.000Z',
+      endTime: '2099-01-05T15:00:00.000Z',
+    };
+
+    await controller.createAvailabilityBlock(professionalId, USER, block);
+    await controller.updateAvailabilityBlock(professionalId, blockId, USER, {
+      note: 'Interna',
+    });
+
+    expect(availability.createBlock).toHaveBeenCalledWith(
+      professionalId,
+      USER.organizationId,
+      USER.id,
+      block,
+    );
+    expect(availability.updateBlock).toHaveBeenCalledWith(
+      professionalId,
+      blockId,
+      USER.organizationId,
+      USER.id,
+      { note: 'Interna' },
+    );
+  });
+
+  it('routes BARBER availability only through its token identity', async () => {
+    const { controller, availability } = createController();
+    const barber = { ...USER, role: UserRole.BARBER };
+
+    await controller.replaceMyWeeklySchedule(barber, {
+      shifts: [{ dayOfWeek: 1, startTime: '09:00', endTime: '13:00' }],
+    });
+
+    expect(availability.replaceOwnWeeklySchedule).toHaveBeenCalledWith(
+      barber.id,
+      barber.organizationId,
+      {
+        shifts: [{ dayOfWeek: 1, startTime: '09:00', endTime: '13:00' }],
+      },
     );
   });
 });

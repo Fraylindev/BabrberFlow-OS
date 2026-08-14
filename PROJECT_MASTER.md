@@ -8,7 +8,7 @@
 
 > **Última actualización:** basada en auditoría completa del código fuente (no en supuestos ni en versiones anteriores de este documento). Todo lo escrito aquí refleja lo que existe hoy en el repositorio, más el historial completo de cómo se llegó ahí.
 
-> **Estado vigente de módulos (2026-08-12):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb` y A1 Backend está **CERRADO / APROBADO** sobre `60919ee94eb27f628906c9b86ce7a43b2fa09237`. Entrega B Frontend está implementada / en revisión; el módulo todavía no está cerrado. Resumen continúa congelado. Ver §56–61.
+> **Estado vigente de módulos (2026-08-13):** Reservas está **CERRADO / APROBADO** sobre el checkpoint funcional `9a30f2abb37857dbbbf15e34df1cbaec576121b6`. Clientes Backend y Frontend están **CERRADOS / APROBADOS**; el módulo Clientes está **CERRADO oficialmente** sobre el checkpoint `c0764e9a98e3876339152763bf9b0fc98fe43aae`. Profesionales A0 está **CERRADO / APROBADO** sobre `8964c981223ba3f4a1e780103cbc0d20e4c602eb` y A1 Backend está **CERRADO / APROBADO** sobre `60919ee94eb27f628906c9b86ce7a43b2fa09237`. Entrega B Frontend y su ajuste de búsqueda siguen implementados / en revisión. A2 Backend de disponibilidad individual está implementado como candidato a auditoría, todavía no aprobado; el módulo no está cerrado. Resumen continúa congelado. Ver §56–62.
 
 ---
 
@@ -1663,7 +1663,7 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 ### 60.4. Límites y estado
 
 - Entradas con `trim`; nombre máximo 120, bio 2000, teléfono 30, especialidad 120, avatar URL HTTP(S) máximo 2048, experiencia entera no negativa y búsqueda máxima 120. No se aceptan Base64 ni uploads de imagen.
-- No se implementaron horarios, vacaciones, bloqueos manuales, Cloudinary, páginas públicas individuales, CRUD de `ProfessionalService` ni frontend de Profesionales.
+- En A1 no se implementaron horarios ni bloqueos; esas capacidades se incorporaron posteriormente en A2 (§62). Cloudinary, páginas públicas individuales, CRUD de `ProfessionalService` y Frontend A2 continúan sin implementar.
 - Validación final de la corrección candidata: `pnpm --filter api exec tsc --noEmit`, `pnpm --filter api lint` y `pnpm --filter api test` finalizaron con exit 0; 151 tests aprobados y 5 pruebas PostgreSQL opt-in omitidas en la suite estándar. La ejecución opt-in real aprobó las 5/5 pruebas: exclusión de solapamientos y carreras de archivo contra creación interna, creación dentro de la transacción pública, reprogramación y reactivación. `prisma migrate status` confirmó 10 migraciones y schema local al día.
 - Estado al publicar originalmente el candidato A1: **IMPLEMENTADO / EN REVISIÓN**, todavía no aprobado y Frontend no autorizado. La aprobación posterior y el estado vigente se registran en §60.5 y §61; el módulo Profesionales todavía no está cerrado.
 - Resumen/Dashboard continúa congelado y no se inicia ningún módulo posterior.
@@ -1701,5 +1701,36 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 
 - La búsqueda mantiene el endpoint y paginación reales, pero deja de exigir el botón: el texto se aplica automáticamente tras un debounce de 300 ms y reinicia la vista en la primera página.
 - El botón `Buscar` permanece como alternativa inmediata. Las query keys conservan aislamiento por organización, vista de rol, filtros y página; no cambian backend, contratos, Prisma ni dependencias.
+- El filtro general aclara su alcance operativo con la etiqueta `Todos (sin archivados)`; continúa excluyendo `ARCHIVED` y no cambia el query backend.
 - TypeScript y lint web finalizaron con exit 0. El QA autenticado comprobó en desktop y 390×844 que pulsaciones sucesivas por debajo de 300 ms conservan el listado y generan un único resultado tras la pausa; el botón aplica de inmediato, no existe overflow horizontal y la consola no reporta errores ni advertencias.
 - Estado: ajuste **IMPLEMENTADO / EN REVISIÓN**, pendiente de auditoría y aprobación explícita. Entrega B y el módulo Profesionales continúan **NO CERRADOS**; no se autoriza avanzar a Servicios ni a otro módulo.
+
+## 62. Profesionales — Checkpoint A2 Backend: disponibilidad individual (2026-08-13)
+
+### 62.1. Modelo y zona horaria
+
+- `Organization.timeZone` establece la zona IANA autoritativa del tenant. La migración inicial conserva todas las organizaciones y aplica `America/Santo_Domingo` como valor por defecto/backfill; A2 no incorpora todavía un endpoint de configuración de zona horaria.
+- `ProfessionalWeeklySchedule` almacena turnos recurrentes con `dayOfWeek` (`0..6`), `startMinute` y `endMinute`. Admite varios turnos no solapados por día. Cero filas significa heredar el horario global; al existir filas, los días omitidos quedan sin turno individual.
+- `ProfessionalAvailabilityBlock` almacena rangos UTC absolutos, estado `ACTIVE | CANCELLED` y nota interna opcional de hasta 500 caracteres. No existe hard-delete.
+- Los dos modelos guardan `organizationId` y `professionalId`; una FK compuesta PostgreSQL impide asociar disponibilidad a un Professional de otro tenant. Checks de rango y una exclusión GiST evitan rangos semanales inválidos o solapados incluso ante escrituras concurrentes.
+
+### 62.2. Contrato y permisos
+
+- `GET /professionals/:id/availability`, `PUT /professionals/:id/availability/weekly`, `POST /professionals/:id/availability/blocks` y `PATCH /professionals/:id/availability/blocks/:blockId`: solo `OWNER`/`ADMIN`, siempre con UUID y `organizationId` del token.
+- `GET /professionals/me/availability`, `PUT /professionals/me/availability/weekly`, `POST /professionals/me/availability/blocks` y `PATCH /professionals/me/availability/blocks/:blockId`: solo `BARBER`, resolviendo exclusivamente su Professional vinculado dentro del tenant del token.
+- `RECEPTIONIST` no recibe endpoints de modificación de disponibilidad. El reemplazo semanal valida `HH:mm`, máximo 35 turnos y ausencia de solapamientos; los bloqueos validan ISO-8601, inicio anterior al fin, rango activo futuro, PATCH no vacío y consulta de hasta 366 días.
+- La respuesta interna explícita incluye zona horaria, indicador de herencia, turnos y bloqueos. La nota se limita a estos endpoints internos autorizados; ni el catálogo ni la disponibilidad pública la consultan o exponen.
+
+### 62.3. Disponibilidad efectiva e integridad
+
+- La regla autoritativa es: horario global de Organization ∩ horario semanal individual − bloqueos `ACTIVE` − reservas operativas. El flujo público conserva su respuesta mínima de slots y su mensaje genérico existente cuando no hay horarios; no recibe notas ni motivos internos.
+- Crear una reserva interna o pública, reprogramar y reactivar una cancelada futura validan la disponibilidad efectiva dentro de su transacción, después de adquirir el bloqueo PostgreSQL tenant-scoped de A1. Reemplazar horario o crear/reactivar/modificar un bloqueo adquiere el mismo bloqueo antes de consultar y escribir.
+- Un cambio semanal o bloqueo que afecte una reserva futura `PENDING`/`CONFIRMED` devuelve `409`. La serialización garantiza que una carrera horario/bloqueo ↔ creación/reprogramación/reactivación acepta solo el lado compatible y nunca persiste una reserva operativa fuera de disponibilidad.
+- AuditLog registra `WEEKLY_UPDATE`, `BLOCK_CREATE` y `BLOCK_UPDATE` con tenant, actor e ID; nunca guarda la nota ni otros valores sensibles y conserva fail-open.
+
+### 62.4. Estado
+
+- Validación candidata: Prisma generate/validate, API TypeScript, lint y suite estándar finalizaron con exit 0; 173 tests aprobados y 9 casos PostgreSQL opt-in omitidos en la suite estándar. La ejecución PostgreSQL real aprobó 9/9, incluyendo A0/A1, FK tenant-scoped y carreras de disponibilidad. `prisma migrate status` confirmó 12 migraciones y base local al día.
+- A2 Backend está **IMPLEMENTADO / EN REVISIÓN**, como checkpoint candidato; **NO APROBADO / NO CERRADO**. Frontend A2 no fue iniciado.
+- A0 y A1 conservan su aprobación. Entrega B Frontend general continúa en revisión y el módulo Profesionales sigue **NO CERRADO**.
+- No se iniciaron Servicios, Facturación, Equipo, Configuración, Cloudinary, Analytics ni Resumen; Dashboard continúa congelado.

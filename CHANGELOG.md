@@ -2,10 +2,21 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-13 — Profesionales A2 Backend: disponibilidad individual candidata
+
+- Se añadió `Organization.timeZone` con valor inicial `America/Santo_Domingo`, horario semanal opcional con múltiples turnos diarios y bloqueos temporales `ACTIVE/CANCELLED` con nota interna.
+- OWNER/ADMIN gestionan cualquier Professional del tenant; BARBER opera únicamente su perfil vinculado; RECEPTIONIST no modifica disponibilidad. Las consultas y FKs preservan aislamiento por `organizationId`.
+- La disponibilidad efectiva combina horario global, horario individual, bloqueos y reservas. Creación interna/pública, reprogramación y reactivación futura validan dentro de transacción y comparten el bloqueo PostgreSQL A1 con las mutaciones de disponibilidad.
+- Cambios que afectarían reservas futuras abiertas devuelven `409`. La disponibilidad pública filtra slots sin seleccionar ni exponer notas; AuditLog registra únicamente acciones e IDs.
+- Se añadieron DTOs, proyecciones, checks/exclusión GiST, pruebas unitarias y carreras PostgreSQL reales. Frontend A2 no se inició.
+- Prisma, TypeScript, lint y tests terminaron con exit 0: 173 pruebas estándar aprobadas y 9/9 integraciones PostgreSQL reales; la base local quedó al día con 12 migraciones.
+- Estado: A2 Backend **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no aprobado. Profesionales no está cerrado y no se inició otro módulo.
+
 ## 2026-08-13 — Profesionales: búsqueda automática candidata
 
 - La búsqueda del directorio ahora aplica el texto automáticamente con debounce de 300 ms y vuelve a la primera página, conservando el botón `Buscar` como alternativa inmediata.
 - Se reutilizan la búsqueda backend, paginación y query keys tenant/rol existentes; no cambian API, contratos, Prisma, dependencias ni otros módulos.
+- El filtro general quedó rotulado `Todos (sin archivados)`, aclarando el comportamiento vigente sin alterar filtros ni requests.
 - Web TypeScript y lint pasaron con exit 0. QA autenticado desktop/móvil confirmó actualización tras la pausa, envío inmediato con el botón, ausencia de overflow y consola sin errores/advertencias.
 - Estado: ajuste **IMPLEMENTADO / EN REVISIÓN** dentro de Entrega B. Profesionales continúa pendiente de QA/aprobación final y no está cerrado.
 

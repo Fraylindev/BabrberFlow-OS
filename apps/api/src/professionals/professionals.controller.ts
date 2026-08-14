@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
   Res,
   UseGuards,
@@ -27,6 +28,13 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { B2B_ROLES } from '../auth/roles.constants';
 import type { RequestUser } from '../auth/types/authenticated-request';
+import { ProfessionalAvailabilityService } from './professional-availability.service';
+import {
+  CreateAvailabilityBlockDto,
+  QueryProfessionalAvailabilityDto,
+  ReplaceWeeklyScheduleDto,
+  UpdateAvailabilityBlockDto,
+} from './dto/professional-availability.dto';
 
 const PROFESSIONAL_MANAGEMENT_ROLES: UserRole[] = [
   UserRole.OWNER,
@@ -37,7 +45,10 @@ const PROFESSIONAL_MANAGEMENT_ROLES: UserRole[] = [
 @Roles(...B2B_ROLES)
 @Controller('professionals')
 export class ProfessionalsController {
-  constructor(private readonly professionalsService: ProfessionalsService) {}
+  constructor(
+    private readonly professionalsService: ProfessionalsService,
+    private readonly availabilityService: ProfessionalAvailabilityService,
+  ) {}
 
   @Roles(...PROFESSIONAL_MANAGEMENT_ROLES)
   @Post()
@@ -79,6 +90,121 @@ export class ProfessionalsController {
     return this.professionalsService.updateMe(
       user.id,
       user.organizationId,
+      dto,
+    );
+  }
+
+  @Roles(UserRole.BARBER)
+  @Get('me/availability')
+  getMyAvailability(
+    @GetUser() user: RequestUser,
+    @Query() query: QueryProfessionalAvailabilityDto,
+  ) {
+    return this.availabilityService.getForOwnProfile(
+      user.id,
+      user.organizationId,
+      query,
+    );
+  }
+
+  @Roles(UserRole.BARBER)
+  @Put('me/availability/weekly')
+  replaceMyWeeklySchedule(
+    @GetUser() user: RequestUser,
+    @Body() dto: ReplaceWeeklyScheduleDto,
+  ) {
+    return this.availabilityService.replaceOwnWeeklySchedule(
+      user.id,
+      user.organizationId,
+      dto,
+    );
+  }
+
+  @Roles(UserRole.BARBER)
+  @Post('me/availability/blocks')
+  createMyAvailabilityBlock(
+    @GetUser() user: RequestUser,
+    @Body() dto: CreateAvailabilityBlockDto,
+  ) {
+    return this.availabilityService.createOwnBlock(
+      user.id,
+      user.organizationId,
+      dto,
+    );
+  }
+
+  @Roles(UserRole.BARBER)
+  @Patch('me/availability/blocks/:blockId')
+  updateMyAvailabilityBlock(
+    @Param('blockId', new ParseUUIDPipe()) blockId: string,
+    @GetUser() user: RequestUser,
+    @Body() dto: UpdateAvailabilityBlockDto,
+  ) {
+    return this.availabilityService.updateOwnBlock(
+      user.id,
+      blockId,
+      user.organizationId,
+      dto,
+    );
+  }
+
+  @Roles(...PROFESSIONAL_MANAGEMENT_ROLES)
+  @Get(':id/availability')
+  getAvailability(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser('organizationId') organizationId: string,
+    @Query() query: QueryProfessionalAvailabilityDto,
+  ) {
+    return this.availabilityService.getForProfessional(
+      id,
+      organizationId,
+      query,
+    );
+  }
+
+  @Roles(...PROFESSIONAL_MANAGEMENT_ROLES)
+  @Put(':id/availability/weekly')
+  replaceWeeklySchedule(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
+    @Body() dto: ReplaceWeeklyScheduleDto,
+  ) {
+    return this.availabilityService.replaceWeeklySchedule(
+      id,
+      user.organizationId,
+      user.id,
+      dto,
+    );
+  }
+
+  @Roles(...PROFESSIONAL_MANAGEMENT_ROLES)
+  @Post(':id/availability/blocks')
+  createAvailabilityBlock(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
+    @Body() dto: CreateAvailabilityBlockDto,
+  ) {
+    return this.availabilityService.createBlock(
+      id,
+      user.organizationId,
+      user.id,
+      dto,
+    );
+  }
+
+  @Roles(...PROFESSIONAL_MANAGEMENT_ROLES)
+  @Patch(':id/availability/blocks/:blockId')
+  updateAvailabilityBlock(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('blockId', new ParseUUIDPipe()) blockId: string,
+    @GetUser() user: RequestUser,
+    @Body() dto: UpdateAvailabilityBlockDto,
+  ) {
+    return this.availabilityService.updateBlock(
+      id,
+      blockId,
+      user.organizationId,
+      user.id,
       dto,
     );
   }

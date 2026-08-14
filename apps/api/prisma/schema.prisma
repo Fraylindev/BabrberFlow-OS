@@ -32,6 +32,11 @@ enum ProfessionalStatus {
   ARCHIVED
 }
 
+enum AvailabilityBlockStatus {
+  ACTIVE
+  CANCELLED
+}
+
 enum PaymentStatus {
   PENDING
   PAID
@@ -68,6 +73,8 @@ model Organization {
 
   businessHours Json?
 
+  timeZone String @default("America/Santo_Domingo")
+
   isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
@@ -88,8 +95,10 @@ model Organization {
 
   bookings Booking[]
 
-  payments Payment[]
-  Invoice  Invoice[]
+  payments                       Payment[]
+  Invoice                        Invoice[]
+  professionalWeeklySchedules    ProfessionalWeeklySchedule[]
+  professionalAvailabilityBlocks ProfessionalAvailabilityBlock[]
 }
 
 // Identidad global — una sola cuenta, un solo password, puede pertenecer
@@ -178,6 +187,10 @@ model Professional {
 
   professionalServices ProfessionalService[]
 
+  weeklySchedule ProfessionalWeeklySchedule[]
+
+  availabilityBlocks ProfessionalAvailabilityBlock[]
+
   bookings Booking[]
 
   createdAt DateTime @default(now())
@@ -185,7 +198,59 @@ model Professional {
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, userId])
+  @@unique([id, organizationId], map: "Professional_id_organizationId_key")
   @@index([organizationId, status, name, id])
+}
+
+model ProfessionalWeeklySchedule {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  professionalId String
+
+  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade)
+
+  dayOfWeek Int
+
+  startMinute Int
+
+  endMinute Int
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, professionalId, dayOfWeek], map: "ProfessionalSchedule_org_prof_day_idx")
+}
+
+model ProfessionalAvailabilityBlock {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  professionalId String
+
+  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade)
+
+  startTime DateTime
+
+  endTime DateTime
+
+  status AvailabilityBlockStatus @default(ACTIVE)
+
+  note String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, professionalId, status, startTime], map: "ProfessionalBlock_org_prof_status_start_idx")
+  @@index([organizationId, professionalId, endTime], map: "ProfessionalBlock_org_prof_end_idx")
 }
 
 model GalleryImage {
@@ -294,12 +359,12 @@ model Booking {
   updatedAt DateTime @updatedAt
   Invoice   Invoice?
 
+  // The 20260811180000_booking_schedule_exclusion migration also adds a
+  // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
+
   // Acelera GET /bookings (listado filtrado por estado, ordenado por
   // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
   @@index([organizationId, status, createdAt])
-
-  // The 20260811180000_booking_schedule_exclusion migration also adds a
-  // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
 }
 
 model Payment {
