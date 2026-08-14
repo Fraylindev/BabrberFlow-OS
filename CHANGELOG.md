@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-14 — Security A0-D: decisión Clerk + Supabase y diseño diagnóstico
+
+- El propietario aprobó Clerk para identidad, login, registro, recuperación y sesiones; NestJS continúa como autoridad del negocio y PostgreSQL conserva Organization, Membership y roles. Clerk Organizations no será fuente de autorización y Supabase Auth no se usará.
+- La auditoría confirmó que la implementación sigue en JWT propio/localStorage y mantiene abierto el escalamiento OWNER del registro público. La base inspeccionada es local: 7 de 19 Users coinciden con el inventario QA y 12 quedan sin clasificación, por lo que deben preservarse hasta decisión del propietario.
+- ADR-001 define enlace único `User.clerkUserId`, onboarding Organization + OWNER atómico, verificación de sesión Clerk en NestJS, invitaciones locales, revocación, CUSTOMER posterior al booking y retiro gradual del legado con rollback.
+- Prisma continuará sobre PostgreSQL de Supabase. El diseño separa conexión SSL/pooling, ensayo `pg_dump`/restore, reconciliación, cutover y rollback de cualquier checkpoint Clerk.
+- Los planes Free se limitan a desarrollo/QA. Clerk Pro y Supabase Pro son gate obligatorio antes del primer tenant externo o de pago en producción; capacidad, MFA, backups o soporte pueden adelantarlo.
+- Security A0-D es documentación **CANDIDATA A AUDITORÍA**. No implementa Clerk/Supabase, no modifica Profesionales A2, no cierra Profesionales y no inicia Servicios.
+
 ## 2026-08-13 — G0.1: fuentes de gobierno y riesgo de autenticación
 
 - Se añadió `docs/README.md` como entrada universal y se separaron PRD, flujos, arquitectura, modelo de datos, seguridad, gates de entrega, plantilla de brief y ADR de autenticación.

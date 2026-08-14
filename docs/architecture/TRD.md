@@ -1,18 +1,17 @@
-# TRD — Arquitectura técnica vigente
+# TRD — Arquitectura técnica vigente y dirección aprobada
 
 ## Alcance y fuentes
 
-Este documento orienta la arquitectura actual; no reemplaza el código. Prisma es la verdad ejecutable del modelo y [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) es la fuente de contratos publicados.
+Este documento distingue lo que ejecuta hoy el repositorio de la arquitectura aprobada todavía no implementada. El código demuestra el estado real; Prisma es la verdad ejecutable del modelo y [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) documenta contratos publicados.
 
-## Sistema
+## Sistema vigente
 
 - Monorepo pnpm + Turborepo.
 - API: NestJS, TypeScript, Prisma y PostgreSQL en `apps/api`.
 - Web: Next.js App Router, React, TypeScript, Tailwind y React Query en `apps/web`.
 - Cliente HTTP único: [`apps/web/lib/api.ts`](../../apps/web/lib/api.ts).
-- Identidad: JWT propio + Passport + bcryptjs.
-
-No se documenta un proveedor productivo de hosting, correo, caché distribuida o almacenamiento de imágenes porque no está definido como arquitectura vigente.
+- Identidad actual: JWT propio + Passport + bcryptjs; aún no se instaló Clerk.
+- Persistencia actual auditada: PostgreSQL local; aún no se trasladó a Supabase.
 
 ## Capas backend
 
@@ -22,28 +21,61 @@ No se documenta un proveedor productivo de hosting, correo, caché distribuida o
 - DTOs usan validación global con whitelist y rechazo de campos no permitidos.
 - AuditLog registra contexto mínimo sin PII y conserva el patrón fail-open donde está adoptado.
 
-## Multi-tenancy
+## Multi-tenancy y autorización
 
-`Organization` es el tenant; `Membership` une `User × Organization × Role`. Toda consulta de negocio debe aplicar `organizationId` proveniente del contexto autenticado. Las claves compuestas y constraints PostgreSQL refuerzan invariantes donde están implementadas, pero no sustituyen autorización.
+`Organization` es el tenant; `Membership` une `User × Organization × Role`. Toda consulta de negocio aplica `organizationId` derivado del contexto autenticado. Las claves compuestas y constraints PostgreSQL refuerzan invariantes, pero no sustituyen autorización.
+
+La dirección aprobada conserva esta autoridad en NestJS/PostgreSQL. Clerk prueba quién es la persona; no decide a qué Organization pertenece ni qué rol posee. Clerk Organizations no se usará como fuente de autorización y Supabase Auth no se usará.
 
 ## Integridad de agenda
 
 Las operaciones de agenda aprobadas coordinan Professional y Booking mediante transacciones, bloqueo de fila tenant-scoped y restricciones PostgreSQL de solapamiento. La disponibilidad efectiva combina horario global, horario individual, bloqueos y reservas operativas. Los detalles vigentes están en [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md).
 
-## Frontend
+## Frontend vigente
 
 - React Query gestiona estado remoto con aislamiento de keys por alcance.
-- `api.ts` adjunta Bearer token y normaliza errores técnicos; las pantallas deben traducir errores esperados a lenguaje de tarea.
+- `api.ts` adjunta el Bearer JWT propio actual; las pantallas traducen errores esperados a lenguaje de tarea.
+- El JWT y la sesión se almacenan hoy en `localStorage`; es un riesgo abierto hasta Security A0.5.
 - La autorización permanece en API.
 - QA en navegador es obligatorio para declarar una interfaz candidata.
 
-## Autenticación y riesgo abierto
+## Arquitectura de identidad aprobada, no implementada
 
-La implementación actual usa JWT de un día guardado en `localStorage`, revalida Membership por request y limita intentos en memoria. El onboarding público permite componer creación/resolución de Organization con registro OWNER. Consultar [`ADR-001`](../decisions/ADR-001-authentication-strategy.md) antes de cualquier cambio de autenticación.
+```text
+Next.js + Clerk session
+        │ token de sesión verificado
+        ▼
+NestJS Clerk guard ── sub ──► User.clerkUserId
+        │
+        └── contexto local ──► Membership(organizationId, role)
+                                      │
+                                      ▼
+                              autorización de negocio
+```
 
-## Decisiones técnicas
+- Clerk: identidad, registro, login, verificación, recuperación, MFA y sesiones.
+- NestJS: onboarding, selección de tenant, invitaciones de negocio, Guards, roles y toda autorización.
+- PostgreSQL: `User`, `Organization`, `Membership`, entidades de negocio y auditoría.
+- El onboarding crea Organization + primera Membership OWNER en una transacción idempotente y no acepta un tenant preexistente del cliente.
+- La eliminación/cambio de Membership tiene efecto en cada request aunque Clerk mantenga la sesión de identidad.
+- El diseño completo, migración, rollback y checkpoints están en [`ADR-001`](../decisions/ADR-001-authentication-strategy.md).
 
-- No agregar dependencias o proveedores sin decisión aprobada.
+## Arquitectura de datos aprobada, no implementada
+
+- Prisma seguirá operando PostgreSQL y sus migraciones no se reemplazan por un esquema paralelo.
+- Supabase alojará PostgreSQL; no se usará Supabase Auth ni el Data API como autoridad de negocio.
+- Runtime persistente usa conexión directa o Supavisor sesión 5432 según conectividad; migraciones/dump nunca usan el pool transaccional 6543.
+- SSL, rol Prisma dedicado, secretos separados, backups y rollback son gates.
+- Migración de datos y migración Clerk se ejecutan en series de checkpoints separadas.
+
+## Restricciones de despliegue y planes
+
+Free se limita a desarrollo, QA y ensayos. Clerk Pro y Supabase Pro son obligatorios antes del primer tenant externo o de pago en producción, además de cualquier upgrade anticipado por MFA, capacidad, backups, soporte o cuotas. Los límites verificados y el gate exacto se mantienen en ADR-001.
+
+## Decisiones técnicas permanentes
+
+- No aceptar tenant/rol desde claims o bodies no autoritativos.
+- No agregar proveedores o dependencias antes del checkpoint autorizado.
 - No inventar endpoints para desbloquear frontend.
 - Diseñar invariantes concurrentes con garantía PostgreSQL real cuando una lectura previa sea insuficiente.
 - Mantener código, [`DATA_MODEL.md`](DATA_MODEL.md), contratos y estado sincronizados.
