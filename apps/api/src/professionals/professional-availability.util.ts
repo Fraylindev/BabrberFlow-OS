@@ -12,6 +12,13 @@ export interface ZonedDateParts {
   second: number;
 }
 
+export const ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN =
+  /(?:Z|[+-](?:0\d|1\d|2[0-3]):[0-5]\d)$/;
+
+export function hasExplicitTimeZone(value: string): boolean {
+  return ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN.test(value);
+}
+
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 function formatterFor(timeZone: string): Intl.DateTimeFormat {

@@ -121,4 +121,45 @@ describe('Professional DTO validation', () => {
     expect(validateSync(valid)).toEqual([]);
     expect(validateSync(invalid).length).toBeGreaterThan(0);
   });
+
+  it.each([
+    {
+      startTime: '2099-01-05T14:00:00',
+      endTime: '2099-01-05T15:00:00.000Z',
+    },
+    {
+      startTime: '2099-01-05T14:00:00.000Z',
+      endTime: '2099-01-05T15:00:00',
+    },
+  ])('rejects block timestamps without an explicit time zone %#', (payload) => {
+    const dto = plainToInstance(CreateAvailabilityBlockDto, payload);
+
+    expect(validateSync(dto).length).toBeGreaterThan(0);
+  });
+
+  it.each([
+    {
+      startTime: '2099-01-05T14:00:00.000Z',
+      endTime: '2099-01-05T15:00:00.000Z',
+    },
+    {
+      startTime: '2099-01-05T10:00:00.000-04:00',
+      endTime: '2099-01-05T11:00:00.000-04:00',
+    },
+  ])(
+    'accepts block timestamps with UTC or an explicit offset %#',
+    (payload) => {
+      const dto = plainToInstance(CreateAvailabilityBlockDto, payload);
+
+      expect(validateSync(dto)).toEqual([]);
+    },
+  );
+
+  it('applies the explicit-zone rule to partial block updates', () => {
+    const dto = plainToInstance(UpdateAvailabilityBlockDto, {
+      startTime: '2099-01-05T14:00:00',
+    });
+
+    expect(validateSync(dto).length).toBeGreaterThan(0);
+  });
 });

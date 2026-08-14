@@ -233,6 +233,39 @@ describe('ProfessionalAvailabilityService', () => {
     expect(db.professionalAvailabilityBlock.create).not.toHaveBeenCalled();
   });
 
+  it('rejects zone-less block timestamps before opening a transaction', async () => {
+    const { db, service } = createDependencies();
+
+    await expect(
+      service.createBlock(PROFESSIONAL_ID, ORGANIZATION_ID, USER_ID, {
+        startTime: '2099-01-05T14:00:00',
+        endTime: '2099-01-05T15:00:00',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(db.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('accepts UTC block timestamps and persists their exact instants', async () => {
+    const { db, service } = createDependencies();
+    db.professionalAvailabilityBlock.create.mockResolvedValue({
+      id: BLOCK_ID,
+      startTime: START,
+      endTime: END,
+      status: AvailabilityBlockStatus.ACTIVE,
+      note: null,
+    });
+
+    await service.createBlock(PROFESSIONAL_ID, ORGANIZATION_ID, USER_ID, {
+      startTime: START.toISOString(),
+      endTime: END.toISOString(),
+    });
+
+    const createCalls: unknown =
+      db.professionalAvailabilityBlock.create.mock.calls;
+    expect(JSON.stringify(createCalls)).toContain(START.toISOString());
+    expect(JSON.stringify(createCalls)).toContain(END.toISOString());
+  });
+
   it('normalizes an internal note but never writes it to AuditLog', async () => {
     const { db, audit, service } = createDependencies();
     db.professionalAvailabilityBlock.create.mockResolvedValue({

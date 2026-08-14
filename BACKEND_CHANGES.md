@@ -18,6 +18,8 @@ Registro de cambios de contrato de API del backend de Kortek OS. Cada entrada in
 - **`GET /professionals/:id/availability`** — `OWNER`, `ADMIN`. Query opcional `from`, `to`, `status`; rango por defecto de 90 días y máximo 366. Devuelve `{ professionalId, timeZone, inheritsOrganizationHours, weeklySchedule, blocks }` sin `organizationId`.
 - **`PUT /professionals/:id/availability/weekly`** — `OWNER`, `ADMIN`. Body `{ shifts: [{ dayOfWeek, startTime: "HH:mm", endTime: "HH:mm" }] }`; máximo 35, varios turnos diarios y reemplazo atómico. `shifts: []` restablece herencia del horario global.
 - **`POST /professionals/:id/availability/blocks`** y **`PATCH /professionals/:id/availability/blocks/:blockId`** — `OWNER`, `ADMIN`. Body de creación `{ startTime, endTime, note? }`; PATCH permite rango, `status` y nota, pero no vacío. Un bloqueo activo debe terminar en el futuro.
+- En creación y PATCH, `startTime`/`endTime` deben ser ISO-8601 con `Z` u offset explícito `±HH:mm`. Los timestamps sin zona se rechazan con `400`; la regla se aplica en DTO y servicio para evitar que la zona del proceso cambie el instante almacenado.
+- Validación del correctivo: TypeScript, lint y suite API estándar en exit 0, con 180 pruebas aprobadas y 9 integraciones PostgreSQL opt-in omitidas. No cambió Prisma ni las migraciones.
 - Las variantes **`/professionals/me/availability`**, **`/professionals/me/availability/weekly`** y **`/professionals/me/availability/blocks[/:blockId]`** ofrecen el mismo contrato solo a `BARBER`, resolviendo el perfil vinculado por `userId + organizationId` del JWT. `RECEPTIONIST` no modifica disponibilidad.
 - IDs de Professional/bloqueo pasan `ParseUUIDPipe`. Recurso ajeno o inexistente conserva el mismo `404` tenant-scoped.
 

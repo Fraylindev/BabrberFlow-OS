@@ -1719,6 +1719,7 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - `GET /professionals/:id/availability`, `PUT /professionals/:id/availability/weekly`, `POST /professionals/:id/availability/blocks` y `PATCH /professionals/:id/availability/blocks/:blockId`: solo `OWNER`/`ADMIN`, siempre con UUID y `organizationId` del token.
 - `GET /professionals/me/availability`, `PUT /professionals/me/availability/weekly`, `POST /professionals/me/availability/blocks` y `PATCH /professionals/me/availability/blocks/:blockId`: solo `BARBER`, resolviendo exclusivamente su Professional vinculado dentro del tenant del token.
 - `RECEPTIONIST` no recibe endpoints de modificación de disponibilidad. El reemplazo semanal valida `HH:mm`, máximo 35 turnos y ausencia de solapamientos; los bloqueos validan ISO-8601, inicio anterior al fin, rango activo futuro, PATCH no vacío y consulta de hasta 366 días.
+- `startTime` y `endTime` de creación/edición de bloqueos exigen zona horaria inequívoca: sufijo `Z` o un offset explícito `±HH:mm`. Un ISO local sin zona se rechaza con `400`; DTO y servicio aplican la misma regla para evitar interpretación dependiente del servidor.
 - La respuesta interna explícita incluye zona horaria, indicador de herencia, turnos y bloqueos. La nota se limita a estos endpoints internos autorizados; ni el catálogo ni la disponibilidad pública la consultan o exponen.
 
 ### 62.3. Disponibilidad efectiva e integridad
@@ -1734,3 +1735,10 @@ Implementación realizada sobre el checkpoint autorizado `e9dacc348da4b9c507a248
 - A2 Backend está **IMPLEMENTADO / EN REVISIÓN**, como checkpoint candidato; **NO APROBADO / NO CERRADO**. Frontend A2 no fue iniciado.
 - A0 y A1 conservan su aprobación. Entrega B Frontend general continúa en revisión y el módulo Profesionales sigue **NO CERRADO**.
 - No se iniciaron Servicios, Facturación, Equipo, Configuración, Cloudinary, Analytics ni Resumen; Dashboard continúa congelado.
+
+### 62.5. Correctivo de timestamps explícitos (2026-08-13)
+
+- Se cerró la ambigüedad de `@IsISO8601`: los bloqueos ya no aceptan timestamps locales sin zona. Solo se admiten instantes ISO-8601 con `Z` o `±HH:mm`, tanto al crear como al actualizar parcialmente.
+- La validación se mantiene en el DTO y defensivamente en el servicio antes de abrir la transacción. Se añadieron regresiones para rechazo sin zona, aceptación UTC `Z`, aceptación con offset y preservación del instante UTC.
+- Validación final del correctivo: API TypeScript, lint y suite estándar finalizaron con exit 0; 180 pruebas aprobadas y 9 integraciones PostgreSQL opt-in omitidas, sin cambios de migración o persistencia.
+- Estado: correctivo **IMPLEMENTADO / EN REVISIÓN** dentro del candidato A2. A2 no queda aprobado ni cerrado y Frontend A2 continúa sin iniciar.

@@ -14,6 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { AvailabilityBlockStatus } from '@prisma/client';
+import { ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN } from '../professional-availability.util';
 
 const HH_MM_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -43,9 +44,15 @@ export class ReplaceWeeklyScheduleDto {
 
 export class CreateAvailabilityBlockDto {
   @IsISO8601({ strict: true })
+  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN, {
+    message: 'startTime debe incluir Z u offset explícito (±HH:mm)',
+  })
   startTime!: string;
 
   @IsISO8601({ strict: true })
+  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN, {
+    message: 'endTime debe incluir Z u offset explícito (±HH:mm)',
+  })
   endTime!: string;
 
   @IsOptional()
@@ -57,10 +64,16 @@ export class CreateAvailabilityBlockDto {
 export class UpdateAvailabilityBlockDto {
   @IsOptional()
   @IsISO8601({ strict: true })
+  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN, {
+    message: 'startTime debe incluir Z u offset explícito (±HH:mm)',
+  })
   startTime?: string;
 
   @IsOptional()
   @IsISO8601({ strict: true })
+  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN, {
+    message: 'endTime debe incluir Z u offset explícito (±HH:mm)',
+  })
   endTime?: string;
 
   @IsOptional()

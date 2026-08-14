@@ -192,6 +192,7 @@ Solo después de aprobación explícita se pasa al siguiente módulo.
 - Entrega B Frontend: **IMPLEMENTADA / EN REVISIÓN**; candidata a auditoría, todavía no aprobada.
 - Ajustes de búsqueda automática y etiqueta `Todos (sin archivados)`: **IMPLEMENTADOS / EN REVISIÓN**.
 - Checkpoint A2 Backend — Disponibilidad individual: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; todavía no aprobado. Frontend A2 no iniciado.
+- Correctivo A2 de timestamps: los bloqueos exigen ISO-8601 con `Z` u offset explícito `±HH:mm`; fechas sin zona horaria se rechazan.
 - Módulo Profesionales: **NO CERRADO / NO APROBADO**.
 
 ## Resumen / Dashboard

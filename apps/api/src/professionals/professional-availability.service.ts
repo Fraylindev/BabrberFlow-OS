@@ -21,6 +21,7 @@ import {
 import {
   AvailabilityWindow,
   addDaysToIsoDate,
+  hasExplicitTimeZone,
   isIntervalInsideWindows,
   isValidTimeZone,
   minuteToHHmm,
@@ -508,6 +509,11 @@ export class ProfessionalAvailabilityService {
   }
 
   private normalizeBlockRange(startValue: string, endValue: string) {
+    if (!hasExplicitTimeZone(startValue) || !hasExplicitTimeZone(endValue)) {
+      throw new BadRequestException(
+        'Los timestamps del bloqueo deben incluir Z u offset explícito (±HH:mm)',
+      );
+    }
     const startTime = new Date(startValue);
     const endTime = new Date(endValue);
     if (

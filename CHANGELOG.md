@@ -2,6 +2,13 @@
 
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
+## 2026-08-13 — Profesionales A2: correctivo de zona explícita
+
+- Los timestamps de bloqueos temporales ahora exigen ISO-8601 con `Z` u offset `±HH:mm`; una fecha sin zona se rechaza con `400` en creación y actualización.
+- La protección existe en DTO y servicio. Se añadieron pruebas de rechazo sin zona, aceptación UTC/offset y persistencia del instante UTC exacto.
+- TypeScript, lint y suite API estándar finalizaron con exit 0: 180 pruebas aprobadas; Prisma y migraciones no cambiaron.
+- A2 continúa **IMPLEMENTADO / EN REVISIÓN** como candidato; no se inició Frontend A2 ni otro módulo.
+
 ## 2026-08-13 — Profesionales A2 Backend: disponibilidad individual candidata
 
 - Se añadió `Organization.timeZone` con valor inicial `America/Santo_Domingo`, horario semanal opcional con múltiples turnos diarios y bloqueos temporales `ACTIVE/CANCELLED` con nota interna.
