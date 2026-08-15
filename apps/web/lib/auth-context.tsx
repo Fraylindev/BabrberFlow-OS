@@ -150,17 +150,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ownerEmail: string;
     password: string;
   }) {
-    const organization = await api.post<Organization>("/organizations", {
-      name: input.orgName,
-      slug: input.orgSlug,
-      email: input.orgEmail,
-    });
-
     await api.post("/auth/register", {
       name: input.ownerName,
       email: input.ownerEmail,
       password: input.password,
-      organizationId: organization.id,
+      organizationName: input.orgName,
+      organizationSlug: input.orgSlug,
     });
 
     // Encadenamos el nuevo login de un solo paso

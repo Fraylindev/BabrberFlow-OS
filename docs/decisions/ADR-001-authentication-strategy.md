@@ -206,10 +206,19 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, los 19 usuarios existentes, Prisma, Supabase y frontend no cambian.
 - Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership, revocación local de acceso, arranque sin variables Clerk, fallo cerrado del loader, fallo cerrado del guard por error inesperado y reutilización del cliente inicializado.
 
+## Resultado de Security A0.3-H (Hardening Legacy)
+
+- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y elimina `organizationId`.
+- `AuthService.register()` crea el `User`, `Organization` y `Membership` OWNER en una sola transacción `SERIALIZABLE` simulada (o transaccional de Prisma).
+- `POST /organizations` (`OrganizationsController`) ha sido protegido para requerir JWT y el rol `OWNER`, dejando de ser un flujo público para altas iniciales.
+- Se ha actualizado la migración `password` en la tabla `User` a `String?` (nullable).
+- Se adaptó el frontend web (`auth-context.tsx`) para enviar el nuevo payload de registro atómico en una única petición a `/auth/register`.
+- El endpoint `/auth/login` se modificó de manera compatible para aceptar cuentas sin password (retorna el genérico `401 Credenciales inválidas`), sin generar error interno `bcrypt.compare` nulo.
+
 ## Fuera de alcance del diagnóstico Security A0-D
 
 - Instalar Clerk, crear proyectos Supabase o cambiar variables/secrets.
-- Modificar endpoints, DTOs, Prisma, dependencias, frontend o base de datos.
+- Modificar endpoints, DTOs, Prisma, dependencias, frontend o base de datos no mencionados.
 - Clasificar, fusionar, eliminar o importar usuarios.
 - Corregir/cerrar Profesionales A2 o iniciar Servicios.
 

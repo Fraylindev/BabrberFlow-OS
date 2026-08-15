@@ -22,7 +22,11 @@ export class RegisterDto {
   @MinLength(PASSWORD_MIN_LENGTH, { message: PASSWORD_MIN_LENGTH_MESSAGE })
   password!: string;
 
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
-  organizationId!: string;
+  organizationName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  organizationSlug!: string;
 }

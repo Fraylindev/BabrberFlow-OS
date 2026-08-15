@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-15 — Security A0.3-H: Hardening legacy
+
+- **Registro atómico:** El endpoint `POST /auth/register` ya no acepta `organizationId`. Ahora exige `organizationName` y `organizationSlug` y crea atómicamente el `User`, `Organization` y `Membership OWNER`. Esto mitiga el riesgo de escalamiento de privilegios al registrarse.
+- **Protección de organizaciones:** `POST /organizations` (`OrganizationsController`) ahora está protegido por `JwtAuthGuard` y `RolesGuard(OWNER)`, dejando de ser un flujo público para el alta inicial de barberías.
+- **Cuentas sin contraseña:** `User.password` ahora es `String?`. El endpoint `/auth/login` se modificó de manera retrocompatible para manejar cuentas sin contraseña (como futuras cuentas creadas por Clerk) retornando un genérico `401 Credenciales inválidas` para prevenir fugas de información o errores internos.
+- **Frontend web:** Se actualizó `apps/web/lib/auth-context.tsx` para enviar el nuevo payload unificado a `/auth/register`.
+- **Estado:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN**.
+
 ## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables Clerk
 
 - Corregido el hallazgo de auditoría: `ClerkAuthGuard` no debe exigir claves al arrancar el proceso. Los providers pasan a devolver funciones tipadas (`ClerkConfigLoader`, `ClerkClientFactory`); la evaluación de secretos y la creación del cliente Clerk ocurren solo en la primera petición que alcanza el guard.

@@ -148,6 +148,19 @@ describe('AuthService — autenticación', () => {
       ).rejects.toThrow('Credenciales inválidas');
     });
 
+    it('rechaza con 401 cuando la cuenta existe pero no tiene contraseña local (es de Clerk)', async () => {
+      prisma.db.user.findUnique.mockResolvedValue({
+        id: 'user-clerk',
+        email: 'clerk@x.com',
+        name: 'Clerk User',
+        password: null,
+      });
+
+      await expect(
+        service.login({ email: 'clerk@x.com', password: PASSWORD }),
+      ).rejects.toThrow('Credenciales inválidas');
+    });
+
     it('bloquea la cuenta tras demasiados intentos fallidos, incluso con la contraseña correcta', async () => {
       await mockValidUser();
 
@@ -185,7 +198,6 @@ describe('AuthService — autenticación', () => {
 
   describe('register', () => {
     it('rechaza con 409 si el correo ya existe globalmente', async () => {
-      prisma.db.organization.findUnique.mockResolvedValue({ id: 'org-1' });
       prisma.db.user.findUnique.mockResolvedValue({ id: 'user-existente' });
 
       await expect(
@@ -193,9 +205,32 @@ describe('AuthService — autenticación', () => {
           name: 'Otro',
           email: EMAIL,
           password: PASSWORD,
-          organizationId: 'org-1',
+          organizationName: 'Mi Barberia',
+          organizationSlug: 'mi-barberia',
         }),
       ).rejects.toMatchObject({ status: 409 });
+    });
+
+    it('crea usuario, organizacion y membresia atomica si no hay conflictos', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      prisma.db.$transaction.mockResolvedValue({
+        id: 'new-user',
+        name: 'Nuevo',
+        email: EMAIL,
+        password: 'hashed-password',
+      });
+
+      const result = await service.register({
+        name: 'Nuevo',
+        email: EMAIL,
+        password: PASSWORD,
+        organizationName: 'Nueva Barberia',
+        organizationSlug: 'nueva-barberia',
+      });
+
+      expect(prisma.db.$transaction).toHaveBeenCalled();
+      expect(result.id).toBe('new-user');
+      expect((result as any).password).toBeUndefined();
     });
   });
 });

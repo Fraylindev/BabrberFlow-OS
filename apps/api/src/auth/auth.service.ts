@@ -67,15 +67,7 @@ export class AuthService {
   // (Invitar a alguien que YA tiene cuenta a una organización adicional
   // es un caso distinto, cubierto por TeamService.inviteUser().)
   async register(registerDto: RegisterDto) {
-    const { name, email, password, organizationId } = registerDto;
-
-    const organization = await this.prisma.db.organization.findUnique({
-      where: { id: organizationId },
-    });
-
-    if (!organization) {
-      throw new BadRequestException('La organización no existe');
-    }
+    const { name, email, password, organizationName, organizationSlug } = registerDto;
 
     const existingUser = await this.prisma.db.user.findUnique({
       where: { email },
@@ -91,19 +83,27 @@ export class AuthService {
 
     try {
       const user = await this.prisma.db.$transaction(async (tx) => {
+        const org = await tx.organization.create({
+          data: {
+            name: organizationName,
+            slug: organizationSlug,
+            email,
+          },
+        });
+
         const createdUser = await tx.user.create({
           data: {
             name,
             email,
             password: hashedPassword,
-            lastOrganizationId: organizationId,
+            lastOrganizationId: org.id,
           },
         });
 
         await tx.membership.create({
           data: {
             userId: createdUser.id,
-            organizationId,
+            organizationId: org.id,
             role: 'OWNER',
           },
         });
@@ -115,9 +115,15 @@ export class AuthService {
       const { password: _, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (err) {
-      if (isUniqueConstraintError(err, 'email')) {
+      if (isUniqueConstraintError(err, 'slug')) {
         throw new ConflictException(
-          'Ya existe una cuenta con este correo. Inicia sesión en vez de registrarte de nuevo.',
+          'El slug de la organización ya está en uso. Elige otro.',
+        );
+      }
+      if (isUniqueConstraintError(err, 'email')) {
+        // En caso de que el email ya exista en Organization
+        throw new ConflictException(
+          'Ya existe una organización o cuenta con este correo.',
         );
       }
       throw err;
@@ -142,7 +148,7 @@ export class AuthService {
 
     const user = await this.prisma.db.user.findUnique({ where: { email } });
 
-    const isPasswordValid = user
+    const isPasswordValid = (user && user.password)
       ? await bcrypt.compare(password, user.password)
       : false;
 

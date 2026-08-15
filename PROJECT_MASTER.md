@@ -95,6 +95,8 @@ Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nulla
 
 Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
 
+Security A0.3-H: **IMPLEMENTADO / EN REVISIÓN**. Hardening del sistema legacy y web. Hace que la creación de organización y primer usuario sea atómica en `/auth/register` sin aceptar `organizationId` arbitrario del cliente, eliminando la vulnerabilidad de escalamiento de privilegios. Protege `POST /organizations` para restringirlo a operaciones autenticadas de OWNER. Ajusta `User.password` como nullable para compatibilidad con autenticación futura, manejando caídas seguras en `/auth/login` sin contraseñas. El frontend web consume este flujo atómico.
+
 ## 5. Decisiones activas de dominio
 
 ### Reservas y facturación
@@ -126,11 +128,10 @@ Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade ver
 ### Autenticación
 
 - La implementación actual usa JWT propio de un día en `localStorage` y revalida Membership en cada request.
-- `POST /organizations` es público; `GET /organizations/by-slug/:slug` expone el ID; `/auth/register` acepta `organizationId` y crea Membership OWNER.
-- Esa composición permite escalamiento de privilegios sobre un tenant existente y es un riesgo crítico abierto.
+- `POST /organizations` es privado (OWNER) tras A0.3-H. El registro de barberías nuevas es atómico en `/auth/register` usando `organizationName` y `organizationSlug`.
 - Recuperación, verificación de correo, MFA, refresh rotativo y revocación general de sesiones no existen; los límites actuales son locales al proceso, no distribuidos.
 - Decisión aprobada: Clerk gestionará identidad, login, registro, recuperación y sesiones. NestJS verificará la sesión y resolverá `User` + Membership local en cada petición.
-- `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local creará Organization + primera Membership OWNER de forma atómica e idempotente.
+- `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local crea Organization + primera Membership OWNER de forma atómica e idempotente.
 - La base A0.2 usa `authenticateRequest()` con session tokens, origins autorizados (`CLERK_AUTHORIZED_PARTIES`, variable independiente de `CORS_ALLOWED_ORIGINS`) y audiencia cuando el token/configuración la define; valida el issuer de la instancia y consulta en Clerk que la sesión siga `active`. Config y cliente Clerk se crean en la primera petición al guard, no al arrancar; si la config no está, el guard falla cerrado con 401 genérico y log interno seguro. Un selector de tenant aportado por el cliente solo elige contexto: la Membership compuesta local debe existir y su rol es el único aceptado.
 - `ClerkAuthGuard` no está aplicado a rutas. Los 19 Users siguen sin enlace y ningún flujo los busca por correo.
 - Los cambios de contraseña, verificación, MFA, logout y revocación pasarán a Clerk; retirar JWT/password local ocurrirá solo tras QA y ventana de rollback.
@@ -163,7 +164,6 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 7. Riesgos y límites conocidos
 
-- **Autenticación / OWNER:** el onboarding público actual acepta un tenant elegido por el cliente y puede conceder OWNER sobre una Organization existente. Ver [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md). Sigue abierto hasta implementar y aprobar Security A0.3.
 - JWT en `localStorage`, falta de recuperación/verificación/MFA/revocación general y rate limiting no distribuido amplían el riesgo de cuenta y sesión.
 - Doce Users locales no están clasificados como QA o reales; no pueden importarse, fusionarse ni eliminarse por inferencia.
 - Clerk/Supabase Free no satisfacen el gate operativo de producción real: Clerk Hobby no ofrece MFA productivo y Supabase Free carece de backups automáticos, puede pausarse y limita la base a 500 MB.
@@ -177,11 +177,11 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el checkpoint candidato **Security A0.2**.
-2. No aplicar `ClerkAuthGuard` a endpoints ni iniciar Security A0.3 hasta aprobación explícita.
-3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
-4. Mantener Frontend A2 de Profesionales en revisión, sin corregirlo ni cerrarlo dentro de Security A0.2.
-5. No iniciar Servicios, frontend Clerk, Supabase ni otro cambio funcional durante este checkpoint.
+1. Validar con QA real en web el flujo de registro.
+2. Hacer commit de Security A0.3-H con las modificaciones y documentación actualizadas.
+3. No iniciar Security A0.3 (Onboarding Clerk) sin autorización.
+4. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace, salvo las modificaciones hechas en A0.3-H para proteger de error 500 a las nuevas cuentas.
+5. Mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 
