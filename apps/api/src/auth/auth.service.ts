@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import {
   Injectable,
   BadRequestException,
@@ -67,7 +68,7 @@ export class AuthService {
   // (Invitar a alguien que YA tiene cuenta a una organización adicional
   // es un caso distinto, cubierto por TeamService.inviteUser().)
   async register(registerDto: RegisterDto) {
-    const { name, email, password, organizationName, organizationSlug } = registerDto;
+    const { name, email, password, organizationName, organizationSlug, organizationEmail } = registerDto;
 
     const existingUser = await this.prisma.db.user.findUnique({
       where: { email },
@@ -81,52 +82,83 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    try {
-      const user = await this.prisma.db.$transaction(async (tx) => {
-        const org = await tx.organization.create({
-          data: {
-            name: organizationName,
-            slug: organizationSlug,
-            email,
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+
+    while (attempt < MAX_RETRIES) {
+      try {
+        const user = await this.prisma.db.$transaction(
+          async (tx) => {
+            const org = await tx.organization.create({
+              data: {
+                name: organizationName,
+                slug: organizationSlug,
+                email: organizationEmail,
+              },
+            });
+
+            const createdUser = await tx.user.create({
+              data: {
+                name,
+                email,
+                password: hashedPassword,
+                lastOrganizationId: org.id,
+              },
+            });
+
+            await tx.membership.create({
+              data: {
+                userId: createdUser.id,
+                organizationId: org.id,
+                role: 'OWNER',
+              },
+            });
+
+            await this.audit.log(
+              {
+                organizationId: org.id,
+                userId: createdUser.id,
+                action: 'CREATE',
+                entity: 'Organization',
+                entityId: org.id,
+              },
+              tx,
+            );
+
+            return createdUser;
           },
-        });
-
-        const createdUser = await tx.user.create({
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-            lastOrganizationId: org.id,
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           },
-        });
-
-        await tx.membership.create({
-          data: {
-            userId: createdUser.id,
-            organizationId: org.id,
-            role: 'OWNER',
-          },
-        });
-
-        return createdUser;
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'slug')) {
-        throw new ConflictException(
-          'El slug de la organización ya está en uso. Elige otro.',
         );
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      } catch (err: any) {
+        if (err.code === 'P2034') {
+          attempt++;
+          if (attempt >= MAX_RETRIES) {
+            throw new ConflictException(
+              'No se pudo completar el registro debido a un conflicto concurrente tras varios intentos.',
+            );
+          }
+          continue; // Reintentar
+        }
+
+        if (isUniqueConstraintError(err, 'slug')) {
+          throw new ConflictException(
+            'El slug de la organización ya está en uso. Elige otro.',
+          );
+        }
+        if (isUniqueConstraintError(err, 'email')) {
+          // En caso de que el email ya exista en Organization
+          throw new ConflictException(
+            'Ya existe una organización o cuenta con este correo.',
+          );
+        }
+        throw err;
       }
-      if (isUniqueConstraintError(err, 'email')) {
-        // En caso de que el email ya exista en Organization
-        throw new ConflictException(
-          'Ya existe una organización o cuenta con este correo.',
-        );
-      }
-      throw err;
     }
   }
 
@@ -248,6 +280,11 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    if (!user.password) {
+      await this.passwordChangeLimiter.recordFailure(userId);
+      throw new BadRequestException('La cuenta no tiene contraseña local configurada.');
     }
 
     const isCurrentValid = await bcrypt.compare(

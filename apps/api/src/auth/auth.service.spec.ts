@@ -207,18 +207,25 @@ describe('AuthService — autenticación', () => {
           password: PASSWORD,
           organizationName: 'Mi Barberia',
           organizationSlug: 'mi-barberia',
+          organizationEmail: 'org@barberia.com',
         }),
       ).rejects.toMatchObject({ status: 409 });
     });
 
     it('crea usuario, organizacion y membresia atomica si no hay conflictos', async () => {
       prisma.db.user.findUnique.mockResolvedValue(null);
-      prisma.db.$transaction.mockResolvedValue({
-        id: 'new-user',
-        name: 'Nuevo',
-        email: EMAIL,
-        password: 'hashed-password',
+      
+      const mockTx = {
+        organization: { create: jest.fn().mockResolvedValue({ id: 'org-new' }) },
+        user: { create: jest.fn().mockResolvedValue({ id: 'user-new', name: 'Nuevo', email: EMAIL, password: 'hashed-password' }) },
+        membership: { create: jest.fn().mockResolvedValue({}) },
+      };
+      
+      prisma.db.$transaction.mockImplementation(async (cb) => {
+        return cb(mockTx);
       });
+
+      const auditSpy = jest.spyOn(service['audit'], 'log');
 
       const result = await service.register({
         name: 'Nuevo',
@@ -226,11 +233,43 @@ describe('AuthService — autenticación', () => {
         password: PASSWORD,
         organizationName: 'Nueva Barberia',
         organizationSlug: 'nueva-barberia',
+        organizationEmail: 'org@barberia.com',
       });
 
       expect(prisma.db.$transaction).toHaveBeenCalled();
-      expect(result.id).toBe('new-user');
+      expect(mockTx.organization.create).toHaveBeenCalledWith({
+        data: { name: 'Nueva Barberia', slug: 'nueva-barberia', email: 'org@barberia.com' },
+      });
+      expect(mockTx.user.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ email: EMAIL, lastOrganizationId: 'org-new' }) })
+      );
+      expect(mockTx.membership.create).toHaveBeenCalledWith({
+        data: { userId: 'user-new', organizationId: 'org-new', role: 'OWNER' },
+      });
+      expect(auditSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'CREATE', entity: 'Organization', entityId: 'org-new' }),
+        mockTx
+      );
+
+      expect(result.id).toBe('user-new');
       expect((result as any).password).toBeUndefined();
+    });
+  });
+
+  describe('updatePassword', () => {
+    it('rechaza con BadRequestException si el usuario no tiene contraseña local (es de Clerk)', async () => {
+      prisma.db.user.findUnique.mockResolvedValue({
+        id: 'user-clerk',
+        email: 'clerk@x.com',
+        password: null,
+      });
+
+      await expect(
+        service.updatePassword('user-clerk', 'org-1', {
+          currentPassword: 'any',
+          newPassword: 'new',
+        }),
+      ).rejects.toThrow('La cuenta no tiene contraseña local configurada.');
     });
   });
 });

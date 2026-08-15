@@ -26,9 +26,10 @@ export class AuditService {
 
   constructor(private prisma: PrismaService) {}
 
-  async log(entry: AuditLogEntry): Promise<void> {
+  async log(entry: AuditLogEntry, tx?: any): Promise<void> {
     try {
-      await this.prisma.db.auditLog.create({
+      const db = tx ?? this.prisma.db;
+      await db.auditLog.create({
         data: {
           organizationId: entry.organizationId,
           userId: entry.userId ?? null,

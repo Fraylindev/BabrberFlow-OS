@@ -29,4 +29,7 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   organizationSlug!: string;
+
+  @IsEmail()
+  organizationEmail!: string;
 }

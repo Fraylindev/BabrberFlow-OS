@@ -6,11 +6,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 ## 2026-08-15 — Security A0.3-H: Hardening legacy
 
-- **Registro atómico:** El endpoint `POST /auth/register` ya no acepta `organizationId`. Ahora exige `organizationName` y `organizationSlug` y crea atómicamente el `User`, `Organization` y `Membership OWNER`. Esto mitiga el riesgo de escalamiento de privilegios al registrarse.
+- **Registro atómico:** El endpoint `POST /auth/register` ya no acepta `organizationId`. Ahora exige `organizationName`, `organizationSlug` y `organizationEmail`, y crea atómicamente el `User`, `Organization` y `Membership OWNER`. Esto ocurre en una transacción PostgreSQL estricta (aislamiento `Serializable`) con reintentos controlados para `P2034` y fallos inmediatos por colisiones (`P2002`).
 - **Protección de organizaciones:** `POST /organizations` (`OrganizationsController`) ahora está protegido por `JwtAuthGuard` y `RolesGuard(OWNER)`, dejando de ser un flujo público para el alta inicial de barberías.
-- **Cuentas sin contraseña:** `User.password` ahora es `String?`. El endpoint `/auth/login` se modificó de manera retrocompatible para manejar cuentas sin contraseña (como futuras cuentas creadas por Clerk) retornando un genérico `401 Credenciales inválidas` para prevenir fugas de información o errores internos.
+- **Cuentas sin contraseña:** `User.password` ahora es `String?`. El endpoint `/auth/login` se modificó de manera retrocompatible para manejar cuentas sin contraseña (como futuras cuentas creadas por Clerk) retornando un genérico `401 Credenciales inválidas` para prevenir fugas de información o errores internos. La actualización de contraseña (`/auth/update-password`) verifica y bloquea operaciones en cuentas sin contraseña local antes de verificar hashes.
+- **Auditoría:** La transacción atómica escribe en el `AuditLog` un evento `CREATE` sin incluir información sensible (PII) si es exitosa.
 - **Frontend web:** Se actualizó `apps/web/lib/auth-context.tsx` para enviar el nuevo payload unificado a `/auth/register`.
-- **Estado:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN**.
+- **Estado:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado con aislamiento, correo de organización explícito y QA robustecido).
 
 ## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables Clerk
 

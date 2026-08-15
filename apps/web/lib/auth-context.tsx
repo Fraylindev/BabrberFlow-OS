@@ -156,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: input.password,
       organizationName: input.orgName,
       organizationSlug: input.orgSlug,
+      organizationEmail: input.orgEmail,
     });
 
     // Encadenamos el nuevo login de un solo paso

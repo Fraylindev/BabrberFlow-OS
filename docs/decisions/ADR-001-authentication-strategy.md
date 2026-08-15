@@ -208,12 +208,13 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 
 ## Resultado de Security A0.3-H (Hardening Legacy)
 
-- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y elimina `organizationId`.
-- `AuthService.register()` crea el `User`, `Organization` y `Membership` OWNER en una sola transacción `SERIALIZABLE` simulada (o transaccional de Prisma).
+- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y elimina `organizationId`.
+- `AuthService.register()` crea el `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (aislamiento `Serializable`). Se incluye un bucle de reintento acotado (máximo 3 intentos) exclusivo para fallas de serialización (`P2034`), mientras que conflictos de negocio (P2002) se abortan inmediatamente.
+- La transacción atómica también escribe el evento `CREATE` en el `AuditLog` sin incluir PII y garantizando su consistencia.
 - `POST /organizations` (`OrganizationsController`) ha sido protegido para requerir JWT y el rol `OWNER`, dejando de ser un flujo público para altas iniciales.
 - Se ha actualizado la migración `password` en la tabla `User` a `String?` (nullable).
 - Se adaptó el frontend web (`auth-context.tsx`) para enviar el nuevo payload de registro atómico en una única petición a `/auth/register`.
-- El endpoint `/auth/login` se modificó de manera compatible para aceptar cuentas sin password (retorna el genérico `401 Credenciales inválidas`), sin generar error interno `bcrypt.compare` nulo.
+- El endpoint `/auth/login` se modificó de manera compatible para aceptar cuentas sin password (retorna el genérico `401 Credenciales inválidas`), sin generar error interno `bcrypt.compare` nulo. Igualmente se protegió la actualización de contraseña local.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 
