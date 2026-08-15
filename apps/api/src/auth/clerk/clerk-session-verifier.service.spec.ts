@@ -1,7 +1,10 @@
 import { UnauthorizedException } from '@nestjs/common';
 import type { ClerkBackendClient } from './clerk-auth.providers';
 import type { ClerkAuthConfig } from './clerk-auth.config';
-import type { ClerkConfigLoader, ClerkClientFactory } from './clerk-auth.providers';
+import type {
+  ClerkConfigLoader,
+  ClerkClientFactory,
+} from './clerk-auth.providers';
 import { ClerkSessionVerifierService } from './clerk-session-verifier.service';
 
 const userId = 'user_clerk_123';

@@ -65,7 +65,10 @@ describe('AuthService — autenticación', () => {
           },
         },
         { provide: CACHE_MANAGER, useValue: cache },
-        { provide: AuditService, useValue: { log: jest.fn() } },
+        {
+          provide: AuditService,
+          useValue: { log: jest.fn(), logTransactional: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -213,19 +216,26 @@ describe('AuthService — autenticación', () => {
     });
 
     it('crea usuario, organizacion y membresia atomica si no hay conflictos', async () => {
-      prisma.db.user.findUnique.mockResolvedValue(null);
-      
+      const auditSpy = jest.spyOn(service['audit'], 'logTransactional');
+
       const mockTx = {
-        organization: { create: jest.fn().mockResolvedValue({ id: 'org-new' }) },
-        user: { create: jest.fn().mockResolvedValue({ id: 'user-new', name: 'Nuevo', email: EMAIL, password: 'hashed-password' }) },
+        organization: {
+          create: jest.fn().mockResolvedValue({ id: 'org-new' }),
+        },
+        user: {
+          create: jest.fn().mockResolvedValue({
+            id: 'user-new',
+            name: 'Nuevo',
+            email: EMAIL,
+            password: 'hashed-password',
+          }),
+        },
         membership: { create: jest.fn().mockResolvedValue({}) },
       };
-      
+
       prisma.db.$transaction.mockImplementation(async (cb) => {
         return cb(mockTx);
       });
-
-      const auditSpy = jest.spyOn(service['audit'], 'log');
 
       const result = await service.register({
         name: 'Nuevo',
@@ -238,17 +248,30 @@ describe('AuthService — autenticación', () => {
 
       expect(prisma.db.$transaction).toHaveBeenCalled();
       expect(mockTx.organization.create).toHaveBeenCalledWith({
-        data: { name: 'Nueva Barberia', slug: 'nueva-barberia', email: 'org@barberia.com' },
+        data: {
+          name: 'Nueva Barberia',
+          slug: 'nueva-barberia',
+          email: 'org@barberia.com',
+        },
       });
       expect(mockTx.user.create).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ email: EMAIL, lastOrganizationId: 'org-new' }) })
+        expect.objectContaining({
+          data: expect.objectContaining({
+            email: EMAIL,
+            lastOrganizationId: 'org-new',
+          }),
+        }),
       );
       expect(mockTx.membership.create).toHaveBeenCalledWith({
         data: { userId: 'user-new', organizationId: 'org-new', role: 'OWNER' },
       });
       expect(auditSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ action: 'CREATE', entity: 'Organization', entityId: 'org-new' }),
-        mockTx
+        expect.objectContaining({
+          action: 'CREATE',
+          entity: 'Organization',
+          entityId: 'org-new',
+        }),
+        mockTx,
       );
 
       expect(result.id).toBe('user-new');

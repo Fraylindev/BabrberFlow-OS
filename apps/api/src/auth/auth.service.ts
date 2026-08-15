@@ -68,7 +68,14 @@ export class AuthService {
   // (Invitar a alguien que YA tiene cuenta a una organización adicional
   // es un caso distinto, cubierto por TeamService.inviteUser().)
   async register(registerDto: RegisterDto) {
-    const { name, email, password, organizationName, organizationSlug, organizationEmail } = registerDto;
+    const {
+      name,
+      email,
+      password,
+      organizationName,
+      organizationSlug,
+      organizationEmail,
+    } = registerDto;
 
     const existingUser = await this.prisma.db.user.findUnique({
       where: { email },
@@ -114,7 +121,7 @@ export class AuthService {
               },
             });
 
-            await this.audit.log(
+            await this.audit.logTransactional(
               {
                 organizationId: org.id,
                 userId: createdUser.id,
@@ -180,9 +187,10 @@ export class AuthService {
 
     const user = await this.prisma.db.user.findUnique({ where: { email } });
 
-    const isPasswordValid = (user && user.password)
-      ? await bcrypt.compare(password, user.password)
-      : false;
+    const isPasswordValid =
+      user && user.password
+        ? await bcrypt.compare(password, user.password)
+        : false;
 
     if (!user || !isPasswordValid) {
       await this.loginLimiter.recordFailure(email);
@@ -284,7 +292,9 @@ export class AuthService {
 
     if (!user.password) {
       await this.passwordChangeLimiter.recordFailure(userId);
-      throw new BadRequestException('La cuenta no tiene contraseña local configurada.');
+      throw new BadRequestException(
+        'La cuenta no tiene contraseña local configurada.',
+      );
     }
 
     const isCurrentValid = await bcrypt.compare(

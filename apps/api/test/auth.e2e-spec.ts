@@ -4,6 +4,9 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from './../src/prisma/prisma.service';
 
+import { ValidationPipe } from '@nestjs/common';
+import { globalValidationPipeOptions } from './../src/common/validation.config';
+
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -14,8 +17,9 @@ describe('AuthController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
     await app.init();
-    
+
     prisma = app.get<PrismaService>(PrismaService);
   });
 
@@ -36,30 +40,33 @@ describe('AuthController (e2e)', () => {
           organizationEmail: 'org@test.com',
           organizationId: 'should-not-be-allowed',
         });
-        
+
       expect(res.status).toBe(400);
-      expect(res.body.message).toEqual(expect.arrayContaining([expect.stringContaining('organizationId')]));
+      expect(res.body.message).toEqual(
+        expect.arrayContaining([expect.stringContaining('organizationId')]),
+      );
     });
   });
 
   describe('Concurrent Registration', () => {
     it('handles concurrent registration for the same email gracefully', async () => {
+      const ts = Date.now();
       const payload1 = {
         name: 'Concurrent User 1',
-        email: 'concurrent@test.com',
+        email: `concurrent-${ts}@test.com`,
         password: 'password123',
-        organizationName: 'Concurrent Org 1',
-        organizationSlug: 'concurrent-org-1',
-        organizationEmail: 'org1@test.com',
+        organizationName: `Concurrent Org 1 ${ts}`,
+        organizationSlug: `concurrent-org-1-${ts}`,
+        organizationEmail: `org1-${ts}@test.com`,
       };
-      
+
       const payload2 = {
         name: 'Concurrent User 2',
-        email: 'concurrent@test.com', // same email
+        email: `concurrent-${ts}@test.com`, // same email
         password: 'password123',
-        organizationName: 'Concurrent Org 2',
-        organizationSlug: 'concurrent-org-2',
-        organizationEmail: 'org2@test.com',
+        organizationName: `Concurrent Org 2 ${ts}`,
+        organizationSlug: `concurrent-org-2-${ts}`,
+        organizationEmail: `org2-${ts}@test.com`,
       };
 
       const [res1, res2] = await Promise.all([

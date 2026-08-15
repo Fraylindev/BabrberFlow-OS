@@ -3,8 +3,10 @@ import {
   IsEmail,
   IsNotEmpty,
   MinLength,
-  IsUUID,
+  MaxLength,
+  Matches,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MIN_LENGTH_MESSAGE,
@@ -28,6 +30,15 @@ export class RegisterDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(3, { message: 'El slug debe tener al menos 3 caracteres' })
+  @MaxLength(50, { message: 'El slug no puede exceder 50 caracteres' })
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+    message:
+      'El slug solo puede contener letras minúsculas, números y guiones intermedios',
+  })
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.toLowerCase() : value,
+  )
   organizationSlug!: string;
 
   @IsEmail()

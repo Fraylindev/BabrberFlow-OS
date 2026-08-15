@@ -4,6 +4,9 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from './../src/prisma/prisma.service';
 
+import { ValidationPipe } from '@nestjs/common';
+import { globalValidationPipeOptions } from './../src/common/validation.config';
+
 describe('OrganizationsController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -16,31 +19,28 @@ describe('OrganizationsController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
     await app.init();
-    
-    prisma = app.get<PrismaService>(PrismaService);
-    
-    // Clean up
-    await prisma.db.membership.deleteMany();
-    await prisma.db.user.deleteMany();
-    await prisma.db.organization.deleteMany();
 
+    prisma = app.get<PrismaService>(PrismaService);
+
+    const ts = Date.now();
     // Register a valid owner via the auth endpoint to get a token
     const res1 = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
         name: 'Owner',
-        email: 'owner@test.com',
+        email: `owner-${ts}@test.com`,
         password: 'password123',
-        organizationName: 'Org1',
-        organizationSlug: 'org1',
-        organizationEmail: 'org1@test.com',
+        organizationName: `Org1-${ts}`,
+        organizationSlug: `org1-${ts}`,
+        organizationEmail: `org1-${ts}@test.com`,
       });
-      
+
     // Login to get token
     const loginRes1 = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: 'owner@test.com', password: 'password123' });
+      .send({ email: `owner-${ts}@test.com`, password: 'password123' });
     ownerToken = loginRes1.body.accessToken;
 
     // We need a barber. Create one directly or via login trick if possible.
@@ -48,35 +48,32 @@ describe('OrganizationsController (e2e)', () => {
       .post('/auth/register')
       .send({
         name: 'Barber',
-        email: 'barber2@test.com',
+        email: `barber2-${ts}@test.com`,
         password: 'password123',
-        organizationName: 'Org3',
-        organizationSlug: 'org3',
-        organizationEmail: 'org3@test.com',
+        organizationName: `Org3-${ts}`,
+        organizationSlug: `org3-${ts}`,
+        organizationEmail: `org3-${ts}@test.com`,
       });
-      
-    let loginRes2 = await request(app.getHttpServer())
+
+    const loginRes2 = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: 'barber2@test.com', password: 'password123' });
-    
+      .send({ email: `barber2-${ts}@test.com`, password: 'password123' });
+
     const barberId = loginRes2.body.user.id;
     // update role to BARBER
     await prisma.db.membership.updateMany({
       where: { userId: barberId },
-      data: { role: 'BARBER' }
+      data: { role: 'BARBER' },
     });
-    
+
     // Refresh token after role change
     const loginRes3 = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: 'barber2@test.com', password: 'password123' });
+      .send({ email: `barber2-${ts}@test.com`, password: 'password123' });
     barberToken = loginRes3.body.accessToken;
   });
 
   afterAll(async () => {
-    await prisma.db.membership.deleteMany();
-    await prisma.db.user.deleteMany();
-    await prisma.db.organization.deleteMany();
     await app.close();
   });
 

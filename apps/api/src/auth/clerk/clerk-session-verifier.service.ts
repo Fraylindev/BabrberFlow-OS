@@ -1,7 +1,14 @@
-import { Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   CLERK_AUTH_CONFIG,
   CLERK_BACKEND_CLIENT,
+} from './clerk-auth.providers';
+import type {
   ClerkConfigLoader,
   ClerkClientFactory,
   ClerkBackendClient,

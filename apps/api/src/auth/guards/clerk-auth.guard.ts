@@ -78,7 +78,9 @@ export class ClerkAuthGuard implements CanActivate {
       const kind =
         error instanceof Error ? error.constructor.name : 'UnknownError';
       this.logger.error(`Error inesperado en ClerkAuthGuard: ${kind}`);
-      throw new UnauthorizedException('Sesión no válida para esta organización');
+      throw new UnauthorizedException(
+        'Sesión no válida para esta organización',
+      );
     }
   }
 

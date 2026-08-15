@@ -82,8 +82,9 @@ describe('Clerk auth config', () => {
     // llamar directamente a loadClerkAuthConfig. Crear el cargador no consume
     // el entorno y no lanza aunque falten todas las variables Clerk.
     const emptyEnv: NodeJS.ProcessEnv = {};
-    const makeLoader = (): (() => ReturnType<typeof loadClerkAuthConfig>) =>
-      () => loadClerkAuthConfig(emptyEnv);
+    const makeLoader =
+      (): (() => ReturnType<typeof loadClerkAuthConfig>) => () =>
+        loadClerkAuthConfig(emptyEnv);
 
     // Crear la función cargadora no lanza (equivalente al arranque del módulo)
     const loader = makeLoader();

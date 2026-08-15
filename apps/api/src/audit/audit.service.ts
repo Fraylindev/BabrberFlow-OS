@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 export interface AuditLogEntry {
   organizationId: string;
@@ -26,10 +27,9 @@ export class AuditService {
 
   constructor(private prisma: PrismaService) {}
 
-  async log(entry: AuditLogEntry, tx?: any): Promise<void> {
+  async log(entry: AuditLogEntry): Promise<void> {
     try {
-      const db = tx ?? this.prisma.db;
-      await db.auditLog.create({
+      await this.prisma.db.auditLog.create({
         data: {
           organizationId: entry.organizationId,
           userId: entry.userId ?? null,
@@ -44,5 +44,25 @@ export class AuditService {
         err instanceof Error ? err.stack : String(err),
       );
     }
+  }
+
+  /**
+   * Registra auditoría de manera atómica, dentro de una transacción en curso.
+   * Si falla, lanzará error y provocará el rollback de toda la transacción principal.
+   * Utilizar esto de forma exclusiva cuando la auditoría es condición sine qua non del éxito (ej. onboarding atómico).
+   */
+  async logTransactional(
+    entry: AuditLogEntry,
+    tx: Prisma.TransactionClient,
+  ): Promise<void> {
+    await tx.auditLog.create({
+      data: {
+        organizationId: entry.organizationId,
+        userId: entry.userId ?? null,
+        action: entry.action,
+        entity: entry.entity,
+        entityId: entry.entityId,
+      },
+    });
   }
 }

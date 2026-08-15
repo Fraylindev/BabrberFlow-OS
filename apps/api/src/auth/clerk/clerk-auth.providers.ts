@@ -17,10 +17,9 @@ export type ClerkConfigLoader = () => ClerkAuthConfig;
  * Separada del loader para permitir inyectar dobles de prueba sin cambiar
  * la inicialización lazy del servicio.
  */
-export type ClerkClientFactory = (config: ClerkAuthConfig) => Pick<
-  ClerkClient,
-  'authenticateRequest' | 'sessions'
->;
+export type ClerkClientFactory = (
+  config: ClerkAuthConfig,
+) => Pick<ClerkClient, 'authenticateRequest' | 'sessions'>;
 
 /** Alias publico del tipo Pick del cliente, reutilizado en el verifier. */
 export type ClerkBackendClient = ReturnType<ClerkClientFactory>;
@@ -43,7 +42,8 @@ export const clerkAuthConfigProvider: Provider<ClerkConfigLoader> = {
  */
 export const clerkBackendClientProvider: Provider<ClerkClientFactory> = {
   provide: CLERK_BACKEND_CLIENT,
-  useFactory: (): ClerkClientFactory =>
+  useFactory:
+    (): ClerkClientFactory =>
     (config: ClerkAuthConfig): ClerkBackendClient =>
       createClerkClient({
         secretKey: config.secretKey,

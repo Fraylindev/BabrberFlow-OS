@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { globalValidationPipeOptions } from './common/validation.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -35,13 +36,7 @@ async function bootstrap() {
   // limpio de conexiones en cada redeploy en vez de dejarlas colgadas.
   app.enableShutdownHooks();
 
-  // Activamos validación estricta en toda la aplicación
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // Elimina campos no definidos en el DTO
-      forbidNonWhitelisted: true, // Lanza error si envían campos extra
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
 
   await app.listen(process.env.PORT ?? 3000);
 }
