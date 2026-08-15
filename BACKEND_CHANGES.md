@@ -10,6 +10,29 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ---
 
+## 2026-08-14 — Security A0.1: base de enlace Clerk candidata
+
+### Persistencia
+
+- `User.clerkUserId`: `String? @unique`, materializado como `TEXT NULL` e índice único `User_clerkUserId_key`.
+- Migración `20260814190000_add_user_clerk_link_a0_1`: solo agrega la columna y el índice; no ejecuta backfill ni modifica filas existentes.
+- PostgreSQL permite múltiples `NULL`, por lo que todos los usuarios pueden permanecer sin enlace; dos valores Clerk no nulos iguales se rechazan por la base.
+- Los 19 usuarios locales conservaron UUID y datos. La huella de IDs antes/después coincidió; quedaron 19 `NULL` y 0 enlaces.
+
+### Contrato y comportamiento
+
+- No cambian endpoints, DTOs, respuestas, Guards, roles ni multi-tenancy.
+- Login, registro, invitaciones, JWT, password y `lastOrganizationId` continúan con el comportamiento previo.
+- No existe enlace automático por correo ni lógica que lea/escriba `clerkUserId` en runtime.
+- No se instalaron Clerk/dependencias, variables, frontend ni Supabase.
+
+### Validación
+
+- La integración PostgreSQL opt-in valida los 19 usuarios existentes sin enlace, múltiples valores `NULL`, unicidad de valores no nulos y limpieza de fixtures.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría. No autoriza Security A0.2.
+
+---
+
 ## 2026-08-13 — Profesionales A2: disponibilidad individual candidata
 
 ### Persistencia

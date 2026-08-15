@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-14 — Security A0.1: base de enlace Clerk candidata
+
+- La aprobación del diagnóstico Security A0-D autorizó únicamente la base de enlace. `User` suma `clerkUserId` nullable y único, conservando UUID, password y login actuales.
+- La migración es aditiva: columna `TEXT NULL` e índice único, sin backfill, sin enlace por correo, sin clasificación, fusión, eliminación ni modificación de cuentas existentes.
+- PostgreSQL real confirmó los mismos 19 IDs antes/después, 19 usuarios sin enlace y 0 enlazados. La integración pasó 3/3 casos: preservación, múltiples `NULL` y rechazo de un ID Clerk duplicado.
+- No se instalaron Clerk/dependencias ni se modificaron variables, Guards, endpoints, DTOs, frontend, Supabase, Profesionales A2 o Servicios.
+- Estado: Security A0.1 **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; Security A0.2 no está autorizado.
+
 ## 2026-08-14 — Security A0-D: decisión Clerk + Supabase y diseño diagnóstico
 
 - El propietario aprobó Clerk para identidad, login, registro, recuperación y sesiones; NestJS continúa como autoridad del negocio y PostgreSQL conserva Organization, Membership y roles. Clerk Organizations no será fuente de autorización y Supabase Auth no se usará.

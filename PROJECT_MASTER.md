@@ -50,6 +50,7 @@ Gobierno y estándares:
 - La implementación que ejecuta hoy sigue usando JWT + Passport + bcryptjs; el login recibe email y contraseña, no `organizationId`.
 - La arquitectura aprobada migrará identidad y sesiones a Clerk. El UUID de `User` seguirá siendo la identidad local estable y se enlazará de forma única a la identidad Clerk.
 - `Organization`, `Membership` y roles continúan como autoridad local; Clerk Organizations no se usará para autorización.
+- Security A0.1 añade `User.clerkUserId` nullable y único. Los 19 usuarios existentes conservan UUID, password y datos; todos permanecen sin enlace.
 
 ### Seguridad
 
@@ -87,7 +88,9 @@ G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado f
 
 Estado de G0: **IMPLEMENTADO / EN REVISIÓN**. G0.1 corrige y completa sus fuentes como checkpoint documental candidato; ninguno de los dos es aprobación funcional de un módulo.
 
-Security A0-D: **AUDITORÍA / DISEÑO IMPLEMENTADO, CANDIDATO A AUDITORÍA**. No cambia autenticación, base de datos ni contratos y no autoriza ningún checkpoint de implementación.
+Security A0-D: **CERRADO / APROBADO** por el propietario sobre `66e1c094b47e8bc7265803c122d851125023ce94`.
+
+Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nullable/única de enlace Clerk; no cambia login ni enlaza usuarios.
 
 ## 5. Decisiones activas de dominio
 
@@ -168,11 +171,11 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el checkpoint diagnóstico **Security A0-D**; G0/G0.1 continúan **EN REVISIÓN**.
-2. No iniciar implementación hasta aprobación explícita y autorización de un único checkpoint pequeño del ADR.
-3. El primer checkpoint propuesto es **Security A0.1 — inventario y enlace de identidad**; no cambia login y no incluye Supabase.
-4. Mantener Frontend A2 de Profesionales en revisión, sin corregirlo ni cerrarlo dentro de Security A0-D.
-5. No iniciar Servicios, migración Clerk, traslado de base de datos ni otro cambio funcional durante este checkpoint.
+1. Auditar el checkpoint candidato **Security A0.1**.
+2. No iniciar Security A0.2 ni otra implementación hasta aprobación explícita del propietario.
+3. Mantener login/JWT/password actuales y los 19 usuarios sin enlace durante A0.1.
+4. Mantener Frontend A2 de Profesionales en revisión, sin corregirlo ni cerrarlo dentro de Security A0.1.
+5. No iniciar Servicios, frontend Clerk, Supabase ni otro cambio funcional durante este checkpoint.
 
 ## 9. Política de lenguaje y evidencia
 

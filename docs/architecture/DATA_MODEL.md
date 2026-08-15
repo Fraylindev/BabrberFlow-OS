@@ -7,7 +7,8 @@
 ## Identidad y tenant
 
 - `Organization`: tenant y raíz de datos de negocio.
-- `User`: identidad global con email único y contraseña; no contiene rol ni tenant propios.
+- `User`: identidad global con UUID local estable, email único y contraseña vigente; no contiene rol ni tenant propios.
+- `User.clerkUserId`: enlace externo nullable y único reservado para Clerk. Security A0.1 no lo puebla ni usa para autenticar; múltiples usuarios pueden permanecer en `NULL`.
 - `Membership`: relación `User × Organization` con `UserRole`; única por pareja.
 - `User.lastOrganizationId`: preferencia para resolver la Membership activa, no autorización por sí sola.
 

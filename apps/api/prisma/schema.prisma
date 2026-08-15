@@ -107,6 +107,10 @@ model Organization {
 model User {
   id String @id @default(uuid())
 
+  // Enlace externo reservado para Clerk. Permanece NULL hasta que una
+  // entrega posterior vincule explícitamente una identidad verificada.
+  clerkUserId String? @unique
+
   email String @unique
 
   password String

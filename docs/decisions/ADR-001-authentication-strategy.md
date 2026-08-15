@@ -1,8 +1,8 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **DECISIÓN DE ARQUITECTURA APROBADA / diseño Security A0-D candidato a auditoría**
+- Estado: **Security A0-D CERRADO / APROBADO; Security A0.1 implementado / en revisión**
 - Fecha de decisión: 2026-08-14
-- Alcance de este checkpoint: auditoría y diseño; no modifica autenticación, contratos, Prisma ni infraestructura.
+- Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
 ## Decisión
 
@@ -163,7 +163,7 @@ Límites verificados el 2026-08-14; deben revalidarse antes de presupuestar:
 
 Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, documentación y auditoría independiente:
 
-1. **Security A0.1 — inventario y enlace:** clasificación de datos, `clerkUserId` nullable/unique y estrategia de importación; sin cambiar login.
+1. **Security A0.1 — base de enlace (implementado / en revisión):** `clerkUserId` nullable/unique, sin backfill, sin enlace por correo, sin cambio de login ni modificación de cuentas existentes.
 2. **Security A0.2 — verificación backend:** guard Clerk y resolución local User/Membership en compatibilidad controlada; sin cambiar frontend.
 3. **Security A0.3 — onboarding:** comando atómico Organization + OWNER y retiro del escalamiento público.
 4. **Security A0.4 — invitaciones:** invitación pendiente local, aceptación Clerk y Membership/Professional atómicos.
@@ -185,7 +185,16 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - [Supabase: migrar PostgreSQL](https://supabase.com/docs/guides/platform/migrating-to-supabase/postgres)
 - [Supabase: backups](https://supabase.com/docs/guides/platform/backups)
 
-## Fuera de alcance de Security A0-D
+## Resultado de Security A0.1
+
+- `User` conserva su UUID, email, password, relaciones y comportamiento de login.
+- `clerkUserId` es `TEXT NULL` con índice único PostgreSQL; varios `NULL` son válidos y un ID no nulo no puede repetirse.
+- La migración es aditiva y no ejecuta `UPDATE`, clasificación, fusión, eliminación o enlace de usuarios.
+- PostgreSQL real preservó los 19 IDs existentes con la misma huella; 19 quedaron en `NULL` y 0 enlazados.
+- El test opt-in cubre preservación del dataset local, múltiples usuarios sin enlace y rechazo `P2002` para un ID Clerk duplicado.
+- No cambia endpoints, DTOs, Guards, JWT, frontend, dependencias, variables ni Supabase.
+
+## Fuera de alcance del diagnóstico Security A0-D
 
 - Instalar Clerk, crear proyectos Supabase o cambiar variables/secrets.
 - Modificar endpoints, DTOs, Prisma, dependencias, frontend o base de datos.
