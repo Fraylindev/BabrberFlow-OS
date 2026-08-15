@@ -31,6 +31,8 @@ function parseAuthorizedParties(value: string | undefined): string[] {
   const parties = parseList(value).map((party) => {
     const url = new URL(party);
 
+    // Acepta orígenes exactos http/https con o sin puerto explícito (p. ej.
+    // http://localhost:3001). Rechaza paths, queries, hashes y credenciales.
     if (
       !['http:', 'https:'].includes(url.protocol) ||
       url.pathname !== '/' ||
@@ -39,7 +41,10 @@ function parseAuthorizedParties(value: string | undefined): string[] {
       url.username ||
       url.password
     ) {
-      throw new Error('CORS_ALLOWED_ORIGINS contiene un origen no permitido.');
+      throw new Error(
+        'CLERK_AUTHORIZED_PARTIES contiene un origen no permitido: ' +
+          `"${url.href}" debe ser un origen exacto http o https.`,
+      );
     }
 
     return url.origin;
@@ -47,7 +52,7 @@ function parseAuthorizedParties(value: string | undefined): string[] {
 
   if (parties.length === 0) {
     throw new Error(
-      'CORS_ALLOWED_ORIGINS debe incluir al menos un origen autorizado para Clerk.',
+      'CLERK_AUTHORIZED_PARTIES debe incluir al menos un origen http o https autorizado.',
     );
   }
 
@@ -103,7 +108,7 @@ export function loadClerkAuthConfig(
     secretKey: requireValue(env.CLERK_SECRET_KEY, 'CLERK_SECRET_KEY'),
     publishableKey,
     issuer: issuerFromPublishableKey(publishableKey),
-    authorizedParties: parseAuthorizedParties(env.CORS_ALLOWED_ORIGINS),
+    authorizedParties: parseAuthorizedParties(env.CLERK_AUTHORIZED_PARTIES),
     ...(audience.length > 0 ? { audience } : {}),
   };
 }

@@ -194,15 +194,17 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - El test opt-in aplica la migración real sobre fixtures pre-A0.1 en un schema temporal; cubre preservación, múltiples usuarios sin enlace y rechazo PostgreSQL de un ID Clerk duplicado sin depender del dataset local.
 - No cambia endpoints, DTOs, Guards, JWT, frontend, dependencias, variables ni Supabase.
 
-## Resultado de Security A0.2
+## Resultado de Security A0.2 (incluyendo correctivo)
 
-- `@clerk/backend` crea el cliente backend con secretos obtenidos exclusivamente del entorno; ningún valor se registra o versiona.
-- `authenticateRequest()` acepta solo `session_token` y verifica firma/JWKS, expiración y claims temporales. `authorizedParties` se deriva de los orígenes CORS exactos; la audiencia se pasa cuando `CLERK_JWT_AUDIENCE` está definida. El issuer se compara con el Frontend API codificado en `CLERK_PUBLISHABLE_KEY`.
+- `@clerk/backend` está instalado y registrado. El proceso **arranca sin variables Clerk**: los providers devuelven funciones tipadas (`ClerkConfigLoader`, `ClerkClientFactory`) cuya evaluación se difiere hasta la primera petición que alcanza el guard.
+- Al invocarse el guard, `ClerkSessionVerifierService.initializeIfNeeded()` llama al loader y al factory; si alguno falla, lanza `UnauthorizedException` genérico y registra internamente solo el nombre de clase del error (sin secretos ni tokens). `ClerkAuthGuard` añade su propio `try/catch` exterior para errores inesperados de infraestructura.
+- `CLERK_AUTHORIZED_PARTIES` es la variable que alimenta `authorizedParties` en `authenticateRequest()`. Acepta orígenes exactos `http`/`https` con o sin puerto explícito (p. ej. `http://localhost:3001`). `CORS_ALLOWED_ORIGINS` conserva su uso exclusivo en `main.ts`.
+- `authenticateRequest()` acepta solo `session_token` y verifica firma/JWKS, expiración y claims temporales. `authorizedParties` se deriva de `CLERK_AUTHORIZED_PARTIES`; la audiencia se pasa cuando `CLERK_JWT_AUDIENCE` está definida. El issuer se compara con el Frontend API codificado en `CLERK_PUBLISHABLE_KEY`.
 - Tras la verificación criptográfica, `sessions.getSession()` exige una sesión `active` del mismo `sub`. La revocación, expiración/finalización, sujeto distinto o fallo de Clerk producen `401` sin detalles internos.
 - El guard busca `User` únicamente por `clerkUserId`, nunca por correo. Después exige la Membership compuesta para el selector UUID de Organization y construye el contexto con el rol local actual. Claims o headers de rol/usuario no participan en la autorización.
 - Cambiar el rol o eliminar la Membership tiene efecto en la siguiente petición. Un User no enlazado y un User sin Membership se rechazan de forma segura.
 - La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, los 19 usuarios existentes, Prisma, Supabase y frontend no cambian.
-- Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership y revocación local de acceso.
+- Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership, revocación local de acceso, arranque sin variables Clerk, fallo cerrado del loader, fallo cerrado del guard por error inesperado y reutilización del cliente inicializado.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 

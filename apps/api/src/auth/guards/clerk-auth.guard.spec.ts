@@ -131,4 +131,17 @@ describe('ClerkAuthGuard', () => {
     ).rejects.toBeInstanceOf(UnauthorizedException);
     expect(verify).not.toHaveBeenCalled();
   });
+
+  it('falla cerrado cuando una dependencia lanza un error inesperado sin exponer detalles', async () => {
+    // Simula un error de infraestructura (p. ej. BD caída) que no sea UnauthorizedException.
+    // El guard debe convertirlo en 401 genérico; el detalle solo va al log interno.
+    findUser.mockRejectedValue(new Error('Prisma: connection refused'));
+
+    const error = await guard
+      .canActivate(makeContext(makeRequest()))
+      .catch((e) => e);
+
+    expect(error).toBeInstanceOf(UnauthorizedException);
+    expect(error.message).toBe('Sesión no válida para esta organización');
+  });
 });

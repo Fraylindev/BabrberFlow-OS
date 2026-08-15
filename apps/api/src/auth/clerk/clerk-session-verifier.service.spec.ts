@@ -1,6 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import type { ClerkBackendClient } from './clerk-auth.providers';
 import type { ClerkAuthConfig } from './clerk-auth.config';
+import type { ClerkConfigLoader, ClerkClientFactory } from './clerk-auth.providers';
 import { ClerkSessionVerifierService } from './clerk-session-verifier.service';
 
 const userId = 'user_clerk_123';
@@ -43,15 +44,21 @@ describe('ClerkSessionVerifierService', () => {
       authenticateRequest,
       sessions: { getSession },
     } as unknown as ClerkBackendClient;
+
     const config: ClerkAuthConfig = {
       secretKey: 'test-secret-not-real',
       publishableKey: 'test-publishable-not-real',
       issuer,
-      authorizedParties: ['http://localhost:3000', 'http://localhost:3002'],
+      authorizedParties: ['http://localhost:3000', 'http://localhost:3001'],
       audience: ['kortek-api'],
     };
 
-    service = new ClerkSessionVerifierService(client, config);
+    // El servicio recibe un ClerkConfigLoader y un ClerkClientFactory.
+    // En pruebas, el loader devuelve la config fija y el factory devuelve el mock.
+    const configLoader: ClerkConfigLoader = () => config;
+    const clientFactory: ClerkClientFactory = () => client;
+
+    service = new ClerkSessionVerifierService(configLoader, clientFactory);
   });
 
   it('acepta una sesión firmada, vigente, del issuer esperado y activa en Clerk', async () => {
@@ -65,7 +72,7 @@ describe('ClerkSessionVerifierService', () => {
     });
     expect(authenticateRequest).toHaveBeenCalledWith(request, {
       acceptsToken: 'session_token',
-      authorizedParties: ['http://localhost:3000', 'http://localhost:3002'],
+      authorizedParties: ['http://localhost:3000', 'http://localhost:3001'],
       audience: ['kortek-api'],
     });
     expect(getSession).toHaveBeenCalledWith(sessionId);
@@ -133,5 +140,62 @@ describe('ClerkSessionVerifierService', () => {
     ).rejects.toMatchObject({
       message: 'Sesión no válida',
     });
+  });
+
+  it('falla cerrado cuando el cargador de configuración lanza al invocar verify()', async () => {
+    // Simula el guard invocado sin variables Clerk en el entorno.
+    // El loader lanza (como haría loadClerkAuthConfig sin CLERK_SECRET_KEY);
+    // el servicio debe convertirlo en 401 genérico sin exponer el detalle.
+    const failingLoader: ClerkConfigLoader = () => {
+      throw new Error('CLERK_SECRET_KEY no está configurado para Clerk.');
+    };
+    const unusedFactory: ClerkClientFactory = () => {
+      throw new Error('El factory no debería invocarse si el loader falla.');
+    };
+
+    const failingService = new ClerkSessionVerifierService(
+      failingLoader,
+      unusedFactory,
+    );
+
+    const error = await failingService
+      .verify(new Request('http://localhost:3000/secure'))
+      .catch((e) => e);
+
+    expect(error).toBeInstanceOf(UnauthorizedException);
+    expect(error.message).toBe('Sesión no válida');
+  });
+
+  it('reutiliza el cliente y la configuración ya inicializados en llamadas sucesivas', async () => {
+    const request = new Request('http://localhost:3000/secure', {
+      headers: { authorization: 'Bearer session-token-placeholder' },
+    });
+
+    // Invocamos verify() dos veces; el factory solo debe llamarse una vez.
+    let factoryCallCount = 0;
+    const client = {
+      authenticateRequest,
+      sessions: { getSession },
+    } as unknown as ClerkBackendClient;
+    const config: ClerkAuthConfig = {
+      secretKey: 'test-secret-not-real',
+      publishableKey: 'test-publishable-not-real',
+      issuer,
+      authorizedParties: ['http://localhost:3000'],
+    };
+    const countingFactory: ClerkClientFactory = () => {
+      factoryCallCount++;
+      return client;
+    };
+
+    const freshService = new ClerkSessionVerifierService(
+      () => config,
+      countingFactory,
+    );
+
+    await freshService.verify(request);
+    await freshService.verify(request);
+
+    expect(factoryCallCount).toBe(1);
   });
 });

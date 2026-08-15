@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
@@ -14,6 +15,8 @@ export const ORGANIZATION_ID_HEADER = 'x-organization-id';
 
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
+  private readonly logger = new Logger(ClerkAuthGuard.name);
+
   constructor(
     private readonly verifier: ClerkSessionVerifierService,
     private readonly prisma: PrismaService,
@@ -21,45 +24,62 @@ export class ClerkAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+
+    // readOrganizationId lanza UnauthorizedException directamente; se deja fuera
+    // del try/catch para que no sea capturado ni transformado.
     const organizationId = this.readOrganizationId(request);
-    const session = await this.verifier.verify(this.toWebRequest(request));
 
-    const user = await this.prisma.db.user.findUnique({
-      where: { clerkUserId: session.clerkUserId },
-      select: { id: true, email: true, name: true },
-    });
+    try {
+      const session = await this.verifier.verify(this.toWebRequest(request));
 
-    if (!user) {
-      throw new UnauthorizedException(
-        'Sesión no válida para esta organización',
-      );
-    }
+      const user = await this.prisma.db.user.findUnique({
+        where: { clerkUserId: session.clerkUserId },
+        select: { id: true, email: true, name: true },
+      });
 
-    const membership = await this.prisma.db.membership.findUnique({
-      where: {
-        userId_organizationId: {
-          userId: user.id,
-          organizationId,
+      if (!user) {
+        throw new UnauthorizedException(
+          'Sesión no válida para esta organización',
+        );
+      }
+
+      const membership = await this.prisma.db.membership.findUnique({
+        where: {
+          userId_organizationId: {
+            userId: user.id,
+            organizationId,
+          },
         },
-      },
-      select: { organizationId: true, role: true },
-    });
+        select: { organizationId: true, role: true },
+      });
 
-    if (!membership) {
-      throw new UnauthorizedException(
-        'Sesión no válida para esta organización',
-      );
+      if (!membership) {
+        throw new UnauthorizedException(
+          'Sesión no válida para esta organización',
+        );
+      }
+
+      request.user = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        organizationId: membership.organizationId,
+        role: membership.role,
+      };
+
+      return true;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      // Error inesperado de infraestructura (p. ej. BD caída, timeout SDK).
+      // Solo registramos el tipo — sin valores, tokens ni detalles internos.
+      const kind =
+        error instanceof Error ? error.constructor.name : 'UnknownError';
+      this.logger.error(`Error inesperado en ClerkAuthGuard: ${kind}`);
+      throw new UnauthorizedException('Sesión no válida para esta organización');
     }
-
-    request.user = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      organizationId: membership.organizationId,
-      role: membership.role,
-    };
-
-    return true;
   }
 
   private readOrganizationId(request: Request): string {

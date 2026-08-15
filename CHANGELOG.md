@@ -4,13 +4,22 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables Clerk
+
+- Corregido el hallazgo de auditoría: `ClerkAuthGuard` no debe exigir claves al arrancar el proceso. Los providers pasan a devolver funciones tipadas (`ClerkConfigLoader`, `ClerkClientFactory`); la evaluación de secretos y la creación del cliente Clerk ocurren solo en la primera petición que alcanza el guard.
+- `CLERK_AUTHORIZED_PARTIES` reemplaza el uso incorrecto de `CORS_ALLOWED_ORIGINS` para derivar los orígenes autorizados de Clerk. La nueva variable acepta únicamente orígenes exactos `http`/`https` con o sin puerto explícito. `CORS_ALLOWED_ORIGINS` conserva su función en `main.ts`.
+- Fallo cerrado: si el loader o el factory fallan al invocarse, el guard y el verifier devuelven `401` genérico y registran internamente solo el nombre de clase del error (sin secretos ni tokens).
+- Pruebas añadidas: arranque sin variables Clerk, fallo cerrado del verifier con loader inválido, fallo cerrado del guard con dependencia que lanza, reutilización del cliente ya inicializado. El spec del verifier adopta el patrón loader+factory.
+- 206 tests, 22 suites, exit 0. No se aplica el guard a endpoints; no cambian login, JWT, register, password, frontend, Prisma, Supabase ni los 19 usuarios.
+- Estado: Security A0.2 correctivo **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría; no autoriza A0.3.
+
 ## 2026-08-15 — Security A0.2: base de verificación backend Clerk
 
 - Se instaló el SDK backend oficial de Clerk y se implementó una capa aislada para verificar session tokens, issuer/orígenes autorizados, audiencia configurada y estado autoritativo `active`.
 - El `sub` verificado se resuelve solo por `User.clerkUserId`; PostgreSQL vuelve a determinar Membership, organización y rol en cada petición. Usuario no enlazado, Membership ausente, rol cambiado o baja local no se sustituyen con claims del navegador.
 - El guard todavía no protege endpoints existentes. Login, register, JWT, password, frontend, Prisma, migraciones, Supabase y los 19 usuarios locales permanecen intactos y no hubo enlace por correo.
 - Se añadieron pruebas aisladas de sesiones válidas/inválidas, estado remoto, issuer, User/Membership y cambio o baja de rol local. Los secretos siguen fuera de Git.
-- Estado: Security A0.2 **IMPLEMENTADO / EN REVISIÓN**, checkpoint candidato; no aprueba ni autoriza A0.3 u otra etapa.
+- Estado histórico (fotografía): Security A0.2 original implementado; corregido por la entrada anterior de esta misma fecha.
 
 ## 2026-08-15 — Security A0.1: correctivo de prueba reutilizable
 

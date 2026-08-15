@@ -10,16 +10,28 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ---
 
-## 2026-08-15 — Security A0.2: verificación Clerk backend candidata
+## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables
+
+- **Problema corregido:** la implementación anterior llamaba a `loadClerkAuthConfig()` en el factory del provider, obligando a que `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY` y una variable CORS estuvieran presentes al arrancar el proceso aunque `ClerkAuthGuard` no proteja ningún endpoint. Además, `authorizedParties` se derivaba de `CORS_ALLOWED_ORIGINS`, mezclando dos mecanismos con semánticas distintas.
+- **Inicialización diferida:** `clerkAuthConfigProvider` y `clerkBackendClientProvider` ahora devuelven funciones tipadas (`ClerkConfigLoader` y `ClerkClientFactory`). La configuración y el cliente Clerk se construyen solo en la primera petición que alcanza el guard, mediante `initializeIfNeeded()` en `ClerkSessionVerifierService`. El proceso arranca sin variables Clerk.
+- **`CLERK_AUTHORIZED_PARTIES` separado:** nueva variable de entorno independiente que alimenta `authorizedParties` en `authenticateRequest()`. Acepta únicamente orígenes exactos `http`/`https` con o sin puerto explícito (p. ej. `http://localhost:3001`). `CORS_ALLOWED_ORIGINS` conserva su función exclusiva en `main.ts`.
+- **Fallo cerrado:** si el loader o el factory fallan al invocarse, `ClerkSessionVerifierService` lanza `UnauthorizedException` genérico y registra internamente solo el nombre de clase del error (sin valores de secretos ni tokens). `ClerkAuthGuard` añade un `try/catch` exterior que convierte cualquier error inesperado de infraestructura (BD caída, timeout) en el mismo `401` genérico con log seguro.
+- **Tests:** 3 nuevas pruebas — arranque sin variables Clerk (el cargador no evalúa al construirse), fallo cerrado del verifier cuando el loader lanza, fallo cerrado del guard cuando una dependencia lanza inesperadamente. Se añade test de reutilización del cliente ya inicializado. El spec del verifier actualiza sus constructores al nuevo patrón loader+factory.
+- No se aplica el guard a endpoints; no cambian login, JWT, register, password, frontend, Prisma, Supabase ni los 19 usuarios existentes.
+
+**Estado:** Security A0.2 correctivo **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría. No autoriza aplicación a endpoints, Security A0.3, frontend Clerk, Supabase ni otro módulo.
+
+---
+
+## 2026-08-15 — Security A0.2: verificación Clerk backend candidata (checkpoint original)
 
 - Se instaló `@clerk/backend` y se añadió una integración aislada con `authenticateRequest()` que acepta únicamente `session_token`. El SDK verifica firma/JWKS, expiración y claims temporales; la configuración fija `authorizedParties`, pasa `audience` cuando se define y la capa compara el `iss` con la instancia codificada en la publishable key.
 - Después de validar el token, la API consulta `sessions.getSession()` y exige estado `active` y el mismo `userId`; fallos, revocación, expiración, cambio de sujeto o error del proveedor se cierran con `401` genérico.
 - `ClerkAuthGuard` resuelve exclusivamente el `sub` verificado mediante `User.clerkUserId`. El tenant recibido es solo un selector UUID: se autoriza mediante `Membership(userId, organizationId)` y el rol se lee de PostgreSQL en cada petición. No se aceptan `sub`, rol ni tenant como autoridad del navegador o de Clerk Organizations.
 - El guard queda registrado para adopción posterior, pero **no está aplicado a ningún endpoint**. Login, register, JWT, password, contratos HTTP y los 19 Users existentes no cambian; no existe enlace por correo ni escritura de identidades.
-- Las claves permanecen únicamente en `.env` ignorados. `CORS_ALLOWED_ORIGINS` alimenta la lista exacta de `authorizedParties`; `CLERK_JWT_AUDIENCE` es opcional porque el session token estándar de Clerk no incluye `aud`, pero cuando se configura el SDK lo exige.
 - Pruebas aisladas cubren sesión válida/inválida, issuer ajeno, sesión revocada/expirada/finalizada, usuario de sesión distinto, User no enlazado, Membership inexistente, selector inválido y efecto inmediato de cambio/baja de rol local.
 
-**Estado:** Security A0.2 **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría. No autoriza aplicación a endpoints, Security A0.3, frontend Clerk, Supabase ni otro módulo.
+**Estado histórico (fotografía):** Security A0.2 original implementado; corregido por la entrada anterior de esta misma fecha.
 
 ---
 

@@ -93,7 +93,7 @@ Security A0-D: **CERRADO / APROBADO** por el propietario sobre `66e1c094b47e8bc7
 
 Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nullable/única de enlace Clerk; no cambia login ni enlaza usuarios.
 
-Security A0.2: **IMPLEMENTADO / EN REVISIÓN**. Añade verificación backend y resolución local aisladas; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
+Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
 
 ## 5. Decisiones activas de dominio
 
@@ -131,7 +131,7 @@ Security A0.2: **IMPLEMENTADO / EN REVISIÓN**. Añade verificación backend y r
 - Recuperación, verificación de correo, MFA, refresh rotativo y revocación general de sesiones no existen; los límites actuales son locales al proceso, no distribuidos.
 - Decisión aprobada: Clerk gestionará identidad, login, registro, recuperación y sesiones. NestJS verificará la sesión y resolverá `User` + Membership local en cada petición.
 - `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local creará Organization + primera Membership OWNER de forma atómica e idempotente.
-- La base A0.2 usa `authenticateRequest()` con session tokens, origins autorizados y audiencia cuando el token/configuración la define; valida el issuer de la instancia y consulta en Clerk que la sesión siga `active`. Un selector de tenant aportado por el cliente solo elige contexto: la Membership compuesta local debe existir y su rol es el único aceptado.
+- La base A0.2 usa `authenticateRequest()` con session tokens, origins autorizados (`CLERK_AUTHORIZED_PARTIES`, variable independiente de `CORS_ALLOWED_ORIGINS`) y audiencia cuando el token/configuración la define; valida el issuer de la instancia y consulta en Clerk que la sesión siga `active`. Config y cliente Clerk se crean en la primera petición al guard, no al arrancar; si la config no está, el guard falla cerrado con 401 genérico y log interno seguro. Un selector de tenant aportado por el cliente solo elige contexto: la Membership compuesta local debe existir y su rol es el único aceptado.
 - `ClerkAuthGuard` no está aplicado a rutas. Los 19 Users siguen sin enlace y ningún flujo los busca por correo.
 - Los cambios de contraseña, verificación, MFA, logout y revocación pasarán a Clerk; retirar JWT/password local ocurrirá solo tras QA y ventana de rollback.
 - El inventario local encontró 19 Users: 7 coinciden con cuentas QA documentadas localmente y 12 no tienen clasificación comprobable. No hay evidencia de producción, pero esos 12 se preservan hasta clasificación del propietario.
