@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-15 — Security A0.1: correctivo de prueba reutilizable
+
+- La integración deja de exigir exactamente 19 usuarios o que el dataset real permanezca íntegramente sin enlace.
+- Cada caso crea un schema PostgreSQL temporal con una tabla `User` pre-A0.1, siembra identidades aisladas y aplica el archivo de migración versionado.
+- La suite comprueba preservación de los usuarios sembrados, múltiples valores `NULL` y rechazo de un `clerkUserId` no nulo duplicado; no consulta ni modifica cuentas reales.
+- Los 19 usuarios y su huella permanecen documentados únicamente como evidencia del entorno auditado. La migración funcional y el estado candidato de A0.1 no cambian; A0.2 continúa bloqueado.
+
 ## 2026-08-14 — Security A0.1: base de enlace Clerk candidata
 
 - La aprobación del diagnóstico Security A0-D autorizó únicamente la base de enlace. `User` suma `clerkUserId` nullable y único, conservando UUID, password y login actuales.

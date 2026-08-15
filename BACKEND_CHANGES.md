@@ -28,7 +28,8 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ### Validación
 
-- La integración PostgreSQL opt-in valida los 19 usuarios existentes sin enlace, múltiples valores `NULL`, unicidad de valores no nulos y limpieza de fixtures.
+- La evidencia ambiental de A0.1 conserva el conteo y la huella de los 19 usuarios locales; no es un requisito fijo de la suite.
+- La integración PostgreSQL reutilizable crea un schema temporal y una tabla `User` pre-A0.1, siembra fixtures aislados, aplica el SQL versionado y comprueba preservación, múltiples `NULL` y unicidad de valores no nulos. No consulta ni modifica usuarios reales.
 - Estado: **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría. No autoriza Security A0.2.
 
 ---

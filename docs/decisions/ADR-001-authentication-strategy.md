@@ -191,7 +191,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - `clerkUserId` es `TEXT NULL` con índice único PostgreSQL; varios `NULL` son válidos y un ID no nulo no puede repetirse.
 - La migración es aditiva y no ejecuta `UPDATE`, clasificación, fusión, eliminación o enlace de usuarios.
 - PostgreSQL real preservó los 19 IDs existentes con la misma huella; 19 quedaron en `NULL` y 0 enlazados.
-- El test opt-in cubre preservación del dataset local, múltiples usuarios sin enlace y rechazo `P2002` para un ID Clerk duplicado.
+- El test opt-in aplica la migración real sobre fixtures pre-A0.1 en un schema temporal; cubre preservación, múltiples usuarios sin enlace y rechazo PostgreSQL de un ID Clerk duplicado sin depender del dataset local.
 - No cambia endpoints, DTOs, Guards, JWT, frontend, dependencias, variables ni Supabase.
 
 ## Fuera de alcance del diagnóstico Security A0-D
