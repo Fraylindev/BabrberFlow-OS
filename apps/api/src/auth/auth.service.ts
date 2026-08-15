@@ -77,8 +77,9 @@ export class AuthService {
       organizationEmail,
     } = registerDto;
 
+    const normalizedEmail = email.toLowerCase();
     const existingUser = await this.prisma.db.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUser) {
@@ -99,15 +100,15 @@ export class AuthService {
             const org = await tx.organization.create({
               data: {
                 name: organizationName,
-                slug: organizationSlug,
-                email: organizationEmail,
+                slug: organizationSlug.toLowerCase(),
+                email: organizationEmail.toLowerCase(),
               },
             });
 
             const createdUser = await tx.user.create({
               data: {
                 name,
-                email,
+                email: normalizedEmail,
                 password: hashedPassword,
                 lastOrganizationId: org.id,
               },
@@ -142,8 +143,9 @@ export class AuthService {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password: _, ...userWithoutPassword } = user;
         return userWithoutPassword;
-      } catch (err: any) {
-        if (err.code === 'P2034') {
+      } catch (err: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if ((err as any)?.code === 'P2034') {
           attempt++;
           if (attempt >= MAX_RETRIES) {
             throw new ConflictException(

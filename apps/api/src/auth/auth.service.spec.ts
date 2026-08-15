@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/require-await, @typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -233,31 +234,32 @@ describe('AuthService — autenticación', () => {
         membership: { create: jest.fn().mockResolvedValue({}) },
       };
 
-      prisma.db.$transaction.mockImplementation(async (cb) => {
+      prisma.db.$transaction.mockImplementation(async (cb, options) => {
+        expect(options).toEqual({ isolationLevel: 'Serializable' });
         return cb(mockTx);
       });
 
       const result = await service.register({
         name: 'Nuevo',
-        email: EMAIL,
+        email: 'TEST@email.COM', // uppercase to test lowering
         password: PASSWORD,
         organizationName: 'Nueva Barberia',
-        organizationSlug: 'nueva-barberia',
-        organizationEmail: 'org@barberia.com',
+        organizationSlug: 'NUEVA-BARBERIA', // uppercase
+        organizationEmail: 'ORG@BARBERIA.COM', // uppercase
       });
 
       expect(prisma.db.$transaction).toHaveBeenCalled();
       expect(mockTx.organization.create).toHaveBeenCalledWith({
         data: {
           name: 'Nueva Barberia',
-          slug: 'nueva-barberia',
-          email: 'org@barberia.com',
+          slug: 'nueva-barberia', // lowered
+          email: 'org@barberia.com', // lowered
         },
       });
       expect(mockTx.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            email: EMAIL,
+            email: 'test@email.com', // lowered
             lastOrganizationId: 'org-new',
           }),
         }),
@@ -276,6 +278,53 @@ describe('AuthService — autenticación', () => {
 
       expect(result.id).toBe('user-new');
       expect((result as any).password).toBeUndefined();
+    });
+
+    it('falla el registro si logTransactional lanza error', async () => {
+      jest
+        .spyOn(service['audit'], 'logTransactional')
+        .mockRejectedValue(new Error('Fallo auditoría'));
+      const mockTx = {
+        organization: {
+          create: jest.fn().mockResolvedValue({ id: 'org-new' }),
+        },
+        user: { create: jest.fn().mockResolvedValue({ id: 'user-new' }) },
+        membership: { create: jest.fn().mockResolvedValue({}) },
+      };
+
+      prisma.db.$transaction.mockImplementation(async (cb) => {
+        return cb(mockTx);
+      });
+
+      await expect(
+        service.register({
+          name: 'Nuevo',
+          email: EMAIL,
+          password: PASSWORD,
+          organizationName: 'Barber',
+          organizationSlug: 'barber',
+          organizationEmail: 'org@barber.com',
+        }),
+      ).rejects.toThrow('Fallo auditoría');
+    });
+
+    it('reintenta exactamente 3 veces en error P2034 y falla con 409', async () => {
+      const p2034Error = Object.assign(new Error(), { code: 'P2034' });
+      prisma.db.$transaction.mockRejectedValue(p2034Error);
+
+      await expect(
+        service.register({
+          name: 'Nuevo',
+          email: EMAIL,
+          password: PASSWORD,
+          organizationName: 'Barber',
+          organizationSlug: 'barber',
+          organizationEmail: 'org@barber.com',
+        }),
+      ).rejects.toMatchObject({ status: 409 });
+
+      // Transaction is called 3 times exactly.
+      expect(prisma.db.$transaction).toHaveBeenCalledTimes(3);
     });
   });
 

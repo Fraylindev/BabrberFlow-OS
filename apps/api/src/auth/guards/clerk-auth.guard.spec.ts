@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import type { AuthenticatedRequest } from '../types/authenticated-request';

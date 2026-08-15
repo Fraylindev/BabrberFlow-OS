@@ -208,13 +208,14 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 
 ## Resultado de Security A0.3-H (Hardening Legacy)
 
-- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y elimina `organizationId`.
+- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y elimina `organizationId`. Se incluyó validación y normalización estricta (lowercase) del slug en el flujo.
 - `AuthService.register()` crea el `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (aislamiento `Serializable`). Se incluye un bucle de reintento acotado (máximo 3 intentos) exclusivo para fallas de serialización (`P2034`), mientras que conflictos de negocio (P2002) se abortan inmediatamente.
-- La transacción atómica también escribe el evento `CREATE` en el `AuditLog` sin incluir PII y garantizando su consistencia.
+- La transacción atómica también escribe el evento `CREATE` en el `AuditLog` sin incluir PII y garantizando su consistencia (falla la transacción si falla la escritura del log).
 - `POST /organizations` (`OrganizationsController`) ha sido protegido para requerir JWT y el rol `OWNER`, dejando de ser un flujo público para altas iniciales.
 - Se ha actualizado la migración `password` en la tabla `User` a `String?` (nullable).
 - Se adaptó el frontend web (`auth-context.tsx`) para enviar el nuevo payload de registro atómico en una única petición a `/auth/register`.
 - El endpoint `/auth/login` se modificó de manera compatible para aceptar cuentas sin password (retorna el genérico `401 Credenciales inválidas`), sin generar error interno `bcrypt.compare` nulo. Igualmente se protegió la actualización de contraseña local.
+- Pruebas E2E (`auth.e2e-spec.ts` y `organizations.e2e-spec.ts`) operan bajo un estricto aislamiento, forzando la validación del esquema de la base de datos de test.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 

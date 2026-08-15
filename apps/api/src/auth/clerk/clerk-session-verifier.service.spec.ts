@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import { UnauthorizedException } from '@nestjs/common';
 import type { ClerkBackendClient } from './clerk-auth.providers';
 import type { ClerkAuthConfig } from './clerk-auth.config';

@@ -1,13 +1,9 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
 export default function () {
-  const envPath = join(__dirname, '..', '.env.test');
   const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl || !dbUrl.includes('test')) {
+  if (!dbUrl || (!dbUrl.includes('_test') && !dbUrl.includes('schema=test'))) {
     throw new Error(
-      'E2E tests must be run with a DATABASE_URL pointing to a test database (must include "test" in URL). Current URL: ' +
+      'E2E tests must be run with a DATABASE_URL pointing to an explicit test database (e.g. database name ending in "_test" or "schema=test"). Current URL: ' +
         dbUrl,
     );
   }
-};
+}

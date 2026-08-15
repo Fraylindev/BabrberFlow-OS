@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/require-await, @typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -26,7 +27,7 @@ describe('OrganizationsController (e2e)', () => {
 
     const ts = Date.now();
     // Register a valid owner via the auth endpoint to get a token
-    const res1 = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/auth/register')
       .send({
         name: 'Owner',

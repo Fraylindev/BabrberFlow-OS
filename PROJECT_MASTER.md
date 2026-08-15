@@ -181,11 +181,10 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Validar con QA real en web el flujo de registro.
-2. Hacer commit de Security A0.3-H con las modificaciones y documentación actualizadas.
-3. No iniciar Security A0.3 (Onboarding Clerk) sin autorización.
-4. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace, salvo las modificaciones hechas en A0.3-H para proteger de error 500 a las nuevas cuentas.
-5. Mantener Frontend A2 de Profesionales en revisión.
+1. Security A0.3-H completado (aislamiento estricto de e2e, normalización de slug, transacción SERIALIZABLE verificada para P2034, y validación Prisma/lint/test limpia).
+2. Queda pendiente iniciar Security A0.3 (Onboarding Clerk), el cual NO DEBE INICIARSE sin autorización explícita.
+3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
+4. Mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 

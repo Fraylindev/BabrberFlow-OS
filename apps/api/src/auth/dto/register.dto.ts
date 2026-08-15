@@ -36,7 +36,7 @@ export class RegisterDto {
     message:
       'El slug solo puede contener letras minúsculas, números y guiones intermedios',
   })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.toLowerCase() : value,
   )
   organizationSlug!: string;
