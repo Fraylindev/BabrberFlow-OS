@@ -5,6 +5,12 @@ import { TeamService } from './team.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuditModule } from '../audit/audit.module';
+import {
+  clerkAuthConfigProvider,
+  clerkBackendClientProvider,
+} from './clerk/clerk-auth.providers';
+import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
+import { ClerkAuthGuard } from './guards/clerk-auth.guard';
 
 if (!process.env.JWT_SECRET) {
   throw new Error(
@@ -22,6 +28,15 @@ if (!process.env.JWT_SECRET) {
     AuditModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, TeamService, JwtStrategy],
+  providers: [
+    AuthService,
+    TeamService,
+    JwtStrategy,
+    clerkAuthConfigProvider,
+    clerkBackendClientProvider,
+    ClerkSessionVerifierService,
+    ClerkAuthGuard,
+  ],
+  exports: [ClerkAuthGuard],
 })
 export class AuthModule {}

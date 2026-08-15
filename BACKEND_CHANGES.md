@@ -10,6 +10,19 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ---
 
+## 2026-08-15 — Security A0.2: verificación Clerk backend candidata
+
+- Se instaló `@clerk/backend` y se añadió una integración aislada con `authenticateRequest()` que acepta únicamente `session_token`. El SDK verifica firma/JWKS, expiración y claims temporales; la configuración fija `authorizedParties`, pasa `audience` cuando se define y la capa compara el `iss` con la instancia codificada en la publishable key.
+- Después de validar el token, la API consulta `sessions.getSession()` y exige estado `active` y el mismo `userId`; fallos, revocación, expiración, cambio de sujeto o error del proveedor se cierran con `401` genérico.
+- `ClerkAuthGuard` resuelve exclusivamente el `sub` verificado mediante `User.clerkUserId`. El tenant recibido es solo un selector UUID: se autoriza mediante `Membership(userId, organizationId)` y el rol se lee de PostgreSQL en cada petición. No se aceptan `sub`, rol ni tenant como autoridad del navegador o de Clerk Organizations.
+- El guard queda registrado para adopción posterior, pero **no está aplicado a ningún endpoint**. Login, register, JWT, password, contratos HTTP y los 19 Users existentes no cambian; no existe enlace por correo ni escritura de identidades.
+- Las claves permanecen únicamente en `.env` ignorados. `CORS_ALLOWED_ORIGINS` alimenta la lista exacta de `authorizedParties`; `CLERK_JWT_AUDIENCE` es opcional porque el session token estándar de Clerk no incluye `aud`, pero cuando se configura el SDK lo exige.
+- Pruebas aisladas cubren sesión válida/inválida, issuer ajeno, sesión revocada/expirada/finalizada, usuario de sesión distinto, User no enlazado, Membership inexistente, selector inválido y efecto inmediato de cambio/baja de rol local.
+
+**Estado:** Security A0.2 **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría. No autoriza aplicación a endpoints, Security A0.3, frontend Clerk, Supabase ni otro módulo.
+
+---
+
 ## 2026-08-14 — Security A0.1: base de enlace Clerk candidata
 
 ### Persistencia

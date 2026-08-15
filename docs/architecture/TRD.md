@@ -10,7 +10,7 @@ Este documento distingue lo que ejecuta hoy el repositorio de la arquitectura ap
 - API: NestJS, TypeScript, Prisma y PostgreSQL en `apps/api`.
 - Web: Next.js App Router, React, TypeScript, Tailwind y React Query en `apps/web`.
 - Cliente HTTP único: [`apps/web/lib/api.ts`](../../apps/web/lib/api.ts).
-- Identidad actual: JWT propio + Passport + bcryptjs; aún no se instaló Clerk.
+- Identidad efectiva actual: JWT propio + Passport + bcryptjs. El SDK backend de Clerk y un guard aislado existen desde A0.2, pero todavía no protegen rutas.
 - Persistencia actual auditada: PostgreSQL local; aún no se trasladó a Supabase.
 
 ## Capas backend
@@ -39,7 +39,7 @@ Las operaciones de agenda aprobadas coordinan Professional y Booking mediante tr
 - La autorización permanece en API.
 - QA en navegador es obligatorio para declarar una interfaz candidata.
 
-## Arquitectura de identidad aprobada, no implementada
+## Arquitectura de identidad aprobada, parcialmente preparada
 
 ```text
 Next.js + Clerk session
@@ -56,6 +56,10 @@ NestJS Clerk guard ── sub ──► User.clerkUserId
 - Clerk: identidad, registro, login, verificación, recuperación, MFA y sesiones.
 - NestJS: onboarding, selección de tenant, invitaciones de negocio, Guards, roles y toda autorización.
 - PostgreSQL: `User`, `Organization`, `Membership`, entidades de negocio y auditoría.
+- A0.2 implementa sin activar en endpoints la primera parte del diagrama: `authenticateRequest()` valida el session token con issuer/orígenes autorizados y audiencia configurada, una consulta Clerk exige sesión `active`, y el guard resuelve `sub → User.clerkUserId → Membership` en PostgreSQL.
+- El `organizationId` que llegue del cliente es únicamente un selector de contexto validado como UUID; no concede acceso sin la clave compuesta local. El rol siempre sale de la Membership actual, por lo que cambio o baja tienen efecto en la siguiente petición.
+- Los session tokens estándar de Clerk no incluyen `aud` por defecto. `authorizedParties` valida su `azp`; si se configura `CLERK_JWT_AUDIENCE`, el SDK exige también ese claim. La publishable key determina la instancia y el issuer esperado.
+- La comprobación de estado consulta Clerk y falla cerrada. Antes de activarla ampliamente deben medirse latencia, cuotas y disponibilidad; no se cacheará una autorización de manera que retrase una revocación.
 - El onboarding crea Organization + primera Membership OWNER en una transacción idempotente y no acepta un tenant preexistente del cliente.
 - La eliminación/cambio de Membership tiene efecto en cada request aunque Clerk mantenga la sesión de identidad.
 - El diseño completo, migración, rollback y checkpoints están en [`ADR-001`](../decisions/ADR-001-authentication-strategy.md).
@@ -75,6 +79,7 @@ Free se limita a desarrollo, QA y ensayos. Clerk Pro y Supabase Pro son obligato
 ## Decisiones técnicas permanentes
 
 - No aceptar tenant/rol desde claims o bodies no autoritativos.
+- No aceptar `sub` sin verificación criptográfica ni usar correo para enlazar identidades.
 - No agregar proveedores o dependencias antes del checkpoint autorizado.
 - No inventar endpoints para desbloquear frontend.
 - Diseñar invariantes concurrentes con garantía PostgreSQL real cuando una lectura previa sea insuficiente.

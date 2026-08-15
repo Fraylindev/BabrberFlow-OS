@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-15 — Security A0.2: base de verificación backend Clerk
+
+- Se instaló el SDK backend oficial de Clerk y se implementó una capa aislada para verificar session tokens, issuer/orígenes autorizados, audiencia configurada y estado autoritativo `active`.
+- El `sub` verificado se resuelve solo por `User.clerkUserId`; PostgreSQL vuelve a determinar Membership, organización y rol en cada petición. Usuario no enlazado, Membership ausente, rol cambiado o baja local no se sustituyen con claims del navegador.
+- El guard todavía no protege endpoints existentes. Login, register, JWT, password, frontend, Prisma, migraciones, Supabase y los 19 usuarios locales permanecen intactos y no hubo enlace por correo.
+- Se añadieron pruebas aisladas de sesiones válidas/inválidas, estado remoto, issuer, User/Membership y cambio o baja de rol local. Los secretos siguen fuera de Git.
+- Estado: Security A0.2 **IMPLEMENTADO / EN REVISIÓN**, checkpoint candidato; no aprueba ni autoriza A0.3 u otra etapa.
+
 ## 2026-08-15 — Security A0.1: correctivo de prueba reutilizable
 
 - La integración deja de exigir exactamente 19 usuarios o que el dataset real permanezca íntegramente sin enlace.

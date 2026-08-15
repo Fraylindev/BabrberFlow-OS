@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D CERRADO / APROBADO; Security A0.1 implementado / en revisión**
+- Estado: **Security A0-D CERRADO / APROBADO; Security A0.1 y A0.2 implementados / en revisión**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -164,7 +164,7 @@ Límites verificados el 2026-08-14; deben revalidarse antes de presupuestar:
 Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, documentación y auditoría independiente:
 
 1. **Security A0.1 — base de enlace (implementado / en revisión):** `clerkUserId` nullable/unique, sin backfill, sin enlace por correo, sin cambio de login ni modificación de cuentas existentes.
-2. **Security A0.2 — verificación backend:** guard Clerk y resolución local User/Membership en compatibilidad controlada; sin cambiar frontend.
+2. **Security A0.2 — verificación backend (implementado / en revisión):** guard Clerk y resolución local User/Membership en compatibilidad controlada; sin cambiar frontend ni rutas existentes.
 3. **Security A0.3 — onboarding:** comando atómico Organization + OWNER y retiro del escalamiento público.
 4. **Security A0.4 — invitaciones:** invitación pendiente local, aceptación Clerk y Membership/Professional atómicos.
 5. **Security A0.5 — frontend de identidad:** Clerk login/register/recovery/logout; retirar `localStorage` tras QA.
@@ -193,6 +193,16 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - PostgreSQL real preservó los 19 IDs existentes con la misma huella; 19 quedaron en `NULL` y 0 enlazados.
 - El test opt-in aplica la migración real sobre fixtures pre-A0.1 en un schema temporal; cubre preservación, múltiples usuarios sin enlace y rechazo PostgreSQL de un ID Clerk duplicado sin depender del dataset local.
 - No cambia endpoints, DTOs, Guards, JWT, frontend, dependencias, variables ni Supabase.
+
+## Resultado de Security A0.2
+
+- `@clerk/backend` crea el cliente backend con secretos obtenidos exclusivamente del entorno; ningún valor se registra o versiona.
+- `authenticateRequest()` acepta solo `session_token` y verifica firma/JWKS, expiración y claims temporales. `authorizedParties` se deriva de los orígenes CORS exactos; la audiencia se pasa cuando `CLERK_JWT_AUDIENCE` está definida. El issuer se compara con el Frontend API codificado en `CLERK_PUBLISHABLE_KEY`.
+- Tras la verificación criptográfica, `sessions.getSession()` exige una sesión `active` del mismo `sub`. La revocación, expiración/finalización, sujeto distinto o fallo de Clerk producen `401` sin detalles internos.
+- El guard busca `User` únicamente por `clerkUserId`, nunca por correo. Después exige la Membership compuesta para el selector UUID de Organization y construye el contexto con el rol local actual. Claims o headers de rol/usuario no participan en la autorización.
+- Cambiar el rol o eliminar la Membership tiene efecto en la siguiente petición. Un User no enlazado y un User sin Membership se rechazan de forma segura.
+- La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, los 19 usuarios existentes, Prisma, Supabase y frontend no cambian.
+- Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership y revocación local de acceso.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 

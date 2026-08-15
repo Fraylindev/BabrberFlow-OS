@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-14. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-15. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -51,6 +51,7 @@ Gobierno y estándares:
 - La arquitectura aprobada migrará identidad y sesiones a Clerk. El UUID de `User` seguirá siendo la identidad local estable y se enlazará de forma única a la identidad Clerk.
 - `Organization`, `Membership` y roles continúan como autoridad local; Clerk Organizations no se usará para autorización.
 - Security A0.1 añade `User.clerkUserId` nullable y único. Los 19 usuarios existentes conservan UUID, password y datos; todos permanecen sin enlace.
+- Security A0.2 instala el SDK backend oficial de Clerk y añade una capa todavía no aplicada a rutas: verifica session tokens y estado remoto, resuelve `sub` por `User.clerkUserId` y vuelve a consultar la `Membership` local en cada petición.
 
 ### Seguridad
 
@@ -58,8 +59,8 @@ Gobierno y estándares:
 - Guards y roles backend son el límite real; la UI solo representa permisos.
 - Recurso ajeno e inexistente comparten respuesta cuando revelar existencia sería un riesgo.
 - AuditLog es fail-open en los flujos donde ya se adoptó y no debe guardar PII.
-- La implementación de autenticación vigente todavía es propia y conserva un riesgo crítico confirmado.
-- La decisión aprobada es usar Clerk para identidad/sesiones y NestJS + Membership local para autorización. [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) define el diseño Security A0-D; aún no está implementado.
+- La autenticación efectiva de todos los endpoints sigue siendo propia y conserva un riesgo crítico confirmado; el guard Clerk A0.2 permanece desacoplado hasta una entrega posterior autorizada.
+- La decisión aprobada es usar Clerk para identidad/sesiones y NestJS + Membership local para autorización. [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) define el diseño y el avance incremental de Security A0.
 - Prisma se mantendrá sobre PostgreSQL y la base se trasladará a Supabase en checkpoints separados de la migración Clerk. No se usará Supabase Auth.
 
 ### Frontend
@@ -91,6 +92,8 @@ Estado de G0: **IMPLEMENTADO / EN REVISIÓN**. G0.1 corrige y completa sus fuent
 Security A0-D: **CERRADO / APROBADO** por el propietario sobre `66e1c094b47e8bc7265803c122d851125023ce94`.
 
 Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nullable/única de enlace Clerk; no cambia login ni enlaza usuarios.
+
+Security A0.2: **IMPLEMENTADO / EN REVISIÓN**. Añade verificación backend y resolución local aisladas; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
 
 ## 5. Decisiones activas de dominio
 
@@ -128,6 +131,8 @@ Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nulla
 - Recuperación, verificación de correo, MFA, refresh rotativo y revocación general de sesiones no existen; los límites actuales son locales al proceso, no distribuidos.
 - Decisión aprobada: Clerk gestionará identidad, login, registro, recuperación y sesiones. NestJS verificará la sesión y resolverá `User` + Membership local en cada petición.
 - `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local creará Organization + primera Membership OWNER de forma atómica e idempotente.
+- La base A0.2 usa `authenticateRequest()` con session tokens, origins autorizados y audiencia cuando el token/configuración la define; valida el issuer de la instancia y consulta en Clerk que la sesión siga `active`. Un selector de tenant aportado por el cliente solo elige contexto: la Membership compuesta local debe existir y su rol es el único aceptado.
+- `ClerkAuthGuard` no está aplicado a rutas. Los 19 Users siguen sin enlace y ningún flujo los busca por correo.
 - Los cambios de contraseña, verificación, MFA, logout y revocación pasarán a Clerk; retirar JWT/password local ocurrirá solo tras QA y ventana de rollback.
 - El inventario local encontró 19 Users: 7 coinciden con cuentas QA documentadas localmente y 12 no tienen clasificación comprobable. No hay evidencia de producción, pero esos 12 se preservan hasta clasificación del propietario.
 
@@ -167,14 +172,15 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - El vínculo B2C `Client ↔ User CUSTOMER` no está implementado.
 - Servicios, imágenes y Cloudinary requieren auditoría y decisiones propias; no adelantar.
 - Configuración productiva de CORS, URLs y secretos depende del entorno y debe validarse antes de despliegue.
+- El guard Clerk consulta el estado autoritativo de sesión en Clerk por petición; latencia, disponibilidad, cuotas y política de fallo cerrado deben medirse antes de aplicarlo masivamente.
 - El historial contiene decisiones revocadas válidas en su fecha; nunca debe usarse como estado actual sin contrastar este documento y el código.
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el checkpoint candidato **Security A0.1**.
-2. No iniciar Security A0.2 ni otra implementación hasta aprobación explícita del propietario.
-3. Mantener login/JWT/password actuales y los 19 usuarios sin enlace durante A0.1.
-4. Mantener Frontend A2 de Profesionales en revisión, sin corregirlo ni cerrarlo dentro de Security A0.1.
+1. Auditar el checkpoint candidato **Security A0.2**.
+2. No aplicar `ClerkAuthGuard` a endpoints ni iniciar Security A0.3 hasta aprobación explícita.
+3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
+4. Mantener Frontend A2 de Profesionales en revisión, sin corregirlo ni cerrarlo dentro de Security A0.2.
 5. No iniciar Servicios, frontend Clerk, Supabase ni otro cambio funcional durante este checkpoint.
 
 ## 9. Política de lenguaje y evidencia
