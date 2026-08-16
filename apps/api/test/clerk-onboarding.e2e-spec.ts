@@ -741,6 +741,8 @@ describe('ClerkOnboarding rollback on audit failure (e2e)', () => {
     };
     currentSession.clerkUserId = clerkId;
 
+    const initialAuditCount = await prisma.db.auditLog.count();
+
     const res = await requestApp(app)
       .post('/auth/clerk/onboarding')
       .set('Authorization', 'Bearer valid-token')
@@ -752,20 +754,35 @@ describe('ClerkOnboarding rollback on audit failure (e2e)', () => {
 
     expect(res.status).toBeGreaterThanOrEqual(500);
 
-    // Verificar que NO existe rastro en PostgreSQL real
+    // Verificar explícitamente que no existe User por clerkUserId
     const user = await prisma.db.user.findUnique({
       where: { clerkUserId: clerkId },
     });
     expect(user).toBeNull();
 
+    // Verificar explícitamente que no existe Organization por slug
     const org = await prisma.db.organization.findUnique({
       where: { slug },
     });
     expect(org).toBeNull();
 
-    const auditLogs = await prisma.db.auditLog.findMany({
-      where: { entityId: slug },
+    // Verificar explícitamente que no existe Membership asociada al usuario u organización de la prueba
+    const membershipsByUser = await prisma.db.membership.findMany({
+      where: {
+        user: { clerkUserId: clerkId },
+      },
     });
-    expect(auditLogs).toHaveLength(0);
+    expect(membershipsByUser).toHaveLength(0);
+
+    const membershipsByOrg = await prisma.db.membership.findMany({
+      where: {
+        organization: { slug },
+      },
+    });
+    expect(membershipsByOrg).toHaveLength(0);
+
+    // Confirmar que el conteo de AuditLog no cambió
+    const finalAuditCount = await prisma.db.auditLog.count();
+    expect(finalAuditCount).toBe(initialAuditCount);
   });
 });

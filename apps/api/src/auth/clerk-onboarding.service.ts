@@ -116,15 +116,10 @@ export class ClerkOnboardingService {
     };
   }
 
-  async onboardOwner(
+  private async resolveExistingOwner(
     clerkUserId: string,
-    dto: ClerkOnboardingDto,
-  ): Promise<OnboardOwnerResult> {
-    const { name: resolvedName, email: verifiedEmail } =
-      await this.fetchClerkProfile(clerkUserId);
-
-    // 1. Verificar si clerkUserId ya existe (Idempotencia / Estado parcial)
-    const userByClerk = await this.prisma.db.user.findUnique({
+  ): Promise<OnboardOwnerResult | null> {
+    const user = await this.prisma.db.user.findUnique({
       where: { clerkUserId },
       include: {
         memberships: {
@@ -135,35 +130,44 @@ export class ClerkOnboardingService {
       },
     });
 
-    if (userByClerk) {
-      const ownerMemberships = userByClerk.memberships.filter(
-        (m) => m.role === 'OWNER',
-      );
-      if (ownerMemberships.length === 1 && ownerMemberships[0].organization) {
-        const org = ownerMemberships[0].organization;
-        return {
-          isNew: false,
-          user: {
-            id: userByClerk.id,
-            name: userByClerk.name,
-            email: userByClerk.email,
-            clerkUserId: userByClerk.clerkUserId,
-            lastOrganizationId: userByClerk.lastOrganizationId,
-          },
-          organization: {
-            id: org.id,
-            name: org.name,
-            slug: org.slug,
-            email: org.email,
-          },
-          role: 'OWNER',
-        };
-      }
+    if (!user) return null;
 
-      // Estado parcial o ambiguo: NUNCA crear una segunda organización
-      throw new ConflictException(
-        'Estado de cuenta no válido para onboarding.',
-      );
+    const ownerMemberships = user.memberships.filter((m) => m.role === 'OWNER');
+    if (ownerMemberships.length === 1 && ownerMemberships[0].organization) {
+      const org = ownerMemberships[0].organization;
+      return {
+        isNew: false,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          clerkUserId: user.clerkUserId,
+          lastOrganizationId: user.lastOrganizationId,
+        },
+        organization: {
+          id: org.id,
+          name: org.name,
+          slug: org.slug,
+          email: org.email,
+        },
+        role: 'OWNER',
+      };
+    }
+
+    throw new ConflictException('Estado de cuenta no válido para onboarding.');
+  }
+
+  async onboardOwner(
+    clerkUserId: string,
+    dto: ClerkOnboardingDto,
+  ): Promise<OnboardOwnerResult> {
+    const { name: resolvedName, email: verifiedEmail } =
+      await this.fetchClerkProfile(clerkUserId);
+
+    // 1. Verificar si clerkUserId ya existe (Idempotencia / Estado parcial)
+    const existingOwner = await this.resolveExistingOwner(clerkUserId);
+    if (existingOwner) {
+      return existingOwner;
     }
 
     // 2. Anti-enlace por email de usuario local (Respuesta completamente neutra)
@@ -172,6 +176,10 @@ export class ClerkOnboardingService {
     });
 
     if (userByEmail) {
+      if (userByEmail.clerkUserId === clerkUserId) {
+        const resolved = await this.resolveExistingOwner(clerkUserId);
+        if (resolved) return resolved;
+      }
       throw new ConflictException(
         'No es posible completar el registro con los datos proporcionados.',
       );
@@ -185,6 +193,9 @@ export class ClerkOnboardingService {
       where: { slug: normalizedSlug },
     });
     if (existingSlug) {
+      const resolved = await this.resolveExistingOwner(clerkUserId);
+      if (resolved) return resolved;
+
       throw new ConflictException(
         'El slug de la organización ya está en uso. Elige otro.',
       );
@@ -194,6 +205,9 @@ export class ClerkOnboardingService {
       where: { email: normalizedOrgEmail },
     });
     if (existingOrgEmail) {
+      const resolved = await this.resolveExistingOwner(clerkUserId);
+      if (resolved) return resolved;
+
       throw new ConflictException(
         'Ya existe una organización registrada con este correo.',
       );
@@ -243,30 +257,30 @@ export class ClerkOnboardingService {
               tx,
             );
 
-            return { user, org };
+            return {
+              isNew: true,
+              user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                clerkUserId: user.clerkUserId,
+                lastOrganizationId: user.lastOrganizationId,
+              },
+              organization: {
+                id: org.id,
+                name: org.name,
+                slug: org.slug,
+                email: org.email,
+              },
+              role: 'OWNER',
+            };
           },
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           },
         );
 
-        return {
-          isNew: true,
-          user: {
-            id: result.user.id,
-            name: result.user.name,
-            email: result.user.email,
-            clerkUserId: result.user.clerkUserId,
-            lastOrganizationId: result.user.lastOrganizationId,
-          },
-          organization: {
-            id: result.org.id,
-            name: result.org.name,
-            slug: result.org.slug,
-            email: result.org.email,
-          },
-          role: 'OWNER',
-        };
+        return result;
       } catch (err: unknown) {
         if (isSerializationFailureError(err)) {
           attempt++;
@@ -283,51 +297,8 @@ export class ClerkOnboardingService {
           isUniqueConstraintError(err, 'slug') ||
           isUniqueConstraintError(err, 'email')
         ) {
-          // Si hubo colisión de unicidad, verificar primero si se debe a un intento simultáneo
-          // del mismo clerkUserId que ya completó la creación de su organización.
-          const existing = await this.prisma.db.user.findUnique({
-            where: { clerkUserId },
-            include: {
-              memberships: {
-                include: {
-                  organization: true,
-                },
-              },
-            },
-          });
-
-          if (existing) {
-            const ownerMemberships = existing.memberships.filter(
-              (m) => m.role === 'OWNER',
-            );
-            if (
-              ownerMemberships.length === 1 &&
-              ownerMemberships[0].organization
-            ) {
-              const org = ownerMemberships[0].organization;
-              return {
-                isNew: false,
-                user: {
-                  id: existing.id,
-                  name: existing.name,
-                  email: existing.email,
-                  clerkUserId: existing.clerkUserId,
-                  lastOrganizationId: existing.lastOrganizationId,
-                },
-                organization: {
-                  id: org.id,
-                  name: org.name,
-                  slug: org.slug,
-                  email: org.email,
-                },
-                role: 'OWNER',
-              };
-            }
-
-            throw new ConflictException(
-              'Estado de cuenta no válido para onboarding.',
-            );
-          }
+          const resolved = await this.resolveExistingOwner(clerkUserId);
+          if (resolved) return resolved;
 
           if (isUniqueConstraintError(err, 'slug')) {
             throw new ConflictException(
@@ -336,7 +307,6 @@ export class ClerkOnboardingService {
           }
 
           if (isUniqueConstraintError(err, 'email')) {
-            // Desambiguación segura: rechazo neutro con rollback garantizado
             throw new ConflictException(
               'No es posible completar el registro con los datos proporcionados.',
             );
