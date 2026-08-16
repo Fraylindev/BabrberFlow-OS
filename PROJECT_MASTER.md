@@ -181,7 +181,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Security A0.3-H: Estado **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Aislamiento estricto de E2E implementado, normalización explícita de slug/emails, transacción SERIALIZABLE con reintento acotado para P2034, auditoría transaccional estricta, types y lint limpios sin eslint-disable. Pendiente ejecución de E2E contra PostgreSQL real y QA web de navegador en entorno con base de datos activa).
+1. Security A0.3-H: Estado **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Aislamiento estricto de E2E implementado, normalización explícita de slug/emails, transacción SERIALIZABLE con reintento acotado para P2034, auditoría transaccional estricta, types y lint limpios. Suite E2E completa ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test` tras eliminar la plantilla obsoleta `app.e2e-spec.ts`. Pendiente QA web de navegador en entorno con servidor activo).
 2. Queda pendiente iniciar Security A0.3 (Onboarding Clerk), el cual **NO DEBE INICIARSE** sin autorización y cierre formal de A0.3-H.
 3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
 4. Mantener Frontend A2 de Profesionales en revisión.

@@ -16,8 +16,8 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Protección de organizaciones:** `POST /organizations` ya no es un endpoint público para registrar una barbería inicial. Ha sido protegido con `JwtAuthGuard` y `RolesGuard(OWNER)`, reservándose para usuarios autenticados con privilegios que necesiten registrar organizaciones adicionales.
 - **Cuentas sin contraseña local:** La columna `User.password` en Prisma ahora es `String?` (nullable). Esto prepara la base de datos para usuarios autenticados mediante Clerk. El endpoint `POST /auth/login` se modificó para verificar explícitamente `user.password !== null` antes de usar `bcrypt`, retornando siempre el genérico `401 Credenciales inválidas` en caso de intentar un login legacy sobre una cuenta Clerk, preservando la seguridad y evitando fugas de información. `PATCH /auth/update-password` previene el pase de nulls lanzando explícitamente un 400.
 - **Frontend actualizado:** El cliente de registro en `apps/web/lib/auth-context.tsx` ha sido modificado para enviar el nuevo payload unificado a `/auth/register` incluyendo el nuevo campo de correo de la organización (`organizationEmail`), eliminando la llamada previa y vulnerable a `/organizations`.
-- **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y solo permite ejecución si el nombre de la base termina en `_test` o el parámetro `schema` es `test` o termina en `_test`.
-- **Estado:** Security A0.3-H (Hardening Legacy) **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Falta ejecución de E2E contra PostgreSQL real y QA de navegador por indisponibilidad de base de datos local).
+- **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`. Se eliminó la plantilla obsoleta `app.e2e-spec.ts`. Suite E2E ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test`.
+- **Estado:** Security A0.3-H (Hardening Legacy) **IMPLEMENTADO / EN REVISIÓN** (No aprobado. E2E PostgreSQL ejecutado y verificado; pendiente QA de navegador con servidor web activo).
 
 ---
 

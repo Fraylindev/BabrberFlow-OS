@@ -11,8 +11,8 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Cuentas sin contraseña:** `User.password` ahora es `String?`. El endpoint `/auth/login` se modificó de manera retrocompatible para manejar cuentas sin contraseña (como futuras cuentas creadas por Clerk) retornando un genérico `401 Credenciales inválidas` para prevenir fugas de información o errores internos. La actualización de contraseña (`/auth/update-password`) verifica y bloquea operaciones en cuentas sin contraseña local antes de verificar hashes.
 - **Auditoría:** La transacción atómica escribe en el `AuditLog` un evento `CREATE` sin incluir información sensible (PII) vía `AuditService.logTransactional()`, provocando rollback atómico si la auditoría falla.
 - **Frontend web:** Se actualizó `apps/web/lib/auth-context.tsx` para enviar el nuevo payload unificado a `/auth/register` incluyendo `organizationEmail`.
-- **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`.
-- **Estado:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Pruebas unitarias, linting estricto sin ignores, build y types limpios; pendiente ejecución de E2E contra PostgreSQL real y QA de navegador por entorno local).
+- **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`. Se eliminó la plantilla obsoleta `app.e2e-spec.ts`. Suite E2E ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test`.
+- **Estado:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Pruebas unitarias, E2E PostgreSQL real aislado, linting estricto, build y types limpios; pendiente QA de navegador con servidor web activo).
 
 ## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables Clerk
 

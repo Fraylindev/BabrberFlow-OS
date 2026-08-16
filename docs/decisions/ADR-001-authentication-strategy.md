@@ -214,8 +214,8 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - `POST /organizations` (`OrganizationsController`) está protegido con JWT y rol `OWNER`; ya no es ruta pública para el alta inicial.
 - `User.password` es nullable en persistencia. `login()` y `updatePassword()` protegen contra contraseñas locales nulas (devuelven rechazo neutro 401 y 400 respectivamente sin invocar bcrypt con null).
 - Frontend web (`apps/web/lib/auth-context.tsx`) envía el payload atómico completo incluyendo `organizationEmail`.
-- E2E (`apps/api/test/global-setup.ts`) analiza `DATABASE_URL` mediante `URL` y solo permite ejecución si el pathname de la base termina estrictamente en `_test` o el parámetro `schema` es exactamente `test` o termina en `_test`.
-- Evidencia ejecutada: Type-check API/Web, Lint API/Web sin eslint-disables, Build API/Web, Prisma schema validate, 227 Unit tests API pasando. Pendiente: Ejecución de E2E contra PostgreSQL real y QA web de navegador en entorno con base de datos activa.
+- Pruebas E2E (`auth.e2e-spec.ts` y `organizations.e2e-spec.ts`) operan bajo un estricto aislamiento, forzando la validación del esquema de la base de datos de test (`global-setup.ts`). La plantilla obsoleta `app.e2e-spec.ts` fue eliminada. Ejecutadas y pasadas 8/8 pruebas contra PostgreSQL en esquema aislado `test`.
+- Evidencia ejecutada: Type-check API/Web (`exit 0`), Lint API/Web sin eslint-disables (`exit 0`), Build API/Web (`exit 0`), Prisma schema validate (`exit 0`), 227 Unit tests API pasando (`exit 0`), 8 E2E tests contra PostgreSQL real en esquema aislado `test` pasando (`exit 0`). Pendiente: QA web de navegador en entorno con servidor activo.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 
