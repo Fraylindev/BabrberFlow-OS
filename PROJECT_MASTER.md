@@ -95,7 +95,7 @@ Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nulla
 
 Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
 
-Security A0.3-H: **IMPLEMENTADO / EN REVISIÓN**. Hardening legacy y web con los siguientes atributos:
+Security A0.3-H: **CERRADO / APROBADO** por el propietario tras validación de 8 tests E2E reales en PostgreSQL aislado y QA de navegador. Hardening legacy y web con los siguientes atributos:
     *   **Registro Atómico Estricto:** La creación de usuario (`User`), inquilino (`Organization`) y el vínculo de propiedad (`Membership` con rol `OWNER`) ocurre en una **transacción PostgreSQL con aislamiento `Serializable`** (`Prisma.TransactionIsolationLevel.Serializable`), previniendo escalamiento y cuentas fantasma por concurrencia. Se incluyen reintentos (max 3) para lidiar con fallas de serialización (`P2034`).
     *   **Inquilinos Aislados:** `POST /organizations` ya no es un endpoint público. Solo un usuario con rol `OWNER` puede crear nuevos tenants adicionales.
     *   **Correo de Organización:** La barbería recibe su propio correo electrónico, disociado del correo personal del propietario, exigido como `organizationEmail` durante el registro inicial.
