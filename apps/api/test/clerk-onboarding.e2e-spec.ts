@@ -2,6 +2,7 @@ import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { ClerkSessionVerifierService } from '../src/auth/clerk/clerk-session-verifier.service';
+import { AuditService } from '../src/audit/audit.service';
 import { createE2eApp, requestApp } from './create-e2e-app';
 
 interface MockClerkUser {
@@ -51,8 +52,12 @@ describe('ClerkOnboarding (e2e)', () => {
   };
 
   const mockVerifier = {
-    verify: jest.fn().mockImplementation(() => {
+    verify: jest.fn().mockImplementation((req?: globalThis.Request) => {
       if (shouldFailVerify) {
+        return Promise.reject(new UnauthorizedException('Sesión no válida'));
+      }
+      const authHeader = req?.headers?.get('authorization');
+      if (!authHeader || authHeader.trim().length === 0) {
         return Promise.reject(new UnauthorizedException('Sesión no válida'));
       }
       return Promise.resolve(currentSession);
@@ -108,6 +113,16 @@ describe('ClerkOnboarding (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  it('devuelve 401 si la petición no incluye cabecera Authorization', async () => {
+    const res = await requestApp(app).post('/auth/clerk/onboarding').send({
+      organizationName: 'Barbería Sin Auth',
+      organizationSlug: 'barberia-sin-auth',
+      organizationEmail: 'org-sin-auth@e2e-test.com',
+    });
+
+    expect(res.status).toBe(401);
   });
 
   it('devuelve 401 si la sesión de Clerk no es válida', async () => {
@@ -332,6 +347,83 @@ describe('ClerkOnboarding (e2e)', () => {
       where: { clerkUserId: clerkId },
     });
     expect(usersCount).toBe(1);
+  });
+
+  it('soporta concurrencia Promise.all con mismo clerkUserId creando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog', async () => {
+    const unique = Date.now() + Math.random().toString(36).substring(2, 7);
+    const clerkId = `user_clerk_concurrent_${unique}`;
+    const slug = `barberia-concurrent-${unique}`;
+    const orgEmail = `contacto-${unique}@concurrent.com`;
+    const userEmail = `concurrent-${unique}@e2e-test.com`;
+
+    currentSession = {
+      clerkUserId: clerkId,
+      sessionId: `sess_concurrent_${unique}`,
+    };
+    currentClerkUser = {
+      id: clerkId,
+      firstName: 'Concurrent',
+      lastName: 'Owner',
+      username: `concurrent_${unique}`,
+      primaryEmailAddressId: `email_${unique}`,
+      emailAddresses: [
+        {
+          id: `email_${unique}`,
+          emailAddress: userEmail,
+          verification: { status: 'verified' },
+        },
+      ],
+    };
+
+    const payload = {
+      organizationName: 'Barbería Concurrente',
+      organizationSlug: slug,
+      organizationEmail: orgEmail,
+    };
+
+    const [res1, res2] = await Promise.all([
+      requestApp(app)
+        .post('/auth/clerk/onboarding')
+        .set('Authorization', 'Bearer valid-token')
+        .send(payload),
+      requestApp(app)
+        .post('/auth/clerk/onboarding')
+        .set('Authorization', 'Bearer valid-token')
+        .send(payload),
+    ]);
+
+    const statuses = [res1.status, res2.status].sort();
+    expect(statuses).toEqual([200, 201]);
+
+    // Verificar en PostgreSQL real aislado
+    const users = await prisma.db.user.findMany({
+      where: { clerkUserId: clerkId },
+    });
+    expect(users).toHaveLength(1);
+    expect(users[0].password).toBeNull();
+
+    const orgs = await prisma.db.organization.findMany({
+      where: { slug },
+    });
+    expect(orgs).toHaveLength(1);
+
+    const memberships = await prisma.db.membership.findMany({
+      where: {
+        userId: users[0].id,
+        organizationId: orgs[0].id,
+      },
+    });
+    expect(memberships).toHaveLength(1);
+    expect(memberships[0].role).toBe('OWNER');
+
+    const auditLogs = await prisma.db.auditLog.findMany({
+      where: {
+        organizationId: orgs[0].id,
+        action: 'CREATE',
+        entity: 'Organization',
+      },
+    });
+    expect(auditLogs).toHaveLength(1);
   });
 
   it('devuelve 409 ante estado parcial (clerkUserId existe sin membresía OWNER) y nunca crea segunda organización', async () => {
@@ -571,5 +663,109 @@ describe('ClerkOnboarding (e2e)', () => {
       where: { email: localEmail },
     });
     expect(dbUser?.clerkUserId).toBeNull();
+  });
+});
+
+describe('ClerkOnboarding rollback on audit failure (e2e)', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+
+  let currentClerkUser: MockClerkUser | null = null;
+  const currentSession = {
+    clerkUserId: 'user_clerk_rollback_1',
+    sessionId: 'sess_rollback_1',
+  };
+
+  const mockVerifier = {
+    verify: jest.fn().mockImplementation((req?: globalThis.Request) => {
+      const authHeader = req?.headers?.get('authorization');
+      if (!authHeader) {
+        return Promise.reject(new UnauthorizedException('Sesión no válida'));
+      }
+      return Promise.resolve(currentSession);
+    }),
+    getClient: jest.fn().mockReturnValue({
+      users: {
+        getUser: jest.fn().mockImplementation((userId: string) => {
+          if (currentClerkUser && currentClerkUser.id === userId) {
+            return Promise.resolve(currentClerkUser);
+          }
+          return Promise.resolve(currentClerkUser);
+        }),
+      },
+    }),
+  };
+
+  beforeAll(async () => {
+    app = await createE2eApp((builder) =>
+      builder
+        .overrideProvider(ClerkSessionVerifierService)
+        .useValue(mockVerifier)
+        .overrideGuard(ThrottlerGuard)
+        .useValue({ canActivate: () => true })
+        .overrideProvider(AuditService)
+        .useValue({
+          log: jest.fn().mockResolvedValue(undefined),
+          logTransactional: jest
+            .fn()
+            .mockRejectedValue(new Error('forced audit failure')),
+        }),
+    );
+    prisma = app.get(PrismaService);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('provoca rollback total en PostgreSQL si falla logTransactional', async () => {
+    const unique = Date.now() + Math.random().toString(36).substring(2, 7);
+    const clerkId = `user_clerk_auditfail_${unique}`;
+    const slug = `barberia-auditfail-${unique}`;
+    const orgEmail = `contacto-${unique}@auditfail.com`;
+    const userEmail = `auditfail-${unique}@e2e-test.com`;
+
+    currentClerkUser = {
+      id: clerkId,
+      firstName: 'Audit',
+      lastName: 'Fail',
+      username: `auditfail_${unique}`,
+      primaryEmailAddressId: `email_${unique}`,
+      emailAddresses: [
+        {
+          id: `email_${unique}`,
+          emailAddress: userEmail,
+          verification: { status: 'verified' },
+        },
+      ],
+    };
+    currentSession.clerkUserId = clerkId;
+
+    const res = await requestApp(app)
+      .post('/auth/clerk/onboarding')
+      .set('Authorization', 'Bearer valid-token')
+      .send({
+        organizationName: 'Barbería Audit Fail',
+        organizationSlug: slug,
+        organizationEmail: orgEmail,
+      });
+
+    expect(res.status).toBeGreaterThanOrEqual(500);
+
+    // Verificar que NO existe rastro en PostgreSQL real
+    const user = await prisma.db.user.findUnique({
+      where: { clerkUserId: clerkId },
+    });
+    expect(user).toBeNull();
+
+    const org = await prisma.db.organization.findUnique({
+      where: { slug },
+    });
+    expect(org).toBeNull();
+
+    const auditLogs = await prisma.db.auditLog.findMany({
+      where: { entityId: slug },
+    });
+    expect(auditLogs).toHaveLength(0);
   });
 });

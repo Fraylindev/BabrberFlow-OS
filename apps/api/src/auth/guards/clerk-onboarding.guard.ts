@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ClerkSessionVerifierService } from '../clerk/clerk-session-verifier.service';
+import { toWebRequest } from '../clerk/to-web-request';
 
 export interface ClerkOnboardingRequest extends Request {
   clerkSession?: {
@@ -25,7 +26,7 @@ export class ClerkOnboardingGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<ClerkOnboardingRequest>();
 
     try {
-      const session = await this.verifier.verify(this.toWebRequest(request));
+      const session = await this.verifier.verify(toWebRequest(request));
 
       request.clerkSession = {
         clerkUserId: session.clerkUserId,
@@ -43,26 +44,5 @@ export class ClerkOnboardingGuard implements CanActivate {
       this.logger.error(`Error inesperado en ClerkOnboardingGuard: ${kind}`);
       throw new UnauthorizedException('Sesión no válida');
     }
-  }
-
-  private toWebRequest(request: Request): globalThis.Request {
-    const headers = new Headers();
-
-    for (const [name, value] of Object.entries(request.headers)) {
-      if (Array.isArray(value)) {
-        value.forEach((item) => headers.append(name, item));
-      } else if (value !== undefined) {
-        headers.set(name, value);
-      }
-    }
-
-    const protocol = request.protocol || 'http';
-    const host = request.get('host') || 'localhost';
-    const path = request.originalUrl || request.url || '/';
-
-    return new globalThis.Request(`${protocol}://${host}${path}`, {
-      method: request.method,
-      headers,
-    });
   }
 }

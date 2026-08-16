@@ -9,6 +9,7 @@ import { isUUID } from 'class-validator';
 import { Request } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ClerkSessionVerifierService } from '../clerk/clerk-session-verifier.service';
+import { toWebRequest } from '../clerk/to-web-request';
 import { AuthenticatedRequest } from '../types/authenticated-request';
 
 export const ORGANIZATION_ID_HEADER = 'x-organization-id';
@@ -30,7 +31,7 @@ export class ClerkAuthGuard implements CanActivate {
     const organizationId = this.readOrganizationId(request);
 
     try {
-      const session = await this.verifier.verify(this.toWebRequest(request));
+      const session = await this.verifier.verify(toWebRequest(request));
 
       const user = await this.prisma.db.user.findUnique({
         where: { clerkUserId: session.clerkUserId },
@@ -73,11 +74,9 @@ export class ClerkAuthGuard implements CanActivate {
         throw error;
       }
 
-      // Error inesperado de infraestructura (p. ej. BD caída, timeout SDK).
-      // Solo registramos el tipo — sin valores, tokens ni detalles internos.
-      const kind =
-        error instanceof Error ? error.constructor.name : 'UnknownError';
-      this.logger.error(`Error inesperado en ClerkAuthGuard: ${kind}`);
+      this.logger.error(
+        `Error inesperado en ClerkAuthGuard: ${error instanceof Error ? error.constructor.name : 'UnknownError'}`,
+      );
       throw new UnauthorizedException(
         'Sesión no válida para esta organización',
       );
@@ -95,26 +94,5 @@ export class ClerkAuthGuard implements CanActivate {
     }
 
     return organizationId;
-  }
-
-  private toWebRequest(request: Request): globalThis.Request {
-    const headers = new Headers();
-
-    for (const [name, value] of Object.entries(request.headers)) {
-      if (Array.isArray(value)) {
-        value.forEach((item) => headers.append(name, item));
-      } else if (value !== undefined) {
-        headers.set(name, value);
-      }
-    }
-
-    const protocol = request.protocol || 'http';
-    const host = request.get('host') || 'localhost';
-    const path = request.originalUrl || request.url || '/';
-
-    return new globalThis.Request(`${protocol}://${host}${path}`, {
-      method: request.method,
-      headers,
-    });
   }
 }

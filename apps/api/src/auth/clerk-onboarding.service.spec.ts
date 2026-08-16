@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { ClerkOnboardingService } from './clerk-onboarding.service';
@@ -110,6 +111,26 @@ describe('ClerkOnboardingService', () => {
 
       await expect(service.onboardOwner(clerkUserId, validDto)).rejects.toThrow(
         ServiceUnavailableException,
+      );
+    });
+
+    it('lanza 401 cuando el perfil retornado tiene un id diferente al clerkUserId de la sesión', async () => {
+      clerkUsersMock.getUser.mockResolvedValue(
+        mockClerkUser({
+          id: 'user_clerk_different_456',
+        }),
+      );
+
+      await expect(service.onboardOwner(clerkUserId, validDto)).rejects.toThrow(
+        new UnauthorizedException('Sesión no válida'),
+      );
+    });
+
+    it('lanza 401 cuando el SDK de Clerk devuelve un perfil nulo', async () => {
+      clerkUsersMock.getUser.mockResolvedValue(null);
+
+      await expect(service.onboardOwner(clerkUserId, validDto)).rejects.toThrow(
+        new UnauthorizedException('Sesión no válida'),
       );
     });
 

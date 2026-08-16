@@ -103,13 +103,14 @@ Security A0.3-H: **CERRADO / APROBADO** por el propietario tras validación de 8
 
 Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictamente backend). Onboarding de propietarios con Clerk con los siguientes atributos:
     *   **Endpoint Seguro:** `POST /auth/clerk/onboarding` protegido por `ClerkOnboardingGuard`, verificando sesión activa en Clerk sin requerir inquilino ni usuario previo en PostgreSQL.
+    *   **Helper Compartido:** Conversión unificada de peticiones Express a Web Fetch API Request (`toWebRequest`) compartida entre `ClerkAuthGuard` y `ClerkOnboardingGuard`.
     *   **Reutilización Lazy:** Amplía `ClerkClientFactory` con `users.getUser` y reutiliza el cliente ya instanciado en `ClerkSessionVerifierService`.
-    *   **Perfil Autoritativo:** Nombre obligatorio resuelto estrictamente desde `firstName`/`lastName` o `username` (400 si falta; prohibido body o metadata). Correo principal verificado obligatorio (403 si no está verificado). Falla externa de Clerk responde 503 sin tocar base de datos.
+    *   **Perfil Autoritativo con Validación de ID:** Validación estricta de que el perfil devuelto por `users.getUser` posea exactamente el mismo `id` que el `clerkUserId` autenticado (401 antes de tocar PostgreSQL si no coincide). Nombre obligatorio resuelto de `firstName`/`lastName` o `username` (400 si falta; prohibido body o metadata). Correo principal verificado obligatorio (403 si no está verificado). Falla externa de Clerk responde 503 sin tocar base de datos.
     *   **Anti-Enlace Neutro:** Rechazo 409 completamente neutro si el correo verificado coincide con un usuario local no enlazado, sin revelar existencia de cuentas.
     *   **Transacción Atómica e Idempotente:** Alta atómica en transacción `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` (`name`, `slug` normalizado, `email` normalizado) y `Membership(OWNER)` con `AuditLog` sin PII. Reintento acotado a 3 para `P2034`.
-    *   **Códigos Dinámicos:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente.
+    *   **Códigos Dinámicos y Concurrencia:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente. Resuelve de forma idempotente ante ráfagas concurrentes `Promise.all` garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog. Rollback atómico total garantizado si falla `logTransactional`.
     *   **Control de Estado Parcial:** Si `clerkUserId` existe sin exactamente 1 membresía OWNER, responde 409 y nunca crea una segunda organización.
-    *   **Validación:** 250 pruebas unitarias y 18 pruebas E2E contra PostgreSQL en esquema aislado `test` con dobles controlados de Clerk (cero secretos y cero llamadas de red en tests). No incluye frontend ni QA de navegador.
+    *   **Validación:** 253 pruebas unitarias y 21 pruebas E2E contra PostgreSQL en esquema aislado `test` con dobles controlados de Clerk (cero secretos y cero llamadas de red en tests). No incluye frontend ni QA de navegador.
 
 ## 5. Decisiones activas de dominio
 
@@ -191,7 +192,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Security A0.3-A (Onboarding con Clerk Backend): **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Implementado endpoint atómico e idempotente `POST /auth/clerk/onboarding` bajo `ClerkOnboardingGuard`, resolución autoritativa de perfil Clerk con nombre obligatorio y correo verificado 403, anti-enlace 409 neutro, transacción `SERIALIZABLE` con reintento acotado para P2034, 201 inicial y 200 idempotente, y control de estado parcial. 250 unit tests y 18 E2E tests pasando contra PostgreSQL en esquema aislado `test` con dobles de Clerk. No incluye frontend ni QA web).
+1. Security A0.3-A (Onboarding con Clerk Backend): **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Implementado endpoint atómico e idempotente `POST /auth/clerk/onboarding` bajo `ClerkOnboardingGuard`, helper compartido `toWebRequest`, validación estricta de `clerkUser.id === clerkUserId` con 401, resolución autoritativa de perfil Clerk con nombre obligatorio y correo verificado 403, anti-enlace 409 neutro, transacción `SERIALIZABLE` con reintento acotado para P2034, 201 inicial y 200 idempotente ante concurrencia `Promise.all` garantizando exactamente 1 User/Org/Membership/AuditLog, rollback total ante fallo de auditoría, y control de estado parcial. 253 unit tests y 21 E2E tests pasando contra PostgreSQL en esquema aislado `test` con dobles de Clerk. No incluye frontend ni QA web).
 2. Queda pendiente auditar y cerrar formalmente Security A0.3-A antes de avanzar a la etapa de frontend o a A0.3-B (`GET /auth/clerk/me`).
 3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
 4. Mantener Frontend A2 de Profesionales en revisión.

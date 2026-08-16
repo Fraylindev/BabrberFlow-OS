@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Injectable,
   ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -38,6 +39,7 @@ export interface OnboardOwnerResult {
 }
 
 interface ClerkUserProfile {
+  id?: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
@@ -70,10 +72,8 @@ export class ClerkOnboardingService {
       );
     }
 
-    if (!clerkUser) {
-      throw new ServiceUnavailableException(
-        'Servicio de autenticación no disponible temporalmente',
-      );
+    if (!clerkUser || clerkUser.id !== clerkUserId) {
+      throw new UnauthorizedException('Sesión no válida');
     }
 
     const nameParts = [clerkUser.firstName, clerkUser.lastName]
@@ -278,8 +278,13 @@ export class ClerkOnboardingService {
           continue;
         }
 
-        if (isUniqueConstraintError(err, 'clerkUserId')) {
-          // Reintento simultáneo del mismo clerkUserId: resolver fuera de la transacción fallida
+        if (
+          isUniqueConstraintError(err, 'clerkUserId') ||
+          isUniqueConstraintError(err, 'slug') ||
+          isUniqueConstraintError(err, 'email')
+        ) {
+          // Si hubo colisión de unicidad, verificar primero si se debe a un intento simultáneo
+          // del mismo clerkUserId que ya completó la creación de su organización.
           const existing = await this.prisma.db.user.findUnique({
             where: { clerkUserId },
             include: {
@@ -318,22 +323,27 @@ export class ClerkOnboardingService {
                 role: 'OWNER',
               };
             }
+
+            throw new ConflictException(
+              'Estado de cuenta no válido para onboarding.',
+            );
           }
+
+          if (isUniqueConstraintError(err, 'slug')) {
+            throw new ConflictException(
+              'El slug de la organización ya está en uso. Elige otro.',
+            );
+          }
+
+          if (isUniqueConstraintError(err, 'email')) {
+            // Desambiguación segura: rechazo neutro con rollback garantizado
+            throw new ConflictException(
+              'No es posible completar el registro con los datos proporcionados.',
+            );
+          }
+
           throw new ConflictException(
             'Estado de cuenta no válido para onboarding.',
-          );
-        }
-
-        if (isUniqueConstraintError(err, 'slug')) {
-          throw new ConflictException(
-            'El slug de la organización ya está en uso. Elige otro.',
-          );
-        }
-
-        if (isUniqueConstraintError(err, 'email')) {
-          // Desambiguación segura: rechazo neutro con rollback garantizado
-          throw new ConflictException(
-            'No es posible completar el registro con los datos proporcionados.',
           );
         }
 
