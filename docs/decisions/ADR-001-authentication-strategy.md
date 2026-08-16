@@ -206,7 +206,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, los 19 usuarios existentes, Prisma, Supabase y frontend no cambian.
 - Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership, revocación local de acceso, arranque sin variables Clerk, fallo cerrado del loader, fallo cerrado del guard por error inesperado y reutilización del cliente inicializado.
 
-## Resultado de Security A0.3-H (Hardening Legacy) — IMPLEMENTADO / EN REVISIÓN (No aprobado)
+## Resultado de Security A0.3-H (Hardening Legacy) — CERRADO / APROBADO
 
 - El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y rechaza `organizationId`. Se implementó validación de formato (3-50 caracteres, minúsculas/números y guiones intermedios) y normalización explícita (`toLowerCase().trim()`) para slug y correos en el servicio.
 - `AuthService.register()` crea `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (`isolationLevel: Prisma.TransactionIsolationLevel.Serializable`). Se implementó reintento acotado a exactamente 3 intentos exclusivo para fallas de serialización (`P2034`), mientras que errores de unicidad (`P2002`) en slug o email se traducen inmediatamente a `409 ConflictException` sin reintentos ciegos.
@@ -215,7 +215,8 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - `User.password` es nullable en persistencia. `login()` y `updatePassword()` protegen contra contraseñas locales nulas (devuelven rechazo neutro 401 y 400 respectivamente sin invocar bcrypt con null).
 - Frontend web (`apps/web/lib/auth-context.tsx`) envía el payload atómico completo incluyendo `organizationEmail`.
 - Pruebas E2E (`auth.e2e-spec.ts` y `organizations.e2e-spec.ts`) operan bajo un estricto aislamiento, forzando la validación del esquema de la base de datos de test (`global-setup.ts`). La plantilla obsoleta `app.e2e-spec.ts` fue eliminada. Ejecutadas y pasadas 8/8 pruebas contra PostgreSQL en esquema aislado `test`.
-- Evidencia ejecutada: Type-check API/Web (`exit 0`), Lint API/Web sin eslint-disables (`exit 0`), Build API/Web (`exit 0`), Prisma schema validate (`exit 0`), 227 Unit tests API pasando (`exit 0`), 8 E2E tests contra PostgreSQL real en esquema aislado `test` pasando (`exit 0`). Pendiente: QA web de navegador en entorno con servidor activo.
+- Evidencia validada: Type-check API/Web (`exit 0`), Lint API/Web sin eslint-disables (`exit 0`), Build API/Web (`exit 0`), Prisma schema validate (`exit 0`), 227 Unit tests API pasando (`exit 0`), 8 E2E tests contra PostgreSQL real en esquema aislado `test` pasando (`exit 0`), QA funcional de navegador completado.
+- Estado: **CERRADO / APROBADO**. Security A0.3 completo continúa abierto hacia A0.3-A (Onboarding Clerk).
 
 ## Fuera de alcance del diagnóstico Security A0-D
 

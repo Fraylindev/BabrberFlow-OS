@@ -12,7 +12,7 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Auditoría:** La transacción atómica escribe en el `AuditLog` un evento `CREATE` sin incluir información sensible (PII) vía `AuditService.logTransactional()`, provocando rollback atómico si la auditoría falla.
 - **Frontend web:** Se actualizó `apps/web/lib/auth-context.tsx` para enviar el nuevo payload unificado a `/auth/register` incluyendo `organizationEmail`.
 - **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`. Se eliminó la plantilla obsoleta `app.e2e-spec.ts`. Suite E2E ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test`.
-- **Estado:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Pruebas unitarias, E2E PostgreSQL real aislado, linting estricto, build y types limpios; pendiente QA de navegador con servidor web activo).
+- **Estado:** Security A0.3-H **CERRADO / APROBADO** por el propietario. Security A0.3 completo sigue abierto; siguiente etapa: A0.3-A (Onboarding Clerk).
 
 ## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables Clerk
 

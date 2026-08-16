@@ -17,7 +17,7 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Cuentas sin contraseña local:** La columna `User.password` en Prisma ahora es `String?` (nullable). Esto prepara la base de datos para usuarios autenticados mediante Clerk. El endpoint `POST /auth/login` se modificó para verificar explícitamente `user.password !== null` antes de usar `bcrypt`, retornando siempre el genérico `401 Credenciales inválidas` en caso de intentar un login legacy sobre una cuenta Clerk, preservando la seguridad y evitando fugas de información. `PATCH /auth/update-password` previene el pase de nulls lanzando explícitamente un 400.
 - **Frontend actualizado:** El cliente de registro en `apps/web/lib/auth-context.tsx` ha sido modificado para enviar el nuevo payload unificado a `/auth/register` incluyendo el nuevo campo de correo de la organización (`organizationEmail`), eliminando la llamada previa y vulnerable a `/organizations`.
 - **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`. Se eliminó la plantilla obsoleta `app.e2e-spec.ts`. Suite E2E ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test`.
-- **Estado:** Security A0.3-H (Hardening Legacy) **IMPLEMENTADO / EN REVISIÓN** (No aprobado. E2E PostgreSQL ejecutado y verificado; pendiente QA de navegador con servidor web activo).
+- **Estado:** Security A0.3-H (Hardening Legacy) **CERRADO / APROBADO** por el propietario tras validación E2E en PostgreSQL aislado y QA de navegador. Security A0.3 continúa abierto hacia A0.3-A.
 
 ---
 
