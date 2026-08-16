@@ -199,5 +199,6 @@ describe('ClerkSessionVerifierService', () => {
     await freshService.verify(request);
 
     expect(factoryCallCount).toBe(1);
+    expect(freshService.getClient()).toBe(client);
   });
 });

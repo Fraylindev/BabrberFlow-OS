@@ -8,6 +8,18 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-15 — Security A0.3-A: Onboarding backend con Clerk
+
+- **Endpoint de Onboarding:** Se implementó `POST /auth/clerk/onboarding` (`ClerkOnboardingController`), protegido por `ClerkOnboardingGuard`. Permite a nuevos usuarios autenticados en Clerk crear su tenant inicial sin requerir pertenencia previa a una organización.
+- **Cero confianza en payload de cliente:** El `ClerkOnboardingDto` solo acepta `organizationName`, `organizationSlug` y `organizationEmail`. Prohíbe y rechaza con 400 cualquier campo de identidad o privilegio (`clerkUserId`, `name`, `email`, `role`, `organizationId`).
+- **Resolución autoritativa y verificación de perfil:** Se consulta `users.getUser(clerkUserId)` de forma lazy reutilizando la instancia de `ClerkSessionVerifierService`. El nombre se extrae estrictamente de `firstName`/`lastName` o `username` (400 si falta). El correo principal debe estar verificado en Clerk (403 si `status !== 'verified'`). Falla de infraestructura externa responde 503 controlado.
+- **Anti-Enlace Neutro:** Si el correo verificado de Clerk coincide con un usuario local no enlazado, devuelve `409 ConflictException` completamente neutro (*"No es posible completar el registro con los datos proporcionados"*).
+- **Alta Atómica e Idempotente:** Creación en transacción PostgreSQL `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` y `Membership(role: 'OWNER')` junto con `AuditLog` sin PII. Reintento acotado a 3 intentos para fallos `P2034`.
+- **Manejo de concurrencia P2002 y estado parcial:** Ante colisión `P2002(clerkUserId)`, se resuelve la entidad existente fuera de la transacción fallida y se retorna `200 OK` idempotente si el usuario posee exactamente 1 organización OWNER. Si el estado es parcial/inconsistente, responde 409 y nunca crea una segunda organización.
+- **Respuestas dinámicas:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente.
+- **Pruebas y Aislamiento:** 250 unit tests y 18 pruebas E2E ejecutadas y pasadas al 100% contra PostgreSQL en esquema aislado `test` con dobles controlados de Clerk (sin secretos ni red externa).
+- **Estado:** Security A0.3-A **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictamente backend; no incluye frontend ni QA de navegador).
+
 ---
 
 ## 2026-08-15 — Security A0.3-H: Hardening legacy

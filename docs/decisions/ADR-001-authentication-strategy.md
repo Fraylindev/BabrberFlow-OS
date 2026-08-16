@@ -218,6 +218,21 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Evidencia validada: Type-check API/Web (`exit 0`), Lint API/Web sin eslint-disables (`exit 0`), Build API/Web (`exit 0`), Prisma schema validate (`exit 0`), 227 Unit tests API pasando (`exit 0`), 8 E2E tests contra PostgreSQL real en esquema aislado `test` pasando (`exit 0`), QA funcional de navegador completado.
 - Estado: **CERRADO / APROBADO**. Security A0.3 completo continúa abierto hacia A0.3-A (Onboarding Clerk).
 
+## Resultado de Security A0.3-A (Onboarding Backend Clerk) — IMPLEMENTADO / EN REVISIÓN (No aprobado)
+
+- Se amplió `ClerkClientFactory` con `users: Pick<ClerkClient['users'], 'getUser'>` y se habilitó su acceso lazy sin duplicación desde `ClerkSessionVerifierService.getClient()`.
+- Se implementó `ClerkOnboardingGuard` para proteger endpoints de onboarding verificando la autenticidad y estado activo de la sesión Clerk sin exigir inquilino ni usuario previo en PostgreSQL.
+- Se implementó `POST /auth/clerk/onboarding` (`ClerkOnboardingController`) con `ClerkOnboardingDto` (`organizationName`, `organizationSlug`, `organizationEmail`). El payload no acepta datos de identidad (`clerkUserId`, `name`, `email`, `role`, `organizationId`).
+- Resolución autoritativa de perfil Clerk: se extrae nombre estrictamente de `firstName`/`lastName` o `username` (400 si falta; prohibido body o metadata). Correo principal verificado obligatorio (403 si `status !== 'verified'`). Falla de Clerk API responde 503 controlado.
+- Política anti-enlace: si el correo verificado coincide con un usuario local no enlazado, se rechaza con `409 ConflictException` neutro (*"No es posible completar el registro con los datos proporcionados"*).
+- Creación atómica en transacción `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` y `Membership(role: 'OWNER')` junto con `AuditLog` sin PII.
+- Reintento acotado a 3 intentos para `P2034`.
+- Manejo diferenciado de `P2002`: ante `clerkUserId`, se aborta la transacción y se resuelve la entidad existente retornando `200 OK` idempotente; ante colisión de slug o email de organización, se retorna `409 ConflictException` de negocio.
+- Control de estado parcial: si `clerkUserId` existe sin exactamente 1 membresía OWNER, se rechaza con 409 y nunca se crea una segunda organización.
+- Códigos HTTP dinámicos vía `@Res({ passthrough: true })`: `201 Created` en creación inicial y `200 OK` en reintento idempotente.
+- Suite de pruebas: 250 unit tests API pasando y 18 tests E2E ejecutados y pasados en PostgreSQL bajo esquema aislado `test` con dobles en memoria para Clerk (cero secretos y cero llamadas de red externas).
+- Alcance 100% backend; no incluye frontend ni QA de navegador.
+
 ## Fuera de alcance del diagnóstico Security A0-D
 
 - Instalar Clerk, crear proyectos Supabase o cambiar variables/secrets.

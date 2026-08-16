@@ -19,7 +19,7 @@ export type ClerkConfigLoader = () => ClerkAuthConfig;
  */
 export type ClerkClientFactory = (
   config: ClerkAuthConfig,
-) => Pick<ClerkClient, 'authenticateRequest' | 'sessions'>;
+) => Pick<ClerkClient, 'authenticateRequest' | 'sessions' | 'users'>;
 
 /** Alias publico del tipo Pick del cliente, reutilizado en el verifier. */
 export type ClerkBackendClient = ReturnType<ClerkClientFactory>;

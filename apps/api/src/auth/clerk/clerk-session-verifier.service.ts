@@ -69,6 +69,10 @@ export class ClerkSessionVerifierService {
     return { client: this.client, config: this.config };
   }
 
+  getClient(): ClerkBackendClient {
+    return this.initializeIfNeeded().client;
+  }
+
   async verify(request: Request): Promise<VerifiedClerkSession> {
     try {
       const { client, config } = this.initializeIfNeeded();

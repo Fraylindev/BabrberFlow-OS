@@ -101,6 +101,16 @@ Security A0.3-H: **CERRADO / APROBADO** por el propietario tras validación de 8
     *   **Correo de Organización:** La barbería recibe su propio correo electrónico, disociado del correo personal del propietario, exigido como `organizationEmail` durante el registro inicial.
     *   **Tolerancia a contraseñas nulas:** Las cuentas sin contraseña local (preparación para usuarios autenticados vía Clerk) reciben el mismo rechazo neutro "Credenciales inválidas" en el login legacy en lugar de errores internos de servidor (500). La actualización de contraseñas protege contra bcrypt(null).
 
+Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictamente backend). Onboarding de propietarios con Clerk con los siguientes atributos:
+    *   **Endpoint Seguro:** `POST /auth/clerk/onboarding` protegido por `ClerkOnboardingGuard`, verificando sesión activa en Clerk sin requerir inquilino ni usuario previo en PostgreSQL.
+    *   **Reutilización Lazy:** Amplía `ClerkClientFactory` con `users.getUser` y reutiliza el cliente ya instanciado en `ClerkSessionVerifierService`.
+    *   **Perfil Autoritativo:** Nombre obligatorio resuelto estrictamente desde `firstName`/`lastName` o `username` (400 si falta; prohibido body o metadata). Correo principal verificado obligatorio (403 si no está verificado). Falla externa de Clerk responde 503 sin tocar base de datos.
+    *   **Anti-Enlace Neutro:** Rechazo 409 completamente neutro si el correo verificado coincide con un usuario local no enlazado, sin revelar existencia de cuentas.
+    *   **Transacción Atómica e Idempotente:** Alta atómica en transacción `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` (`name`, `slug` normalizado, `email` normalizado) y `Membership(OWNER)` con `AuditLog` sin PII. Reintento acotado a 3 para `P2034`.
+    *   **Códigos Dinámicos:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente.
+    *   **Control de Estado Parcial:** Si `clerkUserId` existe sin exactamente 1 membresía OWNER, responde 409 y nunca crea una segunda organización.
+    *   **Validación:** 250 pruebas unitarias y 18 pruebas E2E contra PostgreSQL en esquema aislado `test` con dobles controlados de Clerk (cero secretos y cero llamadas de red en tests). No incluye frontend ni QA de navegador.
+
 ## 5. Decisiones activas de dominio
 
 ### Reservas y facturación
@@ -181,11 +191,10 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Security A0.3-H (Hardening Legacy): **CERRADO / APROBADO** tras validación de 8 tests E2E reales en PostgreSQL aislado y QA de navegador.
-2. Security A0.3 completo sigue abierto.
-3. Siguiente etapa: **A0.3-A (Onboarding con Clerk)**. Aún **NO DEBE INICIARSE** sin autorización específica previa.
-4. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
-5. Mantener Frontend A2 de Profesionales en revisión.
+1. Security A0.3-A (Onboarding con Clerk Backend): **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Implementado endpoint atómico e idempotente `POST /auth/clerk/onboarding` bajo `ClerkOnboardingGuard`, resolución autoritativa de perfil Clerk con nombre obligatorio y correo verificado 403, anti-enlace 409 neutro, transacción `SERIALIZABLE` con reintento acotado para P2034, 201 inicial y 200 idempotente, y control de estado parcial. 250 unit tests y 18 E2E tests pasando contra PostgreSQL en esquema aislado `test` con dobles de Clerk. No incluye frontend ni QA web).
+2. Queda pendiente auditar y cerrar formalmente Security A0.3-A antes de avanzar a la etapa de frontend o a A0.3-B (`GET /auth/clerk/me`).
+3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
+4. Mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 

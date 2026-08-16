@@ -4,6 +4,16 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-15 — Security A0.3-A: Onboarding backend con Clerk
+
+- **Endpoint de Onboarding:** Se implementó `POST /auth/clerk/onboarding` bajo `ClerkOnboardingGuard`, permitiendo crear una barbería inicial y asociar al propietario autenticado en Clerk sin requerir pertenencia previa a un tenant.
+- **Validación Estricta de Perfil:** Consulta autoritativa a `users.getUser` mediante el cliente instanciado lazy en `ClerkSessionVerifierService`. Nombre obligatorio resuelto de `firstName`/`lastName` o `username` (400 si falta; prohibido body o metadata). Correo principal verificado obligatorio (403 si `status !== 'verified'`). Falla de Clerk API responde 503 controlado sin tocar base de datos.
+- **Política Anti-Enlace:** Rechazo 409 completamente neutro (*"No es posible completar el registro con los datos proporcionados"*) si el correo verificado coincide con un usuario local no enlazado.
+- **Alta Atómica `SERIALIZABLE`:** Creación transaccional de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` y `Membership(OWNER)` con `AuditLog` sin PII. Reintento acotado a 3 intentos para `P2034`.
+- **Manejo de Concurrencia e Idempotencia:** `P2002` en `clerkUserId` resuelve la organización existente y responde `200 OK` si posee 1 membresía OWNER. Si el estado es parcial/inconsistente, responde 409 y nunca crea una segunda organización.
+- **Pruebas y Aislamiento:** 250 unit tests y 18 tests E2E ejecutados y pasados en PostgreSQL bajo esquema aislado `test` con dobles de Clerk (cero secretos y cero llamadas de red en tests).
+- **Estado:** Security A0.3-A **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Alcance estrictamente backend).
+
 ## 2026-08-15 — Security A0.3-H: Hardening legacy
 
 - **Registro atómico:** El endpoint `POST /auth/register` ya no acepta `organizationId`. Ahora exige `organizationName`, `organizationSlug` y `organizationEmail`, y crea atómicamente el `User`, `Organization` y `Membership OWNER`. Esto ocurre en una transacción PostgreSQL estricta (aislamiento `Serializable`) con reintentos acotados (hasta 3) exclusivamente para `P2034` y fallos inmediatos por colisiones (`P2002`). Se normalizan explícitamente a minúsculas `organizationSlug`, `email` y `organizationEmail`.

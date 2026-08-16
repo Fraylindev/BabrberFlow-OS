@@ -12,6 +12,10 @@ import {
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
 import { ClerkAuthGuard } from './guards/clerk-auth.guard';
 
+import { ClerkOnboardingController } from './clerk-onboarding.controller';
+import { ClerkOnboardingService } from './clerk-onboarding.service';
+import { ClerkOnboardingGuard } from './guards/clerk-onboarding.guard';
+
 if (!process.env.JWT_SECRET) {
   throw new Error(
     'JWT_SECRET no está configurado. Define esta variable en tu archivo .env antes de iniciar la API (ver .env.example).',
@@ -27,7 +31,7 @@ if (!process.env.JWT_SECRET) {
     }),
     AuditModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, ClerkOnboardingController],
   providers: [
     AuthService,
     TeamService,
@@ -36,7 +40,9 @@ if (!process.env.JWT_SECRET) {
     clerkBackendClientProvider,
     ClerkSessionVerifierService,
     ClerkAuthGuard,
+    ClerkOnboardingService,
+    ClerkOnboardingGuard,
   ],
-  exports: [ClerkAuthGuard],
+  exports: [ClerkAuthGuard, ClerkOnboardingGuard, ClerkOnboardingService],
 })
 export class AuthModule {}
