@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import type { AuthenticatedRequest } from '../types/authenticated-request';
@@ -138,11 +137,10 @@ describe('ClerkAuthGuard', () => {
     // El guard debe convertirlo en 401 genérico; el detalle solo va al log interno.
     findUser.mockRejectedValue(new Error('Prisma: connection refused'));
 
-    const error = await guard
-      .canActivate(makeContext(makeRequest()))
-      .catch((e) => e);
-
-    expect(error).toBeInstanceOf(UnauthorizedException);
-    expect(error.message).toBe('Sesión no válida para esta organización');
+    await expect(
+      guard.canActivate(makeContext(makeRequest())),
+    ).rejects.toMatchObject({
+      message: 'Sesión no válida para esta organización',
+    });
   });
 });

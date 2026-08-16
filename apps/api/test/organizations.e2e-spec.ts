@@ -1,12 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/require-await, @typescript-eslint/no-unsafe-return */
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
 import { PrismaService } from './../src/prisma/prisma.service';
+import { createE2eApp, requestApp } from './create-e2e-app';
 
-import { ValidationPipe } from '@nestjs/common';
-import { globalValidationPipeOptions } from './../src/common/validation.config';
+function readLoginBody(body: unknown): { accessToken: string; userId: string } {
+  if (typeof body !== 'object' || body === null) {
+    throw new Error('Login response was not an object');
+  }
+  if (!('accessToken' in body) || typeof body.accessToken !== 'string') {
+    throw new Error('Login response did not include accessToken');
+  }
+  if (
+    !('user' in body) ||
+    typeof body.user !== 'object' ||
+    body.user === null ||
+    !('id' in body.user) ||
+    typeof body.user.id !== 'string'
+  ) {
+    throw new Error('Login response did not include user.id');
+  }
+  return { accessToken: body.accessToken, userId: body.user.id };
+}
 
 describe('OrganizationsController (e2e)', () => {
   let app: INestApplication;
@@ -15,19 +28,11 @@ describe('OrganizationsController (e2e)', () => {
   let barberToken: string;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
-    await app.init();
-
-    prisma = app.get<PrismaService>(PrismaService);
+    app = await createE2eApp();
+    prisma = app.get(PrismaService);
 
     const ts = Date.now();
-    // Register a valid owner via the auth endpoint to get a token
-    await request(app.getHttpServer())
+    await requestApp(app)
       .post('/auth/register')
       .send({
         name: 'Owner',
@@ -36,16 +41,15 @@ describe('OrganizationsController (e2e)', () => {
         organizationName: `Org1-${ts}`,
         organizationSlug: `org1-${ts}`,
         organizationEmail: `org1-${ts}@test.com`,
-      });
+      })
+      .expect(201);
 
-    // Login to get token
-    const loginRes1 = await request(app.getHttpServer())
+    const loginRes1 = await requestApp(app)
       .post('/auth/login')
       .send({ email: `owner-${ts}@test.com`, password: 'password123' });
-    ownerToken = loginRes1.body.accessToken;
+    ownerToken = readLoginBody(loginRes1.body).accessToken;
 
-    // We need a barber. Create one directly or via login trick if possible.
-    await request(app.getHttpServer())
+    await requestApp(app)
       .post('/auth/register')
       .send({
         name: 'Barber',
@@ -54,24 +58,23 @@ describe('OrganizationsController (e2e)', () => {
         organizationName: `Org3-${ts}`,
         organizationSlug: `org3-${ts}`,
         organizationEmail: `org3-${ts}@test.com`,
-      });
+      })
+      .expect(201);
 
-    const loginRes2 = await request(app.getHttpServer())
+    const loginRes2 = await requestApp(app)
       .post('/auth/login')
       .send({ email: `barber2-${ts}@test.com`, password: 'password123' });
+    const barberId = readLoginBody(loginRes2.body).userId;
 
-    const barberId = loginRes2.body.user.id;
-    // update role to BARBER
     await prisma.db.membership.updateMany({
       where: { userId: barberId },
       data: { role: 'BARBER' },
     });
 
-    // Refresh token after role change
-    const loginRes3 = await request(app.getHttpServer())
+    const loginRes3 = await requestApp(app)
       .post('/auth/login')
       .send({ email: `barber2-${ts}@test.com`, password: 'password123' });
-    barberToken = loginRes3.body.accessToken;
+    barberToken = readLoginBody(loginRes3.body).accessToken;
   });
 
   afterAll(async () => {
@@ -80,14 +83,14 @@ describe('OrganizationsController (e2e)', () => {
 
   describe('POST /organizations', () => {
     it('returns 401 Unauthorized when anonymous', async () => {
-      return request(app.getHttpServer())
+      return requestApp(app)
         .post('/organizations')
         .send({ name: 'New Org', slug: 'new-org', email: 'new@org.com' })
         .expect(401);
     });
 
     it('returns 403 Forbidden when role is not OWNER', async () => {
-      return request(app.getHttpServer())
+      return requestApp(app)
         .post('/organizations')
         .set('Authorization', `Bearer ${barberToken}`)
         .send({ name: 'New Org', slug: 'new-org', email: 'new@org.com' })
@@ -95,10 +98,15 @@ describe('OrganizationsController (e2e)', () => {
     });
 
     it('returns 201 Created when role is OWNER', async () => {
-      return request(app.getHttpServer())
+      const ts = Date.now();
+      return requestApp(app)
         .post('/organizations')
         .set('Authorization', `Bearer ${ownerToken}`)
-        .send({ name: 'New Org', slug: 'new-org', email: 'new@org.com' })
+        .send({
+          name: 'New Org',
+          slug: `new-org-${ts}`,
+          email: `new-${ts}@org.com`,
+        })
         .expect(201);
     });
   });

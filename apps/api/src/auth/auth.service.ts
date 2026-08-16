@@ -14,9 +14,16 @@ import { LoginDto } from './dto/login.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { isUniqueConstraintError } from '../common/prisma-error.util';
+import {
+  isSerializationFailureError,
+  isUniqueConstraintError,
+} from '../common/prisma-error.util';
 import { AttemptLimiter } from './attempt-limiter';
 import { AuditService } from '../audit/audit.service';
+import {
+  normalizeAccountEmail,
+  normalizeOrganizationSlug,
+} from './organization-slug';
 
 // Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
 // attempt-limiter.ts para el porqué de este enfoque (por cuenta, en
@@ -77,7 +84,10 @@ export class AuthService {
       organizationEmail,
     } = registerDto;
 
-    const normalizedEmail = email.toLowerCase();
+    const normalizedEmail = normalizeAccountEmail(email);
+    const normalizedOrganizationEmail =
+      normalizeAccountEmail(organizationEmail);
+    const normalizedSlug = normalizeOrganizationSlug(organizationSlug);
     const existingUser = await this.prisma.db.user.findUnique({
       where: { email: normalizedEmail },
     });
@@ -100,8 +110,8 @@ export class AuthService {
             const org = await tx.organization.create({
               data: {
                 name: organizationName,
-                slug: organizationSlug.toLowerCase(),
-                email: organizationEmail.toLowerCase(),
+                slug: normalizedSlug,
+                email: normalizedOrganizationEmail,
               },
             });
 
@@ -140,19 +150,24 @@ export class AuthService {
           },
         );
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password: _, ...userWithoutPassword } = user;
-        return userWithoutPassword;
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          lastOrganizationId: user.lastOrganizationId,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          clerkUserId: user.clerkUserId,
+        };
       } catch (err: unknown) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if ((err as any)?.code === 'P2034') {
+        if (isSerializationFailureError(err)) {
           attempt++;
           if (attempt >= MAX_RETRIES) {
             throw new ConflictException(
               'No se pudo completar el registro debido a un conflicto concurrente tras varios intentos.',
             );
           }
-          continue; // Reintentar
+          continue;
         }
 
         if (isUniqueConstraintError(err, 'slug')) {
@@ -169,6 +184,10 @@ export class AuthService {
         throw err;
       }
     }
+
+    throw new ConflictException(
+      'No se pudo completar el registro debido a un conflicto concurrente tras varios intentos.',
+    );
   }
 
   // Login de un solo paso. Resuelve la organización activa vía
@@ -180,7 +199,8 @@ export class AuthService {
   // aplicado en el controller. Solo cuenta intentos con contraseña
   // incorrecta — nunca penaliza a alguien que ya inició sesión bien.
   async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
+    const { password } = loginDto;
+    const email = normalizeAccountEmail(loginDto.email);
 
     await this.loginLimiter.assertNotLocked(
       email,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import { UnauthorizedException } from '@nestjs/common';
 import type { ClerkBackendClient } from './clerk-auth.providers';
 import type { ClerkAuthConfig } from './clerk-auth.config';
@@ -162,12 +161,11 @@ describe('ClerkSessionVerifierService', () => {
       unusedFactory,
     );
 
-    const error = await failingService
-      .verify(new Request('http://localhost:3000/secure'))
-      .catch((e) => e);
-
-    expect(error).toBeInstanceOf(UnauthorizedException);
-    expect(error.message).toBe('Sesión no válida');
+    await expect(
+      failingService.verify(new Request('http://localhost:3000/secure')),
+    ).rejects.toMatchObject({
+      message: 'Sesión no válida',
+    });
   });
 
   it('reutiliza el cliente y la configuración ya inicializados en llamadas sucesivas', async () => {

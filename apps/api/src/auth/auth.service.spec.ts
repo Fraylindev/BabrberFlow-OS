@@ -1,16 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/require-await, @typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 
-// Cache en memoria real (no un mock de cada llamada) — así el
-// AttemptLimiter corre su lógica de verdad y la prueba de bloqueo por
-// fuerza bruta prueba el mecanismo real, no una simulación de él.
 function createInMemoryCache() {
   const store = new Map<string, unknown>();
   return {
@@ -25,6 +22,12 @@ function createInMemoryCache() {
     }),
   };
 }
+
+type RegisterTx = {
+  organization: { create: jest.Mock };
+  user: { create: jest.Mock };
+  membership: { create: jest.Mock };
+};
 
 function createMockPrisma() {
   return {
@@ -43,17 +46,48 @@ function createMockPrisma() {
   };
 }
 
+function knownPrismaError(
+  code: string,
+  meta?: Prisma.PrismaClientKnownRequestError['meta'],
+) {
+  return new Prisma.PrismaClientKnownRequestError('prisma', {
+    code,
+    clientVersion: 'test',
+    meta,
+  });
+}
+
+function isInteractiveTransaction(
+  value: unknown,
+): value is (tx: RegisterTx) => Promise<unknown> {
+  return typeof value === 'function';
+}
+
 const EMAIL = 'ana@elitebarber.com';
 const PASSWORD = 'password123';
+
+const registerInput = {
+  name: 'Nuevo',
+  email: EMAIL,
+  password: PASSWORD,
+  organizationName: 'Barber',
+  organizationSlug: 'barber',
+  organizationEmail: 'org@barber.com',
+};
 
 describe('AuthService — autenticación', () => {
   let service: AuthService;
   let prisma: ReturnType<typeof createMockPrisma>;
   let cache: ReturnType<typeof createInMemoryCache>;
+  let audit: { log: jest.Mock; logTransactional: jest.Mock };
 
   beforeEach(async () => {
     prisma = createMockPrisma();
     cache = createInMemoryCache();
+    audit = {
+      log: jest.fn().mockResolvedValue(undefined),
+      logTransactional: jest.fn().mockResolvedValue(undefined),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -66,10 +100,7 @@ describe('AuthService — autenticación', () => {
           },
         },
         { provide: CACHE_MANAGER, useValue: cache },
-        {
-          provide: AuditService,
-          useValue: { log: jest.fn(), logTransactional: jest.fn() },
-        },
+        { provide: AuditService, useValue: audit },
       ],
     }).compile();
 
@@ -91,10 +122,6 @@ describe('AuthService — autenticación', () => {
         organizationId: 'org-1',
         role: 'BARBER',
       });
-      // login() ahora resuelve la organización activa vía
-      // organization.findUnique (ver auth.service.ts) para devolverla en
-      // la respuesta — sin este mock, la llamada real resuelve
-      // `undefined` y login() rechaza con 'La organización no existe'.
       prisma.db.organization.findUnique.mockResolvedValue({
         id: 'org-1',
         name: 'Elite Barber Shop',
@@ -145,8 +172,6 @@ describe('AuthService — autenticación', () => {
     it('rechaza con 401 cuando el correo no existe — mismo mensaje que contraseña incorrecta', async () => {
       prisma.db.user.findUnique.mockResolvedValue(null);
 
-      // No debe distinguirse de "contraseña incorrecta" — evita que un
-      // atacante use la respuesta para enumerar qué correos existen.
       await expect(
         service.login({ email: 'no-existe@x.com', password: PASSWORD }),
       ).rejects.toThrow('Credenciales inválidas');
@@ -168,15 +193,12 @@ describe('AuthService — autenticación', () => {
     it('bloquea la cuenta tras demasiados intentos fallidos, incluso con la contraseña correcta', async () => {
       await mockValidUser();
 
-      // Agota el límite fallando a propósito.
       for (let i = 0; i < 8; i++) {
         await expect(
           service.login({ email: EMAIL, password: 'mala' }),
         ).rejects.toBeInstanceOf(UnauthorizedException);
       }
 
-      // El siguiente intento, aunque la contraseña ahora sea correcta,
-      // debe quedar bloqueado por el límite de intentos — no por 401.
       await expect(
         service.login({ email: EMAIL, password: PASSWORD }),
       ).rejects.toBeInstanceOf(HttpException);
@@ -189,11 +211,8 @@ describe('AuthService — autenticación', () => {
         service.login({ email: EMAIL, password: 'mala' }),
       ).rejects.toBeInstanceOf(UnauthorizedException);
 
-      // Login correcto entre medio — debe limpiar el contador.
       await service.login({ email: EMAIL, password: PASSWORD });
 
-      // Y ahora debería poder volver a fallar sin quedar ya bloqueado
-      // por los intentos de antes del reset.
       await expect(
         service.login({ email: EMAIL, password: 'mala' }),
       ).rejects.toBeInstanceOf(UnauthorizedException);
@@ -201,25 +220,111 @@ describe('AuthService — autenticación', () => {
   });
 
   describe('register', () => {
+    function mockSuccessfulTransaction(mockTx: RegisterTx) {
+      prisma.db.$transaction.mockImplementation(
+        async (
+          arg: unknown,
+          options?: { isolationLevel?: Prisma.TransactionIsolationLevel },
+        ) => {
+          expect(options?.isolationLevel).toBe(
+            Prisma.TransactionIsolationLevel.Serializable,
+          );
+          if (!isInteractiveTransaction(arg)) {
+            throw new Error('Se esperaba una transacción interactiva');
+          }
+          return arg(mockTx);
+        },
+      );
+    }
+
     it('rechaza con 409 si el correo ya existe globalmente', async () => {
       prisma.db.user.findUnique.mockResolvedValue({ id: 'user-existente' });
 
-      await expect(
-        service.register({
-          name: 'Otro',
-          email: EMAIL,
-          password: PASSWORD,
-          organizationName: 'Mi Barberia',
-          organizationSlug: 'mi-barberia',
-          organizationEmail: 'org@barberia.com',
-        }),
-      ).rejects.toMatchObject({ status: 409 });
+      await expect(service.register(registerInput)).rejects.toMatchObject({
+        status: 409,
+      });
+      expect(prisma.db.$transaction).not.toHaveBeenCalled();
     });
 
-    it('crea usuario, organizacion y membresia atomica si no hay conflictos', async () => {
-      const auditSpy = jest.spyOn(service['audit'], 'logTransactional');
+    it('usa aislamiento Serializable y persiste slug y correos normalizados', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
 
-      const mockTx = {
+      const createdAt = new Date('2026-08-15T00:00:00.000Z');
+      const mockTx: RegisterTx = {
+        organization: {
+          create: jest.fn().mockResolvedValue({ id: 'org-new' }),
+        },
+        user: {
+          create: jest.fn().mockResolvedValue({
+            id: 'user-new',
+            name: 'Nuevo',
+            email: 'test@email.com',
+            lastOrganizationId: 'org-new',
+            createdAt,
+            updatedAt: createdAt,
+            clerkUserId: null,
+          }),
+        },
+        membership: { create: jest.fn().mockResolvedValue({}) },
+      };
+
+      mockSuccessfulTransaction(mockTx);
+
+      const result = await service.register({
+        name: 'Nuevo',
+        email: 'TEST@email.COM',
+        password: PASSWORD,
+        organizationName: 'Nueva Barberia',
+        organizationSlug: 'NUEVA-BARBERIA',
+        organizationEmail: 'ORG@BARBERIA.COM',
+      });
+
+      expect(prisma.db.$transaction).toHaveBeenCalledWith(
+        expect.any(Function),
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+      expect(mockTx.organization.create).toHaveBeenCalledWith({
+        data: {
+          name: 'Nueva Barberia',
+          slug: 'nueva-barberia',
+          email: 'org@barberia.com',
+        },
+      });
+      expect(mockTx.user.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          email: 'test@email.com',
+          lastOrganizationId: 'org-new',
+        }) as { email: string },
+      });
+      expect(mockTx.membership.create).toHaveBeenCalledWith({
+        data: { userId: 'user-new', organizationId: 'org-new', role: 'OWNER' },
+      });
+      expect(audit.logTransactional).toHaveBeenCalledWith(
+        {
+          organizationId: 'org-new',
+          userId: 'user-new',
+          action: 'CREATE',
+          entity: 'Organization',
+          entityId: 'org-new',
+        },
+        mockTx,
+      );
+
+      expect(result).toEqual({
+        id: 'user-new',
+        name: 'Nuevo',
+        email: 'test@email.com',
+        lastOrganizationId: 'org-new',
+        createdAt,
+        updatedAt: createdAt,
+        clerkUserId: null,
+      });
+      expect(result).not.toHaveProperty('password');
+    });
+
+    it('no sustituye organizationEmail por el correo del owner', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      const mockTx: RegisterTx = {
         organization: {
           create: jest.fn().mockResolvedValue({ id: 'org-new' }),
         },
@@ -228,103 +333,95 @@ describe('AuthService — autenticación', () => {
             id: 'user-new',
             name: 'Nuevo',
             email: EMAIL,
-            password: 'hashed-password',
+            lastOrganizationId: 'org-new',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            clerkUserId: null,
           }),
         },
         membership: { create: jest.fn().mockResolvedValue({}) },
       };
+      mockSuccessfulTransaction(mockTx);
 
-      prisma.db.$transaction.mockImplementation(async (cb, options) => {
-        expect(options).toEqual({ isolationLevel: 'Serializable' });
-        return cb(mockTx);
+      await service.register({
+        ...registerInput,
+        email: 'owner@barber.com',
+        organizationEmail: 'contacto@barber.com',
       });
 
-      const result = await service.register({
-        name: 'Nuevo',
-        email: 'TEST@email.COM', // uppercase to test lowering
-        password: PASSWORD,
-        organizationName: 'Nueva Barberia',
-        organizationSlug: 'NUEVA-BARBERIA', // uppercase
-        organizationEmail: 'ORG@BARBERIA.COM', // uppercase
-      });
-
-      expect(prisma.db.$transaction).toHaveBeenCalled();
       expect(mockTx.organization.create).toHaveBeenCalledWith({
         data: {
-          name: 'Nueva Barberia',
-          slug: 'nueva-barberia', // lowered
-          email: 'org@barberia.com', // lowered
+          name: 'Barber',
+          slug: 'barber',
+          email: 'contacto@barber.com',
         },
       });
-      expect(mockTx.user.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({
-            email: 'test@email.com', // lowered
-            lastOrganizationId: 'org-new',
-          }),
-        }),
-      );
-      expect(mockTx.membership.create).toHaveBeenCalledWith({
-        data: { userId: 'user-new', organizationId: 'org-new', role: 'OWNER' },
+      expect(mockTx.user.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          email: 'owner@barber.com',
+        }) as { email: string },
       });
-      expect(auditSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          action: 'CREATE',
-          entity: 'Organization',
-          entityId: 'org-new',
-        }),
-        mockTx,
-      );
-
-      expect(result.id).toBe('user-new');
-      expect((result as any).password).toBeUndefined();
     });
 
     it('falla el registro si logTransactional lanza error', async () => {
-      jest
-        .spyOn(service['audit'], 'logTransactional')
-        .mockRejectedValue(new Error('Fallo auditoría'));
-      const mockTx = {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      audit.logTransactional.mockRejectedValue(new Error('Fallo auditoría'));
+      const mockTx: RegisterTx = {
         organization: {
           create: jest.fn().mockResolvedValue({ id: 'org-new' }),
         },
         user: { create: jest.fn().mockResolvedValue({ id: 'user-new' }) },
         membership: { create: jest.fn().mockResolvedValue({}) },
       };
+      mockSuccessfulTransaction(mockTx);
 
-      prisma.db.$transaction.mockImplementation(async (cb) => {
-        return cb(mockTx);
-      });
-
-      await expect(
-        service.register({
-          name: 'Nuevo',
-          email: EMAIL,
-          password: PASSWORD,
-          organizationName: 'Barber',
-          organizationSlug: 'barber',
-          organizationEmail: 'org@barber.com',
-        }),
-      ).rejects.toThrow('Fallo auditoría');
+      await expect(service.register(registerInput)).rejects.toThrow(
+        'Fallo auditoría',
+      );
     });
 
-    it('reintenta exactamente 3 veces en error P2034 y falla con 409', async () => {
-      const p2034Error = Object.assign(new Error(), { code: 'P2034' });
-      prisma.db.$transaction.mockRejectedValue(p2034Error);
+    it('reintenta exactamente 3 veces en P2034 y luego responde 409', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      prisma.db.$transaction.mockRejectedValue(knownPrismaError('P2034'));
 
-      await expect(
-        service.register({
-          name: 'Nuevo',
-          email: EMAIL,
-          password: PASSWORD,
-          organizationName: 'Barber',
-          organizationSlug: 'barber',
-          organizationEmail: 'org@barber.com',
-        }),
-      ).rejects.toMatchObject({ status: 409 });
-
-      // Transaction is called 3 times exactly.
+      await expect(service.register(registerInput)).rejects.toMatchObject({
+        status: 409,
+      });
       expect(prisma.db.$transaction).toHaveBeenCalledTimes(3);
+    });
+
+    it('no reintenta un Error genérico que solo imita code P2034', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      const fake = Object.assign(new Error('serialization'), { code: 'P2034' });
+      prisma.db.$transaction.mockRejectedValue(fake);
+
+      await expect(service.register(registerInput)).rejects.toBe(fake);
+      expect(prisma.db.$transaction).toHaveBeenCalledTimes(1);
+    });
+
+    it('traduce P2002 de slug a 409 y no reintenta', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      prisma.db.$transaction.mockRejectedValue(
+        knownPrismaError('P2002', { target: ['slug'] }),
+      );
+
+      await expect(service.register(registerInput)).rejects.toMatchObject({
+        status: 409,
+        message: 'El slug de la organización ya está en uso. Elige otro.',
+      });
+      expect(prisma.db.$transaction).toHaveBeenCalledTimes(1);
+    });
+
+    it('traduce P2002 de email a 409 y no reintenta', async () => {
+      prisma.db.user.findUnique.mockResolvedValue(null);
+      prisma.db.$transaction.mockRejectedValue(
+        knownPrismaError('P2002', { target: ['email'] }),
+      );
+
+      await expect(service.register(registerInput)).rejects.toMatchObject({
+        status: 409,
+      });
+      expect(prisma.db.$transaction).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -13,6 +13,13 @@ import { Prisma } from '@prisma/client';
  * (cualquier campo). Si se pasa, confirma que el campo colisionado
  * coincide con `field` (Prisma expone los campos en error.meta.target).
  */
+export function isSerializationFailureError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2034'
+  );
+}
+
 export function isUniqueConstraintError(
   error: unknown,
   field?: string,

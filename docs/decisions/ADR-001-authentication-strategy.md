@@ -206,16 +206,16 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, los 19 usuarios existentes, Prisma, Supabase y frontend no cambian.
 - Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership, revocación local de acceso, arranque sin variables Clerk, fallo cerrado del loader, fallo cerrado del guard por error inesperado y reutilización del cliente inicializado.
 
-## Resultado de Security A0.3-H (Hardening Legacy)
+## Resultado de Security A0.3-H (Hardening Legacy) — IMPLEMENTADO / EN REVISIÓN (No aprobado)
 
-- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y elimina `organizationId`. Se incluyó validación y normalización estricta (lowercase) del slug en el flujo.
-- `AuthService.register()` crea el `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (aislamiento `Serializable`). Se incluye un bucle de reintento acotado (máximo 3 intentos) exclusivo para fallas de serialización (`P2034`), mientras que conflictos de negocio (P2002) se abortan inmediatamente.
-- La transacción atómica también escribe el evento `CREATE` en el `AuditLog` sin incluir PII y garantizando su consistencia (falla la transacción si falla la escritura del log).
-- `POST /organizations` (`OrganizationsController`) ha sido protegido para requerir JWT y el rol `OWNER`, dejando de ser un flujo público para altas iniciales.
-- Se ha actualizado la migración `password` en la tabla `User` a `String?` (nullable).
-- Se adaptó el frontend web (`auth-context.tsx`) para enviar el nuevo payload de registro atómico en una única petición a `/auth/register`.
-- El endpoint `/auth/login` se modificó de manera compatible para aceptar cuentas sin password (retorna el genérico `401 Credenciales inválidas`), sin generar error interno `bcrypt.compare` nulo. Igualmente se protegió la actualización de contraseña local.
-- Pruebas E2E (`auth.e2e-spec.ts` y `organizations.e2e-spec.ts`) operan bajo un estricto aislamiento, forzando la validación del esquema de la base de datos de test.
+- El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y rechaza `organizationId`. Se implementó validación de formato (3-50 caracteres, minúsculas/números y guiones intermedios) y normalización explícita (`toLowerCase().trim()`) para slug y correos en el servicio.
+- `AuthService.register()` crea `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (`isolationLevel: Prisma.TransactionIsolationLevel.Serializable`). Se implementó reintento acotado a exactamente 3 intentos exclusivo para fallas de serialización (`P2034`), mientras que errores de unicidad (`P2002`) en slug o email se traducen inmediatamente a `409 ConflictException` sin reintentos ciegos.
+- La transacción atómica escribe el evento `CREATE` en `AuditLog` vía `AuditService.logTransactional()`, sin PII y de forma requerida (si falla la auditoría, la transacción completa hace rollback sin dejar filas huérfanas).
+- `POST /organizations` (`OrganizationsController`) está protegido con JWT y rol `OWNER`; ya no es ruta pública para el alta inicial.
+- `User.password` es nullable en persistencia. `login()` y `updatePassword()` protegen contra contraseñas locales nulas (devuelven rechazo neutro 401 y 400 respectivamente sin invocar bcrypt con null).
+- Frontend web (`apps/web/lib/auth-context.tsx`) envía el payload atómico completo incluyendo `organizationEmail`.
+- E2E (`apps/api/test/global-setup.ts`) analiza `DATABASE_URL` mediante `URL` y solo permite ejecución si el pathname de la base termina estrictamente en `_test` o el parámetro `schema` es exactamente `test` o termina en `_test`.
+- Evidencia ejecutada: Type-check API/Web, Lint API/Web sin eslint-disables, Build API/Web, Prisma schema validate, 227 Unit tests API pasando. Pendiente: Ejecución de E2E contra PostgreSQL real y QA web de navegador en entorno con base de datos activa.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 

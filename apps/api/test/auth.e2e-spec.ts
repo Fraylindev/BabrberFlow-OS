@@ -1,26 +1,29 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
 import { PrismaService } from './../src/prisma/prisma.service';
+import { AuditService } from './../src/audit/audit.service';
+import { createE2eApp, requestApp } from './create-e2e-app';
 
-import { ValidationPipe } from '@nestjs/common';
-import { globalValidationPipeOptions } from './../src/common/validation.config';
+function validationMessages(body: unknown): string[] {
+  if (typeof body !== 'object' || body === null || !('message' in body)) {
+    return [];
+  }
+  const { message } = body;
+  if (
+    Array.isArray(message) &&
+    message.every((item): item is string => typeof item === 'string')
+  ) {
+    return message;
+  }
+  return [];
+}
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
+  let prisma: PrismaService;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
-    await app.init();
-
-    prisma = app.get<PrismaService>(PrismaService);
+    app = await createE2eApp();
+    prisma = app.get(PrismaService);
   });
 
   afterAll(async () => {
@@ -29,22 +32,63 @@ describe('AuthController (e2e)', () => {
 
   describe('POST /auth/register', () => {
     it('returns 400 if organizationId is sent', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/auth/register')
-        .send({
-          name: 'Test User',
-          email: 'test@test.com',
-          password: 'password123',
-          organizationName: 'Test Org',
-          organizationSlug: 'test-org',
-          organizationEmail: 'org@test.com',
-          organizationId: 'should-not-be-allowed',
-        });
+      const res = await requestApp(app).post('/auth/register').send({
+        name: 'Test User',
+        email: 'test@test.com',
+        password: 'password123',
+        organizationName: 'Test Org',
+        organizationSlug: 'test-org',
+        organizationEmail: 'org@test.com',
+        organizationId: 'should-not-be-allowed',
+      });
 
       expect(res.status).toBe(400);
-      expect(res.body.message).toEqual(
-        expect.arrayContaining([expect.stringContaining('organizationId')]),
+      expect(validationMessages(res.body).join(' ')).toContain(
+        'organizationId',
       );
+    });
+
+    it('returns 400 for an invalid slug', async () => {
+      const res = await requestApp(app).post('/auth/register').send({
+        name: 'Test User',
+        email: 'invalid-slug@test.com',
+        password: 'password123',
+        organizationName: 'Test Org',
+        organizationSlug: '-Invalid Slug/',
+        organizationEmail: 'org@test.com',
+      });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('persists a normalized slug and a distinct organization email', async () => {
+      const ts = Date.now();
+      const ownerEmail = `owner-norm-${ts}@test.com`;
+      const organizationEmail = `shop-norm-${ts}@test.com`;
+      const res = await requestApp(app)
+        .post('/auth/register')
+        .send({
+          name: 'Owner',
+          email: ownerEmail,
+          password: 'password123',
+          organizationName: 'Norm Shop',
+          organizationSlug: `NORM-SHOP-${ts}`,
+          organizationEmail,
+        });
+
+      expect(res.status).toBe(201);
+
+      const org = await prisma.db.organization.findUnique({
+        where: { slug: `norm-shop-${ts}` },
+      });
+      expect(org).not.toBeNull();
+      expect(org?.email).toBe(organizationEmail);
+      expect(org?.email).not.toBe(ownerEmail);
+
+      const user = await prisma.db.user.findUnique({
+        where: { email: ownerEmail },
+      });
+      expect(user).not.toBeNull();
     });
   });
 
@@ -62,7 +106,7 @@ describe('AuthController (e2e)', () => {
 
       const payload2 = {
         name: 'Concurrent User 2',
-        email: `concurrent-${ts}@test.com`, // same email
+        email: `concurrent-${ts}@test.com`,
         password: 'password123',
         organizationName: `Concurrent Org 2 ${ts}`,
         organizationSlug: `concurrent-org-2-${ts}`,
@@ -70,13 +114,65 @@ describe('AuthController (e2e)', () => {
       };
 
       const [res1, res2] = await Promise.all([
-        request(app.getHttpServer()).post('/auth/register').send(payload1),
-        request(app.getHttpServer()).post('/auth/register').send(payload2),
+        requestApp(app).post('/auth/register').send(payload1),
+        requestApp(app).post('/auth/register').send(payload2),
       ]);
 
       const statuses = [res1.status, res2.status];
-      expect(statuses).toContain(201); // One should succeed
-      expect(statuses).toContain(409); // One should fail with Conflict
+      expect(statuses).toContain(201);
+      expect(statuses).toContain(409);
     });
+  });
+});
+
+describe('AuthController register rollback (e2e)', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+
+  beforeAll(async () => {
+    app = await createE2eApp((builder) =>
+      builder.overrideProvider(AuditService).useValue({
+        log: jest.fn().mockResolvedValue(undefined),
+        logTransactional: jest
+          .fn()
+          .mockRejectedValue(new Error('forced audit failure')),
+      }),
+    );
+    prisma = app.get(PrismaService);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('does not persist User, Organization, Membership or AuditLog when audit fails', async () => {
+    const ts = Date.now();
+    const email = `rollback-${ts}@test.com`;
+    const slug = `rollback-${ts}`;
+    const beforeAudit = await prisma.db.auditLog.count();
+
+    const res = await requestApp(app)
+      .post('/auth/register')
+      .send({
+        name: 'Rollback',
+        email,
+        password: 'password123',
+        organizationName: 'Rollback Shop',
+        organizationSlug: slug,
+        organizationEmail: `rollback-org-${ts}@test.com`,
+      });
+
+    expect(res.status).toBeGreaterThanOrEqual(500);
+
+    expect(await prisma.db.user.findUnique({ where: { email } })).toBeNull();
+    expect(
+      await prisma.db.organization.findUnique({ where: { slug } }),
+    ).toBeNull();
+    expect(
+      await prisma.db.membership.count({
+        where: { user: { email } },
+      }),
+    ).toBe(0);
+    expect(await prisma.db.auditLog.count()).toBe(beforeAudit);
   });
 });
