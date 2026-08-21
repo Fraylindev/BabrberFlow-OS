@@ -31,6 +31,7 @@ describe('ClerkOnboardingService', () => {
     };
   };
   let auditMock: {
+    log: jest.Mock;
     logTransactional: jest.Mock;
   };
   let verifierMock: {
@@ -78,6 +79,7 @@ describe('ClerkOnboardingService', () => {
     };
 
     auditMock = {
+      log: jest.fn().mockResolvedValue(undefined),
       logTransactional: jest.fn().mockResolvedValue(undefined),
     };
 
@@ -267,6 +269,12 @@ describe('ClerkOnboardingService', () => {
           'No es posible completar el registro con los datos proporcionados.',
         ),
       );
+      expect(auditMock.log).toHaveBeenCalledWith({
+        organizationId: null,
+        userId: null,
+        action: 'CLERK_ONBOARDING_EMAIL_CONFLICT',
+        entity: 'SecurityEvent',
+      });
       expect(prismaMock.db.$transaction).not.toHaveBeenCalled();
     });
   });
@@ -526,6 +534,39 @@ describe('ClerkOnboardingService', () => {
           'No es posible completar el registro con los datos proporcionados.',
         ),
       );
+    });
+
+    it('registra el evento pre-tenant si P2002 confirma una carrera con un usuario local', async () => {
+      const p2002EmailError = new Prisma.PrismaClientKnownRequestError(
+        'Unique constraint',
+        {
+          code: 'P2002',
+          clientVersion: '5.0.0',
+          meta: { target: ['email'] },
+        },
+      );
+
+      prismaMock.db.$transaction.mockRejectedValueOnce(p2002EmailError);
+      prismaMock.db.user.findUnique
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          id: 'local-race-user',
+          clerkUserId: null,
+        });
+
+      await expect(service.onboardOwner(clerkUserId, validDto)).rejects.toThrow(
+        new ConflictException(
+          'No es posible completar el registro con los datos proporcionados.',
+        ),
+      );
+      expect(auditMock.log).toHaveBeenCalledWith({
+        organizationId: null,
+        userId: null,
+        action: 'CLERK_ONBOARDING_EMAIL_CONFLICT',
+        entity: 'SecurityEvent',
+      });
     });
   });
 });

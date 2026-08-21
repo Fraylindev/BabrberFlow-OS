@@ -50,6 +50,9 @@ describe('ClerkOnboarding (e2e)', () => {
     clerkUserId: 'user_clerk_e2e_1',
     sessionId: 'sess_e2e_1',
   };
+  const sessionsByToken = new Map<string, typeof currentSession>();
+  const clerkUsersById = new Map<string, MockClerkUser>();
+  const failingClerkUserIds = new Set<string>();
 
   const mockVerifier = {
     verify: jest.fn().mockImplementation((req?: globalThis.Request) => {
@@ -60,11 +63,19 @@ describe('ClerkOnboarding (e2e)', () => {
       if (!authHeader || authHeader.trim().length === 0) {
         return Promise.reject(new UnauthorizedException('Sesión no válida'));
       }
-      return Promise.resolve(currentSession);
+      const token = authHeader.replace(/^Bearer\s+/i, '');
+      return Promise.resolve(sessionsByToken.get(token) ?? currentSession);
     }),
     getClient: jest.fn().mockReturnValue({
       users: {
         getUser: jest.fn().mockImplementation((userId: string) => {
+          if (failingClerkUserIds.has(userId)) {
+            return Promise.reject(new Error('Clerk unavailable'));
+          }
+          const mappedUser = clerkUsersById.get(userId);
+          if (mappedUser) {
+            return Promise.resolve(mappedUser);
+          }
           if (currentClerkUser && currentClerkUser.id === userId) {
             return Promise.resolve(currentClerkUser);
           }
@@ -91,6 +102,9 @@ describe('ClerkOnboarding (e2e)', () => {
 
   beforeEach(() => {
     shouldFailVerify = false;
+    sessionsByToken.clear();
+    clerkUsersById.clear();
+    failingClerkUserIds.clear();
     currentSession = {
       clerkUserId: 'user_clerk_e2e_1',
       sessionId: 'sess_e2e_1',
@@ -217,6 +231,48 @@ describe('ClerkOnboarding (e2e)', () => {
       });
 
     expect(res.status).toBe(400);
+  });
+
+  it('devuelve 503 genérico y no persiste ninguna fila si Clerk.users.getUser falla', async () => {
+    const unique = Date.now() + Math.random().toString(36).substring(2, 7);
+    const clerkId = `user_clerk_unavailable_${unique}`;
+    const token = `token-unavailable-${unique}`;
+    sessionsByToken.set(token, {
+      clerkUserId: clerkId,
+      sessionId: `sess_unavailable_${unique}`,
+    });
+    failingClerkUserIds.add(clerkId);
+
+    const before = {
+      users: await prisma.db.user.count(),
+      organizations: await prisma.db.organization.count(),
+      memberships: await prisma.db.membership.count(),
+      auditLogs: await prisma.db.auditLog.count(),
+    };
+
+    const res = await requestApp(app)
+      .post('/auth/clerk/onboarding')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        organizationName: 'Barbería Clerk No Disponible',
+        organizationSlug: `clerk-unavailable-${unique}`,
+        organizationEmail: `org-${unique}@clerk-unavailable.test`,
+      });
+
+    expect(res.status).toBe(503);
+    expect(res.body as unknown).toEqual({
+      message: 'Servicio de autenticación no disponible temporalmente',
+      error: 'Service Unavailable',
+      statusCode: 503,
+    });
+
+    const after = {
+      users: await prisma.db.user.count(),
+      organizations: await prisma.db.organization.count(),
+      memberships: await prisma.db.membership.count(),
+      auditLogs: await prisma.db.auditLog.count(),
+    };
+    expect(after).toEqual(before);
   });
 
   it('crea exitosamente User(password null) + Organization + Membership(OWNER) con 201 Created', async () => {
@@ -426,6 +482,115 @@ describe('ClerkOnboarding (e2e)', () => {
     expect(auditLogs).toHaveLength(1);
   });
 
+  it('serializa dos clerkUserId distintos con el mismo slug sin dejar filas parciales', async () => {
+    const unique = Date.now() + Math.random().toString(36).substring(2, 7);
+    const sharedSlug = `shared-concurrent-slug-${unique}`;
+    const clerkIds = [
+      `user_clerk_slug_race_a_${unique}`,
+      `user_clerk_slug_race_b_${unique}`,
+    ] as const;
+    const tokens = [`slug-race-a-${unique}`, `slug-race-b-${unique}`] as const;
+
+    clerkIds.forEach((clerkUserId, index) => {
+      sessionsByToken.set(tokens[index], {
+        clerkUserId,
+        sessionId: `sess_slug_race_${index}_${unique}`,
+      });
+      clerkUsersById.set(clerkUserId, {
+        id: clerkUserId,
+        firstName: 'Slug',
+        lastName: index === 0 ? 'Alpha' : 'Beta',
+        username: null,
+        primaryEmailAddressId: `email_slug_race_${index}_${unique}`,
+        emailAddresses: [
+          {
+            id: `email_slug_race_${index}_${unique}`,
+            emailAddress: `slug-race-${index}-${unique}@e2e-test.com`,
+            verification: { status: 'verified' },
+          },
+        ],
+      });
+    });
+
+    const before = {
+      users: await prisma.db.user.count(),
+      organizations: await prisma.db.organization.count(),
+      memberships: await prisma.db.membership.count(),
+      auditLogs: await prisma.db.auditLog.count(),
+    };
+
+    const responses = await Promise.all(
+      tokens.map((token, index) =>
+        requestApp(app)
+          .post('/auth/clerk/onboarding')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            organizationName: `Barbería Slug Race ${index + 1}`,
+            organizationSlug: sharedSlug,
+            organizationEmail: `slug-race-org-${index}-${unique}@e2e-test.com`,
+          }),
+      ),
+    );
+
+    expect(responses.map(({ status }) => status).sort()).toEqual([201, 409]);
+
+    const winningResponse = responses.find(({ status }) => status === 201);
+    if (!winningResponse) {
+      throw new Error('No se encontró la respuesta 201 esperada.');
+    }
+    const winnerClerkId = toBody(winningResponse).user?.clerkUserId;
+    if (!winnerClerkId) {
+      throw new Error('La respuesta 201 no incluyó el clerkUserId esperado.');
+    }
+    expect(clerkIds).toContain(winnerClerkId);
+    const loserClerkId =
+      winnerClerkId === clerkIds[0] ? clerkIds[1] : clerkIds[0];
+
+    const organizations = await prisma.db.organization.findMany({
+      where: { slug: sharedSlug },
+    });
+    expect(organizations).toHaveLength(1);
+
+    const winningUser = await prisma.db.user.findUnique({
+      where: { clerkUserId: winnerClerkId },
+    });
+    const losingUser = await prisma.db.user.findUnique({
+      where: { clerkUserId: loserClerkId },
+    });
+    expect(winningUser).not.toBeNull();
+    expect(losingUser).toBeNull();
+
+    const memberships = await prisma.db.membership.findMany({
+      where: { organizationId: organizations[0].id },
+    });
+    expect(memberships).toHaveLength(1);
+    expect(memberships[0].userId).toBe(winningUser?.id);
+
+    const auditLogs = await prisma.db.auditLog.findMany({
+      where: { organizationId: organizations[0].id },
+    });
+    expect(auditLogs).toHaveLength(1);
+    expect(auditLogs[0]).toMatchObject({
+      userId: winningUser?.id,
+      action: 'CREATE',
+      entity: 'Organization',
+      entityId: organizations[0].id,
+    });
+
+    const after = {
+      users: await prisma.db.user.count(),
+      organizations: await prisma.db.organization.count(),
+      memberships: await prisma.db.membership.count(),
+      auditLogs: await prisma.db.auditLog.count(),
+    };
+    expect(after).toEqual({
+      users: before.users + 1,
+      organizations: before.organizations + 1,
+      memberships: before.memberships + 1,
+      auditLogs: before.auditLogs + 1,
+    });
+  });
+
   it('devuelve 409 ante estado parcial (clerkUserId existe sin membresía OWNER) y nunca crea segunda organización', async () => {
     const unique = Date.now() + Math.random().toString(36).substring(2, 7);
     const clerkId = `user_clerk_partial_${unique}`;
@@ -625,6 +790,9 @@ describe('ClerkOnboarding (e2e)', () => {
     });
 
     const clerkId = `user_clerk_takeover_${unique}`;
+    const securityEventsBefore = await prisma.db.auditLog.count({
+      where: { action: 'CLERK_ONBOARDING_EMAIL_CONFLICT' },
+    });
     currentSession = {
       clerkUserId: clerkId,
       sessionId: `sess_takeover_${unique}`,
@@ -657,12 +825,37 @@ describe('ClerkOnboarding (e2e)', () => {
     expect(toBody(res).message).toBe(
       'No es posible completar el registro con los datos proporcionados.',
     );
+    expect(res.body as unknown).toEqual({
+      message:
+        'No es posible completar el registro con los datos proporcionados.',
+      error: 'Conflict',
+      statusCode: 409,
+    });
 
     // Verificar que el usuario local NO fue sobreescrito ni enlazado
     const dbUser = await prisma.db.user.findUnique({
       where: { email: localEmail },
     });
     expect(dbUser?.clerkUserId).toBeNull();
+
+    const securityEventsAfter = await prisma.db.auditLog.count({
+      where: { action: 'CLERK_ONBOARDING_EMAIL_CONFLICT' },
+    });
+    expect(securityEventsAfter).toBe(securityEventsBefore + 1);
+
+    const securityEvent = await prisma.db.auditLog.findFirst({
+      where: { action: 'CLERK_ONBOARDING_EMAIL_CONFLICT' },
+      orderBy: { createdAt: 'desc' },
+    });
+    expect(securityEvent).toMatchObject({
+      organizationId: null,
+      userId: null,
+      action: 'CLERK_ONBOARDING_EMAIL_CONFLICT',
+      entity: 'SecurityEvent',
+      entityId: null,
+    });
+    expect(JSON.stringify(securityEvent)).not.toContain(localEmail);
+    expect(JSON.stringify(res.body)).not.toContain(clerkId);
   });
 });
 

@@ -108,11 +108,11 @@ Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictam
     *   **Helper Compartido:** Conversión unificada de peticiones Express a Web Fetch API Request (`toWebRequest`) compartida entre `ClerkAuthGuard` y `ClerkOnboardingGuard`.
     *   **Reutilización Lazy:** Amplía `ClerkClientFactory` con `users.getUser` y reutiliza el cliente ya instanciado en `ClerkSessionVerifierService`.
     *   **Perfil Autoritativo con Validación de ID:** Validación estricta de que el perfil devuelto por `users.getUser` posea exactamente el mismo `id` que el `clerkUserId` autenticado (401 antes de tocar PostgreSQL si no coincide). Nombre obligatorio resuelto de `firstName`/`lastName` o `username` (400 si falta; prohibido body o metadata). Correo principal verificado obligatorio (403 si no está verificado). Falla externa de Clerk responde 503 sin tocar base de datos.
-    *   **Anti-Enlace Neutro:** Rechazo 409 completamente neutro si el correo verificado coincide con un usuario local no enlazado, sin revelar existencia de cuentas.
+    *   **Anti-Enlace Neutro y Auditable:** Rechazo 409 completamente neutro si el correo verificado coincide con un usuario local no enlazado, sin revelar existencia de cuentas. Se registra `CLERK_ONBOARDING_EMAIL_CONFLICT` sin PII ni IDs; como el conflicto sucede antes de tener tenant, `AuditLog.organizationId` es `NULL` solo para este evento y una restricción PostgreSQL prohíbe usar esa excepción con otra acción o con `userId`/`entityId`.
     *   **Transacción Atómica e Idempotente:** Alta atómica en transacción `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` (`name`, `slug` normalizado, `email` normalizado) y `Membership(OWNER)` con `AuditLog` sin PII. Reintento acotado a 3 para `P2034`.
     *   **Códigos Dinámicos y Concurrencia:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente. Resuelve de forma idempotente ante ráfagas concurrentes `Promise.all` garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog. Rollback atómico total garantizado si falla `logTransactional`.
     *   **Control de Estado Parcial:** Si `clerkUserId` existe sin exactamente 1 membresía OWNER, responde 409 y nunca crea una segunda organización.
-    *   **Validación recuperada:** las 21 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales; el guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. `schema=test` dentro de la base principal ya no es aceptado. No incluye frontend ni QA de navegador para A0.3-A.
+    *   **Validación recuperada:** API TypeScript/lint/build, Prisma validate/generate y 258 unitarias pasaron; las 23 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales. El guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. Cubren dos identidades compitiendo por el mismo slug (`201 + 409`, un único agregado ganador y cero filas parciales perdedoras) y fallo de `Clerk.users.getUser()` (`503`, cero escrituras). Web TypeScript/lint/build pasó como regresión. `schema=test` dentro de la base principal ya no es aceptado. No incluye frontend ni QA de navegador para A0.3-A.
 
 ## 5. Decisiones activas de dominio
 
@@ -195,8 +195,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el checkpoint candidato recuperado de Security A0.3-H, que permanece **IMPLEMENTADO / EN REVISIÓN**. No declararlo aprobado sin decisión explícita del propietario.
-2. Security A0.3-A permanece **IMPLEMENTADO / EN REVISIÓN**, congelado en su comportamiento actual. No continuar A0.3-A, iniciar A0.3-B ni ampliar onboarding durante esta recuperación.
+1. Auditar el correctivo candidato de Security A0.3-A, que permanece **IMPLEMENTADO / EN REVISIÓN**. No declararlo aprobado sin decisión explícita del propietario.
+2. No iniciar A0.3-B, frontend Clerk, Supabase ni ampliar onboarding antes de esa auditoría y autorización expresa.
 3. Mantener login/JWT/register/password actuales y no enlazar, clasificar ni alterar usuarios por correo.
 4. Mantener Frontend A2 de Profesionales en revisión.
 

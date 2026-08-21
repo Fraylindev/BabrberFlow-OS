@@ -432,7 +432,10 @@ model Notification {
 model AuditLog {
   id String @id @default(uuid())
 
-  organizationId String
+  // NULL se reserva exclusivamente para eventos de seguridad pre-tenant,
+  // cuando todavía no existe una Organization autoritativa. Nunca se
+  // inventa un tenant para satisfacer el registro de auditoría.
+  organizationId String?
 
   // Sin relación/FK a propósito: un registro de auditoría debe sobrevivir
   // aunque el usuario que hizo la acción deje de existir más adelante —

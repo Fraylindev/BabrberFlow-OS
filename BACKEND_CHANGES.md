@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-20 — Security A0.3-A: auditoría pre-tenant y carreras de onboarding
+
+- **Contrato HTTP sin cambios:** `POST /auth/clerk/onboarding` conserva sus respuestas. Un conflicto de correo devuelve `409` neutro y una falla de `Clerk.users.getUser()` devuelve `503` genérico, sin PII, IDs ni detalles del proveedor.
+- **Evento de seguridad:** un conflicto confirmado de correo Clerk/local registra `CLERK_ONBOARDING_EMAIL_CONFLICT` con `organizationId`, `userId` y `entityId` nulos. No se atribuye el evento a una organización inexistente.
+- **Persistencia mínima segura:** la migración `20260820220000_audit_log_pre_tenant_security_events` vuelve nullable solo `AuditLog.organizationId` y añade un `CHECK` que limita esa excepción al evento exacto `SecurityEvent`; las auditorías tenant-scoped continúan exigiendo su organización real en el tipo de aplicación y en la restricción.
+- **Concurrencia real:** una E2E con dos `clerkUserId` y correos distintos sobre el mismo slug exige exactamente `201 + 409`, una Organization y únicamente el User, Membership OWNER y AuditLog del ganador. No quedan filas parciales de la petición perdedora.
+- **Falla externa sin efectos:** una E2E fuerza el rechazo de `Clerk.users.getUser()` y exige `503` genérico y deltas cero en User, Organization, Membership y AuditLog.
+- **Estado:** Security A0.3-A sigue **IMPLEMENTADO / EN REVISIÓN**. Este correctivo no aprueba el checkpoint ni autoriza A0.3-B.
+
+---
+
 ## 2026-08-20 — Recuperación y aislamiento verificable de Security A0.3-H
 
 - **Estado corregido:** Security A0.3-H y Security A0.3-A permanecen **IMPLEMENTADOS / EN REVISIÓN**. No existe aprobación vigente verificable para ninguno; A0.3-A no se amplió.

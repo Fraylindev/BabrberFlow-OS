@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D CERRADO / APROBADO; Security A0.1 y A0.2 implementados / en revisión**
+- Estado: **Security A0-D CERRADO / APROBADO; Security A0.1, A0.2 y A0.3-A implementados / en revisión**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -56,6 +56,8 @@ No hay evidencia de usuarios reales de producción, pero tampoco evidencia sufic
 - webhooks verificados sincronizan datos de perfil mínimos, pero no conceden Membership ni roles;
 - no se crea un segundo `User` si ya existe un enlace válido;
 - todo enlace/importación es idempotente y auditable sin guardar tokens, contraseñas ni PII en AuditLog.
+
+Un conflicto entre el correo verificado de una identidad Clerk y un `User` local no enlazado se rechaza sin enlazar por correo y se registra como `CLERK_ONBOARDING_EMAIL_CONFLICT`. Ese hecho ocurre antes de que exista una Organization autoritativa: por ello el registro usa `organizationId: NULL`, sin `userId`, `entityId`, correo ni `clerkUserId`. Una restricción PostgreSQL limita esta excepción al evento exacto; atribuirlo a un tenant ficticio falsearía la auditoría y queda prohibido.
 
 Clerk soporta importar hashes bcrypt, pero usar esa capacidad requiere inventario aprobado, exportación protegida, ensayo y rollback. La alternativa preferida para cuentas QA o no clasificadas es invitación/activación o recuperación administrada por Clerk, evitando transportar hashes cuando no sea necesario. El campo local `password` se volverá nullable y se retirará únicamente después de validar Clerk y vencer la ventana de rollback.
 
@@ -233,7 +235,9 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Manejo de concurrencia e idempotencia `Promise.all`: ante ráfagas concurrentes con el mismo `clerkUserId`, se resuelve la entidad existente retornando `200 OK` idempotente garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog en PostgreSQL.
 - Control de estado parcial: si `clerkUserId` existe sin exactamente 1 membresía OWNER, se rechaza con 409 y nunca se crea una segunda organización.
 - Códigos HTTP dinámicos vía `@Res({ passthrough: true })`: `201 Created` en creación inicial y `200 OK` en reintento idempotente.
-- Suite E2E: 21 tests ejecutados con dobles en memoria para Clerk (cero secretos y cero llamadas de red externas, verificando rechazo 401 ante ausencia de cabecera Authorization). Desde la recuperación del 2026-08-20 se ejecutan bajo el mismo aislamiento estricto de base y credencial separadas descrito arriba.
+- Suite E2E: 23 tests ejecutados con dobles en memoria para Clerk, cero secretos y cero llamadas de red externas. Desde la recuperación del 2026-08-20 se ejecutan bajo el mismo aislamiento estricto de base y credencial separadas descrito arriba.
+- Correctivo bloqueante: la suite aislada incluye carreras reales entre dos `clerkUserId` distintos sobre el mismo slug y exige `201 + 409`, una sola Organization y ninguna fila parcial del perdedor. También fuerza una falla de `Clerk.users.getUser()` y exige `503` genérico con cero cambios en User, Organization, Membership y AuditLog. El conflicto Clerk/local queda auditable mediante el evento pre-tenant restringido descrito arriba.
+- Estado vigente: **IMPLEMENTADO / EN REVISIÓN**. No constituye aprobación ni habilita A0.3-B.
 - Alcance 100% backend; no incluye frontend ni QA de navegador.
 
 ## Nota operativa de recuperación local — 2026-08-20

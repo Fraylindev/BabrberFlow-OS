@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-20 — Correctivo bloqueante de Security A0.3-A
+
+- El conflicto entre un correo verificado de Clerk y un `User` local no enlazado registra `CLERK_ONBOARDING_EMAIL_CONFLICT` sin PII ni identificadores. Como todavía no existe un tenant autoritativo, `AuditLog.organizationId` admite `NULL` solo para ese evento pre-tenant; un `CHECK` PostgreSQL exige además `userId` y `entityId` nulos y evita inventar una organización.
+- La respuesta al cliente permanece en `409` genérico y no expone correo, `clerkUserId` ni IDs internos. La misma política se aplica si la colisión de correo se materializa durante la transacción.
+- PostgreSQL aislado comprobó dos identidades Clerk distintas compitiendo por el mismo slug: exactamente una respuesta `201`, una `409`, una sola Organization y solo las filas User/Membership/AuditLog del ganador. Otra E2E comprobó que un fallo de `Clerk.users.getUser()` devuelve `503` genérico sin escrituras.
+- Validación final en exit 0: API TypeScript, lint, build, Prisma validate/generate y 258 unitarias aprobadas (11 integraciones opt-in omitidas); E2E 23/23 en `kortek_e2e_test`; web TypeScript, lint y build como regresión. La base E2E usa una credencial separada de la principal.
+- El archivo vacío no rastreado `apps/web/pnpm` fue revisado y eliminado; no era fuente ni dependencia del proyecto.
+- Estado: Security A0.3-A **IMPLEMENTADO / EN REVISIÓN**, candidato a auditoría. No está aprobado ni cerrado y no autoriza A0.3-B, frontend Clerk, Supabase u otro módulo.
+
 ## 2026-08-20 — Recuperación de Security A0.3-H y saneamiento local
 
 - Se auditó el código y el historial desde Security A0.2 hasta `baff8627efca7838e83061a2a1fd20d52f2d0e3d`. Security A0.3-H y A0.3-A quedan **IMPLEMENTADOS / EN REVISIÓN**; se retiraron las afirmaciones no verificables de cierre/aprobación de A0.3-H y A0.3-A no se amplió.

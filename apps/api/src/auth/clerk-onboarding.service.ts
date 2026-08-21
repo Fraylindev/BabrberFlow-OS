@@ -59,6 +59,15 @@ export class ClerkOnboardingService {
     private readonly verifier: ClerkSessionVerifierService,
   ) {}
 
+  private async recordEmailConflict(): Promise<void> {
+    await this.audit.log({
+      organizationId: null,
+      userId: null,
+      action: 'CLERK_ONBOARDING_EMAIL_CONFLICT',
+      entity: 'SecurityEvent',
+    });
+  }
+
   private async fetchClerkProfile(
     clerkUserId: string,
   ): Promise<{ name: string; email: string }> {
@@ -180,6 +189,9 @@ export class ClerkOnboardingService {
         const resolved = await this.resolveExistingOwner(clerkUserId);
         if (resolved) return resolved;
       }
+
+      await this.recordEmailConflict();
+
       throw new ConflictException(
         'No es posible completar el registro con los datos proporcionados.',
       );
@@ -307,6 +319,15 @@ export class ClerkOnboardingService {
           }
 
           if (isUniqueConstraintError(err, 'email')) {
+            const conflictingUser = await this.prisma.db.user.findUnique({
+              where: { email: verifiedEmail },
+            });
+            if (
+              conflictingUser &&
+              conflictingUser.clerkUserId !== clerkUserId
+            ) {
+              await this.recordEmailConflict();
+            }
             throw new ConflictException(
               'No es posible completar el registro con los datos proporcionados.',
             );
