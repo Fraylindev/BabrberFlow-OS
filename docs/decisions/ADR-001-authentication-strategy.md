@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D CERRADO / APROBADO; Security A0.1, A0.2 y A0.3-A implementados / en revisión**
+- Estado: **Security A0-D y A0.3-A CERRADOS / APROBADOS; Security A0.1 y A0.2 implementados / en revisión; A0.3-B planificado / pendiente de autorización**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -222,7 +222,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - El propietario confirmó mediante QA manual en navegador el registro, cierre de sesión, login válido y el mensaje genérico ante credenciales inválidas.
 - Estado vigente: **IMPLEMENTADO / EN REVISIÓN**. No se considera aprobado y no autoriza avanzar a A0.3-B.
 
-## Resultado de Security A0.3-A (Onboarding Backend Clerk) — IMPLEMENTADO / EN REVISIÓN (No aprobado)
+## Resultado de Security A0.3-A (Onboarding Backend Clerk) — CERRADO / APROBADO
 
 - Se amplió `ClerkClientFactory` con `users: Pick<ClerkClient['users'], 'getUser'>` y se habilitó su acceso lazy sin duplicación desde `ClerkSessionVerifierService.getClient()`.
 - Se extrajo el helper `toWebRequest` (`apps/api/src/auth/clerk/to-web-request.ts`) para unificar la conversión de Express Request a Web Fetch API Request entre `ClerkAuthGuard` y `ClerkOnboardingGuard`.
@@ -237,8 +237,20 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Códigos HTTP dinámicos vía `@Res({ passthrough: true })`: `201 Created` en creación inicial y `200 OK` en reintento idempotente.
 - Suite E2E: 23 tests ejecutados con dobles en memoria para Clerk, cero secretos y cero llamadas de red externas. Desde la recuperación del 2026-08-20 se ejecutan bajo el mismo aislamiento estricto de base y credencial separadas descrito arriba.
 - Correctivo bloqueante: la suite aislada incluye carreras reales entre dos `clerkUserId` distintos sobre el mismo slug y exige `201 + 409`, una sola Organization y ninguna fila parcial del perdedor. También fuerza una falla de `Clerk.users.getUser()` y exige `503` genérico con cero cambios en User, Organization, Membership y AuditLog. El conflicto Clerk/local queda auditable mediante el evento pre-tenant restringido descrito arriba.
-- Estado vigente: **IMPLEMENTADO / EN REVISIÓN**. No constituye aprobación ni habilita A0.3-B.
-- Alcance 100% backend; no incluye frontend ni QA de navegador.
+- QA integrado real: el propietario verificó con sesiones Clerk Development el alta inicial (`201`), el reintento idempotente de la misma identidad (`200` y misma organización), el conflicto de slug de una segunda identidad (`409`) y el rechazo de una sesión revocada (`401`). La evidencia se registra sin PII, tokens, claves, cookies ni identificadores sensibles.
+- Estado vigente por decisión explícita del propietario: **CERRADO / APROBADO**. La utilidad temporal local de QA fue eliminada y nunca estuvo rastreada.
+- Alcance 100% backend. Este cierre no implementa ni autoriza por sí solo A0.3-B.
+
+## Diseño de Security A0.3-B — PLANIFICADO / PENDIENTE DE AUTORIZACIÓN
+
+- Piloto propuesto: `GET /auth/clerk/me`, protegido por el `ClerkAuthGuard` existente seguido de `RolesGuard` y `@Roles(...B2B_ROLES)`.
+- Entrada obligatoria: `Authorization: Bearer <session token>` y `x-organization-id` con UUID. El header solo selecciona contexto; la autorización proviene de la sesión Clerk verificada y la Membership local.
+- Resolución: `sub` verificado → `User.clerkUserId` único → Membership compuesta `userId + organizationId` → rol local actual. No se acepta usuario, rol o tenant como autoridad desde el navegador o metadata Clerk.
+- Respuesta `200`: exactamente la misma entidad y lógica de `GET /organizations/mine`, reutilizando `OrganizationsService.findMine()` para evitar dos contratos. La ruta legacy conserva `JwtAuthGuard`, `RolesGuard` y su comportamiento sin cambios.
+- Fallos: `401` genérico para sesión inválida/revocada, header ausente o inválido, User no enlazado, Membership inexistente/baja o error inesperado del guard; `403` genérico para un rol local fuera del conjunto B2B. Si el contexto autorizado no encuentra la Organization, se conserva el resultado vigente de `findMine()` para mantener paridad; cualquier endurecimiento común deberá proponerse aparte para no bifurcar contratos.
+- Permisos: cualquier Membership local válida de roles B2B (`OWNER`, `ADMIN`, `RECEPTIONIST`, `BARBER`) puede consultar su propia Organization, igual que la ruta legacy. `CUSTOMER` no debe recibir acceso al dashboard; debe probarse explícitamente según la autoridad local vigente.
+- No alcance: no cambia A0.2, onboarding, JWT/login/register/password, Prisma, Supabase, frontend ni otras rutas.
+- Estado: el diseño está listo para auditoría, pero no existe implementación A0.3-B ni autorización para escribirla.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

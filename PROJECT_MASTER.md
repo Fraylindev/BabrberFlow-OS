@@ -103,7 +103,7 @@ Security A0.3-H: **IMPLEMENTADO / EN REVISIÓN**. La afirmación anterior de cie
     *   **Evidencia recuperada:** API TypeScript/lint/build/Prisma y Web TypeScript/lint/build están en exit 0; 257 unit tests y 21 E2E pasaron. Un smoke HTTP real confirmó registro 201, login 201, CORS para la web, rechazo 400 de `organizationId`, protección 401 de `POST /organizations` y conteos atómicos `1|1|1|1`.
     *   **QA manual completado:** el propietario confirmó en navegador el registro, cierre de sesión e inicio con credenciales válidas; credenciales inválidas muestran el mensaje genérico esperado. Esta evidencia habilita el checkpoint candidato, pero no constituye aprobación ni cierre.
 
-Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictamente backend). Onboarding de propietarios con Clerk con los siguientes atributos:
+Security A0.3-A: **CERRADO / APROBADO** por decisión explícita del propietario. Onboarding backend de propietarios con Clerk con los siguientes atributos:
     *   **Endpoint Seguro:** `POST /auth/clerk/onboarding` protegido por `ClerkOnboardingGuard`, verificando sesión activa en Clerk sin requerir inquilino ni usuario previo en PostgreSQL.
     *   **Helper Compartido:** Conversión unificada de peticiones Express a Web Fetch API Request (`toWebRequest`) compartida entre `ClerkAuthGuard` y `ClerkOnboardingGuard`.
     *   **Reutilización Lazy:** Amplía `ClerkClientFactory` con `users.getUser` y reutiliza el cliente ya instanciado en `ClerkSessionVerifierService`.
@@ -112,7 +112,10 @@ Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictam
     *   **Transacción Atómica e Idempotente:** Alta atómica en transacción `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` (`name`, `slug` normalizado, `email` normalizado) y `Membership(OWNER)` con `AuditLog` sin PII. Reintento acotado a 3 para `P2034`.
     *   **Códigos Dinámicos y Concurrencia:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente. Resuelve de forma idempotente ante ráfagas concurrentes `Promise.all` garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog. Rollback atómico total garantizado si falla `logTransactional`.
     *   **Control de Estado Parcial:** Si `clerkUserId` existe sin exactamente 1 membresía OWNER, responde 409 y nunca crea una segunda organización.
-    *   **Validación recuperada:** API TypeScript/lint/build, Prisma validate/generate y 258 unitarias pasaron; las 23 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales. El guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. Cubren dos identidades compitiendo por el mismo slug (`201 + 409`, un único agregado ganador y cero filas parciales perdedoras) y fallo de `Clerk.users.getUser()` (`503`, cero escrituras). Web TypeScript/lint/build pasó como regresión. `schema=test` dentro de la base principal ya no es aceptado. No incluye frontend ni QA de navegador para A0.3-A.
+    *   **Validación recuperada:** API TypeScript/lint/build, Prisma validate/generate y 258 unitarias pasaron; las 23 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales. El guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. Cubren dos identidades compitiendo por el mismo slug (`201 + 409`, un único agregado ganador y cero filas parciales perdedoras) y fallo de `Clerk.users.getUser()` (`503`, cero escrituras). Web TypeScript/lint/build pasó como regresión. `schema=test` dentro de la base principal no es aceptado.
+    *   **QA integrado real y cierre:** el propietario verificó con sesiones reales de Clerk Development el alta inicial (`201`), el reintento idempotente de la misma identidad (`200` y la misma organización), el conflicto de un segundo usuario sobre el mismo slug (`409`) y el rechazo de una sesión revocada (`401`). La evidencia no registra PII, tokens, claves, cookies ni identificadores sensibles. La utilidad local temporal usada para el QA fue eliminada y nunca formó parte de Git.
+
+Security A0.3-B: **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**. El alcance propuesto es un piloto backend `GET /auth/clerk/me`, protegido por el `ClerkAuthGuard` existente, `RolesGuard`, los roles B2B vigentes y el selector obligatorio `x-organization-id`. Debe resolver `User.clerkUserId`, Membership y rol locales en cada petición y reutilizar `OrganizationsService.findMine()` para devolver exactamente el mismo contrato que `GET /organizations/mine`, sin modificar la ruta JWT legacy. No existe código A0.3-B todavía.
 
 ## 5. Decisiones activas de dominio
 
@@ -195,8 +198,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el correctivo candidato de Security A0.3-A, que permanece **IMPLEMENTADO / EN REVISIÓN**. No declararlo aprobado sin decisión explícita del propietario.
-2. No iniciar A0.3-B, frontend Clerk, Supabase ni ampliar onboarding antes de esa auditoría y autorización expresa.
+1. Auditar el plan de Security A0.3-B, que permanece **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**; esta autorización cubre análisis y diseño, no implementación.
+2. No escribir código A0.3-B, frontend Clerk, Supabase ni ampliar onboarding hasta autorización expresa posterior.
 3. Mantener login/JWT/register/password actuales y no enlazar, clasificar ni alterar usuarios por correo.
 4. Mantener Frontend A2 de Profesionales en revisión.
 

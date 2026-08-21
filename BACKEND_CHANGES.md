@@ -8,6 +8,15 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-20 — Cierre aprobado de Security A0.3-A
+
+- **Estado:** el propietario declaró Security A0.3-A **CERRADO / APROBADO** después de QA integrado con sesiones reales de Clerk Development.
+- **Evidencia segura:** el flujo real confirmó alta `201`, repetición idempotente `200` sobre la misma organización, colisión de slug de una segunda identidad `409` y sesión revocada `401`. No se registran PII, tokens, claves, cookies ni identificadores sensibles.
+- **Contrato:** este checkpoint documental no cambia `POST /auth/clerk/onboarding` ni otro contrato. La utilidad local de QA fue eliminada y nunca estuvo rastreada.
+- **Siguiente alcance:** Security A0.3-B queda **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**. Su piloto propuesto `GET /auth/clerk/me` reutilizará la lógica y respuesta vigentes de `GET /organizations/mine`; todavía no está implementado.
+
+---
+
 ## 2026-08-20 — Security A0.3-A: auditoría pre-tenant y carreras de onboarding
 
 - **Contrato HTTP sin cambios:** `POST /auth/clerk/onboarding` conserva sus respuestas. Un conflicto de correo devuelve `409` neutro y una falla de `Clerk.users.getUser()` devuelve `503` genérico, sin PII, IDs ni detalles del proveedor.

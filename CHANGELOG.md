@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-20 — Security A0.3-A cerrado y aprobado
+
+- El propietario cerró y aprobó explícitamente Security A0.3-A después de QA integrado real con sesiones Clerk Development.
+- La evidencia confirmó alta inicial `201`, reintento idempotente `200` sobre la misma organización, conflicto `409` para una segunda identidad sobre el mismo slug y rechazo `401` de una sesión revocada, sin documentar PII, tokens, claves, cookies ni identificadores sensibles.
+- Se eliminó la utilidad temporal local usada para QA; permaneció ignorada y nunca entró en Git.
+- Security A0.3-B queda únicamente **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**. No se implementó el piloto ni se modificaron login/registro JWT, Prisma, Supabase, frontend productivo u otros módulos.
+
 ## 2026-08-20 — Correctivo bloqueante de Security A0.3-A
 
 - El conflicto entre un correo verificado de Clerk y un `User` local no enlazado registra `CLERK_ONBOARDING_EMAIL_CONFLICT` sin PII ni identificadores. Como todavía no existe un tenant autoritativo, `AuditLog.organizationId` admite `NULL` solo para ese evento pre-tenant; un `CHECK` PostgreSQL exige además `userId` y `entityId` nulos y evita inventar una organización.
