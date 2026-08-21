@@ -15,6 +15,8 @@ import { ClerkAuthGuard } from './guards/clerk-auth.guard';
 import { ClerkOnboardingController } from './clerk-onboarding.controller';
 import { ClerkOnboardingService } from './clerk-onboarding.service';
 import { ClerkOnboardingGuard } from './guards/clerk-onboarding.guard';
+import { OrganizationsModule } from '../organizations/organizations.module';
+import { ClerkMeController } from './clerk-me.controller';
 
 if (!process.env.JWT_SECRET) {
   throw new Error(
@@ -30,8 +32,9 @@ if (!process.env.JWT_SECRET) {
       signOptions: { expiresIn: '1d' }, // El token expirará en 1 día
     }),
     AuditModule,
+    OrganizationsModule,
   ],
-  controllers: [AuthController, ClerkOnboardingController],
+  controllers: [AuthController, ClerkOnboardingController, ClerkMeController],
   providers: [
     AuthService,
     TeamService,

@@ -8,6 +8,19 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-21 — Security A0.3-B cerrado: piloto de contexto Clerk
+
+- **Nuevo endpoint:** `GET /auth/clerk/me`, protegido por `ClerkAuthGuard`, `RolesGuard` y `B2B_ROLES` (`OWNER`, `ADMIN`, `RECEPTIONIST`, `BARBER`). `CUSTOMER` recibe `403`.
+- **Entrada:** exige `Authorization: Bearer <session token>` y exactamente una ocurrencia UUID de `x-organization-id`. El header selecciona contexto, pero la autorización proviene del `sub` verificado, `User.clerkUserId` y la Membership/rol local actual.
+- **Duplicados:** `ClerkAuthGuard` inspecciona las ocurrencias físicas case-insensitive en `rawHeaders`. Ausencia, formato inválido, arreglo, valor combinado o cualquier duplicado —incluso idéntico— devuelve `401` genérico antes de invocar Clerk o PostgreSQL; nunca se toma el primer valor.
+- **Respuesta `200`:** delegación directa en `OrganizationsService.findMine()`, por lo que el cuerpo es idéntico al de `GET /organizations/mine`. La ruta JWT legacy, sus guards y su contrato no cambian.
+- **Fallos seguros:** sesión inválida/revocada, User no enlazado, Membership inexistente/baja o tenant ajeno devuelven `401` genérico; un rol local no B2B devuelve `403` sin detalles internos.
+- **Persistencia:** no añade migraciones ni cambia Prisma, usuarios, organizaciones o Memberships.
+- **Validación y cierre:** API TypeScript, lint y build terminaron en exit `0`; pasaron 262 unitarias y 36/36 E2E en PostgreSQL temporal estrictamente aislado. El propietario confirmó una llamada real con sesión Clerk válida y selector propio: `GET /auth/clerk/me` respondió `200` y la organización coincidió con la ya autorizada. La evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles; la utilidad temporal ignorada fue eliminada sin entrar en Git.
+- **Estado:** **CERRADO / APROBADO** por decisión explícita del propietario.
+
+---
+
 ## 2026-08-20 — Cierre aprobado de Security A0.3-A
 
 - **Estado:** el propietario declaró Security A0.3-A **CERRADO / APROBADO** después de QA integrado con sesiones reales de Clerk Development.

@@ -4,6 +4,16 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-21 — Security A0.3-B cerrado y aprobado
+
+- Se implementó el piloto backend `GET /auth/clerk/me` con `ClerkAuthGuard + RolesGuard + B2B_ROLES`, Membership/rol local y reutilización directa de `OrganizationsService.findMine()`; `GET /organizations/mine` y el flujo JWT legacy no cambiaron.
+- `ClerkAuthGuard` ahora rechaza con `401` cualquier `x-organization-id` duplicado antes de Clerk o PostgreSQL, incluso si los valores son iguales, además de arreglos, valores combinados y selectores inválidos.
+- La cobertura comprueba roles B2B, `CUSTOMER`, tenant ajeno, User no enlazado, Membership ausente/cambiada/eliminada, sesión revocada, duplicados físicos y paridad exacta con la respuesta legacy.
+- Exit `0`: API TypeScript, lint y build; 262 unitarias (11 integraciones opt-in omitidas) y 36/36 E2E sobre PostgreSQL temporal aislado. Los clústeres temporales fueron apagados y eliminados sin tocar la base principal.
+- El propietario confirmó el QA integrado real con la sesión Clerk ya validada: `GET /auth/clerk/me` respondió `200` y la organización coincidió con la autorizada. No se repitieron onboarding, conflictos, revocación ni pruebas de otros tenants.
+- La evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles; la utilidad temporal ignorada fue eliminada y nunca entró en Git.
+- Estado: **CERRADO / APROBADO** por decisión explícita del propietario.
+
 ## 2026-08-21 — Correctivo documental del plan Security A0.3-B
 
 - Se sincronizó el estado vigente de Security A0.3-H como **CERRADO / APROBADO** por decisión explícita del propietario; las entradas históricas permanecen intactas como fotografía de su fecha.

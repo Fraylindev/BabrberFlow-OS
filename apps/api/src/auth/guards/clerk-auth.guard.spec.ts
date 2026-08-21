@@ -24,6 +24,7 @@ function makeRequest(): AuthenticatedRequest {
     protocol: 'http',
     originalUrl: '/secure',
     url: '/secure',
+    rawHeaders: [ORGANIZATION_ID_HEADER, organizationId],
     get: jest.fn().mockReturnValue('localhost:3000'),
   } as unknown as AuthenticatedRequest;
 }
@@ -130,6 +131,41 @@ describe('ClerkAuthGuard', () => {
       guard.canActivate(makeContext(request)),
     ).rejects.toBeInstanceOf(UnauthorizedException);
     expect(verify).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['idénticos', organizationId, organizationId],
+    ['distintos', organizationId, '00000000-0000-4000-8000-000000000099'],
+  ])(
+    'rechaza dos headers x-organization-id %s antes de verificar Clerk o PostgreSQL',
+    async (_caseName, firstValue, secondValue) => {
+      const request = makeRequest();
+      request.headers[ORGANIZATION_ID_HEADER] = firstValue;
+      request.rawHeaders = [
+        'X-Organization-Id',
+        firstValue,
+        ORGANIZATION_ID_HEADER,
+        secondValue,
+      ];
+
+      await expect(
+        guard.canActivate(makeContext(request)),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(verify).not.toHaveBeenCalled();
+      expect(findUser).not.toHaveBeenCalled();
+      expect(findMembership).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rechaza un valor de header representado como arreglo aunque rawHeaders tenga una sola ocurrencia', async () => {
+    const request = makeRequest();
+    request.headers[ORGANIZATION_ID_HEADER] = [organizationId, organizationId];
+
+    await expect(
+      guard.canActivate(makeContext(request)),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(verify).not.toHaveBeenCalled();
+    expect(findUser).not.toHaveBeenCalled();
   });
 
   it('falla cerrado cuando una dependencia lanza un error inesperado sin exponer detalles', async () => {

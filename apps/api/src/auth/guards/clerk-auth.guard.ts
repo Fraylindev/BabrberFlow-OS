@@ -85,14 +85,24 @@ export class ClerkAuthGuard implements CanActivate {
 
   private readOrganizationId(request: Request): string {
     const header = request.headers[ORGANIZATION_ID_HEADER];
-    const organizationId = Array.isArray(header) ? header[0] : header;
+    const rawHeaderOccurrences = request.rawHeaders.reduce(
+      (count, value, index) =>
+        index % 2 === 0 && value.toLowerCase() === ORGANIZATION_ID_HEADER
+          ? count + 1
+          : count,
+      0,
+    );
 
-    if (!organizationId || !isUUID(organizationId)) {
+    if (
+      rawHeaderOccurrences !== 1 ||
+      typeof header !== 'string' ||
+      !isUUID(header)
+    ) {
       throw new UnauthorizedException(
         'Sesión no válida para esta organización',
       );
     }
 
-    return organizationId;
+    return header;
   }
 }

@@ -93,7 +93,7 @@ Security A0-D: **CERRADO / APROBADO** por el propietario sobre `66e1c094b47e8bc7
 
 Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nullable/única de enlace Clerk; no cambia login ni enlaza usuarios.
 
-Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
+Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard. A0.3-B reutiliza esta capa únicamente en su endpoint piloto; no reemplaza JWT/login/register.
 
 Security A0.3-H: **CERRADO / APROBADO** por decisión explícita del propietario. Hardening legacy y web con los siguientes atributos:
     *   **Registro Atómico Estricto:** La creación de usuario (`User`), inquilino (`Organization`) y el vínculo de propiedad (`Membership` con rol `OWNER`) ocurre en una **transacción PostgreSQL con aislamiento `Serializable`** (`Prisma.TransactionIsolationLevel.Serializable`), previniendo escalamiento y cuentas fantasma por concurrencia. Se incluyen reintentos (max 3) para lidiar con fallas de serialización (`P2034`).
@@ -115,7 +115,7 @@ Security A0.3-A: **CERRADO / APROBADO** por decisión explícita del propietario
     *   **Validación recuperada:** API TypeScript/lint/build, Prisma validate/generate y 258 unitarias pasaron; las 23 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales. El guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. Cubren dos identidades compitiendo por el mismo slug (`201 + 409`, un único agregado ganador y cero filas parciales perdedoras) y fallo de `Clerk.users.getUser()` (`503`, cero escrituras). Web TypeScript/lint/build pasó como regresión. `schema=test` dentro de la base principal no es aceptado.
     *   **QA integrado real y cierre:** el propietario verificó con sesiones reales de Clerk Development el alta inicial (`201`), el reintento idempotente de la misma identidad (`200` y la misma organización), el conflicto de un segundo usuario sobre el mismo slug (`409`) y el rechazo de una sesión revocada (`401`). La evidencia no registra PII, tokens, claves, cookies ni identificadores sensibles. La utilidad local temporal usada para el QA fue eliminada y nunca formó parte de Git.
 
-Security A0.3-B: **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**. El diseño aprobado propone un piloto backend `GET /auth/clerk/me`, protegido por el `ClerkAuthGuard` existente, `RolesGuard`, los roles B2B vigentes y el selector obligatorio `x-organization-id`. Debe resolver `User.clerkUserId`, Membership y rol locales en cada petición y reutilizar directamente `OrganizationsService.findMine()` para mantener paridad completa con `GET /organizations/mine`, sin modificar la ruta JWT legacy. Como correctivo puntual autorizado dentro del futuro A0.3-B, `ClerkAuthGuard` deberá rechazar con `401` cualquier aparición duplicada de `x-organization-id`, aunque todos los valores sean idénticos; el diseño exige pruebas unitarias y E2E PostgreSQL aisladas de ese caso. No existe código A0.3-B todavía.
+Security A0.3-B: **CERRADO / APROBADO** por decisión explícita del propietario. `GET /auth/clerk/me` usa `ClerkAuthGuard`, `RolesGuard` y `B2B_ROLES`; resuelve `User.clerkUserId`, Membership y rol locales en cada petición y delega directamente en `OrganizationsService.findMine()`, manteniendo paridad completa con `GET /organizations/mine` sin modificar la ruta JWT legacy. `x-organization-id` sigue siendo solo selector y debe aparecer exactamente una vez: el guard devuelve `401` antes de Clerk/PostgreSQL ante ausencia, formato inválido, arreglo, valor combinado o duplicado, incluso si los valores repetidos son iguales. API TypeScript, lint y build pasaron; 262 unitarias y 36 E2E pasaron, estas últimas sobre una base `_test` y credencial no privilegiada dentro de un clúster PostgreSQL temporal separado que fue eliminado al terminar. El propietario confirmó además el QA integrado real con una sesión Clerk válida: `GET /auth/clerk/me` respondió `200` y la organización coincidió con la ya autorizada. La evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles; la utilidad temporal ignorada fue eliminada sin entrar en Git.
 
 ## 5. Decisiones activas de dominio
 
@@ -198,10 +198,9 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Mantener Security A0.3-B **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN** con el diseño corregido aprobado; todavía requiere autorización explícita separada para implementar.
-2. No escribir código A0.3-B, frontend Clerk, Supabase ni ampliar onboarding antes de esa autorización.
-3. Mantener login/JWT/register/password actuales y no enlazar, clasificar ni alterar usuarios por correo.
-4. Mantener Frontend A2 de Profesionales en revisión.
+1. Security A0.3-B queda **CERRADO / APROBADO**; este cierre no autoriza por sí solo otro checkpoint funcional.
+2. Mantener login/JWT/register/password actuales y no enlazar, clasificar ni alterar usuarios por correo fuera de un alcance posterior aprobado.
+3. Mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 
