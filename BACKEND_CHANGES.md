@@ -8,6 +8,18 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-20 — Recuperación y aislamiento verificable de Security A0.3-H
+
+- **Estado corregido:** Security A0.3-H y Security A0.3-A permanecen **IMPLEMENTADOS / EN REVISIÓN**. No existe aprobación vigente verificable para ninguno; A0.3-A no se amplió.
+- **Aislamiento E2E estricto:** `DATABASE_URL` debe apuntar a otra base cuyo nombre termine en `_test` y usar una credencial distinta de la principal. La preparación consulta PostgreSQL real y exige que el usuario sea propietario de esa base sin `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION`, `BYPASSRLS` ni herencia de roles privilegiados, y que no pueda conectar a la base principal. Un `schema=test` dentro de la misma base ya no es válido.
+- **Migraciones sin privilegios globales:** `global-setup.ts` dejó de crear schemas con SQL inseguro. Valida primero la conexión limitada y luego ejecuta las migraciones versionadas sobre la base aislada.
+- **Atomicidad concurrente observable:** la E2E de registro concurrente no se limita a los códigos HTTP; consulta la base real y exige exactamente un `User`, una `Organization`, una `Membership OWNER` y un `AuditLog` para el alta.
+- **Tipos:** la proyección segura de miembros de Equipo dejó de depender de `eslint-disable` para omitir contraseñas y usa una proyección explícita tipada.
+- **Evidencia del entorno recuperado:** 21/21 E2E pasaron en `kortek_e2e_test`, propiedad de `kortek_e2e_runner`, un rol sin privilegios globales alojado en un clúster temporal separado donde la base principal no existe.
+- **QA manual:** el propietario confirmó en navegador registro, cierre de sesión, login válido y rechazo de credenciales inválidas con mensaje genérico. Security A0.3-H permanece **IMPLEMENTADO / EN REVISIÓN** hasta auditoría.
+
+---
+
 ## 2026-08-15 — Security A0.3-A: Onboarding backend con Clerk
 
 - **Endpoint de Onboarding:** Se implementó `POST /auth/clerk/onboarding` (`ClerkOnboardingController`), protegido por `ClerkOnboardingGuard`. Permite a nuevos usuarios autenticados en Clerk crear su tenant inicial sin requerir pertenencia previa a una organización.
@@ -18,7 +30,7 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Alta Atómica e Idempotente:** Creación en transacción PostgreSQL `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` y `Membership(role: 'OWNER')` junto con `AuditLog` sin PII. Rollback total ante fallo de auditoría. Reintento acotado a 3 intentos para fallos `P2034`.
 - **Manejo de concurrencia e idempotencia `Promise.all`:** Ante colisiones de unicidad (`P2002`) derivadas de peticiones simultáneas para el mismo `clerkUserId`, se resuelve la entidad existente fuera de la transacción fallida y se retorna `200 OK` idempotente garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog. Si el estado es parcial/inconsistente, responde 409 y nunca crea una segunda organización.
 - **Respuestas dinámicas:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente.
-- **Pruebas y Aislamiento:** 253 unit tests y 21 pruebas E2E ejecutadas y pasadas al 100% contra PostgreSQL en esquema aislado `test` con dobles controlados de Clerk (sin secretos ni red externa, validando rechazo 401 sin header Authorization).
+- **Pruebas y Aislamiento:** 21 pruebas E2E ejecutadas con dobles controlados de Clerk (sin secretos ni red externa, validando rechazo 401 sin header Authorization). La recuperación del 2026-08-20 sustituye el aislamiento insuficiente por schema por una base y credencial realmente separadas.
 - **Estado:** Security A0.3-A **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictamente backend; no incluye frontend ni QA de navegador).
 
 ---
@@ -29,8 +41,8 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Protección de organizaciones:** `POST /organizations` ya no es un endpoint público para registrar una barbería inicial. Ha sido protegido con `JwtAuthGuard` y `RolesGuard(OWNER)`, reservándose para usuarios autenticados con privilegios que necesiten registrar organizaciones adicionales.
 - **Cuentas sin contraseña local:** La columna `User.password` en Prisma ahora es `String?` (nullable). Esto prepara la base de datos para usuarios autenticados mediante Clerk. El endpoint `POST /auth/login` se modificó para verificar explícitamente `user.password !== null` antes de usar `bcrypt`, retornando siempre el genérico `401 Credenciales inválidas` en caso de intentar un login legacy sobre una cuenta Clerk, preservando la seguridad y evitando fugas de información. `PATCH /auth/update-password` previene el pase de nulls lanzando explícitamente un 400.
 - **Frontend actualizado:** El cliente de registro en `apps/web/lib/auth-context.tsx` ha sido modificado para enviar el nuevo payload unificado a `/auth/register` incluyendo el nuevo campo de correo de la organización (`organizationEmail`), eliminando la llamada previa y vulnerable a `/organizations`.
-- **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`. Se eliminó la plantilla obsoleta `app.e2e-spec.ts`. Suite E2E ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test`.
-- **Estado:** Security A0.3-H (Hardening Legacy) **CERRADO / APROBADO** por el propietario tras validación E2E en PostgreSQL aislado y QA de navegador. Security A0.3 continúa abierto hacia A0.3-A.
+- **Aislamiento E2E histórico:** el checkpoint original aceptaba una base con sufijo `_test` o un schema `test`/`_test`. La segunda opción no era aislamiento estricto y queda revocada por la entrada de recuperación del 2026-08-20.
+- **Estado vigente corregido:** Security A0.3-H (Hardening Legacy) **IMPLEMENTADO / EN REVISIÓN**. La afirmación histórica de cierre/aprobación fue retirada por no contar con autorización verificable.
 
 ---
 

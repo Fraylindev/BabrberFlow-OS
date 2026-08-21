@@ -2,8 +2,8 @@ import { execSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { PrismaClient } from '@prisma/client';
 import {
+  assertIsolatedDatabaseConnection,
   assertIsolatedDatabaseUrl,
-  isolatedSchemaName,
 } from '../src/common/assert-isolated-database-url';
 
 export default async function globalSetup(): Promise<void> {
@@ -14,18 +14,24 @@ export default async function globalSetup(): Promise<void> {
     );
   }
 
-  const parsed = assertIsolatedDatabaseUrl(dbUrl);
-  const schema = isolatedSchemaName(parsed);
+  const primaryDatabaseName = process.env.E2E_PRIMARY_DATABASE_NAME;
+  const primaryDatabaseUser = process.env.E2E_PRIMARY_DATABASE_USER;
+  if (!primaryDatabaseName || !primaryDatabaseUser) {
+    throw new Error(
+      'E2E requires E2E_PRIMARY_DATABASE_NAME and E2E_PRIMARY_DATABASE_USER.',
+    );
+  }
 
-  if (schema) {
-    const prisma = new PrismaClient({
-      datasources: { db: { url: dbUrl } },
-    });
-    try {
-      await prisma.$executeRawUnsafe(`CREATE SCHEMA IF NOT EXISTS "${schema}"`);
-    } finally {
-      await prisma.$disconnect();
-    }
+  const expectations = { primaryDatabaseName, primaryDatabaseUser };
+  const parsed = assertIsolatedDatabaseUrl(dbUrl, expectations);
+  const prisma = new PrismaClient({
+    datasources: { db: { url: dbUrl } },
+  });
+  try {
+    await prisma.$connect();
+    await assertIsolatedDatabaseConnection(prisma, parsed, expectations);
+  } finally {
+    await prisma.$disconnect();
   }
 
   execSync('pnpm exec prisma migrate deploy', {

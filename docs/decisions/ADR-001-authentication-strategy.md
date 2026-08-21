@@ -203,10 +203,10 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Tras la verificación criptográfica, `sessions.getSession()` exige una sesión `active` del mismo `sub`. La revocación, expiración/finalización, sujeto distinto o fallo de Clerk producen `401` sin detalles internos.
 - El guard busca `User` únicamente por `clerkUserId`, nunca por correo. Después exige la Membership compuesta para el selector UUID de Organization y construye el contexto con el rol local actual. Claims o headers de rol/usuario no participan en la autorización.
 - Cambiar el rol o eliminar la Membership tiene efecto en la siguiente petición. Un User no enlazado y un User sin Membership se rechazan de forma segura.
-- La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, los 19 usuarios existentes, Prisma, Supabase y frontend no cambian.
+- La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, Prisma, Supabase y frontend no cambian. Los 19 usuarios citados corresponden al inventario histórico de A0.1, no a un invariante ni al estado de la instancia nativa actual.
 - Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership, revocación local de acceso, arranque sin variables Clerk, fallo cerrado del loader, fallo cerrado del guard por error inesperado y reutilización del cliente inicializado.
 
-## Resultado de Security A0.3-H (Hardening Legacy) — CERRADO / APROBADO
+## Resultado de Security A0.3-H (Hardening Legacy) — IMPLEMENTADO / EN REVISIÓN
 
 - El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y rechaza `organizationId`. Se implementó validación de formato (3-50 caracteres, caracteres alfanuméricos aceptando mayúsculas y minúsculas con guiones intermedios, sin espacios ni rutas) y normalización explícita a minúsculas (`toLowerCase().trim()`) para la persistencia del slug y correos en el servicio.
 - `AuthService.register()` crea `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (`isolationLevel: Prisma.TransactionIsolationLevel.Serializable`). Se implementó reintento acotado a exactamente 3 intentos exclusivo para fallas de serialización (`P2034`), mientras que errores de unicidad (`P2002`) en slug o email se traducen inmediatamente a `409 ConflictException` sin reintentos ciegos.
@@ -214,9 +214,11 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - `POST /organizations` (`OrganizationsController`) está protegido con JWT y rol `OWNER`; ya no es ruta pública para el alta inicial.
 - `User.password` es nullable en persistencia. `login()` y `updatePassword()` protegen contra contraseñas locales nulas (devuelven rechazo neutro 401 y 400 respectivamente sin invocar bcrypt con null).
 - Frontend web (`apps/web/lib/auth-context.tsx`) envía el payload atómico completo incluyendo `organizationEmail`.
-- Pruebas E2E (`auth.e2e-spec.ts` y `organizations.e2e-spec.ts`) operan bajo un estricto aislamiento, forzando la validación del esquema de la base de datos de test (`global-setup.ts`). La plantilla obsoleta `app.e2e-spec.ts` fue eliminada. Ejecutadas y pasadas 8/8 pruebas contra PostgreSQL en esquema aislado `test`.
-- Evidencia validada: Type-check API/Web (`exit 0`), Lint API/Web sin eslint-disables (`exit 0`), Build API/Web (`exit 0`), Prisma schema validate (`exit 0`), 227 Unit tests API pasando (`exit 0`), 8 E2E tests contra PostgreSQL real en esquema aislado `test` pasando (`exit 0`), QA funcional de navegador completado.
-- Estado: **CERRADO / APROBADO**. Security A0.3 completo continúa abierto hacia A0.3-A (Onboarding Clerk).
+- El aislamiento E2E original aceptaba un schema `test` dentro de la base principal y una credencial privilegiada. Esa evidencia no cumple aislamiento estricto y no sustenta una aprobación.
+- La recuperación del 2026-08-20 exige una base `_test` y usuario diferentes. Antes de migrar, consulta PostgreSQL real y rechaza superusuario, privilegios globales o heredados y cualquier acceso a la base principal. `global-setup.ts` dejó de crear schemas mediante SQL dinámico.
+- La E2E concurrente verifica persistencia real: exactamente un `User`, una `Organization`, una `Membership OWNER` y un `AuditLog`. La suite completa pasó 21/21 en `kortek_e2e_test`, dentro de un clúster temporal separado y con `kortek_e2e_runner` sin privilegios globales.
+- El propietario confirmó mediante QA manual en navegador el registro, cierre de sesión, login válido y el mensaje genérico ante credenciales inválidas.
+- Estado vigente: **IMPLEMENTADO / EN REVISIÓN**. No se considera aprobado y no autoriza avanzar a A0.3-B.
 
 ## Resultado de Security A0.3-A (Onboarding Backend Clerk) — IMPLEMENTADO / EN REVISIÓN (No aprobado)
 
@@ -231,8 +233,14 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Manejo de concurrencia e idempotencia `Promise.all`: ante ráfagas concurrentes con el mismo `clerkUserId`, se resuelve la entidad existente retornando `200 OK` idempotente garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog en PostgreSQL.
 - Control de estado parcial: si `clerkUserId` existe sin exactamente 1 membresía OWNER, se rechaza con 409 y nunca se crea una segunda organización.
 - Códigos HTTP dinámicos vía `@Res({ passthrough: true })`: `201 Created` en creación inicial y `200 OK` en reintento idempotente.
-- Suite de pruebas: 253 unit tests API pasando y 21 tests E2E ejecutados y pasados en PostgreSQL bajo esquema aislado `test` con dobles en memoria para Clerk (cero secretos y cero llamadas de red externas, verificando rechazo 401 ante ausencia de cabecera Authorization).
+- Suite E2E: 21 tests ejecutados con dobles en memoria para Clerk (cero secretos y cero llamadas de red externas, verificando rechazo 401 ante ausencia de cabecera Authorization). Desde la recuperación del 2026-08-20 se ejecutan bajo el mismo aislamiento estricto de base y credencial separadas descrito arriba.
 - Alcance 100% backend; no incluye frontend ni QA de navegador.
+
+## Nota operativa de recuperación local — 2026-08-20
+
+- La instancia PostgreSQL nativa tenía las cuatro reglas `host` locales en `trust`. Antes de corregirlas se creó `pg_hba.conf.backup-20260819-234953`; solo esas reglas volvieron a `scram-sha-256` y se verificó una conexión autenticada con contraseña SCRAM.
+- `barberflow` era superusuario. Se preservaron el rol, el login, la herencia, su base y sus objetos, retirando únicamente `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` y `BYPASSRLS`.
+- La base nativa inspeccionada tiene 0 Users, 0 Organizations y 0 Memberships. Los 19 usuarios citados por A0.1 son evidencia histórica y no se reinterpretan como estado actual; este saneamiento no eliminó datos.
 
 ## Fuera de alcance del diagnóstico Security A0-D
 

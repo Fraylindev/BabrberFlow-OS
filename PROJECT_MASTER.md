@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-15. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-20. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -50,7 +50,7 @@ Gobierno y estándares:
 - La implementación que ejecuta hoy sigue usando JWT + Passport + bcryptjs; el login recibe email y contraseña, no `organizationId`.
 - La arquitectura aprobada migrará identidad y sesiones a Clerk. El UUID de `User` seguirá siendo la identidad local estable y se enlazará de forma única a la identidad Clerk.
 - `Organization`, `Membership` y roles continúan como autoridad local; Clerk Organizations no se usará para autorización.
-- Security A0.1 añade `User.clerkUserId` nullable y único. Los 19 usuarios existentes conservan UUID, password y datos; todos permanecen sin enlace.
+- Security A0.1 añade `User.clerkUserId` nullable y único. La auditoría de aquel entorno preservó 19 usuarios sin enlace; ese conteo es evidencia histórica, no un invariante ni el estado de la instancia PostgreSQL nativa actual.
 - Security A0.2 instala el SDK backend oficial de Clerk y añade una capa todavía no aplicada a rutas: verifica session tokens y estado remoto, resuelve `sub` por `User.clerkUserId` y vuelve a consultar la `Membership` local en cada petición.
 
 ### Seguridad
@@ -95,11 +95,13 @@ Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nulla
 
 Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
 
-Security A0.3-H: **CERRADO / APROBADO** por el propietario tras validación de 8 tests E2E reales en PostgreSQL aislado y QA de navegador. Hardening legacy y web con los siguientes atributos:
+Security A0.3-H: **IMPLEMENTADO / EN REVISIÓN**. La afirmación anterior de cierre/aprobación no cuenta con autorización verificable y fue retirada. Hardening legacy y web con los siguientes atributos:
     *   **Registro Atómico Estricto:** La creación de usuario (`User`), inquilino (`Organization`) y el vínculo de propiedad (`Membership` con rol `OWNER`) ocurre en una **transacción PostgreSQL con aislamiento `Serializable`** (`Prisma.TransactionIsolationLevel.Serializable`), previniendo escalamiento y cuentas fantasma por concurrencia. Se incluyen reintentos (max 3) para lidiar con fallas de serialización (`P2034`).
     *   **Inquilinos Aislados:** `POST /organizations` ya no es un endpoint público. Solo un usuario con rol `OWNER` puede crear nuevos tenants adicionales.
     *   **Correo de Organización:** La barbería recibe su propio correo electrónico, disociado del correo personal del propietario, exigido como `organizationEmail` durante el registro inicial.
     *   **Tolerancia a contraseñas nulas:** Las cuentas sin contraseña local (preparación para usuarios autenticados vía Clerk) reciben el mismo rechazo neutro "Credenciales inválidas" en el login legacy en lugar de errores internos de servidor (500). La actualización de contraseñas protege contra bcrypt(null).
+    *   **Evidencia recuperada:** API TypeScript/lint/build/Prisma y Web TypeScript/lint/build están en exit 0; 257 unit tests y 21 E2E pasaron. Un smoke HTTP real confirmó registro 201, login 201, CORS para la web, rechazo 400 de `organizationId`, protección 401 de `POST /organizations` y conteos atómicos `1|1|1|1`.
+    *   **QA manual completado:** el propietario confirmó en navegador el registro, cierre de sesión e inicio con credenciales válidas; credenciales inválidas muestran el mensaje genérico esperado. Esta evidencia habilita el checkpoint candidato, pero no constituye aprobación ni cierre.
 
 Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictamente backend). Onboarding de propietarios con Clerk con los siguientes atributos:
     *   **Endpoint Seguro:** `POST /auth/clerk/onboarding` protegido por `ClerkOnboardingGuard`, verificando sesión activa en Clerk sin requerir inquilino ni usuario previo en PostgreSQL.
@@ -110,7 +112,7 @@ Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictam
     *   **Transacción Atómica e Idempotente:** Alta atómica en transacción `SERIALIZABLE` de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` (`name`, `slug` normalizado, `email` normalizado) y `Membership(OWNER)` con `AuditLog` sin PII. Reintento acotado a 3 para `P2034`.
     *   **Códigos Dinámicos y Concurrencia:** Retorna `201 Created` en alta nueva y `200 OK` en reintento idempotente. Resuelve de forma idempotente ante ráfagas concurrentes `Promise.all` garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog. Rollback atómico total garantizado si falla `logTransactional`.
     *   **Control de Estado Parcial:** Si `clerkUserId` existe sin exactamente 1 membresía OWNER, responde 409 y nunca crea una segunda organización.
-    *   **Validación:** 253 pruebas unitarias y 21 pruebas E2E contra PostgreSQL en esquema aislado `test` con dobles controlados de Clerk (cero secretos y cero llamadas de red en tests). No incluye frontend ni QA de navegador.
+    *   **Validación recuperada:** las 21 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales; el guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. `schema=test` dentro de la base principal ya no es aceptado. No incluye frontend ni QA de navegador para A0.3-A.
 
 ## 5. Decisiones activas de dominio
 
@@ -148,9 +150,9 @@ Security A0.3-A: **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Entrega estrictam
 - Decisión aprobada: Clerk gestionará identidad, login, registro, recuperación y sesiones. NestJS verificará la sesión y resolverá `User` + Membership local en cada petición.
 - `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local crea Organization + primera Membership OWNER de forma atómica e idempotente.
 - La base A0.2 usa `authenticateRequest()` con session tokens, origins autorizados (`CLERK_AUTHORIZED_PARTIES`, variable independiente de `CORS_ALLOWED_ORIGINS`) y audiencia cuando el token/configuración la define; valida el issuer de la instancia y consulta en Clerk que la sesión siga `active`. Config y cliente Clerk se crean en la primera petición al guard, no al arrancar; si la config no está, el guard falla cerrado con 401 genérico y log interno seguro. Un selector de tenant aportado por el cliente solo elige contexto: la Membership compuesta local debe existir y su rol es el único aceptado.
-- `ClerkAuthGuard` no está aplicado a rutas. Los 19 Users siguen sin enlace y ningún flujo los busca por correo.
+- `ClerkAuthGuard` no está aplicado a rutas y ningún flujo enlaza usuarios por correo. La evidencia histórica de A0.1 registró 19 Users sin enlace; la instancia PostgreSQL nativa inspeccionada el 2026-08-20 contiene 0 Users, 0 Organizations y 0 Memberships, sin que este saneamiento eliminara filas.
 - Los cambios de contraseña, verificación, MFA, logout y revocación pasarán a Clerk; retirar JWT/password local ocurrirá solo tras QA y ventana de rollback.
-- El inventario local encontró 19 Users: 7 coinciden con cuentas QA documentadas localmente y 12 no tienen clasificación comprobable. No hay evidencia de producción, pero esos 12 se preservan hasta clasificación del propietario.
+- El inventario histórico encontró 19 Users: 7 coincidían con cuentas QA documentadas localmente y 12 no tenían clasificación comprobable. No deben importarse, fusionarse ni eliminarse por inferencia. La instancia nativa actual está vacía; no se asume que sea la misma fuente histórica.
 
 ### Persistencia administrada
 
@@ -180,7 +182,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 ## 7. Riesgos y límites conocidos
 
 - JWT en `localStorage`, falta de recuperación/verificación/MFA/revocación general y rate limiting no distribuido amplían el riesgo de cuenta y sesión.
-- Doce Users locales no están clasificados como QA o reales; no pueden importarse, fusionarse ni eliminarse por inferencia.
+- Doce Users del inventario histórico no están clasificados como QA o reales; no pueden importarse, fusionarse ni eliminarse por inferencia.
+- El 2026-08-20 se encontró que las cuatro reglas TCP locales de `pg_hba.conf` usaban `trust` y que `barberflow` era superusuario. Se creó la copia `pg_hba.conf.backup-20260819-234953`, se restauraron solo esas reglas `host` a `scram-sha-256`, el servicio quedó en inicio manual y se verificó conexión con contraseña SCRAM. `barberflow` conserva login, herencia y propiedad de su base/objetos, pero ya no tiene `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` ni `BYPASSRLS`.
 - Clerk/Supabase Free no satisfacen el gate operativo de producción real: Clerk Hobby no ofrece MFA productivo y Supabase Free carece de backups automáticos, puede pausarse y limita la base a 500 MB.
 - Frontend general y A2 de Profesionales siguen pendientes de aprobación; el módulo no puede cerrar todavía.
 - `Organization.timeZone` existe en persistencia/contratos de disponibilidad, pero todavía no hay UI/endpoint autorizado de configuración general.
@@ -192,9 +195,9 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Security A0.3-A (Onboarding con Clerk Backend): **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Implementado endpoint atómico e idempotente `POST /auth/clerk/onboarding` bajo `ClerkOnboardingGuard`, helper compartido `toWebRequest`, validación estricta de `clerkUser.id === clerkUserId` con 401, resolución autoritativa de perfil Clerk con nombre obligatorio y correo verificado 403, anti-enlace 409 neutro, transacción `SERIALIZABLE` con reintento acotado para P2034, 201 inicial y 200 idempotente ante concurrencia `Promise.all` garantizando exactamente 1 User/Org/Membership/AuditLog, rollback total ante fallo de auditoría, y control de estado parcial. 253 unit tests y 21 E2E tests pasando contra PostgreSQL en esquema aislado `test` con dobles de Clerk. No incluye frontend ni QA web).
-2. Queda pendiente auditar y cerrar formalmente Security A0.3-A antes de avanzar a la etapa de frontend o a A0.3-B (`GET /auth/clerk/me`).
-3. Mantener login/JWT/register/password actuales y los 19 usuarios sin enlace.
+1. Auditar el checkpoint candidato recuperado de Security A0.3-H, que permanece **IMPLEMENTADO / EN REVISIÓN**. No declararlo aprobado sin decisión explícita del propietario.
+2. Security A0.3-A permanece **IMPLEMENTADO / EN REVISIÓN**, congelado en su comportamiento actual. No continuar A0.3-A, iniciar A0.3-B ni ampliar onboarding durante esta recuperación.
+3. Mantener login/JWT/register/password actuales y no enlazar, clasificar ni alterar usuarios por correo.
 4. Mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia

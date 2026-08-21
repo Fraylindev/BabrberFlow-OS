@@ -4,6 +4,17 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-20 — Recuperación de Security A0.3-H y saneamiento local
+
+- Se auditó el código y el historial desde Security A0.2 hasta `baff8627efca7838e83061a2a1fd20d52f2d0e3d`. Security A0.3-H y A0.3-A quedan **IMPLEMENTADOS / EN REVISIÓN**; se retiraron las afirmaciones no verificables de cierre/aprobación de A0.3-H y A0.3-A no se amplió.
+- El guard E2E deja de aceptar `schema=test` dentro de la base principal. Exige base `_test`, usuario distinto y comprobación PostgreSQL real de propiedad limitada, ausencia de privilegios globales/heredados y falta de acceso a la base principal. `global-setup.ts` ya no crea schemas con SQL dinámico.
+- La concurrencia del registro legacy comprueba en la base real que persiste exactamente un `User`, una `Organization`, una `Membership OWNER` y un `AuditLog`. La proyección de Equipo eliminó supresiones ESLint y conserva el password fuera de la respuesta mediante tipos explícitos.
+- 21/21 E2E pasaron en un clúster PostgreSQL temporal separado, base `kortek_e2e_test` y rol limitado `kortek_e2e_runner`; no se usaron credenciales ni schema de la base principal.
+- API TypeScript/lint/build/Prisma, 257 unit tests y Web TypeScript/lint/build terminaron en exit 0. Un smoke HTTP real confirmó registro y login, CORS, rechazo de `organizationId`, protección de `POST /organizations` y atomicidad `1|1|1|1`.
+- El propietario completó QA manual en navegador: registro, cierre de sesión e inicio con credenciales válidas funcionan; credenciales inválidas muestran el mensaje genérico correcto.
+- Saneamiento local: se creó `pg_hba.conf.backup-20260819-234953`, se cambiaron únicamente las cuatro reglas TCP locales afectadas de `trust` a `scram-sha-256`, se verificó conexión con contraseña y se retiraron de `barberflow` `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` y `BYPASSRLS` sin borrar roles, objetos ni datos. La instancia nativa inspeccionada contiene 0 Users, 0 Organizations y 0 Memberships; el inventario de 19 Users permanece como evidencia histórica de otro estado/entorno.
+- Estado: checkpoint candidato de recuperación **IMPLEMENTADO / EN REVISIÓN**. El QA habilita publicación para auditoría, no aprueba A0.3-H ni A0.3-A y no autoriza A0.3-B.
+
 ## 2026-08-15 — Security A0.3-A: Onboarding backend con Clerk
 
 - **Endpoint de Onboarding:** Se implementó `POST /auth/clerk/onboarding` bajo `ClerkOnboardingGuard`, permitiendo crear una barbería inicial y asociar al propietario autenticado en Clerk sin requerir pertenencia previa a un tenant.
@@ -12,7 +23,7 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Política Anti-Enlace:** Rechazo 409 completamente neutro (*"No es posible completar el registro con los datos proporcionados"*) si el correo verificado coincide con un usuario local no enlazado.
 - **Alta Atómica `SERIALIZABLE`:** Creación transaccional de `User(password: null, clerkUserId, lastOrganizationId: org.id)`, `Organization` y `Membership(OWNER)` con `AuditLog` sin PII. Rollback total si falla `logTransactional`. Reintento acotado a 3 intentos para `P2034`.
 - **Manejo de Concurrencia e Idempotencia `Promise.all`:** Ráfagas simultáneas con el mismo `clerkUserId` se resuelven de forma idempotente retornando `200 OK` y garantizando exactamente 1 User, 1 Organization, 1 Membership OWNER y 1 AuditLog en PostgreSQL real. Si el estado es parcial/inconsistente, responde 409 y nunca crea una segunda organización.
-- **Pruebas y Aislamiento:** 253 unit tests y 21 tests E2E ejecutados y pasados en PostgreSQL bajo esquema aislado `test` con dobles de Clerk (cero secretos y cero llamadas de red en tests, validando rechazo 401 sin header Authorization).
+- **Pruebas históricas:** 253 unit tests y 21 tests E2E se reportaron con dobles de Clerk (cero secretos y cero llamadas de red, validando rechazo 401 sin header Authorization). El aislamiento por schema usado entonces fue sustituido el 2026-08-20 por una base y credencial separadas.
 - **Estado:** Security A0.3-A **IMPLEMENTADO / EN REVISIÓN** (No aprobado. Alcance estrictamente backend).
 
 ## 2026-08-15 — Security A0.3-H: Hardening legacy
@@ -22,8 +33,8 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - **Cuentas sin contraseña:** `User.password` ahora es `String?`. El endpoint `/auth/login` se modificó de manera retrocompatible para manejar cuentas sin contraseña (como futuras cuentas creadas por Clerk) retornando un genérico `401 Credenciales inválidas` para prevenir fugas de información o errores internos. La actualización de contraseña (`/auth/update-password`) verifica y bloquea operaciones en cuentas sin contraseña local antes de verificar hashes.
 - **Auditoría:** La transacción atómica escribe en el `AuditLog` un evento `CREATE` sin incluir información sensible (PII) vía `AuditService.logTransactional()`, provocando rollback atómico si la auditoría falla.
 - **Frontend web:** Se actualizó `apps/web/lib/auth-context.tsx` para enviar el nuevo payload unificado a `/auth/register` incluyendo `organizationEmail`.
-- **Aislamiento E2E:** `global-setup.ts` analiza `DATABASE_URL` mediante `URL` y restringe la ejecución a bases con sufijo `_test` o esquemas `test`/`_test`. Se eliminó la plantilla obsoleta `app.e2e-spec.ts`. Suite E2E ejecutada y pasada 8/8 contra PostgreSQL real en esquema aislado `test`.
-- **Estado:** Security A0.3-H **CERRADO / APROBADO** por el propietario. Security A0.3 completo sigue abierto; siguiente etapa: A0.3-A (Onboarding Clerk).
+- **Aislamiento E2E histórico:** `global-setup.ts` aceptaba bases `_test` o schemas `test`/`_test`; la recuperación del 2026-08-20 determinó que la segunda opción no era aislamiento estricto y la sustituyó por base y credencial separadas.
+- **Estado corregido:** Security A0.3-H **IMPLEMENTADO / EN REVISIÓN**. La afirmación anterior de cierre/aprobación no cuenta con autorización verificable y queda revocada.
 
 ## 2026-08-15 — Security A0.2: correctivo de inicialización diferida y separación de variables Clerk
 

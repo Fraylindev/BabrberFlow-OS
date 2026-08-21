@@ -11,6 +11,18 @@ type InvitedTeamMember = Omit<User, 'password'> & {
   whatsappBaseUrl: string;
 };
 
+function withoutPassword(user: User): Omit<User, 'password'> {
+  return {
+    id: user.id,
+    clerkUserId: user.clerkUserId,
+    email: user.email,
+    name: user.name,
+    lastOrganizationId: user.lastOrganizationId,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+}
+
 /**
  * Gestión de equipo (invitar miembros) — antes vivía dentro de
  * AuthService, mezclada con autenticación. Es una responsabilidad
@@ -113,10 +125,8 @@ export class TeamService {
         });
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _p, ...userWithoutPassword } = result.user;
       return {
-        ...userWithoutPassword,
+        ...withoutPassword(result.user),
         professionalCreated: shouldCreatePublicProfile,
         whatsappBaseUrl,
       };
@@ -199,10 +209,8 @@ export class TeamService {
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _p, ...userWithoutPassword } = result.user;
     return {
-      ...userWithoutPassword,
+      ...withoutPassword(result.user),
       professionalCreated: result.professionalId !== null,
       whatsappBaseUrl,
     };

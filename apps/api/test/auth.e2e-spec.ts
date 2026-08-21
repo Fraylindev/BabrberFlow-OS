@@ -121,6 +121,32 @@ describe('AuthController (e2e)', () => {
       const statuses = [res1.status, res2.status];
       expect(statuses).toContain(201);
       expect(statuses).toContain(409);
+
+      const users = await prisma.db.user.findMany({
+        where: { email: payload1.email },
+        select: { id: true },
+      });
+      const organizations = await prisma.db.organization.findMany({
+        where: {
+          slug: { in: [payload1.organizationSlug, payload2.organizationSlug] },
+        },
+        select: { id: true },
+      });
+      const memberships = await prisma.db.membership.count({
+        where: { userId: { in: users.map(({ id }) => id) } },
+      });
+      const auditLogs = await prisma.db.auditLog.count({
+        where: {
+          organizationId: { in: organizations.map(({ id }) => id) },
+          action: 'CREATE',
+          entity: 'Organization',
+        },
+      });
+
+      expect(users).toHaveLength(1);
+      expect(organizations).toHaveLength(1);
+      expect(memberships).toBe(1);
+      expect(auditLogs).toBe(1);
     });
   });
 });
