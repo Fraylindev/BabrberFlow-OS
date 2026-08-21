@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-20. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-21. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -95,13 +95,13 @@ Security A0.1: **IMPLEMENTADO / EN REVISIÓN**. Añade únicamente la base nulla
 
 Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade verificación backend, resolución local aislada, inicialización diferida (el proceso arranca sin claves Clerk), `CLERK_AUTHORIZED_PARTIES` separado de `CORS_ALLOWED_ORIGINS` y fallo cerrado en el guard; no protege todavía ningún endpoint ni reemplaza JWT/login/register.
 
-Security A0.3-H: **IMPLEMENTADO / EN REVISIÓN**. La afirmación anterior de cierre/aprobación no cuenta con autorización verificable y fue retirada. Hardening legacy y web con los siguientes atributos:
+Security A0.3-H: **CERRADO / APROBADO** por decisión explícita del propietario. Hardening legacy y web con los siguientes atributos:
     *   **Registro Atómico Estricto:** La creación de usuario (`User`), inquilino (`Organization`) y el vínculo de propiedad (`Membership` con rol `OWNER`) ocurre en una **transacción PostgreSQL con aislamiento `Serializable`** (`Prisma.TransactionIsolationLevel.Serializable`), previniendo escalamiento y cuentas fantasma por concurrencia. Se incluyen reintentos (max 3) para lidiar con fallas de serialización (`P2034`).
     *   **Inquilinos Aislados:** `POST /organizations` ya no es un endpoint público. Solo un usuario con rol `OWNER` puede crear nuevos tenants adicionales.
     *   **Correo de Organización:** La barbería recibe su propio correo electrónico, disociado del correo personal del propietario, exigido como `organizationEmail` durante el registro inicial.
     *   **Tolerancia a contraseñas nulas:** Las cuentas sin contraseña local (preparación para usuarios autenticados vía Clerk) reciben el mismo rechazo neutro "Credenciales inválidas" en el login legacy en lugar de errores internos de servidor (500). La actualización de contraseñas protege contra bcrypt(null).
     *   **Evidencia recuperada:** API TypeScript/lint/build/Prisma y Web TypeScript/lint/build están en exit 0; 257 unit tests y 21 E2E pasaron. Un smoke HTTP real confirmó registro 201, login 201, CORS para la web, rechazo 400 de `organizationId`, protección 401 de `POST /organizations` y conteos atómicos `1|1|1|1`.
-    *   **QA manual completado:** el propietario confirmó en navegador el registro, cierre de sesión e inicio con credenciales válidas; credenciales inválidas muestran el mensaje genérico esperado. Esta evidencia habilita el checkpoint candidato, pero no constituye aprobación ni cierre.
+    *   **QA manual y cierre:** el propietario confirmó en navegador el registro, cierre de sesión e inicio con credenciales válidas; credenciales inválidas muestran el mensaje genérico esperado. La decisión posterior del propietario cerró y aprobó A0.3-H.
 
 Security A0.3-A: **CERRADO / APROBADO** por decisión explícita del propietario. Onboarding backend de propietarios con Clerk con los siguientes atributos:
     *   **Endpoint Seguro:** `POST /auth/clerk/onboarding` protegido por `ClerkOnboardingGuard`, verificando sesión activa en Clerk sin requerir inquilino ni usuario previo en PostgreSQL.
@@ -115,7 +115,7 @@ Security A0.3-A: **CERRADO / APROBADO** por decisión explícita del propietario
     *   **Validación recuperada:** API TypeScript/lint/build, Prisma validate/generate y 258 unitarias pasaron; las 23 E2E se ejecutan contra una base separada `kortek_e2e_test`, propiedad de un usuario distinto y sin privilegios globales. El guard comprueba en PostgreSQL real que esa credencial no puede conectar a la base principal. Cubren dos identidades compitiendo por el mismo slug (`201 + 409`, un único agregado ganador y cero filas parciales perdedoras) y fallo de `Clerk.users.getUser()` (`503`, cero escrituras). Web TypeScript/lint/build pasó como regresión. `schema=test` dentro de la base principal no es aceptado.
     *   **QA integrado real y cierre:** el propietario verificó con sesiones reales de Clerk Development el alta inicial (`201`), el reintento idempotente de la misma identidad (`200` y la misma organización), el conflicto de un segundo usuario sobre el mismo slug (`409`) y el rechazo de una sesión revocada (`401`). La evidencia no registra PII, tokens, claves, cookies ni identificadores sensibles. La utilidad local temporal usada para el QA fue eliminada y nunca formó parte de Git.
 
-Security A0.3-B: **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**. El alcance propuesto es un piloto backend `GET /auth/clerk/me`, protegido por el `ClerkAuthGuard` existente, `RolesGuard`, los roles B2B vigentes y el selector obligatorio `x-organization-id`. Debe resolver `User.clerkUserId`, Membership y rol locales en cada petición y reutilizar `OrganizationsService.findMine()` para devolver exactamente el mismo contrato que `GET /organizations/mine`, sin modificar la ruta JWT legacy. No existe código A0.3-B todavía.
+Security A0.3-B: **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**. El diseño aprobado propone un piloto backend `GET /auth/clerk/me`, protegido por el `ClerkAuthGuard` existente, `RolesGuard`, los roles B2B vigentes y el selector obligatorio `x-organization-id`. Debe resolver `User.clerkUserId`, Membership y rol locales en cada petición y reutilizar directamente `OrganizationsService.findMine()` para mantener paridad completa con `GET /organizations/mine`, sin modificar la ruta JWT legacy. Como correctivo puntual autorizado dentro del futuro A0.3-B, `ClerkAuthGuard` deberá rechazar con `401` cualquier aparición duplicada de `x-organization-id`, aunque todos los valores sean idénticos; el diseño exige pruebas unitarias y E2E PostgreSQL aisladas de ese caso. No existe código A0.3-B todavía.
 
 ## 5. Decisiones activas de dominio
 
@@ -198,8 +198,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar el plan de Security A0.3-B, que permanece **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**; esta autorización cubre análisis y diseño, no implementación.
-2. No escribir código A0.3-B, frontend Clerk, Supabase ni ampliar onboarding hasta autorización expresa posterior.
+1. Mantener Security A0.3-B **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN** con el diseño corregido aprobado; todavía requiere autorización explícita separada para implementar.
+2. No escribir código A0.3-B, frontend Clerk, Supabase ni ampliar onboarding antes de esa autorización.
 3. Mantener login/JWT/register/password actuales y no enlazar, clasificar ni alterar usuarios por correo.
 4. Mantener Frontend A2 de Profesionales en revisión.
 

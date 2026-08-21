@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-21 — Correctivo documental del plan Security A0.3-B
+
+- Se sincronizó el estado vigente de Security A0.3-H como **CERRADO / APROBADO** por decisión explícita del propietario; las entradas históricas permanecen intactas como fotografía de su fecha.
+- El diseño A0.3-B conserva `GET /auth/clerk/me`, `ClerkAuthGuard + RolesGuard + B2B_ROLES`, Membership/rol local, reutilización directa de `OrganizationsService.findMine()` y paridad con `GET /organizations/mine` sin modificar la ruta JWT legacy.
+- Se añadió como requisito obligatorio que cualquier `x-organization-id` duplicado devuelva `401`, incluso con valores idénticos, con cobertura unitaria y E2E PostgreSQL aislada. La corrección puntual futura de `ClerkAuthGuard` queda dentro del alcance A0.3-B aprobado como diseño.
+- Security A0.3-B permanece **PLANIFICADO / PENDIENTE DE AUTORIZACIÓN**; este checkpoint no contiene implementación funcional.
+
 ## 2026-08-20 — Security A0.3-A cerrado y aprobado
 
 - El propietario cerró y aprobó explícitamente Security A0.3-A después de QA integrado real con sesiones Clerk Development.

@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D y A0.3-A CERRADOS / APROBADOS; Security A0.1 y A0.2 implementados / en revisión; A0.3-B planificado / pendiente de autorización**
+- Estado: **Security A0-D, A0.3-H y A0.3-A CERRADOS / APROBADOS; Security A0.1 y A0.2 implementados / en revisión; A0.3-B planificado / pendiente de autorización**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -208,7 +208,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La capa está registrada pero no aplicada a controllers. Los endpoints actuales conservan JWT propio; login/register/password, Prisma, Supabase y frontend no cambian. Los 19 usuarios citados corresponden al inventario histórico de A0.1, no a un invariante ni al estado de la instancia nativa actual.
 - Los tests de A0.2 son aislados y no consumen sesiones ni secretos reales. Cubren sesión válida/inválida, issuer, estado remoto, enlace local, Membership, revocación local de acceso, arranque sin variables Clerk, fallo cerrado del loader, fallo cerrado del guard por error inesperado y reutilización del cliente inicializado.
 
-## Resultado de Security A0.3-H (Hardening Legacy) — IMPLEMENTADO / EN REVISIÓN
+## Resultado de Security A0.3-H (Hardening Legacy) — CERRADO / APROBADO
 
 - El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y rechaza `organizationId`. Se implementó validación de formato (3-50 caracteres, caracteres alfanuméricos aceptando mayúsculas y minúsculas con guiones intermedios, sin espacios ni rutas) y normalización explícita a minúsculas (`toLowerCase().trim()`) para la persistencia del slug y correos en el servicio.
 - `AuthService.register()` crea `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (`isolationLevel: Prisma.TransactionIsolationLevel.Serializable`). Se implementó reintento acotado a exactamente 3 intentos exclusivo para fallas de serialización (`P2034`), mientras que errores de unicidad (`P2002`) en slug o email se traducen inmediatamente a `409 ConflictException` sin reintentos ciegos.
@@ -220,7 +220,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La recuperación del 2026-08-20 exige una base `_test` y usuario diferentes. Antes de migrar, consulta PostgreSQL real y rechaza superusuario, privilegios globales o heredados y cualquier acceso a la base principal. `global-setup.ts` dejó de crear schemas mediante SQL dinámico.
 - La E2E concurrente verifica persistencia real: exactamente un `User`, una `Organization`, una `Membership OWNER` y un `AuditLog`. La suite completa pasó 21/21 en `kortek_e2e_test`, dentro de un clúster temporal separado y con `kortek_e2e_runner` sin privilegios globales.
 - El propietario confirmó mediante QA manual en navegador el registro, cierre de sesión, login válido y el mensaje genérico ante credenciales inválidas.
-- Estado vigente: **IMPLEMENTADO / EN REVISIÓN**. No se considera aprobado y no autoriza avanzar a A0.3-B.
+- Estado vigente por decisión explícita del propietario: **CERRADO / APROBADO**. Las entradas cronológicas anteriores conservan el estado histórico que tenían al publicarse.
 
 ## Resultado de Security A0.3-A (Onboarding Backend Clerk) — CERRADO / APROBADO
 
@@ -245,11 +245,14 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 
 - Piloto propuesto: `GET /auth/clerk/me`, protegido por el `ClerkAuthGuard` existente seguido de `RolesGuard` y `@Roles(...B2B_ROLES)`.
 - Entrada obligatoria: `Authorization: Bearer <session token>` y `x-organization-id` con UUID. El header solo selecciona contexto; la autorización proviene de la sesión Clerk verificada y la Membership local.
+- Ambigüedad prohibida: `x-organization-id` debe aparecer exactamente una vez. El futuro A0.3-B tiene autorización de alcance para corregir puntualmente `ClerkAuthGuard`: deberá inspeccionar las ocurrencias reales del header, incluyendo `rawHeaders` sin distinguir mayúsculas/minúsculas, y devolver `401` antes de verificar la sesión si llega duplicado, incluso cuando los valores sean iguales. Un valor combinado o de tipo arreglo también se rechaza; nunca se elige el primero.
 - Resolución: `sub` verificado → `User.clerkUserId` único → Membership compuesta `userId + organizationId` → rol local actual. No se acepta usuario, rol o tenant como autoridad desde el navegador o metadata Clerk.
 - Respuesta `200`: exactamente la misma entidad y lógica de `GET /organizations/mine`, reutilizando `OrganizationsService.findMine()` para evitar dos contratos. La ruta legacy conserva `JwtAuthGuard`, `RolesGuard` y su comportamiento sin cambios.
 - Fallos: `401` genérico para sesión inválida/revocada, header ausente o inválido, User no enlazado, Membership inexistente/baja o error inesperado del guard; `403` genérico para un rol local fuera del conjunto B2B. Si el contexto autorizado no encuentra la Organization, se conserva el resultado vigente de `findMine()` para mantener paridad; cualquier endurecimiento común deberá proponerse aparte para no bifurcar contratos.
 - Permisos: cualquier Membership local válida de roles B2B (`OWNER`, `ADMIN`, `RECEPTIONIST`, `BARBER`) puede consultar su propia Organization, igual que la ruta legacy. `CUSTOMER` no debe recibir acceso al dashboard; debe probarse explícitamente según la autoridad local vigente.
-- No alcance: no cambia A0.2, onboarding, JWT/login/register/password, Prisma, Supabase, frontend ni otras rutas.
+- Pruebas obligatorias del selector: unitarias de `ClerkAuthGuard` para header único válido, ausente, inválido, arreglo y dos ocurrencias idénticas o distintas, comprobando que los duplicados producen `401` antes de Clerk o PostgreSQL; E2E en PostgreSQL aislado que envíe físicamente dos líneas `x-organization-id` idénticas y confirme `401`, además de la matriz tenant/roles y la paridad de respuesta con la ruta legacy.
+- QA real: sesión Clerk válida sobre el tenant autorizado, selector único con `200`, selector ausente/ajeno/duplicado con respuesta genérica, y token revocado con `401`, sin registrar ni exponer token, PII o detalles internos.
+- No alcance: no reabre el comportamiento de sesión de A0.2 más allá del rechazo puntual del header duplicado expresamente incluido en A0.3-B; no cambia onboarding, JWT/login/register/password, Prisma, Supabase, frontend ni otras rutas.
 - Estado: el diseño está listo para auditoría, pero no existe implementación A0.3-B ni autorización para escribirla.
 
 ## Nota operativa de recuperación local — 2026-08-20
