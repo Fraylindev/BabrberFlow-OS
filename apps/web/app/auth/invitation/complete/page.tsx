@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
-
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { invitationIdFromSearchParams } from "@/lib/invitation-navigation";
 
 function acceptanceError(error: unknown): string {
   if (error instanceof ApiError && error.status === 409) {
@@ -22,14 +20,23 @@ function acceptanceError(error: unknown): string {
 }
 
 export default function CompleteInvitationPage() {
+  return (
+    <Suspense fallback={null}>
+      <CompleteInvitationContent />
+    </Suspense>
+  );
+}
+
+function CompleteInvitationContent() {
   const { isLoaded, user } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const started = useRef(false);
   const [error, setError] = useState<string | null>(null);
-  const locator = user?.publicMetadata.kortekTeamInvitationId;
+  const locator = invitationIdFromSearchParams(searchParams);
   const locatorError =
-    isLoaded && user && (typeof locator !== "string" || !UUID_PATTERN.test(locator))
+    !locator
       ? "No encontramos una invitación válida para esta cuenta. Abre de nuevo el enlace original o pide una nueva."
       : null;
 
@@ -37,8 +44,7 @@ export default function CompleteInvitationPage() {
     if (
       !isLoaded ||
       !user ||
-      typeof locator !== "string" ||
-      !UUID_PATTERN.test(locator) ||
+      !locator ||
       started.current
     ) {
       return;

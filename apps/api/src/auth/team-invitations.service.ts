@@ -28,6 +28,7 @@ import {
 import { CreateTeamInvitationDto } from './dto/create-team-invitation.dto';
 import { ListTeamInvitationsDto } from './dto/list-team-invitations.dto';
 import { normalizeAccountEmail } from './organization-slug';
+import { buildTeamInvitationRedirectUrl } from './team-invitation-redirect';
 
 const INVITATION_SELECT = {
   id: true,
@@ -169,10 +170,10 @@ export class TeamInvitationsService {
           expiresInDays,
           ignoreExisting: true,
           notify: true,
-          redirectUrl: this.loadInvitationRedirectUrl(),
-          publicMetadata: {
-            kortekTeamInvitationId: invitation.id,
-          },
+          redirectUrl: buildTeamInvitationRedirectUrl(
+            this.loadInvitationRedirectUrl(),
+            invitation.id,
+          ),
         });
       return created.id;
     } catch {

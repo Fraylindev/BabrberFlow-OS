@@ -16,6 +16,7 @@ interface ActorFixture {
 interface ExternalInvitation {
   id: string;
   emailAddress: string;
+  redirectUrl: string;
   status: 'pending' | 'accepted' | 'revoked' | 'expired';
 }
 
@@ -45,7 +46,13 @@ describe('Security A0.4 team invitations (e2e)', () => {
   const clerkClient = {
     invitations: {
       createInvitation: jest.fn(
-        ({ emailAddress }: { emailAddress: string }) => {
+        ({
+          emailAddress,
+          redirectUrl,
+        }: {
+          emailAddress: string;
+          redirectUrl: string;
+        }) => {
           if (failCreateInvitation) {
             return Promise.reject(new Error('external unavailable'));
           }
@@ -53,6 +60,7 @@ describe('Security A0.4 team invitations (e2e)', () => {
           const invitation: ExternalInvitation = {
             id,
             emailAddress,
+            redirectUrl,
             status: 'pending',
           };
           externalInvitations.set(id, invitation);
@@ -209,6 +217,15 @@ describe('Security A0.4 team invitations (e2e)', () => {
     const invitation = await createInvitation(owner, email);
     expect(invitation.email).toBe(email.trim().toLowerCase());
     expect(invitation.status).toBe(TeamInvitationStatus.PENDING);
+    const createdLocal = await prisma.db.teamInvitation.findUniqueOrThrow({
+      where: { id: invitation.id },
+    });
+    const createdExternal = externalInvitations.get(
+      createdLocal.clerkInvitationId ?? '',
+    );
+    expect(createdExternal?.redirectUrl).toBe(
+      `http://localhost:3001/accept-invitation?invitation=${invitation.id}`,
+    );
 
     const ownerList = await requestApp(app)
       .get('/auth/clerk/invitations?page=1&limit=20')
@@ -285,6 +302,14 @@ describe('Security A0.4 team invitations (e2e)', () => {
     expect(
       externalInvitations.get(original.clerkInvitationId ?? '')?.status,
     ).toBe('revoked');
+    const resentLocal = await prisma.db.teamInvitation.findUniqueOrThrow({
+      where: { id: invitation.id },
+    });
+    expect(
+      externalInvitations.get(resentLocal.clerkInvitationId ?? '')?.redirectUrl,
+    ).toBe(
+      `http://localhost:3001/accept-invitation?invitation=${invitation.id}`,
+    );
 
     const revoked = await requestApp(app)
       .post(`/auth/clerk/invitations/${invitation.id}/revoke`)

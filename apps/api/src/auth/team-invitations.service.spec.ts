@@ -112,9 +112,15 @@ describe('TeamInvitationsService', () => {
         emailAddress: 'barber@example.test',
         ignoreExisting: true,
         notify: true,
-        redirectUrl: 'http://localhost:3001/accept-invitation',
+        redirectUrl:
+          'http://localhost:3001/accept-invitation?invitation=ca0986f6-7578-4473-93c5-d2122cfe3a59',
       }),
     );
+    const clerkCalls = createInvitation.mock.calls as unknown as Array<
+      [Record<string, unknown>]
+    >;
+    const [clerkPayload] = clerkCalls[0];
+    expect(clerkPayload).not.toHaveProperty('publicMetadata');
     expect(logTransactional).toHaveBeenCalledTimes(1);
     const [auditEntry, auditTransaction] = logTransactional.mock
       .calls[0] as unknown as [Record<string, unknown>, typeof tx];

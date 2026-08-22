@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-22 — Correctivo de invitaciones A0.5-B/A0.4 candidato
+
+- La creación y el reenvío de invitaciones ahora anexan en backend el UUID local de `TeamInvitation` a la URL controlada por servidor. Se eliminó la dependencia de metadata pública Clerk para correlacionar la aceptación.
+- El frontend conserva el UUID local entre rutas internas fijas y rechaza localizadores ausentes, inválidos o duplicados. No acepta redirects libres, tenant, rol, correo ni identificadores Clerk desde el navegador.
+- Pruebas unitarias y E2E cubren creación, reenvío, URL controlada, ausencia de metadata y continuidad segura. API TypeScript, lint, build y 278 unitarias; Web 5 pruebas de rutas, TypeScript, lint y build; y 11 E2E de invitaciones sobre PostgreSQL temporal aislado finalizaron con exit `0`. El QA real nuevo con una cuenta Clerk preexistente confirmó `201`, repetición `200` y acceso al dashboard.
+- Se revocaron con trazabilidad las dos invitaciones técnicas pendientes anteriores y se eliminaron exactamente dos identidades técnicas Clerk Development que no tenían User local. No se borraron filas históricas ni se conservaron PII, tokens, claves, cookies o identificadores sensibles.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No aprueba ni cierra A0.5-B y no autoriza A0.6, Supabase u otro módulo.
+
 ## 2026-08-22 — Security A0.5-B frontend implementado como candidato
 
 - La web interna migró login, registro, recuperación y logout al SDK oficial de Clerk. El token de sesión se obtiene al hacer cada petición y ya no se guarda un JWT propio en `localStorage` ni se usa la cookie indicadora legacy.

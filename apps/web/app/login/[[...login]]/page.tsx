@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { clerkAppearance } from "@/components/auth/clerk-appearance";
+import { AUTH_ROUTES, resolveDashboardRedirect } from "@/lib/auth-routes";
 
 export default function LoginPage() {
   return (
@@ -17,7 +18,7 @@ export default function LoginPage() {
 function LoginContent() {
   const searchParams = useSearchParams();
   const requested = searchParams.get("next");
-  const next = requested?.startsWith("/dashboard") ? requested : "/dashboard";
+  const next = resolveDashboardRedirect(requested);
   const continueUrl = `/auth/continue?next=${encodeURIComponent(next)}`;
 
   return (
@@ -28,8 +29,8 @@ function LoginContent() {
     >
       <SignIn
         routing="path"
-        path="/login"
-        signUpUrl="/register"
+        path={AUTH_ROUTES.login}
+        signUpUrl={AUTH_ROUTES.register}
         forceRedirectUrl={continueUrl}
         appearance={clerkAppearance}
       />
