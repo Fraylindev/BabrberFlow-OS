@@ -8,6 +8,12 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-22 — Security A0.5 completo cerrado y aprobado
+
+- **Estado vigente:** Security A0.5, incluidos los subalcances A, B, C y D definidos por el propietario, queda **CERRADO / APROBADO**. Esta entrada de cierre no modifica endpoints, DTOs, Guards, Prisma, persistencia ni contratos.
+- **Evidencia preservada:** permanecen vigentes el bootstrap Clerk, la compatibilidad B2B temporal con autorización local, la web Clerk sin JWT propio persistido y el correctivo de invitaciones para cuentas preexistentes. Las validaciones automatizadas y el QA real ya registrados sustentan el cierre sin conservar PII, tokens, claves, cookies ni identificadores sensibles.
+- **Siguiente alcance:** A0.6 queda únicamente para análisis y planificación; no hay implementación autorizada por este cierre.
+
 ## 2026-08-22 — Security A0.5-B: consumidor web de identidad Clerk
 
 - **Contratos backend:** no se añaden ni modifican endpoints, DTOs, guards, Prisma o migraciones. A0.5-B consume exclusivamente los contratos aprobados e implementados por A0.3-A, A0.4 y A0.5-A.

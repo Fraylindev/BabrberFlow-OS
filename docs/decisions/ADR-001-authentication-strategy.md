@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B y A0.4 CERRADOS / APROBADOS; Security A0.1, A0.2, A0.5-A y A0.5-B implementados / en revisión**
+- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B, A0.4 y Security A0.5 completo (A, B, C y D) CERRADOS / APROBADOS; Security A0.1 y A0.2 implementados / en revisión**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -170,7 +170,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 3. **Security A0.3 — onboarding:** comando atómico Organization + OWNER y retiro del escalamiento público.
 4. **Security A0.4 — invitaciones:** invitación pendiente local, aceptación Clerk y Membership/Professional atómicos.
 5. **Security A0.5-A — preparación backend:** bootstrap de sesión, compatibilidad temporal JWT/Clerk para rutas B2B y redirección segura de invitaciones.
-6. **Security A0.5-B — frontend de identidad (implementado / en revisión):** Clerk login/register/recovery/logout, sesión efímera para API, bootstrap local y retiro del JWT propio de `localStorage`; requiere auditoría y aprobación explícita.
+6. **Security A0.5-B — frontend de identidad (cerrado / aprobado):** Clerk login/register/recovery/logout, sesión efímera para API, bootstrap local y retiro del JWT propio de `localStorage`.
 7. **Security A0.6 — CUSTOMER:** registro/enlace posterior al booking público.
 8. **Security A0.7 — retiro legado:** passwords/JWT/endpoints/secrets propios, solo tras ventana de rollback.
 9. **Data D0.1 — Supabase preparado:** proyecto QA, roles, SSL, conexión y ensayo vacío; sin migrar identidad.
@@ -270,7 +270,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - QA integrado posterior con Clerk Development: una aceptación real devolvió `201`, repetirla devolvió `200` y PostgreSQL confirmó una sola Membership y un solo Professional. Una segunda invitación controlada fue revocada y su aceptación posterior devolvió `409` neutro sin acceso adicional. La utilidad temporal ignorada fue eliminada y no se conservaron PII, tokens, claves, cookies ni identificadores sensibles.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario tras auditoría y QA integrado real. La autorización posterior habilitó exclusivamente A0.5-A backend.
 
-## Resultado de Security A0.5-A — IMPLEMENTADO / EN REVISIÓN
+## Resultado de Security A0.5-A — CERRADO / APROBADO
 
 - `GET /auth/clerk/bootstrap` usa el guard de sesión Clerk sin selector tenant para resolver únicamente por `User.clerkUserId`. No busca ni enlaza por correo y no acepta User, Organization o rol desde el cliente.
 - El contrato distingue `ONBOARDING_REQUIRED`, `NO_ACCESS` y `READY`. Solo entrega User local mínimo, Memberships con roles B2B y Organizations mínimas; excluye CUSTOMER, PII, identidad Clerk y timestamps. La preferencia solo se devuelve cuando corresponde a una Membership autorizada.
@@ -278,9 +278,9 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La convivencia se aplica a Organizations, Bookings, Professionals, Services, Clients, Invoices y Analytics. No cambia login, registro, password, `/auth/invite`, onboarding/aceptación Clerk, rutas públicas, JWT emitido, Prisma o Supabase.
 - La invitación Clerk recibe una `redirectUrl` configurada por `CLERK_INVITATION_REDIRECT_URL`. El backend valida que sea `http`/`https`, sin credenciales, query ni hash, y no usa fallback. En creación y reenvío agrega el UUID local de `TeamInvitation` como único parámetro de correlación y no depende de `publicMetadata`; tenant, rol e identidad se verifican como en A0.4.
 - Cobertura: unitarias de bootstrap, guard dual y configuración/redirección; E2E de estados, privacidad, tenant, rol/baja local, header duplicado y regresión JWT legacy. API TypeScript, lint y build pasaron; 277 unitarias y 55 E2E finalizaron correctamente, estas últimas en un clúster PostgreSQL temporal separado con base `_test` y rol no privilegiado, eliminado al terminar.
-- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría explícita. Su publicación no autorizó por sí sola frontend, retiro legacy, Supabase ni otro módulo; A0.5-B se implementó únicamente tras la autorización posterior del propietario.
+- Estado: **CERRADO / APROBADO** por decisión explícita del propietario como parte del cierre completo de Security A0.5. Su cierre no retira por sí solo el rollback legacy ni autoriza Supabase u otro módulo.
 
-## Resultado de Security A0.5-B — IMPLEMENTADO / EN REVISIÓN
+## Resultado de Security A0.5-B — CERRADO / APROBADO
 
 - Next.js integra `ClerkProvider`, componentes Clerk localizados y middleware de sesión para login, registro, recuperación, invitaciones y logout. La presencia de sesión en frontend mejora el flujo, pero no concede permisos de negocio.
 - El cliente HTTP obtiene el token corto mediante el SDK en cada petición autenticada y añade `x-organization-id` solo desde una Membership incluida en `GET /auth/clerk/bootstrap`. No acepta tenant o rol libres y limpia la caché de negocio al cambiar de contexto sin borrar el bootstrap autoritativo.
@@ -290,7 +290,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Para invitaciones, el navegador solo interpreta un UUID local único y válido añadido por el servidor, y construye destinos internos fijos. No aporta URL, tenant, rol, correo ni identificador de invitación Clerk. El endpoint existente sigue verificando sesión Clerk, correo principal verificado, invitación externa aceptada, coincidencia de correo, estado local y persistencia `SERIALIZABLE` antes de conceder acceso.
 - El QA correctivo con una cuenta Clerk preexistente confirmó aceptación inicial `201`, repetición idempotente `200` y acceso al dashboard. API TypeScript, lint, build y 278 unitarias; Web 5 pruebas de rutas, TypeScript, lint y build; y 11 E2E de invitaciones sobre PostgreSQL temporal aislado finalizaron con exit `0`. Las utilidades temporales fueron eliminadas; la evidencia no registra PII, secretos, sesiones ni identificadores sensibles.
 - Web TypeScript, lint y build finalizaron con exit `0`. QA en navegador con sesiones Clerk Development verificó BARBER sin acceso a Equipo, OWNER con gestión de invitaciones, login, recuperación visible, logout, registro visible sin crear cuentas y layouts de 390 px y 1440 px sin overflow. La consola no mostró errores de aplicación; únicamente el aviso esperado de claves Development. No se crearon identidades ni se enviaron invitaciones durante este QA.
-- Estado: **IMPLEMENTADO / EN REVISIÓN**. No aprueba A0.5-A ni A0.5-B y no autoriza A0.6, retiro legacy, Supabase u otro módulo.
+- Estado: **CERRADO / APROBADO** por decisión explícita del propietario. El cierre comprende Security A0.5 completo, incluidos los subalcances A, B, C y D; las etiquetas C/D no agregan en este ADR contratos o evidencia distintos de los ya documentados. A0.6 permanece sin implementación hasta autorización posterior.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

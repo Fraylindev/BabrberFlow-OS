@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-22 — Security A0.5 completo cerrado y aprobado
+
+- El propietario aprobó y cerró explícitamente Security A0.5 completo, incluidos sus subalcances A, B, C y D.
+- El cierre conserva la evidencia ya registrada: bootstrap y autorización local en NestJS, identidad Clerk en web sin JWT propio persistido, invitaciones seguras para cuentas nuevas y preexistentes, validaciones automatizadas y QA real.
+- No se añadieron cambios funcionales ni nueva evidencia sensible. A0.6 queda limitado a análisis y plan hasta una autorización posterior de implementación.
+
 ## 2026-08-22 — Correctivo de invitaciones A0.5-B/A0.4 candidato
 
 - La creación y el reenvío de invitaciones ahora anexan en backend el UUID local de `TeamInvitation` a la URL controlada por servidor. Se eliminó la dependencia de metadata pública Clerk para correlacionar la aceptación.
