@@ -68,7 +68,7 @@ export class ClerkOnboardingService {
     });
   }
 
-  private async fetchClerkProfile(
+  async getVerifiedClerkProfile(
     clerkUserId: string,
   ): Promise<{ name: string; email: string }> {
     let clerkUser: ClerkUserProfile;
@@ -171,7 +171,7 @@ export class ClerkOnboardingService {
     dto: ClerkOnboardingDto,
   ): Promise<OnboardOwnerResult> {
     const { name: resolvedName, email: verifiedEmail } =
-      await this.fetchClerkProfile(clerkUserId);
+      await this.getVerifiedClerkProfile(clerkUserId);
 
     // 1. Verificar si clerkUserId ya existe (Idempotencia / Estado parcial)
     const existingOwner = await this.resolveExistingOwner(clerkUserId);

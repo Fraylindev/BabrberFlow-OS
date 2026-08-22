@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-22 — Security A0.6-A: vínculo B2C posterior a reserva
+
+- **Persistencia aditiva:** `Client.userId` es nullable, referencia `User` con `ON DELETE SET NULL` y tiene unicidad compuesta por `organizationId + userId`. No hay backfill, no se modifican Clients existentes y no se crea `Membership CUSTOMER`.
+- **Nuevo contrato:** `POST /auth/clerk/customer/claims`, protegido por `ClerkOnboardingGuard` y rate limit, acepta exclusivamente `{ bookingId: UUID, organizationSlug: string }`. El navegador no aporta User, correo, tenant ID, rol ni autoridad.
+- **Respuesta:** `{ claimed: true }`; `201` al crear el vínculo y `200` para la repetición idempotente por la misma identidad. Reserva/slug inexistente o ajeno devuelve el mismo `404`; una colisión de identidad, correo o vínculo devuelve `409` genérico.
+- **Autoridad y atomicidad:** Clerk aporta `sub`, nombre y correo principal verificado. PostgreSQL resuelve y bloquea Booking y Client tenant-scoped dentro de una transacción `SERIALIZABLE`, reintenta únicamente fallos de serialización (`P2034` o `P2010` con código PostgreSQL exacto `40001`) y persiste User opcional, vínculo y AuditLog como una unidad.
+- **Anti-enlace:** la coincidencia de correo nunca enlaza un User local existente, incluso con rol CUSTOMER legacy. La colisión no crea User, Membership, vínculo ni AuditLog. El correo solo debe coincidir con el Client de la reserva para demostrar la reclamación.
+- **Privacidad:** la respuesta no expone Client, Booking, User, correo, tenant ni timestamps. AuditLog registra solo `LINK`, `Client`, IDs internos tenant-scoped y actor local, sin PII.
+- **Compatibilidad:** no cambia el contrato público legacy, la creación de Booking/Client, la cuenta/password fail-open ni rutas JWT. A0.6-B/C/D quedan fuera de alcance.
+- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. Candidato a auditoría; no está aprobado ni cerrado.
+
 ## 2026-08-22 — Security A0.5 completo cerrado y aprobado
 
 - **Estado vigente:** Security A0.5, incluidos los subalcances A, B, C y D definidos por el propietario, queda **CERRADO / APROBADO**. Esta entrada de cierre no modifica endpoints, DTOs, Guards, Prisma, persistencia ni contratos.

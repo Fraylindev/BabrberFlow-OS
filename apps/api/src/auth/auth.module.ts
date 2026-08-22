@@ -26,6 +26,8 @@ import { TeamInvitationsService } from './team-invitations.service';
 import { B2bAuthGuard } from './guards/b2b-auth.guard';
 import { ClerkBootstrapController } from './clerk-bootstrap.controller';
 import { ClerkBootstrapService } from './clerk-bootstrap.service';
+import { ClerkCustomerClaimsController } from './clerk-customer-claims.controller';
+import { ClerkCustomerClaimsService } from './clerk-customer-claims.service';
 
 if (!process.env.JWT_SECRET) {
   throw new Error(
@@ -51,6 +53,7 @@ if (!process.env.JWT_SECRET) {
     TeamInvitationsController,
     TeamInvitationAcceptanceController,
     ClerkBootstrapController,
+    ClerkCustomerClaimsController,
   ],
   providers: [
     AuthService,
@@ -66,6 +69,7 @@ if (!process.env.JWT_SECRET) {
     TeamInvitationsService,
     B2bAuthGuard,
     ClerkBootstrapService,
+    ClerkCustomerClaimsService,
   ],
   exports: [
     ClerkAuthGuard,

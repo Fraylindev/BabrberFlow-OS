@@ -14,10 +14,14 @@ import { Prisma } from '@prisma/client';
  * coincide con `field` (Prisma expone los campos en error.meta.target).
  */
 export function isSerializationFailureError(error: unknown): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2034'
-  );
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError)) return false;
+
+  if (error.code === 'P2034') return true;
+
+  // PostgreSQL 40001 surfaced through $queryRaw is wrapped by Prisma as
+  // P2010 rather than P2034. Treat only that exact database code as a
+  // serialization failure so the caller can safely retry the transaction.
+  return error.code === 'P2010' && error.meta?.code === '40001';
 }
 
 export function isUniqueConstraintError(

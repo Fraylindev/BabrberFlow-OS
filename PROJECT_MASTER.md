@@ -125,6 +125,8 @@ Security A0.5-B — Frontend de identidad Clerk: **CERRADO / APROBADO** por deci
 
 Security A0.5 completo — subalcances A, B, C y D: **CERRADO / APROBADO** por decisión explícita del propietario. Las etiquetas técnicas conservadas en este documento describen A, B y el correctivo final publicado; el cierre A–D no añade comportamiento ni evidencia distintos de los ya registrados y auditados.
 
+Security A0.6-A — Base backend B2C posterior a reserva: **IMPLEMENTADO / EN REVISIÓN**. `Client.userId` es nullable y enlaza explícitamente una identidad global sin crear `Membership CUSTOMER`; una restricción única `[organizationId, userId]` permite como máximo un Client por identidad y tenant sin alterar los registros existentes. `POST /auth/clerk/customer/claims` exige sesión Clerk válida y solo acepta `bookingId` y `organizationSlug` como localizadores. La reserva y el Client se resuelven y bloquean con aislamiento tenant-scoped dentro de una transacción PostgreSQL `SERIALIZABLE`; la primera reclamación devuelve `201`, la repetición de la misma identidad `200`, y colisiones o identidades distintas reciben `409` genérico sin escrituras parciales. El correo verificado solo comprueba que la persona reclama su registro: nunca enlaza un User local preexistente por coincidencia, incluidos CUSTOMER legacy. El alta opcional crea un User Clerk sin password ni Membership y registra `LINK Client` atómicamente sin PII. El contrato público legacy, el password y el flujo actual de reserva permanecen sin cambios. Pruebas unitarias y E2E PostgreSQL aisladas cubren idempotencia, concurrencia, colisión legacy, privacidad tenant y ausencia de Membership. A0.6-B/C/D no están autorizados.
+
 ## 5. Decisiones activas de dominio
 
 ### Reservas y facturación
@@ -207,9 +209,10 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 ## 8. Próximo paso autorizado
 
 1. Security A0.5 completo (A, B, C y D) está **CERRADO / APROBADO** por decisión explícita del propietario.
-2. Preparar únicamente el análisis y plan de Security A0.6; su implementación permanece **PENDIENTE DE AUTORIZACIÓN**.
-3. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
-4. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.
+2. Auditar Security A0.6-A, que queda **IMPLEMENTADO / EN REVISIÓN** como checkpoint backend candidato.
+3. A0.6-B, A0.6-C, A0.6-D, Supabase y cualquier otro alcance permanecen bloqueados hasta autorización explícita.
+4. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
+5. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 

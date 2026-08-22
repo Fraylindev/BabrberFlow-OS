@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-22 — Security A0.6-A backend implementado como candidato
+
+- Se añadió el vínculo B2C opcional `Client.userId`, separado de Membership y único por organización, sin backfill ni modificación de cuentas existentes.
+- El nuevo endpoint Clerk permite reclamar de forma segura e idempotente el Client asociado a una reserva. La consulta autoritativa y los bloqueos de Booking/Client viven en una transacción PostgreSQL `SERIALIZABLE`; User opcional, vínculo y auditoría sin PII son atómicos.
+- No existe enlace automático por correo. Cualquier User local ya ocupado —incluidos CUSTOMER legacy— provoca `409` neutro y rollback completo. No se crea Membership CUSTOMER.
+- El contrato público legacy y el flujo de reserva/password permanecen intactos. Las pruebas unitarias y E2E PostgreSQL aisladas cubren idempotencia, carreras, tenant, colisiones y ausencia de filas parciales.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No aprueba ni cierra A0.6-A y no autoriza A0.6-B/C/D, Supabase u otro alcance.
+
 ## 2026-08-22 — Security A0.5 completo cerrado y aprobado
 
 - El propietario aprobó y cerró explícitamente Security A0.5 completo, incluidos sus subalcances A, B, C y D.
