@@ -8,6 +8,14 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-22 — Security A0.5-B: consumidor web de identidad Clerk
+
+- **Contratos backend:** no se añaden ni modifican endpoints, DTOs, guards, Prisma o migraciones. A0.5-B consume exclusivamente los contratos aprobados e implementados por A0.3-A, A0.4 y A0.5-A.
+- **Bootstrap y tenant:** la web llama `GET /auth/clerk/bootstrap`, selecciona `x-organization-id` solo desde sus Memberships B2B y purga caché de negocio al cambiar de organización. El header continúa siendo selector; NestJS conserva User, Membership y rol local como autoridad.
+- **Onboarding e invitaciones:** el alta de primera organización usa `POST /auth/clerk/onboarding`; Equipo usa listado/creación/reenvío/revocación y la aceptación A0.4. La UI ya no consume `/auth/invite` ni solicita contraseñas temporales.
+- **Compatibilidad:** la web deja de consumir `/auth/login`, `/auth/register`, JWT propio y cookie indicadora legacy. Esos contratos backend no se eliminan en este checkpoint y permanecen temporalmente para rollback.
+- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. No es aprobación ni cierre y no autoriza A0.6, retiro legacy, Supabase u otro módulo.
+
 ## 2026-08-22 — Security A0.5-A: preparación backend para la transición Clerk
 
 - **Bootstrap:** nuevo `GET /auth/clerk/bootstrap`, protegido por `ClerkOnboardingGuard` y rate limit, sin `x-organization-id`. Resuelve exclusivamente el `sub` verificado por `User.clerkUserId`; nunca enlaza por correo ni acepta identidad, tenant o rol del cliente.

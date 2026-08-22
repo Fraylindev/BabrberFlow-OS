@@ -5,26 +5,49 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Topbar } from "@/components/dashboard/Topbar";
+import { Button } from "@/components/ui/Button";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const auth = useAuth();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (!auth.isLoaded) return;
+    if (!auth.isSignedIn) {
       router.replace("/login");
+    } else if (!auth.isReady && !auth.error) {
+      router.replace("/auth/continue");
     }
-  }, [user, router]);
+  }, [auth.error, auth.isLoaded, auth.isReady, auth.isSignedIn, router]);
 
-  if (!user) {
+  if (auth.error) {
     return (
-      <div className="dashboard-shell flex min-h-screen items-center justify-center text-sm text-[var(--dash-text-muted)]">
-        Cargando…
+      <div className="dashboard-shell flex min-h-screen items-center justify-center px-4">
+        <div className="max-w-md rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-6 text-center">
+          <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--dash-text)]">
+            No pudimos abrir tu panel
+          </h1>
+          <p className="mt-2 text-sm text-[var(--dash-text-muted)]">{auth.error}</p>
+          <Button className="mt-5" onClick={() => void auth.refresh()}>
+            Intentar de nuevo
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!auth.isReady) {
+    return (
+      <div
+        role="status"
+        className="dashboard-shell flex min-h-screen items-center justify-center text-sm text-[var(--dash-text-muted)]"
+      >
+        Preparando tu panel…
       </div>
     );
   }

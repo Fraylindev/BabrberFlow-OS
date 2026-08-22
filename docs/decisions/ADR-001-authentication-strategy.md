@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B y A0.4 CERRADOS / APROBADOS; Security A0.1, A0.2 y A0.5-A implementados / en revisión**
+- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B y A0.4 CERRADOS / APROBADOS; Security A0.1, A0.2, A0.5-A y A0.5-B implementados / en revisión**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -20,16 +20,16 @@ La implementación se dividirá en checkpoints independientes. Migrar identidad 
 
 ### Identidad y riesgo vigente
 
-El código todavía implementa autenticación propia:
+El diagnóstico que originó Security A0 encontró autenticación propia con estos riesgos; los resultados posteriores del ADR indican cuáles ya fueron corregidos:
 
 - [`OrganizationsController`](../../apps/api/src/organizations/organizations.controller.ts) expone `POST /organizations` sin guard.
 - `GET /organizations/by-slug/:slug` es público y [`OrganizationsService`](../../apps/api/src/organizations/organizations.service.ts) proyecta `{ id, name, slug }`.
 - [`RegisterDto`](../../apps/api/src/auth/dto/register.dto.ts) acepta `organizationId` enviado por el cliente.
 - [`AuthService.register()`](../../apps/api/src/auth/auth.service.ts) crea `User` y `Membership OWNER` para ese ID.
-- [`auth-context.tsx`](../../apps/web/lib/auth-context.tsx) guarda `bf_token` y `bf_session` en `localStorage`; [`proxy.ts`](../../apps/web/proxy.ts) solo comprueba una cookie indicadora `kb_session`.
+- En el diagnóstico original, `auth-context.tsx` guardaba `bf_token` y `bf_session` en `localStorage` y `proxy.ts` solo comprobaba una cookie indicadora `kb_session`. Security A0.5-B elimina ese comportamiento de la web; se conserva aquí como riesgo histórico que motivó la decisión.
 - [`JwtStrategy`](../../apps/api/src/auth/strategies/jwt.strategy.ts) revalida la Membership por petición. Este control local es correcto y debe conservarse con Clerk.
 
-La composición pública permite solicitar OWNER sobre una Organization existente. Además, el JWT dura un día, los límites de intentos viven en memoria y no existen recuperación, verificación, MFA ni revocación general de sesiones. Security A0 debe cerrar esos riesgos sin trasladar la autorización de negocio al proveedor de identidad.
+La composición pública permitía solicitar OWNER sobre una Organization existente. Además, el JWT duraba un día, los límites de intentos vivían en memoria y no existían recuperación, verificación, MFA ni revocación general de sesiones. Security A0 corrige esos riesgos por checkpoints sin trasladar la autorización de negocio al proveedor de identidad.
 
 ### Clasificación de usuarios
 
@@ -170,7 +170,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 3. **Security A0.3 — onboarding:** comando atómico Organization + OWNER y retiro del escalamiento público.
 4. **Security A0.4 — invitaciones:** invitación pendiente local, aceptación Clerk y Membership/Professional atómicos.
 5. **Security A0.5-A — preparación backend:** bootstrap de sesión, compatibilidad temporal JWT/Clerk para rutas B2B y redirección segura de invitaciones.
-6. **Security A0.5-B — frontend de identidad:** Clerk login/register/recovery/logout; retirar `localStorage` tras QA y aprobación independiente de A0.5-A.
+6. **Security A0.5-B — frontend de identidad (implementado / en revisión):** Clerk login/register/recovery/logout, sesión efímera para API, bootstrap local y retiro del JWT propio de `localStorage`; requiere auditoría y aprobación explícita.
 7. **Security A0.6 — CUSTOMER:** registro/enlace posterior al booking público.
 8. **Security A0.7 — retiro legado:** passwords/JWT/endpoints/secrets propios, solo tras ventana de rollback.
 9. **Data D0.1 — Supabase preparado:** proyecto QA, roles, SSL, conexión y ensayo vacío; sin migrar identidad.
@@ -278,7 +278,17 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La convivencia se aplica a Organizations, Bookings, Professionals, Services, Clients, Invoices y Analytics. No cambia login, registro, password, `/auth/invite`, onboarding/aceptación Clerk, rutas públicas, JWT emitido, Prisma o Supabase.
 - La invitación Clerk ahora recibe una `redirectUrl` configurada por `CLERK_INVITATION_REDIRECT_URL`. El backend valida que sea `http`/`https`, sin credenciales, query ni hash, y no usa fallback. El identificador técnico en metadata sigue siendo solo correlación; tenant, rol e identidad se verifican como en A0.4.
 - Cobertura: unitarias de bootstrap, guard dual y configuración/redirección; E2E de estados, privacidad, tenant, rol/baja local, header duplicado y regresión JWT legacy. API TypeScript, lint y build pasaron; 277 unitarias y 55 E2E finalizaron correctamente, estas últimas en un clúster PostgreSQL temporal separado con base `_test` y rol no privilegiado, eliminado al terminar.
-- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría explícita. No autoriza A0.5-B, retiro legacy, Supabase ni otro módulo.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría explícita. Su publicación no autorizó por sí sola frontend, retiro legacy, Supabase ni otro módulo; A0.5-B se implementó únicamente tras la autorización posterior del propietario.
+
+## Resultado de Security A0.5-B — IMPLEMENTADO / EN REVISIÓN
+
+- Next.js integra `ClerkProvider`, componentes Clerk localizados y middleware de sesión para login, registro, recuperación, invitaciones y logout. La presencia de sesión en frontend mejora el flujo, pero no concede permisos de negocio.
+- El cliente HTTP obtiene el token corto mediante el SDK en cada petición autenticada y añade `x-organization-id` solo desde una Membership incluida en `GET /auth/clerk/bootstrap`. No acepta tenant o rol libres y limpia la caché de negocio al cambiar de contexto sin borrar el bootstrap autoritativo.
+- La web elimina la persistencia y consumo de `bf_token`, `bf_session` y la cookie indicadora `kb_session`; durante la transición borra esos artefactos legacy si existen. Los endpoints y secretos JWT/password backend no se retiran en este checkpoint y permanecen como rollback.
+- Los estados `ONBOARDING_REQUIRED`, `NO_ACCESS` y `READY` tienen recorridos explícitos. Onboarding consume A0.3-A; aceptación y gestión de invitaciones consumen A0.4. Equipo ya no solicita ni muestra contraseñas temporales y solo OWNER/ADMIN ven la gestión, mientras backend continúa siendo el límite de autorización.
+- La selección de organización usa exclusivamente Memberships locales del bootstrap y purga queries de negocio al cambiar de tenant/rol. La información de identidad Clerk no se usa como autoridad de Membership.
+- Web TypeScript, lint y build finalizaron con exit `0`. QA en navegador con sesiones Clerk Development verificó BARBER sin acceso a Equipo, OWNER con gestión de invitaciones, login, recuperación visible, logout, registro visible sin crear cuentas y layouts de 390 px y 1440 px sin overflow. La consola no mostró errores de aplicación; únicamente el aviso esperado de claves Development. No se crearon identidades ni se enviaron invitaciones durante este QA.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No aprueba A0.5-A ni A0.5-B y no autoriza A0.6, retiro legacy, Supabase u otro módulo.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

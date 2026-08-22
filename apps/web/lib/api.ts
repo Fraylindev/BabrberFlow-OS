@@ -1,6 +1,6 @@
 /**
  * Cliente HTTP centralizado para la API de Kortek Booking.
- * Toda la app pasa por aquí — un solo lugar para adjuntar el token,
+ * Toda la app pasa por aquí — un solo lugar para adjuntar la sesión,
  * manejar errores del backend (NestJS ValidationPipe) y tipar respuestas.
  */
 
@@ -15,9 +15,23 @@ export class ApiError extends Error {
   }
 }
 
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem("bf_token");
+interface ApiAuthContext {
+  token: string | null;
+  organizationId: string | null;
+}
+
+type ApiAuthResolver = () => Promise<ApiAuthContext>;
+
+let resolveApiAuth: ApiAuthResolver = async () => ({
+  token: null,
+  organizationId: null,
+});
+
+export function configureApiAuth(resolver: ApiAuthResolver) {
+  resolveApiAuth = resolver;
+  return () => {
+    resolveApiAuth = async () => ({ token: null, organizationId: null });
+  };
 }
 
 export interface ApiResponse<T> {
@@ -29,13 +43,19 @@ async function requestWithHeaders<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
-  const token = getToken();
+  const isPublicRequest = path.startsWith("/public/");
+  const auth = isPublicRequest
+    ? { token: null, organizationId: null }
+    : await resolveApiAuth();
 
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
+      ...(auth.organizationId
+        ? { "x-organization-id": auth.organizationId }
+        : {}),
       ...options.headers,
     },
   });
@@ -110,9 +130,56 @@ export interface Organization {
 export interface AuthUser {
   id: string;
   name: string;
-  email: string;
   role: UserRole;
   organizationId: string;
+}
+
+export type ClerkBootstrapState =
+  | "ONBOARDING_REQUIRED"
+  | "NO_ACCESS"
+  | "READY";
+
+export interface ClerkMembership {
+  role: UserRole;
+  organization: Pick<Organization, "id" | "name" | "slug">;
+}
+
+export interface ClerkBootstrapResponse {
+  state: ClerkBootstrapState;
+  user: Pick<AuthUser, "id" | "name"> | null;
+  preferredOrganizationId: string | null;
+  memberships: ClerkMembership[];
+}
+
+export type TeamInvitationStatus =
+  | "CREATING"
+  | "PENDING"
+  | "RESENDING"
+  | "REVOKING"
+  | "ACCEPTED"
+  | "REVOKED"
+  | "EXPIRED"
+  | "FAILED";
+
+export interface TeamInvitation {
+  id: string;
+  email: string;
+  role: Exclude<UserRole, "OWNER">;
+  createPublicProfile: boolean;
+  status: TeamInvitationStatus;
+  expiresAt: string;
+  acceptedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TeamInvitationPage {
+  items: TeamInvitation[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 export interface Professional {

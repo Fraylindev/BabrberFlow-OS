@@ -147,7 +147,13 @@ export function Sidebar({
                 )}
               </div>
             }
-            items={[{ label: "Cerrar sesión", onSelect: logout, danger: true }]}
+            items={[
+              {
+                label: "Cerrar sesión",
+                onSelect: () => void logout(),
+                danger: true,
+              },
+            ]}
           />
         </div>
       )}

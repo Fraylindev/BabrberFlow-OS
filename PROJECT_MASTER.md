@@ -47,11 +47,11 @@ Gobierno y estándares:
 - `Membership` relaciona User × Organization × Role.
 - Roles internos: `OWNER`, `ADMIN`, `RECEPTIONIST`, `BARBER`.
 - `CUSTOMER` pertenece al flujo B2C y no accede al dashboard interno.
-- La implementación que ejecuta hoy sigue usando JWT + Passport + bcryptjs; el login recibe email y contraseña, no `organizationId`.
-- La arquitectura aprobada migrará identidad y sesiones a Clerk. El UUID de `User` seguirá siendo la identidad local estable y se enlazará de forma única a la identidad Clerk.
+- El frontend interno usa Clerk para login, registro, recuperación, logout y sesión. Ya no guarda ni consume el JWT propio en `localStorage`.
+- NestJS mantiene temporalmente compatibilidad dual en rutas B2B: JWT legacy revalidado o sesión Clerk verificada. El UUID de `User` sigue siendo la identidad local estable y se enlaza de forma única a la identidad Clerk.
 - `Organization`, `Membership` y roles continúan como autoridad local; Clerk Organizations no se usará para autorización.
 - Security A0.1 añade `User.clerkUserId` nullable y único. La auditoría de aquel entorno preservó 19 usuarios sin enlace; ese conteo es evidencia histórica, no un invariante ni el estado de la instancia PostgreSQL nativa actual.
-- Security A0.2 instala el SDK backend oficial de Clerk y añade una capa todavía no aplicada a rutas: verifica session tokens y estado remoto, resuelve `sub` por `User.clerkUserId` y vuelve a consultar la `Membership` local en cada petición.
+- Security A0.2 instaló el SDK backend oficial de Clerk; A0.5-A aplica esa verificación a rutas B2B mediante la compatibilidad dual. Verifica session tokens y estado remoto, resuelve `sub` por `User.clerkUserId` y vuelve a consultar la `Membership` local en cada petición.
 
 ### Seguridad
 
@@ -59,7 +59,7 @@ Gobierno y estándares:
 - Guards y roles backend son el límite real; la UI solo representa permisos.
 - Recurso ajeno e inexistente comparten respuesta cuando revelar existencia sería un riesgo.
 - AuditLog es fail-open en los flujos donde ya se adoptó y no debe guardar PII.
-- La autenticación efectiva de todos los endpoints sigue siendo propia y conserva un riesgo crítico confirmado; el guard Clerk A0.2 permanece desacoplado hasta una entrega posterior autorizada.
+- Las rutas internas B2B aceptan temporalmente JWT legacy o Clerk mediante `B2bAuthGuard`; en ambos casos NestJS vuelve a resolver Membership y rol locales. Los endpoints legacy permanecen como rollback backend, pero la web A0.5-B ya no los consume.
 - La decisión aprobada es usar Clerk para identidad/sesiones y NestJS + Membership local para autorización. [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) define el diseño y el avance incremental de Security A0.
 - Prisma se mantendrá sobre PostgreSQL y la base se trasladará a Supabase en checkpoints separados de la migración Clerk. No se usará Supabase Auth.
 
@@ -119,7 +119,9 @@ Security A0.3-B: **CERRADO / APROBADO** por decisión explícita del propietario
 
 Security A0.4: **CERRADO / APROBADO** por decisión explícita del propietario. Incorpora invitaciones tenant-scoped de Equipo mediante Clerk para roles `ADMIN`, `BARBER` y `RECEPTIONIST`; `OWNER` nunca es invitable. OWNER/ADMIN pueden crear, listar, reenviar y revocar dentro de su organización. La aceptación exige una sesión Clerk real, valida fuera de la transacción la invitación externa aceptada y su correo principal verificado, y persiste en una transacción `SERIALIZABLE` el User nuevo cuando corresponde, Membership, Professional BARBER opcional, estado local y AuditLog sin PII. Nunca enlaza un User local por coincidencia de correo: cualquier colisión con un User sin enlace o enlazado a otra identidad produce `409` neutro y rollback total. Las llamadas a Clerk no mantienen transacciones PostgreSQL abiertas y los estados intermedios permiten fallo cerrado, reintento y compensación. La validación cubrió tipos, lint, build, pruebas unitarias y 11 E2E sobre PostgreSQL temporal estrictamente aislado. El QA integrado posterior usó sesiones reales de Clerk Development: la primera aceptación devolvió `201`, su repetición idempotente `200`, una segunda invitación fue revocada y su aceptación posterior devolvió `409` neutro; PostgreSQL confirmó exactamente una Membership y un Professional para la invitación aceptada, sin duplicados. La utilidad temporal ignorada fue eliminada y la evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles. No se modificó frontend productivo.
 
-Security A0.5-A — Preparación backend: **IMPLEMENTADO / EN REVISIÓN**. Añade `GET /auth/clerk/bootstrap`, protegido por sesión Clerk verificada sin exigir todavía selector tenant, para devolver únicamente el estado `ONBOARDING_REQUIRED`, `NO_ACCESS` o `READY`, el User local mínimo y sus Memberships B2B autorizadas. Las rutas internas de negocio usan temporalmente `B2bAuthGuard`: un JWT legacy válido conserva su contexto tras revalidar Membership local, mientras una sesión Clerk exige exactamente un `x-organization-id` y vuelve a resolver User, Membership y rol locales. Login, registro, invitación y contraseñas legacy no cambian. La creación de invitaciones Clerk incorpora una URL de redirección configurada y validada mediante `CLERK_INVITATION_REDIRECT_URL`; el ID técnico local sigue siendo solo correlación, nunca autoridad. No hay frontend A0.5-B, cambio de Prisma ni Supabase. API TypeScript, lint, build, 277 pruebas unitarias y 55 E2E pasaron; las E2E usaron PostgreSQL temporal separado, base `_test` y rol no privilegiado, eliminados al finalizar. Este candidato requiere auditoría y no está aprobado ni cerrado.
+Security A0.5-A — Preparación backend: **IMPLEMENTADO / EN REVISIÓN**. Añade `GET /auth/clerk/bootstrap`, protegido por sesión Clerk verificada sin exigir todavía selector tenant, para devolver únicamente el estado `ONBOARDING_REQUIRED`, `NO_ACCESS` o `READY`, el User local mínimo y sus Memberships B2B autorizadas. Las rutas internas de negocio usan temporalmente `B2bAuthGuard`: un JWT legacy válido conserva su contexto tras revalidar Membership local, mientras una sesión Clerk exige exactamente un `x-organization-id` y vuelve a resolver User, Membership y rol locales. Login, registro, invitación y contraseñas legacy no cambian. La creación de invitaciones Clerk incorpora una URL de redirección configurada y validada mediante `CLERK_INVITATION_REDIRECT_URL`; el ID técnico local sigue siendo solo correlación, nunca autoridad. No cambia Prisma ni Supabase. API TypeScript, lint, build, 277 pruebas unitarias y 55 E2E pasaron; las E2E usaron PostgreSQL temporal separado, base `_test` y rol no privilegiado, eliminados al finalizar. Este candidato requiere auditoría y no está aprobado ni cerrado.
+
+Security A0.5-B — Frontend de identidad Clerk: **IMPLEMENTADO / EN REVISIÓN**. La web usa el SDK oficial de Clerk para login, registro, recuperación y logout; obtiene el token corto de la sesión en memoria y usa `GET /auth/clerk/bootstrap` para resolver estado, User mínimo y Memberships locales. `x-organization-id` se selecciona únicamente entre Memberships devueltas por NestJS, nunca desde datos libres del navegador, y al cambiar de organización se purga la caché de negocio sin borrar el bootstrap autoritativo. Onboarding usa el contrato aprobado de A0.3-A y Equipo consume las invitaciones A0.4 sin contraseñas temporales. La aceptación usa el identificador técnico que Clerk entrega en metadata solo como correlación; backend conserva toda autorización. Las rutas backend JWT/login/register/password legacy siguen disponibles para rollback, pero la web productiva ya no guarda `bf_token`, `bf_session` ni la cookie indicadora legacy. Web TypeScript, lint y build terminaron con exit `0`. QA real con Clerk Development comprobó sesión BARBER y restricción de Equipo, login/logout OWNER, acceso a recuperación, pantalla de registro sin crear identidades, gestión visible de invitaciones sin contraseñas y responsive sin overflow en 390 px y 1440 px; no hubo errores de aplicación en consola. No se enviaron invitaciones ni se modificaron datos durante este QA. Este candidato no está aprobado ni cerrado.
 
 ## 5. Decisiones activas de dominio
 
@@ -151,14 +153,14 @@ Security A0.5-A — Preparación backend: **IMPLEMENTADO / EN REVISIÓN**. Añad
 
 ### Autenticación
 
-- La implementación actual usa JWT propio de un día en `localStorage` y revalida Membership en cada request.
+- La web interna usa la sesión Clerk y no persiste JWT propio en `localStorage`. NestJS conserva temporalmente JWT legacy como rollback backend y revalida Membership en cada request.
 - `POST /organizations` es privado (OWNER) tras A0.3-H. El registro de barberías nuevas es atómico en `/auth/register` usando `organizationName` y `organizationSlug`.
-- Recuperación, verificación de correo, MFA, refresh rotativo y revocación general de sesiones no existen; los límites actuales son locales al proceso, no distribuidos.
+- El frontend Clerk ya ofrece recuperación, verificación y revocación de sesión. MFA productivo continúa sujeto al gate de plan y configuración; los límites de operaciones sensibles de NestJS siguen locales al proceso y deben ser distribuidos antes de producción horizontal.
 - Decisión aprobada: Clerk gestionará identidad, login, registro, recuperación y sesiones. NestJS verificará la sesión y resolverá `User` + Membership local en cada petición.
 - `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local crea Organization + primera Membership OWNER de forma atómica e idempotente.
 - La base A0.2 usa `authenticateRequest()` con session tokens, origins autorizados (`CLERK_AUTHORIZED_PARTIES`, variable independiente de `CORS_ALLOWED_ORIGINS`) y audiencia cuando el token/configuración la define; valida el issuer de la instancia y consulta en Clerk que la sesión siga `active`. Config y cliente Clerk se crean en la primera petición al guard, no al arrancar; si la config no está, el guard falla cerrado con 401 genérico y log interno seguro. Un selector de tenant aportado por el cliente solo elige contexto: la Membership compuesta local debe existir y su rol es el único aceptado.
-- `ClerkAuthGuard` no está aplicado a rutas y ningún flujo enlaza usuarios por correo. La evidencia histórica de A0.1 registró 19 Users sin enlace; la instancia PostgreSQL nativa inspeccionada el 2026-08-20 contiene 0 Users, 0 Organizations y 0 Memberships, sin que este saneamiento eliminara filas.
-- Los cambios de contraseña, verificación, MFA, logout y revocación pasarán a Clerk; retirar JWT/password local ocurrirá solo tras QA y ventana de rollback.
+- `ClerkAuthGuard` participa en las rutas B2B a través de `B2bAuthGuard`; ningún flujo enlaza usuarios por correo. La evidencia histórica de A0.1 registró 19 Users sin enlace; la instancia PostgreSQL nativa inspeccionada el 2026-08-20 contiene 0 Users, 0 Organizations y 0 Memberships, sin que este saneamiento eliminara filas.
+- Login, registro, recuperación y logout de la web ya pasan por Clerk. Retirar JWT/password y endpoints legacy del backend ocurrirá solo tras auditoría, aprobación y ventana de rollback.
 - El inventario histórico encontró 19 Users: 7 coincidían con cuentas QA documentadas localmente y 12 no tenían clasificación comprobable. No deben importarse, fusionarse ni eliminarse por inferencia. La instancia nativa actual está vacía; no se asume que sea la misma fuente histórica.
 
 ### Persistencia administrada
@@ -202,10 +204,10 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Auditar Security A0.5-A — Preparación backend, que permanece **IMPLEMENTADO / EN REVISIÓN**.
-2. No iniciar A0.5-B frontend, Supabase ni otro módulo sin autorización explícita posterior.
-3. Mantener login/JWT/register/password y `/auth/invite` legacy sin cambios; nunca enlazar usuarios por coincidencia de correo.
-4. Mantener Frontend A2 de Profesionales en revisión.
+1. Auditar Security A0.5-B, que permanece **IMPLEMENTADO / EN REVISIÓN**; A0.5-A también continúa en revisión hasta decisión explícita.
+2. No iniciar A0.6, retiro legacy, Supabase ni otro módulo sin autorización explícita posterior.
+3. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
+4. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 

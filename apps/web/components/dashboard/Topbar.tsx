@@ -31,7 +31,13 @@ function currentSectionLabel(pathname: string): string {
  */
 export function Topbar({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
   const pathname = usePathname();
-  const { user, organization, logout } = useAuth();
+  const {
+    user,
+    organization,
+    memberships,
+    selectOrganization,
+    logout,
+  } = useAuth();
   const { toast } = useToast();
   const section = currentSectionLabel(pathname);
 
@@ -89,7 +95,21 @@ export function Topbar({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
                     { label: "Copiar enlace", onSelect: copyPublicLink },
                   ]
                 : []),
-              { label: "Cerrar sesión", onSelect: logout, danger: true },
+              ...memberships
+                .filter(
+                  (membership) =>
+                    membership.organization.id !== organization?.id,
+                )
+                .map((membership) => ({
+                  label: `Cambiar a ${membership.organization.name}`,
+                  onSelect: () =>
+                    selectOrganization(membership.organization.id),
+                })),
+              {
+                label: "Cerrar sesión",
+                onSelect: () => void logout(),
+                danger: true,
+              },
             ]}
           />
         </div>

@@ -19,4 +19,7 @@ export const queryKeys = {
   invoices: {
     all: ["invoices"] as const,
   },
+  invitations: {
+    all: ["team-invitations"] as const,
+  },
 };

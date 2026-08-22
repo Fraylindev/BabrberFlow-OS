@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-22 — Security A0.5-B frontend implementado como candidato
+
+- La web interna migró login, registro, recuperación y logout al SDK oficial de Clerk. El token de sesión se obtiene al hacer cada petición y ya no se guarda un JWT propio en `localStorage` ni se usa la cookie indicadora legacy.
+- El contexto de negocio se resuelve mediante `GET /auth/clerk/bootstrap`; la organización activa solo puede elegirse entre Memberships locales autorizadas y el cambio de tenant purga la caché de negocio.
+- Onboarding consume el contrato A0.3-A y Equipo consume las invitaciones A0.4 sin solicitar ni compartir contraseñas temporales. Los endpoints legacy backend permanecen sin cambios como rollback y la web deja de consumirlos.
+- Exit `0`: Web TypeScript, lint y build. QA real con Clerk Development verificó login/logout OWNER, recuperación y registro visibles sin crear cuentas, gestión de Equipo sin contraseñas, BARBER restringido y responsive sin overflow en móvil pequeño y desktop; no hubo errores de aplicación en consola ni envíos de invitaciones.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No aprueba A0.5-A ni A0.5-B y no autoriza A0.6, retiro legacy, Supabase u otro módulo.
+
 ## 2026-08-22 — Security A0.5-A implementado como candidato
 
 - Se añadió el bootstrap backend de sesión Clerk para distinguir onboarding, falta de acceso y Memberships B2B listas, con una proyección mínima que no expone correo, identificadores Clerk, CUSTOMER ni timestamps.

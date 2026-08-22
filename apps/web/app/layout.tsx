@@ -3,6 +3,8 @@ import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { BRAND } from "@/lib/brand";
+import { ClerkProvider } from "@clerk/nextjs";
+import { esES } from "@clerk/localizations";
 
 const fraunces = Fraunces({
   variable: "--font-display",
@@ -36,7 +38,9 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <ClerkProvider localization={esES}>
+          <Providers>{children}</Providers>
+        </ClerkProvider>
       </body>
     </html>
   );
