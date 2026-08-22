@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { TeamService } from './team.service';
@@ -8,6 +8,7 @@ import { AuditModule } from '../audit/audit.module';
 import {
   clerkAuthConfigProvider,
   clerkBackendClientProvider,
+  clerkInvitationRedirectUrlProvider,
 } from './clerk/clerk-auth.providers';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
 import { ClerkAuthGuard } from './guards/clerk-auth.guard';
@@ -22,6 +23,9 @@ import {
   TeamInvitationsController,
 } from './team-invitations.controller';
 import { TeamInvitationsService } from './team-invitations.service';
+import { B2bAuthGuard } from './guards/b2b-auth.guard';
+import { ClerkBootstrapController } from './clerk-bootstrap.controller';
+import { ClerkBootstrapService } from './clerk-bootstrap.service';
 
 if (!process.env.JWT_SECRET) {
   throw new Error(
@@ -29,6 +33,7 @@ if (!process.env.JWT_SECRET) {
   );
 }
 
+@Global()
 @Module({
   imports: [
     JwtModule.register({
@@ -45,6 +50,7 @@ if (!process.env.JWT_SECRET) {
     ClerkMeController,
     TeamInvitationsController,
     TeamInvitationAcceptanceController,
+    ClerkBootstrapController,
   ],
   providers: [
     AuthService,
@@ -52,12 +58,20 @@ if (!process.env.JWT_SECRET) {
     JwtStrategy,
     clerkAuthConfigProvider,
     clerkBackendClientProvider,
+    clerkInvitationRedirectUrlProvider,
     ClerkSessionVerifierService,
     ClerkAuthGuard,
     ClerkOnboardingService,
     ClerkOnboardingGuard,
     TeamInvitationsService,
+    B2bAuthGuard,
+    ClerkBootstrapService,
   ],
-  exports: [ClerkAuthGuard, ClerkOnboardingGuard, ClerkOnboardingService],
+  exports: [
+    ClerkAuthGuard,
+    ClerkOnboardingGuard,
+    ClerkOnboardingService,
+    B2bAuthGuard,
+  ],
 })
 export class AuthModule {}

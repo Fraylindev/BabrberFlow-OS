@@ -2,6 +2,7 @@ import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { TeamInvitationStatus, UserRole, type User } from '@prisma/client';
 import { ClerkSessionVerifierService } from '../src/auth/clerk/clerk-session-verifier.service';
+import { CLERK_INVITATION_REDIRECT_URL } from '../src/auth/clerk/clerk-auth.providers';
 import { ORGANIZATION_ID_HEADER } from '../src/auth/guards/clerk-auth.guard';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { createE2eApp, requestApp } from './create-e2e-app';
@@ -107,6 +108,8 @@ describe('Security A0.4 team invitations (e2e)', () => {
       builder
         .overrideProvider(ClerkSessionVerifierService)
         .useValue(mockVerifier)
+        .overrideProvider(CLERK_INVITATION_REDIRECT_URL)
+        .useValue(() => 'http://localhost:3001/accept-invitation')
         .overrideGuard(ThrottlerGuard)
         .useValue({ canActivate: () => true }),
     );

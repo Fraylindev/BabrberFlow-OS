@@ -112,3 +112,27 @@ export function loadClerkAuthConfig(
     ...(audience.length > 0 ? { audience } : {}),
   };
 }
+
+export function loadClerkInvitationRedirectUrl(
+  env: NodeJS.ProcessEnv = process.env,
+): string {
+  const value = requireValue(
+    env.CLERK_INVITATION_REDIRECT_URL,
+    'CLERK_INVITATION_REDIRECT_URL',
+  );
+  const url = new URL(value);
+
+  if (
+    !['http:', 'https:'].includes(url.protocol) ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error(
+      'CLERK_INVITATION_REDIRECT_URL debe ser una URL http o https sin credenciales, query ni hash.',
+    );
+  }
+
+  return url.href;
+}

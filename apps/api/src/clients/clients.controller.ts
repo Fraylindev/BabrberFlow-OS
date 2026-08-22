@@ -18,7 +18,7 @@ import { ProfessionalsService } from '../professionals/professionals.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { QueryClientsDto } from './dto/query-clients.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -31,7 +31,7 @@ const CLIENT_MANAGEMENT_ROLES = [
   UserRole.RECEPTIONIST,
 ];
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(B2bAuthGuard, RolesGuard)
 @Roles(...B2B_ROLES)
 @Controller('clients')
 export class ClientsController {

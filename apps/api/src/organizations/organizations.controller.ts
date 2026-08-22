@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -12,7 +12,7 @@ import { B2B_ROLES } from '../auth/roles.constants';
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(B2bAuthGuard, RolesGuard)
   @Roles(UserRole.OWNER)
   @Post()
   create(@Body() createOrganizationDto: CreateOrganizationDto) {
@@ -27,7 +27,7 @@ export class OrganizationsController {
   }
 
   // 🛡️ Ruta protegida, aislada (multi-tenant) y exclusiva de personal B2B
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(B2bAuthGuard, RolesGuard)
   @Roles(...B2B_ROLES)
   @Get('mine')
   findMine(@GetUser('organizationId') organizationId: string) {
@@ -39,7 +39,7 @@ export class OrganizationsController {
   // información de gestión de staff, igual que /auth/invite (que ya
   // tiene la misma restricción). Si se necesita que RECEPTIONIST/BARBER
   // también lo vean, es cambiar un decorador, no un rediseño.
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(B2bAuthGuard, RolesGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Get('mine/members')
   findMembers(@GetUser('organizationId') organizationId: string) {

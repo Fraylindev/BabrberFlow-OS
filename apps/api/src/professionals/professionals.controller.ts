@@ -22,7 +22,7 @@ import { QueryProfessionalsDto } from './dto/query-professionals.dto';
 import { UpdateProfessionalStatusDto } from './dto/update-professional-status.dto';
 import { UpdateProfessionalVisibilityDto } from './dto/update-professional-visibility.dto';
 import { LinkProfessionalUserDto } from './dto/link-professional-user.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -41,7 +41,7 @@ const PROFESSIONAL_MANAGEMENT_ROLES: UserRole[] = [
   UserRole.ADMIN,
 ];
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(B2bAuthGuard, RolesGuard)
 @Roles(...B2B_ROLES)
 @Controller('professionals')
 export class ProfessionalsController {

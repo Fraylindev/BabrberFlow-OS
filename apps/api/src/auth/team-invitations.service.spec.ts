@@ -65,7 +65,14 @@ describe('TeamInvitationsService', () => {
       users: { getUser: jest.fn() },
     }),
   } as unknown as ClerkSessionVerifierService;
-  const service = new TeamInvitationsService(prisma, audit, verifier);
+  const loadInvitationRedirectUrl = () =>
+    'http://localhost:3001/accept-invitation';
+  const service = new TeamInvitationsService(
+    prisma,
+    audit,
+    verifier,
+    loadInvitationRedirectUrl,
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -105,6 +112,7 @@ describe('TeamInvitationsService', () => {
         emailAddress: 'barber@example.test',
         ignoreExisting: true,
         notify: true,
+        redirectUrl: 'http://localhost:3001/accept-invitation',
       }),
     );
     expect(logTransactional).toHaveBeenCalledTimes(1);

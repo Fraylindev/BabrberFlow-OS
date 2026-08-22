@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-21. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-22. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -119,6 +119,8 @@ Security A0.3-B: **CERRADO / APROBADO** por decisión explícita del propietario
 
 Security A0.4: **CERRADO / APROBADO** por decisión explícita del propietario. Incorpora invitaciones tenant-scoped de Equipo mediante Clerk para roles `ADMIN`, `BARBER` y `RECEPTIONIST`; `OWNER` nunca es invitable. OWNER/ADMIN pueden crear, listar, reenviar y revocar dentro de su organización. La aceptación exige una sesión Clerk real, valida fuera de la transacción la invitación externa aceptada y su correo principal verificado, y persiste en una transacción `SERIALIZABLE` el User nuevo cuando corresponde, Membership, Professional BARBER opcional, estado local y AuditLog sin PII. Nunca enlaza un User local por coincidencia de correo: cualquier colisión con un User sin enlace o enlazado a otra identidad produce `409` neutro y rollback total. Las llamadas a Clerk no mantienen transacciones PostgreSQL abiertas y los estados intermedios permiten fallo cerrado, reintento y compensación. La validación cubrió tipos, lint, build, pruebas unitarias y 11 E2E sobre PostgreSQL temporal estrictamente aislado. El QA integrado posterior usó sesiones reales de Clerk Development: la primera aceptación devolvió `201`, su repetición idempotente `200`, una segunda invitación fue revocada y su aceptación posterior devolvió `409` neutro; PostgreSQL confirmó exactamente una Membership y un Professional para la invitación aceptada, sin duplicados. La utilidad temporal ignorada fue eliminada y la evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles. No se modificó frontend productivo.
 
+Security A0.5-A — Preparación backend: **IMPLEMENTADO / EN REVISIÓN**. Añade `GET /auth/clerk/bootstrap`, protegido por sesión Clerk verificada sin exigir todavía selector tenant, para devolver únicamente el estado `ONBOARDING_REQUIRED`, `NO_ACCESS` o `READY`, el User local mínimo y sus Memberships B2B autorizadas. Las rutas internas de negocio usan temporalmente `B2bAuthGuard`: un JWT legacy válido conserva su contexto tras revalidar Membership local, mientras una sesión Clerk exige exactamente un `x-organization-id` y vuelve a resolver User, Membership y rol locales. Login, registro, invitación y contraseñas legacy no cambian. La creación de invitaciones Clerk incorpora una URL de redirección configurada y validada mediante `CLERK_INVITATION_REDIRECT_URL`; el ID técnico local sigue siendo solo correlación, nunca autoridad. No hay frontend A0.5-B, cambio de Prisma ni Supabase. API TypeScript, lint, build, 277 pruebas unitarias y 55 E2E pasaron; las E2E usaron PostgreSQL temporal separado, base `_test` y rol no privilegiado, eliminados al finalizar. Este candidato requiere auditoría y no está aprobado ni cerrado.
+
 ## 5. Decisiones activas de dominio
 
 ### Reservas y facturación
@@ -200,8 +202,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-1. Preparar únicamente el análisis y diseño de Security A0.5 — frontend de identidad Clerk; su implementación queda pendiente de autorización explícita.
-2. No iniciar código de A0.5, Supabase ni otro módulo sin autorización posterior.
+1. Auditar Security A0.5-A — Preparación backend, que permanece **IMPLEMENTADO / EN REVISIÓN**.
+2. No iniciar A0.5-B frontend, Supabase ni otro módulo sin autorización explícita posterior.
 3. Mantener login/JWT/register/password y `/auth/invite` legacy sin cambios; nunca enlazar usuarios por coincidencia de correo.
 4. Mantener Frontend A2 de Profesionales en revisión.
 

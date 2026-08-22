@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
@@ -20,6 +21,10 @@ import {
 } from '../common/prisma-error.util';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
+import {
+  CLERK_INVITATION_REDIRECT_URL,
+  type ClerkInvitationRedirectUrlLoader,
+} from './clerk/clerk-auth.providers';
 import { CreateTeamInvitationDto } from './dto/create-team-invitation.dto';
 import { ListTeamInvitationsDto } from './dto/list-team-invitations.dto';
 import { normalizeAccountEmail } from './organization-slug';
@@ -83,6 +88,8 @@ export class TeamInvitationsService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly verifier: ClerkSessionVerifierService,
+    @Inject(CLERK_INVITATION_REDIRECT_URL)
+    private readonly loadInvitationRedirectUrl: ClerkInvitationRedirectUrlLoader,
   ) {}
 
   private project(invitation: InvitationRecord) {
@@ -162,6 +169,7 @@ export class TeamInvitationsService {
           expiresInDays,
           ignoreExisting: true,
           notify: true,
+          redirectUrl: this.loadInvitationRedirectUrl(),
           publicMetadata: {
             kortekTeamInvitationId: invitation.id,
           },

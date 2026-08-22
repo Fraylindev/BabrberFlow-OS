@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-22 — Security A0.5-A implementado como candidato
+
+- Se añadió el bootstrap backend de sesión Clerk para distinguir onboarding, falta de acceso y Memberships B2B listas, con una proyección mínima que no expone correo, identificadores Clerk, CUSTOMER ni timestamps.
+- Las rutas B2B aceptan temporalmente JWT legacy revalidado o sesión Clerk verificada con selector tenant único; la autorización continúa en Membership y rol locales. Los endpoints legacy de identidad y las rutas públicas no cambian.
+- Las invitaciones Clerk reciben una redirección configurada y validada, sin convertir metadata o datos del navegador en autoridad.
+- Exit `0`: API TypeScript, lint, build, 277 unitarias y 55 E2E. Las E2E usaron un PostgreSQL temporal estrictamente aislado, base `_test` y rol limitado; el clúster se eliminó al finalizar.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. Este checkpoint no aprueba A0.5-A ni autoriza A0.5-B, Supabase u otro módulo.
+
 ## 2026-08-21 — Security A0.4 cerrado y aprobado
 
 - El propietario aprobó explícitamente Security A0.4 después de la auditoría y del QA integrado real ya registrado.

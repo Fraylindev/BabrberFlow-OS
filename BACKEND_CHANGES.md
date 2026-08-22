@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-22 — Security A0.5-A: preparación backend para la transición Clerk
+
+- **Bootstrap:** nuevo `GET /auth/clerk/bootstrap`, protegido por `ClerkOnboardingGuard` y rate limit, sin `x-organization-id`. Resuelve exclusivamente el `sub` verificado por `User.clerkUserId`; nunca enlaza por correo ni acepta identidad, tenant o rol del cliente.
+- **Respuesta explícita:** devuelve `ONBOARDING_REQUIRED` cuando no existe User enlazado, `NO_ACCESS` cuando existe pero no tiene Membership B2B y `READY` cuando hay acceso. La proyección limita User a `id`/`name` y cada Membership a rol más Organization `id`/`name`/`slug`; excluye email, `clerkUserId`, roles CUSTOMER y timestamps. `preferredOrganizationId` solo aparece si pertenece al conjunto autorizado.
+- **Compatibilidad B2B:** Organizations, Bookings, Professionals, Services, Clients, Invoices y Analytics usan `B2bAuthGuard`. Un JWT legacy firmado conserva su tenant únicamente tras revalidar la Membership y el rol locales. Si no es JWT legacy válido, la petición pasa por `ClerkAuthGuard`, que exige un único `x-organization-id`, sesión Clerk válida y Membership local vigente. `RolesGuard` conserva la matriz de cada controller.
+- **Legacy preservado:** `/auth/login`, `/auth/register`, `/auth/invite`, password, onboarding Clerk, aceptación/gestión de invitaciones y rutas públicas no cambian de contrato. No se emiten ni intercambian tokens y no hay cambios de Prisma.
+- **Redirección de invitaciones:** la creación externa incluye `redirectUrl` obtenido de `CLERK_INVITATION_REDIRECT_URL`. La variable se evalúa al crear la invitación y exige URL absoluta `http`/`https` sin credenciales, query ni hash. El ID local en metadata sirve solo como correlación; la aceptación mantiene todas sus validaciones autoritativas.
+- **Fallos:** sesión, selector o Membership inválidos producen errores genéricos; un rol local fuera de B2B queda en `403` por `RolesGuard`. La redirección ausente/inválida falla antes de llamar a Clerk y no introduce un valor por defecto inseguro.
+- **Validación candidata:** API TypeScript, lint y build finalizaron con exit `0`; 277 unitarias pasaron (11 integraciones opt-in omitidas) y 55/55 E2E pasaron sobre PostgreSQL temporal separado, base `_test` y rol sin privilegios globales. El clúster temporal fue eliminado al terminar.
+- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. No incluye frontend A0.5-B, Supabase ni aprobación/cierre.
+
 ## 2026-08-21 — Security A0.4 cerrado: invitaciones de Equipo con Clerk
 
 - **Persistencia:** nueva entidad `TeamInvitation`, aislada por `organizationId`, con actor local, rol, expiración, referencia Clerk, opción de perfil público BARBER y estados `CREATING`, `PENDING`, `RESENDING`, `REVOKING`, `ACCEPTED`, `REVOKED`, `EXPIRED` y `FAILED`. PostgreSQL prohíbe `OWNER`, limita el perfil público a `BARBER` y permite una sola invitación abierta por tenant/correo normalizado.

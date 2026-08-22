@@ -11,7 +11,7 @@ import {
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -20,7 +20,7 @@ import { B2B_ROLES } from '../auth/roles.constants';
 
 // Uso interno (B2B) — el catálogo administrativo de servicios no es el
 // mismo endpoint que consume la reserva pública (esa usa /public/:slug/booking-data).
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(B2bAuthGuard, RolesGuard)
 @Roles(...B2B_ROLES)
 @Controller('services')
 export class ServicesController {

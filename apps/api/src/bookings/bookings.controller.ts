@@ -15,7 +15,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
 import { QueryBookingsDto } from './dto/query-bookings.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -26,7 +26,7 @@ import { ProfessionalStatus, UserRole } from '@prisma/client';
 // Uso interno (B2B) — la reserva de clientes externos pasa por el módulo
 // público (/public/:slug/bookings), no por aquí. Un CUSTOMER autenticado
 // no debe poder ver ni gestionar la agenda completa de la barbería.
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(B2bAuthGuard, RolesGuard)
 @Roles(...B2B_ROLES)
 @Controller('bookings')
 export class BookingsController {

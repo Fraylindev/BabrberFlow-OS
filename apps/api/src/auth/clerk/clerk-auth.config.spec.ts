@@ -1,6 +1,7 @@
 import {
   issuerFromPublishableKey,
   loadClerkAuthConfig,
+  loadClerkInvitationRedirectUrl,
 } from './clerk-auth.config';
 
 function publishableKey(frontendApi: string): string {
@@ -116,5 +117,30 @@ describe('Clerk auth config', () => {
         // CLERK_SECRET_KEY ausente
       }),
     ).toThrow('CLERK_SECRET_KEY');
+  });
+
+  it('valida una URL explícita y segura para aceptar invitaciones', () => {
+    expect(
+      loadClerkInvitationRedirectUrl({
+        CLERK_INVITATION_REDIRECT_URL:
+          'http://localhost:3001/accept-invitation',
+      }),
+    ).toBe('http://localhost:3001/accept-invitation');
+
+    expect(() => loadClerkInvitationRedirectUrl({})).toThrow(
+      'CLERK_INVITATION_REDIRECT_URL',
+    );
+    expect(() =>
+      loadClerkInvitationRedirectUrl({
+        CLERK_INVITATION_REDIRECT_URL:
+          'https://user:secret@app.example.test/accept',
+      }),
+    ).toThrow();
+    expect(() =>
+      loadClerkInvitationRedirectUrl({
+        CLERK_INVITATION_REDIRECT_URL:
+          'https://app.example.test/accept?token=unsafe',
+      }),
+    ).toThrow();
   });
 });

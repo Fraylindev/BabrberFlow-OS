@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D, A0.3-H, A0.3-A y A0.3-B CERRADOS / APROBADOS; Security A0.1 y A0.2 implementados / en revisión**
+- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B y A0.4 CERRADOS / APROBADOS; Security A0.1, A0.2 y A0.5-A implementados / en revisión**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -169,13 +169,14 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 2. **Security A0.2 — verificación backend (implementado / en revisión):** guard Clerk y resolución local User/Membership en compatibilidad controlada; sin cambiar frontend ni rutas existentes.
 3. **Security A0.3 — onboarding:** comando atómico Organization + OWNER y retiro del escalamiento público.
 4. **Security A0.4 — invitaciones:** invitación pendiente local, aceptación Clerk y Membership/Professional atómicos.
-5. **Security A0.5 — frontend de identidad:** Clerk login/register/recovery/logout; retirar `localStorage` tras QA.
-6. **Security A0.6 — CUSTOMER:** registro/enlace posterior al booking público.
-7. **Security A0.7 — retiro legado:** passwords/JWT/endpoints/secrets propios, solo tras ventana de rollback.
-8. **Data D0.1 — Supabase preparado:** proyecto QA, roles, SSL, conexión y ensayo vacío; sin migrar identidad.
-9. **Data D0.2 — ensayo de datos:** dump/restore QA y reconciliación completa.
-10. **Data D0.3 — cutover:** traslado controlado de PostgreSQL con freeze y rollback probado.
-11. **Data D0.4 — operación:** backups, alertas, restore periódico y gate de pago/productivo.
+5. **Security A0.5-A — preparación backend:** bootstrap de sesión, compatibilidad temporal JWT/Clerk para rutas B2B y redirección segura de invitaciones.
+6. **Security A0.5-B — frontend de identidad:** Clerk login/register/recovery/logout; retirar `localStorage` tras QA y aprobación independiente de A0.5-A.
+7. **Security A0.6 — CUSTOMER:** registro/enlace posterior al booking público.
+8. **Security A0.7 — retiro legado:** passwords/JWT/endpoints/secrets propios, solo tras ventana de rollback.
+9. **Data D0.1 — Supabase preparado:** proyecto QA, roles, SSL, conexión y ensayo vacío; sin migrar identidad.
+10. **Data D0.2 — ensayo de datos:** dump/restore QA y reconciliación completa.
+11. **Data D0.3 — cutover:** traslado controlado de PostgreSQL con freeze y rollback probado.
+12. **Data D0.4 — operación:** backups, alertas, restore periódico y gate de pago/productivo.
 
 ## Referencias operativas
 
@@ -267,7 +268,17 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La aceptación es idempotente para la misma identidad e invitación. Tenant, rol, estado, expiración, concurrencia, colisiones y fallos de Clerk se cubren con pruebas unitarias y E2E PostgreSQL aisladas.
 - El checkpoint no modifica `/auth/invite`, JWT/login/register/password, frontend, Supabase ni cuentas existentes. Tampoco envía invitaciones Clerk reales durante la validación automatizada.
 - QA integrado posterior con Clerk Development: una aceptación real devolvió `201`, repetirla devolvió `200` y PostgreSQL confirmó una sola Membership y un solo Professional. Una segunda invitación controlada fue revocada y su aceptación posterior devolvió `409` neutro sin acceso adicional. La utilidad temporal ignorada fue eliminada y no se conservaron PII, tokens, claves, cookies ni identificadores sensibles.
-- Estado: **CERRADO / APROBADO** por decisión explícita del propietario tras auditoría y QA integrado real. Security A0.5 queda limitado a análisis y diseño hasta una autorización posterior de implementación.
+- Estado: **CERRADO / APROBADO** por decisión explícita del propietario tras auditoría y QA integrado real. La autorización posterior habilitó exclusivamente A0.5-A backend.
+
+## Resultado de Security A0.5-A — IMPLEMENTADO / EN REVISIÓN
+
+- `GET /auth/clerk/bootstrap` usa el guard de sesión Clerk sin selector tenant para resolver únicamente por `User.clerkUserId`. No busca ni enlaza por correo y no acepta User, Organization o rol desde el cliente.
+- El contrato distingue `ONBOARDING_REQUIRED`, `NO_ACCESS` y `READY`. Solo entrega User local mínimo, Memberships con roles B2B y Organizations mínimas; excluye CUSTOMER, PII, identidad Clerk y timestamps. La preferencia solo se devuelve cuando corresponde a una Membership autorizada.
+- `B2bAuthGuard` es la compatibilidad temporal de rutas internas: primero verifica un JWT legacy con el secreto vigente y revalida Membership/rol local; cualquier token que no sea un JWT legacy válido se delega al `ClerkAuthGuard`, que mantiene sesión, selector tenant único y Membership local como autoridad. Los `RolesGuard` de cada dominio siguen decidiendo permisos.
+- La convivencia se aplica a Organizations, Bookings, Professionals, Services, Clients, Invoices y Analytics. No cambia login, registro, password, `/auth/invite`, onboarding/aceptación Clerk, rutas públicas, JWT emitido, Prisma o Supabase.
+- La invitación Clerk ahora recibe una `redirectUrl` configurada por `CLERK_INVITATION_REDIRECT_URL`. El backend valida que sea `http`/`https`, sin credenciales, query ni hash, y no usa fallback. El identificador técnico en metadata sigue siendo solo correlación; tenant, rol e identidad se verifican como en A0.4.
+- Cobertura: unitarias de bootstrap, guard dual y configuración/redirección; E2E de estados, privacidad, tenant, rol/baja local, header duplicado y regresión JWT legacy. API TypeScript, lint y build pasaron; 277 unitarias y 55 E2E finalizaron correctamente, estas últimas en un clúster PostgreSQL temporal separado con base `_test` y rol no privilegiado, eliminado al terminar.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría explícita. No autoriza A0.5-B, retiro legacy, Supabase ni otro módulo.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

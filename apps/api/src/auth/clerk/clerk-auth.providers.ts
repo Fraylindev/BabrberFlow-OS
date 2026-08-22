@@ -1,9 +1,16 @@
 import { Provider } from '@nestjs/common';
 import { ClerkClient, createClerkClient } from '@clerk/backend';
-import { ClerkAuthConfig, loadClerkAuthConfig } from './clerk-auth.config';
+import {
+  ClerkAuthConfig,
+  loadClerkAuthConfig,
+  loadClerkInvitationRedirectUrl,
+} from './clerk-auth.config';
 
 export const CLERK_AUTH_CONFIG = Symbol('CLERK_AUTH_CONFIG');
 export const CLERK_BACKEND_CLIENT = Symbol('CLERK_BACKEND_CLIENT');
+export const CLERK_INVITATION_REDIRECT_URL = Symbol(
+  'CLERK_INVITATION_REDIRECT_URL',
+);
 
 /**
  * Función que, al invocarse, lee el entorno y devuelve la configuración Clerk.
@@ -11,6 +18,7 @@ export const CLERK_BACKEND_CLIENT = Symbol('CLERK_BACKEND_CLIENT');
  * Si las variables no están presentes en ese momento el guard falla cerrado con 401.
  */
 export type ClerkConfigLoader = () => ClerkAuthConfig;
+export type ClerkInvitationRedirectUrlLoader = () => string;
 
 /**
  * Función que, dado un config válido, construye el cliente SDK de Clerk.
@@ -37,6 +45,13 @@ export const clerkAuthConfigProvider: Provider<ClerkConfigLoader> = {
   provide: CLERK_AUTH_CONFIG,
   useFactory: (): ClerkConfigLoader => () => loadClerkAuthConfig(process.env),
 };
+
+export const clerkInvitationRedirectUrlProvider: Provider<ClerkInvitationRedirectUrlLoader> =
+  {
+    provide: CLERK_INVITATION_REDIRECT_URL,
+    useFactory: (): ClerkInvitationRedirectUrlLoader => () =>
+      loadClerkInvitationRedirectUrl(process.env),
+  };
 
 /**
  * Provider de la función creadora del cliente SDK.
