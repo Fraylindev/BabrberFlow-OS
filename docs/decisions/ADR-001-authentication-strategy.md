@@ -266,6 +266,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Decisión fija: nunca se enlaza automáticamente un User existente por coincidencia de correo. Solo se reutiliza por `clerkUserId`; si el correo pertenece a un User no enlazado o a otra identidad Clerk se responde `409` neutro y la transacción no deja escrituras parciales.
 - La aceptación es idempotente para la misma identidad e invitación. Tenant, rol, estado, expiración, concurrencia, colisiones y fallos de Clerk se cubren con pruebas unitarias y E2E PostgreSQL aisladas.
 - El checkpoint no modifica `/auth/invite`, JWT/login/register/password, frontend, Supabase ni cuentas existentes. Tampoco envía invitaciones Clerk reales durante la validación automatizada.
+- QA integrado posterior con Clerk Development: una aceptación real devolvió `201`, repetirla devolvió `200` y PostgreSQL confirmó una sola Membership y un solo Professional. Una segunda invitación controlada fue revocada y su aceptación posterior devolvió `409` neutro sin acceso adicional. La utilidad temporal ignorada fue eliminada y no se conservaron PII, tokens, claves, cookies ni identificadores sensibles.
 - Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría y aprobación explícita antes de continuar.
 
 ## Nota operativa de recuperación local — 2026-08-20

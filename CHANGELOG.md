@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-21 — QA integrado real de Security A0.4
+
+- Se validó el flujo nuevo de invitaciones con sesiones reales de Clerk Development y una cuenta controlada, sin repetir QA de A0.1–A0.3.
+- La primera aceptación devolvió `201`; repetirla con la misma identidad devolvió `200`. PostgreSQL confirmó exactamente una Membership y un Professional, sin duplicados.
+- Una segunda invitación fue creada y revocada de forma controlada; intentar aceptarla después devolvió `409` con mensaje neutro y no concedió acceso adicional.
+- La utilidad temporal estaba ignorada, se eliminó al terminar y no entró en Git. La evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. El QA integrado no equivale a aprobación ni cierre; A0.4 queda pendiente de auditoría explícita.
+
 ## 2026-08-21 — Security A0.4 implementado como candidato
 
 - Se añadió el ciclo tenant-scoped de invitaciones Clerk para Equipo: OWNER/ADMIN gestionan invitaciones de ADMIN, BARBER o RECEPTIONIST; nadie puede invitar como OWNER.

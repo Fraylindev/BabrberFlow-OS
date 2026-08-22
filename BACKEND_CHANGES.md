@@ -20,6 +20,8 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Fallos:** conflictos de identidad, estado, tenant o concurrencia responden de forma neutra; indisponibilidad de Clerk devuelve `503` genérico. La nota/metadata externa contiene solo el ID técnico de la invitación local y nunca rol, tenant o PII adicional.
 - **Auditoría:** CREATE/RESEND/REVOKE/ACCEPT se registran con organización, actor cuando existe, acción y entidad; no se guardan correo, nombre, token, cookie o secreto.
 - **Validación candidata:** Prisma validate/generate, API TypeScript, lint y build en exit `0`; 3 pruebas unitarias y 11 E2E pasaron sobre PostgreSQL temporal estrictamente aislado. No se ejecutó envío real de invitaciones Clerk ni QA de frontend.
+- **QA integrado posterior:** con sesiones reales de Clerk Development, la aceptación inicial respondió `201` y la repetición de la misma identidad respondió `200`. PostgreSQL confirmó una sola Membership y un solo Professional, sin duplicados. Una segunda invitación controlada fue revocada y el intento posterior de aceptación respondió `409` neutro sin crear acceso adicional.
+- **Evidencia segura:** la utilidad local fue temporal, ignorada y eliminada al finalizar. No se conservaron PII, tokens, claves, cookies ni identificadores sensibles y no se modificó frontend productivo.
 - **Estado:** **IMPLEMENTADO / EN REVISIÓN**. No modifica `/auth/invite`, JWT/login/register/password, Supabase ni frontend productivo y no está aprobado.
 
 ---
