@@ -17,6 +17,11 @@ import { ClerkOnboardingService } from './clerk-onboarding.service';
 import { ClerkOnboardingGuard } from './guards/clerk-onboarding.guard';
 import { OrganizationsModule } from '../organizations/organizations.module';
 import { ClerkMeController } from './clerk-me.controller';
+import {
+  TeamInvitationAcceptanceController,
+  TeamInvitationsController,
+} from './team-invitations.controller';
+import { TeamInvitationsService } from './team-invitations.service';
 
 if (!process.env.JWT_SECRET) {
   throw new Error(
@@ -34,7 +39,13 @@ if (!process.env.JWT_SECRET) {
     AuditModule,
     OrganizationsModule,
   ],
-  controllers: [AuthController, ClerkOnboardingController, ClerkMeController],
+  controllers: [
+    AuthController,
+    ClerkOnboardingController,
+    ClerkMeController,
+    TeamInvitationsController,
+    TeamInvitationAcceptanceController,
+  ],
   providers: [
     AuthService,
     TeamService,
@@ -45,6 +56,7 @@ if (!process.env.JWT_SECRET) {
     ClerkAuthGuard,
     ClerkOnboardingService,
     ClerkOnboardingGuard,
+    TeamInvitationsService,
   ],
   exports: [ClerkAuthGuard, ClerkOnboardingGuard, ClerkOnboardingService],
 })

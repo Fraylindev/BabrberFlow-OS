@@ -257,6 +257,17 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - QA integrado real: el propietario confirmó `GET /auth/clerk/me` con una sesión Clerk válida y el selector propio; respondió `200` y la organización coincidió con la ya autorizada. No se repitieron los escenarios de A0.3-A ni se conservaron PII, tokens, claves, cookies o identificadores sensibles. La utilidad temporal ignorada fue eliminada sin entrar en Git.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario.
 
+## Resultado de Security A0.4 — IMPLEMENTADO / EN REVISIÓN
+
+- `TeamInvitation` es la autoridad local tenant-scoped para invitar personal. Conserva actor, rol, expiración, referencia Clerk, opción BARBER/Professional, estado y timestamps; una restricción PostgreSQL impide invitar como `OWNER`, limita el perfil público a BARBER y evita dos invitaciones abiertas para el mismo tenant/correo.
+- OWNER y ADMIN administran invitaciones con una Membership local vigente. Clerk Organizations, metadata cliente, correo o headers no conceden tenant ni rol.
+- Las operaciones externas de crear, reenviar y revocar usan estados intermedios locales y no dejan una transacción PostgreSQL abierta durante llamadas a Clerk. Los fallos externos quedan cerrados y son compensados cuando es posible.
+- La aceptación valida fuera de la transacción una sesión Clerk auténtica, el perfil retornado para el mismo `sub`, correo principal verificado y la invitación externa aceptada. Después bloquea la fila local y persiste en aislamiento `SERIALIZABLE` User nuevo cuando aplica, Membership, Professional BARBER opcional, estado y AuditLog sin PII.
+- Decisión fija: nunca se enlaza automáticamente un User existente por coincidencia de correo. Solo se reutiliza por `clerkUserId`; si el correo pertenece a un User no enlazado o a otra identidad Clerk se responde `409` neutro y la transacción no deja escrituras parciales.
+- La aceptación es idempotente para la misma identidad e invitación. Tenant, rol, estado, expiración, concurrencia, colisiones y fallos de Clerk se cubren con pruebas unitarias y E2E PostgreSQL aisladas.
+- El checkpoint no modifica `/auth/invite`, JWT/login/register/password, frontend, Supabase ni cuentas existentes. Tampoco envía invitaciones Clerk reales durante la validación automatizada.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría y aprobación explícita antes de continuar.
+
 ## Nota operativa de recuperación local — 2026-08-20
 
 - La instancia PostgreSQL nativa tenía las cuatro reglas `host` locales en `trust`. Antes de corregirlas se creó `pg_hba.conf.backup-20260819-234953`; solo esas reglas volvieron a `scram-sha-256` y se verificó una conexión autenticada con contraseña SCRAM.

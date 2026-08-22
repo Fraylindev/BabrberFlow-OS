@@ -8,6 +8,22 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-21 — Security A0.4: invitaciones de Equipo con Clerk
+
+- **Persistencia:** nueva entidad `TeamInvitation`, aislada por `organizationId`, con actor local, rol, expiración, referencia Clerk, opción de perfil público BARBER y estados `CREATING`, `PENDING`, `RESENDING`, `REVOKING`, `ACCEPTED`, `REVOKED`, `EXPIRED` y `FAILED`. PostgreSQL prohíbe `OWNER`, limita el perfil público a `BARBER` y permite una sola invitación abierta por tenant/correo normalizado.
+- **Gestión:** `POST /auth/clerk/invitations`, `GET /auth/clerk/invitations`, `POST /auth/clerk/invitations/:id/resend` y `POST /auth/clerk/invitations/:id/revoke` requieren `ClerkAuthGuard + RolesGuard` y rol local `OWNER` o `ADMIN`. Los IDs son UUID y toda consulta autoritativa incluye la organización del contexto verificado.
+- **Creación:** acepta `email`, rol `ADMIN | BARBER | RECEPTIONIST`, `createPublicProfile` solo para BARBER y expiración de 1 a 30 días (30 por defecto). El listado admite estado, `page` y `limit` (20 por defecto, máximo 100) y devuelve una proyección explícita paginada.
+- **Aceptación:** `POST /auth/clerk/invitations/:id/accept` requiere sesión Clerk verificada y aplica rate limit local. Responde `201` en la primera aceptación y `200` en repetición idempotente; devuelve solo `organizationId`, rol y si se creó Professional.
+- **Identidad:** se reutiliza exclusivamente `User.clerkUserId`. Si no existe, se crea un User sin contraseña solo cuando no hay colisión de correo. Un User local con el mismo correo y enlace nulo o con otro `clerkUserId` produce `409` neutro, sin enlace automático ni escrituras parciales.
+- **Atomicidad:** antes de abrir la transacción se comprueban en Clerk el perfil, correo principal verificado e invitación externa aceptada. La transacción `SERIALIZABLE` bloquea la invitación local y escribe atómicamente User cuando aplica, Membership, Professional BARBER opcional, aceptación y AuditLog sin PII; reintenta de forma acotada conflictos de serialización/unicidad.
+- **Coordinación externa:** crear, reenviar y revocar no mantienen una transacción PostgreSQL durante llamadas a Clerk. Los estados intermedios, la compensación best-effort y la recuperación de transiciones estancadas evitan presentar como completada una operación externa fallida.
+- **Fallos:** conflictos de identidad, estado, tenant o concurrencia responden de forma neutra; indisponibilidad de Clerk devuelve `503` genérico. La nota/metadata externa contiene solo el ID técnico de la invitación local y nunca rol, tenant o PII adicional.
+- **Auditoría:** CREATE/RESEND/REVOKE/ACCEPT se registran con organización, actor cuando existe, acción y entidad; no se guardan correo, nombre, token, cookie o secreto.
+- **Validación candidata:** Prisma validate/generate, API TypeScript, lint y build en exit `0`; 3 pruebas unitarias y 11 E2E pasaron sobre PostgreSQL temporal estrictamente aislado. No se ejecutó envío real de invitaciones Clerk ni QA de frontend.
+- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. No modifica `/auth/invite`, JWT/login/register/password, Supabase ni frontend productivo y no está aprobado.
+
+---
+
 ## 2026-08-21 — Security A0.3-B cerrado: piloto de contexto Clerk
 
 - **Nuevo endpoint:** `GET /auth/clerk/me`, protegido por `ClerkAuthGuard`, `RolesGuard` y `B2B_ROLES` (`OWNER`, `ADMIN`, `RECEPTIONIST`, `BARBER`). `CUSTOMER` recibe `403`.

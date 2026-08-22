@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-21 — Security A0.4 implementado como candidato
+
+- Se añadió el ciclo tenant-scoped de invitaciones Clerk para Equipo: OWNER/ADMIN gestionan invitaciones de ADMIN, BARBER o RECEPTIONIST; nadie puede invitar como OWNER.
+- La aceptación valida primero la identidad e invitación externas y persiste de forma `SERIALIZABLE` e idempotente User nuevo cuando corresponde, Membership, Professional BARBER opcional, estado y auditoría sin PII.
+- Se aplicó la decisión de seguridad de no enlazar jamás por coincidencia de correo. Cualquier correo local ya ocupado —sin enlace o enlazado a otra identidad Clerk— devuelve `409` neutro sin filas parciales.
+- Las llamadas a Clerk se coordinan mediante estados locales sin mantener transacciones de base abiertas durante la red. Migración, constraints y pruebas cubren aislamiento, roles, reenvío/revocación, expiración, fallos externos, rollback y concurrencia.
+- Exit `0`: Prisma validate/generate, API TypeScript, lint y build; 3/3 unitarias y 11/11 E2E nuevas sobre PostgreSQL temporal aislado. No hubo cambios de frontend ni QA con invitaciones reales.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. A0.4 no está aprobado y el siguiente paso es su auditoría.
+
 ## 2026-08-21 — Security A0.3-B cerrado y aprobado
 
 - Se implementó el piloto backend `GET /auth/clerk/me` con `ClerkAuthGuard + RolesGuard + B2B_ROLES`, Membership/rol local y reutilización directa de `OrganizationsService.findMine()`; `GET /organizations/mine` y el flujo JWT legacy no cambiaron.
