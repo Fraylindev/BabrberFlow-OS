@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-21 — Security A0.4 cerrado y aprobado
+
+- El propietario aprobó explícitamente Security A0.4 después de la auditoría y del QA integrado real ya registrado.
+- Se preserva la evidencia: aceptación inicial `201`, repetición idempotente `200`, rechazo neutro `409` tras revocación y una sola Membership y un solo Professional en PostgreSQL, sin duplicados.
+- Estado vigente: **CERRADO / APROBADO**. El siguiente alcance se limita al análisis y diseño de Security A0.5; no autoriza implementación, Supabase ni otro módulo.
+
 ## 2026-08-21 — QA integrado real de Security A0.4
 
 - Se validó el flujo nuevo de invitaciones con sesiones reales de Clerk Development y una cuenta controlada, sin repetir QA de A0.1–A0.3.

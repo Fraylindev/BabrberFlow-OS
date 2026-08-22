@@ -257,7 +257,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - QA integrado real: el propietario confirmó `GET /auth/clerk/me` con una sesión Clerk válida y el selector propio; respondió `200` y la organización coincidió con la ya autorizada. No se repitieron los escenarios de A0.3-A ni se conservaron PII, tokens, claves, cookies o identificadores sensibles. La utilidad temporal ignorada fue eliminada sin entrar en Git.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario.
 
-## Resultado de Security A0.4 — IMPLEMENTADO / EN REVISIÓN
+## Resultado de Security A0.4 — CERRADO / APROBADO
 
 - `TeamInvitation` es la autoridad local tenant-scoped para invitar personal. Conserva actor, rol, expiración, referencia Clerk, opción BARBER/Professional, estado y timestamps; una restricción PostgreSQL impide invitar como `OWNER`, limita el perfil público a BARBER y evita dos invitaciones abiertas para el mismo tenant/correo.
 - OWNER y ADMIN administran invitaciones con una Membership local vigente. Clerk Organizations, metadata cliente, correo o headers no conceden tenant ni rol.
@@ -267,7 +267,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - La aceptación es idempotente para la misma identidad e invitación. Tenant, rol, estado, expiración, concurrencia, colisiones y fallos de Clerk se cubren con pruebas unitarias y E2E PostgreSQL aisladas.
 - El checkpoint no modifica `/auth/invite`, JWT/login/register/password, frontend, Supabase ni cuentas existentes. Tampoco envía invitaciones Clerk reales durante la validación automatizada.
 - QA integrado posterior con Clerk Development: una aceptación real devolvió `201`, repetirla devolvió `200` y PostgreSQL confirmó una sola Membership y un solo Professional. Una segunda invitación controlada fue revocada y su aceptación posterior devolvió `409` neutro sin acceso adicional. La utilidad temporal ignorada fue eliminada y no se conservaron PII, tokens, claves, cookies ni identificadores sensibles.
-- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría y aprobación explícita antes de continuar.
+- Estado: **CERRADO / APROBADO** por decisión explícita del propietario tras auditoría y QA integrado real. Security A0.5 queda limitado a análisis y diseño hasta una autorización posterior de implementación.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

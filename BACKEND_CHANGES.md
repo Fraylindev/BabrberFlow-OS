@@ -8,7 +8,7 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
-## 2026-08-21 — Security A0.4: invitaciones de Equipo con Clerk
+## 2026-08-21 — Security A0.4 cerrado: invitaciones de Equipo con Clerk
 
 - **Persistencia:** nueva entidad `TeamInvitation`, aislada por `organizationId`, con actor local, rol, expiración, referencia Clerk, opción de perfil público BARBER y estados `CREATING`, `PENDING`, `RESENDING`, `REVOKING`, `ACCEPTED`, `REVOKED`, `EXPIRED` y `FAILED`. PostgreSQL prohíbe `OWNER`, limita el perfil público a `BARBER` y permite una sola invitación abierta por tenant/correo normalizado.
 - **Gestión:** `POST /auth/clerk/invitations`, `GET /auth/clerk/invitations`, `POST /auth/clerk/invitations/:id/resend` y `POST /auth/clerk/invitations/:id/revoke` requieren `ClerkAuthGuard + RolesGuard` y rol local `OWNER` o `ADMIN`. Los IDs son UUID y toda consulta autoritativa incluye la organización del contexto verificado.
@@ -22,7 +22,7 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Validación candidata:** Prisma validate/generate, API TypeScript, lint y build en exit `0`; 3 pruebas unitarias y 11 E2E pasaron sobre PostgreSQL temporal estrictamente aislado. No se ejecutó envío real de invitaciones Clerk ni QA de frontend.
 - **QA integrado posterior:** con sesiones reales de Clerk Development, la aceptación inicial respondió `201` y la repetición de la misma identidad respondió `200`. PostgreSQL confirmó una sola Membership y un solo Professional, sin duplicados. Una segunda invitación controlada fue revocada y el intento posterior de aceptación respondió `409` neutro sin crear acceso adicional.
 - **Evidencia segura:** la utilidad local fue temporal, ignorada y eliminada al finalizar. No se conservaron PII, tokens, claves, cookies ni identificadores sensibles y no se modificó frontend productivo.
-- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. No modifica `/auth/invite`, JWT/login/register/password, Supabase ni frontend productivo y no está aprobado.
+- **Estado:** **CERRADO / APROBADO** por decisión explícita del propietario. No modifica `/auth/invite`, JWT/login/register/password, Supabase ni frontend productivo.
 
 ---
 
