@@ -1,6 +1,6 @@
 # ADR-001 — Identidad con Clerk y persistencia PostgreSQL en Supabase
 
-- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B, A0.4 y Security A0.5 completo (A, B, C y D) CERRADOS / APROBADOS; Security A0.1, A0.2 y A0.6-A implementados / en revisión**
+- Estado: **Security A0-D, A0.3-H, A0.3-A, A0.3-B, A0.4, Security A0.5 completo (A, B, C y D) y A0.6-A CERRADOS / APROBADOS; Security A0.1 y A0.2 implementados / en revisión**
 - Fecha de decisión: 2026-08-14
 - Checkpoint de diseño aprobado: `66e1c094b47e8bc7265803c122d851125023ce94`.
 
@@ -171,7 +171,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 4. **Security A0.4 — invitaciones:** invitación pendiente local, aceptación Clerk y Membership/Professional atómicos.
 5. **Security A0.5-A — preparación backend:** bootstrap de sesión, compatibilidad temporal JWT/Clerk para rutas B2B y redirección segura de invitaciones.
 6. **Security A0.5-B — frontend de identidad (cerrado / aprobado):** Clerk login/register/recovery/logout, sesión efímera para API, bootstrap local y retiro del JWT propio de `localStorage`.
-7. **Security A0.6-A — CUSTOMER backend (implementado / en revisión):** vínculo explícito posterior al booking público, sin Membership CUSTOMER ni enlace por correo.
+7. **Security A0.6-A — CUSTOMER backend (cerrado / aprobado):** vínculo explícito posterior al booking público, sin Membership CUSTOMER ni enlace por correo.
 8. **Security A0.6-B/C/D — continuidad CUSTOMER:** permanecen sin autorización; conservar contrato público y rollback legacy hasta definir cada checkpoint.
 9. **Security A0.7 — retiro legado:** passwords/JWT/endpoints/secrets propios, solo tras ventana de rollback.
 10. **Data D0.1 — Supabase preparado:** proyecto QA, roles, SSL, conexión y ensayo vacío; sin migrar identidad.
@@ -293,7 +293,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Web TypeScript, lint y build finalizaron con exit `0`. QA en navegador con sesiones Clerk Development verificó BARBER sin acceso a Equipo, OWNER con gestión de invitaciones, login, recuperación visible, logout, registro visible sin crear cuentas y layouts de 390 px y 1440 px sin overflow. La consola no mostró errores de aplicación; únicamente el aviso esperado de claves Development. No se crearon identidades ni se enviaron invitaciones durante este QA.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario. El cierre comprende Security A0.5 completo, incluidos los subalcances A, B, C y D; las etiquetas C/D no agregan en este ADR contratos o evidencia distintos de los ya documentados. Ese cierre no autorizó A0.6; la autorización posterior se limita al resultado A0.6-A documentado a continuación.
 
-## Resultado de Security A0.6-A — IMPLEMENTADO / EN REVISIÓN
+## Resultado de Security A0.6-A — CERRADO / APROBADO
 
 - `Client.userId` introduce el vínculo B2C explícito hacia `User`, nullable y único por tenant. Es deliberadamente independiente de Membership: reclamar una reserva no concede acceso B2B ni crea rol CUSTOMER.
 - `POST /auth/clerk/customer/claims` usa la sesión Clerk verificada existente y acepta solo el UUID de Booking y el slug normalizado como localizadores. El backend obtiene el perfil y correo principal verificado desde Clerk; no confía en identidad, correo, rol o tenant enviados por el navegador.
@@ -302,7 +302,8 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - El alta B2C opcional crea `User` con `password: null`, sin `lastOrganizationId` y sin Membership. User, vínculo Client y AuditLog `LINK Client` sin PII quedan en la misma transacción.
 - El endpoint devuelve únicamente `{ claimed: true }`; un booking de otro tenant es indistinguible de uno inexistente. El contrato público legacy, la creación actual de Booking/Client y la provisión password fail-open no cambian en A0.6-A.
 - Pruebas unitarias y E2E PostgreSQL aisladas cubren guard/controlador, alta sin Membership, idempotencia, concurrencia, ganador único, colisión de CUSTOMER legacy, privacidad tenant y auditoría. El clúster temporal usa base `_test` y propietario no privilegiado, y se elimina al terminar.
-- Estado: **IMPLEMENTADO / EN REVISIÓN**. Requiere auditoría explícita; A0.6-B/C/D y cualquier otro alcance permanecen bloqueados.
+- Evidencia aprobada: Prisma validate/generate, API TypeScript/lint/build, 286 unitarias y 5 E2E PostgreSQL aisladas terminaron con exit `0`; el clúster temporal fue eliminado. La evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles.
+- Estado: **CERRADO / APROBADO** por decisión explícita del propietario sobre `cbd7b8762b24ddc6802051e98ebb128d53f5f99e`. A0.6-B queda solo para análisis y plan; A0.6-C/D y cualquier otro alcance permanecen bloqueados.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

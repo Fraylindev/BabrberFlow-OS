@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-22 — Security A0.6-A cerrado y aprobado
+
+- El propietario aprobó y cerró explícitamente el checkpoint backend A0.6-A después de revisar la migración, el contrato de reclamación, la atomicidad, la política anti-enlace, la privacidad tenant y la evidencia automatizada ya registrada.
+- Se preserva la evidencia sin PII: Prisma, TypeScript, lint y build finalizaron con exit `0`; 286 unitarias y 5 E2E PostgreSQL aisladas pasaron, y el clúster temporal fue eliminado.
+- Este cierre no modifica funcionalidad. A0.6-B queda limitado a análisis y planificación; A0.6-C/D y otros alcances permanecen bloqueados.
+
 ## 2026-08-22 — Security A0.6-A backend implementado como candidato
 
 - Se añadió el vínculo B2C opcional `Client.userId`, separado de Membership y único por organización, sin backfill ni modificación de cuentas existentes.

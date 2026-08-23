@@ -125,7 +125,7 @@ Security A0.5-B — Frontend de identidad Clerk: **CERRADO / APROBADO** por deci
 
 Security A0.5 completo — subalcances A, B, C y D: **CERRADO / APROBADO** por decisión explícita del propietario. Las etiquetas técnicas conservadas en este documento describen A, B y el correctivo final publicado; el cierre A–D no añade comportamiento ni evidencia distintos de los ya registrados y auditados.
 
-Security A0.6-A — Base backend B2C posterior a reserva: **IMPLEMENTADO / EN REVISIÓN**. `Client.userId` es nullable y enlaza explícitamente una identidad global sin crear `Membership CUSTOMER`; una restricción única `[organizationId, userId]` permite como máximo un Client por identidad y tenant sin alterar los registros existentes. `POST /auth/clerk/customer/claims` exige sesión Clerk válida y solo acepta `bookingId` y `organizationSlug` como localizadores. La reserva y el Client se resuelven y bloquean con aislamiento tenant-scoped dentro de una transacción PostgreSQL `SERIALIZABLE`; la primera reclamación devuelve `201`, la repetición de la misma identidad `200`, y colisiones o identidades distintas reciben `409` genérico sin escrituras parciales. El correo verificado solo comprueba que la persona reclama su registro: nunca enlaza un User local preexistente por coincidencia, incluidos CUSTOMER legacy. El alta opcional crea un User Clerk sin password ni Membership y registra `LINK Client` atómicamente sin PII. El contrato público legacy, el password y el flujo actual de reserva permanecen sin cambios. Pruebas unitarias y E2E PostgreSQL aisladas cubren idempotencia, concurrencia, colisión legacy, privacidad tenant y ausencia de Membership. A0.6-B/C/D no están autorizados.
+Security A0.6-A — Base backend B2C posterior a reserva: **CERRADO / APROBADO** por decisión explícita del propietario sobre `cbd7b8762b24ddc6802051e98ebb128d53f5f99e`. `Client.userId` es nullable y enlaza explícitamente una identidad global sin crear `Membership CUSTOMER`; una restricción única `[organizationId, userId]` permite como máximo un Client por identidad y tenant sin alterar los registros existentes. `POST /auth/clerk/customer/claims` exige sesión Clerk válida y solo acepta `bookingId` y `organizationSlug` como localizadores. La reserva y el Client se resuelven y bloquean con aislamiento tenant-scoped dentro de una transacción PostgreSQL `SERIALIZABLE`; la primera reclamación devuelve `201`, la repetición de la misma identidad `200`, y colisiones o identidades distintas reciben `409` genérico sin escrituras parciales. El correo verificado solo comprueba que la persona reclama su registro: nunca enlaza un User local preexistente por coincidencia, incluidos CUSTOMER legacy. El alta opcional crea un User Clerk sin password ni Membership y registra `LINK Client` atómicamente sin PII. El contrato público legacy, el password y el flujo actual de reserva permanecen sin cambios. La evidencia aprobada incluye Prisma validate/generate, API TypeScript/lint/build, 286 unitarias y 5 E2E PostgreSQL aisladas sobre idempotencia, concurrencia, colisión legacy, privacidad tenant y ausencia de Membership, todas con exit `0`. El clúster temporal se eliminó al terminar. A0.6-B/C/D no están implementados.
 
 ## 5. Decisiones activas de dominio
 
@@ -178,7 +178,7 @@ Security A0.6-A — Base backend B2C posterior a reserva: **IMPLEMENTADO / EN RE
 
 - Clientes inactivos se excluyen por defecto; reservas internas no pueden usarlos.
 - Una reserva pública válida puede reactivar al cliente dentro de la misma transacción.
-- No existe todavía vínculo `Client ↔ User CUSTOMER`; sigue pendiente para historial/autoservicio B2C.
+- A0.6-A incorpora el vínculo backend explícito `Client.userId` sin Membership CUSTOMER. La entrada desde el flujo público y el autoservicio B2C siguen pendientes de A0.6-B/C/D.
 - Respuestas públicas y proyecciones BARBER minimizan PII y nunca exponen notas internas.
 
 ## 6. Proceso vigente
@@ -200,7 +200,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - Clerk/Supabase Free no satisfacen el gate operativo de producción real: Clerk Hobby no ofrece MFA productivo y Supabase Free carece de backups automáticos, puede pausarse y limita la base a 500 MB.
 - Frontend general y A2 de Profesionales siguen pendientes de aprobación; el módulo no puede cerrar todavía.
 - `Organization.timeZone` existe en persistencia/contratos de disponibilidad, pero todavía no hay UI/endpoint autorizado de configuración general.
-- El vínculo B2C `Client ↔ User CUSTOMER` no está implementado.
+- El vínculo backend B2C de A0.6-A está aprobado; todavía no existe el recorrido público posterior a reserva ni el historial/autoservicio del cliente.
 - Servicios, imágenes y Cloudinary requieren auditoría y decisiones propias; no adelantar.
 - Configuración productiva de CORS, URLs y secretos depende del entorno y debe validarse antes de despliegue.
 - El guard Clerk consulta el estado autoritativo de sesión en Clerk por petición; latencia, disponibilidad, cuotas y política de fallo cerrado deben medirse antes de aplicarlo masivamente.
@@ -209,10 +209,11 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 ## 8. Próximo paso autorizado
 
 1. Security A0.5 completo (A, B, C y D) está **CERRADO / APROBADO** por decisión explícita del propietario.
-2. Auditar Security A0.6-A, que queda **IMPLEMENTADO / EN REVISIÓN** como checkpoint backend candidato.
-3. A0.6-B, A0.6-C, A0.6-D, Supabase y cualquier otro alcance permanecen bloqueados hasta autorización explícita.
-4. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
-5. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.
+2. Security A0.6-A está **CERRADO / APROBADO** por decisión explícita del propietario.
+3. Preparar únicamente el análisis y plan de Security A0.6-B; su implementación permanece **PENDIENTE DE AUTORIZACIÓN**.
+4. A0.6-C, A0.6-D, Supabase y cualquier otro alcance permanecen bloqueados hasta autorización explícita.
+5. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
+6. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.
 
 ## 9. Política de lenguaje y evidencia
 

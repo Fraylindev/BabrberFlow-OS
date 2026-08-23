@@ -8,7 +8,7 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
-## 2026-08-22 — Security A0.6-A: vínculo B2C posterior a reserva
+## 2026-08-22 — Security A0.6-A cerrado: vínculo B2C posterior a reserva
 
 - **Persistencia aditiva:** `Client.userId` es nullable, referencia `User` con `ON DELETE SET NULL` y tiene unicidad compuesta por `organizationId + userId`. No hay backfill, no se modifican Clients existentes y no se crea `Membership CUSTOMER`.
 - **Nuevo contrato:** `POST /auth/clerk/customer/claims`, protegido por `ClerkOnboardingGuard` y rate limit, acepta exclusivamente `{ bookingId: UUID, organizationSlug: string }`. El navegador no aporta User, correo, tenant ID, rol ni autoridad.
@@ -17,7 +17,8 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 - **Anti-enlace:** la coincidencia de correo nunca enlaza un User local existente, incluso con rol CUSTOMER legacy. La colisión no crea User, Membership, vínculo ni AuditLog. El correo solo debe coincidir con el Client de la reserva para demostrar la reclamación.
 - **Privacidad:** la respuesta no expone Client, Booking, User, correo, tenant ni timestamps. AuditLog registra solo `LINK`, `Client`, IDs internos tenant-scoped y actor local, sin PII.
 - **Compatibilidad:** no cambia el contrato público legacy, la creación de Booking/Client, la cuenta/password fail-open ni rutas JWT. A0.6-B/C/D quedan fuera de alcance.
-- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. Candidato a auditoría; no está aprobado ni cerrado.
+- **Evidencia aprobada:** Prisma validate/generate, API TypeScript/lint/build, 286 unitarias y 5 E2E PostgreSQL aisladas finalizaron con exit `0`. Las E2E verificaron idempotencia, concurrencia, ganador único, colisión CUSTOMER legacy sin escrituras y privacidad tenant; el clúster temporal se eliminó al terminar.
+- **Estado:** **CERRADO / APROBADO** por decisión explícita del propietario sobre `cbd7b8762b24ddc6802051e98ebb128d53f5f99e`. A0.6-B/C/D continúan sin implementación.
 
 ## 2026-08-22 — Security A0.5 completo cerrado y aprobado
 
