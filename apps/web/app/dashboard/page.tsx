@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { api, AnalyticsDashboard, Booking, Professional } from "@/lib/api";
 import { formatMoney } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -15,6 +15,12 @@ import { TrendStat } from "@/components/ui/TrendStat";
 import { Reveal } from "@/components/ui/Reveal";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/lib/auth-context";
+import {
+  INITIAL_DASHBOARD_SUMMARY_STATE,
+  dashboardSummaryForScope,
+  dashboardSummaryReducer,
+  dashboardSummaryScopeKey,
+} from "@/lib/dashboard-summary-state";
 
 function isToday(dateStr: string) {
   const d = new Date(dateStr);
@@ -47,32 +53,72 @@ export default function DashboardHome() {
   const canSeeAnalytics = user?.role !== "BARBER";
   const canCreateClient = user?.role !== "BARBER";
   const canCreateCatalog = user?.role === "OWNER" || user?.role === "ADMIN";
+  const scopeKey = dashboardSummaryScopeKey(user);
+  const requestIdRef = useRef(0);
+  const [summaryState, dispatchSummary] = useReducer(
+    dashboardSummaryReducer,
+    INITIAL_DASHBOARD_SUMMARY_STATE,
+  );
 
-  const [bookings, setBookings] = useState<Booking[] | null>(null);
-  const [professionals, setProfessionals] = useState<Professional[] | null>(null);
-  const [analytics, setAnalytics] = useState<AnalyticsDashboard | null>(null);
-  const [nextBookingId, setNextBookingId] = useState<string | undefined>(undefined);
-  const [error, setError] = useState<string | null>(null);
+  // Nunca renderizar datos cuyo alcance no coincida con el contexto actual.
+  // Esto los oculta en el mismo render del cambio, antes de que corra el efecto
+  // que inicia la carga nueva.
+  const currentSummary = dashboardSummaryForScope(summaryState, scopeKey);
+  const bookings = currentSummary?.data?.bookings ?? null;
+  const professionals = currentSummary?.data?.professionals ?? null;
+  const analytics = currentSummary?.data?.analytics ?? null;
+  const nextBookingId = currentSummary?.data?.nextBookingId;
+  const error = currentSummary?.error ?? null;
 
   useEffect(() => {
+    const requestId = ++requestIdRef.current;
+    if (!scopeKey) {
+      dispatchSummary({ type: "reset", requestId });
+      return;
+    }
+
+    let active = true;
+    dispatchSummary({ type: "start", scopeKey, requestId });
+
     Promise.all([
       api.get<Booking[]>("/bookings"),
       api.get<Professional[]>("/professionals"),
       canSeeAnalytics ? api.get<AnalyticsDashboard>("/analytics/dashboard") : Promise.resolve(null),
     ])
       .then(([b, p, a]) => {
-        setBookings(b);
-        setProfessionals(p);
-        setAnalytics(a);
+        if (!active) return;
         const now = Date.now();
         const todayList = b
           .filter((x) => isToday(x.startTime))
           .sort((x, y) => x.startTime.localeCompare(y.startTime));
-        setNextBookingId(todayList.find((x) => new Date(x.startTime).getTime() >= now)?.id);
+        dispatchSummary({
+          type: "success",
+          scopeKey,
+          requestId,
+          data: {
+            bookings: b,
+            professionals: p,
+            analytics: a,
+            nextBookingId: todayList.find(
+              (x) => new Date(x.startTime).getTime() >= now,
+            )?.id,
+          },
+        });
       })
-      .catch(() => setError("No pudimos cargar el resumen. Intenta recargar."));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      .catch(() => {
+        if (!active) return;
+        dispatchSummary({
+          type: "error",
+          scopeKey,
+          requestId,
+          message: "No pudimos cargar el resumen. Intenta recargar.",
+        });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [canSeeAnalytics, scopeKey]);
 
   const loading = bookings === null || professionals === null;
   const todayBookings = (bookings || [])

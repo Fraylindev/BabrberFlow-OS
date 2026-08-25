@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-22. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-24. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -84,6 +84,8 @@ Gobierno y estándares:
 | 4 | Servicios | **NO INICIADO en el ciclo modular vigente** | No autorizado mientras Profesionales siga abierto |
 | 5–8 | Facturación, Equipo, Configuración, Analytics | **PENDIENTES** | Seguir orden modular y auditoría previa |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
+
+Correctivo transversal de aislamiento del Resumen: **IMPLEMENTADO / EN REVISIÓN**. El estado visible queda ligado a una clave de alcance `usuario + organización + rol`, se vacía en el mismo render en que cambia ese contexto y solo acepta respuestas cuyo alcance e identificador de solicitud sigan vigentes. Las respuestas tardías del tenant anterior se descartan; la limpieza existente de React Query se conserva. El QA real cubrió `OWNER → BARBER → OWNER` en escritorio y 390×844, verificó la limpieza inmediata y la carga del tenant nuevo sin métricas, reservas ni profesionales obsoletos, y no registró errores de aplicación en consola. Las pruebas específicas cubren además respuestas tardías y el ciclo `A → B → A`. Este correctivo no descongela ni aprueba el módulo, no altera Facturación, A0.6, Clerk, backend, Prisma o contratos API, y no requiere cambio de ADR.
 
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 

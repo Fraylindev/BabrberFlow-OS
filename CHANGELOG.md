@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-24 — Correctivo de aislamiento del Resumen candidato
+
+- El Resumen vincula su estado remoto a `usuario + organización + rol`, oculta los datos anteriores inmediatamente al cambiar el contexto y descarta respuestas tardías por alcance e identificador de solicitud. Se conserva la limpieza vigente de React Query.
+- Se añadieron cinco pruebas de regresión para cambio de tenant/rol, respuesta tardía y ciclo `A → B → A`. Web TypeScript, lint, build, pruebas del correctivo y regresión de rutas de autenticación finalizaron con exit `0`.
+- El QA real con una identidad de dos organizaciones y roles `OWNER`/`BARBER` pasó en escritorio y 390×844: cada cambio cargó el tenant nuevo sin métricas, reservas ni profesionales obsoletos y sin errores de aplicación en consola. La membresía adicional fue un fixture local autorizado y no forma parte de Git.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. El Resumen continúa congelado y no aprobado; no se modificaron Facturación, A0.6, Clerk, backend, Prisma, contratos API ni ADR.
+
 ## 2026-08-22 — Security A0.6-A cerrado y aprobado
 
 - El propietario aprobó y cerró explícitamente el checkpoint backend A0.6-A después de revisar la migración, el contrato de reclamación, la atomicidad, la política anti-enlace, la privacidad tenant y la evidencia automatizada ya registrada.
