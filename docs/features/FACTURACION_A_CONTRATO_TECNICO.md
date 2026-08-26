@@ -1,13 +1,15 @@
-# Facturación-A — contrato técnico propuesto
+# Facturación-A — contrato técnico aprobado
 
-Estado: **PLAN TÉCNICO / PENDIENTE DE APROBACIÓN PARA IMPLEMENTAR**
+Estado: **IMPLEMENTADO / EN REVISIÓN**
+
+Etapa: **Backend**
 
 Fecha: 2026-08-25
 
-Checkpoint base: `2ffe54fa7062f2630afc21d18106880020cc58c4`
+Contrato aprobado: `2d66d7c301de6dfc69f2cead94356ed2e7bd95f1`
 Rama autorizada: `ai/antigravity-qa`
 
-Este documento completa la definición de producto y propone el contrato de arquitectura y seguridad de Facturación-A. No autoriza implementación, migración, frontend ni despliegue.
+Este documento define el contrato de producto, arquitectura y seguridad implementado por Facturación-A Backend. El checkpoint continúa pendiente de auditoría y aprobación; no autoriza frontend ni despliegue aislado.
 
 ## 1. Resultado de producto
 
@@ -391,6 +393,15 @@ Después de aprobación explícita del backend: loading, empty, error, pending, 
 
 ## 18. Gates y siguiente autorización
 
-Gate 1 queda definido por las decisiones del propietario. Gate 2 permanece **PROPUESTO / PENDIENTE DE APROBACIÓN** hasta auditar este documento.
+Gate 1 y Gate 2 fueron aprobados por el propietario al autorizar Facturación-A Backend. Gate 3 queda **IMPLEMENTADO / EN REVISIÓN** como checkpoint candidato.
 
-Para iniciar código se requiere autorización explícita de **Facturación-A Backend** sobre este contrato. Esa autorización no incluye frontend, A0.6, Clerk, Supabase, reembolsos, anulaciones, comisiones ni integraciones de pago.
+Para cerrar el backend se requiere auditoría y aprobación explícita del propietario. Frontend exige una autorización posterior independiente. Continúan fuera de alcance A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones e integraciones de pago.
+
+## 19. Evidencia del checkpoint backend
+
+- migración versionada fail-closed, validada sobre una Invoice legacy convertible y un Payment legacy bloqueante;
+- Prisma format/validate/generate, TypeScript, lint y build en exit `0`;
+- 305 pruebas unitarias aprobadas; 11 integraciones opt-in omitidas por diseño;
+- 78/78 E2E aprobadas sobre PostgreSQL temporal separado, base `_test` y rol propietario sin privilegios globales;
+- QA backend integrado dentro de la E2E: OWNER, ADMIN, RECEPTIONIST, dos BARBER vinculados, BARBER sin vínculo y CUSTOMER; dos tenants; cambio de rol/tenant para una misma identidad; emisión/cobro idempotentes y concurrentes; IDOR; mínima exposición; auditoría; rollback y Analytics por `paidAt`;
+- frontend, A0.6-B, Clerk, Supabase y demás no-alcances permanecieron intactos.

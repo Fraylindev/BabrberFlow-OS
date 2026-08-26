@@ -27,7 +27,8 @@
 
 - `GalleryImage`: contenido asociado a Organization; su API/almacenamiento no está autorizado.
 - `AuditLog`: guarda organización, actor, acción, entidad e ID sin relación dura a User; no debe contener PII o notas.
-- `Payment` e `Invoice`: modelos separados de Booking. Su presencia en Prisma no significa que el módulo de Facturación esté aprobado o completo.
+- `Invoice`: registro interno inmutable, único por Booking completada y tenant-consistente. Conserva el snapshot positivo `Decimal(65,2)` del precio del Service y moneda `DOP`; su estado API se deriva de la existencia de Payment.
+- `Payment`: cobro completo único por Invoice. Conserva método, fecha real asignada por servidor y actor local denormalizado; no duplica importe, Booking ni estado.
 - `Notification`: registro con `organizationId` y `userId` opcional; debe auditarse en su módulo antes de asumir contratos o relaciones.
 
 ## Invariantes
@@ -35,4 +36,6 @@
 - Todo dato de negocio debe aislarse por `organizationId` en consultas y contratos.
 - Relaciones sin clave compuesta tenant-scoped requieren que el servicio valide la organización de todos los recursos en la operación autoritativa.
 - No usar hard-delete para datos operativos o financieros sin una decisión explícita.
+- Booking–Invoice–Payment comparten `organizationId` mediante claves compuestas; emisión y cobro son transacciones serializables, idempotentes y con AuditLog fail-closed sin PII.
+- Analytics atribuye ingresos por `Payment.paidAt`, nunca por la fecha de emisión de Invoice.
 - Los enums y defaults se leen del schema vigente; este mapa no los redefine.

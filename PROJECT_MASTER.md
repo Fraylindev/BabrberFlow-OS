@@ -58,7 +58,7 @@ Gobierno y estándares:
 - Todo dato de negocio debe aislarse por `organizationId` en la consulta autoritativa.
 - Guards y roles backend son el límite real; la UI solo representa permisos.
 - Recurso ajeno e inexistente comparten respuesta cuando revelar existencia sería un riesgo.
-- AuditLog es fail-open en los flujos donde ya se adoptó y no debe guardar PII.
+- AuditLog es fail-open en los flujos donde ya se adoptó; las mutaciones financieras de Facturación-A son la excepción contractual fail-closed y transaccional. Ningún evento debe guardar PII.
 - Las rutas internas B2B aceptan temporalmente JWT legacy o Clerk mediante `B2bAuthGuard`; en ambos casos NestJS vuelve a resolver Membership y rol locales. Los endpoints legacy permanecen como rollback backend, pero la web A0.5-B ya no los consume.
 - La decisión aprobada es usar Clerk para identidad/sesiones y NestJS + Membership local para autorización. [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) define el diseño y el avance incremental de Security A0.
 - Prisma se mantendrá sobre PostgreSQL y la base se trasladará a Supabase en checkpoints separados de la migración Clerk. No se usará Supabase Auth.
@@ -82,12 +82,14 @@ Gobierno y estándares:
 | 3 | Profesionales A2 Frontend | **IMPLEMENTADO / EN REVISIÓN** | Candidato `75b35f7f6fdd69a18e3fcede8fcaf4f39e57f06b` |
 | 3 | Módulo Profesionales | **NO CERRADO / NO APROBADO** | Pendiente de auditoría y aprobación frontend |
 | 4 | Servicios | **NO INICIADO en el ciclo modular vigente** | No autorizado mientras Profesionales siga abierto |
-| 5–8 | Facturación, Equipo, Configuración, Analytics | **PENDIENTES** | Seguir orden modular y auditoría previa |
+| 5 | Facturación-A Backend | **IMPLEMENTADO / EN REVISIÓN** | Contrato interno, migración, Invoice/Payment, permisos, Analytics y QA backend; pendiente de auditoría |
+| 5 | Facturación Frontend | **NO INICIADO / NO AUTORIZADO** | Requiere aprobación explícita del backend |
+| 6–8 | Equipo, Configuración, Analytics modular | **PENDIENTES** | No iniciar sin autorización propia |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
 
 Correctivo transversal de aislamiento del Resumen: **CERRADO / APROBADO** por decisión explícita del propietario sobre `3235501956050e284d84d9aa306b2653cc07003d`. El estado visible queda ligado a una clave de alcance `usuario + organización + rol`, se vacía en el mismo render en que cambia ese contexto y solo acepta respuestas cuyo alcance e identificador de solicitud sigan vigentes. Las respuestas tardías del tenant anterior se descartan; la limpieza existente de React Query se conserva. El QA real cubrió `OWNER → BARBER → OWNER` en escritorio y 390×844, verificó la limpieza inmediata y la carga del tenant nuevo sin métricas, reservas ni profesionales obsoletos, y no registró errores de aplicación en consola. Las pruebas específicas cubren además respuestas tardías y el ciclo `A → B → A`. Este cierre aprueba únicamente el correctivo transversal: el módulo Resumen permanece congelado y no implica cambios ni aprobación de Facturación, A0.6, Clerk, backend, Prisma, contratos API o ADR.
 
-Facturación-A: **PLAN TÉCNICO / PENDIENTE DE APROBACIÓN PARA IMPLEMENTAR**. El propietario definió Facturación como registro interno no fiscal, Invoice solo para Booking completada, importe server-side desde el precio de Service al emitir, Payment completo único con método/fecha/actor, Analytics por fecha real de pago, respuestas mínimas/paginadas y alcance propio para BARBER vinculado. El contrato propuesto, migración, invariantes, endpoints, permisos, IDOR, concurrencia, auditoría, pruebas y QA están en [`docs/features/FACTURACION_A_CONTRATO_TECNICO.md`](docs/features/FACTURACION_A_CONTRATO_TECNICO.md). No existe autorización de código, frontend, A0.6, Clerk, Prisma, Supabase o despliegue.
+Facturación-A Backend: **IMPLEMENTADO / EN REVISIÓN**. Implementa el contrato aprobado en [`docs/features/FACTURACION_A_CONTRATO_TECNICO.md`](docs/features/FACTURACION_A_CONTRATO_TECNICO.md) y la decisión [`ADR-002`](docs/decisions/ADR-002-facturacion-interna-inmutable.md): Invoice interna única e inmutable para Booking completada, snapshot server-side `DOP`, Payment completo único con método/fecha/actor, aislamiento tenant/ownership de BARBER, respuestas mínimas paginadas, auditoría financiera transaccional y Analytics por `Payment.paidAt`. La migración falla cerrada ante datos legacy no reconciliables. Prisma, TypeScript, lint y build pasaron; 305 unitarias y 78/78 E2E PostgreSQL aisladas aprobaron. El QA backend integrado cubrió OWNER, ADMIN, RECEPTIONIST, dos BARBER vinculados, BARBER sin vínculo, CUSTOMER, dos tenants, cambio de rol/tenant, concurrencia, IDOR, mínima exposición y rollback. El checkpoint no está aprobado ni cerrado y no autoriza frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones o despliegue aislado.
 
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 
@@ -138,6 +140,9 @@ Security A0.6-A — Base backend B2C posterior a reserva: **CERRADO / APROBADO**
 - Booking y Payment/Invoice son conceptos separados.
 - Completar una reserva no significa cobrarla.
 - Reservas no crea ni gestiona pagos.
+- Invoice se emite solo para Booking completada y toma el precio del Service en servidor; el cliente nunca envía amount.
+- Payment es completo, único e inmutable por Invoice; registra método, `paidAt` y actor. Los estados se derivan de su existencia.
+- Analytics contabiliza ingresos por `Payment.paidAt` usando la zona del negocio.
 - No se eliminan físicamente reservas; se usa ciclo de estados.
 - La base PostgreSQL impide solapamientos operativos concurrentes para un mismo profesional y excluye `CANCELLED`.
 
@@ -213,7 +218,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 ## 8. Próximo paso autorizado
 
 1. Security A0.5 completo (A, B, C y D), Security A0.6-A y el correctivo transversal de aislamiento del Resumen están **CERRADOS / APROBADOS** por decisión explícita del propietario.
-2. Auditar y aprobar, si corresponde, el contrato técnico propuesto de Facturación-A; su implementación permanece **PENDIENTE DE AUTORIZACIÓN**.
+2. Auditar el checkpoint candidato de Facturación-A Backend. No cerrarlo ni iniciar frontend hasta aprobación explícita del propietario.
 3. No iniciar Security A0.6-B. A0.6-B/C/D, Supabase y cualquier otro alcance permanecen bloqueados hasta autorización explícita.
 4. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
 5. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.

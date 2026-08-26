@@ -48,13 +48,6 @@ enum AvailabilityBlockStatus {
   CANCELLED
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  REFUNDED
-  FAILED
-}
-
 enum PaymentMethod {
   CASH
   CARD
@@ -107,7 +100,7 @@ model Organization {
   bookings Booking[]
 
   payments                       Payment[]
-  Invoice                        Invoice[]
+  invoices                       Invoice[]
   professionalWeeklySchedules    ProfessionalWeeklySchedule[]
   professionalAvailabilityBlocks ProfessionalAvailabilityBlock[]
   teamInvitations                TeamInvitation[]
@@ -410,8 +403,6 @@ model Booking {
 
   status BookingStatus @default(PENDING)
 
-  payment Payment?
-
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
@@ -420,29 +411,26 @@ model Booking {
   // The 20260811180000_booking_schedule_exclusion migration also adds a
   // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
 
+  @@unique([id, organizationId], map: "Booking_id_organizationId_key")
   // Acelera GET /bookings (listado filtrado por estado, ordenado por
   // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
   @@index([organizationId, status, createdAt])
 }
 
 model Payment {
-  id String @id @default(uuid())
+  id               String        @id @default(uuid())
+  organizationId   String
+  organization     Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  invoiceId        String        @unique
+  invoice          Invoice       @relation(fields: [invoiceId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  method           PaymentMethod
+  paidAt           DateTime
+  recordedByUserId String
+  createdAt        DateTime      @default(now())
 
-  organizationId String
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-
-  bookingId String @unique
-
-  booking Booking @relation(fields: [bookingId], references: [id])
-
-  amount Decimal
-
-  method PaymentMethod
-
-  status PaymentStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
+  @@unique([invoiceId, organizationId], map: "Payment_invoiceId_organizationId_key")
+  @@unique([id, organizationId], map: "Payment_id_organizationId_key")
+  @@index([organizationId, paidAt, id], map: "Payment_org_paidAt_id_idx")
 }
 
 model ProfessionalService {
@@ -506,24 +494,19 @@ model AuditLog {
   createdAt DateTime @default(now())
 }
 
-enum InvoiceStatus {
-  UNPAID
-  PAID
-  REFUNDED
-}
-
 model Invoice {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id])
-  bookingId      String        @unique
-  booking        Booking       @relation(fields: [bookingId], references: [id])
-  amount         Decimal
-  status         InvoiceStatus @default(UNPAID)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  bookingId      String       @unique
+  booking        Booking      @relation(fields: [bookingId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  amount         Decimal      @db.Decimal(65, 2)
+  currency       String       @default("DOP")
+  payment        Payment?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  // Misma razón que en Booking — soporta /analytics/dashboard (revenue
-  // por rango de fecha, filtrado por status=PAID) sin escanear toda la tabla.
-  @@index([organizationId, status, createdAt])
+  @@unique([bookingId, organizationId], map: "Invoice_bookingId_organizationId_key")
+  @@unique([id, organizationId], map: "Invoice_id_organizationId_key")
+  @@index([organizationId, createdAt, id], map: "Invoice_org_createdAt_id_idx")
 }

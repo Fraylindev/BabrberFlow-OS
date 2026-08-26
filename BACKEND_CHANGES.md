@@ -8,6 +8,24 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-25 — Facturación-A Backend: factura interna y cobro completo
+
+- **Modelo:** `Invoice` es única por Booking, inmutable, tenant-scoped y conserva `amount Decimal(65,2)` positivo más `currency = DOP`. El estado de respuesta se deriva como `ISSUED` sin Payment o `PAID` con Payment; se retiran los estados Invoice legacy.
+- **Payment:** relación uno-a-uno con Invoice mediante tenant compuesto. Guarda exclusivamente `method`, `paidAt` server-side, `recordedByUserId` y timestamps técnicos; no duplica amount, Booking o estado.
+- **Migración:** `20260825220000_facturacion_a_internal_invoices` añade claves compuestas, checks, índices y relaciones `RESTRICT`. Falla cerrada ante Payment legacy, Invoice pagada/reembolsada o filas que no cumplan tenant, Booking completada y snapshot determinista. No inventa actor, método, fecha ni importe.
+- **`GET /invoices`:** OWNER, ADMIN y RECEPTIONIST reciben el tenant completo; BARBER solo reservas cuyo `Professional.userId` coincide con su identidad. Query opcional `page`, `limit` y `state=ISSUED|PAID`; respuesta array mínima con headers `X-Total-Count`, `X-Page`, `X-Limit`, `X-Total-Pages`.
+- **`GET /invoices/:id`:** misma proyección mínima. ID inexistente, otro tenant o otro Professional para BARBER devuelve `404` neutro.
+- **`POST /invoices`:** body exclusivo `{ bookingId: UUID }`. Solo Booking `COMPLETED`; toma `Service.price` dentro de transacción. Devuelve `201` al crear y `200` al repetir la misma emisión. `amount` y cualquier campo autoritativo extra reciben `400` por whitelist.
+- **`POST /invoices/:id/payments`:** body exclusivo `{ method: CASH | CARD | TRANSFER }`. Devuelve `201` al registrar y `200` al repetir el mismo método sin cambiar actor o `paidAt`; otro método devuelve `409`.
+- **Contrato retirado:** ya no existe `PATCH /invoices/:id/pay`; `POST /invoices` no acepta amount. No hay endpoints de edición, anulación, reembolso, delete o listado Payment independiente.
+- **Concurrencia:** emisión y cobro usan `SERIALIZABLE`, bloqueo de Booking/Service o Invoice, reintento acotado y unicidad PostgreSQL. Ráfagas concurrentes producen un agregado y un AuditLog.
+- **Auditoría:** `ISSUE_INVOICE` y `RECORD_INVOICE_PAYMENT` son fail-closed dentro de la transacción financiera. Guardan tenant, actor, entidad e ID; excluyen PII, importe, método y bodies.
+- **Analytics:** ingresos suman `Invoice.amount` mediante `Payment.paidAt`, filtrando Payment e Invoice por tenant y calculando días con `Organization.timeZone`. BARBER y CUSTOMER continúan excluidos de Analytics global.
+- **Privacidad:** las respuestas no incluyen organizationId, actor, correo, teléfono, notas, IDs de User, objetos Prisma ni estados legacy.
+- **Validación:** Prisma format/validate/generate, TypeScript, lint y build terminaron con exit `0`; 305 unitarias y 78/78 E2E pasaron. Las E2E usaron un clúster temporal separado, base `_test` y rol propietario sin privilegios globales.
+- **QA backend integrado:** HTTP NestJS real con JWT controlados, Membership revalidada y PostgreSQL cubrió OWNER, ADMIN, RECEPTIONIST, dos BARBER vinculados, BARBER sin vínculo y CUSTOMER en dos tenants; emisión/cobro, repetición, método conflictivo, cambio de rol/tenant, IDOR, proyección, concurrencia, constraints, auditoría, rollback y Analytics.
+- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. El frontend actual es incompatible y no debe desplegarse contra este backend hasta una entrega coordinada y autorizada. No incluye frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones ni integraciones de pago.
+
 ## 2026-08-22 — Security A0.6-A cerrado: vínculo B2C posterior a reserva
 
 - **Persistencia aditiva:** `Client.userId` es nullable, referencia `User` con `ON DELETE SET NULL` y tiene unicidad compuesta por `organizationId + userId`. No hay backfill, no se modifican Clients existentes y no se crea `Membership CUSTOMER`.

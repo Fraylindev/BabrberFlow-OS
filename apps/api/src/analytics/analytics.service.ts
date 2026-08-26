@@ -1,6 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { BookingStatus, InvoiceStatus } from '@prisma/client';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { BookingStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  addDaysToIsoDate,
+  getZonedDateParts,
+  isValidTimeZone,
+  zonedLocalDateTimeToUtc,
+} from '../professionals/professional-availability.util';
 
 // Ventana fija de 30 días para "profesional del mes" — no se expone como
 // parámetro configurable todavía porque nadie lo pidió (YAGNI). Si se
@@ -13,22 +23,19 @@ export class AnalyticsService {
 
   async getDashboard(organizationId: string) {
     const now = new Date();
-    const startOfToday = new Date(now);
-    startOfToday.setHours(0, 0, 0, 0);
-
-    const startOfYesterday = new Date(startOfToday);
-    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-
-    const startOf7DaysAgo = new Date(startOfToday);
-    startOf7DaysAgo.setDate(startOf7DaysAgo.getDate() - 6); // incluye hoy = 7 días
-
-    const startOfTomorrow = new Date(startOfToday);
-    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-
-    const startOfWindow = new Date(startOfToday);
-    startOfWindow.setDate(
-      startOfWindow.getDate() - TOP_PROFESSIONAL_WINDOW_DAYS,
-    );
+    const organization = await this.prisma.db.organization.findUnique({
+      where: { id: organizationId },
+      select: { timeZone: true },
+    });
+    if (!organization)
+      throw new NotFoundException('Organización no encontrada');
+    const {
+      startOfToday,
+      startOfYesterday,
+      startOf7DaysAgo,
+      startOfTomorrow,
+      startOfWindow,
+    } = this.getDateBoundaries(now, organization.timeZone);
 
     const [
       revenueToday,
@@ -116,11 +123,51 @@ export class AnalyticsService {
     const result = await this.prisma.db.invoice.aggregate({
       where: {
         organizationId,
-        status: InvoiceStatus.PAID,
-        createdAt: { gte: from, lt: to },
+        payment: {
+          is: {
+            organizationId,
+            paidAt: { gte: from, lt: to },
+          },
+        },
       },
       _sum: { amount: true },
     });
     return Number(result._sum.amount ?? 0);
+  }
+
+  private getDateBoundaries(now: Date, timeZone: string) {
+    if (!isValidTimeZone(timeZone)) {
+      throw new InternalServerErrorException(
+        'No fue posible calcular las métricas del negocio',
+      );
+    }
+    const today = getZonedDateParts(now, timeZone).date;
+    const atStart = (date: string) =>
+      zonedLocalDateTimeToUtc(date, '00:00', timeZone);
+    const startOfToday = atStart(today);
+    const startOfYesterday = atStart(addDaysToIsoDate(today, -1));
+    const startOf7DaysAgo = atStart(addDaysToIsoDate(today, -6));
+    const startOfTomorrow = atStart(addDaysToIsoDate(today, 1));
+    const startOfWindow = atStart(
+      addDaysToIsoDate(today, -TOP_PROFESSIONAL_WINDOW_DAYS),
+    );
+    if (
+      !startOfToday ||
+      !startOfYesterday ||
+      !startOf7DaysAgo ||
+      !startOfTomorrow ||
+      !startOfWindow
+    ) {
+      throw new InternalServerErrorException(
+        'No fue posible calcular las métricas del negocio',
+      );
+    }
+    return {
+      startOfToday,
+      startOfYesterday,
+      startOf7DaysAgo,
+      startOfTomorrow,
+      startOfWindow,
+    };
   }
 }

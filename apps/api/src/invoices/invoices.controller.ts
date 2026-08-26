@@ -1,46 +1,74 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import { InvoicesService } from './invoices.service';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import type { Response } from 'express';
 import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
-import { UserRole } from '@prisma/client';
+import { B2B_ROLES } from '../auth/roles.constants';
+import type { RequestUser } from '../auth/types/authenticated-request';
+import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { QueryInvoicesDto } from './dto/query-invoices.dto';
+import { RecordInvoicePaymentDto } from './dto/record-invoice-payment.dto';
+import { InvoicesService } from './invoices.service';
 
-// Facturación es información financiera sensible: se restringe a los
-// roles que manejan caja/administración. BARBER queda fuera.
 @UseGuards(B2bAuthGuard, RolesGuard)
-@Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
+@Roles(...B2B_ROLES)
 @Controller('invoices')
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
-  @Post()
-  create(
-    @GetUser('organizationId') organizationId: string,
-    @Body() createInvoiceDto: CreateInvoiceDto,
-  ) {
-    return this.invoicesService.create(organizationId, createInvoiceDto);
-  }
-
   @Get()
-  findAll(@GetUser('organizationId') organizationId: string) {
-    return this.invoicesService.findAll(organizationId);
+  async findAll(
+    @GetUser() user: RequestUser,
+    @Query() query: QueryInvoicesDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.invoicesService.findAll(user, query);
+    response.setHeader('X-Total-Count', result.pagination.total);
+    response.setHeader('X-Page', result.pagination.page);
+    response.setHeader('X-Limit', result.pagination.limit);
+    response.setHeader('X-Total-Pages', result.pagination.totalPages);
+    return result.data;
   }
 
-  @Patch(':id/pay')
-  markAsPaid(
-    @Param('id') id: string,
-    @GetUser('organizationId') organizationId: string,
+  @Get(':id')
+  findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
   ) {
-    return this.invoicesService.markAsPaid(id, organizationId);
+    return this.invoicesService.findOne(id, user);
+  }
+
+  @Post()
+  async create(
+    @GetUser() user: RequestUser,
+    @Body() dto: CreateInvoiceDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.invoicesService.create(user, dto);
+    response.status(result.isNew ? 201 : 200);
+    return result.invoice;
+  }
+
+  @Post(':id/payments')
+  async recordPayment(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @GetUser() user: RequestUser,
+    @Body() dto: RecordInvoicePaymentDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.invoicesService.recordPayment(id, user, dto);
+    response.status(result.isNew ? 201 : 200);
+    return result.invoice;
   }
 }

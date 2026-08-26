@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-25 — Facturación-A Backend implementado como candidato
+
+- Se implementó Invoice interna única para Booking completada, snapshot server-side del precio, Payment completo único con método/fecha/actor y respuestas mínimas paginadas.
+- OWNER, ADMIN y RECEPTIONIST operan el tenant; BARBER queda limitado por tenant y `Professional.userId` a sus propias reservas. CUSTOMER no accede a Facturación o Analytics global.
+- Emisión y cobro son serializables, idempotentes, resistentes a carreras y auditados de forma transaccional sin PII. Analytics usa `Payment.paidAt` y la zona del negocio.
+- La migración fail-closed convierte solo Invoice legacy determinista y bloquea Payment o estados sin trazabilidad real. Se validaron ambos caminos en PostgreSQL temporal.
+- Prisma, TypeScript, lint y build pasaron; 305 unitarias y 78/78 E2E PostgreSQL aisladas aprobaron. El QA backend integrado cubrió roles, dos tenants, IDOR, mínima exposición, concurrencia, constraints, auditoría y rollback.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No autoriza frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones ni otro alcance.
+
 ## 2026-08-25 — Contrato técnico de Facturación-A preparado
 
 - Se registraron las decisiones del propietario para una factura interna no fiscal: solo Booking completada, snapshot server-side del precio, un Payment completo con método/fecha/actor, Analytics por fecha real de pago, respuestas mínimas/paginadas y auditoría sin PII.
