@@ -87,6 +87,8 @@ Gobierno y estándares:
 
 Correctivo transversal de aislamiento del Resumen: **CERRADO / APROBADO** por decisión explícita del propietario sobre `3235501956050e284d84d9aa306b2653cc07003d`. El estado visible queda ligado a una clave de alcance `usuario + organización + rol`, se vacía en el mismo render en que cambia ese contexto y solo acepta respuestas cuyo alcance e identificador de solicitud sigan vigentes. Las respuestas tardías del tenant anterior se descartan; la limpieza existente de React Query se conserva. El QA real cubrió `OWNER → BARBER → OWNER` en escritorio y 390×844, verificó la limpieza inmediata y la carga del tenant nuevo sin métricas, reservas ni profesionales obsoletos, y no registró errores de aplicación en consola. Las pruebas específicas cubren además respuestas tardías y el ciclo `A → B → A`. Este cierre aprueba únicamente el correctivo transversal: el módulo Resumen permanece congelado y no implica cambios ni aprobación de Facturación, A0.6, Clerk, backend, Prisma, contratos API o ADR.
 
+Facturación-A: **PLAN TÉCNICO / PENDIENTE DE APROBACIÓN PARA IMPLEMENTAR**. El propietario definió Facturación como registro interno no fiscal, Invoice solo para Booking completada, importe server-side desde el precio de Service al emitir, Payment completo único con método/fecha/actor, Analytics por fecha real de pago, respuestas mínimas/paginadas y alcance propio para BARBER vinculado. El contrato propuesto, migración, invariantes, endpoints, permisos, IDOR, concurrencia, auditoría, pruebas y QA están en [`docs/features/FACTURACION_A_CONTRATO_TECNICO.md`](docs/features/FACTURACION_A_CONTRATO_TECNICO.md). No existe autorización de código, frontend, A0.6, Clerk, Prisma, Supabase o despliegue.
+
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 
 Estado de G0: **IMPLEMENTADO / EN REVISIÓN**. G0.1 corrige y completa sus fuentes como checkpoint documental candidato; ninguno de los dos es aprobación funcional de un módulo.
@@ -211,7 +213,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 ## 8. Próximo paso autorizado
 
 1. Security A0.5 completo (A, B, C y D), Security A0.6-A y el correctivo transversal de aislamiento del Resumen están **CERRADOS / APROBADOS** por decisión explícita del propietario.
-2. Preparar únicamente el análisis y plan de Facturación segura; su implementación permanece **PENDIENTE DE AUTORIZACIÓN**.
+2. Auditar y aprobar, si corresponde, el contrato técnico propuesto de Facturación-A; su implementación permanece **PENDIENTE DE AUTORIZACIÓN**.
 3. No iniciar Security A0.6-B. A0.6-B/C/D, Supabase y cualquier otro alcance permanecen bloqueados hasta autorización explícita.
 4. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
 5. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.

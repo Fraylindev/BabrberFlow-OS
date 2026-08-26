@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-25 — Contrato técnico de Facturación-A preparado
+
+- Se registraron las decisiones del propietario para una factura interna no fiscal: solo Booking completada, snapshot server-side del precio, un Payment completo con método/fecha/actor, Analytics por fecha real de pago, respuestas mínimas/paginadas y auditoría sin PII.
+- El plan define modelo/migración, invariantes, transiciones, endpoints, DTOs/proyecciones, permisos tenant/ownership para OWNER, ADMIN, RECEPTIONIST y BARBER, concurrencia, idempotencia, pruebas y QA.
+- Estado: **PLAN TÉCNICO / PENDIENTE DE APROBACIÓN PARA IMPLEMENTAR**. No se modificaron código, frontend, A0.6, Clerk, Prisma, Supabase ni contratos ejecutables; `BACKEND_CHANGES.md` permanece intacto.
+
 ## 2026-08-25 — Correctivo de aislamiento del Resumen cerrado y aprobado
 
 - El propietario aprobó y cerró explícitamente el checkpoint `3235501956050e284d84d9aa306b2653cc07003d` después de revisar el aislamiento por usuario, organización y rol, las pruebas de respuestas tardías y el QA real `OWNER → BARBER → OWNER` en escritorio y móvil.
