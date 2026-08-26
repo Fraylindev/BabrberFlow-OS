@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-25 — Correctivo de aislamiento del Resumen cerrado y aprobado
+
+- El propietario aprobó y cerró explícitamente el checkpoint `3235501956050e284d84d9aa306b2653cc07003d` después de revisar el aislamiento por usuario, organización y rol, las pruebas de respuestas tardías y el QA real `OWNER → BARBER → OWNER` en escritorio y móvil.
+- El cierre se limita al correctivo transversal. El módulo Resumen continúa congelado y no se aprueban ni modifican Facturación, A0.6, Clerk, backend, Prisma, contratos API, Supabase o ADR.
+- El siguiente alcance queda limitado al análisis y plan de Facturación segura. Su implementación y Security A0.6-B permanecen pendientes de autorización explícita.
+
 ## 2026-08-24 — Correctivo de aislamiento del Resumen candidato
 
 - El Resumen vincula su estado remoto a `usuario + organización + rol`, oculta los datos anteriores inmediatamente al cambiar el contexto y descarta respuestas tardías por alcance e identificador de solicitud. Se conserva la limpieza vigente de React Query.
