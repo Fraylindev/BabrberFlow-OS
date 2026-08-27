@@ -383,7 +383,10 @@ export class BookingsService {
       throw new NotFoundException('Reserva no encontrada en esta barbería');
     }
 
-    if (booking.status === updateBookingStatusDto.status) return booking;
+    if (booking.status === updateBookingStatusDto.status) {
+      this.assertServiceEndedForCompletion(booking, updateBookingStatusDto);
+      return booking;
+    }
 
     const allowedStatuses = professionalId
       ? (BARBER_STATUS_TRANSITIONS[booking.status] ?? [])
@@ -395,6 +398,8 @@ export class BookingsService {
           : 'Transición administrativa de estado no permitida',
       );
     }
+
+    this.assertServiceEndedForCompletion(booking, updateBookingStatusDto);
 
     const reactivatesFutureSchedule =
       booking.status === BookingStatus.CANCELLED &&
@@ -431,6 +436,20 @@ export class BookingsService {
       });
     } catch (error) {
       this.rethrowScheduleConflict(error);
+    }
+  }
+
+  private assertServiceEndedForCompletion(
+    booking: Pick<Booking, 'endTime'>,
+    updateBookingStatusDto: UpdateBookingStatusDto,
+  ): void {
+    if (
+      updateBookingStatusDto.status === BookingStatus.COMPLETED &&
+      booking.endTime.getTime() > Date.now()
+    ) {
+      throw new ConflictException(
+        'No se puede completar una reserva antes de que termine el servicio',
+      );
     }
   }
 

@@ -3,6 +3,7 @@ import {
   IsOptional,
   IsNotEmpty,
   IsNumber,
+  IsPositive,
   Min,
 } from 'class-validator';
 
@@ -19,7 +20,7 @@ export class CreateServiceDto {
   @Min(1)
   duration!: number; // Duración en minutos
 
-  @IsNumber()
-  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
   price!: number;
 }

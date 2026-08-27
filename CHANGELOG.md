@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-26 — Correctivo temporal y monetario de Facturación-A Backend
+
+- Se impidió completar una Booking antes de `endTime` para todos los roles autorizados usando tiempo del servidor; Invoice y Payment repiten el control para datos históricos.
+- `Service.price` quedó limitado a DOP positivo con máximo dos decimales en creación, edición, servicio, Prisma y PostgreSQL.
+- La migración fail-closed bloquea precios históricos inválidos y Booking futura ya completada sin redondear ni alterar parcialmente las filas.
+- Prisma, TypeScript, lint y build pasaron; 328 unitarias y 80/80 E2E PostgreSQL aisladas aprobaron. QA verificó `0`, `125.555`, constraint, OWNER/BARBER, emisión/cobro futuros y tres escenarios históricos de migración.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. La auditoría no aprueba ni cierra el checkpoint y no autoriza ningún alcance posterior.
+
 ## 2026-08-25 — Facturación-A Backend implementado como candidato
 
 - Se implementó Invoice interna única para Booking completada, snapshot server-side del precio, Payment completo único con método/fecha/actor y respuestas mínimas paginadas.

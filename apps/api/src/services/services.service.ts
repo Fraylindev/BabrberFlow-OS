@@ -1,4 +1,9 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -14,9 +19,11 @@ export class ServicesService {
   ) {}
 
   async create(organizationId: string, createServiceDto: CreateServiceDto) {
+    const price = this.normalizeDopPrice(createServiceDto.price);
     return await this.prisma.db.service.create({
       data: {
         ...createServiceDto,
+        price,
         organizationId, // 🔒 Inyectado directamente del JWT
       },
     });
@@ -41,9 +48,16 @@ export class ServicesService {
       'Servicio no encontrado',
     );
 
+    const data =
+      updateServiceDto.price === undefined
+        ? updateServiceDto
+        : {
+            ...updateServiceDto,
+            price: this.normalizeDopPrice(updateServiceDto.price),
+          };
     const updated = await this.prisma.db.service.update({
       where: { id },
-      data: updateServiceDto,
+      data,
     });
 
     await this.audit.log({
@@ -87,5 +101,25 @@ export class ServicesService {
       }
       throw err;
     }
+  }
+
+  private normalizeDopPrice(value: number): Prisma.Decimal {
+    if (!Number.isFinite(value)) {
+      throw new BadRequestException(
+        'El precio debe ser mayor que cero y usar como máximo dos decimales',
+      );
+    }
+    const price = new Prisma.Decimal(value.toString());
+    const integerDigits = price
+      .trunc()
+      .abs()
+      .toFixed(0)
+      .replace(/^0+/, '').length;
+    if (price.lte(0) || price.decimalPlaces() > 2 || integerDigits > 63) {
+      throw new BadRequestException(
+        'El precio debe ser mayor que cero y usar como máximo dos decimales',
+      );
+    }
+    return price;
   }
 }

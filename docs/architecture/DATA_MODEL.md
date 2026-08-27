@@ -19,7 +19,7 @@
 - `ProfessionalWeeklySchedule`: turnos recurrentes tenant-scoped de un Professional.
 - `ProfessionalAvailabilityBlock`: bloqueo temporal tenant-scoped con estado y nota interna.
 - `Client`: pertenece a Organization; email es único por organización cuando existe.
-- `Service`: pertenece a Organization.
+- `Service`: pertenece a Organization; `price` es una fuente DOP `Decimal(65,2)`, estrictamente positiva y validada antes de persistir.
 - `Booking`: une Organization, Client, Professional y Service; las reglas de agenda también viven en migraciones PostgreSQL.
 - `ProfessionalService`: relación futura de precio/comisión; no limita qué servicio activo puede realizar un Professional activo en la fase vigente.
 
@@ -36,6 +36,8 @@
 - Todo dato de negocio debe aislarse por `organizationId` en consultas y contratos.
 - Relaciones sin clave compuesta tenant-scoped requieren que el servicio valide la organización de todos los recursos en la operación autoritativa.
 - No usar hard-delete para datos operativos o financieros sin una decisión explícita.
+- `Booking` solo puede pasar a `COMPLETED` cuando el tiempo del servidor alcanza `endTime`; Invoice y Payment repiten el control ante datos históricos.
+- `Service.price` no admite cero, negativos ni más de dos decimales; la migración falla cerrada en vez de redondear datos históricos.
 - Booking–Invoice–Payment comparten `organizationId` mediante claves compuestas; emisión y cobro son transacciones serializables, idempotentes y con AuditLog fail-closed sin PII.
 - Analytics atribuye ingresos por `Payment.paidAt`, nunca por la fecha de emisión de Invoice.
 - Los enums y defaults se leen del schema vigente; este mapa no los redefine.

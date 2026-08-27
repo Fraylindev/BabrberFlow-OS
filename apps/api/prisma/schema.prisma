@@ -365,7 +365,7 @@ model Service {
 
   duration Int
 
-  price Decimal
+  price Decimal @db.Decimal(65, 2)
 
   isActive Boolean @default(true)
 

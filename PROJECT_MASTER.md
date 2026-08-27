@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-25. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-26. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -82,14 +82,14 @@ Gobierno y estándares:
 | 3 | Profesionales A2 Frontend | **IMPLEMENTADO / EN REVISIÓN** | Candidato `75b35f7f6fdd69a18e3fcede8fcaf4f39e57f06b` |
 | 3 | Módulo Profesionales | **NO CERRADO / NO APROBADO** | Pendiente de auditoría y aprobación frontend |
 | 4 | Servicios | **NO INICIADO en el ciclo modular vigente** | No autorizado mientras Profesionales siga abierto |
-| 5 | Facturación-A Backend | **IMPLEMENTADO / EN REVISIÓN** | Contrato interno, migración, Invoice/Payment, permisos, Analytics y QA backend; pendiente de auditoría |
+| 5 | Facturación-A Backend | **IMPLEMENTADO / EN REVISIÓN** | Correctivo temporal/monetario aplicado; checkpoint todavía no aprobado |
 | 5 | Facturación Frontend | **NO INICIADO / NO AUTORIZADO** | Requiere aprobación explícita del backend |
 | 6–8 | Equipo, Configuración, Analytics modular | **PENDIENTES** | No iniciar sin autorización propia |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
 
 Correctivo transversal de aislamiento del Resumen: **CERRADO / APROBADO** por decisión explícita del propietario sobre `3235501956050e284d84d9aa306b2653cc07003d`. El estado visible queda ligado a una clave de alcance `usuario + organización + rol`, se vacía en el mismo render en que cambia ese contexto y solo acepta respuestas cuyo alcance e identificador de solicitud sigan vigentes. Las respuestas tardías del tenant anterior se descartan; la limpieza existente de React Query se conserva. El QA real cubrió `OWNER → BARBER → OWNER` en escritorio y 390×844, verificó la limpieza inmediata y la carga del tenant nuevo sin métricas, reservas ni profesionales obsoletos, y no registró errores de aplicación en consola. Las pruebas específicas cubren además respuestas tardías y el ciclo `A → B → A`. Este cierre aprueba únicamente el correctivo transversal: el módulo Resumen permanece congelado y no implica cambios ni aprobación de Facturación, A0.6, Clerk, backend, Prisma, contratos API o ADR.
 
-Facturación-A Backend: **IMPLEMENTADO / EN REVISIÓN**. Implementa el contrato aprobado en [`docs/features/FACTURACION_A_CONTRATO_TECNICO.md`](docs/features/FACTURACION_A_CONTRATO_TECNICO.md) y la decisión [`ADR-002`](docs/decisions/ADR-002-facturacion-interna-inmutable.md): Invoice interna única e inmutable para Booking completada, snapshot server-side `DOP`, Payment completo único con método/fecha/actor, aislamiento tenant/ownership de BARBER, respuestas mínimas paginadas, auditoría financiera transaccional y Analytics por `Payment.paidAt`. La migración falla cerrada ante datos legacy no reconciliables. Prisma, TypeScript, lint y build pasaron; 305 unitarias y 78/78 E2E PostgreSQL aisladas aprobaron. El QA backend integrado cubrió OWNER, ADMIN, RECEPTIONIST, dos BARBER vinculados, BARBER sin vínculo, CUSTOMER, dos tenants, cambio de rol/tenant, concurrencia, IDOR, mínima exposición y rollback. El checkpoint no está aprobado ni cerrado y no autoriza frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones o despliegue aislado.
+Facturación-A Backend: **IMPLEMENTADO / EN REVISIÓN** y expresamente **NO APROBADO**. El correctivo de auditoría impide que cualquier rol complete una Booking antes de `endTime` usando tiempo del servidor; emisión y cobro repiten esa defensa ante datos históricos. `Service.price` ahora exige valor DOP positivo y máximo dos decimales en DTO, servicio y PostgreSQL (`Decimal(65,2)` + check). La migración `20260826210000_facturacion_a_completion_service_price_guards` falla cerrada ante precios históricos inválidos o Booking futura ya completada. Prisma, TypeScript, lint y build pasaron; 328 unitarias y 80/80 E2E PostgreSQL aisladas aprobaron. El QA incluyó OWNER y BARBER intentando completar una reserva futura, bloqueo de emisión/cobro, creación/edición de precios `0` y `125.555`, constraint real y migración válida/fail-closed con rollback atómico. Se conservan las garantías previas de tenant, ownership, concurrencia, auditoría, mínima exposición y Analytics. No autoriza frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones o despliegue aislado.
 
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 
@@ -140,6 +140,8 @@ Security A0.6-A — Base backend B2C posterior a reserva: **CERRADO / APROBADO**
 - Booking y Payment/Invoice son conceptos separados.
 - Completar una reserva no significa cobrarla.
 - Reservas no crea ni gestiona pagos.
+- Ningún rol puede marcar `COMPLETED` mientras el tiempo autoritativo del servidor sea anterior a `Booking.endTime`.
+- `Service.price` es DOP positivo con máximo dos decimales; DTO, servicio y PostgreSQL protegen la fuente del snapshot.
 - Invoice se emite solo para Booking completada y toma el precio del Service en servidor; el cliente nunca envía amount.
 - Payment es completo, único e inmutable por Invoice; registra método, `paidAt` y actor. Los estados se derivan de su existencia.
 - Analytics contabiliza ingresos por `Payment.paidAt` usando la zona del negocio.

@@ -58,6 +58,7 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
   let completedReception: BookingFixture;
   let completedBarberA: BookingFixture;
   let confirmedBarberA: BookingFixture;
+  let futureBarberA: BookingFixture;
   let completedBarberB: BookingFixture;
   let privilegedFieldsInvoiceId: string;
 
@@ -269,6 +270,19 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
         300,
       ),
     ]);
+    const futureStartTime = new Date(Date.now() + 2 * 60 * 60_000);
+    futureBarberA = await prisma.db.booking.create({
+      data: {
+        organizationId: tenantA.id,
+        clientId: tenantA.clientId,
+        professionalId: professionalBarberA.id,
+        serviceId: tenantA.serviceId,
+        startTime: futureStartTime,
+        endTime: new Date(futureStartTime.getTime() + 30 * 60_000),
+        status: BookingStatus.CONFIRMED,
+      },
+      select: { id: true, professionalId: true },
+    });
   });
 
   afterAll(async () => app.close());
@@ -301,6 +315,54 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
         where: { bookingId: completedOwner.id },
       }),
     ).toBe(0);
+  });
+
+  it('rechaza Service.price inválido al crear, editar y persistir', async () => {
+    for (const price of [0, 125.555]) {
+      const response = await requestApp(app)
+        .post('/services')
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .send({ name: `Servicio inválido ${price}`, duration: 30, price });
+      expect(response.status).toBe(400);
+    }
+
+    const created = await requestApp(app)
+      .post('/services')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ name: 'Servicio monetario QA', duration: 30, price: 125.55 });
+    expect(created.status).toBe(201);
+    const serviceId = asRecord(created.body as unknown).id;
+    if (typeof serviceId !== 'string') throw new Error('Missing Service id');
+
+    for (const price of [0, 125.555]) {
+      const response = await requestApp(app)
+        .patch(`/services/${serviceId}`)
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .send({ price });
+      expect(response.status).toBe(400);
+    }
+
+    const updated = await requestApp(app)
+      .patch(`/services/${serviceId}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ price: 99.9 });
+    expect(updated.status).toBe(200);
+    const persisted = await prisma.db.service.findUniqueOrThrow({
+      where: { id: serviceId },
+      select: { price: true },
+    });
+    expect(persisted.price.toFixed(2)).toBe('99.90');
+
+    await expect(
+      prisma.db.service.create({
+        data: {
+          organizationId: tenantA.id,
+          name: 'Servicio constraint QA',
+          duration: 30,
+          price: '0.00',
+        },
+      }),
+    ).rejects.toThrow('Service_price_dop_check');
   });
 
   it('OWNER, ADMIN y RECEPTIONIST emiten desde el precio server-side', async () => {
@@ -419,6 +481,62 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
     }
     expect(
       await prisma.db.payment.count({ where: { invoiceId: issuedId } }),
+    ).toBe(0);
+  });
+
+  it('una reserva futura no puede completarse, emitirse ni cobrarse', async () => {
+    for (const token of [barberAToken, ownerToken]) {
+      const completion = await requestApp(app)
+        .patch(`/bookings/${futureBarberA.id}/status`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ status: BookingStatus.COMPLETED });
+      expect(completion.status).toBe(409);
+    }
+    expect(
+      await prisma.db.booking.findUniqueOrThrow({
+        where: { id: futureBarberA.id },
+        select: { status: true },
+      }),
+    ).toEqual({ status: BookingStatus.CONFIRMED });
+
+    const issueConfirmed = await requestApp(app)
+      .post('/invoices')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ bookingId: futureBarberA.id });
+    expect(issueConfirmed.status).toBe(409);
+
+    await prisma.db.booking.update({
+      where: { id: futureBarberA.id },
+      data: { status: BookingStatus.COMPLETED },
+    });
+    await requestApp(app)
+      .patch(`/bookings/${futureBarberA.id}/status`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ status: BookingStatus.COMPLETED })
+      .expect(409);
+    const issueHistorical = await requestApp(app)
+      .post('/invoices')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ bookingId: futureBarberA.id });
+    expect(issueHistorical.status).toBe(409);
+
+    const historicalInvoice = await prisma.db.invoice.create({
+      data: {
+        organizationId: tenantA.id,
+        bookingId: futureBarberA.id,
+        amount: '125.50',
+        currency: 'DOP',
+      },
+    });
+    const payment = await requestApp(app)
+      .post(`/invoices/${historicalInvoice.id}/payments`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ method: PaymentMethod.CASH });
+    expect(payment.status).toBe(409);
+    expect(
+      await prisma.db.payment.count({
+        where: { invoiceId: historicalInvoice.id },
+      }),
     ).toBe(0);
   });
 

@@ -96,6 +96,7 @@ const CLIENT = { id: 'client-1', organizationId: ORG_ID };
 // Fecha futura fija — evita que los tests dependan del reloj real y
 // fallen solos con el paso del tiempo.
 const FUTURE_DATE = '2099-01-01T10:00:00.000Z';
+const FINISHED_END_TIME = new Date('2000-01-01T10:30:00.000Z');
 
 const VALID_DTO = {
   clientId: CLIENT.id,
@@ -548,6 +549,7 @@ describe('BookingsService - BARBER status authorization', () => {
       prisma.db.booking.findFirst.mockResolvedValue({
         id: 'booking-id',
         status: BookingStatus.CONFIRMED,
+        endTime: FINISHED_END_TIME,
       });
 
       await service.updateStatus(
@@ -567,6 +569,45 @@ describe('BookingsService - BARBER status authorization', () => {
       });
     },
   );
+
+  it.each([
+    ['BARBER', PROFESSIONAL.id],
+    ['administrativo', undefined],
+  ])(
+    'rechaza COMPLETED antes de endTime para rol %s',
+    async (_role, professionalId) => {
+      prisma.db.booking.findFirst.mockResolvedValue({
+        id: 'booking-id',
+        status: BookingStatus.CONFIRMED,
+        endTime: new Date('2099-01-01T10:30:00.000Z'),
+      });
+
+      await expect(
+        service.updateStatus(
+          'booking-id',
+          ORG_ID,
+          { status: BookingStatus.COMPLETED },
+          professionalId,
+        ),
+      ).rejects.toBeInstanceOf(ConflictException);
+      expect(prisma.db.booking.update).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rechaza repetir COMPLETED sobre una Booking futura históricamente inválida', async () => {
+    prisma.db.booking.findFirst.mockResolvedValue({
+      id: 'booking-id',
+      status: BookingStatus.COMPLETED,
+      endTime: new Date('2099-01-01T10:30:00.000Z'),
+    });
+
+    await expect(
+      service.updateStatus('booking-id', ORG_ID, {
+        status: BookingStatus.COMPLETED,
+      }),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(prisma.db.booking.update).not.toHaveBeenCalled();
+  });
 
   it.each([
     BookingStatus.COMPLETED,

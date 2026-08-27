@@ -13,6 +13,8 @@ const USER: RequestUser = {
   name: 'Barber',
   role: UserRole.BARBER,
 };
+const FINISHED_END_TIME = new Date('2000-01-01T10:30:00.000Z');
+const FUTURE_END_TIME = new Date('2099-01-01T10:30:00.000Z');
 
 function invoiceRecord(
   payment: InvoiceResponseRecord['payment'] = null,
@@ -69,6 +71,7 @@ describe('InvoicesService', () => {
       {
         id: 'booking-id',
         status: BookingStatus.COMPLETED,
+        endTime: FINISHED_END_TIME,
         servicePrice: '125.500000000000000000000000000000',
       },
     ]);
@@ -109,6 +112,7 @@ describe('InvoicesService', () => {
       {
         id: 'booking-id',
         status: BookingStatus.CONFIRMED,
+        endTime: FINISHED_END_TIME,
         servicePrice: '125.50',
       },
     ]);
@@ -135,6 +139,7 @@ describe('InvoicesService', () => {
       {
         id: 'booking-id',
         status: BookingStatus.COMPLETED,
+        endTime: FINISHED_END_TIME,
         servicePrice: '125.50',
       },
     ]);
@@ -155,6 +160,7 @@ describe('InvoicesService', () => {
         {
           id: 'booking-id',
           status: BookingStatus.COMPLETED,
+          endTime: FINISHED_END_TIME,
           servicePrice,
         },
       ]);
@@ -167,6 +173,24 @@ describe('InvoicesService', () => {
     },
   );
 
+  it('rechaza emitir una Invoice para una Booking completada antes de endTime', async () => {
+    const { service, tx, audit } = createHarness();
+    tx.$queryRaw.mockResolvedValue([
+      {
+        id: 'booking-id',
+        status: BookingStatus.COMPLETED,
+        endTime: FUTURE_END_TIME,
+        servicePrice: '125.50',
+      },
+    ]);
+
+    await expect(
+      service.create(USER, { bookingId: 'booking-id' }),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(tx.invoice.create).not.toHaveBeenCalled();
+    expect(audit.logTransactional).not.toHaveBeenCalled();
+  });
+
   it('registra un único cobro con fecha y actor server-side', async () => {
     const { service, tx, audit } = createHarness();
     const paid = invoiceRecord({
@@ -174,7 +198,12 @@ describe('InvoicesService', () => {
       paidAt: new Date('2026-08-25T12:01:00.000Z'),
     });
     tx.$queryRaw.mockResolvedValue([
-      { id: 'invoice-id', paymentId: null, paymentMethod: null },
+      {
+        id: 'invoice-id',
+        endTime: FINISHED_END_TIME,
+        paymentId: null,
+        paymentMethod: null,
+      },
     ]);
     tx.payment.create.mockResolvedValue({ id: 'payment-id' });
     tx.invoice.findFirst.mockResolvedValue(paid);
@@ -226,6 +255,7 @@ describe('InvoicesService', () => {
     tx.$queryRaw.mockResolvedValue([
       {
         id: 'invoice-id',
+        endTime: FINISHED_END_TIME,
         paymentId: 'payment-id',
         paymentMethod: PaymentMethod.CASH,
       },
@@ -251,6 +281,7 @@ describe('InvoicesService', () => {
     tx.$queryRaw.mockResolvedValue([
       {
         id: 'invoice-id',
+        endTime: FINISHED_END_TIME,
         paymentId: 'payment-id',
         paymentMethod: PaymentMethod.CASH,
       },
@@ -262,6 +293,26 @@ describe('InvoicesService', () => {
       }),
     ).rejects.toBeInstanceOf(ConflictException);
     expect(tx.payment.create).not.toHaveBeenCalled();
+  });
+
+  it('rechaza cobrar una Invoice histórica vinculada a una Booking futura', async () => {
+    const { service, tx, audit } = createHarness();
+    tx.$queryRaw.mockResolvedValue([
+      {
+        id: 'invoice-id',
+        endTime: FUTURE_END_TIME,
+        paymentId: null,
+        paymentMethod: null,
+      },
+    ]);
+
+    await expect(
+      service.recordPayment('invoice-id', USER, {
+        method: PaymentMethod.CASH,
+      }),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(tx.payment.create).not.toHaveBeenCalled();
+    expect(audit.logTransactional).not.toHaveBeenCalled();
   });
 
   it('aplica tenant y ownership antes de contar y paginar', async () => {
@@ -304,6 +355,7 @@ describe('InvoicesService', () => {
       {
         id: 'booking-id',
         status: BookingStatus.COMPLETED,
+        endTime: FINISHED_END_TIME,
         servicePrice: '125.50',
       },
     ]);

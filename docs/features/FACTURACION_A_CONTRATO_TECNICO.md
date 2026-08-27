@@ -6,6 +6,8 @@ Etapa: **Backend**
 
 Fecha: 2026-08-25
 
+Correctivo de auditoría: 2026-08-26
+
 Contrato aprobado: `2d66d7c301de6dfc69f2cead94356ed2e7bd95f1`
 Rama autorizada: `ai/antigravity-qa`
 
@@ -29,6 +31,8 @@ Lenguaje futuro para BARBER: **“Facturación de mis servicios”** o **“Cobr
 ### Incluido
 
 - factura interna única por `Booking COMPLETED`;
+- transición a `COMPLETED` solo cuando el tiempo del servidor alcanza `Booking.endTime`;
+- `Service.price` DOP estrictamente positivo y con máximo dos decimales;
 - snapshot autoritativo del precio vigente de `Service` al emitir;
 - un único `Payment` completo por Invoice;
 - método de cobro, `paidAt` autoritativo y actor que registró el cobro;
@@ -49,6 +53,14 @@ Lenguaje futuro para BARBER: **“Facturación de mis servicios”** o **“Cobr
 - frontend, A0.6, Clerk, Supabase y cualquier cambio de autenticación.
 
 ## 3. Modelo objetivo
+
+### Service.price
+
+- fuente monetaria autoritativa de Facturación-A;
+- `Decimal(65,2)` en PostgreSQL y Prisma;
+- estrictamente mayor que cero;
+- creación y edición rechazan más de dos decimales, sin redondeo silencioso;
+- una fila histórica inválida bloquea la migración para reconciliación explícita.
 
 ### Invoice
 
@@ -104,6 +116,8 @@ La migración debe fallar cerrada y no inventar fechas, actores, métodos ni est
    - Payment sin Invoice correspondiente;
    - pares con tenant o importe divergente;
    - Invoice de Booking no completada;
+   - Booking futura ya marcada `COMPLETED`;
+   - Service con precio no positivo, fuera de rango o con más de dos decimales;
    - importes no positivos, fuera de rango o con más de dos decimales.
 2. Si existe cualquier fila financiera no convertible de forma determinista, detener la migración y exigir una decisión de reconciliación explícita. No usar `updatedAt` como `paidAt` ni seleccionar un actor o método por defecto.
 3. Añadir primero claves compuestas, nuevas columnas/relaciones e índices compatibles.
@@ -116,7 +130,7 @@ La migración no incluye Supabase ni traslado de datos entre proveedores.
 
 ## 5. Invariantes Invoice–Payment
 
-1. Invoice existe solo si Booking pertenece al mismo tenant y está `COMPLETED`.
+1. Invoice existe solo si Booking pertenece al mismo tenant, está `COMPLETED` y el tiempo del servidor alcanzó `Booking.endTime`.
 2. Una Booking admite como máximo una Invoice.
 3. `Invoice.amount` se lee de `Booking.service.price` dentro de la transacción de emisión. El body no acepta `amount`.
 4. El snapshot debe ser positivo, caber en la precisión acordada y tener escala máxima de dos decimales; una configuración inválida produce conflicto sin escrituras.
@@ -128,11 +142,13 @@ La migración no incluye Supabase ni traslado de datos entre proveedores.
 10. Para BARBER, `Booking.professional.userId` debe coincidir con el actor dentro del mismo tenant.
 11. No hay hard-delete ni transición desde `PAID` en Facturación-A.
 12. Cada creación nueva de Invoice o Payment produce exactamente un AuditLog en la misma transacción.
+13. `Service.price` es DOP positivo con máximo dos decimales; creación, edición y persistencia deben conservar la regla.
+14. Payment vuelve a verificar que el servicio terminó para impedir cobros sobre datos históricos imposibles.
 
 ## 6. Transiciones
 
 ```text
-Booking no completada ── completar por contrato de Reservas ──► Booking COMPLETED
+Booking no completada + servidor >= endTime ── completar ──► Booking COMPLETED
 Booking COMPLETED sin Invoice ── emitir ──► Invoice ISSUED
 Invoice ISSUED ── registrar método de cobro ──► Invoice PAID
 Invoice PAID ──► estado terminal en Facturación-A
@@ -141,6 +157,7 @@ Invoice PAID ──► estado terminal en Facturación-A
 - repetir “emitir” para la misma Booking devuelve la Invoice existente y no duplica auditoría;
 - repetir “registrar cobro” con el mismo método devuelve el Payment existente y no cambia actor ni `paidAt`;
 - repetir el cobro con un método diferente devuelve conflicto;
+- antes de `Booking.endTime` no se permite completar, emitir ni cobrar;
 - anular, reembolsar, editar o borrar no tiene endpoint.
 
 ## 7. Endpoints propuestos
@@ -156,6 +173,7 @@ Para habilitar la emisión, el body es `{ "status": "COMPLETED" }` y se mantiene
 - BARBER solo puede pasar de `CONFIRMED` a `COMPLETED` una Booking cuyo `professional.userId` coincide con su identidad en el tenant activo;
 - un BARBER ajeno recibe `404` neutro y uno sin Professional vinculado queda denegado sin resolver el recurso;
 - OWNER, ADMIN y RECEPTIONIST conservan las transiciones que defina el contrato vigente de Reservas;
+- ningún rol puede completar antes de `Booking.endTime`; el backend usa su propio reloj y responde `409` sin escribir;
 - completar no crea Invoice ni Payment automáticamente, y repetir `COMPLETED` no duplica efectos financieros.
 
 ### `GET /invoices`
@@ -193,7 +211,7 @@ No acepta `amount`, `organizationId`, `professionalId`, `serviceId`, estado, act
 - `201`: Invoice creada;
 - `200`: repetición idempotente de una emisión ya existente y autorizada;
 - `404`: Booking no disponible para el tenant/ownership;
-- `409`: Booking no está completada o el precio no puede convertirse en un snapshot válido.
+- `409`: Booking no está completada, el servicio todavía no terminó o el precio no puede convertirse en un snapshot válido.
 
 ### `POST /invoices/:id/payments`
 
@@ -208,7 +226,7 @@ No acepta amount, `paidAt`, actor, tenant, Booking o Professional.
 - `201`: Payment creado;
 - `200`: repetición idempotente con el mismo método;
 - `404`: Invoice no disponible para el tenant/ownership;
-- `409`: ya existe Payment con otro método o la fila financiera está en estado incompatible.
+- `409`: el servicio todavía no terminó, ya existe Payment con otro método o la fila financiera está en estado incompatible.
 
 ### Contratos retirados
 
@@ -273,6 +291,8 @@ Threat model mínimo:
 | BARBER usa Invoice/Booking ajena | tenant + Professional ownership en consulta final |
 | selector tenant concede acceso | Membership local revalidada; selector nunca autoriza |
 | carrera duplica Invoice/Payment | lock + unicidad + traducción idempotente |
+| Booking futura marcada completada | guard central por reloj server-side + reverificación en Invoice y Payment |
+| precio inválido/redondeado | DTO + validación de servicio + migración fail-closed + Decimal(65,2)/check |
 | respuesta filtra PII | `select` explícito y DTO mínimo |
 | mutación queda sin auditoría | escritura financiera y AuditLog en la misma transacción |
 | revenue cae en fecha incorrecta | Analytics consulta `Payment.paidAt` |
@@ -282,7 +302,7 @@ Threat model mínimo:
 ### Emisión
 
 1. Transacción PostgreSQL `SERIALIZABLE` con reintento acotado para `P2034`.
-2. Bloquear Booking tenant-scoped y verificar `COMPLETED`.
+2. Bloquear Booking tenant-scoped y verificar `COMPLETED` más `endTime <= now` server-side.
 3. Bloquear/leer Service de esa Booking dentro de la misma transacción.
 4. Validar y copiar `Service.price` a Invoice.
 5. Crear Invoice y AuditLog `ISSUE_INVOICE`.
@@ -291,7 +311,7 @@ Threat model mínimo:
 ### Cobro
 
 1. Transacción PostgreSQL `SERIALIZABLE` con reintento acotado.
-2. Bloquear Invoice tenant/ownership-scoped.
+2. Bloquear Invoice tenant/ownership-scoped y volver a verificar `Booking.endTime <= now` server-side.
 3. Si no existe Payment, crearlo con método del DTO, `paidAt = now` del servidor y actor de sesión; crear AuditLog `RECORD_INVOICE_PAYMENT`.
 4. Si ya existe con el mismo método, devolverlo `200` sin cambiar `paidAt`, actor ni auditoría.
 5. Si existe con otro método, devolver `409`.
@@ -332,11 +352,15 @@ Eventos:
 - headers de paginación exactos;
 - matriz de roles del controller y uso de `RequestUser` completo.
 - para el flujo de Facturación-A, `PATCH /bookings/:id/status` acepta `CONFIRMED` a `COMPLETED` solo sobre la Booking propia del BARBER y no crea efectos financieros; las demás transiciones continúan bajo las pruebas y el contrato de Reservas.
+- OWNER/ADMIN/RECEPTIONIST y BARBER reciben `409` al intentar `COMPLETED` antes de `endTime`.
+- Create/UpdateService rechazan `0`, negativos y más de dos decimales.
 
 ### Service
 
 - snapshot exacto del precio y salida decimal como string;
 - rechazo de Booking no completada y precio inválido;
+- rechazo de emisión y cobro cuando `Booking.endTime` continúa en el futuro;
+- normalización exacta de Service.price válido y rechazo defensivo antes de Prisma;
 - Invoice/Payment idempotentes;
 - conflicto por método diferente;
 - BARBER vinculado propio, ajeno y sin vínculo;
@@ -364,6 +388,10 @@ Ejecutar en base `_test`, usuario no privilegiado y entorno temporal aislado:
 13. Paginación no mezcla tenants ni profesionales y no expone PII prohibida.
 14. Analytics atribuye el ingreso al día de `Payment.paidAt`, no a emisión ni Booking.
 15. La migración falla ante datos legacy no reconciliables y pasa con un fixture convertible aprobado.
+16. OWNER y BARBER reciben `409` al completar una Booking futura; la fila conserva su estado.
+17. Una Booking futura forzada históricamente a `COMPLETED` no puede emitir Invoice ni registrar Payment.
+18. Crear o editar Service con `0` o `125.555` devuelve `400`; PostgreSQL rechaza además precio no positivo.
+19. La migración monetaria conserva sin cambios los fixtures inválidos al fallar y activa escala/check en el fixture válido.
 
 ## 16. QA manual planificado
 
@@ -373,6 +401,8 @@ Ejecutar en base `_test`, usuario no privilegiado y entorno temporal aislado:
 - dos organizaciones con reservas completadas y no completadas;
 - emitir, repetir emisión, cobrar, repetir cobro y probar método conflictivo;
 - verificar amount igual al precio server-side aunque el cliente intente enviar otro;
+- intentar completar, emitir y cobrar una reserva cuyo `endTime` sigue en el futuro;
+- crear y editar Service con `0`, `125.555` y un precio válido de dos decimales;
 - cambiar tenant y repetir IDs ajenos;
 - comprobar Payment, `paidAt`, actor y AuditLog en PostgreSQL sin registrar PII en evidencia;
 - comprobar que Analytics cambia en el día real del cobro;
@@ -389,7 +419,7 @@ Después de aprobación explícita del backend: loading, empty, error, pending, 
 - el checkpoint backend debe considerarse candidato de revisión, no desplegable de forma aislada;
 - la activación requiere frontend autorizado y coordinado, o una compatibilidad explícitamente aprobada que ignore de forma segura amount y nunca invente método/actor/fecha;
 - rollback operativo: restaurar binario y base desde backup previo; no intentar downgrade destructivo de filas financieras nuevas;
-- `BACKEND_CHANGES.md` se actualizará al implementar el contrato, no durante este plan.
+- `BACKEND_CHANGES.md` registra la implementación y el correctivo; este contrato permanece como referencia autoritativa del alcance.
 
 ## 18. Gates y siguiente autorización
 
@@ -400,8 +430,10 @@ Para cerrar el backend se requiere auditoría y aprobación explícita del propi
 ## 19. Evidencia del checkpoint backend
 
 - migración versionada fail-closed, validada sobre una Invoice legacy convertible y un Payment legacy bloqueante;
+- migración correctiva validada con precio histórico válido, precios `0`/`125.555` y Booking futura `COMPLETED`, incluyendo rollback atómico;
 - Prisma format/validate/generate, TypeScript, lint y build en exit `0`;
-- 305 pruebas unitarias aprobadas; 11 integraciones opt-in omitidas por diseño;
-- 78/78 E2E aprobadas sobre PostgreSQL temporal separado, base `_test` y rol propietario sin privilegios globales;
+- 328 pruebas unitarias aprobadas; 11 integraciones opt-in omitidas por diseño;
+- 80/80 E2E aprobadas sobre PostgreSQL temporal separado, base `_test` y rol propietario sin privilegios globales;
 - QA backend integrado dentro de la E2E: OWNER, ADMIN, RECEPTIONIST, dos BARBER vinculados, BARBER sin vínculo y CUSTOMER; dos tenants; cambio de rol/tenant para una misma identidad; emisión/cobro idempotentes y concurrentes; IDOR; mínima exposición; auditoría; rollback y Analytics por `paidAt`;
+- QA correctivo: OWNER/BARBER, tiempo server-side, emisión/cobro futuros, Service create/update, constraint monetaria y datos históricos fail-closed;
 - frontend, A0.6-B, Clerk, Supabase y demás no-alcances permanecieron intactos.

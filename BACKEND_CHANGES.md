@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-26 — Correctivo de auditoría de Facturación-A Backend
+
+- **`PATCH /bookings/:id/status`:** toda transición a `COMPLETED`, para OWNER, ADMIN, RECEPTIONIST o BARBER, compara `Booking.endTime` con el tiempo autoritativo del servidor. Antes del fin responde `409` y no modifica la Booking.
+- **Defensa financiera histórica:** `POST /invoices` y `POST /invoices/:id/payments` vuelven a verificar `endTime` dentro de su transacción y bloqueo tenant/ownership-scoped. Una Booking futura marcada `COMPLETED` por datos previos no puede emitir ni cobrar.
+- **`POST /services` y `PATCH /services/:id`:** `price` debe ser número finito, estrictamente mayor que cero y con máximo dos decimales. `0`, negativos y `125.555` reciben `400`; `UpdateServiceDto` conserva las mismas reglas.
+- **Persistencia:** `Service.price` pasa a `Decimal(65,2)` y `Service_price_dop_check` exige valor positivo. El servicio normaliza valores válidos a `Prisma.Decimal` antes de crear o editar.
+- **Migración:** `20260826210000_facturacion_a_completion_service_price_guards` usa una transacción explícita y falla cerrada antes de redondear ante `Service.price` histórico no positivo, con más de dos decimales o fuera de rango; también bloquea Booking futura ya `COMPLETED` para reconciliación explícita.
+- **Validación:** Prisma format/validate/generate, TypeScript, lint y build terminaron con exit `0`; 328 unitarias y 80/80 E2E pasaron. PostgreSQL temporal aplicó las 19 migraciones con rol sin privilegios globales.
+- **QA de migración:** el fixture válido terminó con escala `2` y constraint activa. Los fixtures con `0`/`125.555` y Booking futura `COMPLETED` fallaron como se esperaba y conservaron escala `30`, filas originales y ausencia de constraint, demostrando rollback atómico.
+- **Estado:** **IMPLEMENTADO / EN REVISIÓN**. La auditoría no aprueba ni cierra Facturación-A; frontend y todos los no-alcances permanecen bloqueados.
+
 ## 2026-08-25 — Facturación-A Backend: factura interna y cobro completo
 
 - **Modelo:** `Invoice` es única por Booking, inmutable, tenant-scoped y conserva `amount Decimal(65,2)` positivo más `currency = DOP`. El estado de respuesta se deriva como `ISSUED` sin Payment o `PAID` con Payment; se retiran los estados Invoice legacy.
