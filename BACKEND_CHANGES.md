@@ -8,6 +8,15 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-26 — Facturación-A Backend cerrado y aprobado
+
+- **Aprobación:** el propietario aprobó y cerró explícitamente Facturación-A Backend sobre el checkpoint correctivo `21761ac573b075ec627c0e91593d61a4279c2b8f`.
+- **Contrato vigente:** permanecen aprobados Invoice interna única e inmutable, Payment completo único, importe server-side, tenant/ownership de BARBER, respuestas mínimas paginadas, auditoría financiera transaccional sin PII y Analytics por `Payment.paidAt`.
+- **Correctivo incluido:** ningún rol puede completar, emitir o cobrar antes de `Booking.endTime`; `Service.price` es DOP positivo con máximo dos decimales y la migración monetaria falla cerrada ante datos históricos inválidos.
+- **Evidencia aprobada:** Prisma format/validate/generate, TypeScript, lint y build en exit `0`; 328 unitarias; 80/80 E2E PostgreSQL aisladas; 19 migraciones aplicadas desde cero; QA de roles, tenant/IDOR, concurrencia, auditoría, mínima exposición y rollback atómico.
+- **Alcance del cierre:** este commit no modifica endpoints, DTOs, guards, Prisma, migraciones, persistencia ni código. Facturación-B queda limitada a análisis y plan; frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones y comisiones requieren autorización separada.
+- **Estado:** **CERRADO / APROBADO**.
+
 ## 2026-08-26 — Correctivo de auditoría de Facturación-A Backend
 
 - **`PATCH /bookings/:id/status`:** toda transición a `COMPLETED`, para OWNER, ADMIN, RECEPTIONIST o BARBER, compara `Booking.endTime` con el tiempo autoritativo del servidor. Antes del fin responde `409` y no modifica la Booking.

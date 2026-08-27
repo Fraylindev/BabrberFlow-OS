@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-26 — Facturación-A Backend cerrado y aprobado
+
+- El propietario aprobó explícitamente el checkpoint correctivo `21761ac573b075ec627c0e91593d61a4279c2b8f` y cerró Facturación-A Backend.
+- La aprobación conserva el contrato de Invoice/Payment, aislamiento tenant/ownership, concurrencia, auditoría sin PII, mínima exposición, Analytics por fecha real de pago y los correctivos temporal y monetario.
+- La evidencia aprobada incluye Prisma, TypeScript, lint y build en exit `0`; 328 unitarias; 80/80 E2E PostgreSQL aisladas; 19 migraciones desde cero; y QA fail-closed con rollback atómico para datos históricos inválidos.
+- Este cierre es exclusivamente documental. Facturación-B queda limitada a análisis y plan; no autoriza implementación frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones ni otro alcance.
+- Estado: **CERRADO / APROBADO**.
+
 ## 2026-08-26 — Correctivo temporal y monetario de Facturación-A Backend
 
 - Se impidió completar una Booking antes de `endTime` para todos los roles autorizados usando tiempo del servidor; Invoice y Payment repiten el control para datos históricos.

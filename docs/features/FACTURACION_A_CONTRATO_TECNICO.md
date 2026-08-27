@@ -1,6 +1,6 @@
 # Facturación-A — contrato técnico aprobado
 
-Estado: **IMPLEMENTADO / EN REVISIÓN**
+Estado: **CERRADO / APROBADO**
 
 Etapa: **Backend**
 
@@ -9,9 +9,10 @@ Fecha: 2026-08-25
 Correctivo de auditoría: 2026-08-26
 
 Contrato aprobado: `2d66d7c301de6dfc69f2cead94356ed2e7bd95f1`
+Checkpoint backend aprobado: `21761ac573b075ec627c0e91593d61a4279c2b8f`
 Rama autorizada: `ai/antigravity-qa`
 
-Este documento define el contrato de producto, arquitectura y seguridad implementado por Facturación-A Backend. El checkpoint continúa pendiente de auditoría y aprobación; no autoriza frontend ni despliegue aislado.
+Este documento define el contrato de producto, arquitectura y seguridad implementado por Facturación-A Backend. El propietario aprobó y cerró el backend sobre el checkpoint correctivo indicado. El cierre no autoriza despliegue aislado ni implementación frontend.
 
 ## 1. Resultado de producto
 
@@ -410,25 +411,26 @@ Ejecutar en base `_test`, usuario no privilegiado y entorno temporal aislado:
 
 ### Frontend futuro, fuera de esta autorización
 
-Después de aprobación explícita del backend: loading, empty, error, pending, success, confirmación de cobro, teclado/foco, desktop, 390 px, cambio de tenant/rol sin datos obsoletos y consola limpia. No iniciar este QA ni frontend en Facturación-A.
+Facturación-B deberá cubrir loading, empty, error, pending, success, confirmación de cobro, teclado/foco, desktop, 390 px, cambio de tenant/rol sin datos obsoletos y consola limpia. Solo su análisis y plan están autorizados; no iniciar implementación ni QA frontend hasta nueva autorización.
 
 ## 17. Compatibilidad y activación
 
 - el contrato cambia bodies, respuestas, modelo y endpoint de cobro;
 - el frontend actual envía amount, espera estados legacy y usa `PATCH /invoices/:id/pay`;
-- el checkpoint backend debe considerarse candidato de revisión, no desplegable de forma aislada;
+- el checkpoint backend está aprobado, pero no debe desplegarse de forma aislada mientras el consumidor frontend siga siendo incompatible;
 - la activación requiere frontend autorizado y coordinado, o una compatibilidad explícitamente aprobada que ignore de forma segura amount y nunca invente método/actor/fecha;
 - rollback operativo: restaurar binario y base desde backup previo; no intentar downgrade destructivo de filas financieras nuevas;
 - `BACKEND_CHANGES.md` registra la implementación y el correctivo; este contrato permanece como referencia autoritativa del alcance.
 
 ## 18. Gates y siguiente autorización
 
-Gate 1 y Gate 2 fueron aprobados por el propietario al autorizar Facturación-A Backend. Gate 3 queda **IMPLEMENTADO / EN REVISIÓN** como checkpoint candidato.
+Gate 1, Gate 2 y Gate 3 fueron aprobados por el propietario. Facturación-A Backend queda **CERRADO / APROBADO** sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`.
 
-Para cerrar el backend se requiere auditoría y aprobación explícita del propietario. Frontend exige una autorización posterior independiente. Continúan fuera de alcance A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones e integraciones de pago.
+Facturación-B Frontend exige una autorización posterior independiente para implementar; por ahora solo se autoriza análisis y plan. Continúan fuera de alcance A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones e integraciones de pago.
 
 ## 19. Evidencia del checkpoint backend
 
+- aprobación explícita del propietario sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`;
 - migración versionada fail-closed, validada sobre una Invoice legacy convertible y un Payment legacy bloqueante;
 - migración correctiva validada con precio histórico válido, precios `0`/`125.555` y Booking futura `COMPLETED`, incluyendo rollback atómico;
 - Prisma format/validate/generate, TypeScript, lint y build en exit `0`;

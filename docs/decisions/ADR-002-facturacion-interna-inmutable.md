@@ -1,10 +1,11 @@
 # ADR-002 — Facturación interna inmutable y cobro completo único
 
-- Estado: **IMPLEMENTADO / EN REVISIÓN**
+- Estado: **CERRADO / APROBADO**
 - Fecha de decisión: 2026-08-25
 - Correctivo de auditoría: 2026-08-26
 - Contrato aprobado: [`FACTURACION_A_CONTRATO_TECNICO.md`](../features/FACTURACION_A_CONTRATO_TECNICO.md)
 - Checkpoint base del contrato: `2d66d7c301de6dfc69f2cead94356ed2e7bd95f1`
+- Checkpoint backend aprobado: `21761ac573b075ec627c0e91593d61a4279c2b8f`
 
 ## Contexto
 
@@ -58,4 +59,5 @@ El contrato retira `PATCH /invoices/:id/pay`, elimina `amount` de `POST /invoice
 - La activación exige reconciliar explícitamente precios históricos inválidos o reservas futuras ya completadas si existen.
 - La activación requiere coordinar un consumidor frontend posterior.
 - Anulación, reembolso, pago parcial, comisiones y fiscalidad necesitarán decisiones y migraciones propias.
-- La auditoría del checkpoint backend debe validar migración, concurrencia, IDOR, proyecciones y evidencia PostgreSQL antes de aprobarlo.
+- La auditoría validó migración, concurrencia, IDOR, proyecciones y evidencia PostgreSQL; el propietario aprobó y cerró Facturación-A Backend sobre el checkpoint correctivo registrado.
+- Facturación-B permanece separada: solo están autorizados su análisis y plan, no implementación ni QA frontend.
