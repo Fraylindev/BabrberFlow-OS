@@ -1,6 +1,6 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-08-26. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-08-27. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
 ## 1. Visión
 
@@ -83,13 +83,15 @@ Gobierno y estándares:
 | 3 | Módulo Profesionales | **NO CERRADO / NO APROBADO** | Pendiente de auditoría y aprobación frontend |
 | 4 | Servicios | **NO INICIADO en el ciclo modular vigente** | No autorizado mientras Profesionales siga abierto |
 | 5 | Facturación-A Backend | **CERRADO / APROBADO** | Checkpoint correctivo aprobado `21761ac573b075ec627c0e91593d61a4279c2b8f` |
-| 5 | Facturación-B Frontend | **ANÁLISIS / PLAN AUTORIZADO** | Implementación y QA todavía no autorizados |
+| 5 | Facturación-B Frontend | **IMPLEMENTADO / EN REVISIÓN** | Consumo del contrato aprobado, emisión desde Reservas, cobro completo, responsive y aislamiento de contexto; pendiente de auditoría y aprobación |
 | 6–8 | Equipo, Configuración, Analytics modular | **PENDIENTES** | No iniciar sin autorización propia |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
 
 Correctivo transversal de aislamiento del Resumen: **CERRADO / APROBADO** por decisión explícita del propietario sobre `3235501956050e284d84d9aa306b2653cc07003d`. El estado visible queda ligado a una clave de alcance `usuario + organización + rol`, se vacía en el mismo render en que cambia ese contexto y solo acepta respuestas cuyo alcance e identificador de solicitud sigan vigentes. Las respuestas tardías del tenant anterior se descartan; la limpieza existente de React Query se conserva. El QA real cubrió `OWNER → BARBER → OWNER` en escritorio y 390×844, verificó la limpieza inmediata y la carga del tenant nuevo sin métricas, reservas ni profesionales obsoletos, y no registró errores de aplicación en consola. Las pruebas específicas cubren además respuestas tardías y el ciclo `A → B → A`. Este cierre aprueba únicamente el correctivo transversal: el módulo Resumen permanece congelado y no implica cambios ni aprobación de Facturación, A0.6, Clerk, backend, Prisma, contratos API o ADR.
 
-Facturación-A Backend: **CERRADO / APROBADO** por decisión explícita del propietario sobre el checkpoint correctivo `21761ac573b075ec627c0e91593d61a4279c2b8f`. La aprobación comprende Invoice interna y Payment completo único, tenant/ownership, concurrencia, auditoría sin PII, mínima exposición, Analytics por `Payment.paidAt`, el guard temporal de `Booking.endTime` y `Service.price` DOP positivo con máximo dos decimales. La evidencia aprobada conserva Prisma format/validate/generate, TypeScript, lint y build en exit `0`; 328 unitarias; 80/80 E2E PostgreSQL aisladas; 19 migraciones desde cero; y QA fail-closed/rollback para precios históricos inválidos y Booking futura `COMPLETED`. El cierre no autoriza despliegue aislado ni implementación frontend, A0.6-B, Clerk, Supabase, reembolsos, anulaciones o comisiones. Facturación-B queda limitada a análisis y plan hasta nueva autorización.
+Facturación-A Backend: **CERRADO / APROBADO** por decisión explícita del propietario sobre el checkpoint correctivo `21761ac573b075ec627c0e91593d61a4279c2b8f`. La aprobación comprende Invoice interna y Payment completo único, tenant/ownership, concurrencia, auditoría sin PII, mínima exposición, Analytics por `Payment.paidAt`, el guard temporal de `Booking.endTime` y `Service.price` DOP positivo con máximo dos decimales. La evidencia aprobada conserva Prisma format/validate/generate, TypeScript, lint y build en exit `0`; 328 unitarias; 80/80 E2E PostgreSQL aisladas; 19 migraciones desde cero; y QA fail-closed/rollback para precios históricos inválidos y Booking futura `COMPLETED`.
+
+Facturación-B Frontend: **IMPLEMENTADO / EN REVISIÓN**. La web consume las proyecciones y paginación aprobadas, nunca envía `amount`, emite desde una Booking `COMPLETED` y registra un único cobro completo con método. OWNER, ADMIN y RECEPTIONIST reciben la vista del tenant; BARBER recibe “Facturación de mis servicios” y solo los datos autorizados por backend, sin columna de otros profesionales ni lenguaje de ganancias. Las query keys financieras incluyen usuario, organización y rol; el cambio de contexto desmonta la vista, vacía los datos visibles inmediatamente e impide que una mutación tardía del contexto anterior actualice UI o toast. El QA real usó una identidad con dos organizaciones y roles OWNER/BARBER sobre PostgreSQL temporal aislado: verificó aislamiento inmediato y carga del tenant nuevo, emisión y cobro BARBER, importe DOP inmutable, `paidAt` server-side, actor y AuditLog sin PII, filtros, diálogo, desktop y 375 px sin overflow, y consola sin errores de aplicación. TypeScript, lint, build y 16 pruebas frontend finalizaron con exit `0`; las 20/20 E2E de Facturación-A pasaron sobre 19 migraciones desde cero. Este estado no equivale a aprobación y no autoriza A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones ni otro alcance.
 
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 
@@ -221,7 +223,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 1. Security A0.5 completo (A, B, C y D), Security A0.6-A y el correctivo transversal de aislamiento del Resumen están **CERRADOS / APROBADOS** por decisión explícita del propietario.
 2. Facturación-A Backend está **CERRADO / APROBADO** sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`.
-3. Realizar únicamente análisis y plan de Facturación-B Frontend. No implementar frontend ni iniciar QA hasta autorización explícita posterior.
+3. Auditar Facturación-B Frontend como checkpoint **IMPLEMENTADO / EN REVISIÓN**; no cerrarlo ni declararlo aprobado sin decisión explícita del propietario.
 4. No iniciar Security A0.6-B. A0.6-B/C/D, Clerk, Supabase, reembolsos, anulaciones, comisiones y cualquier otro alcance permanecen bloqueados.
 5. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
 6. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.

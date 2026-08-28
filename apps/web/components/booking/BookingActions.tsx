@@ -35,9 +35,11 @@ interface BookingActionsProps {
   booking: Booking;
   isBarber: boolean;
   isUpdating: boolean;
+  isIssuing: boolean;
   layout: 'mobile' | 'table';
   onStatusChange: (status: BookingStatus) => void;
   onReschedule: () => void;
+  onIssueInvoice: () => void;
 }
 
 interface ContextAction {
@@ -244,15 +246,19 @@ export function BookingActions({
   booking,
   isBarber,
   isUpdating,
+  isIssuing,
   layout,
   onStatusChange,
   onReschedule,
+  onIssueInvoice,
 }: BookingActionsProps) {
   const actions = (isBarber ? BARBER_ACTIONS : STAFF_ACTIONS)[booking.status] ?? [];
   const canReschedule =
     !isBarber && (booking.status === 'PENDING' || booking.status === 'CONFIRMED');
+  const canIssueInvoice = booking.status === 'COMPLETED';
+  const isBusy = isUpdating || isIssuing;
 
-  if (actions.length === 0 && !canReschedule) {
+  if (actions.length === 0 && !canReschedule && !canIssueInvoice) {
     return <span className="text-xs text-[var(--dash-text-faint)]">Sin acciones disponibles</span>;
   }
 
@@ -265,7 +271,7 @@ export function BookingActions({
             type="button"
             tone="light"
             variant={action.variant}
-            disabled={isUpdating}
+            disabled={isBusy}
             onClick={() => onStatusChange(action.to)}
             className="min-h-10 w-full px-3 py-2 text-xs"
           >
@@ -277,11 +283,22 @@ export function BookingActions({
             type="button"
             tone="light"
             variant="secondary"
-            disabled={isUpdating}
+            disabled={isBusy}
             onClick={onReschedule}
             className="min-h-10 w-full px-3 py-2 text-xs"
           >
             Reprogramar
+          </Button>
+        )}
+        {canIssueInvoice && (
+          <Button
+            type="button"
+            tone="light"
+            disabled={isBusy}
+            onClick={onIssueInvoice}
+            className="col-span-2 min-h-11 w-full px-3 py-2 text-xs"
+          >
+            {isIssuing ? 'Emitiendo…' : 'Emitir factura'}
           </Button>
         )}
       </div>
@@ -305,15 +322,26 @@ export function BookingActions({
           type="button"
           tone="light"
           variant="primary"
-          disabled={isUpdating}
+          disabled={isBusy}
           onClick={() => onStatusChange(primaryAction.to)}
           className="min-h-9 px-3 py-1.5 text-xs"
         >
           {primaryAction.label}
         </Button>
       )}
+      {canIssueInvoice && (
+        <Button
+          type="button"
+          tone="light"
+          disabled={isBusy}
+          onClick={onIssueInvoice}
+          className="min-h-9 px-3 py-1.5 text-xs"
+        >
+          {isIssuing ? 'Emitiendo…' : 'Emitir factura'}
+        </Button>
+      )}
       {secondaryActions.length > 0 && (
-        <ContextActionsMenu actions={secondaryActions} disabled={isUpdating} />
+        <ContextActionsMenu actions={secondaryActions} disabled={isBusy} />
       )}
     </div>
   );

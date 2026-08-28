@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, FormEvent, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ApiError,
   Booking,
@@ -28,6 +29,8 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonListRows } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth-context';
+import { invoiceErrorMessage, invoiceScopeKey } from '@/lib/invoice-ui';
+import { useCreateInvoice } from '@/lib/queries/invoices';
 import { ClientAutocomplete } from '@/components/booking/ClientAutocomplete';
 import { BookingActions } from '@/components/booking/BookingActions';
 
@@ -127,7 +130,14 @@ const STATUS_LABELS: Record<BookingStatus | 'ALL', string> = {
 export default function BookingsPage() {
   const { toast } = useToast();
   const { user } = useAuth();
+  const router = useRouter();
   const isBarber = user?.role === 'BARBER';
+  const scopeKey = invoiceScopeKey(user);
+  const scopeRef = useRef(scopeKey);
+
+  useEffect(() => {
+    scopeRef.current = scopeKey;
+  }, [scopeKey]);
 
   // ── Filtros ──────────────────────────────────────────────────────────────
   const today = new Date();
@@ -151,7 +161,9 @@ export default function BookingsPage() {
 
   // ── Mutaciones ───────────────────────────────────────────────────────────
   const updateStatus = useUpdateBookingStatus();
+  const createInvoice = useCreateInvoice();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [issuingId, setIssuingId] = useState<string | null>(null);
 
   async function handleStatusChange(id: string, status: BookingStatus) {
     setUpdatingId(id);
@@ -165,6 +177,24 @@ export default function BookingsPage() {
       );
     } finally {
       setUpdatingId(null);
+    }
+  }
+
+  async function handleIssueInvoice(bookingId: string) {
+    if (!scopeKey) return;
+    const operationScope = scopeKey;
+    setIssuingId(bookingId);
+    try {
+      await createInvoice.mutateAsync({ bookingId, scopeKey: operationScope });
+      if (scopeRef.current !== operationScope) return;
+      toast('Factura disponible.', 'success');
+      router.push('/dashboard/invoices');
+    } catch (error) {
+      if (scopeRef.current === operationScope) {
+        toast(invoiceErrorMessage(error, 'issue'), 'error');
+      }
+    } finally {
+      if (scopeRef.current === operationScope) setIssuingId(null);
     }
   }
 
@@ -397,9 +427,11 @@ export default function BookingsPage() {
                   booking={b}
                   isBarber={isBarber}
                   isUpdating={updatingId === b.id}
+                  isIssuing={issuingId === b.id}
                   layout="mobile"
                   onStatusChange={(status) => handleStatusChange(b.id, status)}
                   onReschedule={() => setRescheduleTarget(b)}
+                  onIssueInvoice={() => handleIssueInvoice(b.id)}
                 />
               </article>
             ))}
@@ -493,9 +525,11 @@ export default function BookingsPage() {
                         booking={b}
                         isBarber={isBarber}
                         isUpdating={updatingId === b.id}
+                        isIssuing={issuingId === b.id}
                         layout="table"
                         onStatusChange={(status) => handleStatusChange(b.id, status)}
                         onReschedule={() => setRescheduleTarget(b)}
+                        onIssueInvoice={() => handleIssueInvoice(b.id)}
                       />
                     </td>
                   </tr>

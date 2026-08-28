@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-27 — Facturación-B Frontend implementado como candidato
+
+- Se reemplazó el consumidor financiero incompatible por el contrato aprobado: listado mínimo y paginado, estados derivados `ISSUED`/`PAID`, importes DOP como strings decimales, emisión con solo `bookingId` y cobro completo con solo `method`.
+- Reservas permite emitir desde una Booking completada; Facturación ofrece filtros, estados loading/empty/error/pending/success, confirmación de cobro, fechas en la zona del negocio, tabla desktop y tarjetas móviles. BARBER usa “Facturación de mis servicios” y no recibe lenguaje de ganancias ni columnas financieras de otros profesionales.
+- Las consultas quedan aisladas por usuario, organización y rol. El cambio de contexto retira inmediatamente los datos anteriores, carga el tenant nuevo y descarta efectos visuales de mutaciones tardías; se conserva la limpieza global vigente de React Query.
+- QA real sobre PostgreSQL temporal aislado y una identidad con organizaciones/roles OWNER y BARBER verificó cambio de tenant sin datos obsoletos, emisión y cobro BARBER, importe inmutable, método, fecha del servidor, actor y auditoría sin PII, filtros, diálogo, desktop, 375 px sin overflow y consola sin errores de aplicación.
+- Web TypeScript, lint y build finalizaron con exit `0`; pasaron 6 pruebas de Facturación, 5 de aislamiento del Resumen y 5 de rutas de autenticación. Las E2E backend específicas aprobaron 20/20 sobre una base `_test` con 19 migraciones desde cero.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No está cerrado ni aprobado y no autoriza A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones ni otro alcance.
+
 ## 2026-08-26 — Facturación-A Backend cerrado y aprobado
 
 - El propietario aprobó explícitamente el checkpoint correctivo `21761ac573b075ec627c0e91593d61a4279c2b8f` y cerró Facturación-A Backend.

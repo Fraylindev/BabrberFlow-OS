@@ -12,6 +12,7 @@ import type { UserRole } from "@/lib/api";
 export interface NavItem {
   href: string;
   label: string;
+  labelByRole?: Partial<Record<UserRole, string>>;
   icon: (props: { className?: string }) => React.ReactElement;
   roles: readonly UserRole[] | null;
 }
@@ -43,8 +44,9 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         href: "/dashboard/invoices",
         label: "Facturación",
+        labelByRole: { BARBER: "Facturación de mis servicios" },
         icon: ReceiptIcon,
-        roles: ["OWNER", "ADMIN", "RECEPTIONIST"],
+        roles: ["OWNER", "ADMIN", "RECEPTIONIST", "BARBER"],
       },
     ],
   },
@@ -61,6 +63,11 @@ export const ALL_NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((g) => g.items);
 export function visibleNavGroups(role: UserRole | undefined): NavGroup[] {
   return NAV_GROUPS.map((g) => ({
     ...g,
-    items: g.items.filter((item) => !item.roles || (role && item.roles.includes(role))),
+    items: g.items
+      .filter((item) => !item.roles || (role && item.roles.includes(role)))
+      .map((item) => ({
+        ...item,
+        label: (role && item.labelByRole?.[role]) || item.label,
+      })),
   })).filter((g) => g.items.length > 0);
 }

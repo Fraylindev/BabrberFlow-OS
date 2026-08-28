@@ -6,9 +6,8 @@ const DARK_STYLES: Record<string, string> = {
   CANCELLED: 'text-[var(--color-danger)] bg-[var(--color-danger-bg)]',
   NO_SHOW: 'text-[var(--color-danger)] bg-[var(--color-danger-bg)]',
   // Invoices
-  UNPAID: 'text-[var(--color-pending)] bg-[var(--color-pending-bg)]',
+  ISSUED: 'text-[var(--color-pending)] bg-[var(--color-pending-bg)]',
   PAID: 'text-[var(--color-success)] bg-[var(--color-success-bg)]',
-  REFUNDED: 'text-[var(--color-muted)] bg-[var(--color-surface-raised)]',
 };
 
 // Tema claro del Backoffice: fondo tintado suave + texto saturado del
@@ -21,9 +20,8 @@ const LIGHT_STYLES: Record<string, string> = {
   COMPLETED: 'text-[#15803d] bg-[#dcfce7]',
   CANCELLED: 'text-[#b91c1c] bg-[#fee2e2]',
   NO_SHOW: 'text-[#475569] bg-[#e2e8f0]',
-  UNPAID: 'text-[#b45309] bg-[#fef3c7]',
+  ISSUED: 'text-[#b45309] bg-[#fef3c7]',
   PAID: 'text-[#15803d] bg-[#dcfce7]',
-  REFUNDED: 'text-[var(--dash-text-muted)] bg-[var(--dash-surface-raised)]',
 };
 
 const labels: Record<string, string> = {
@@ -32,9 +30,8 @@ const labels: Record<string, string> = {
   COMPLETED: 'Completada',
   CANCELLED: 'Cancelada',
   NO_SHOW: 'No asistió',
-  UNPAID: 'Sin pagar',
+  ISSUED: 'Pendiente de cobro',
   PAID: 'Pagada',
-  REFUNDED: 'Reembolsada',
 };
 
 export function Badge({

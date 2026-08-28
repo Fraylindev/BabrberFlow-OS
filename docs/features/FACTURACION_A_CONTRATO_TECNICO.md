@@ -409,16 +409,15 @@ Ejecutar en base `_test`, usuario no privilegiado y entorno temporal aislado:
 - comprobar que Analytics cambia en el día real del cobro;
 - confirmar que BARBER solo ve “Facturación de mis servicios”/“Cobros de mis reservas” y nunca Analytics global.
 
-### Frontend futuro, fuera de esta autorización
+### Frontend Facturación-B implementado como candidato
 
-Facturación-B deberá cubrir loading, empty, error, pending, success, confirmación de cobro, teclado/foco, desktop, 390 px, cambio de tenant/rol sin datos obsoletos y consola limpia. Solo su análisis y plan están autorizados; no iniciar implementación ni QA frontend hasta nueva autorización.
+Facturación-B cubre loading, empty, error, pending, success, confirmación de cobro, teclado/foco, desktop, móvil a 375 px, cambio de tenant/rol sin datos obsoletos y consola limpia. La implementación permanece **IMPLEMENTADA / EN REVISIÓN**: su QA habilita auditoría, no cierre ni aprobación.
 
 ## 17. Compatibilidad y activación
 
 - el contrato cambia bodies, respuestas, modelo y endpoint de cobro;
-- el frontend actual envía amount, espera estados legacy y usa `PATCH /invoices/:id/pay`;
-- el checkpoint backend está aprobado, pero no debe desplegarse de forma aislada mientras el consumidor frontend siga siendo incompatible;
-- la activación requiere frontend autorizado y coordinado, o una compatibilidad explícitamente aprobada que ignore de forma segura amount y nunca invente método/actor/fecha;
+- el frontend candidato ya no envía `amount`, consume estados `ISSUED`/`PAID` y usa `POST /invoices/:id/payments` con `method`;
+- el backend aprobado y el frontend candidato son contractualmente compatibles, pero la activación productiva sigue sujeta a auditoría y aprobación explícita de Facturación-B;
 - rollback operativo: restaurar binario y base desde backup previo; no intentar downgrade destructivo de filas financieras nuevas;
 - `BACKEND_CHANGES.md` registra la implementación y el correctivo; este contrato permanece como referencia autoritativa del alcance.
 
@@ -426,7 +425,7 @@ Facturación-B deberá cubrir loading, empty, error, pending, success, confirmac
 
 Gate 1, Gate 2 y Gate 3 fueron aprobados por el propietario. Facturación-A Backend queda **CERRADO / APROBADO** sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`.
 
-Facturación-B Frontend exige una autorización posterior independiente para implementar; por ahora solo se autoriza análisis y plan. Continúan fuera de alcance A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones e integraciones de pago.
+Facturación-B Frontend fue autorizado e implementado como checkpoint **IMPLEMENTADO / EN REVISIÓN**. Exige auditoría y aprobación explícita antes de cierre o activación. Continúan fuera de alcance A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones e integraciones de pago.
 
 ## 19. Evidencia del checkpoint backend
 
@@ -438,4 +437,13 @@ Facturación-B Frontend exige una autorización posterior independiente para imp
 - 80/80 E2E aprobadas sobre PostgreSQL temporal separado, base `_test` y rol propietario sin privilegios globales;
 - QA backend integrado dentro de la E2E: OWNER, ADMIN, RECEPTIONIST, dos BARBER vinculados, BARBER sin vínculo y CUSTOMER; dos tenants; cambio de rol/tenant para una misma identidad; emisión/cobro idempotentes y concurrentes; IDOR; mínima exposición; auditoría; rollback y Analytics por `paidAt`;
 - QA correctivo: OWNER/BARBER, tiempo server-side, emisión/cobro futuros, Service create/update, constraint monetaria y datos históricos fail-closed;
-- frontend, A0.6-B, Clerk, Supabase y demás no-alcances permanecieron intactos.
+- durante el checkpoint backend, frontend, A0.6-B, Clerk, Supabase y demás no-alcances permanecieron intactos.
+
+## 20. Evidencia del checkpoint frontend
+
+- Web TypeScript, lint y build en exit `0`; 6 pruebas específicas de Facturación, 5 de aislamiento de contexto y 5 de rutas de autenticación aprobadas.
+- E2E backend específica de Invoice/Payment: 20/20 sobre PostgreSQL temporal separado, base `_test`, rol limitado y 19 migraciones desde cero.
+- QA real con una misma identidad en dos organizaciones y roles OWNER/BARBER: limpieza visible inmediata, carga del nuevo tenant, ausencia de datos del otro profesional para BARBER, filtros y proyecciones mínimas.
+- Flujo integrado BARBER: emisión desde Booking completada y cobro completo con método `CASH`; PostgreSQL confirmó `PAID`, DOP con dos decimales, `paidAt` autoritativo, actor correcto y un AuditLog de emisión y otro de cobro, sin PII en la evidencia.
+- Revisión visual y funcional en desktop y 375 px sin overflow horizontal; diálogo con importe no editable, método, advertencia, foco inicial y cierre con `Escape`; consola sin errores de aplicación.
+- No se modificaron backend, Prisma, migraciones, Clerk, Supabase, A0.6-B, reembolsos, anulaciones, comisiones ni contratos API.

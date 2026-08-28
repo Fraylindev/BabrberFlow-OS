@@ -9,7 +9,8 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "test:auth-routes": "node --test lib/auth-routes.test.ts lib/invitation-navigation.test.ts",
-    "test:dashboard-scope": "node --test lib/dashboard-summary-state.test.ts"
+    "test:dashboard-scope": "node --test lib/dashboard-summary-state.test.ts",
+    "test:invoices": "node --test lib/invoice-ui.test.ts"
   },
   "dependencies": {
     "@clerk/localizations": "^4.15.5",

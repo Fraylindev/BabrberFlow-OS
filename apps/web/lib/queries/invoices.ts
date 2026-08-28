@@ -1,35 +1,96 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, Invoice } from "@/lib/api";
+import {
+  api,
+  type Invoice,
+  type InvoicePage,
+  type InvoiceState,
+  type Organization,
+  type PaymentMethod,
+} from "@/lib/api";
+import {
+  createInvoicePayload,
+  createPaymentPayload,
+  parseInvoicePagination,
+} from "@/lib/invoice-ui";
 import { queryKeys } from "./keys";
 
-export function useInvoicesQuery() {
+interface InvoiceFilters {
+  page: number;
+  limit: number;
+  state?: InvoiceState;
+}
+
+export function useInvoicesQuery(
+  scopeKey: string | null,
+  filters: InvoiceFilters,
+) {
   return useQuery({
-    queryKey: queryKeys.invoices.all,
-    queryFn: () => api.get<Invoice[]>("/invoices"),
+    queryKey: scopeKey
+      ? queryKeys.invoices.list(scopeKey, filters)
+      : ["invoices", "disabled"],
+    queryFn: async (): Promise<InvoicePage> => {
+      const response = await api.getWithHeaders<Invoice[]>("/invoices", {
+        page: String(filters.page),
+        limit: String(filters.limit),
+        ...(filters.state ? { state: filters.state } : {}),
+      });
+      return {
+        items: response.data,
+        pagination: parseInvoicePagination(response.headers),
+      };
+    },
+    enabled: Boolean(scopeKey),
   });
 }
 
-export interface CreateInvoiceInput {
-  bookingId: string;
-  amount: number;
+export function useOrganizationTimeZoneQuery(scopeKey: string | null) {
+  return useQuery({
+    queryKey: scopeKey
+      ? queryKeys.organizations.scope(scopeKey)
+      : ["organizations", "disabled"],
+    queryFn: async () => {
+      const organization = await api.get<Organization>("/organizations/mine");
+      if (!organization.timeZone) {
+        throw new Error("La zona horaria del negocio no está disponible");
+      }
+      return organization.timeZone;
+    },
+    enabled: Boolean(scopeKey),
+  });
 }
 
 export function useCreateInvoice() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: CreateInvoiceInput) => api.post<Invoice>("/invoices", input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.invoices.all });
+    mutationFn: ({ bookingId }: { bookingId: string; scopeKey: string }) =>
+      api.post<Invoice>("/invoices", createInvoicePayload(bookingId)),
+    onSuccess: (_invoice, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.invoices.scope(variables.scopeKey),
+      });
     },
   });
 }
 
-export function useMarkInvoicePaid() {
+export function useRecordInvoicePayment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.patch<Invoice>(`/invoices/${id}/pay`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.invoices.all });
+    mutationFn: ({
+      invoiceId,
+      method,
+    }: {
+      invoiceId: string;
+      method: PaymentMethod;
+      scopeKey: string;
+    }) =>
+      api.post<Invoice>(
+        `/invoices/${invoiceId}/payments`,
+        createPaymentPayload(method),
+      ),
+    onSuccess: (_invoice, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.invoices.scope(variables.scopeKey),
+      });
     },
   });
 }

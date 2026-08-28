@@ -18,6 +18,14 @@ export const queryKeys = {
   },
   invoices: {
     all: ["invoices"] as const,
+    scope: (scopeKey: string) => ["invoices", scopeKey] as const,
+    list: (
+      scopeKey: string,
+      filters: { page: number; limit: number; state?: "ISSUED" | "PAID" },
+    ) => ["invoices", scopeKey, "list", filters] as const,
+  },
+  organizations: {
+    scope: (scopeKey: string) => ["organizations", scopeKey] as const,
   },
   invitations: {
     all: ["team-invitations"] as const,

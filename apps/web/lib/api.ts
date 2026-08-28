@@ -116,7 +116,8 @@ export type BookingStatus =
   | "COMPLETED"
   | "NO_SHOW";
 
-export type InvoiceStatus = "UNPAID" | "PAID" | "REFUNDED";
+export type InvoiceState = "ISSUED" | "PAID";
+export type PaymentMethod = "CASH" | "CARD" | "TRANSFER";
 export type ProfessionalStatus = "ACTIVE" | "INACTIVE" | "ARCHIVED";
 
 export interface Organization {
@@ -125,6 +126,7 @@ export interface Organization {
   slug: string;
   email?: string;
   phone?: string | null;
+  timeZone?: string;
 }
 
 export interface AuthUser {
@@ -305,11 +307,33 @@ export interface RescheduleBookingInput {
 
 export interface Invoice {
   id: string;
-  amount: string | number;
-  status: InvoiceStatus;
-  bookingId: string;
-  createdAt: string;
-  booking?: Booking;
+  state: InvoiceState;
+  amount: string;
+  currency: "DOP";
+  issuedAt: string;
+  booking: {
+    id: string;
+    startTime: string;
+    clientName: string;
+    serviceName: string;
+    professionalName: string;
+  };
+  payment: {
+    method: PaymentMethod;
+    paidAt: string;
+  } | null;
+}
+
+export interface InvoicePagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface InvoicePage {
+  items: Invoice[];
+  pagination: InvoicePagination;
 }
 
 // === Flujo público B2C (sin autenticación) ===
