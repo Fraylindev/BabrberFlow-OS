@@ -17,4 +17,16 @@ export class QueryInvoicesDto {
   @IsOptional()
   @IsIn(INVOICE_STATES)
   state?: InvoiceState;
+
+  @IsOptional()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'from debe usar el formato YYYY-MM-DD',
+  })
+  from?: string;
+
+  @IsOptional()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'to debe usar el formato YYYY-MM-DD',
+  })
+  to?: string;
 }

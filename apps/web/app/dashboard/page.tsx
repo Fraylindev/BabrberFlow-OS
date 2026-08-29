@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { api, AnalyticsDashboard, Booking, Professional } from "@/lib/api";
 import { formatMoney } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -55,6 +55,7 @@ export default function DashboardHome() {
   const canCreateCatalog = user?.role === "OWNER" || user?.role === "ADMIN";
   const scopeKey = dashboardSummaryScopeKey(user);
   const requestIdRef = useRef(0);
+  const [reloadKey, setReloadKey] = useState(0);
   const [summaryState, dispatchSummary] = useReducer(
     dashboardSummaryReducer,
     INITIAL_DASHBOARD_SUMMARY_STATE,
@@ -118,9 +119,9 @@ export default function DashboardHome() {
     return () => {
       active = false;
     };
-  }, [canSeeAnalytics, scopeKey]);
+  }, [canSeeAnalytics, reloadKey, scopeKey]);
 
-  const loading = bookings === null || professionals === null;
+  const loading = currentSummary?.loading ?? true;
   const todayBookings = (bookings || [])
     .filter((b) => isToday(b.startTime))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
@@ -150,7 +151,7 @@ export default function DashboardHome() {
   // Negocio recién creado: sin profesionales y sin ninguna cita todavía
   // — la agenda vacía y los widgets de carga no aportan nada útil
   // todavía, mejor guiar los primeros pasos.
-  const isBrandNew = !loading && (professionals?.length ?? 0) === 0 && (bookings?.length ?? 0) === 0;
+  const isBrandNew = !error && !loading && (professionals?.length ?? 0) === 0 && (bookings?.length ?? 0) === 0;
 
   const alerts: { text: string; href: string }[] = [];
   if (analytics) {
@@ -191,10 +192,21 @@ export default function DashboardHome() {
       />
 
       {error && (
-        <p className="mb-6 rounded-sm bg-[#fee2e2] px-3 py-2 text-sm text-[#b91c1c]">{error}</p>
+        <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-sm border border-[var(--dash-danger)]/30 bg-[var(--dash-danger-bg)] px-4 py-3 sm:flex-row sm:items-center">
+          <p role="alert" className="text-sm text-[var(--dash-danger)]">{error}</p>
+          <Button
+            type="button"
+            tone="light"
+            variant="secondary"
+            className="shrink-0"
+            onClick={() => setReloadKey((current) => current + 1)}
+          >
+            Reintentar
+          </Button>
+        </div>
       )}
 
-      {canSeeAnalytics && (
+      {canSeeAnalytics && !error && (
         <Reveal>
           <Card tone="light" className="mb-6 p-4 sm:p-6">
             {loading || !analytics ? (
@@ -267,7 +279,7 @@ export default function DashboardHome() {
         </div>
       </Reveal>
 
-      {alerts.length > 0 && (
+      {!error && alerts.length > 0 && (
         <Reveal delay={120}>
           <Card tone="light" className="mb-6 p-5">
             <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--dash-text-muted)]">
@@ -290,7 +302,7 @@ export default function DashboardHome() {
         </Reveal>
       )}
 
-      {isBrandNew ? (
+      {!error && (isBrandNew ? (
         <Reveal delay={160}>
           <Card tone="light" className="p-6 sm:p-8">
             <EmptyState
@@ -452,7 +464,7 @@ export default function DashboardHome() {
             )}
           </Reveal>
         </div>
-      )}
+      ))}
     </div>
   );
 }

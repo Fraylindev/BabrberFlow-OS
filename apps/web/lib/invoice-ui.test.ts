@@ -7,6 +7,7 @@ import {
   formatBusinessDateTime,
   formatDopAmount,
   invoiceErrorMessage,
+  invoiceDateRangeError,
   invoiceScopeKey,
   isCurrentInvoiceScope,
   parseInvoicePagination,
@@ -49,6 +50,16 @@ test("financial payloads contain only client-authorized fields", () => {
   assert.deepEqual(createPaymentPayload("TRANSFER"), {
     method: "TRANSFER",
   });
+});
+
+test("invoice issue date range validates both inclusive local endpoints", () => {
+  assert.equal(
+    invoiceDateRangeError("2026-08-11", "2026-08-10"),
+    "Desde no puede ser posterior a Hasta.",
+  );
+  assert.equal(invoiceDateRangeError("2026-08-10", "2026-08-10"), null);
+  assert.equal(invoiceDateRangeError("", "2026-08-10"), null);
+  assert.equal(invoiceDateRangeError("2026-08-10", ""), null);
 });
 
 test("DOP formatting preserves decimal strings without floating point", () => {

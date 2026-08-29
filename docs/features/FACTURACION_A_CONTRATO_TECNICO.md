@@ -188,8 +188,14 @@ Query DTO:
 | `page` | entero positivo; default `1` |
 | `limit` | entero `1..100`; default `20` |
 | `state` | opcional: `ISSUED` o `PAID` |
+| `from` | fecha local de emisión opcional `YYYY-MM-DD`; inclusiva |
+| `to` | fecha local de emisión opcional `YYYY-MM-DD`; inclusiva |
 
 - orden estable: `createdAt DESC, id DESC`;
+- `from` y `to` filtran exclusivamente `Invoice.createdAt`, presentado como “Fecha de emisión”; nunca `Payment.paidAt`;
+- cada extremo se calcula en backend con `Organization.timeZone`: inicio del día para `from` y comienzo del día siguiente como límite exclusivo de `to`;
+- un extremo ausente queda abierto; fecha calendario imposible o `from > to` devuelve `400` antes de consultar filas financieras;
+- el filtro forma parte del `where` tenant/ownership-scoped antes de contar, ordenar y paginar; no se filtra en memoria;
 - metadata mediante `X-Total-Count`, `X-Page`, `X-Limit`, `X-Total-Pages`, siguiendo el contrato vigente de listados;
 - OWNER/ADMIN/RECEPTIONIST reciben el tenant completo;
 - BARBER recibe solo filas cuyo `Booking.professional.userId` coincide con su User local;
@@ -411,7 +417,7 @@ Ejecutar en base `_test`, usuario no privilegiado y entorno temporal aislado:
 
 ### Frontend Facturación-B implementado como candidato
 
-Facturación-B cubre loading, empty, error, pending, success, confirmación de cobro, teclado/foco, desktop, móvil a 375 px, cambio de tenant/rol sin datos obsoletos y consola limpia. La implementación permanece **IMPLEMENTADA / EN REVISIÓN**: su QA habilita auditoría, no cierre ni aprobación.
+Facturación-B cubre loading, empty, error con reintento, pending, success, confirmación de cobro, teclado/foco, desktop, móvil a 375 px, cambio de tenant/rol sin datos obsoletos y consola limpia. El correctivo candidato añade filtros de fecha local de emisión y estado enviados al backend, limpieza visible, rango inválido útil y `issuedAt` presentado como “Fecha de emisión”. La implementación permanece **IMPLEMENTADA / EN REVISIÓN**: su QA habilita auditoría, no cierre ni aprobación.
 
 ## 17. Compatibilidad y activación
 
@@ -447,3 +453,12 @@ Facturación-B Frontend fue autorizado e implementado como checkpoint **IMPLEMEN
 - Flujo integrado BARBER: emisión desde Booking completada y cobro completo con método `CASH`; PostgreSQL confirmó `PAID`, DOP con dos decimales, `paidAt` autoritativo, actor correcto y un AuditLog de emisión y otro de cobro, sin PII en la evidencia.
 - Revisión visual y funcional en desktop y 375 px sin overflow horizontal; diálogo con importe no editable, método, advertencia, foco inicial y cierre con `Escape`; consola sin errores de aplicación.
 - No se modificaron backend, Prisma, migraciones, Clerk, Supabase, A0.6-B, reembolsos, anulaciones, comisiones ni contratos API.
+
+## 21. Evidencia del correctivo de estabilidad y filtro de emisión
+
+- Causa raíz reproducida: `GET /analytics/dashboard` fallaba con Prisma `P2022` por `Payment.invoiceId` ausente y `GET /invoices?page=1&limit=20` por `Invoice.currency` ausente. El cuerpo público permaneció genérico; el esquema financiero local seguía legacy aunque el ledger declaraba aplicadas las migraciones de Facturación-A.
+- La validación integrada usó una base local desechable nueva, sin copiar filas de la base principal, con las 19 migraciones aplicadas desde cero. El correctivo no añade migración ni modifica Prisma.
+- QA real con una misma identidad y dos organizaciones OWNER/BARBER verificó limpieza inmediata, carga exclusiva del tenant nuevo, rangos de emisión con y sin resultados, extremos inclusivos, estado combinado, rango invertido, error y reintento, desktop 1440 px y móvil 375 px sin overflow.
+- `OPTIONS` para Resumen y Facturación respondió `204`, permitió el origen web y `authorization,x-organization-id`, y expuso `X-Total-Count`, `X-Page`, `X-Limit`, `X-Total-Pages`; las E2E verifican `200`, conteos y proyección mínima para los listados autorizados.
+- API TypeScript/lint/build y Web TypeScript/lint/build terminaron con exit `0`; pasaron 331 unitarias API, 18 pruebas web y 21/21 E2E específicas de Facturación sobre PostgreSQL 16 temporal con rol no privilegiado.
+- Estado: correctivo **IMPLEMENTADO / EN REVISIÓN**. Facturación-B no queda cerrada ni aprobada.

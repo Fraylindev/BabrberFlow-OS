@@ -18,11 +18,14 @@ interface InvoiceFilters {
   page: number;
   limit: number;
   state?: InvoiceState;
+  from?: string;
+  to?: string;
 }
 
 export function useInvoicesQuery(
   scopeKey: string | null,
   filters: InvoiceFilters,
+  enabled = true,
 ) {
   return useQuery({
     queryKey: scopeKey
@@ -33,13 +36,15 @@ export function useInvoicesQuery(
         page: String(filters.page),
         limit: String(filters.limit),
         ...(filters.state ? { state: filters.state } : {}),
+        ...(filters.from ? { from: filters.from } : {}),
+        ...(filters.to ? { to: filters.to } : {}),
       });
       return {
         items: response.data,
         pagination: parseInvoicePagination(response.headers),
       };
     },
-    enabled: Boolean(scopeKey),
+    enabled: Boolean(scopeKey) && enabled,
   });
 }
 

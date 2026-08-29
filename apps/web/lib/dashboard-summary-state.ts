@@ -99,7 +99,7 @@ export function dashboardSummaryReducer(
         ...state,
         data: null,
         error: event.message,
-        loading: true,
+        loading: false,
       };
   }
 }

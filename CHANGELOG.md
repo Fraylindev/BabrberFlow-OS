@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-29 — Estabilidad del Resumen y filtro real de Facturación
+
+- El Resumen deja de conservar `loading` tras un fallo de sus dependencias, no renderiza datos vacíos como si fueran autoritativos y ofrece reintento sin alterar la clave de alcance ni la protección contra respuestas tardías de otro tenant.
+- Facturación reemplaza los botones de estado por una sección responsive de “Fecha de emisión” con `Desde`, `Hasta`, `Estado` y limpieza visible. Las filas muestran la fecha real de `Invoice.issuedAt` separada de Reserva y Cobro.
+- `GET /invoices` acepta `from`/`to` locales inclusivos y filtra `Invoice.createdAt` en backend usando `Organization.timeZone`, combinado con tenant, ownership y estado antes de ordenar y paginar. Los extremos abiertos son válidos y el rango invertido recibe `400` antes de consultar organización o facturas.
+- El diagnóstico real identificó `GET /analytics/dashboard` y `GET /invoices?page=1&limit=20` con `500` seguro porque el esquema financiero del PostgreSQL local seguía legacy aunque su ledger declaraba aplicadas las migraciones de Facturación-A. Para no operar esa base inconsistente, la validación continuó en una base local desechable creada desde cero con las 19 migraciones reales.
+- API TypeScript/lint/build y Web TypeScript/lint/build finalizaron con exit `0`; pasaron 331 unitarias API, 18 pruebas web y 21/21 E2E de Facturación sobre PostgreSQL 16 temporal aislado. QA real OWNER/BARBER cubrió cambio de tenant, rangos, estado, error/reintento, 1440 px y 375 px sin overflow.
+- Estado: correctivo candidato **IMPLEMENTADO / EN REVISIÓN**. Facturación-B no se cierra ni aprueba; no se modifica A0.6-B, Clerk, Supabase, Prisma, reembolsos, anulaciones, comisiones, Profesionales ni otro alcance.
+
 ## 2026-08-27 — Facturación-B Frontend implementado como candidato
 
 - Se reemplazó el consumidor financiero incompatible por el contrato aprobado: listado mínimo y paginado, estados derivados `ISSUED`/`PAID`, importes DOP como strings decimales, emisión con solo `bookingId` y cobro completo con solo `method`.

@@ -34,6 +34,12 @@ export function createPaymentPayload(method: PaymentMethod) {
   return { method };
 }
 
+export function invoiceDateRangeError(from: string, to: string): string | null {
+  return from && to && from > to
+    ? "Desde no puede ser posterior a Hasta."
+    : null;
+}
+
 function requiredHeaderInteger(headers: Headers, name: string): number {
   const raw = headers.get(name);
   if (!raw || !/^\d+$/.test(raw)) {
@@ -63,7 +69,10 @@ export function formatDopAmount(value: string): string {
   return `RD$${integer}.${fraction}`;
 }
 
-export function formatBusinessDateTime(value: string, timeZone: string): string {
+export function formatBusinessDateTime(
+  value: string,
+  timeZone: string,
+): string {
   return new Intl.DateTimeFormat("es-DO", {
     timeZone,
     weekday: "short",

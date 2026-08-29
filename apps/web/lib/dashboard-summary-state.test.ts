@@ -137,3 +137,22 @@ test("a late error from another role does not replace the current state", () => 
   assert.equal(unchanged, state);
   assert.equal(unchanged.error, null);
 });
+
+test("a current error reaches a terminal state without retaining tenant data", () => {
+  let state = dashboardSummaryReducer(INITIAL_DASHBOARD_SUMMARY_STATE, {
+    type: "start",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 5,
+  });
+
+  state = dashboardSummaryReducer(state, {
+    type: "error",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 5,
+    message: "No pudimos cargar el resumen.",
+  });
+
+  assert.equal(state.loading, false);
+  assert.equal(state.data, null);
+  assert.equal(state.error, "No pudimos cargar el resumen.");
+});

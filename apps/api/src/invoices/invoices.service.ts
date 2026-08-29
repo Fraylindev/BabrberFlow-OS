@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { BookingStatus, PaymentMethod, Prisma, UserRole } from '@prisma/client';
@@ -11,6 +13,11 @@ import {
   isUniqueConstraintError,
 } from '../common/prisma-error.util';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  addDaysToIsoDate,
+  isValidTimeZone,
+  zonedLocalDateTimeToUtc,
+} from '../professionals/professional-availability.util';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import {
   InvoiceListResult,
@@ -57,14 +64,17 @@ export class InvoicesService {
     user: RequestUser,
     query: QueryInvoicesDto,
   ): Promise<InvoiceListResult> {
+    this.assertValidDateRange(query.from, query.to);
     const page = Number(query.page ?? 1);
     const limit = Math.min(
       Number(query.limit ?? InvoicesService.DEFAULT_PAGE_SIZE),
       InvoicesService.MAX_PAGE_SIZE,
     );
+    const createdAt = await this.invoiceCreatedAtRange(user, query);
     const where = this.authorizedWhere(user, {
       ...(query.state === 'ISSUED' ? { payment: { is: null } } : {}),
       ...(query.state === 'PAID' ? { payment: { isNot: null } } : {}),
+      ...(createdAt ? { createdAt } : {}),
     });
 
     const [total, records] = await Promise.all([
@@ -86,6 +96,63 @@ export class InvoicesService {
         total,
         totalPages: Math.ceil(total / limit),
       },
+    };
+  }
+
+  private assertValidDateRange(from?: string, to?: string): void {
+    for (const [field, value] of [
+      ['from', from],
+      ['to', to],
+    ] as const) {
+      if (!value) continue;
+      const [year, month, day] = value.split('-').map(Number);
+      const normalized = new Date(Date.UTC(year, month - 1, day))
+        .toISOString()
+        .slice(0, 10);
+      if (normalized !== value) {
+        throw new BadRequestException(
+          `${field} debe ser una fecha calendario válida`,
+        );
+      }
+    }
+    if (from && to && from > to) {
+      throw new BadRequestException('Desde no puede ser posterior a Hasta');
+    }
+  }
+
+  private async invoiceCreatedAtRange(
+    user: RequestUser,
+    query: Pick<QueryInvoicesDto, 'from' | 'to'>,
+  ): Promise<Prisma.DateTimeFilter | undefined> {
+    if (!query.from && !query.to) return undefined;
+
+    const organization = await this.prisma.db.organization.findFirst({
+      where: { id: user.organizationId },
+      select: { timeZone: true },
+    });
+    if (!organization || !isValidTimeZone(organization.timeZone)) {
+      throw new InternalServerErrorException(
+        'La zona horaria del negocio no está disponible',
+      );
+    }
+
+    const from = query.from
+      ? zonedLocalDateTimeToUtc(query.from, '00:00', organization.timeZone)
+      : null;
+    const exclusiveTo = query.to
+      ? zonedLocalDateTimeToUtc(
+          addDaysToIsoDate(query.to, 1),
+          '00:00',
+          organization.timeZone,
+        )
+      : null;
+    if ((query.from && !from) || (query.to && !exclusiveTo)) {
+      throw new BadRequestException('El rango de fechas no es válido');
+    }
+
+    return {
+      ...(from ? { gte: from } : {}),
+      ...(exclusiveTo ? { lt: exclusiveTo } : {}),
     };
   }
 

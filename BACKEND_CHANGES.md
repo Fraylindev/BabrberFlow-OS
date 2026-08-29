@@ -8,6 +8,16 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-29 — Filtro de fecha de emisión para `GET /invoices`
+
+- **Contrato:** `GET /invoices` añade query opcional `from` y `to` en formato calendario `YYYY-MM-DD`; los extremos abiertos son válidos. El filtro corresponde exclusivamente a `Invoice.createdAt`, presentado en producto como “Fecha de emisión”, y no cambia la semántica de `Payment.paidAt`.
+- **Zona del negocio:** cada extremo se convierte en backend con `Organization.timeZone`. `from` incluye el inicio del día local y `to` usa como límite exclusivo el inicio del día local siguiente, haciendo inclusivo el día seleccionado sin aritmética UTC en el navegador.
+- **Validación:** una fecha imposible o `from > to` devuelve `400` claro antes de consultar organización, conteo o filas financieras. La zona ausente o inválida falla cerrada; no se sustituye por UTC.
+- **Consulta y seguridad:** fecha, estado, tenant y ownership BARBER forman un único `where` previo a `count`, orden estable y paginación. Se mantienen la proyección mínima y los headers `X-Total-Count`, `X-Page`, `X-Limit`, `X-Total-Pages`.
+- **Persistencia:** no cambia Prisma ni añade migración. Los `500` observados provenían de un PostgreSQL local cuyo esquema financiero seguía legacy aunque su ledger declaraba aplicadas las migraciones aprobadas de Facturación-A; el API conservó respuestas genéricas seguras. La validación integrada continuó en una base local desechable creada desde cero y con las 19 migraciones reales.
+- **Validación:** API TypeScript, lint y build terminaron con exit `0`; pasaron 331 unitarias y 21/21 E2E específicas de Facturación sobre PostgreSQL 16 temporal, base `_test` y rol propietario no privilegiado. Las E2E cubren límites locales, extremos abiertos, rango/fecha inválidos, filtro antes de paginar, orden estable, tenant y ownership BARBER.
+- **Estado:** correctivo **IMPLEMENTADO / EN REVISIÓN**. Facturación-B no queda cerrada ni aprobada.
+
 ## 2026-08-26 — Facturación-A Backend cerrado y aprobado
 
 - **Aprobación:** el propietario aprobó y cerró explícitamente Facturación-A Backend sobre el checkpoint correctivo `21761ac573b075ec627c0e91593d61a4279c2b8f`.

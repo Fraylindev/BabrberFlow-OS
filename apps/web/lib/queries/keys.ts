@@ -21,7 +21,13 @@ export const queryKeys = {
     scope: (scopeKey: string) => ["invoices", scopeKey] as const,
     list: (
       scopeKey: string,
-      filters: { page: number; limit: number; state?: "ISSUED" | "PAID" },
+      filters: {
+        page: number;
+        limit: number;
+        state?: "ISSUED" | "PAID";
+        from?: string;
+        to?: string;
+      },
     ) => ["invoices", scopeKey, "list", filters] as const,
   },
   organizations: {

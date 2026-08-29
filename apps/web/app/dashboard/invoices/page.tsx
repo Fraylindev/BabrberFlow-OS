@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import {
   formatBusinessDateTime,
   formatDopAmount,
+  invoiceDateRangeError,
   invoiceErrorMessage,
   invoiceScopeKey,
   isCurrentInvoiceScope,
@@ -54,6 +55,8 @@ function ScopedInvoicesPage({
   const router = useRouter();
   const scopeRef = useRef(scopeKey);
   const [stateFilter, setStateFilter] = useState<StateFilter>("ALL");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [page, setPage] = useState(1);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
@@ -69,18 +72,29 @@ function ScopedInvoicesPage({
     page,
     limit: PAGE_SIZE,
     ...(stateFilter === "ALL" ? {} : { state: stateFilter }),
+    ...(fromDate ? { from: fromDate } : {}),
+    ...(toDate ? { to: toDate } : {}),
   };
-  const invoicesQuery = useInvoicesQuery(scopeKey, filters);
+  const rangeError = invoiceDateRangeError(fromDate, toDate);
+  const invoicesQuery = useInvoicesQuery(scopeKey, filters, !rangeError);
   const timeZoneQuery = useOrganizationTimeZoneQuery(scopeKey);
   const paymentMutation = useRecordInvoicePayment();
   const isBarber = user?.role === "BARBER";
-  const isLoading = invoicesQuery.isPending || timeZoneQuery.isPending;
+  const isLoading = !rangeError && (invoicesQuery.isPending || timeZoneQuery.isPending);
   const hasError = invoicesQuery.isError || timeZoneQuery.isError;
+  const hasActiveFilters = Boolean(fromDate || toDate || stateFilter !== "ALL");
   const items = invoicesQuery.data?.items ?? [];
   const pagination = invoicesQuery.data?.pagination;
 
   function changeFilter(next: StateFilter) {
     setStateFilter(next);
+    setPage(1);
+  }
+
+  function clearFilters() {
+    setFromDate("");
+    setToDate("");
+    setStateFilter("ALL");
     setPage(1);
   }
 
@@ -130,27 +144,105 @@ function ScopedInvoicesPage({
         }
       />
 
-      <div
-        className="mb-5 flex flex-wrap gap-2"
-        role="group"
-        aria-label="Filtrar facturas por estado"
-      >
-        {FILTERS.map((filter) => (
+      <Card tone="light" className="mb-5 overflow-hidden rounded-xl">
+        <div className="border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)]/70 px-4 py-2.5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
+            Fecha de emisión
+          </p>
+        </div>
+        <div className="grid grid-cols-1 items-end gap-3 p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <label
+              htmlFor="invoice-filter-from"
+              className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]"
+            >
+              Desde
+            </label>
+            <input
+              id="invoice-filter-from"
+              type="date"
+              value={fromDate}
+              onChange={(event) => {
+                setFromDate(event.target.value);
+                setPage(1);
+              }}
+              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+            />
+          </div>
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <label
+              htmlFor="invoice-filter-to"
+              className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]"
+            >
+              Hasta
+            </label>
+            <input
+              id="invoice-filter-to"
+              type="date"
+              value={toDate}
+              onChange={(event) => {
+                setToDate(event.target.value);
+                setPage(1);
+              }}
+              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+            />
+          </div>
+          <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
+            <label
+              htmlFor="invoice-filter-state"
+              className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]"
+            >
+              Estado
+            </label>
+            <select
+              id="invoice-filter-state"
+              value={stateFilter}
+              onChange={(event) =>
+                changeFilter(event.target.value as StateFilter)
+              }
+              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+            >
+              {FILTERS.map((filter) => (
+                <option key={filter.value} value={filter.value}>
+                  {filter.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <Button
-            key={filter.value}
             type="button"
             tone="light"
-            variant={stateFilter === filter.value ? "primary" : "secondary"}
-            aria-pressed={stateFilter === filter.value}
-            onClick={() => changeFilter(filter.value)}
-            className="min-h-10"
+            variant="ghost"
+            disabled={!hasActiveFilters}
+            className="min-h-10 w-full self-end border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 text-xs text-[var(--dash-text-muted)] shadow-sm sm:w-auto"
+            onClick={clearFilters}
           >
-            {filter.label}
+            Limpiar filtros
           </Button>
-        ))}
-      </div>
+        </div>
+      </Card>
 
-      {hasError ? (
+      {rangeError ? (
+        <Card tone="light" className="p-6 text-center">
+          <p
+            role="alert"
+            className="text-sm font-medium text-[var(--dash-danger)]"
+          >
+            {rangeError}
+          </p>
+          <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
+            Corrige el rango o limpia los filtros para continuar.
+          </p>
+          <Button
+            tone="light"
+            variant="secondary"
+            className="mt-4"
+            onClick={clearFilters}
+          >
+            Limpiar filtros
+          </Button>
+        </Card>
+      ) : hasError ? (
         <Card tone="light" className="p-6 text-center">
           <p role="alert" className="text-sm font-medium text-[var(--dash-danger)]">
             {invoiceErrorMessage(invoicesQuery.error, "list")}
@@ -169,21 +261,21 @@ function ScopedInvoicesPage({
       ) : items.length === 0 ? (
         <EmptyState
           tone="light"
-          title={stateFilter === "ALL" ? "Todavía no hay facturas" : "No hay facturas con este estado"}
+          title={hasActiveFilters ? "No hay facturas con estos filtros" : "Todavía no hay facturas"}
           description={
-            stateFilter === "ALL"
-              ? "Ve a Reservas y emite la factura desde una cita completada."
-              : "Prueba otro filtro o consulta tus reservas completadas."
+            hasActiveFilters
+              ? "Prueba otro rango de emisión o estado."
+              : "Ve a Reservas y emite la factura desde una cita completada."
           }
           action={
-            <Button tone="light" onClick={() => router.push("/dashboard/bookings")}>
-              Ir a reservas
+            <Button tone="light" onClick={hasActiveFilters ? clearFilters : () => router.push("/dashboard/bookings")}>
+              {hasActiveFilters ? "Limpiar filtros" : "Ir a reservas"}
             </Button>
           }
         />
       ) : (
         <>
-          <div className="space-y-3 md:hidden">
+          <div className="space-y-3 xl:hidden">
             {items.map((invoice) => (
               <InvoiceCard
                 key={invoice.id}
@@ -195,12 +287,13 @@ function ScopedInvoicesPage({
             ))}
           </div>
 
-          <Card tone="light" className="hidden overflow-hidden md:block">
+          <Card tone="light" className="hidden overflow-hidden xl:block">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left text-sm">
                 <thead className="bg-[var(--dash-surface-raised)] text-xs uppercase tracking-wider text-[var(--dash-text-muted)]">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-medium">Reserva</th>
+                    <th scope="col" className="px-4 py-3 font-medium">Fecha de emisión</th>
                     <th scope="col" className="px-4 py-3 font-medium">Servicio</th>
                     {!isBarber && <th scope="col" className="px-4 py-3 font-medium">Profesional</th>}
                     <th scope="col" className="px-4 py-3 text-right font-medium">Importe</th>
@@ -334,6 +427,7 @@ function InvoiceRow({ invoice, timeZone, isBarber, onPayment }: {
           {formatBusinessDateTime(invoice.booking.startTime, timeZone)}
         </p>
       </td>
+      <td className="whitespace-nowrap px-4 py-4">{formatBusinessDateTime(invoice.issuedAt, timeZone)}</td>
       <td className="px-4 py-4">{invoice.booking.serviceName}</td>
       {!isBarber && <td className="px-4 py-4">{invoice.booking.professionalName}</td>}
       <td className="whitespace-nowrap px-4 py-4 text-right font-semibold">{formatDopAmount(invoice.amount)}</td>
@@ -371,6 +465,10 @@ function InvoiceCard({ invoice, timeZone, isBarber, onPayment }: {
         <Badge tone="light" status={invoice.state} />
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+        <div className="col-span-2">
+          <dt className="text-xs text-[var(--dash-text-muted)]">Fecha de emisión</dt>
+          <dd className="mt-0.5 text-[var(--dash-text)]">{formatBusinessDateTime(invoice.issuedAt, timeZone)}</dd>
+        </div>
         <div className="col-span-2">
           <dt className="text-xs text-[var(--dash-text-muted)]">Reserva</dt>
           <dd className="mt-0.5 text-[var(--dash-text)]">{formatBusinessDateTime(invoice.booking.startTime, timeZone)}</dd>

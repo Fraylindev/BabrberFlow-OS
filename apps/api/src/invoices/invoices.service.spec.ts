@@ -1,4 +1,8 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { BookingStatus, PaymentMethod, Prisma, UserRole } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import type { RequestUser } from '../auth/types/authenticated-request';
@@ -55,6 +59,9 @@ function createHarness() {
       findMany: jest.fn(),
       findFirst: jest.fn(),
     },
+    organization: {
+      findFirst: jest.fn(),
+    },
   };
   const audit = { logTransactional: jest.fn().mockResolvedValue(undefined) };
   const service = new InvoicesService(
@@ -65,6 +72,73 @@ function createHarness() {
 }
 
 describe('InvoicesService', () => {
+  it('filtra Invoice.createdAt por días locales inclusivos antes de paginar', async () => {
+    const { service, db } = createHarness();
+    db.organization.findFirst.mockResolvedValue({
+      timeZone: 'America/Santo_Domingo',
+    });
+    db.invoice.count.mockResolvedValue(1);
+    db.invoice.findMany.mockResolvedValue([invoiceRecord()]);
+
+    await service.findAll(USER, {
+      page: '2',
+      limit: '10',
+      state: 'PAID',
+      from: '2026-08-10',
+      to: '2026-08-10',
+    });
+
+    type InvoiceListArgs = {
+      where: Prisma.InvoiceWhereInput;
+      orderBy?: Prisma.InvoiceOrderByWithRelationInput[];
+      skip?: number;
+      take?: number;
+    };
+    const countCalls = db.invoice.count.mock.calls as unknown as Array<
+      [InvoiceListArgs]
+    >;
+    const findCalls = db.invoice.findMany.mock.calls as unknown as Array<
+      [InvoiceListArgs]
+    >;
+    const countArgs = countCalls[0]?.[0];
+    const findArgs = findCalls[0]?.[0];
+    if (!countArgs || !findArgs) throw new Error('Missing invoice list calls');
+    const expectedWhere = {
+      organizationId: USER.organizationId,
+      payment: { isNot: null },
+      createdAt: {
+        gte: new Date('2026-08-10T04:00:00.000Z'),
+        lt: new Date('2026-08-11T04:00:00.000Z'),
+      },
+    };
+    expect(countArgs.where).toMatchObject(expectedWhere);
+    expect(findArgs.where).toMatchObject(expectedWhere);
+    expect(findArgs.orderBy).toEqual([{ createdAt: 'desc' }, { id: 'desc' }]);
+    expect(findArgs.skip).toBe(10);
+    expect(findArgs.take).toBe(10);
+  });
+
+  it('rechaza Desde posterior a Hasta sin consultar organización ni facturas', async () => {
+    const { service, db } = createHarness();
+
+    await expect(
+      service.findAll(USER, { from: '2026-08-11', to: '2026-08-10' }),
+    ).rejects.toThrow(BadRequestException);
+    expect(db.organization.findFirst).not.toHaveBeenCalled();
+    expect(db.invoice.count).not.toHaveBeenCalled();
+    expect(db.invoice.findMany).not.toHaveBeenCalled();
+  });
+
+  it('rechaza fechas calendario imposibles antes de consultar datos', async () => {
+    const { service, db } = createHarness();
+
+    await expect(service.findAll(USER, { from: '2026-02-30' })).rejects.toThrow(
+      BadRequestException,
+    );
+    expect(db.organization.findFirst).not.toHaveBeenCalled();
+    expect(db.invoice.count).not.toHaveBeenCalled();
+  });
+
   it('emite desde el precio server-side y audita en la misma transacción', async () => {
     const { service, tx, audit } = createHarness();
     tx.$queryRaw.mockResolvedValue([

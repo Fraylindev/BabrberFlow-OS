@@ -599,6 +599,85 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
     expect(tenantBOwn.status).toBe(201);
   });
 
+  it('filtra Fecha de emisión por días locales inclusivos antes de paginar y conserva ownership', async () => {
+    const [ownerInvoice, adminInvoice, receptionInvoice, barberInvoice] =
+      await Promise.all(
+        [
+          completedOwner.id,
+          completedAdmin.id,
+          completedReception.id,
+          completedBarberA.id,
+        ].map((bookingId) =>
+          prisma.db.invoice.findUniqueOrThrow({ where: { bookingId } }),
+        ),
+      );
+    const tenantBInvoice = await prisma.db.invoice.findUniqueOrThrow({
+      where: { bookingId: completedBarberB.id },
+    });
+    await Promise.all([
+      prisma.db.invoice.update({
+        where: { id: ownerInvoice.id },
+        data: { createdAt: new Date('2026-08-10T04:00:00.000Z') },
+      }),
+      prisma.db.invoice.update({
+        where: { id: adminInvoice.id },
+        data: { createdAt: new Date('2026-08-11T03:59:59.999Z') },
+      }),
+      prisma.db.invoice.update({
+        where: { id: receptionInvoice.id },
+        data: { createdAt: new Date('2026-08-11T04:00:00.000Z') },
+      }),
+      prisma.db.invoice.update({
+        where: { id: barberInvoice.id },
+        data: { createdAt: new Date('2026-08-10T16:00:00.000Z') },
+      }),
+      prisma.db.invoice.update({
+        where: { id: tenantBInvoice.id },
+        data: { createdAt: new Date('2026-08-10T16:00:00.000Z') },
+      }),
+    ]);
+
+    const ownerPaid = await requestApp(app)
+      .get('/invoices?from=2026-08-10&to=2026-08-10&state=PAID&page=1&limit=1')
+      .set('Authorization', `Bearer ${ownerToken}`);
+    expect(ownerPaid.status).toBe(200);
+    expect(ownerPaid.headers['x-total-count']).toBe('2');
+    expect(asArray(ownerPaid.body as unknown)).toHaveLength(1);
+    expect(asRecord(asArray(ownerPaid.body as unknown)[0]).id).toBe(
+      adminInvoice.id,
+    );
+
+    const barberOwn = await requestApp(app)
+      .get('/invoices?from=2026-08-10&to=2026-08-10')
+      .set('Authorization', `Bearer ${barberAToken}`);
+    expect(barberOwn.status).toBe(200);
+    expect(barberOwn.headers['x-total-count']).toBe('1');
+    expect(asRecord(asArray(barberOwn.body as unknown)[0]).id).toBe(
+      barberInvoice.id,
+    );
+
+    const beforeRange = await requestApp(app)
+      .get('/invoices?to=2026-08-09')
+      .set('Authorization', `Bearer ${ownerToken}`);
+    expect(beforeRange.status).toBe(200);
+    expect(beforeRange.headers['x-total-count']).toBe('0');
+
+    const openFrom = await requestApp(app)
+      .get('/invoices?from=2026-08-11&limit=100')
+      .set('Authorization', `Bearer ${ownerToken}`);
+    expect(openFrom.status).toBe(200);
+    expect(
+      asArray(openFrom.body as unknown).map((item) => asRecord(item).id),
+    ).toContain(receptionInvoice.id);
+
+    for (const query of ['from=2026-08-11&to=2026-08-10', 'from=2026-02-30']) {
+      const invalid = await requestApp(app)
+        .get(`/invoices?${query}`)
+        .set('Authorization', `Bearer ${ownerToken}`);
+      expect(invalid.status).toBe(400);
+    }
+  });
+
   it('la emisión es idempotente y solo audita una vez', async () => {
     const first = await requestApp(app)
       .post('/invoices')
