@@ -40,7 +40,7 @@ La migración falla cerrada si encuentra Payment legacy, Invoice pagada/reembols
 
 La migración correctiva `20260826210000_facturacion_a_completion_service_price_guards` falla antes de cambiar tipos si detecta `Service.price` no positivo, con más de dos decimales o fuera de `Decimal(65,2)`, o una Booking futura ya `COMPLETED`. El camino válido convierte Service a `Decimal(65,2)` y añade `Service_price_dop_check`; el fallo revierte toda la transacción y no redondea filas.
 
-El contrato retira `PATCH /invoices/:id/pay`, elimina `amount` de `POST /invoices` y usa `POST /invoices/:id/payments`. El frontend actual es incompatible y no debe desplegarse contra este backend hasta una entrega frontend autorizada y coordinada.
+El contrato retira `PATCH /invoices/:id/pay`, elimina `amount` de `POST /invoices` y usa `POST /invoices/:id/payments`. Facturación-B ya consume este contrato como candidato compatible, pero sigue pendiente de aprobación explícita antes de cierre o activación.
 
 ## Alternativas descartadas
 
@@ -60,4 +60,4 @@ El contrato retira `PATCH /invoices/:id/pay`, elimina `amount` de `POST /invoice
 - La activación requiere coordinar un consumidor frontend posterior.
 - Anulación, reembolso, pago parcial, comisiones y fiscalidad necesitarán decisiones y migraciones propias.
 - La auditoría validó migración, concurrencia, IDOR, proyecciones y evidencia PostgreSQL; el propietario aprobó y cerró Facturación-A Backend sobre el checkpoint correctivo registrado.
-- Facturación-B permanece separada: solo están autorizados su análisis y plan, no implementación ni QA frontend.
+- Facturación-B permanece separada y **IMPLEMENTADA / EN REVISIÓN**; su implementación y QA no equivalen a aprobación ni cierre.

@@ -46,21 +46,20 @@ export function Hero() {
 
           <p className="mt-7 max-w-xl text-lg text-[var(--color-paper)]/75 sm:text-xl">
             Reservas sin fricción para tus clientes, un panel real para tu equipo,
-            y los números claros para ti. Con tu marca al frente, siempre.
+            y la operación clara para ti. Con tu marca al frente, siempre.
           </p>
 
           <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <Link href="/register">
-              {/* AQUÍ ESTÁ EL CAMBIO 2: text-white font-semibold agregado al botón */}
               <Button className="w-full px-8 py-4 text-base sm:w-auto text-white font-semibold">
-                Registra tu barbería gratis
+                Registra tu barbería
               </Button>
             </Link>
             <a
-              href="#planes"
+              href="#modulos"
               className="text-sm font-medium text-[var(--color-paper)] underline decoration-[var(--color-brass)] underline-offset-4 transition-colors hover:text-[var(--color-brass)]"
             >
-              Ver planes →
+              Explorar módulos →
             </a>
           </div>
         </Reveal>

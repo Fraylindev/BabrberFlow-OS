@@ -12,15 +12,11 @@ const FAQS = [
   },
   {
     q: "¿Mis clientes necesitan crear una cuenta para reservar?",
-    a: "No es obligatorio, pueden reservar como invitados. Si quieren, pueden crear una cuenta para que su próxima reserva sea más rápida.",
+    a: "No. El flujo público permite reservar como invitado; crear una cuenta es opcional.",
   },
   {
     q: "¿Puedo tener varios profesionales con acceso al panel?",
     a: "Sí. Cada persona de tu equipo tiene su propio usuario y rol: dueño, administrador, recepción o profesional, cada uno ve solo lo que le corresponde.",
-  },
-  {
-    q: "¿Puedo cambiar de plan más adelante?",
-    a: "Sí, en cualquier momento. No hay contrato de permanencia.",
   },
   {
     q: "¿Mis datos se mezclan con los de otras barberías?",

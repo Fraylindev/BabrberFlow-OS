@@ -35,16 +35,16 @@ export function Proof() {
 
         <div className="mt-16 grid grid-cols-2 gap-10 sm:grid-cols-4">
           <Reveal delay={0}>
-            <Stat value="< 1 min" label="para que un cliente reserve" />
+            <Stat value="Web" label="reserva sin instalar una app" />
           </Reveal>
           <Reveal delay={60}>
-            <Stat value="100%" label="datos aislados por negocio" />
+            <Stat value="Separados" label="datos de cada negocio" />
           </Reveal>
           <Reveal delay={120}>
             <Stat value="4 roles" label="dueño, admin, recepción, barbero" />
           </Reveal>
           <Reveal delay={180}>
-            <Stat value="1 lugar" label="para toda tu operación" />
+            <Stat value="1 panel" label="para la operación interna" />
           </Reveal>
         </div>
       </Container>

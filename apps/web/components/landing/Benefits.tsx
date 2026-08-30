@@ -10,7 +10,7 @@ const BENEFITS = [
   {
     title: "Cero fricción para reservar",
     description:
-      "Tu cliente reserva en menos de un minuto, sin bajar ninguna app ni llenar formularios eternos.",
+      "Tu cliente reserva desde el navegador, sin bajar una app ni llamar al negocio.",
     goal: "Objetivo: convertir visitas en citas",
     span: "lg:col-span-2",
   },

@@ -95,6 +95,8 @@ Facturación-A Backend: **CERRADO / APROBADO** por decisión explícita del prop
 
 Facturación-B Frontend: **IMPLEMENTADO / EN REVISIÓN**. La web consume las proyecciones y paginación aprobadas, nunca envía `amount`, emite desde una Booking `COMPLETED` y registra un único cobro completo con método. OWNER, ADMIN y RECEPTIONIST reciben la vista del tenant; BARBER recibe “Facturación de mis servicios” y solo los datos autorizados por backend, sin columna de otros profesionales ni lenguaje de ganancias. Las query keys financieras incluyen usuario, organización y rol; el cambio de contexto desmonta la vista, vacía los datos visibles inmediatamente e impide que una mutación tardía del contexto anterior actualice UI o toast. El filtro candidato consulta al backend por `Invoice.createdAt` mediante `from`/`to` locales inclusivos y `state`; no usa `Payment.paidAt`, no filtra una página en memoria y presenta `issuedAt` como “Fecha de emisión”. El diagnóstico de los `500` confirmó un esquema financiero local legacy con ledger inconsistente; el QA integrado se hizo sobre una base local desechable con 19 migraciones desde cero. API y Web aprobaron TypeScript/lint/build, 331 unitarias API, 18 pruebas web y 21/21 E2E; QA real OWNER/BARBER verificó aislamiento, filtros, error/reintento, desktop y móvil. La implementación permanece pendiente de auditoría y aprobación explícita; no autoriza A0.6-B, Clerk, Supabase, reembolsos, anulaciones, comisiones ni otro alcance.
 
+Auditoría integral desde `2ffd44d20cc4bbe0d1ff3b45601e4f0d8f438268`: **IMPLEMENTADA / EN REVISIÓN**. Se retiraron dos rutas Organization sin consumidor vigente: la creación genérica podía persistir una Organization sin Membership ni auditoría y la resolución pública por slug exponía su UUID interno. El alta inicial continúa por los agregados atómicos de `/auth/register` legacy o `/auth/clerk/onboarding`; crear organizaciones adicionales requiere contrato propio. Reservas y Servicios validan UUID de ruta antes del servicio, Analytics usa exactamente 30 días locales para “Profesional del mes”, la configuración dispone de ejemplos sin secretos y gates no mutantes, y la landing dejó de publicar precios/testimonios ficticios. Next `16.2.11`, Prisma `6.19.3` y overrides transitivas eliminan los avisos de producción detectados; `pnpm audit --prod` y `pnpm peers check` quedan limpios. No hay cambio estructural ni migración nueva: el esquema Prisma declara los nombres históricos reales de dos claves foráneas tenant-scoped de disponibilidad profesional, y las 19 migraciones aplicadas desde cero quedan sin drift frente al schema. Este checkpoint no cierra módulos ni autoriza capacidad nueva.
+
 G0 es un checkpoint exclusivamente documental de gobierno. No cambia el estado funcional ni aprueba Frontend A2.
 
 Estado de G0: **IMPLEMENTADO / EN REVISIÓN**. G0.1 corrige y completa sus fuentes como checkpoint documental candidato; ninguno de los dos es aprobación funcional de un módulo.
@@ -107,7 +109,7 @@ Security A0.2: **IMPLEMENTADO / EN REVISIÓN** (correctivo aplicado). Añade ver
 
 Security A0.3-H: **CERRADO / APROBADO** por decisión explícita del propietario. Hardening legacy y web con los siguientes atributos:
     *   **Registro Atómico Estricto:** La creación de usuario (`User`), inquilino (`Organization`) y el vínculo de propiedad (`Membership` con rol `OWNER`) ocurre en una **transacción PostgreSQL con aislamiento `Serializable`** (`Prisma.TransactionIsolationLevel.Serializable`), previniendo escalamiento y cuentas fantasma por concurrencia. Se incluyen reintentos (max 3) para lidiar con fallas de serialización (`P2034`).
-    *   **Inquilinos Aislados:** `POST /organizations` ya no es un endpoint público. Solo un usuario con rol `OWNER` puede crear nuevos tenants adicionales.
+    *   **Inquilinos Aislados:** `POST /organizations` dejó de ser público en A0.3-H y la auditoría integral posterior lo retiró por completo al comprobar que podía crear un tenant sin Membership. No existe todavía un flujo de organizaciones adicionales.
     *   **Correo de Organización:** La barbería recibe su propio correo electrónico, disociado del correo personal del propietario, exigido como `organizationEmail` durante el registro inicial.
     *   **Tolerancia a contraseñas nulas:** Las cuentas sin contraseña local (preparación para usuarios autenticados vía Clerk) reciben el mismo rechazo neutro "Credenciales inválidas" en el login legacy en lugar de errores internos de servidor (500). La actualización de contraseñas protege contra bcrypt(null).
     *   **Evidencia recuperada:** API TypeScript/lint/build/Prisma y Web TypeScript/lint/build están en exit 0; 257 unit tests y 21 E2E pasaron. Un smoke HTTP real confirmó registro 201, login 201, CORS para la web, rechazo 400 de `organizationId`, protección 401 de `POST /organizations` y conteos atómicos `1|1|1|1`.
@@ -173,7 +175,7 @@ Security A0.6-A — Base backend B2C posterior a reserva: **CERRADO / APROBADO**
 ### Autenticación
 
 - La web interna usa la sesión Clerk y no persiste JWT propio en `localStorage`. NestJS conserva temporalmente JWT legacy como rollback backend y revalida Membership en cada request.
-- `POST /organizations` es privado (OWNER) tras A0.3-H. El registro de barberías nuevas es atómico en `/auth/register` usando `organizationName` y `organizationSlug`.
+- `POST /organizations` está retirado. El alta inicial legacy es atómica en `/auth/register` y el flujo web vigente usa `/auth/clerk/onboarding`; ninguna ruta acepta una Organization preexistente elegida por el cliente.
 - El frontend Clerk ya ofrece recuperación, verificación y revocación de sesión. MFA productivo continúa sujeto al gate de plan y configuración; los límites de operaciones sensibles de NestJS siguen locales al proceso y deben ser distribuidos antes de producción horizontal.
 - Decisión aprobada: Clerk gestionará identidad, login, registro, recuperación y sesiones. NestJS verificará la sesión y resolverá `User` + Membership local en cada petición.
 - `Organization`, Membership y rol nunca se derivarán de Clerk Organizations, metadata cliente ni un `organizationId` libre. El onboarding local crea Organization + primera Membership OWNER de forma atómica e idempotente.
@@ -218,6 +220,9 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - El vínculo backend B2C de A0.6-A está aprobado; todavía no existe el recorrido público posterior a reserva ni el historial/autoservicio del cliente.
 - Servicios, imágenes y Cloudinary requieren auditoría y decisiones propias; no adelantar.
 - Configuración productiva de CORS, URLs y secretos depende del entorno y debe validarse antes de despliegue.
+- No existe un pipeline CI/CD versionado; los gates siguen dependiendo de ejecución local explícita.
+- `sharp`, `postcss`, `nanoid` y `deepmerge-ts` usan overrides de seguridad en `pnpm-workspace.yaml` hasta que Next/Prisma publiquen rangos transitivos compatibles; cada actualización debe revalidar build, Prisma, E2E y `pnpm audit`. ESLint web permanece en 9 por los peers de plugins de `eslint-config-next`, aunque esa rama ya aparece deprecada en el registro.
+- Los canales sociales/contacto de la landing requieren confirmación de titularidad antes de un despliegue público definitivo.
 - El guard Clerk consulta el estado autoritativo de sesión en Clerk por petición; latencia, disponibilidad, cuotas y política de fallo cerrado deben medirse antes de aplicarlo masivamente.
 - El historial contiene decisiones revocadas válidas en su fecha; nunca debe usarse como estado actual sin contrastar este documento y el código.
 
@@ -225,7 +230,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 1. Security A0.5 completo (A, B, C y D), Security A0.6-A y el correctivo transversal de aislamiento del Resumen están **CERRADOS / APROBADOS** por decisión explícita del propietario.
 2. Facturación-A Backend está **CERRADO / APROBADO** sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`.
-3. Auditar Facturación-B Frontend como checkpoint **IMPLEMENTADO / EN REVISIÓN**; no cerrarlo ni declararlo aprobado sin decisión explícita del propietario.
+3. Revisar la auditoría integral y el candidato de Facturación-B Frontend, ambos **IMPLEMENTADOS / EN REVISIÓN**; el siguiente paso es decisión explícita del propietario sobre Facturación-B, no implementación adicional.
 4. No iniciar Security A0.6-B. A0.6-B/C/D, Clerk, Supabase, reembolsos, anulaciones, comisiones y cualquier otro alcance permanecen bloqueados.
 5. Mantener login/JWT/register/password y `/auth/invite` legacy del backend como rollback; la web no debe volver a consumirlos ni persistir su JWT.
 6. Nunca enlazar usuarios por coincidencia de correo y mantener Frontend A2 de Profesionales en revisión.

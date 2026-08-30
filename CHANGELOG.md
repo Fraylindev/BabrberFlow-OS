@@ -4,6 +4,17 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-29 — Auditoría integral desde `2ffd44d`
+
+- Se alinearon código, contratos y documentación con Clerk, Facturación-B y el modelo vigente.
+- Se retiraron las rutas Organization que creaban tenants huérfanos o exponían UUID por slug, sin consumidores web actuales.
+- Reservas y Servicios rechazan IDs de ruta inválidos con `400`; Analytics corrige la ventana de 30 días.
+- Se añadieron ejemplos de entorno sin secretos, un gate `test` de workspace y lint API no mutante; se retiraron lockfile, backup y transcript obsoletos.
+- Se actualizaron Next a `16.2.11` y Prisma/Client a `6.19.3`, se alineó TypeScript `5.9.3`, se corrigieron peers y se fijaron transitivas vulnerables desde `pnpm-workspace.yaml`; `pnpm audit --prod` no reporta vulnerabilidades conocidas.
+- La landing ya no presenta testimonios, precios, descuentos o métricas comerciales inventados; el flujo funcional no cambia.
+- No se añadió ninguna migración ni cambió la estructura persistida. Prisma ahora mapea los nombres históricos reales de dos claves foráneas tenant-scoped de disponibilidad profesional; las 19 migraciones, la E2E completa y el chequeo de drift se validan en PostgreSQL temporal aislado.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No constituye aprobación ni cierre de Facturación-B.
+
 ## 2026-08-29 — Estabilidad del Resumen y filtro real de Facturación
 
 - El Resumen deja de conservar `loading` tras un fallo de sus dependencias, no renderiza datos vacíos como si fueran autoritativos y ofrece reintento sin alterar la clave de alcance ni la protección contra respuestas tardías de otro tenant.

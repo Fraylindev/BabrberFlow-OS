@@ -27,10 +27,10 @@ export function CTASection() {
             Tu agenda merece algo mejor que un cuaderno
           </h2>
           <p className="mx-auto mt-4 max-w-md text-base text-[var(--color-paper)]/75">
-            Regístrate en minutos. Sin tarjeta de crédito para empezar.
+            Crea el espacio de trabajo de tu barbería y configura tu operación.
           </p>
           <Link href="/register" className="mt-8 inline-block">
-            <Button className="px-6 py-3 text-base">Registra tu barbería gratis</Button>
+            <Button className="px-6 py-3 text-base">Registra tu barbería</Button>
           </Link>
         </Reveal>
       </Container>

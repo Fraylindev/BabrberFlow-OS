@@ -26,7 +26,7 @@ export const BRAND = {
   shortName: "Kortek",
   tagline: "El sistema operativo para barberías y salones modernos.",
   description:
-    "Kortek Booking es la plataforma todo-en-uno para gestionar reservas, equipo, clientes y pagos de tu barbería o salón.",
+    "Kortek Booking centraliza reservas, equipo, clientes y facturación interna de barberías y salones.",
   author: "Fraylin",
   company: "Kortek Studio",
   get legalName() {
@@ -42,10 +42,8 @@ export const BRAND = {
   colors: {
     accent: "#e11d2e",
   },
-  /**
-   * Placeholders — el usuario colocará los valores definitivos
-   * (número de WhatsApp real, handles de redes) más adelante.
-   */
+  // Canales configurados por el propietario; validar su titularidad antes de
+  // un despliegue público definitivo.
   contact: {
     whatsapp: "https://wa.me/8297290386",
   },

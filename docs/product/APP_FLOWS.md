@@ -1,48 +1,65 @@
 # Flujos de aplicación — Kortek Booking
 
-Este mapa describe fronteras reales del producto. Los detalles ejecutables pertenecen al código y los contratos vigentes a [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md).
+Este mapa describe los recorridos ejecutados por el código vigente. Los contratos detallados viven en [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) y el estado de cada módulo en [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 
-## 1. Fundación pública de organización — riesgo vigente
+## 1. Identidad y acceso interno
 
-Flujo actual confirmado:
+1. login, registro, recuperación y logout de la web usan Clerk;
+2. la web obtiene un token corto de la sesión en memoria y consulta `GET /auth/clerk/bootstrap`;
+3. NestJS resuelve `User.clerkUserId`, Memberships B2B y organizaciones mínimas;
+4. la organización activa solo puede elegirse entre esas Memberships;
+5. cada ruta B2B vuelve a verificar sesión/JWT legacy, Membership y rol local;
+6. al cambiar usuario, organización o rol, la web elimina la caché de negocio y las vistas sensibles usan una clave de alcance propia.
 
-1. la web crea una Organization mediante `POST /organizations` sin autenticación;
-2. recibe su `id` y llama `POST /auth/register` con ese `organizationId`;
-3. backend crea User y Membership `OWNER` en una transacción;
-4. la web inicia sesión y guarda el JWT en `localStorage`.
+La web no persiste `bf_token`, `bf_session` ni `kb_session`. Los endpoints JWT/password backend continúan únicamente como rollback hasta A0.7.
 
-Además, `GET /organizations/by-slug/:slug` resuelve públicamente el ID interno. La composición permite solicitar rol OWNER sobre un `organizationId` suministrado por el cliente. Es un riesgo abierto documentado en [`ADR-001`](../decisions/ADR-001-authentication-strategy.md); G0.1 no lo corrige.
+## 2. Onboarding de la primera organización
 
-## 2. Inicio y cierre de sesión
+1. Clerk autentica y verifica la identidad;
+2. `POST /auth/clerk/onboarding` recibe solo los datos de la nueva organización;
+3. NestJS crea atómicamente User local, Organization, Membership OWNER y AuditLog;
+4. la repetición de la misma identidad es idempotente.
 
-1. login recibe email y contraseña;
-2. backend resuelve la Membership activa, emite JWT con tenant/rol y devuelve organización mínima;
-3. web guarda sesión/JWT en `localStorage` y adjunta Bearer token;
-4. cada request autenticado revalida que la Membership siga existiendo;
-5. logout local elimina el token del navegador.
+El navegador no aporta `organizationId`, rol, correo ni identificador Clerk como autoridad. `POST /organizations` y `GET /organizations/by-slug/:slug` están retirados: no existe todavía un contrato para crear organizaciones adicionales desde el panel.
 
-No existen todavía recuperación de cuenta, verificación de correo, MFA, refresh token rotativo ni revocación general de sesiones. El límite por IP y el bloqueo por cuenta usan almacenamiento local al proceso.
+## 3. Invitaciones de Equipo
 
-## 3. Reserva pública
-
-1. el slug identifica el negocio sin exponer notas o datos internos;
-2. catálogo y disponibilidad usan servicios/profesionales activos y disponibilidad efectiva;
-3. la persona selecciona servicio, horario y aporta los datos mínimos requeridos;
-4. Client y Booking se crean o reactivan atómicamente;
-5. la respuesta pública es una proyección mínima sin PII interna.
-
-La interfaz presenta horas del negocio de forma natural. La zona y conversión técnica se resuelven internamente y nunca se muestran como identificadores IANA, UTC u offsets.
+1. OWNER/ADMIN crean una invitación local tenant-scoped;
+2. NestJS coordina la invitación externa Clerk sin mantener una transacción PostgreSQL abierta;
+3. la persona acepta con una sesión Clerk y correo principal verificado;
+4. una transacción `SERIALIZABLE` crea Membership y, para BARBER cuando corresponde, Professional;
+5. nunca se enlaza un User por coincidencia de correo.
 
 ## 4. Operación interna
 
-1. el JWT determina User, Membership, rol y organización activa;
-2. Guards y consultas tenant-scoped limitan cada operación;
-3. el frontend muestra solo acciones autorizadas, sin sustituir la protección backend;
-4. React Query debe separar caché cuando tenant, usuario o rol cambien el alcance;
-5. errores esperados se convierten en mensajes útiles sin detalles internos.
+1. `B2bAuthGuard` resuelve el contexto local y `RolesGuard` aplica permisos;
+2. las consultas finales incluyen `organizationId` y ownership cuando aplica;
+3. el frontend muestra solo acciones autorizadas sin sustituir el control backend;
+4. errores esperados se traducen a lenguaje de tarea y permiten recuperación.
 
-Los contratos y matrices concretas se auditan por módulo; este mapa no concede permisos nuevos.
+Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se leen en sus entradas vigentes; este mapa no concede permisos nuevos.
 
-## 5. Flujo de entrega
+## 5. Reserva pública y continuidad B2C
 
-Cada capacidad pasa por definición de producto/UX, arquitectura/seguridad, backend, aprobación, frontend, QA, checkpoint y auditoría. Consultar [`DELIVERY_GATES.md`](../quality/DELIVERY_GATES.md). Una etapa incompleta usa el protocolo de relevo y no autoriza la siguiente.
+1. `/public/:slug/booking-data` entrega catálogo y profesionales públicos mínimos;
+2. disponibilidad usa servicios/profesionales activos, horario efectivo y protección concurrente;
+3. la persona reserva como invitada con datos mínimos;
+4. Client y Booking se crean o reactivan atómicamente;
+5. la opción legacy de cuenta con contraseña permanece temporalmente en el contrato público como rollback;
+6. A0.6-A permite reclamar después una reserva con sesión Clerk mediante un vínculo `Client.userId`, sin Membership CUSTOMER.
+
+A0.6-B/C/D todavía no implementan un recorrido Clerk público posterior a reserva ni autoservicio de cliente.
+
+## 6. Facturación interna
+
+1. una Booking solo se completa después de `endTime` según el reloj del servidor;
+2. una Invoice interna toma el snapshot de `Service.price` y queda única por Booking;
+3. un Payment completo único registra método, `paidAt` y actor;
+4. listados y acciones se aíslan por tenant y, para BARBER, por Professional vinculado;
+5. Analytics atribuye ingresos por `Payment.paidAt`.
+
+No es facturación fiscal y no incluye anulaciones, reembolsos, pagos parciales o comisiones.
+
+## 7. Flujo de entrega
+
+Cada capacidad pasa por definición de producto/UX, arquitectura/seguridad, backend, aprobación, frontend, QA, checkpoint y auditoría. Consultar [`DELIVERY_GATES.md`](../quality/DELIVERY_GATES.md). Una etapa incompleta no autoriza la siguiente.
