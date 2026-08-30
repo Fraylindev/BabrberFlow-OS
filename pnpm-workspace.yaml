@@ -1,6 +1,11 @@
 packages:
   - "apps/*"
   - "packages/*"
+overrides:
+  deepmerge-ts: 8.0.0
+  nanoid: 3.3.18
+  postcss: 8.5.25
+  sharp: 0.35.0
 allowBuilds:
   '@prisma/client': false
   '@prisma/engines': false

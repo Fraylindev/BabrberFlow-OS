@@ -1,21 +1,23 @@
 # Kortek Booking — Web
 
-Frontend Next.js del SaaS multi-tenant Kortek Booking. Ver `maestro.md` en la raíz del repositorio para la documentación completa del proyecto.
+Frontend Next.js del producto multi-tenant. El estado vigente y el gobierno están en [`../../docs/README.md`](../../docs/README.md) y [`../../PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 
-## Requisitos
+## Desarrollo
 
-- Node.js 20+
-- pnpm
-- La API (`apps/api`) corriendo y accesible
+1. Copia `.env.example` a `.env.local`.
+2. Configura claves Clerk Development propias, sin versionarlas.
+3. Inicia la API en `http://localhost:3001`.
+4. Desde la raíz ejecuta `pnpm --filter web dev`.
 
-## Ejecutar en desarrollo
+La web escucha en `http://localhost:3000` por defecto y consume `NEXT_PUBLIC_API_URL`.
+
+## Validación
 
 ```bash
-pnpm dev
+pnpm --filter web type-check
+pnpm --filter web lint
+pnpm --filter web test
+pnpm --filter web build
 ```
 
-Escucha en el puerto 3000 por defecto — si la API también usa 3000 en tu `.env`, cámbiala a otro puerto (ver `apps/api/.env.example`).
-
-## Estado actual
-
-Landing, autenticación, dashboard multi-tenant (Reservas, Clientes, Profesionales, Servicios, Facturación, Equipo) y flujo público de reservas por `slug` conectados a la API real. En proceso de realineación visual/comercial contra el sistema de diseño y el modelo de precio oficiales — ver `maestro.md` para el detalle por fase.
+La autenticación interna usa Clerk y el contexto de negocio proviene del bootstrap local de NestJS; la web no persiste el JWT legacy.

@@ -3,4 +3,10 @@ node_modules
 .next
 dist
 .turbo
-.env.example*
+*.dump
+*.backup
+*.sql.gz
+
+# Los ejemplos sin secretos sí forman parte del contrato de configuración.
+!.env.example
+!**/.env.example

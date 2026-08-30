@@ -38,7 +38,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3001);
 }
 
 // Manejamos la promesa para cumplir con las reglas estrictas de ESLint

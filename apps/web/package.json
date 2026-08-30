@@ -2,12 +2,14 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
+    "test": "node --test lib/*.test.ts",
     "test:auth-routes": "node --test lib/auth-routes.test.ts lib/invitation-navigation.test.ts",
     "test:dashboard-scope": "node --test lib/dashboard-summary-state.test.ts",
     "test:invoices": "node --test lib/invoice-ui.test.ts"
@@ -16,7 +18,7 @@
     "@clerk/localizations": "^4.15.5",
     "@clerk/nextjs": "^7.8.0",
     "@tanstack/react-query": "^5.62.0",
-    "next": "16.2.10",
+    "next": "16.2.11",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -26,7 +28,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.2.11",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
