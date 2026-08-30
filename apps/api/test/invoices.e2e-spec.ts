@@ -365,6 +365,36 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
     ).rejects.toThrow('Service_price_dop_check');
   });
 
+  it('rechaza IDs de ruta inválidos antes de consultar Reservas o Servicios', async () => {
+    const [bookingStatus, bookingReschedule, serviceUpdate, serviceDelete] =
+      await Promise.all([
+        requestApp(app)
+          .patch('/bookings/not-a-uuid/status')
+          .set('Authorization', `Bearer ${ownerToken}`)
+          .send({ status: BookingStatus.CONFIRMED }),
+        requestApp(app)
+          .patch('/bookings/not-a-uuid')
+          .set('Authorization', `Bearer ${ownerToken}`)
+          .send({ startTime: new Date().toISOString() }),
+        requestApp(app)
+          .patch('/services/not-a-uuid')
+          .set('Authorization', `Bearer ${ownerToken}`)
+          .send({ price: 100 }),
+        requestApp(app)
+          .delete('/services/not-a-uuid')
+          .set('Authorization', `Bearer ${ownerToken}`),
+      ]);
+
+    for (const response of [
+      bookingStatus,
+      bookingReschedule,
+      serviceUpdate,
+      serviceDelete,
+    ]) {
+      expect(response.status).toBe(400);
+    }
+  });
+
   it('OWNER, ADMIN y RECEPTIONIST emiten desde el precio server-side', async () => {
     const cases = [
       [ownerToken, completedOwner.id],

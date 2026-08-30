@@ -42,8 +42,8 @@ function parseAuthorizedParties(value: string | undefined): string[] {
       url.password
     ) {
       throw new Error(
-        'CLERK_AUTHORIZED_PARTIES contiene un origen no permitido: ' +
-          `"${url.href}" debe ser un origen exacto http o https.`,
+        'CLERK_AUTHORIZED_PARTIES contiene un origen no permitido; ' +
+          'cada valor debe ser un origen exacto http o https.',
       );
     }
 

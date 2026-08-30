@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-29 — Auditoría integral de contratos y configuración
+
+- **Organizations:** se retiran `POST /organizations` y `GET /organizations/by-slug/:slug`. La primera ruta podía crear una Organization sin Membership ni AuditLog; la segunda exponía públicamente el UUID interno y no tenía consumidor vigente. El alta inicial continúa por `/auth/register` legacy o `/auth/clerk/onboarding`, ambos atómicos. No se implementa un flujo de organizaciones adicionales.
+- **IDs de ruta:** `PATCH /bookings/:id`, `PATCH /bookings/:id/status`, `PATCH /services/:id` y `DELETE /services/:id` usan `ParseUUIDPipe`; un ID malformado devuelve `400` antes de Prisma.
+- **Analytics:** la ventana presentada como “últimos 30 días” incluye exactamente el día local actual y los 29 anteriores; antes incluía 31 días por un límite inferior desplazado.
+- **Configuración:** el lint API deja de escribir archivos por defecto, los ejemplos de entorno sin secretos quedan versionados y el desarrollo fresco alinea web `3000` con API `3001`.
+- **Dependencias:** API usa Prisma/Client `6.19.3`; el workspace fija transitivas vulnerables mediante overrides pnpm auditadas. Se retiró `@types/bcryptjs`, ya redundante, y API usa ESLint 10. No cambian DTOs ni comportamiento de persistencia.
+- **Persistencia:** no hay cambio estructural ni migración nueva. El schema Prisma mapea los nombres históricos reales de las claves foráneas compuestas de `ProfessionalWeeklySchedule` y `ProfessionalAvailabilityBlock`; así deja de proponer renombres espurios. PostgreSQL 16 temporal aplicó las 19 migraciones desde cero y `prisma migrate diff` confirmó ausencia de drift.
+- **Compatibilidad:** ningún consumidor web usaba las dos rutas retiradas. Un futuro alta multi-organización requiere contrato, permisos, límites, transacción, auditoría y UX propios.
+- **Estado:** auditoría **IMPLEMENTADA / EN REVISIÓN**; no cierra Facturación-B ni abre otro módulo.
+
 ## 2026-08-29 — Filtro de fecha de emisión para `GET /invoices`
 
 - **Contrato:** `GET /invoices` añade query opcional `from` y `to` en formato calendario `YYYY-MM-DD`; los extremos abiertos son válidos. El filtro corresponde exclusivamente a `Invoice.createdAt`, presentado en producto como “Fecha de emisión”, y no cambia la semántica de `Payment.paidAt`.

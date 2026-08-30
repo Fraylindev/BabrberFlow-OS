@@ -149,7 +149,7 @@ export class AnalyticsService {
     const startOf7DaysAgo = atStart(addDaysToIsoDate(today, -6));
     const startOfTomorrow = atStart(addDaysToIsoDate(today, 1));
     const startOfWindow = atStart(
-      addDaysToIsoDate(today, -TOP_PROFESSIONAL_WINDOW_DAYS),
+      addDaysToIsoDate(today, 1 - TOP_PROFESSIONAL_WINDOW_DAYS),
     );
     if (
       !startOfToday ||

@@ -7,11 +7,11 @@
 ## Identidad y tenant
 
 - `Organization`: tenant y raíz de datos de negocio.
-- `User`: identidad global con UUID local estable, email único y contraseña vigente; no contiene rol ni tenant propios.
-- `User.clerkUserId`: enlace externo nullable y único reservado para Clerk. Security A0.1 no lo puebla ni usa para autenticar; múltiples usuarios pueden permanecer en `NULL`.
+- `User`: identidad global con UUID local estable y email único; `password` es nullable para identidades Clerk y permanece solo por compatibilidad legacy. No contiene rol ni tenant propios.
+- `User.clerkUserId`: enlace externo Clerk nullable y único. Los flujos Clerk autorizados lo crean o reutilizan explícitamente y nunca lo infieren por correo; múltiples usuarios legacy pueden permanecer en `NULL`.
 - `Membership`: relación `User × Organization` con `UserRole`; única por pareja.
 - `TeamInvitation`: invitación tenant-scoped de Equipo con actor, rol no OWNER, referencia externa Clerk, expiración, estado local y aceptación opcional. Una restricción parcial permite como máximo una invitación abierta por organización y correo normalizado.
-- `User.lastOrganizationId`: preferencia para resolver la Membership activa, no autorización por sí sola.
+- `User.lastOrganizationId`: preferencia para resolver una Membership activa; no autoriza por sí sola.
 
 ## Operación
 

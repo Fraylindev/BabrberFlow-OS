@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   ForbiddenException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { ProfessionalsService } from '../professionals/professionals.service';
@@ -60,9 +61,6 @@ export class BookingsController {
 
   // Un BARBER ve únicamente su propia agenda (resuelta vía su vínculo
   // Professional.userId). El resto de los roles B2B ve la agenda completa
-  // de la organización, como siempre.
-  // Un BARBER ve únicamente su propia agenda (resuelta vía su vínculo
-  // Professional.userId). El resto de los roles B2B ve la agenda completa
   // de la organización, como siempre. from/to/status son opcionales — sin
   // ellos, mismo comportamiento de siempre (todo el historial).
   @Get()
@@ -103,7 +101,7 @@ export class BookingsController {
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.RECEPTIONIST)
   @Patch(':id')
   reschedule(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @GetUser('organizationId') organizationId: string,
     @Body() rescheduleBookingDto: RescheduleBookingDto,
   ) {
@@ -116,7 +114,7 @@ export class BookingsController {
 
   @Patch(':id/status')
   async updateStatus(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @GetUser() user: RequestUser,
     @Body() updateBookingStatusDto: UpdateBookingStatusDto,
   ) {

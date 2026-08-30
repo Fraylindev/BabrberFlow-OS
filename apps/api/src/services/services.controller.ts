@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -45,7 +46,7 @@ export class ServicesController {
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @GetUser('organizationId') organizationId: string,
     @GetUser('id') userId: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -61,7 +62,7 @@ export class ServicesController {
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Delete(':id')
   remove(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @GetUser('organizationId') organizationId: string,
     @GetUser('id') userId: string,
   ) {

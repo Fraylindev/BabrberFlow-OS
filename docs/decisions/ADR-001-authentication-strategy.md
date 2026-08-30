@@ -16,16 +16,16 @@
 
 La implementación se dividirá en checkpoints independientes. Migrar identidad a Clerk y trasladar PostgreSQL a Supabase en un mismo cambio está prohibido.
 
-## Estado real auditado
+## Diagnóstico de origen
 
 ### Identidad y riesgo vigente
 
 El diagnóstico que originó Security A0 encontró autenticación propia con estos riesgos; los resultados posteriores del ADR indican cuáles ya fueron corregidos:
 
-- [`OrganizationsController`](../../apps/api/src/organizations/organizations.controller.ts) expone `POST /organizations` sin guard.
-- `GET /organizations/by-slug/:slug` es público y [`OrganizationsService`](../../apps/api/src/organizations/organizations.service.ts) proyecta `{ id, name, slug }`.
-- [`RegisterDto`](../../apps/api/src/auth/dto/register.dto.ts) acepta `organizationId` enviado por el cliente.
-- [`AuthService.register()`](../../apps/api/src/auth/auth.service.ts) crea `User` y `Membership OWNER` para ese ID.
+- [`OrganizationsController`](../../apps/api/src/organizations/organizations.controller.ts) exponía `POST /organizations` sin guard.
+- `GET /organizations/by-slug/:slug` era público y [`OrganizationsService`](../../apps/api/src/organizations/organizations.service.ts) proyectaba `{ id, name, slug }`.
+- [`RegisterDto`](../../apps/api/src/auth/dto/register.dto.ts) aceptaba `organizationId` enviado por el cliente.
+- [`AuthService.register()`](../../apps/api/src/auth/auth.service.ts) creaba `User` y `Membership OWNER` para ese ID.
 - En el diagnóstico original, `auth-context.tsx` guardaba `bf_token` y `bf_session` en `localStorage` y `proxy.ts` solo comprobaba una cookie indicadora `kb_session`. Security A0.5-B elimina ese comportamiento de la web; se conserva aquí como riesgo histórico que motivó la decisión.
 - [`JwtStrategy`](../../apps/api/src/auth/strategies/jwt.strategy.ts) revalida la Membership por petición. Este control local es correcto y debe conservarse con Clerk.
 
@@ -47,7 +47,7 @@ No hay evidencia de usuarios reales de producción, pero tampoco evidencia sufic
 
 ## Relación entre User local y Clerk
 
-`User` conservará su UUID local estable para relaciones y auditoría. En un checkpoint posterior se añadirá un identificador externo nullable y único, por ejemplo `clerkUserId`, con estas reglas:
+`User` conserva su UUID local estable para relaciones y auditoría. Security A0.1 añadió `clerkUserId` nullable y único, y los checkpoints Clerk posteriores aplican estas reglas:
 
 - una identidad Clerk solo puede enlazar un `User` local;
 - después del enlace, la clave autoritativa es `clerkUserId`, no el correo;
@@ -59,7 +59,7 @@ No hay evidencia de usuarios reales de producción, pero tampoco evidencia sufic
 
 Un conflicto entre el correo verificado de una identidad Clerk y un `User` local no enlazado se rechaza sin enlazar por correo y se registra como `CLERK_ONBOARDING_EMAIL_CONFLICT`. Ese hecho ocurre antes de que exista una Organization autoritativa: por ello el registro usa `organizationId: NULL`, sin `userId`, `entityId`, correo ni `clerkUserId`. Una restricción PostgreSQL limita esta excepción al evento exacto; atribuirlo a un tenant ficticio falsearía la auditoría y queda prohibido.
 
-Clerk soporta importar hashes bcrypt, pero usar esa capacidad requiere inventario aprobado, exportación protegida, ensayo y rollback. La alternativa preferida para cuentas QA o no clasificadas es invitación/activación o recuperación administrada por Clerk, evitando transportar hashes cuando no sea necesario. El campo local `password` se volverá nullable y se retirará únicamente después de validar Clerk y vencer la ventana de rollback.
+Clerk soporta importar hashes bcrypt, pero usar esa capacidad requiere inventario aprobado, exportación protegida, ensayo y rollback. La alternativa preferida para cuentas QA o no clasificadas es invitación/activación o recuperación administrada por Clerk, evitando transportar hashes cuando no sea necesario. El campo local `password` ya es nullable; retirarlo junto con los endpoints legacy exige una ventana de rollback aprobada.
 
 ## Onboarding seguro de Organization + primer OWNER
 
@@ -215,7 +215,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - El `RegisterDto` se volvió atómico: exige `name`, `email`, `password`, `organizationName`, `organizationSlug` y el correo de la organización de forma independiente (`organizationEmail`), y rechaza `organizationId`. Se implementó validación de formato (3-50 caracteres, caracteres alfanuméricos aceptando mayúsculas y minúsculas con guiones intermedios, sin espacios ni rutas) y normalización explícita a minúsculas (`toLowerCase().trim()`) para la persistencia del slug y correos en el servicio.
 - `AuthService.register()` crea `User`, `Organization` y `Membership` OWNER en una sola transacción estricta (`isolationLevel: Prisma.TransactionIsolationLevel.Serializable`). Se implementó reintento acotado a exactamente 3 intentos exclusivo para fallas de serialización (`P2034`), mientras que errores de unicidad (`P2002`) en slug o email se traducen inmediatamente a `409 ConflictException` sin reintentos ciegos.
 - La transacción atómica escribe el evento `CREATE` en `AuditLog` vía `AuditService.logTransactional()`, sin PII y de forma requerida (si falla la auditoría, la transacción completa hace rollback sin dejar filas huérfanas).
-- `POST /organizations` (`OrganizationsController`) está protegido con JWT y rol `OWNER`; ya no es ruta pública para el alta inicial.
+- En aquel checkpoint, `POST /organizations` (`OrganizationsController`) quedó protegido con JWT y rol `OWNER`; la auditoría integral posterior lo retiró por completo.
 - `User.password` es nullable en persistencia. `login()` y `updatePassword()` protegen contra contraseñas locales nulas (devuelven rechazo neutro 401 y 400 respectivamente sin invocar bcrypt con null).
 - Frontend web (`apps/web/lib/auth-context.tsx`) envía el payload atómico completo incluyendo `organizationEmail`.
 - El aislamiento E2E original aceptaba un schema `test` dentro de la base principal y una credencial privilegiada. Esa evidencia no cumple aislamiento estricto y no sustenta una aprobación.
@@ -304,6 +304,14 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Pruebas unitarias y E2E PostgreSQL aisladas cubren guard/controlador, alta sin Membership, idempotencia, concurrencia, ganador único, colisión de CUSTOMER legacy, privacidad tenant y auditoría. El clúster temporal usa base `_test` y propietario no privilegiado, y se elimina al terminar.
 - Evidencia aprobada: Prisma validate/generate, API TypeScript/lint/build, 286 unitarias y 5 E2E PostgreSQL aisladas terminaron con exit `0`; el clúster temporal fue eliminado. La evidencia no conserva PII, tokens, claves, cookies ni identificadores sensibles.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario sobre `cbd7b8762b24ddc6802051e98ebb128d53f5f99e`. A0.6-B queda solo para análisis y plan; A0.6-C/D y cualquier otro alcance permanecen bloqueados.
+
+## Resultado de auditoría integral — 2026-08-29
+
+- `POST /organizations` se retiró: aunque A0.3-H lo había protegido para OWNER, la implementación creaba una Organization sin Membership ni AuditLog y ningún consumidor vigente lo usaba. Un flujo multi-organización futuro exige contrato atómico propio.
+- `GET /organizations/by-slug/:slug` se retiró porque exponía públicamente el UUID interno y ya no participaba en registro, onboarding o reserva pública.
+- El alta inicial permanece en `/auth/register` legacy y `/auth/clerk/onboarding`; ninguna acepta un tenant preexistente elegido por el navegador.
+- `CLERK_AUTHORIZED_PARTIES` conserva fallo cerrado, pero sus errores de configuración ya no reflejan una URL inválida que pudiera contener credenciales.
+- Este correctivo no retira JWT/password legacy, no implementa A0.6-B/A0.7 ni cambia Supabase.
 
 ## Nota operativa de recuperación local — 2026-08-20
 

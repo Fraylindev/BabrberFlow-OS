@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { B2bAuthGuard } from '../auth/guards/b2b-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -11,20 +10,6 @@ import { B2B_ROLES } from '../auth/roles.constants';
 @Controller('organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
-
-  @UseGuards(B2bAuthGuard, RolesGuard)
-  @Roles(UserRole.OWNER)
-  @Post()
-  create(@Body() createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationsService.create(createOrganizationDto);
-  }
-
-  // Público: usado por el frontend para resolver el slug de la barbería
-  // (ej. "elite-barber-shop") al organizationId que piden login/register.
-  @Get('by-slug/:slug')
-  findBySlug(@Param('slug') slug: string) {
-    return this.organizationsService.findBySlug(slug);
-  }
 
   // 🛡️ Ruta protegida, aislada (multi-tenant) y exclusiva de personal B2B
   @UseGuards(B2bAuthGuard, RolesGuard)

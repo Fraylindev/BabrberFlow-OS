@@ -106,14 +106,12 @@ model Organization {
   teamInvitations                TeamInvitation[]
 }
 
-// Identidad global — una sola cuenta, un solo password, puede pertenecer
-// a varias organizaciones a la vez a través de Membership. El rol y la
-// organización activa YA NO viven aquí (ver Membership).
+// Identidad global: una cuenta puede pertenecer a varias organizaciones a
+// través de Membership. El rol y la organización activa no viven aquí.
 model User {
   id String @id @default(uuid())
 
-  // Enlace externo reservado para Clerk. Permanece NULL hasta que una
-  // entrega posterior vincule explícitamente una identidad verificada.
+  // Enlace externo Clerk nullable y único. Nunca se infiere por correo.
   clerkUserId String? @unique
 
   email String @unique
@@ -122,9 +120,7 @@ model User {
 
   name String
 
-  // Última organización en la que operó — el login de un solo paso la usa
-  // para resolver el JWT sin pedirle al usuario que elija cada vez.
-  // register/invite la pueblan al crear la membresía nueva.
+  // Preferencia de organización; nunca concede acceso sin Membership.
   lastOrganizationId String?
 
   memberships Membership[]
@@ -255,7 +251,7 @@ model ProfessionalWeeklySchedule {
 
   professionalId String
 
-  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "ProfessionalWeeklySchedule_professionalId_fkey")
 
   dayOfWeek Int
 
@@ -279,7 +275,7 @@ model ProfessionalAvailabilityBlock {
 
   professionalId String
 
-  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "ProfessionalAvailabilityBlock_professionalId_fkey")
 
   startTime DateTime
 

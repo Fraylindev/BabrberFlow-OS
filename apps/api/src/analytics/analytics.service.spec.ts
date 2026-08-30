@@ -55,5 +55,19 @@ describe('AnalyticsService revenue by real payment date', () => {
       },
       _sum: { amount: true },
     });
+    expect(db.booking.groupBy).toHaveBeenCalledWith({
+      by: ['professionalId'],
+      where: {
+        organizationId: 'organization-id',
+        status: 'COMPLETED',
+        startTime: {
+          gte: new Date('2026-07-26T04:00:00.000Z'),
+          lt: new Date('2026-08-25T04:00:00.000Z'),
+        },
+      },
+      _count: { _all: true },
+      orderBy: { _count: { professionalId: 'desc' } },
+      take: 1,
+    });
   });
 });

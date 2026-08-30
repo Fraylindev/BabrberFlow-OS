@@ -78,6 +78,25 @@ describe('Clerk auth config', () => {
     ).toThrow();
   });
 
+  it('no refleja credenciales incluidas en un origen inválido', () => {
+    const secret = 'credential-that-must-not-be-logged';
+    let message = '';
+
+    try {
+      loadClerkAuthConfig({
+        CLERK_SECRET_KEY: 'test-secret-not-real',
+        CLERK_PUBLISHABLE_KEY: publishableKey('example.clerk.accounts.dev'),
+        CLERK_AUTHORIZED_PARTIES: `https://user:${secret}@app.example.test`,
+      });
+    } catch (error) {
+      message = error instanceof Error ? error.message : String(error);
+    }
+
+    expect(message).toContain('CLERK_AUTHORIZED_PARTIES');
+    expect(message).not.toContain(secret);
+    expect(message).not.toContain('user:');
+  });
+
   it('arranca sin variables Clerk: el cargador se define sin evaluar la configuración', () => {
     // Simula el patrón del provider: la factory retorna una función en lugar de
     // llamar directamente a loadClerkAuthConfig. Crear el cargador no consume

@@ -89,7 +89,7 @@ export class ClerkOnboardingService {
       .map((p) => (typeof p === 'string' ? p.trim() : ''))
       .filter(Boolean);
 
-    let resolvedName = '';
+    let resolvedName: string;
     if (nameParts.length > 0) {
       resolvedName = nameParts.join(' ');
     } else if (
