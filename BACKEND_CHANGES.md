@@ -8,6 +8,15 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-30 — Profesionales y Facturación-B Frontend: CERRADO / APROBADO
+
+- **Aprobación oficial:** el propietario cierra Profesionales (Frontend general, A2 y correctivo de perfil/aislamiento) y Facturación-B Frontend sobre `bc3d1524d5ca185d46e963c086296895407f9cce`. Esta entrada sustituye únicamente sus estados candidatos anteriores; no modifica los contratos descritos más abajo.
+- **Profesionales:** se mantienen permisos OWNER/ADMIN y perfil propio BARBER, lista explícita de campos editables, teléfono privado, aislamiento tenant/ownership y auditoría sin PII. A1/A2 Backend conservan su aprobación previa.
+- **Facturación-B:** se aprueba el frontend vigente sin correcciones ni ampliaciones. Continúan inalterados Invoice interna, Payment completo único, importes server-side, proyecciones/paginación, ownership BARBER y `GET /invoices` por fecha de emisión local/estado. Facturación-A Backend conserva su cierre previo.
+- **Acceso independiente:** el botón aceptado “Usar otra cuenta” de `apps/web/app/auth/continue/page.tsx` permanece sin cambios. Es una mejora de acceso, no de Profesionales; este cierre no modifica Clerk ni autenticación.
+- **Evidencia y límites:** se conserva la evidencia registrada en los checkpoints funcionales. Esta entrega comprueba documentación y Git, no ejecuta código ni añade QA real. La aprobación oficial no se presenta como ejecución de pruebas antes pendientes; tampoco prueba la reconciliación de la instancia legacy con ledger inconsistente.
+- **Alcance:** solo PROJECT_MASTER.md, CHANGELOG.md y BACKEND_CHANGES.md. Sin endpoints, DTOs, servicios, migraciones ni módulos nuevos; visión futura, fixtures, respaldo y cambios ajenos fuera del commit.
+
 ## 2026-08-30 — Profesionales: gestión propia A1, teléfono privado y aislamiento de contexto
 
 - **`GET /professionals/me`:** la proyección propia de `BARBER` añade `phone: string | null`. El número solo se entrega al Professional vinculado a la identidad y organización autenticadas; no se añade al directorio mínimo, a rutas públicas ni a perfiles ajenos.

@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-30 — Cierre oficial de Profesionales y Facturación-B Frontend
+
+- El propietario aprueba oficialmente **Profesionales** (Frontend general, disponibilidad A2 y correctivo de perfil propio/aislamiento) y **Facturación-B Frontend**. Ambos quedan **CERRADO / APROBADO** sobre el estado funcional `bc3d1524d5ca185d46e963c086296895407f9cce`.
+- Profesionales conserva sus contratos, permisos por rol, teléfono propio privado, disponibilidad y aislamiento usuario/tenant/rol, incluido A → B → A. Facturación-B conserva emisión interna, cobro completo único, ownership BARBER y filtro backend por fecha local de emisión/estado; no se corrige ni amplía su alcance.
+- “Usar otra cuenta” en `apps/web/app/auth/continue/page.tsx` se conserva como cambio de acceso independiente aceptado por el propietario. Compartió el checkpoint anterior, pero no es una funcionalidad de Profesionales. Su código permanece intacto.
+- Este cierre registra la decisión explícita del propietario y conserva la evidencia previa con sus límites; no afirma que se hayan ejecutado nuevas pruebas ni completado automáticamente el QA que figuraba pendiente en el candidato.
+- Entrega exclusivamente documental: sin cambios funcionales, contratos, configuración, Prisma ni migraciones. No inicia otro módulo, no reconcilia la base legacy y no incluye visión futura, fixtures, respaldo ni cambios locales ajenos.
+
 ## 2026-08-30 — Correctivo de Profesionales: contexto y gestión del perfil propio
 
 - Profesionales desmonta toda su vista al cambiar usuario, organización o rol y usa ese alcance completo en la consulta; ningún modal, formulario, confirmación, selección de disponibilidad ni dato de listado del contexto anterior permanece visible, y una mutación tardía de ese alcance no puede emitir estado ni toast en el nuevo. La revisión final corrigió también A → B → A mediante una instancia única por visita e invalidación al salir; incluye regresión automática.
