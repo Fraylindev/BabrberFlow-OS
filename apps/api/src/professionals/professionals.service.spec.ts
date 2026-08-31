@@ -286,11 +286,12 @@ describe('ProfessionalsService', () => {
     });
   });
 
-  it('allows BARBER to update only its linked public profile projection', async () => {
+  it('updates own public profile and private phone with authoritative tenant/identity and no PII audit', async () => {
     const ownRecord = {
       id: PROFESSIONAL_ID,
       name: 'Ana',
       bio: 'Bio',
+      phone: '+18095550101',
       avatar: null,
       specialty: 'Fade',
       experienceYears: 5,
@@ -305,7 +306,14 @@ describe('ProfessionalsService', () => {
     const result = await dependencies.service.updateMe(
       BARBER_ID,
       ORGANIZATION_ID,
-      { bio: '  Bio  ' },
+      {
+        name: '  Ana  ',
+        bio: '  Bio  ',
+        phone: '  +18095550101  ',
+        avatar: null,
+        specialty: '  Fade  ',
+        experienceYears: 5,
+      },
     );
 
     expect(dependencies.prisma.db.professional.update).toHaveBeenCalledWith(
@@ -316,11 +324,32 @@ describe('ProfessionalsService', () => {
             userId: BARBER_ID,
           },
         },
-        data: { bio: 'Bio' },
+        data: {
+          name: 'Ana',
+          bio: 'Bio',
+          phone: '+18095550101',
+          avatar: null,
+          specialty: 'Fade',
+          experienceYears: 5,
+        },
       }),
     );
-    expect(result).not.toHaveProperty('phone');
+    expect(result.phone).toBe('+18095550101');
     expect(result).not.toHaveProperty('linkedUser');
+    expect(dependencies.audit.log).toHaveBeenCalledWith({
+      organizationId: ORGANIZATION_ID,
+      userId: BARBER_ID,
+      action: 'UPDATE',
+      entity: 'Professional',
+      entityId: PROFESSIONAL_ID,
+    });
+  });
+
+  it('rejects an empty own PATCH before accessing persistence', async () => {
+    await expect(
+      dependencies.service.updateMe(BARBER_ID, ORGANIZATION_ID, {}),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(dependencies.prisma.db.professional.update).not.toHaveBeenCalled();
   });
 
   it('blocks archive while future PENDING or CONFIRMED bookings exist', async () => {

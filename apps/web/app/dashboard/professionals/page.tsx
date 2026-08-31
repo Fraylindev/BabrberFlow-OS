@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ApiError,
   Professional,
@@ -12,7 +12,6 @@ import { useAuth } from "@/lib/auth-context";
 import {
   CreateProfessionalInput,
   ProfessionalAvailabilityTarget,
-  UpdateOwnProfessionalInput,
   useArchiveProfessional,
   useBarberMembersQuery,
   useCreateProfessional,
@@ -36,6 +35,11 @@ import { Modal } from "@/components/ui/Modal";
 import { FieldWrapper, InputField, SelectField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton, SkeletonListRows } from "@/components/ui/Skeleton";
+import {
+  isCurrentProfessionalsScope,
+  professionalsScopeKey,
+  professionalProfileInput,
+} from "@/lib/professional-ui";
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -45,13 +49,7 @@ const TEXTAREA_CLASS =
 type StatusFilter = "ALL" | ProfessionalStatus;
 type FormMode = "create" | "edit" | "own";
 type ConfirmationKind =
-  | "activate"
-  | "deactivate"
-  | "publish"
-  | "unpublish"
-  | "archive"
-  | "restore"
-  | "unlink";
+  "activate" | "deactivate" | "publish" | "unpublish" | "archive" | "restore" | "unlink";
 type Confirmation = {
   professional: ProfessionalManagement;
   kind: ConfirmationKind;
@@ -109,6 +107,35 @@ function Avatar({ professional }: { professional: Professional }) {
 
 export default function ProfessionalsPage() {
   const { user, organization } = useAuth();
+  const scopeKey = professionalsScopeKey(user, organization?.id);
+  const scopeInstance = useMemo(() => ({ key: scopeKey }), [scopeKey]);
+  const currentScopeRef = useRef<typeof scopeInstance | null>(scopeInstance);
+  useLayoutEffect(() => {
+    currentScopeRef.current = scopeInstance;
+    return () => { currentScopeRef.current = null; };
+  }, [scopeInstance]);
+
+  if (!scopeKey) return null;
+
+  return (
+    <ScopedProfessionalsPage
+      key={scopeKey}
+      scopeKey={scopeKey}
+      isCurrentScope={(operationScope) =>
+        operationScope === scopeKey && isCurrentProfessionalsScope(currentScopeRef.current, scopeInstance)
+      }
+    />
+  );
+}
+
+function ScopedProfessionalsPage({
+  scopeKey,
+  isCurrentScope,
+}: {
+  scopeKey: string;
+  isCurrentScope: (operationScope: string) => boolean;
+}) {
+  const { user, organization } = useAuth();
   const { toast } = useToast();
   const isManager = user?.role === "OWNER" || user?.role === "ADMIN";
   const isBarber = user?.role === "BARBER";
@@ -120,23 +147,21 @@ export default function ProfessionalsPage() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [editing, setEditing] = useState<ProfessionalManagement | null>(null);
   const [editOwnOpen, setEditOwnOpen] = useState(false);
+  const [manageOwnOpen, setManageOwnOpen] = useState(false);
   const [linking, setLinking] = useState<ProfessionalManagement | null>(null);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
-  const [availabilitySelection, setAvailabilitySelection] =
-    useState<AvailabilitySelection | null>(null);
+  const [availabilitySelection, setAvailabilitySelection] = useState<AvailabilitySelection | null>(
+    null,
+  );
 
   const query = useProfessionalsPageQuery({
     search: search || undefined,
     status: status === "ALL" ? undefined : status,
     page,
     limit: PAGE_SIZE,
-    scope: `${organization?.id ?? "pending"}:${isManager ? "management" : "directory"}`,
+    scope: scopeKey,
   });
-  const ownQuery = useOwnProfessionalQuery(
-    Boolean(isBarber),
-    organization?.id,
-    user?.id,
-  );
+  const ownQuery = useOwnProfessionalQuery(Boolean(isBarber), organization?.id, user?.id);
   const professionals = query.data?.professionals ?? [];
   const pagination = query.data?.pagination;
   const hasFilters = Boolean(search) || status !== "ALL";
@@ -170,7 +195,7 @@ export default function ProfessionalsPage() {
         title={isBarber ? "Mi perfil profesional" : "Profesionales"}
         description={
           isBarber
-            ? "Administra tu información pública y consulta el directorio del equipo."
+            ? "Administra tu perfil profesional y consulta el directorio del equipo."
             : isManager
               ? "Administra perfiles, disponibilidad operativa, publicación y cuentas vinculadas."
               : "Consulta los profesionales disponibles de la organización."
@@ -184,23 +209,7 @@ export default function ProfessionalsPage() {
         }
       />
 
-      {isBarber && (
-        <OwnProfilePanel
-          query={ownQuery}
-          onEdit={() => setEditOwnOpen(true)}
-          onAvailability={(professionalName) =>
-            setAvailabilitySelection({
-              professionalName,
-              target: {
-                kind: "own",
-                organizationId: organization?.id,
-                userId: user?.id,
-                role: user?.role,
-              },
-            })
-          }
-        />
-      )}
+      {isBarber && <OwnProfilePanel query={ownQuery} onManage={() => setManageOwnOpen(true)} />}
 
       <Card tone="light" className="mb-5 p-4 sm:p-5">
         <form
@@ -347,7 +356,9 @@ export default function ProfessionalsPage() {
                             Gestionar
                           </Button>
                         ) : (
-                          <span className="text-xs text-[var(--dash-text-faint)]">Solo lectura</span>
+                          <span className="text-xs text-[var(--dash-text-faint)]">
+                            Solo lectura
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -372,6 +383,7 @@ export default function ProfessionalsPage() {
           mode="create"
           onClose={() => setCreateOpen(false)}
           onSuccess={(professional) => {
+            if (!isCurrentScope(scopeKey)) return;
             setCreateOpen(false);
             setStatus("ALL");
             setPage(1);
@@ -386,6 +398,7 @@ export default function ProfessionalsPage() {
           professional={editing}
           onClose={() => setEditing(null)}
           onSuccess={(professional) => {
+            if (!isCurrentScope(scopeKey)) return;
             setEditing(null);
             setDetailId(professional.id);
             toast("El perfil profesional fue actualizado.");
@@ -393,14 +406,42 @@ export default function ProfessionalsPage() {
         />
       )}
 
-      {editOwnOpen && ownQuery.data && (
+      {manageOwnOpen && isBarber && (
+        <OwnProfileManagementModal
+          query={ownQuery}
+          onClose={() => setManageOwnOpen(false)}
+          onEdit={() => {
+            setManageOwnOpen(false);
+            setEditOwnOpen(true);
+          }}
+          onAvailability={(professionalName) => {
+            setManageOwnOpen(false);
+            setAvailabilitySelection({
+              professionalName,
+              target: {
+                kind: "own",
+                organizationId: organization?.id,
+                userId: user?.id,
+                role: user?.role,
+              },
+            });
+          }}
+        />
+      )}
+
+      {editOwnOpen && isBarber && ownQuery.data && (
         <ProfessionalFormModal
           mode="own"
           professional={ownQuery.data}
-          onClose={() => setEditOwnOpen(false)}
-          onSuccess={() => {
+          onClose={() => {
             setEditOwnOpen(false);
-            toast("Tu perfil público fue actualizado.");
+            setManageOwnOpen(true);
+          }}
+          onSuccess={() => {
+            if (!isCurrentScope(scopeKey)) return;
+            setEditOwnOpen(false);
+            setManageOwnOpen(true);
+            toast("Tu perfil profesional fue actualizado.");
           }}
         />
       )}
@@ -440,7 +481,11 @@ export default function ProfessionalsPage() {
         <ProfessionalAvailabilityModal
           target={availabilitySelection.target}
           professionalName={availabilitySelection.professionalName}
-          onClose={() => setAvailabilitySelection(null)}
+          isCurrentScope={() => isCurrentScope(scopeKey)}
+          onClose={() => {
+            setAvailabilitySelection(null);
+            if (availabilitySelection.target.kind === "own") setManageOwnOpen(true);
+          }}
         />
       )}
 
@@ -449,6 +494,7 @@ export default function ProfessionalsPage() {
           professional={linking}
           onClose={() => setLinking(null)}
           onSuccess={() => {
+            if (!isCurrentScope(scopeKey)) return;
             setLinking(null);
             toast("La cuenta BARBER fue vinculada al perfil.");
           }}
@@ -460,6 +506,7 @@ export default function ProfessionalsPage() {
           confirmation={confirmation}
           onClose={() => setConfirmation(null)}
           onSuccess={(message) => {
+            if (!isCurrentScope(scopeKey)) return;
             if (professionals.length === 1 && page > 1) setPage((current) => current - 1);
             setConfirmation(null);
             toast(message);
@@ -472,12 +519,10 @@ export default function ProfessionalsPage() {
 
 function OwnProfilePanel({
   query,
-  onEdit,
-  onAvailability,
+  onManage,
 }: {
   query: ReturnType<typeof useOwnProfessionalQuery>;
-  onEdit: () => void;
-  onAvailability: (professionalName: string) => void;
+  onManage: () => void;
 }) {
   if (query.isLoading) {
     return (
@@ -508,22 +553,96 @@ function OwnProfilePanel({
               {query.data.specialty || "Sin especialidad"} · {statusLabel(query.data.status)} ·{" "}
               {query.data.isPublic ? "Visible públicamente" : "Perfil privado"}
             </p>
+            <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
+              Teléfono privado: {query.data.phone || "Sin teléfono registrado"}
+            </p>
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Button
-            tone="light"
-            variant="secondary"
-            onClick={() => onAvailability(query.data.name)}
-          >
-            Mi disponibilidad
-          </Button>
-          <Button tone="light" variant="secondary" onClick={onEdit}>
-            Editar mi perfil
-          </Button>
-        </div>
+        <Button tone="light" className="min-h-11 shrink-0" onClick={onManage}>
+          Gestionar mi perfil
+        </Button>
       </div>
     </Card>
+  );
+}
+
+function OwnProfileManagementModal({
+  query,
+  onClose,
+  onEdit,
+  onAvailability,
+}: {
+  query: ReturnType<typeof useOwnProfessionalQuery>;
+  onClose: () => void;
+  onEdit: () => void;
+  onAvailability: (professionalName: string) => void;
+}) {
+  return (
+    <Modal title="Gestionar mi perfil" tone="light" onClose={onClose}>
+      {query.isLoading ? (
+        <Skeleton tone="light" className="h-40 w-full" />
+      ) : query.isError || !query.data ? (
+        <ErrorState
+          title="No pudimos cargar tu perfil"
+          message={errorMessage(query.error, "Intenta recargar tu información.")}
+          onRetry={() => void query.refetch()}
+        />
+      ) : (
+        <div className="space-y-5">
+          <div className="flex items-start gap-4">
+            <Avatar professional={query.data} />
+            <div className="min-w-0">
+              <h3 className="break-words text-lg font-semibold text-[var(--dash-text)]">
+                {query.data.name}
+              </h3>
+              <p className="mt-1 break-words text-sm text-[var(--dash-text-muted)]">
+                {query.data.specialty || "Sin especialidad"}
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <ProfessionalStatusBadge status={query.data.status} />
+                <span className="text-xs text-[var(--dash-text-muted)]">
+                  {query.data.isPublic ? "Visible públicamente" : "Perfil privado"}
+                </span>
+              </div>
+            </div>
+          </div>
+          <dl className="grid grid-cols-1 gap-4 rounded-lg border border-[var(--dash-border)] p-4 sm:grid-cols-2">
+            <Detail
+              label="Teléfono privado"
+              value={query.data.phone || "Sin teléfono registrado"}
+            />
+            <Detail
+              label="Experiencia"
+              value={
+                query.data.experienceYears === null
+                  ? "No registrada"
+                  : `${query.data.experienceYears} año${query.data.experienceYears === 1 ? "" : "s"}`
+              }
+            />
+            <div className="sm:col-span-2">
+              <Detail label="Biografía" value={query.data.bio || "Sin biografía"} />
+            </div>
+          </dl>
+          <p className="text-sm leading-6 text-[var(--dash-text-muted)]">
+            Puedes actualizar tu información y disponibilidad. Tu teléfono no se publica; solo lo
+            pueden consultar tú y quienes administran el negocio.
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Button tone="light" className="min-h-11" onClick={onEdit}>
+              Editar información
+            </Button>
+            <Button
+              tone="light"
+              variant="secondary"
+              className="min-h-11"
+              onClick={() => onAvailability(query.data.name)}
+            >
+              Mi disponibilidad
+            </Button>
+          </div>
+        </div>
+      )}
+    </Modal>
   );
 }
 
@@ -575,8 +694,7 @@ function Pagination({
   page: number;
   count: number;
   pagination: ReturnType<typeof useProfessionalsPageQuery>["data"] extends
-    | { pagination: infer T }
-    | undefined
+    { pagination: infer T } | undefined
     ? T | undefined
     : never;
   fetching: boolean;
@@ -651,25 +769,30 @@ function ProfessionalFormModal({
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError(null);
-    const common: CreateProfessionalInput = {
-      name: name.trim(),
-      specialty: specialty.trim() || null,
-      bio: bio.trim() || null,
-      avatar: avatar.trim() || null,
-      experienceYears: experienceYears === "" ? null : Number(experienceYears),
-      ...(isOwn ? {} : { phone: phone.trim() || null }),
-    };
+    if (!name.trim()) {
+      setError("Escribe un nombre para el perfil profesional.");
+      return;
+    }
     try {
-      if (mode === "create") {
-        const created = await createProfessional.mutateAsync(common);
-        onSuccess(created as ProfessionalManagement);
-      } else if (mode === "edit" && professional) {
-        const updated = await updateProfessional.mutateAsync({ id: professional.id, ...common });
+      const common: CreateProfessionalInput = professionalProfileInput({
+        name,
+        specialty,
+        bio,
+        avatar,
+        phone,
+        experienceYears,
+      });
+      if (isOwn) {
+        const updated = await updateOwnProfessional.mutateAsync(common);
         onSuccess(updated);
       } else {
-        const ownInput: UpdateOwnProfessionalInput = common;
-        const updated = await updateOwnProfessional.mutateAsync(ownInput);
-        onSuccess(updated);
+        if (mode === "create") {
+          const created = await createProfessional.mutateAsync(common);
+          onSuccess(created as ProfessionalManagement);
+        } else if (professional) {
+          const updated = await updateProfessional.mutateAsync({ id: professional.id, ...common });
+          onSuccess(updated);
+        }
       }
     } catch (mutationError) {
       setError(errorMessage(mutationError, "No se pudo guardar el perfil profesional."));
@@ -678,14 +801,27 @@ function ProfessionalFormModal({
 
   return (
     <Modal
-      title={mode === "create" ? "Nuevo profesional" : isOwn ? "Editar mi perfil" : "Editar profesional"}
+      title={
+        mode === "create"
+          ? "Nuevo profesional"
+          : isOwn
+            ? "Editar mi información"
+            : "Editar profesional"
+      }
       tone="light"
       onClose={onClose}
     >
       <form onSubmit={submit} className="space-y-4">
+        {isOwn && (
+          <p className="text-sm leading-6 text-[var(--dash-text-muted)]">
+            Edita la información de tu perfil profesional. El teléfono es privado y no aparece en la
+            página pública.
+          </p>
+        )}
         {mode === "create" && (
           <p className="rounded-lg bg-[var(--dash-info-bg)] px-3 py-2 text-sm text-[var(--dash-text-muted)]">
-            El perfil se crea inactivo y privado. Podrás activarlo y publicarlo después de completar sus datos.
+            El perfil se crea inactivo y privado. Podrás activarlo y publicarlo después de completar
+            sus datos.
           </p>
         )}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -706,16 +842,15 @@ function ProfessionalFormModal({
             value={specialty}
             onChange={(event) => setSpecialty(event.target.value)}
           />
-          {!isOwn && (
-            <InputField
-              tone="light"
-              label="Teléfono interno (opcional)"
-              name={`${mode}-professional-phone`}
-              maxLength={30}
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-            />
-          )}
+          <InputField
+            tone="light"
+            label={isOwn ? "Teléfono privado (opcional)" : "Teléfono interno (opcional)"}
+            name={`${mode}-professional-phone`}
+            type="tel"
+            maxLength={30}
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+          />
           <InputField
             tone="light"
             label="Años de experiencia (opcional)"
@@ -737,7 +872,11 @@ function ProfessionalFormModal({
           value={avatar}
           onChange={(event) => setAvatar(event.target.value)}
         />
-        <FieldWrapper label="Biografía (opcional)" htmlFor={`${mode}-professional-bio`} tone="light">
+        <FieldWrapper
+          label="Biografía (opcional)"
+          htmlFor={`${mode}-professional-bio`}
+          tone="light"
+        >
           <textarea
             id={`${mode}-professional-bio`}
             maxLength={2000}
@@ -747,7 +886,10 @@ function ProfessionalFormModal({
           />
         </FieldWrapper>
         {error && (
-          <p role="alert" className="rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]">
+          <p
+            role="alert"
+            className="rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]"
+          >
             {error}
           </p>
         )}
@@ -799,7 +941,9 @@ function ProfessionalDetailModal({
           <div className="flex items-start gap-4">
             <Avatar professional={query.data} />
             <div className="min-w-0">
-              <h3 className="truncate text-lg font-semibold text-[var(--dash-text)]">{query.data.name}</h3>
+              <h3 className="truncate text-lg font-semibold text-[var(--dash-text)]">
+                {query.data.name}
+              </h3>
               <p className="text-sm text-[var(--dash-text-muted)]">
                 {query.data.specialty || "Sin especialidad"}
               </p>
@@ -830,10 +974,7 @@ function ProfessionalDetailModal({
           </dl>
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <Button
-              tone="light"
-              onClick={() => onAvailability(query.data)}
-            >
+            <Button tone="light" onClick={() => onAvailability(query.data)}>
               Gestionar disponibilidad
             </Button>
             <Button tone="light" variant="secondary" onClick={() => onEdit(query.data)}>
@@ -859,7 +1000,11 @@ function ProfessionalDetailModal({
               {query.data.isPublic ? "Quitar de página pública" : "Publicar perfil"}
             </Button>
             {query.data.linkedUser ? (
-              <Button tone="light" variant="secondary" onClick={() => onConfirm(query.data, "unlink")}>
+              <Button
+                tone="light"
+                variant="secondary"
+                onClick={() => onConfirm(query.data, "unlink")}
+              >
                 Desvincular cuenta
               </Button>
             ) : (
@@ -872,7 +1017,11 @@ function ProfessionalDetailModal({
                 Restaurar como inactivo
               </Button>
             ) : (
-              <Button tone="light" variant="danger" onClick={() => onConfirm(query.data, "archive")}>
+              <Button
+                tone="light"
+                variant="danger"
+                onClick={() => onConfirm(query.data, "archive")}
+              >
                 Archivar profesional
               </Button>
             )}
@@ -886,7 +1035,9 @@ function ProfessionalDetailModal({
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-faint)]">{label}</dt>
+      <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-faint)]">
+        {label}
+      </dt>
       <dd className="mt-1 break-words text-sm text-[var(--dash-text)]">{value}</dd>
     </div>
   );
@@ -959,7 +1110,11 @@ function LinkProfessionalModal({
               </option>
             ))}
           </SelectField>
-          {error && <p role="alert" className="text-sm text-[var(--dash-danger)]">{error}</p>}
+          {error && (
+            <p role="alert" className="text-sm text-[var(--dash-danger)]">
+              {error}
+            </p>
+          )}
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button tone="light" variant="ghost" type="button" onClick={onClose}>
               Cancelar
@@ -976,7 +1131,12 @@ function LinkProfessionalModal({
 
 const CONFIRMATION_COPY: Record<
   ConfirmationKind,
-  { title: string; body: (name: string) => string; button: string; success: (name: string) => string }
+  {
+    title: string;
+    body: (name: string) => string;
+    button: string;
+    success: (name: string) => string;
+  }
 > = {
   activate: {
     title: "Activar profesional",
@@ -1005,7 +1165,7 @@ const CONFIRMATION_COPY: Record<
   archive: {
     title: "Archivar profesional",
     body: (name) =>
-      `${name} quedará fuera de la operación. El backend impedirá el archivo si conserva reservas futuras pendientes o confirmadas.`,
+      `${name} quedará fuera de la operación. No podrás archivarlo si conserva reservas futuras pendientes o confirmadas.`,
     button: "Archivar",
     success: (name) => `${name} fue archivado.`,
   },
@@ -1076,7 +1236,10 @@ function ProfessionalConfirmationModal({
         {copy.body(confirmation.professional.name)}
       </p>
       {error && (
-        <p role="alert" className="mt-4 rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]">
+        <p
+          role="alert"
+          className="mt-4 rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]"
+        >
           {error}
         </p>
       )}
@@ -1086,7 +1249,9 @@ function ProfessionalConfirmationModal({
         </Button>
         <Button
           tone="light"
-          variant={confirmation.kind === "archive" || confirmation.kind === "unlink" ? "danger" : "primary"}
+          variant={
+            confirmation.kind === "archive" || confirmation.kind === "unlink" ? "danger" : "primary"
+          }
           disabled={pending}
           onClick={() => void confirm()}
         >

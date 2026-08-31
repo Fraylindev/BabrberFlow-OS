@@ -142,12 +142,14 @@ describe('ProfessionalsController', () => {
     const { controller, professionals } = createController();
     const barber = { ...USER, role: UserRole.BARBER };
 
-    await controller.updateMe(barber, { name: 'Public name' });
+    await controller.updateMe(barber, {
+      phone: '+18095550101',
+    });
 
     expect(professionals.updateMe).toHaveBeenCalledWith(
       barber.id,
       barber.organizationId,
-      { name: 'Public name' },
+      { phone: '+18095550101' },
     );
   });
 

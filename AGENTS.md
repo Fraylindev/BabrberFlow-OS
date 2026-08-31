@@ -48,6 +48,8 @@ Aplicar los gates de [`docs/quality/DELIVERY_GATES.md`](docs/quality/DELIVERY_GA
 - No usar datos ficticios que aparenten capacidades o métricas reales.
 - Aplicar [`docs/quality/SECURITY_STANDARD.md`](docs/quality/SECURITY_STANDARD.md) cuando el alcance toque autenticación, roles, sesiones, endpoints públicos o PII.
 
+Correctivo de perfil propio y aislamiento de Profesionales: **IMPLEMENTADO / EN REVISIÓN**, con publicación autorizada por el propietario el 2026-08-30. BARBER conserva la edición pública propia A1 (`name`, `bio`, `avatar`, `specialty`, `experienceYears`) y puede editar su `phone` privado en `PATCH /professionals/me`. Tenant e identidad proceden exclusivamente del contexto autenticado; estado, publicación, vínculo, IDs y rol no son editables por esta ruta. Se normalizan espacios, los opcionales admiten `null` y el nombre no admite vacío ni `null`. El teléfono propio no amplía directorios, perfiles ajenos ni rutas públicas. “Gestionar mi perfil” reúne edición y disponibilidad; la UI desmonta su estado al cambiar usuario, organización o rol e ignora efectos tardíos mediante una instancia única por visita, también en A → B → A y al salir de la pantalla. El menú común dice “Facturación”, sin cambiar el alcance propio BARBER dentro de la pantalla. La publicación comprende este correctivo y el botón del propietario “Usar otra cuenta” en onboarding, auditado sin ampliar autenticación ni contratos. No cierra Profesionales ni Facturación-B y no autoriza otro módulo.
+
 ## 4. Alcance y cambios
 
 - Trabajar únicamente en el módulo y etapa autorizados.

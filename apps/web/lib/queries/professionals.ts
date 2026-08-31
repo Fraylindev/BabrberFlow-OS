@@ -270,7 +270,10 @@ export interface UpdateProfessionalInput
 }
 
 export type UpdateOwnProfessionalInput = Partial<
-  Omit<CreateProfessionalInput, "phone">
+  Pick<
+    CreateProfessionalInput,
+    "name" | "bio" | "phone" | "avatar" | "specialty" | "experienceYears"
+  >
 >;
 
 function useInvalidateProfessionals() {

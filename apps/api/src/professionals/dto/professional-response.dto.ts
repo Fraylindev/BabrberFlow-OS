@@ -27,6 +27,7 @@ export const professionalOwnProfileSelect = {
   id: true,
   name: true,
   bio: true,
+  phone: true,
   avatar: true,
   specialty: true,
   experienceYears: true,
@@ -73,6 +74,7 @@ export class ProfessionalOwnProfileResponseDto {
   id!: string;
   name!: string;
   bio!: string | null;
+  phone!: string | null;
   avatar!: string | null;
   specialty!: string | null;
   experienceYears!: number | null;

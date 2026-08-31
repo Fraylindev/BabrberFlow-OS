@@ -206,6 +206,7 @@ export interface ProfessionalManagement extends Professional {
 
 export interface ProfessionalOwnProfile extends Professional {
   bio: string | null;
+  phone: string | null;
   experienceYears: number | null;
   isPublic: boolean;
 }

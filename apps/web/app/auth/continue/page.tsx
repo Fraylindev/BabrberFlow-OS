@@ -182,9 +182,21 @@ function AuthContinueContent() {
             {submitError}
           </p>
         )}
-        <Button type="submit" disabled={submitting}>
-          {submitting ? "Creando tu espacio…" : "Crear mi negocio"}
-        </Button>
+
+        <div className="flex w-full flex-col gap-3">
+          <Button type="submit" disabled={submitting}>
+            {submitting ? "Creando tu espacio…" : "Crear mi negocio"}
+          </Button>
+
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={submitting}
+            onClick={() => void auth.logout()}
+          >
+            Usar otra cuenta
+          </Button>
+        </div>
       </form>
     </AuthShell>
   );

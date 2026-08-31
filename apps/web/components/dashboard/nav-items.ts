@@ -44,7 +44,6 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         href: "/dashboard/invoices",
         label: "Facturación",
-        labelByRole: { BARBER: "Facturación de mis servicios" },
         icon: ReceiptIcon,
         roles: ["OWNER", "ADMIN", "RECEPTIONIST", "BARBER"],
       },

@@ -21,6 +21,7 @@ import { FieldWrapper, InputField } from "@/components/ui/Field";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
+import { PROFESSIONAL_BUSINESS_TIME_COPY } from "@/lib/professional-ui";
 
 const DAYS = [
   "Domingo",
@@ -130,10 +131,12 @@ function initialShifts(shifts: ProfessionalWeeklyShift[]): EditableShift[] {
 export function ProfessionalAvailabilityModal({
   target,
   professionalName,
+  isCurrentScope,
   onClose,
 }: {
   target: ProfessionalAvailabilityTarget;
   professionalName: string;
+  isCurrentScope: () => boolean;
   onClose: () => void;
 }) {
   const query = useProfessionalAvailabilityQuery(target);
@@ -173,6 +176,7 @@ export function ProfessionalAvailabilityModal({
           key={`${query.data.professionalId}:${query.data.weeklySchedule.map((shift) => shift.id).join(":")}`}
           availability={query.data}
           target={target}
+          isCurrentScope={isCurrentScope}
         />
       )}
     </Modal>
@@ -182,9 +186,11 @@ export function ProfessionalAvailabilityModal({
 function AvailabilityEditor({
   availability,
   target,
+  isCurrentScope,
 }: {
   availability: ProfessionalAvailability;
   target: ProfessionalAvailabilityTarget;
+  isCurrentScope: () => boolean;
 }) {
   const { toast } = useToast();
   const replaceWeekly = useReplaceProfessionalWeeklySchedule();
@@ -262,10 +268,12 @@ function AvailabilityEditor({
         target,
         shifts: inheritsHours ? [] : normalized,
       });
+      if (!isCurrentScope()) return;
       setInheritsHours(updated.inheritsOrganizationHours);
       setShifts(initialShifts(updated.weeklySchedule));
       toast("El horario semanal fue actualizado.");
     } catch (error) {
+      if (!isCurrentScope()) return;
       setWeeklyError(
         errorMessage(error, "No se pudo actualizar el horario semanal."),
       );
@@ -282,12 +290,14 @@ function AvailabilityEditor({
         blockId: block.id,
         input: { status },
       });
+      if (!isCurrentScope()) return;
       toast(
         status === "ACTIVE"
           ? "El bloqueo fue reactivado."
           : "El bloqueo fue cancelado.",
       );
     } catch (error) {
+      if (!isCurrentScope()) return;
       toast(
         errorMessage(error, "No se pudo cambiar el estado del bloqueo."),
         "error",
@@ -300,10 +310,10 @@ function AvailabilityEditor({
       <div className="rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface-raised)] p-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-[var(--dash-accent-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--dash-accent)]">
-            {availability.timeZone}
+            {PROFESSIONAL_BUSINESS_TIME_COPY.badge}
           </span>
           <p className="text-sm text-[var(--dash-text-muted)]">
-            Horas mostradas en la zona horaria de la organización.
+            {PROFESSIONAL_BUSINESS_TIME_COPY.context}
           </p>
         </div>
         <p className="mt-2 text-xs leading-5 text-[var(--dash-text-faint)]">
@@ -507,9 +517,11 @@ function AvailabilityEditor({
                   blockId: editingBlock.id,
                   input,
                 });
+                if (!isCurrentScope()) return;
                 toast("El bloqueo fue actualizado.");
               } else {
                 await createBlock.mutateAsync({ target, input });
+                if (!isCurrentScope()) return;
                 toast("El bloqueo temporal fue creado.");
               }
               setBlockFormOpen(false);
@@ -628,9 +640,7 @@ function BlockForm({
     const startIso = zonedLocalToIso(startTime, timeZone);
     const endIso = zonedLocalToIso(endTime, timeZone);
     if (!startIso || !endIso) {
-      setError(
-        `Ingresa fechas y horas válidas para la zona ${timeZone}.`,
-      );
+      setError(PROFESSIONAL_BUSINESS_TIME_COPY.invalid);
       return;
     }
     if (new Date(startIso) >= new Date(endIso)) {
@@ -664,8 +674,7 @@ function BlockForm({
         {block ? "Editar bloqueo" : "Nuevo bloqueo"}
       </h4>
       <p className="mt-1 text-xs text-[var(--dash-text-muted)]">
-        Introduce horas locales de {timeZone}; se enviarán al backend con zona
-        horaria explícita.
+        {PROFESSIONAL_BUSINESS_TIME_COPY.inputHelp}
       </p>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <InputField

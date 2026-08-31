@@ -36,22 +36,94 @@ describe('Professional DTO validation', () => {
     expect(validateSync(dto).length).toBeGreaterThan(0);
   });
 
-  it('rejects management-only fields from BARBER self-edit DTO', () => {
+  it.each([
+    ['normalizado', '  +18095550101  ', '+18095550101'],
+    ['limpio', null, null],
+  ])('accepts own phone %s for BARBER', (_case, phone, expected) => {
     const dto = plainToInstance(UpdateOwnProfessionalDto, {
-      name: 'Ana',
-      phone: '+18095550101',
-      status: ProfessionalStatus.ACTIVE,
-      isPublic: true,
-      userId: '00000000-0000-4000-8000-000000000001',
+      phone,
     });
     const errors = validateSync(dto, {
       whitelist: true,
       forbidNonWhitelisted: true,
     });
 
-    expect(errors.map((error) => error.property)).toEqual(
-      expect.arrayContaining(['phone', 'status', 'isPublic', 'userId']),
-    );
+    expect(errors).toEqual([]);
+    expect(dto.phone).toBe(expected);
+  });
+
+  it('accepts the A1 public profile fields together with private own phone', () => {
+    const dto = plainToInstance(UpdateOwnProfessionalDto, {
+      name: '  Ana  ',
+      bio: '  Bio  ',
+      avatar: '  https://example.com/avatar.jpg  ',
+      specialty: '  Fade  ',
+      experienceYears: 5,
+      phone: '  +18095550101  ',
+    });
+    expect(
+      validateSync(dto, { whitelist: true, forbidNonWhitelisted: true }),
+    ).toEqual([]);
+    expect(dto).toEqual({
+      name: 'Ana',
+      bio: 'Bio',
+      avatar: 'https://example.com/avatar.jpg',
+      specialty: 'Fade',
+      experienceYears: 5,
+      phone: '+18095550101',
+    });
+  });
+
+  it('allows clearing optional own fields without clearing the name', () => {
+    const dto = plainToInstance(UpdateOwnProfessionalDto, {
+      bio: null,
+      avatar: null,
+      specialty: null,
+      experienceYears: null,
+      phone: null,
+    });
+    expect(
+      validateSync(dto, { whitelist: true, forbidNonWhitelisted: true }),
+    ).toEqual([]);
+  });
+
+  it.each([
+    { name: null },
+    { name: '   ' },
+    { name: 'x'.repeat(121) },
+    { bio: 'x'.repeat(2001) },
+    { specialty: 'x'.repeat(121) },
+    { phone: 123 },
+    { phone: 'x'.repeat(31) },
+    { avatar: 'javascript:alert(1)' },
+    { avatar: 'data:image/png;base64,AAAA' },
+    { experienceYears: -1 },
+    { experienceYears: 1.5 },
+  ])('rejects invalid own profile payload %#', (payload) => {
+    expect(
+      validateSync(plainToInstance(UpdateOwnProfessionalDto, payload)).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it.each([
+    ['status', ProfessionalStatus.ACTIVE],
+    ['isPublic', true],
+    ['userId', '00000000-0000-4000-8000-000000000001'],
+    ['organizationId', '00000000-0000-4000-8000-000000000002'],
+    ['id', '00000000-0000-4000-8000-000000000003'],
+    ['role', 'OWNER'],
+    ['linkedUser', { id: 'other-user' }],
+  ])('rejects BARBER self-edit field %s', (field, value) => {
+    const dto = plainToInstance(UpdateOwnProfessionalDto, {
+      phone: '+18095550101',
+      [field]: value,
+    });
+    const errors = validateSync(dto, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
+
+    expect(errors.map((error) => error.property)).toContain(field);
   });
 
   it.each([

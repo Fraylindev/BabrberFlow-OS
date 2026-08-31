@@ -479,7 +479,7 @@ export class ProfessionalsService {
       ...(dto.bio !== undefined
         ? { bio: this.normalizeOptionalText(dto.bio) }
         : {}),
-      ...('phone' in dto && dto.phone !== undefined
+      ...(dto.phone !== undefined
         ? { phone: this.normalizeOptionalText(dto.phone) }
         : {}),
       ...(dto.avatar !== undefined
