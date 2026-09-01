@@ -82,11 +82,13 @@ Gobierno y estándares:
 | 3 | Profesionales A2 Backend | **CERRADO / APROBADO** | Disponibilidad individual `ad633e9864e6e20869d0db248861f01b935d5a6f` |
 | 3 | Profesionales A2 Frontend | **CERRADO / APROBADO** | Base `75b35f7f6fdd69a18e3fcede8fcaf4f39e57f06b`; cierre oficial sobre `bc3d1524d5ca185d46e963c086296895407f9cce` |
 | 3 | Módulo Profesionales | **CERRADO / APROBADO** | Aprobación oficial del propietario 2026-08-30; sin autorización de otro módulo |
-| 4 | Servicios | **NO INICIADO en el ciclo modular vigente** | Requiere autorización propia; no se inicia con este cierre |
+| 4 | Servicios — Entrega A Backend | **IMPLEMENTADO / EN REVISIÓN** | Contrato backend candidato; frontend no iniciado y requiere aprobación explícita |
 | 5 | Facturación-A Backend | **CERRADO / APROBADO** | Checkpoint correctivo aprobado `21761ac573b075ec627c0e91593d61a4279c2b8f` |
 | 5 | Facturación-B Frontend | **CERRADO / APROBADO** | Aprobación oficial 2026-08-30 del frontend vigente en `bc3d1524d5ca185d46e963c086296895407f9cce`; sin ampliaciones |
 | 6–8 | Equipo, Configuración, Analytics modular | **PENDIENTES** | No iniciar sin autorización propia |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
+
+Servicios — Entrega A Backend: **IMPLEMENTADO / EN REVISIÓN**. El catálogo B2B conserva lectura para OWNER, ADMIN, RECEPTIONIST y BARBER, mientras que creación, edición, desactivación y reactivación quedan limitadas a OWNER/ADMIN. `DELETE /services/:id` ya no elimina: desactiva de forma idempotente; `PATCH /services/:id/reactivate` es la única reactivación y `PATCH /services/:id` no acepta estado. El listado admite `isActive=true|false`, `GET /services/:id` usa UUID y tenant autoritativo, y todas las respuestas se reducen a `id`, `name`, `description`, `duration`, `price` DOP e `isActive`. Crear y mutar genera AuditLog sin PII; las mutaciones invalidan la caché pública para impedir catálogo obsoleto. Reservas/Invoice históricas se conservan y solo los servicios activos quedan disponibles para nuevas reservas y catálogo público. No hay migración ni cambio Prisma, frontend, `ProfessionalService`, medios ni otros módulos. Evidencia: Prisma validate/generate y migrate status, TypeScript, lint y build en exit `0`; 375 unitarias backend pasadas/11 omitidas; 39/39 unitarias dirigidas y 14/14 E2E de Servicios sobre PostgreSQL aislado con 19 migraciones.
 
 Profesionales — Frontend general, disponibilidad A2 y correctivo de perfil propio/aislamiento: **CERRADO / APROBADO** por aprobación oficial del propietario el 2026-08-30 sobre `bc3d1524d5ca185d46e963c086296895407f9cce`. A1/A2 Backend conservan sus cierres previos. Se mantienen la gestión administrativa OWNER/ADMIN, el perfil propio BARBER con campos públicos A1 y teléfono privado, disponibilidad y aislamiento por usuario/organización/rol con instancia única por visita, incluida la protección A → B → A. Tenant, identidad, permisos, proyecciones y AuditLog sin PII no cambian. La evidencia del checkpoint conserva TypeScript/lint/build API/web, 354 unitarias API (11 omitidas), 27 pruebas web globales y 22/22 E2E PostgreSQL aisladas. Este cierre documental registra la decisión del propietario; no añade pruebas ni atribuye ejecución nueva a la matriz visual que se reportó pendiente en el candidato. No autoriza otro módulo.
 
@@ -222,7 +224,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - Clerk/Supabase Free no satisfacen el gate operativo de producción real: Clerk Hobby no ofrece MFA productivo y Supabase Free carece de backups automáticos, puede pausarse y limita la base a 500 MB.
 - `Organization.timeZone` existe en persistencia/contratos de disponibilidad, pero todavía no hay UI/endpoint autorizado de configuración general.
 - El vínculo backend B2C de A0.6-A está aprobado; todavía no existe el recorrido público posterior a reserva ni el historial/autoservicio del cliente.
-- Servicios, imágenes y Cloudinary requieren auditoría y decisiones propias; no adelantar.
+- El frontend de Servicios, imágenes y Cloudinary requieren auditoría, aprobación y autorización propias; no adelantarlos desde Entrega A Backend.
 - Configuración productiva de CORS, URLs y secretos depende del entorno y debe validarse antes de despliegue.
 - No existe un pipeline CI/CD versionado; los gates siguen dependiendo de ejecución local explícita.
 - `sharp`, `postcss`, `nanoid` y `deepmerge-ts` usan overrides de seguridad en `pnpm-workspace.yaml` hasta que Next/Prisma publiquen rangos transitivos compatibles; cada actualización debe revalidar build, Prisma, E2E y `pnpm audit`. ESLint web permanece en 9 por los peers de plugins de `eslint-config-next`, aunque esa rama ya aparece deprecada en el registro.

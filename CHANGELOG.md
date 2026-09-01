@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-31 — Servicios Entrega A Backend
+
+- Servicios deja de borrar registros: `DELETE /services/:id` desactiva de forma idempotente y `PATCH /services/:id/reactivate` ofrece la transición inversa explícita. La edición general ya no admite `isActive`.
+- `GET /services` conserva el arreglo compatible y añade `isActive=true|false`; `GET /services/:id` exige UUID. Lecturas cubren todos los roles B2B y mutaciones solo OWNER/ADMIN, siempre con tenant autenticado y `404` neutro frente a IDOR.
+- Las respuestas mínimas omiten `organizationId`, timestamps y relaciones. Los DTOs recortan textos, exigen campos de creación, limitan nombre/descripción y restringen duración; el precio conserva la invariante DOP positiva de dos decimales.
+- AuditLog cubre `CREATE`, `UPDATE`, `DEACTIVATE` y `REACTIVATE` sin PII. Cada mutación real invalida la caché pública para que una baja no permanezca visible; Booking, Invoice y su snapshot histórico se conservan, mientras nuevas reservas y catálogo público siguen exigiendo servicio activo.
+- No hay cambio de schema ni migración. Prisma validate/generate y migrate status, TypeScript, lint y build terminaron en exit `0`; pasaron 375 unitarias backend (11 integraciones opt-in omitidas), incluidas 39/39 dirigidas, y 14/14 E2E PostgreSQL aisladas sobre 19 migraciones.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No inicia frontend de Servicios ni modifica Reservas, Facturación, página pública, `ProfessionalService`, Cloudinary/media u otro módulo.
+
 ## 2026-08-30 — Cierre oficial de Profesionales y Facturación-B Frontend
 
 - El propietario aprueba oficialmente **Profesionales** (Frontend general, disponibilidad A2 y correctivo de perfil propio/aislamiento) y **Facturación-B Frontend**. Ambos quedan **CERRADO / APROBADO** sobre el estado funcional `bc3d1524d5ca185d46e963c086296895407f9cce`.

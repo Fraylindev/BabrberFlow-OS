@@ -8,6 +8,33 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-31 — Servicios Entrega A Backend
+
+**Estado:** **IMPLEMENTADO / EN REVISIÓN**. Contrato backend candidato; no autoriza iniciar frontend.
+
+### Contratos B2B
+
+- `GET /services`: disponible para `OWNER`, `ADMIN`, `RECEPTIONIST` y `BARBER`. Devuelve un arreglo con orden estable `name ASC, id ASC`; acepta el filtro opcional `isActive=true|false`. Sin filtro conserva activos e inactivos por compatibilidad.
+- `GET /services/:id`: disponible para los cuatro roles B2B. `:id` debe ser UUID; busca por el `organizationId` autenticado y responde `404 Servicio no encontrado` tanto para ausencia como para otro tenant.
+- `POST /services`: solo `OWNER`/`ADMIN`. Crea activo por defecto y registra AuditLog `CREATE`.
+- `PATCH /services/:id`: solo `OWNER`/`ADMIN`. Edita únicamente `name`, `description`, `duration` y `price`; un body vacío recibe `400` y `isActive` queda rechazado por whitelist. Registra AuditLog `UPDATE`.
+- `DELETE /services/:id`: solo `OWNER`/`ADMIN`. No borra el registro: cambia `isActive=false`, conserva relaciones e historial y registra `DEACTIVATE` solo cuando existe transición real. Repetir la baja es idempotente.
+- `PATCH /services/:id/reactivate`: solo `OWNER`/`ADMIN`. Cambia `isActive=true`, registra `REACTIVATE` solo cuando existe transición real y es idempotente.
+
+### DTOs, proyección e invariantes
+
+- `name` es obligatorio, se recorta y admite hasta 120 caracteres; `description` es opcional, se recorta y admite hasta 1000. `duration` exige un entero entre 1 y 1440 minutos. `price` conserva el contrato DOP: número finito, estrictamente positivo y con máximo dos decimales.
+- Todas las respuestas de Servicios exponen únicamente `id`, `name`, `description`, `duration`, `price` como decimal de dos posiciones e `isActive`. No exponen `organizationId`, timestamps ni relaciones internas.
+- Tenant e identidad del actor proceden exclusivamente del contexto autenticado. Las mutaciones usan consultas tenant-scoped, AuditLog guarda solo actor/tenant/acción/entidad/id y nunca nombre, descripción o precio.
+- Crear, editar, desactivar o reactivar invalida la caché de lectura pública. El catálogo público sigue mostrando solo activos inmediatamente; una baja no elimina Booking, Invoice ni el snapshot financiero histórico, y el servicio inactivo no puede usarse para crear o reprogramar reservas.
+- No se modifica el schema ni se añade migración: `Service.isActive` y las restricciones monetarias aprobadas ya existían.
+
+### Evidencia del candidato
+
+- Unitarias dirigidas de Servicios: 39/39.
+- E2E PostgreSQL aisladas de Servicios: 14/14 sobre 19 migraciones reproducidas; cubren roles, tenant/IDOR, UUID, filtro, proyección, DTOs, auditoría, idempotencia, caché pública y preservación de Booking/Invoice.
+- Prisma validate/generate y migrate status, TypeScript, lint y build finalizaron en exit `0`; la suite backend pasó 375 pruebas y omitió 11 integraciones opt-in. Las 39 unitarias dirigidas forman parte de ese total y las 14 E2E aisladas pasaron aparte.
+
 ## 2026-08-30 — Profesionales y Facturación-B Frontend: CERRADO / APROBADO
 
 - **Aprobación oficial:** el propietario cierra Profesionales (Frontend general, A2 y correctivo de perfil/aislamiento) y Facturación-B Frontend sobre `bc3d1524d5ca185d46e963c086296895407f9cce`. Esta entrada sustituye únicamente sus estados candidatos anteriores; no modifica los contratos descritos más abajo.

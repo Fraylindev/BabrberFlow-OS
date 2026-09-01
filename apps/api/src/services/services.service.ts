@@ -1,38 +1,80 @@
 import {
   BadRequestException,
-  ConflictException,
+  Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Prisma } from '@prisma/client';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { isForeignKeyConstraintError } from '../common/prisma-error.util';
-import { findOwnedByOrgOrThrow } from '../common/find-owned-or-throw.util';
+import { isRecordNotFoundError } from '../common/prisma-error.util';
 import { AuditService } from '../audit/audit.service';
+import { QueryServicesDto } from './dto/query-services.dto';
+import {
+  ServiceResponseDto,
+  serviceResponseSelect,
+  toServiceResponse,
+} from './dto/service-response.dto';
 
 @Injectable()
 export class ServicesService {
   constructor(
     private prisma: PrismaService,
     private audit: AuditService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
-  async create(organizationId: string, createServiceDto: CreateServiceDto) {
+  async create(
+    organizationId: string,
+    userId: string,
+    createServiceDto: CreateServiceDto,
+  ): Promise<ServiceResponseDto> {
     const price = this.normalizeDopPrice(createServiceDto.price);
-    return await this.prisma.db.service.create({
+    const created = await this.prisma.db.service.create({
       data: {
-        ...createServiceDto,
+        ...this.normalizeCreate(createServiceDto),
         price,
-        organizationId, // 🔒 Inyectado directamente del JWT
+        organizationId,
       },
+      select: serviceResponseSelect,
     });
+
+    await this.audit.log({
+      organizationId,
+      userId,
+      action: 'CREATE',
+      entity: 'Service',
+      entityId: created.id,
+    });
+    await this.cache.clear();
+
+    return toServiceResponse(created);
   }
 
-  async findAll(organizationId: string) {
-    return await this.prisma.db.service.findMany({
-      where: { organizationId }, // 🔒 Filtro estricto
+  async findAll(
+    organizationId: string,
+    query: QueryServicesDto,
+  ): Promise<ServiceResponseDto[]> {
+    const isActive = query.isActive?.trim();
+    const services = await this.prisma.db.service.findMany({
+      where: {
+        organizationId,
+        ...(isActive !== undefined ? { isActive: isActive === 'true' } : {}),
+      },
+      select: serviceResponseSelect,
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
     });
+    return services.map(toServiceResponse);
+  }
+
+  async findOne(
+    id: string,
+    organizationId: string,
+  ): Promise<ServiceResponseDto> {
+    return toServiceResponse(await this.findOwnedOrThrow(id, organizationId));
   }
 
   async update(
@@ -41,65 +83,126 @@ export class ServicesService {
     userId: string,
     updateServiceDto: UpdateServiceDto,
   ) {
-    await findOwnedByOrgOrThrow(
-      this.prisma.db.service,
-      id,
-      organizationId,
-      'Servicio no encontrado',
-    );
+    if (Object.keys(updateServiceDto).length === 0) {
+      throw new BadRequestException(
+        'Debe enviar al menos un campo para actualizar',
+      );
+    }
 
+    await this.findOwnedOrThrow(id, organizationId);
+
+    const normalized = this.normalizeUpdate(updateServiceDto);
     const data =
       updateServiceDto.price === undefined
-        ? updateServiceDto
+        ? normalized
         : {
-            ...updateServiceDto,
+            ...normalized,
             price: this.normalizeDopPrice(updateServiceDto.price),
           };
-    const updated = await this.prisma.db.service.update({
-      where: { id },
-      data,
-    });
-
-    await this.audit.log({
-      organizationId,
-      userId,
-      action: 'UPDATE',
-      entity: 'Service',
-      entityId: id,
-    });
-
-    return updated;
-  }
-
-  async remove(id: string, organizationId: string, userId: string) {
-    await findOwnedByOrgOrThrow(
-      this.prisma.db.service,
-      id,
-      organizationId,
-      'Servicio no encontrado',
-    );
-
     try {
-      const removed = await this.prisma.db.service.delete({ where: { id } });
+      const updated = await this.prisma.db.service.update({
+        where: { id, organizationId },
+        data,
+        select: serviceResponseSelect,
+      });
 
       await this.audit.log({
         organizationId,
         userId,
-        action: 'DELETE',
+        action: 'UPDATE',
         entity: 'Service',
         entityId: id,
       });
+      await this.cache.clear();
 
-      return removed;
-    } catch (err) {
-      if (isForeignKeyConstraintError(err)) {
-        // Restrict a propósito: un servicio con reservas asociadas no se
-        // borra en cascada — mismo principio que Professional/Booking/Invoice.
-        throw new ConflictException(
-          'No se puede eliminar: este servicio tiene reservas asociadas. Desactívalo en vez de borrarlo si ya no lo ofreces.',
-        );
-      }
-      throw err;
+      return toServiceResponse(updated);
+    } catch (error) {
+      this.rethrowNotFound(error);
+      throw error;
+    }
+  }
+
+  async deactivate(
+    id: string,
+    organizationId: string,
+    userId: string,
+  ): Promise<ServiceResponseDto> {
+    return this.setActiveState(id, organizationId, userId, false, 'DEACTIVATE');
+  }
+
+  async reactivate(
+    id: string,
+    organizationId: string,
+    userId: string,
+  ): Promise<ServiceResponseDto> {
+    return this.setActiveState(id, organizationId, userId, true, 'REACTIVATE');
+  }
+
+  private async setActiveState(
+    id: string,
+    organizationId: string,
+    userId: string,
+    isActive: boolean,
+    action: 'DEACTIVATE' | 'REACTIVATE',
+  ): Promise<ServiceResponseDto> {
+    const current = await this.findOwnedOrThrow(id, organizationId);
+    if (current.isActive === isActive) return toServiceResponse(current);
+
+    try {
+      const updated = await this.prisma.db.service.update({
+        where: { id, organizationId },
+        data: { isActive },
+        select: serviceResponseSelect,
+      });
+
+      await this.audit.log({
+        organizationId,
+        userId,
+        action,
+        entity: 'Service',
+        entityId: id,
+      });
+      await this.cache.clear();
+
+      return toServiceResponse(updated);
+    } catch (error) {
+      this.rethrowNotFound(error);
+      throw error;
+    }
+  }
+
+  private async findOwnedOrThrow(id: string, organizationId: string) {
+    const service = await this.prisma.db.service.findFirst({
+      where: { id, organizationId },
+      select: serviceResponseSelect,
+    });
+    if (!service) throw new NotFoundException('Servicio no encontrado');
+    return service;
+  }
+
+  private normalizeCreate(dto: CreateServiceDto) {
+    return {
+      name: dto.name.trim(),
+      ...(dto.description !== undefined
+        ? { description: dto.description.trim() }
+        : {}),
+      duration: dto.duration,
+    };
+  }
+
+  private normalizeUpdate(dto: UpdateServiceDto) {
+    return {
+      ...(dto.name !== undefined ? { name: dto.name.trim() } : {}),
+      ...(dto.description !== undefined
+        ? { description: dto.description.trim() }
+        : {}),
+      ...(dto.duration !== undefined ? { duration: dto.duration } : {}),
+    };
+  }
+
+  private rethrowNotFound(error: unknown): void {
+    if (isRecordNotFoundError(error)) {
+      throw new NotFoundException('Servicio no encontrado');
     }
   }
 
