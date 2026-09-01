@@ -251,11 +251,10 @@ export interface TeamMember {
 export interface Service {
   id: string;
   name: string;
-  description?: string | null;
-  duration: number; // minutos
-  price: string | number;
-  isActive?: boolean;
-  organizationId: string;
+  description: string | null;
+  duration: number;
+  price: string;
+  isActive: boolean;
 }
 
 export interface ClientContact {

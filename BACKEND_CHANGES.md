@@ -8,9 +8,19 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-08-31 — Servicios Entrega B Frontend
+
+**Estado:** Entrega A Backend **CERRADO / APROBADO** sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`; Entrega B Frontend **IMPLEMENTADO / EN REVISIÓN**.
+
+- No cambia endpoints, DTOs, permisos, persistencia ni migraciones. El frontend consume exclusivamente los seis contratos B2B publicados en la entrada siguiente.
+- `GET /services` envía el filtro opcional `isActive` al backend; no filtra una página o copia local. El tipo web refleja la proyección mínima real y no espera `organizationId` ni timestamps.
+- `POST /services`, `PATCH /services/:id`, `DELETE /services/:id` y `PATCH /services/:id/reactivate` solo se ofrecen a OWNER/ADMIN. BARBER/RECEPTIONIST reciben listado y filtro en modo de solo lectura; el backend continúa siendo la autoridad.
+- Las query keys de la pantalla incorporan usuario, organización y rol. Cada mutación invalida solo el alcance que la originó; el desmontaje por contexto y la identidad de visita impiden que respuestas tardías reabran modales o emitan éxito en otro tenant, incluso al volver A → B → A.
+- El formulario limita los mismos cuatro campos del contrato, recorta texto y valida nombre, descripción, duración y DOP positiva con máximo dos decimales. Los errores del API se traducen sin exponer detalles internos.
+
 ## 2026-08-31 — Servicios Entrega A Backend
 
-**Estado:** **IMPLEMENTADO / EN REVISIÓN**. Contrato backend candidato; no autoriza iniciar frontend.
+**Estado:** **CERRADO / APROBADO** por decisión oficial del propietario sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`.
 
 ### Contratos B2B
 

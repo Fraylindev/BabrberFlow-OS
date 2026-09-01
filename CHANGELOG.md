@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-08-31 — Servicios Entrega B Frontend
+
+- El propietario aprobó oficialmente Servicios Entrega A Backend sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`; el contrato backend queda **CERRADO / APROBADO** sin cambios adicionales.
+- Servicios incorpora listado responsive, filtro backend por estado, alta, edición, desactivación y reactivación. OWNER/ADMIN gestionan; BARBER/RECEPTIONIST consultan sin controles de mutación.
+- La pantalla cubre loading, vacío, error/reintento, pending y confirmación de éxito. Usa tabla en desktop y tarjetas sin overflow en móvil; formularios y mensajes reflejan los límites y la proyección mínima publicados.
+- Consulta, modales y efectos de mutaciones se aíslan por usuario, organización y rol. El cambio de contexto desmonta inmediatamente la pantalla y la identidad de visita evita efectos tardíos también en A → B → A.
+- Web TypeScript, lint, 33/33 pruebas y build de producción finalizaron con exit `0`. QA real con Clerk Development y PostgreSQL desechable verificó OWNER → BARBER → OWNER, datos distintos por tenant, alta, edición, validación monetaria, desactivación, filtro, permisos, éxito, desktop y 375 px sin overflow. Reactivación visual, error/reintento y cambio con modal abierto quedan para la revisión del candidato porque la sesión de automatización se interrumpió después de la desactivación; los contratos, estados y regresiones de aislamiento correspondientes sí quedan implementados.
+- Estado de Entrega B: **IMPLEMENTADO / EN REVISIÓN**. No cambia backend, Prisma, Reservas, Facturación, página pública, `ProfessionalService`, Cloudinary/media ni otro módulo.
+
 ## 2026-08-31 — Servicios Entrega A Backend
 
 - Servicios deja de borrar registros: `DELETE /services/:id` desactiva de forma idempotente y `PATCH /services/:id/reactivate` ofrece la transición inversa explícita. La edición general ya no admite `isActive`.

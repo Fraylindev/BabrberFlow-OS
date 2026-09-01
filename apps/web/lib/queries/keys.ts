@@ -15,6 +15,9 @@ export const queryKeys = {
   },
   services: {
     all: ["services"] as const,
+    scope: (scopeKey: string) => ["services", scopeKey] as const,
+    list: (scopeKey: string, filters: { isActive?: boolean }) =>
+      ["services", scopeKey, "list", filters] as const,
   },
   invoices: {
     all: ["invoices"] as const,
