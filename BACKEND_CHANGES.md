@@ -8,6 +8,14 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-02 — Cierre oficial del módulo Servicios
+
+**Estado:** Servicios Backend A/A.1 y Frontend B **CERRADOS / APROBADOS**. El propietario aprobó el frontend publicado en `79706ffdc16e9225e6e6528845c9e445a7829ff0` tras QA manual.
+
+- Este cierre es exclusivamente documental: no cambia endpoints, DTOs, permisos, persistencia, migraciones ni código funcional.
+- Permanecen vigentes los contratos y evidencias publicados en las entradas siguientes. OWNER/ADMIN gestionan; BARBER/RECEPTIONIST consultan; tenant, proyección mínima, auditoría y preservación histórica no cambian.
+- No inicia Equipo ni otro módulo. El siguiente alcance queda limitado a auditoría y planificación de Equipo para aprobación explícita.
+
 ## 2026-09-01 — Servicios A.1 Backend: ordenamiento del catálogo
 
 **Estado:** **CERRADO / APROBADO** por decisión explícita del propietario sobre `9752842dfc8a3a53cdcb6bc06e61a185bc79a385`. Entrega B Frontend puede consumir este contrato sin ampliarlo.

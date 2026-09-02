@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-02 — Cierre oficial de Servicios
+
+- El propietario aprobó oficialmente Servicios — Entrega B Frontend tras su QA manual sobre `79706ffdc16e9225e6e6528845c9e445a7829ff0`.
+- Backend A/A.1, Frontend B y el módulo completo de Servicios quedan **CERRADOS / APROBADOS**; se conservan contratos, permisos, aislamiento, validaciones y evidencia previamente publicados.
+- El cierre es exclusivamente documental y no cambia código, endpoints, Prisma, migraciones ni otros módulos. El siguiente alcance se limita a auditar Equipo, sin implementación.
+
 ## 2026-09-02 — Servicios Entrega B: orden y experiencia del formulario
 
 - El propietario aprobó Servicios A.1 Backend sobre `9752842dfc8a3a53cdcb6bc06e61a185bc79a385`; su contrato de ordenamiento queda **CERRADO / APROBADO** y se consume sin ampliaciones.
