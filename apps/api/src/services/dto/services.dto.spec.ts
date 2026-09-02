@@ -6,7 +6,7 @@ import {
   SERVICE_NAME_MAX_LENGTH,
 } from '../services.constants';
 import { CreateServiceDto } from './create-service.dto';
-import { QueryServicesDto } from './query-services.dto';
+import { QueryServicesDto, ServiceSort } from './query-services.dto';
 import { UpdateServiceDto } from './update-service.dto';
 
 function createDto(input: Partial<CreateServiceDto> = {}): CreateServiceDto {
@@ -93,4 +93,19 @@ describe('DTOs de Servicios', () => {
     const errors = await validate(dto);
     expect(errors.some((error) => error.property === 'isActive')).toBe(true);
   });
+
+  it.each(Object.values(ServiceSort))('acepta el orden %s', async (sort) => {
+    const dto = plainToInstance(QueryServicesDto, { sort: ` ${sort} ` });
+    await expect(validate(dto)).resolves.toHaveLength(0);
+    expect(dto.sort).toBe(sort);
+  });
+
+  it.each(['price_asc', 'POPULAR', ''])(
+    'rechaza el orden desconocido %s',
+    async (sort) => {
+      const dto = plainToInstance(QueryServicesDto, { sort });
+      const errors = await validate(dto);
+      expect(errors.some((error) => error.property === 'sort')).toBe(true);
+    },
+  );
 });

@@ -5,14 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Prisma } from '@prisma/client';
+import { BookingStatus, Prisma } from '@prisma/client';
 import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { isRecordNotFoundError } from '../common/prisma-error.util';
 import { AuditService } from '../audit/audit.service';
-import { QueryServicesDto } from './dto/query-services.dto';
+import { QueryServicesDto, ServiceSort } from './dto/query-services.dto';
 import {
   ServiceResponseDto,
   serviceResponseSelect,
@@ -59,13 +59,43 @@ export class ServicesService {
     query: QueryServicesDto,
   ): Promise<ServiceResponseDto[]> {
     const isActive = query.isActive?.trim();
+    const where: Prisma.ServiceWhereInput = {
+      organizationId,
+      ...(isActive !== undefined ? { isActive: isActive === 'true' } : {}),
+    };
+
+    if (
+      query.sort === ServiceSort.BOOKINGS_ASC ||
+      query.sort === ServiceSort.BOOKINGS_DESC
+    ) {
+      const services = await this.prisma.db.service.findMany({
+        where,
+        select: {
+          ...serviceResponseSelect,
+          _count: {
+            select: {
+              bookings: { where: { status: { not: BookingStatus.CANCELLED } } },
+            },
+          },
+        },
+      });
+      const direction = query.sort === ServiceSort.BOOKINGS_ASC ? 1 : -1;
+      services.sort((left, right) => {
+        const byBookings =
+          (left._count.bookings - right._count.bookings) * direction;
+        return (
+          byBookings ||
+          this.compareText(left.name, right.name) ||
+          this.compareText(left.id, right.id)
+        );
+      });
+      return services.map(toServiceResponse);
+    }
+
     const services = await this.prisma.db.service.findMany({
-      where: {
-        organizationId,
-        ...(isActive !== undefined ? { isActive: isActive === 'true' } : {}),
-      },
+      where,
       select: serviceResponseSelect,
-      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      orderBy: this.serviceOrderBy(query.sort),
     });
     return services.map(toServiceResponse);
   }
@@ -204,6 +234,30 @@ export class ServicesService {
     if (isRecordNotFoundError(error)) {
       throw new NotFoundException('Servicio no encontrado');
     }
+  }
+
+  private serviceOrderBy(
+    sort: ServiceSort = ServiceSort.NAME_ASC,
+  ): Prisma.ServiceOrderByWithRelationInput[] {
+    switch (sort) {
+      case ServiceSort.CREATED_DESC:
+        return [{ createdAt: 'desc' }, { id: 'asc' }];
+      case ServiceSort.CREATED_ASC:
+        return [{ createdAt: 'asc' }, { id: 'asc' }];
+      case ServiceSort.PRICE_ASC:
+        return [{ price: 'asc' }, { name: 'asc' }, { id: 'asc' }];
+      case ServiceSort.PRICE_DESC:
+        return [{ price: 'desc' }, { name: 'asc' }, { id: 'asc' }];
+      case ServiceSort.NAME_ASC:
+      default:
+        return [{ name: 'asc' }, { id: 'asc' }];
+    }
+  }
+
+  private compareText(left: string, right: string): number {
+    if (left < right) return -1;
+    if (left > right) return 1;
+    return 0;
   }
 
   private normalizeDopPrice(value: number): Prisma.Decimal {

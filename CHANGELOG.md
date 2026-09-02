@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-01 — Servicios A.1 Backend: ordenamiento del catálogo
+
+- `GET /services` incorpora un `sort` opcional para nombre, mayor/menor número de reservas registradas, fecha de creación y precio en ambos sentidos. El orden predeterminado por nombre permanece compatible.
+- “Reservas registradas” cuenta reservas no canceladas del servicio dentro del tenant. El conteo solo ordena: no se expone en la respuesta ni altera la proyección mínima.
+- Los desempates son estables y la proyección se construye explícitamente para impedir que conteos o metadatos internos se filtren por accidente.
+- No cambia Prisma, migraciones, roles, mutaciones, catálogo público ni otros módulos. El frontend todavía no consume `sort` hasta la aprobación explícita de este backend.
+- Pasaron 56 pruebas unitarias dirigidas, 15/15 E2E aisladas de Servicios con 19 migraciones desde cero, 392 unitarias API (11 omitidas), TypeScript, lint, build y Prisma validate/generate. Estado: **IMPLEMENTADO / EN REVISIÓN**.
+
 ## 2026-08-31 — Servicios Entrega B Frontend
 
 - El propietario aprobó oficialmente Servicios Entrega A Backend sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`; el contrato backend queda **CERRADO / APROBADO** sin cambios adicionales.

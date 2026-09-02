@@ -26,7 +26,11 @@ export function toServiceResponse(
   record: ServiceResponseRecord,
 ): ServiceResponseDto {
   return {
-    ...record,
+    id: record.id,
+    name: record.name,
+    description: record.description,
+    duration: record.duration,
     price: record.price.toFixed(2),
+    isActive: record.isActive,
   };
 }

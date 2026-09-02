@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-01 — Servicios A.1 Backend: ordenamiento del catálogo
+
+**Estado:** **IMPLEMENTADO / EN REVISIÓN**. Requiere aprobación explícita antes de que Entrega B Frontend consuma este contrato.
+
+- `GET /services` conserva `isActive=true|false` y añade el query opcional `sort=NAME_ASC|BOOKINGS_DESC|BOOKINGS_ASC|CREATED_DESC|CREATED_ASC|PRICE_ASC|PRICE_DESC`. Omitir `sort` mantiene exactamente `name ASC, id ASC`.
+- `BOOKINGS_DESC` y `BOOKINGS_ASC` cuentan únicamente reservas del servicio cuyo estado no sea `CANCELLED`. El conteo ocurre después de limitar por el `organizationId` autenticado y nunca se devuelve al cliente; los empates se resuelven por `name ASC, id ASC`.
+- Fecha y precio se ordenan en PostgreSQL. Fecha usa `createdAt` y desempata por `id ASC`; precio desempata por `name ASC, id ASC`. Ningún orden expone `createdAt`, conteos, relaciones o metadatos internos.
+- La proyección sigue siendo `{ id, name, description, duration, price, isActive }` y ahora se construye campo por campo para impedir que una selección interna futura amplíe accidentalmente la respuesta.
+- Roles, permisos, filtro de estado, mutaciones, AuditLog, caché pública, catálogo público y aislamiento tenant no cambian. No hay cambio de Prisma ni migración.
+- Validación: 56/56 unitarias dirigidas, 15/15 E2E de Servicios sobre PostgreSQL temporal aislado con las 19 migraciones aplicadas desde cero, API TypeScript/lint/build y 392 unitarias completas aprobadas (11 omitidas). Prisma validate y generate terminaron en exit `0`.
+
 ## 2026-08-31 — Servicios Entrega B Frontend
 
 **Estado:** Entrega A Backend **CERRADO / APROBADO** sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`; Entrega B Frontend **IMPLEMENTADO / EN REVISIÓN**.

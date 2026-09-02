@@ -24,6 +24,8 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
   let tenantBId: string;
   let ownerAId: string;
   let adminAId: string;
+  let clientId: string;
+  let professionalId: string;
   let historicalServiceId: string;
   let inactiveServiceId: string;
   let tenantBServiceId: string;
@@ -144,6 +146,8 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
         data: { organizationId: tenantAId, name: 'Profesional historial' },
       }),
     ]);
+    clientId = client.id;
+    professionalId = professional.id;
     const booking = await prisma.db.booking.create({
       data: {
         organizationId: tenantAId,
@@ -273,6 +277,141 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
       .get('/services?isActive=all')
       .set('Authorization', `Bearer ${ownerToken}`)
       .expect(400);
+    await requestApp(app)
+      .get('/services?sort=POPULAR')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(400);
+  });
+
+  it('ordena por reservas no canceladas sin exponer el conteo ni otro tenant', async () => {
+    const [popular, moderate, withoutBookings] = await Promise.all([
+      prisma.db.service.create({
+        data: {
+          organizationId: tenantAId,
+          name: 'Orden popular',
+          duration: 30,
+          price: new Prisma.Decimal('303.00'),
+          createdAt: new Date('2024-03-01T12:00:00.000Z'),
+        },
+      }),
+      prisma.db.service.create({
+        data: {
+          organizationId: tenantAId,
+          name: 'Orden moderado',
+          duration: 30,
+          price: new Prisma.Decimal('202.00'),
+          createdAt: new Date('2024-02-01T12:00:00.000Z'),
+        },
+      }),
+      prisma.db.service.create({
+        data: {
+          organizationId: tenantAId,
+          name: 'Orden sin reservas',
+          duration: 30,
+          price: new Prisma.Decimal('101.00'),
+          createdAt: new Date('2024-01-01T12:00:00.000Z'),
+        },
+      }),
+    ]);
+    await prisma.db.booking.createMany({
+      data: [
+        {
+          organizationId: tenantAId,
+          clientId,
+          professionalId,
+          serviceId: popular.id,
+          startTime: new Date('2024-04-01T10:00:00.000Z'),
+          endTime: new Date('2024-04-01T10:30:00.000Z'),
+          status: BookingStatus.COMPLETED,
+        },
+        {
+          organizationId: tenantAId,
+          clientId,
+          professionalId,
+          serviceId: popular.id,
+          startTime: new Date('2024-04-01T11:00:00.000Z'),
+          endTime: new Date('2024-04-01T11:30:00.000Z'),
+          status: BookingStatus.NO_SHOW,
+        },
+        {
+          organizationId: tenantAId,
+          clientId,
+          professionalId,
+          serviceId: moderate.id,
+          startTime: new Date('2024-04-01T12:00:00.000Z'),
+          endTime: new Date('2024-04-01T12:30:00.000Z'),
+          status: BookingStatus.CONFIRMED,
+        },
+        {
+          organizationId: tenantAId,
+          clientId,
+          professionalId,
+          serviceId: withoutBookings.id,
+          startTime: new Date('2024-04-01T13:00:00.000Z'),
+          endTime: new Date('2024-04-01T13:30:00.000Z'),
+          status: BookingStatus.CANCELLED,
+        },
+      ],
+    });
+
+    const descending = asArray(
+      (
+        await requestApp(app)
+          .get('/services?sort=BOOKINGS_DESC')
+          .set('Authorization', `Bearer ${barberToken}`)
+          .expect(200)
+      ).body as unknown,
+    );
+    const descendingIds = descending.map((item) => item.id);
+    expect(descendingIds.indexOf(popular.id)).toBeLessThan(
+      descendingIds.indexOf(moderate.id),
+    );
+    expect(descendingIds.indexOf(moderate.id)).toBeLessThan(
+      descendingIds.indexOf(withoutBookings.id),
+    );
+    expect(descendingIds).not.toContain(tenantBServiceId);
+    expect(descending.every((item) => !('_count' in item))).toBe(true);
+
+    const ascending = asArray(
+      (
+        await requestApp(app)
+          .get('/services?sort=BOOKINGS_ASC')
+          .set('Authorization', `Bearer ${receptionistToken}`)
+          .expect(200)
+      ).body as unknown,
+    );
+    const ascendingIds = ascending.map((item) => item.id);
+    expect(ascendingIds.indexOf(withoutBookings.id)).toBeLessThan(
+      ascendingIds.indexOf(moderate.id),
+    );
+    expect(ascendingIds.indexOf(moderate.id)).toBeLessThan(
+      ascendingIds.indexOf(popular.id),
+    );
+
+    const stableSorts = [
+      [
+        'CREATED_DESC',
+        ['Orden popular', 'Orden moderado', 'Orden sin reservas'],
+      ],
+      [
+        'CREATED_ASC',
+        ['Orden sin reservas', 'Orden moderado', 'Orden popular'],
+      ],
+      ['PRICE_ASC', ['Orden sin reservas', 'Orden moderado', 'Orden popular']],
+      ['PRICE_DESC', ['Orden popular', 'Orden moderado', 'Orden sin reservas']],
+    ] as const;
+    for (const [sort, expectedNames] of stableSorts) {
+      const response = await requestApp(app)
+        .get(`/services?sort=${sort}`)
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .expect(200);
+      const names = asArray(response.body as unknown).map((item) =>
+        String(item.name),
+      );
+      expect(names.filter((name) => name.startsWith('Orden '))).toEqual(
+        expectedNames,
+      );
+    }
   });
 
   it('obtiene por UUID dentro del tenant y oculta recursos ajenos', async () => {

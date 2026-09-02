@@ -2,6 +2,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ServiceSort } from './dto/query-services.dto';
 import { serviceResponseSelect } from './dto/service-response.dto';
 import { ServicesService } from './services.service';
 
@@ -122,6 +123,61 @@ describe('ServicesService', () => {
         where,
         select: serviceResponseSelect,
         orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      });
+    },
+  );
+
+  it.each([
+    [ServiceSort.CREATED_DESC, [{ createdAt: 'desc' }, { id: 'asc' }]],
+    [ServiceSort.CREATED_ASC, [{ createdAt: 'asc' }, { id: 'asc' }]],
+    [ServiceSort.PRICE_ASC, [{ price: 'asc' }, { name: 'asc' }, { id: 'asc' }]],
+    [
+      ServiceSort.PRICE_DESC,
+      [{ price: 'desc' }, { name: 'asc' }, { id: 'asc' }],
+    ],
+    [ServiceSort.NAME_ASC, [{ name: 'asc' }, { id: 'asc' }]],
+  ] as const)(
+    'aplica el orden estable %s en PostgreSQL',
+    async (sort, orderBy) => {
+      const { service, db } = createHarness();
+
+      await service.findAll(ORGANIZATION_ID, { sort });
+
+      expect(db.service.findMany).toHaveBeenCalledWith({
+        where: { organizationId: ORGANIZATION_ID },
+        select: serviceResponseSelect,
+        orderBy,
+      });
+    },
+  );
+
+  it.each([
+    [ServiceSort.BOOKINGS_DESC, ['high', 'tie-a', 'low']],
+    [ServiceSort.BOOKINGS_ASC, ['low', 'high', 'tie-a']],
+  ] as const)(
+    'ordena por reservas no canceladas con desempate estable: %s',
+    async (sort, expectedIds) => {
+      const { service, db } = createHarness();
+      db.service.findMany.mockResolvedValueOnce([
+        { ...ACTIVE_SERVICE, id: 'low', name: 'C', _count: { bookings: 0 } },
+        { ...ACTIVE_SERVICE, id: 'tie-a', name: 'B', _count: { bookings: 2 } },
+        { ...ACTIVE_SERVICE, id: 'high', name: 'A', _count: { bookings: 2 } },
+      ]);
+
+      const result = await service.findAll(ORGANIZATION_ID, { sort });
+
+      expect(result.map((item) => item.id)).toEqual(expectedIds);
+      expect(result.every((item) => !('_count' in item))).toBe(true);
+      expect(db.service.findMany).toHaveBeenCalledWith({
+        where: { organizationId: ORGANIZATION_ID },
+        select: {
+          ...serviceResponseSelect,
+          _count: {
+            select: {
+              bookings: { where: { status: { not: 'CANCELLED' } } },
+            },
+          },
+        },
       });
     },
   );
