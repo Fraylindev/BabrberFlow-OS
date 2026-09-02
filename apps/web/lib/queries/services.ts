@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, Service } from "@/lib/api";
+import type { ServiceSort } from "@/lib/service-ui";
 import { queryKeys } from "./keys";
 
 export interface ServiceFilters {
   isActive?: boolean;
+  sort?: ServiceSort;
 }
 
 export interface ServiceWriteInput {
@@ -27,6 +29,7 @@ export function useServicesQuery(
     queryFn: () =>
       api.get<Service[]>("/services", {
         ...(filters.isActive === undefined ? {} : { isActive: String(filters.isActive) }),
+        ...(filters.sort === undefined ? {} : { sort: filters.sort }),
       }),
     enabled: Boolean(scopeKey),
   });

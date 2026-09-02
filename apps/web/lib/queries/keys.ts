@@ -3,6 +3,8 @@
  * invalidar tras cada mutación — evita strings de key repetidos e
  * inconsistentes entre hooks.
  */
+import type { ServiceSort } from "../service-ui";
+
 export const queryKeys = {
   bookings: {
     all: ["bookings"] as const,
@@ -16,7 +18,7 @@ export const queryKeys = {
   services: {
     all: ["services"] as const,
     scope: (scopeKey: string) => ["services", scopeKey] as const,
-    list: (scopeKey: string, filters: { isActive?: boolean }) =>
+    list: (scopeKey: string, filters: { isActive?: boolean; sort?: ServiceSort }) =>
       ["services", scopeKey, "list", filters] as const,
   },
   invoices: {

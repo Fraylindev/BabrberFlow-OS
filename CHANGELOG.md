@@ -4,13 +4,23 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-02 — Servicios Entrega B: orden y experiencia del formulario
+
+- El propietario aprobó Servicios A.1 Backend sobre `9752842dfc8a3a53cdcb6bc06e61a185bc79a385`; su contrato de ordenamiento queda **CERRADO / APROBADO** y se consume sin ampliaciones.
+- Estado y orden son dos selectores independientes. El orden se ejecuta en backend y ofrece Nombre A–Z, más/menos reservas registradas, más recientes/antiguos y precio en ambos sentidos; “Limpiar filtros” restablece ambos controles sin recargar datos de otro alcance.
+- Se corrige la pérdida de foco al escribir en alta/edición manteniendo estable el callback de cierre del modal. Precio usa entrada decimal DOP estricta sin exponentes, signos ni más de dos decimales; duración usa minutos enteros, equivalencia natural y accesos rápidos de 15 a 120 minutos.
+- Listado y formulario reservan un slot visual no interactivo para la futura imagen del servicio. No existe carga, URL nueva, dato ficticio ni integración con Cloudinary/media.
+- Se añadieron regresiones para dinero y duración. Web TypeScript, lint, 35/35 pruebas y build de producción finalizaron con exit `0`.
+- QA real con Clerk Development y PostgreSQL desechable cubrió OWNER → BARBER → OWNER, datos y acciones distintos por tenant, combinación de estado/orden, alta y edición sin pérdida de foco, error terminal sin conservar datos, recuperación con “Reintentar”, desktop y 375 px sin overflow. No hubo errores de aplicación en consola; solo el aviso esperado de claves Development de Clerk.
+- Estado: **IMPLEMENTADO / EN REVISIÓN**. No cambia backend, Prisma, Reservas, Facturación, página pública, `ProfessionalService`, Cloudinary/media ni otro módulo.
+
 ## 2026-09-01 — Servicios A.1 Backend: ordenamiento del catálogo
 
 - `GET /services` incorpora un `sort` opcional para nombre, mayor/menor número de reservas registradas, fecha de creación y precio en ambos sentidos. El orden predeterminado por nombre permanece compatible.
 - “Reservas registradas” cuenta reservas no canceladas del servicio dentro del tenant. El conteo solo ordena: no se expone en la respuesta ni altera la proyección mínima.
 - Los desempates son estables y la proyección se construye explícitamente para impedir que conteos o metadatos internos se filtren por accidente.
-- No cambia Prisma, migraciones, roles, mutaciones, catálogo público ni otros módulos. El frontend todavía no consume `sort` hasta la aprobación explícita de este backend.
-- Pasaron 56 pruebas unitarias dirigidas, 15/15 E2E aisladas de Servicios con 19 migraciones desde cero, 392 unitarias API (11 omitidas), TypeScript, lint, build y Prisma validate/generate. Estado: **IMPLEMENTADO / EN REVISIÓN**.
+- No cambia Prisma, migraciones, roles, mutaciones, catálogo público ni otros módulos. El propietario aprobó explícitamente este contrato sobre `9752842dfc8a3a53cdcb6bc06e61a185bc79a385` antes de su consumo frontend.
+- Pasaron 56 pruebas unitarias dirigidas, 15/15 E2E aisladas de Servicios con 19 migraciones desde cero, 392 unitarias API (11 omitidas), TypeScript, lint, build y Prisma validate/generate. Estado vigente: **CERRADO / APROBADO**.
 
 ## 2026-08-31 — Servicios Entrega B Frontend
 

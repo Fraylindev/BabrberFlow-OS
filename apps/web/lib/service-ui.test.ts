@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ApiError } from "./api.ts";
 import {
+  formatServiceDuration,
   formatServicePrice,
   isCurrentServicesScope,
+  normalizeServiceDurationInput,
+  normalizeServicePriceInput,
   serviceErrorMessage,
   serviceFilterValue,
   servicesScopeKey,
@@ -56,8 +59,29 @@ test("service form enforces published limits and monetary precision", () => {
   assert.ok(validateServiceDraft({ ...valid, price: "0" }).price);
   assert.equal(
     validateServiceDraft({ ...valid, price: "125.555" }).price,
-    "Usa un máximo de dos decimales.",
+    "Ingresa solo números con un máximo de dos decimales.",
   );
+});
+
+test("service money input accepts a decimal amount without exponent or signs", () => {
+  assert.equal(normalizeServicePriceInput("125"), "125");
+  assert.equal(normalizeServicePriceInput("125,50"), "125.50");
+  assert.equal(normalizeServicePriceInput(".5"), "0.5");
+  assert.equal(normalizeServicePriceInput("125.55"), "125.55");
+  assert.equal(normalizeServicePriceInput("125.555"), null);
+  assert.equal(normalizeServicePriceInput("1e3"), null);
+  assert.equal(normalizeServicePriceInput("-10"), null);
+  assert.equal(normalizeServicePriceInput("RD$ 500"), null);
+});
+
+test("service duration input is whole minutes and formats naturally", () => {
+  assert.equal(normalizeServiceDurationInput("90"), "90");
+  assert.equal(normalizeServiceDurationInput(""), "");
+  assert.equal(normalizeServiceDurationInput("30.5"), null);
+  assert.equal(normalizeServiceDurationInput("1e2"), null);
+  assert.equal(formatServiceDuration(30), "30 min");
+  assert.equal(formatServiceDuration("60"), "1 h");
+  assert.equal(formatServiceDuration(90), "1 h 30 min");
 });
 
 test("state filter maps to the real backend query and supports all", () => {

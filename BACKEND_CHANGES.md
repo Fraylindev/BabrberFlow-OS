@@ -10,7 +10,7 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ## 2026-09-01 — Servicios A.1 Backend: ordenamiento del catálogo
 
-**Estado:** **IMPLEMENTADO / EN REVISIÓN**. Requiere aprobación explícita antes de que Entrega B Frontend consuma este contrato.
+**Estado:** **CERRADO / APROBADO** por decisión explícita del propietario sobre `9752842dfc8a3a53cdcb6bc06e61a185bc79a385`. Entrega B Frontend puede consumir este contrato sin ampliarlo.
 
 - `GET /services` conserva `isActive=true|false` y añade el query opcional `sort=NAME_ASC|BOOKINGS_DESC|BOOKINGS_ASC|CREATED_DESC|CREATED_ASC|PRICE_ASC|PRICE_DESC`. Omitir `sort` mantiene exactamente `name ASC, id ASC`.
 - `BOOKINGS_DESC` y `BOOKINGS_ASC` cuentan únicamente reservas del servicio cuyo estado no sea `CANCELLED`. El conteo ocurre después de limitar por el `organizationId` autenticado y nunca se devuelve al cliente; los empates se resuelven por `name ASC, id ASC`.
@@ -21,13 +21,13 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ## 2026-08-31 — Servicios Entrega B Frontend
 
-**Estado:** Entrega A Backend **CERRADO / APROBADO** sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`; Entrega B Frontend **IMPLEMENTADO / EN REVISIÓN**.
+**Estado:** Entrega A Backend **CERRADO / APROBADO** sobre `f7088a4abb14e61721f08f7eeb85adbd8e6650d6`; A.1 de ordenamiento **CERRADO / APROBADO** sobre `9752842dfc8a3a53cdcb6bc06e61a185bc79a385`; Entrega B Frontend **IMPLEMENTADO / EN REVISIÓN**.
 
 - No cambia endpoints, DTOs, permisos, persistencia ni migraciones. El frontend consume exclusivamente los seis contratos B2B publicados en la entrada siguiente.
-- `GET /services` envía el filtro opcional `isActive` al backend; no filtra una página o copia local. El tipo web refleja la proyección mínima real y no espera `organizationId` ni timestamps.
+- `GET /services` envía `isActive` y `sort` como controles independientes al backend; no filtra ni ordena una copia local. El tipo web refleja la proyección mínima real y no espera `organizationId`, conteos ni timestamps.
 - `POST /services`, `PATCH /services/:id`, `DELETE /services/:id` y `PATCH /services/:id/reactivate` solo se ofrecen a OWNER/ADMIN. BARBER/RECEPTIONIST reciben listado y filtro en modo de solo lectura; el backend continúa siendo la autoridad.
 - Las query keys de la pantalla incorporan usuario, organización y rol. Cada mutación invalida solo el alcance que la originó; el desmontaje por contexto y la identidad de visita impiden que respuestas tardías reabran modales o emitan éxito en otro tenant, incluso al volver A → B → A.
-- El formulario limita los mismos cuatro campos del contrato, recorta texto y valida nombre, descripción, duración y DOP positiva con máximo dos decimales. Los errores del API se traducen sin exponer detalles internos.
+- El formulario limita los mismos cuatro campos del contrato, recorta texto y valida nombre, descripción, minutos enteros y DOP positiva con máximo dos decimales. El precio se introduce sin exponente ni signos, la duración muestra equivalencias naturales y el slot visual de imagen no envía ningún campo ni representa una integración de medios. Los errores del API se traducen sin exponer detalles internos.
 
 ## 2026-08-31 — Servicios Entrega A Backend
 
