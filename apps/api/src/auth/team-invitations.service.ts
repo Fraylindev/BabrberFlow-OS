@@ -83,6 +83,13 @@ const MANAGEMENT_TRANSITIONS = new Set<TeamInvitationStatus>([
   TeamInvitationStatus.REVOKED,
 ]);
 
+const OPEN_INVITATION_STATUSES = [
+  TeamInvitationStatus.CREATING,
+  TeamInvitationStatus.PENDING,
+  TeamInvitationStatus.RESENDING,
+  TeamInvitationStatus.REVOKING,
+] as const;
+
 @Injectable()
 export class TeamInvitationsService {
   constructor(
@@ -156,6 +163,36 @@ export class TeamInvitationsService {
       throw new NotFoundException('Invitación no encontrada');
     }
     return invitation;
+  }
+
+  private async findOpenInvitation(
+    organizationId: string,
+    email: string,
+  ): Promise<InvitationRecord | null> {
+    return this.prisma.db.teamInvitation.findFirst({
+      where: {
+        organizationId,
+        email,
+        status: { in: [...OPEN_INVITATION_STATUSES] },
+      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      select: INVITATION_SELECT,
+    });
+  }
+
+  private reuseMatchingOpenInvitation(
+    invitation: InvitationRecord | null,
+    role: UserRole,
+    createPublicProfile: boolean,
+  ) {
+    if (!invitation) return null;
+    if (
+      invitation.role !== role ||
+      invitation.createPublicProfile !== createPublicProfile
+    ) {
+      throw this.neutralConflict();
+    }
+    return this.project(invitation);
   }
 
   private async createClerkInvitation(
@@ -236,6 +273,16 @@ export class TeamInvitationsService {
 
     const email = normalizeAccountEmail(dto.email);
     const expiresInDays = dto.expiresInDays ?? 30;
+    const createPublicProfile =
+      dto.role === UserRole.BARBER && dto.createPublicProfile === true;
+    await this.expirePending(organizationId);
+    const existing = this.reuseMatchingOpenInvitation(
+      await this.findOpenInvitation(organizationId, email),
+      dto.role,
+      createPublicProfile,
+    );
+    if (existing) return existing;
+
     let localInvitation: InvitationRecord;
 
     try {
@@ -245,8 +292,7 @@ export class TeamInvitationsService {
             organizationId,
             email,
             role: dto.role,
-            createPublicProfile:
-              dto.role === UserRole.BARBER && dto.createPublicProfile === true,
+            createPublicProfile,
             status: TeamInvitationStatus.CREATING,
             invitedByUserId: actorUserId,
             expiresAt: this.expiresAt(expiresInDays),
@@ -268,6 +314,12 @@ export class TeamInvitationsService {
       });
     } catch (error) {
       if (isUniqueConstraintError(error)) {
+        const concurrent = this.reuseMatchingOpenInvitation(
+          await this.findOpenInvitation(organizationId, email),
+          dto.role,
+          createPublicProfile,
+        );
+        if (concurrent) return concurrent;
         throw this.neutralConflict();
       }
       throw error;

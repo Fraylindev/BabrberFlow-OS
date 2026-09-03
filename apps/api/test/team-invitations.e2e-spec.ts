@@ -284,12 +284,15 @@ describe('Security A0.4 team invitations (e2e)', () => {
       where: { id: invitation.id },
     });
 
-    await requestApp(app)
+    const repeatedCreate = await requestApp(app)
       .post('/auth/clerk/invitations')
       .set('Authorization', `Bearer ${admin.token}`)
       .set(ORGANIZATION_ID_HEADER, admin.organizationId)
       .send({ email, role: UserRole.ADMIN })
-      .expect(409);
+      .expect(201);
+    expect((repeatedCreate.body as unknown as { id: string }).id).toBe(
+      invitation.id,
+    );
 
     const resent = await requestApp(app)
       .post(`/auth/clerk/invitations/${invitation.id}/resend`)

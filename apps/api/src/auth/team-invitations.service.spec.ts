@@ -38,6 +38,7 @@ describe('TeamInvitationsService', () => {
     teamInvitation: { create: jest.fn() },
   };
   const teamInvitation = {
+    findFirst: jest.fn(),
     update: jest.fn(),
     updateMany: jest.fn(),
   };
@@ -77,6 +78,7 @@ describe('TeamInvitationsService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     teamInvitation.updateMany.mockResolvedValue({ count: 1 });
+    teamInvitation.findFirst.mockResolvedValue(null);
   });
 
   it('termina la transacción local antes de llamar a Clerk', async () => {
@@ -152,6 +154,24 @@ describe('TeamInvitationsService', () => {
       data: { status: TeamInvitationStatus.FAILED },
     });
     expect(teamInvitation.update).not.toHaveBeenCalled();
+  });
+
+  it('reutiliza una invitación abierta equivalente sin duplicar PostgreSQL, Clerk o auditoría', async () => {
+    const pending = invitation(TeamInvitationStatus.PENDING);
+    teamInvitation.findFirst.mockResolvedValue(pending);
+
+    await expect(
+      service.create(organizationId, actorUserId, {
+        email: ' BARBER@EXAMPLE.TEST ',
+        role: UserRole.BARBER,
+        createPublicProfile: true,
+        expiresInDays: 30,
+      }),
+    ).resolves.toEqual(expect.objectContaining({ id: invitationId }));
+
+    expect(transaction).not.toHaveBeenCalled();
+    expect(createInvitation).not.toHaveBeenCalled();
+    expect(logTransactional).not.toHaveBeenCalled();
   });
 
   it('rechaza perfil profesional para roles que no son BARBER antes de escribir', async () => {

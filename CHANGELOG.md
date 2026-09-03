@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-03 — Equipo Entrega A Backend
+
+- Se publica un directorio de miembros paginado y mínimo para OWNER/ADMIN, separado de la proyección legacy que Profesionales todavía necesita. Expone solo nombre, correo, rol, acceso y nombre/estado del Professional vinculado.
+- OWNER/ADMIN pueden cambiar roles asignables y revocar Membership. ADMIN no opera OWNER; el último OWNER queda protegido con bloqueo tenant-scoped y transacción `SERIALIZABLE`. Repeticiones no duplican cambios ni auditoría y un correo ajeno no revela otra organización.
+- Revocar acceso conserva User, Professional e historial. El vínculo profesional es solo informativo y este módulo no crea, enlaza, edita ni desvincula perfiles.
+- Invitaciones conservan los contratos Clerk aprobados: OWNER no es invitable, la creación equivalente abierta se reutiliza y crear/reenviar/revocar recibe throttling específico. AuditLog de mutaciones no contiene PII.
+- Prisma validate/generate, TypeScript, lint y build pasaron; 402 unitarias aprobaron/11 quedaron omitidas, 14/14 E2E dirigidas y 121/121 E2E completas aprobaron con las 19 migraciones sobre PostgreSQL temporal aislado.
+- No hay cambio Prisma ni migración, frontend, Auth legacy, Reservas, Facturación, Profesionales u otro módulo. Estado: **IMPLEMENTADO / EN REVISIÓN**; el frontend requiere aprobación explícita posterior.
+
 ## 2026-09-02 — Cierre oficial de Servicios
 
 - El propietario aprobó oficialmente Servicios — Entrega B Frontend tras su QA manual sobre `79706ffdc16e9225e6e6528845c9e445a7829ff0`.

@@ -8,6 +8,30 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-03 — Equipo Entrega A Backend
+
+**Estado:** **IMPLEMENTADO / EN REVISIÓN**. No autoriza el frontend.
+
+### Contratos de miembros
+
+- `GET /organizations/mine/team-members?page=1&limit=20`: solo `OWNER`/`ADMIN`. `page` empieza en 1 y `limit` admite 1–100. Devuelve `{ items, page, limit, total, totalPages }`; cada item contiene exclusivamente `{ name, email, role, accessStatus: "ACTIVE", professional: { name, status } | null }`. No expone IDs, teléfono, identificadores Clerk, timestamps ni metadatos internos. Orden estable por alta de Membership e ID interno, sin exponer esos campos.
+- `PATCH /organizations/mine/team-members/role`: solo `OWNER`/`ADMIN`; body exacto `{ email, role }`. El correo se recorta y normaliza a minúsculas. `role` solo admite `ADMIN`, `BARBER` o `RECEPTIONIST`; nunca crea o transfiere OWNER. Devuelve la misma proyección mínima de un miembro. Repetir el rol vigente es idempotente y no duplica auditoría.
+- `POST /organizations/mine/team-members/revoke`: solo `OWNER`/`ADMIN`; body exacto `{ email }`; responde `204`. Borra únicamente la Membership del tenant autenticado. Repetir la revocación o usar un correo ausente/ajeno también responde `204`, sin revelar existencia y sin auditoría ficticia. User, Professional, reservas e historial permanecen intactos.
+- `ADMIN` recibe `403` al intentar cambiar o revocar un `OWNER`. Degradar o revocar al último OWNER responde `409`. Un miembro ausente en cambio de rol responde `404` neutro; DTO inválido o campos adicionales responden `400`.
+- Actor y tenant se obtienen del contexto autenticado y se revalidan dentro de cada mutación. Un bloqueo de la Organization y una transacción PostgreSQL `SERIALIZABLE`, con hasta tres reintentos ante serialización, protegen la regla del último OWNER bajo carreras. AuditLog `UPDATE_ROLE`/`REVOKE_ACCESS` se escribe en la misma transacción y solo guarda tenant, actor, acción, entidad e ID interno; nunca correo ni perfil.
+- El vínculo Professional es informativo: cambiar rol no crea, enlaza, edita ni desvincula el perfil, y revocar acceso no lo elimina. Convertir una Membership a BARBER no crea un Professional; esa decisión requiere el flujo propio de Profesionales.
+
+### Invitaciones y compatibilidad
+
+- Continúan `POST/GET /auth/clerk/invitations`, `POST /auth/clerk/invitations/:id/resend` y `POST /auth/clerk/invitations/:id/revoke`, solo para `OWNER`/`ADMIN`, tenant-scoped y sin permitir `OWNER`. Crear nuevamente la misma invitación abierta con igual correo normalizado, rol y opción de perfil devuelve el registro existente; una variante incompatible mantiene `409` neutro. Reenvío conserva una única invitación externa activa mediante la transición reservada y revocación de la anterior; revocar ya revocada es idempotente.
+- Invitar tiene límite de 10/minuto, reenviar 5/minuto y revocar invitación 10/minuto con el `ThrottlerGuard` existente. Es protección local por instancia; despliegue horizontal todavía requiere almacenamiento distribuido para una garantía global.
+- `GET /organizations/mine/members` se conserva sin cambios como dependencia interna del módulo cerrado Profesionales. Sigue limitado a `OWNER`/`ADMIN`, tenant-scoped y sin teléfono, password, `clerkUserId`, `organizationId` o `userId` en la respuesta, pero contiene IDs necesarios para aquel vínculo; por eso no es el contrato del directorio Equipo.
+
+### Persistencia y evidencia
+
+- No cambia `schema.prisma` ni se añade migración: Membership existente equivale a acceso activo y su ausencia a acceso revocado. Se reutilizan el índice parcial de invitación abierta y los estados de Security A0.4.
+- Pruebas unitarias cubren proyección, tenant, idempotencia, permisos, último OWNER, auditoría y metadata de throttling. E2E PostgreSQL aisladas cubren paginación, mínima exposición, `GET /organizations/mine/members`, roles, IDOR, DTOs, revocación inmediata, preservación de Professional, auditoría sin PII y carrera entre OWNERs. Prisma validate/generate, TypeScript, lint y build pasaron; 402 unitarias aprobaron/11 quedaron omitidas, 14/14 E2E dirigidas y 121/121 E2E completas aprobaron sobre las 19 migraciones reproducidas en un clúster temporal separado con rol no privilegiado.
+
 ## 2026-09-02 — Cierre oficial del módulo Servicios
 
 **Estado:** Servicios Backend A/A.1 y Frontend B **CERRADOS / APROBADOS**. El propietario aprobó el frontend publicado en `79706ffdc16e9225e6e6528845c9e445a7829ff0` tras QA manual.

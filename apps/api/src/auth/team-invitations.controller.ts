@@ -35,6 +35,8 @@ export class TeamInvitationsController {
   constructor(private readonly invitations: TeamInvitationsService) {}
 
   @Post()
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   create(
     @GetUser('organizationId') organizationId: string,
     @GetUser('id') actorUserId: string,
@@ -52,6 +54,8 @@ export class TeamInvitationsController {
   }
 
   @Post(':id/resend')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   resend(
     @GetUser('organizationId') organizationId: string,
@@ -62,6 +66,8 @@ export class TeamInvitationsController {
   }
 
   @Post(':id/revoke')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   revoke(
     @GetUser('organizationId') organizationId: string,
