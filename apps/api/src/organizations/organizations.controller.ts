@@ -15,6 +15,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { UserRole } from '@prisma/client';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { B2B_ROLES } from '../auth/roles.constants';
 import { ListTeamMembersDto } from './dto/list-team-members.dto';
 import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
@@ -42,8 +43,9 @@ export class OrganizationsController {
     return this.organizationsService.findTeamMembers(organizationId, query);
   }
 
-  @UseGuards(B2bAuthGuard, RolesGuard)
+  @UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Patch('mine/team-members/role')
   updateTeamMemberRole(
     @GetUser('organizationId') organizationId: string,
@@ -57,8 +59,9 @@ export class OrganizationsController {
     );
   }
 
-  @UseGuards(B2bAuthGuard, RolesGuard)
+  @UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('mine/team-members/revoke')
   @HttpCode(HttpStatus.NO_CONTENT)
   async revokeTeamMemberAccess(

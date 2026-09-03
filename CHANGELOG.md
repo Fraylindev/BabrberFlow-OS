@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-03 — Correctivo de throttling de Equipo A Backend
+
+- `PATCH /organizations/mine/team-members/role` y `POST /organizations/mine/team-members/revoke` incorporan un límite específico de 10 solicitudes por minuto mediante el guard existente, coherente con las mutaciones de invitaciones.
+- Se añaden regresiones sobre metadata y composición de guards. No cambian contratos, DTOs, persistencia, permisos, invitaciones, Clerk/Auth legacy ni otros módulos.
+- TypeScript, lint y build pasaron; 404 unitarias aprobaron/11 quedaron omitidas y 3/3 E2E de miembros aprobaron tras aplicar las 19 migraciones en PostgreSQL temporal aislado.
+- Equipo A permanece **IMPLEMENTADO / EN REVISIÓN** hasta la aprobación explícita del propietario; no se inicia frontend.
+
 ## 2026-09-03 — Equipo Entrega A Backend
 
 - Se publica un directorio de miembros paginado y mínimo para OWNER/ADMIN, separado de la proyección legacy que Profesionales todavía necesita. Expone solo nombre, correo, rol, acceso y nombre/estado del Professional vinculado.
