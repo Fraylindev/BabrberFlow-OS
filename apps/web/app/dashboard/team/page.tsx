@@ -26,6 +26,7 @@ import {
 import {
   canManageTeam,
   canManageTeamMember,
+  invitationRevocationDecision,
   isCurrentTeamScope,
   PROFESSIONAL_STATUS_LABELS,
   teamErrorMessage,
@@ -128,6 +129,8 @@ function ScopedTeamPage({
     TeamInvitationStatus | "ALL"
   >("ALL");
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [revokeInvitation, setRevokeInvitation] =
+    useState<TeamInvitation | null>(null);
   const [roleMember, setRoleMember] = useState<TeamDirectoryMember | null>(null);
   const [revokeMember, setRevokeMember] =
     useState<TeamDirectoryMember | null>(null);
@@ -142,7 +145,6 @@ function ScopedTeamPage({
     enabled: view === "INVITATIONS",
   });
   const resendInvitation = useResendTeamInvitation();
-  const revokeInvitation = useRevokeTeamInvitation();
 
   function reportSuccess(message: string) {
     if (!isCurrentScope()) return;
@@ -164,17 +166,17 @@ function ScopedTeamPage({
     }
   }
 
-  async function revokeInvitationAccess(invitation: TeamInvitation) {
-    setActionError(null);
-    try {
-      await revokeInvitation.mutateAsync({ id: invitation.id, scopeKey });
-      reportSuccess("Invitación revocada correctamente.");
-    } catch (error) {
-      if (!isCurrentScope()) return;
-      const message = teamErrorMessage(error, "revokeInvitation");
-      setActionError(message);
-      toast(message, "error");
-    }
+  function openInvitationRevocation(invitation: TeamInvitation) {
+    const decision = invitationRevocationDecision(null, {
+      type: "OPEN",
+      invitation,
+    });
+    setRevokeInvitation(decision.nextInvitation);
+  }
+
+  function dismissInvitationRevocation(type: "CANCEL" | "CLOSE") {
+    const decision = invitationRevocationDecision(revokeInvitation, { type });
+    setRevokeInvitation(decision.nextInvitation);
   }
 
   return (
@@ -427,9 +429,7 @@ function ScopedTeamPage({
                 );
                 const busy =
                   (resendInvitation.isPending &&
-                    resendInvitation.variables?.id === invitation.id) ||
-                  (revokeInvitation.isPending &&
-                    revokeInvitation.variables?.id === invitation.id);
+                    resendInvitation.variables?.id === invitation.id);
                 return (
                   <Card key={invitation.id} tone="light" className="p-4 sm:p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -466,12 +466,9 @@ function ScopedTeamPage({
                               variant="danger"
                               disabled={busy}
                               aria-label={`Revocar invitación a ${invitation.email}`}
-                              onClick={() => void revokeInvitationAccess(invitation)}
+                              onClick={() => openInvitationRevocation(invitation)}
                             >
-                              {revokeInvitation.isPending &&
-                              revokeInvitation.variables?.id === invitation.id
-                                ? "Revocando…"
-                                : "Revocar"}
+                              Revocar
                             </Button>
                           )}
                         </div>
@@ -520,6 +517,22 @@ function ScopedTeamPage({
         />
       )}
 
+      {revokeInvitation && (
+        <RevokeInvitationModal
+          invitation={revokeInvitation}
+          organizationName={organizationName}
+          scopeKey={scopeKey}
+          isCurrentScope={isCurrentScope}
+          onCancel={() => dismissInvitationRevocation("CANCEL")}
+          onClose={() => dismissInvitationRevocation("CLOSE")}
+          onSuccess={() => {
+            if (!isCurrentScope()) return;
+            setRevokeInvitation(null);
+            reportSuccess("Invitación revocada correctamente.");
+          }}
+        />
+      )}
+
       {revokeMember && (
         <RevokeMemberModal
           member={revokeMember}
@@ -539,6 +552,90 @@ function ScopedTeamPage({
         />
       )}
     </div>
+  );
+}
+
+function RevokeInvitationModal({
+  invitation,
+  organizationName,
+  scopeKey,
+  isCurrentScope,
+  onCancel,
+  onClose,
+  onSuccess,
+}: {
+  invitation: TeamInvitation;
+  organizationName: string;
+  scopeKey: string;
+  isCurrentScope: () => boolean;
+  onCancel: () => void;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const revokeInvitation = useRevokeTeamInvitation();
+  const [error, setError] = useState<string | null>(null);
+
+  async function confirm() {
+    const decision = invitationRevocationDecision(invitation, {
+      type: "CONFIRM",
+    });
+    if (!decision.revokeId) return;
+
+    setError(null);
+    try {
+      await revokeInvitation.mutateAsync({
+        id: decision.revokeId,
+        scopeKey,
+      });
+      if (!isCurrentScope()) return;
+      onSuccess();
+    } catch (mutationError) {
+      if (!isCurrentScope()) return;
+      setError(teamErrorMessage(mutationError, "revokeInvitation"));
+    }
+  }
+
+  return (
+    <Modal title="Revocar invitación" tone="light" onClose={onClose}>
+      <p className="text-sm leading-6 text-[var(--dash-text-muted)]">
+        La invitación enviada a{" "}
+        <strong className="break-all text-[var(--dash-text)]">
+          {invitation.email}
+        </strong>{" "}
+        para {organizationName} dejará de ser válida.
+      </p>
+      <p className="mt-3 text-sm font-medium text-[var(--dash-danger)]">
+        Esta persona necesitará una nueva invitación para poder acceder.
+      </p>
+      {error && (
+        <p
+          role="alert"
+          className="mt-4 rounded-sm bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]"
+        >
+          {error}
+        </p>
+      )}
+      <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[var(--dash-border)] pt-4 sm:flex-row sm:justify-end">
+        <Button
+          tone="light"
+          variant="ghost"
+          disabled={revokeInvitation.isPending}
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
+        <Button
+          tone="light"
+          variant="danger"
+          disabled={revokeInvitation.isPending}
+          onClick={() => void confirm()}
+        >
+          {revokeInvitation.isPending
+            ? "Revocando…"
+            : "Sí, revocar invitación"}
+        </Button>
+      </div>
+    </Modal>
   );
 }
 

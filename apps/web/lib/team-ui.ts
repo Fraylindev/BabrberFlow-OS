@@ -68,6 +68,28 @@ export function teamRevokeInput(
   return { email: member.email.trim().toLowerCase() };
 }
 
+export type InvitationRevocationEvent<T extends { id: string }> =
+  | { type: "OPEN"; invitation: T }
+  | { type: "CANCEL" | "CLOSE" | "CONFIRM" };
+
+export function invitationRevocationDecision<T extends { id: string }>(
+  currentInvitation: T | null,
+  event: InvitationRevocationEvent<T>,
+) {
+  if (event.type === "OPEN") {
+    return { nextInvitation: event.invitation, revokeId: null };
+  }
+
+  if (event.type === "CONFIRM" && currentInvitation) {
+    return {
+      nextInvitation: currentInvitation,
+      revokeId: currentInvitation.id,
+    };
+  }
+
+  return { nextInvitation: null, revokeId: null };
+}
+
 export function teamErrorMessage(
   error: unknown,
   action: "members" | "invitations" | "invite" | "resend" | "revokeInvitation" | "role" | "revokeMember",

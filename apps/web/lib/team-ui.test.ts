@@ -4,6 +4,7 @@ import { ApiError } from "./api.ts";
 import {
   canManageTeam,
   canManageTeamMember,
+  invitationRevocationDecision,
   isCurrentTeamScope,
   teamErrorMessage,
   teamRevokeInput,
@@ -47,6 +48,34 @@ test("member mutations send only normalized contract fields", () => {
     role: "BARBER",
   });
   assert.deepEqual(teamRevokeInput(member), { email: "person@example.test" });
+});
+
+test("invitation revocation only yields an API id after final confirmation", () => {
+  const invitation = { id: "invitation-1", email: "person@example.test" };
+
+  const opened = invitationRevocationDecision(null, {
+    type: "OPEN",
+    invitation,
+  });
+  assert.equal(opened.nextInvitation, invitation);
+  assert.equal(opened.revokeId, null);
+
+  assert.deepEqual(
+    invitationRevocationDecision(opened.nextInvitation, { type: "CANCEL" }),
+    { nextInvitation: null, revokeId: null },
+  );
+  assert.deepEqual(
+    invitationRevocationDecision(opened.nextInvitation, { type: "CLOSE" }),
+    { nextInvitation: null, revokeId: null },
+  );
+  assert.deepEqual(
+    invitationRevocationDecision(opened.nextInvitation, { type: "CONFIRM" }),
+    { nextInvitation: invitation, revokeId: invitation.id },
+  );
+  assert.deepEqual(
+    invitationRevocationDecision(null, { type: "CONFIRM" }),
+    { nextInvitation: null, revokeId: null },
+  );
 });
 
 test("team errors use safe task language", () => {

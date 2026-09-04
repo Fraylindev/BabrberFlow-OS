@@ -14,6 +14,7 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 - El frontend consume sin ampliar `GET /organizations/mine/team-members`, `PATCH /organizations/mine/team-members/role`, `POST /organizations/mine/team-members/revoke` y los cuatro contratos vigentes de invitaciones Clerk.
 - Las peticiones de miembros e invitaciones conservan paginación backend y se aíslan por usuario, organización y rol. Las mutaciones envían únicamente los DTOs publicados y solo invalidan el alcance que las inició.
+- El correctivo frontend exige confirmación accesible antes de revocar una invitación: abrir, cancelar o cerrar no llama a `POST /auth/clerk/invitations/:id/revoke`; únicamente el botón final de confirmación puede iniciar esa petición. Identifica el correo afectado y advierte que la invitación dejará de ser válida.
 - No cambia endpoint, DTO, permiso, respuesta, persistencia, migración ni código backend. Tampoco modifica Clerk/Auth legacy ni otros módulos.
 
 ## 2026-09-03 — Equipo Entrega A Backend

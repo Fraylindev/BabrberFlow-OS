@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-03 — Correctivo de confirmación al revocar invitaciones de Equipo
+
+- “Revocar” abre ahora un modal accesible que identifica el correo afectado y advierte que la invitación dejará de ser válida y requerirá una nueva invitación para acceder.
+- Abrir, cancelar o cerrar el modal no produce mutación; solo “Sí, revocar invitación” puede llamar al contrato de revocación. Una regresión específica cubre los cuatro eventos y la ausencia de selección.
+- Web TypeScript, lint, 41/41 pruebas y build finalizaron con exit `0`; `git diff --check` se verifica antes del checkpoint. No cambia backend, contratos, Prisma, Clerk/Auth, permisos ni otro módulo.
+- Equipo B permanece **IMPLEMENTADO / EN REVISIÓN** hasta el QA y la aprobación explícita del propietario.
+
 ## 2026-09-03 — Equipo Entrega B Frontend
 
 - El propietario aprobó oficialmente Equipo A Backend, incluido `1270ce9958b3da78f1d2be27d06545a8546c6d43`; su estado pasa a **CERRADO / APROBADO** sin cambios adicionales de backend.
