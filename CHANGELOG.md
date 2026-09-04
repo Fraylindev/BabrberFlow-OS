@@ -4,6 +4,16 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-03 — Equipo Entrega B Frontend
+
+- El propietario aprobó oficialmente Equipo A Backend, incluido `1270ce9958b3da78f1d2be27d06545a8546c6d43`; su estado pasa a **CERRADO / APROBADO** sin cambios adicionales de backend.
+- La pantalla Equipo incorpora directorio paginado, perfil Profesional informativo, invitaciones, cambio de rol y revocación de acceso con confirmación, consumiendo exclusivamente los contratos aprobados.
+- OWNER/ADMIN gestionan; ADMIN no opera OWNER y BARBER/RECEPTIONIST no reciben consultas ni acciones administrativas. La UI no expone teléfono, IDs internos, datos Clerk ni otros campos privados.
+- Query keys y efectos quedan ligados a usuario, organización y rol; cambiar contexto desmonta de inmediato páginas, filtros, formularios, modales y datos, y una visita anterior no puede actualizar la nueva aunque ocurra A → B → A.
+- Se cubren loading, vacío, error/reintento, pending, éxito, tabla desktop, tarjetas móviles y modales accesibles. TypeScript, lint, 40/40 pruebas web y build finalizaron con exit `0`.
+- QA real con Clerk Development y PostgreSQL desechable confirmó OWNER/ADMIN/BARBER, paginación, proyección mínima, vínculo informativo, OWNER protegido ante ADMIN, cambio de tenant y teclado/foco en escritorio. La revisión móvil y las mutaciones externas de invitación quedan pendientes del QA del propietario.
+- No cambia backend, Prisma, Clerk/Auth legacy, Profesionales, Reservas, Facturación, Configuración ni Analytics. Estado: **IMPLEMENTADO / EN REVISIÓN**.
+
 ## 2026-09-03 — Correctivo de throttling de Equipo A Backend
 
 - `PATCH /organizations/mine/team-members/role` y `POST /organizations/mine/team-members/revoke` incorporan un límite específico de 10 solicitudes por minuto mediante el guard existente, coherente con las mutaciones de invitaciones.

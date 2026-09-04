@@ -38,7 +38,14 @@ export const queryKeys = {
   organizations: {
     scope: (scopeKey: string) => ["organizations", scopeKey] as const,
   },
-  invitations: {
-    all: ["team-invitations"] as const,
+  team: {
+    all: ["team"] as const,
+    scope: (scopeKey: string) => ["team", scopeKey] as const,
+    members: (scopeKey: string, page: number) =>
+      ["team", scopeKey, "members", page] as const,
+    invitations: (
+      scopeKey: string,
+      filters: { page: number; status?: string },
+    ) => ["team", scopeKey, "invitations", filters] as const,
   },
 };

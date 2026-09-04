@@ -184,6 +184,25 @@ export interface TeamInvitationPage {
   totalPages: number;
 }
 
+export interface TeamDirectoryMember {
+  name: string;
+  email: string;
+  role: UserRole;
+  accessStatus: "ACTIVE";
+  professional: {
+    name: string;
+    status: ProfessionalStatus;
+  } | null;
+}
+
+export interface TeamDirectoryPage {
+  items: TeamDirectoryMember[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface Professional {
   id: string;
   name: string;

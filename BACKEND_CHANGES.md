@@ -8,9 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-03 — Equipo Entrega B Frontend
+
+**Estado:** **IMPLEMENTADO / EN REVISIÓN**. Equipo A Backend queda **CERRADO / APROBADO** por decisión oficial del propietario sobre `1270ce9958b3da78f1d2be27d06545a8546c6d43`.
+
+- El frontend consume sin ampliar `GET /organizations/mine/team-members`, `PATCH /organizations/mine/team-members/role`, `POST /organizations/mine/team-members/revoke` y los cuatro contratos vigentes de invitaciones Clerk.
+- Las peticiones de miembros e invitaciones conservan paginación backend y se aíslan por usuario, organización y rol. Las mutaciones envían únicamente los DTOs publicados y solo invalidan el alcance que las inició.
+- No cambia endpoint, DTO, permiso, respuesta, persistencia, migración ni código backend. Tampoco modifica Clerk/Auth legacy ni otros módulos.
+
 ## 2026-09-03 — Equipo Entrega A Backend
 
-**Estado:** **IMPLEMENTADO / EN REVISIÓN**. No autoriza el frontend.
+**Estado:** **CERRADO / APROBADO** sobre `1270ce9958b3da78f1d2be27d06545a8546c6d43`. Los contratos siguientes permanecen vigentes.
 
 ### Contratos de miembros
 
