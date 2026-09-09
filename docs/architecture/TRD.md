@@ -10,12 +10,12 @@ Este documento describe la arquitectura que ejecuta el repositorio. El código y
 - API: NestJS, TypeScript, Prisma y PostgreSQL en `apps/api`.
 - Web: Next.js App Router, React, TypeScript, Tailwind y React Query en `apps/web`.
 - Cliente HTTP único: [`apps/web/lib/api.ts`](../../apps/web/lib/api.ts).
-- Desarrollo por defecto: web `3000`, API `3001`; ejemplos sin secretos en cada aplicación.
+- Desarrollo por defecto: API `3000`, web `3001`; ejemplos sin secretos en cada aplicación.
 - Persistencia auditada: PostgreSQL local; Supabase todavía no está implementado.
 
 ## Identidad y autorización
 
-La web interna usa Clerk para login, registro, recuperación, logout y sesión. `GET /auth/clerk/bootstrap` resuelve User local mínimo y Memberships B2B. La web obtiene el token corto en memoria y añade `x-organization-id` únicamente desde ese conjunto autorizado.
+La web interna usa Clerk como única autoridad de identidad para login, registro, verificación, recuperación, contraseña, logout y sesión. `GET /auth/clerk/bootstrap` resuelve User local mínimo y Memberships B2B. La web obtiene el token corto en memoria y añade `x-organization-id` únicamente desde ese conjunto autorizado.
 
 NestJS conserva compatibilidad temporal:
 
@@ -31,7 +31,7 @@ JWT legacy ─────► B2bAuthGuard ──┘
 - La baja o cambio de Membership tiene efecto en la siguiente petición.
 - JWT/password backend permanece solo para rollback hasta un A0.7 autorizado.
 
-El alta inicial usa onboarding Clerk atómico. Las rutas genéricas `POST /organizations` y `GET /organizations/by-slug/:slug` están retiradas porque una creaba tenants sin Membership y la otra exponía UUID interno sin consumidor vigente. Un futuro flujo multi-organización necesita contrato propio.
+El alta inicial separa identidad y negocio: Clerk termina primero la sesión y `/dashboard/setup` consume después el onboarding atómico existente. Antes de `READY`, el layout no monta navegación ni datos tenant. `/auth/continue` es solo compatibilidad de redirección y no contiene formularios ni decisiones de negocio. Las rutas genéricas `POST /organizations` y `GET /organizations/by-slug/:slug` están retiradas porque una creaba tenants sin Membership y la otra exponía UUID interno sin consumidor vigente. Un futuro flujo multi-organización necesita contrato propio.
 
 ## Capas backend
 

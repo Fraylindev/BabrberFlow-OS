@@ -76,6 +76,7 @@ describe('ClerkSessionVerifierService', () => {
     expect(authenticateRequest).toHaveBeenCalledWith(request, {
       acceptsToken: 'session_token',
       authorizedParties: ['http://localhost:3000', 'http://localhost:3001'],
+      clockSkewInMs: 10_000,
       audience: ['kortek-api'],
     });
     expect(getSession).toHaveBeenCalledWith(sessionId);

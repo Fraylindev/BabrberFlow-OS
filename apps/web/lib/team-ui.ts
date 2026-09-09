@@ -94,9 +94,13 @@ export function teamErrorMessage(
   error: unknown,
   action: "members" | "invitations" | "invite" | "resend" | "revokeInvitation" | "role" | "revokeMember",
 ) {
-  const status = (error as ApiError | undefined)?.status;
+  const apiError = error as ApiError | undefined;
+  const status = apiError?.status;
   if (status === 429) {
-    return "Has realizado varias acciones seguidas. Espera un momento e intenta de nuevo.";
+    const retryAfter = apiError?.retryAfterSeconds;
+    return retryAfter !== null && retryAfter !== undefined
+      ? `Has realizado varias acciones seguidas. Intenta de nuevo en ${retryAfter} s.`
+      : "Has realizado varias acciones seguidas. Intenta de nuevo cuando se habilite la acción.";
   }
   if (status === 403) return "No tienes permiso para administrar este equipo.";
   if (status === 404) return "Esta persona ya no está disponible en el equipo.";
@@ -107,7 +111,7 @@ export function teamErrorMessage(
     return "La invitación cambió o ya existe otra activa. Actualiza la lista e intenta de nuevo.";
   }
   if (status === 503 && ["invite", "resend", "revokeInvitation"].includes(action)) {
-    return "El servicio de invitaciones no está disponible ahora. Intenta de nuevo en unos minutos.";
+    return "El servicio de invitaciones no pudo completar la acción. Revisa el estado y vuelve a intentarlo.";
   }
   if (action === "members") return "No pudimos cargar los miembros del equipo.";
   if (action === "invitations") return "No pudimos cargar las invitaciones.";

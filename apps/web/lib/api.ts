@@ -4,20 +4,26 @@
  * manejar errores del backend (NestJS ValidationPipe) y tipar respuestas.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export class ApiError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  retryAfterSeconds: number | null;
+  constructor(status: number, message: string, retryAfterSeconds: number | null = null) {
     super(message);
     this.status = status;
-    this.name = "ApiError";
+    this.retryAfterSeconds = retryAfterSeconds;
+    this.name = 'ApiError';
   }
 }
 
 interface ApiAuthContext {
   token: string | null;
   organizationId: string | null;
+}
+
+interface ApiRequestOptions extends RequestInit {
+  authContext?: ApiAuthContext;
 }
 
 type ApiAuthResolver = () => Promise<ApiAuthContext>;
@@ -41,22 +47,21 @@ export interface ApiResponse<T> {
 
 async function requestWithHeaders<T>(
   path: string,
-  options: RequestInit = {},
+  options: ApiRequestOptions = {},
 ): Promise<ApiResponse<T>> {
-  const isPublicRequest = path.startsWith("/public/");
-  const auth = isPublicRequest
-    ? { token: null, organizationId: null }
-    : await resolveApiAuth();
+  const { authContext, ...requestOptions } = options;
+  const isPublicRequest = path.startsWith('/public/');
+  const auth =
+    authContext ??
+    (isPublicRequest ? { token: null, organizationId: null } : await resolveApiAuth());
 
   const res = await fetch(`${API_URL}${path}`, {
-    ...options,
+    ...requestOptions,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
-      ...(auth.organizationId
-        ? { "x-organization-id": auth.organizationId }
-        : {}),
-      ...options.headers,
+      ...(auth.organizationId ? { 'x-organization-id': auth.organizationId } : {}),
+      ...requestOptions.headers,
     },
   });
 
@@ -67,58 +72,53 @@ async function requestWithHeaders<T>(
   if (!res.ok) {
     // NestJS devuelve { message: string | string[], statusCode, error }
     const message = Array.isArray(data?.message)
-      ? data.message.join(". ")
-      : data?.message || "Ocurrió un error inesperado.";
-    throw new ApiError(res.status, message);
+      ? data.message.join('. ')
+      : data?.message || 'Ocurrió un error inesperado.';
+    const retryAfterHeader = res.headers.get('Retry-After');
+    const retryAfterSeconds =
+      retryAfterHeader && /^\d+(?:\.\d+)?$/.test(retryAfterHeader)
+        ? Math.max(0, Math.ceil(Number(retryAfterHeader)))
+        : typeof data?.retryAfterSeconds === 'number' && Number.isFinite(data.retryAfterSeconds)
+          ? Math.max(0, Math.ceil(data.retryAfterSeconds))
+          : null;
+    throw new ApiError(res.status, message, retryAfterSeconds);
   }
 
   return { data: data as T, headers: res.headers };
 }
 
-async function request<T>(
-  path: string,
-  options: RequestInit = {},
-): Promise<T> {
+async function request<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const response = await requestWithHeaders<T>(path, options);
   return response.data;
 }
 
 export const api = {
-  get: <T>(path: string, params?: Record<string, string>) => {
-    const url = params
-      ? `${path}?${new URLSearchParams(params).toString()}`
-      : path;
-    return request<T>(url, { method: "GET" });
+  get: <T>(path: string, params?: Record<string, string>, options: ApiRequestOptions = {}) => {
+    const url = params ? `${path}?${new URLSearchParams(params).toString()}` : path;
+    return request<T>(url, { ...options, method: 'GET' });
   },
   getWithHeaders: <T>(path: string, params?: Record<string, string>) => {
-    const url = params
-      ? `${path}?${new URLSearchParams(params).toString()}`
-      : path;
-    return requestWithHeaders<T>(url, { method: "GET" });
+    const url = params ? `${path}?${new URLSearchParams(params).toString()}` : path;
+    return requestWithHeaders<T>(url, { method: 'GET' });
   },
   post: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "POST", body: JSON.stringify(body) }),
+    request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
   put: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "PUT", body: JSON.stringify(body) }),
+    request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
   patch: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
+    request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };
 
 // === Tipos que reflejan las entidades reales del backend (Prisma) ===
 
-export type UserRole = "OWNER" | "ADMIN" | "BARBER" | "RECEPTIONIST";
+export type UserRole = 'OWNER' | 'ADMIN' | 'BARBER' | 'RECEPTIONIST';
 
-export type BookingStatus =
-  | "PENDING"
-  | "CONFIRMED"
-  | "CANCELLED"
-  | "COMPLETED"
-  | "NO_SHOW";
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
 
-export type InvoiceState = "ISSUED" | "PAID";
-export type PaymentMethod = "CASH" | "CARD" | "TRANSFER";
-export type ProfessionalStatus = "ACTIVE" | "INACTIVE" | "ARCHIVED";
+export type InvoiceState = 'ISSUED' | 'PAID';
+export type PaymentMethod = 'CASH' | 'CARD' | 'TRANSFER';
+export type ProfessionalStatus = 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
 
 export interface Organization {
   id: string;
@@ -136,37 +136,27 @@ export interface AuthUser {
   organizationId: string;
 }
 
-export type ClerkBootstrapState =
-  | "ONBOARDING_REQUIRED"
-  | "NO_ACCESS"
-  | "READY";
+export type ClerkBootstrapState = 'ONBOARDING_REQUIRED' | 'NO_ACCESS' | 'READY';
 
 export interface ClerkMembership {
   role: UserRole;
-  organization: Pick<Organization, "id" | "name" | "slug">;
+  organization: Pick<Organization, 'id' | 'name' | 'slug'>;
 }
 
 export interface ClerkBootstrapResponse {
   state: ClerkBootstrapState;
-  user: Pick<AuthUser, "id" | "name"> | null;
+  user: Pick<AuthUser, 'id' | 'name'> | null;
   preferredOrganizationId: string | null;
   memberships: ClerkMembership[];
 }
 
 export type TeamInvitationStatus =
-  | "CREATING"
-  | "PENDING"
-  | "RESENDING"
-  | "REVOKING"
-  | "ACCEPTED"
-  | "REVOKED"
-  | "EXPIRED"
-  | "FAILED";
+  'CREATING' | 'PENDING' | 'RESENDING' | 'REVOKING' | 'ACCEPTED' | 'REVOKED' | 'EXPIRED' | 'FAILED';
 
 export interface TeamInvitation {
   id: string;
   email: string;
-  role: Exclude<UserRole, "OWNER">;
+  role: Exclude<UserRole, 'OWNER'>;
   createPublicProfile: boolean;
   status: TeamInvitationStatus;
   expiresAt: string;
@@ -188,7 +178,7 @@ export interface TeamDirectoryMember {
   name: string;
   email: string;
   role: UserRole;
-  accessStatus: "ACTIVE";
+  accessStatus: 'ACTIVE';
   professional: {
     name: string;
     status: ProfessionalStatus;
@@ -230,7 +220,7 @@ export interface ProfessionalOwnProfile extends Professional {
   isPublic: boolean;
 }
 
-export type ProfessionalAvailabilityBlockStatus = "ACTIVE" | "CANCELLED";
+export type ProfessionalAvailabilityBlockStatus = 'ACTIVE' | 'CANCELLED';
 
 export interface ProfessionalWeeklyShift {
   id: string;
@@ -309,8 +299,8 @@ export interface Booking {
  * Todos opcionales: sin ellos, el backend devuelve todo el historial.
  */
 export interface BookingFilters {
-  from?: string;   // ISO date — inicio del rango
-  to?: string;     // ISO date — fin del rango
+  from?: string; // ISO date — inicio del rango
+  to?: string; // ISO date — fin del rango
   status?: BookingStatus;
 }
 
@@ -328,7 +318,7 @@ export interface Invoice {
   id: string;
   state: InvoiceState;
   amount: string;
-  currency: "DOP";
+  currency: 'DOP';
   issuedAt: string;
   booking: {
     id: string;
@@ -364,8 +354,8 @@ export interface PublicBookingData {
     slug: string;
     phone: string | null;
   };
-  services: Pick<Service, "id" | "name" | "description" | "duration" | "price">[];
-  professionals: Pick<Professional, "id" | "name" | "bio" | "avatar">[];
+  services: Pick<Service, 'id' | 'name' | 'description' | 'duration' | 'price'>[];
+  professionals: Pick<Professional, 'id' | 'name' | 'bio' | 'avatar'>[];
 }
 
 export interface PublicBookingResult {
@@ -378,7 +368,7 @@ export interface PublicBookingResult {
     status: BookingStatus;
   };
   accountCreated: boolean;
-  accountCreationError: "EMAIL_ALREADY_EXISTS" | "ACCOUNT_CREATION_FAILED" | null;
+  accountCreationError: 'EMAIL_ALREADY_EXISTS' | 'ACCOUNT_CREATION_FAILED' | null;
 }
 
 export interface PublicAvailabilitySlot {

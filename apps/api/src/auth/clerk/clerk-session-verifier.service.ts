@@ -20,6 +20,11 @@ export interface VerifiedClerkSession {
   sessionId: string;
 }
 
+// Clerk puede emitir el JWT unos segundos por delante del reloj del host.
+// La tolerancia permanece deliberadamente acotada; las demás verificaciones
+// criptográficas y la consulta autoritativa de la sesión siguen vigentes.
+const CLERK_SESSION_CLOCK_SKEW_MS = 10_000;
+
 /**
  * Verifica session tokens de Clerk de forma diferida: el SDK y la configuración
  * se construyen en la primera llamada a verify(), no al registrar el módulo.
@@ -80,10 +85,14 @@ export class ClerkSessionVerifierService {
       const state = await client.authenticateRequest(request, {
         acceptsToken: 'session_token',
         authorizedParties: config.authorizedParties,
+        clockSkewInMs: CLERK_SESSION_CLOCK_SKEW_MS,
         ...(config.audience ? { audience: config.audience } : {}),
       });
 
       if (!state.isAuthenticated || state.status !== 'signed-in') {
+        this.logger.warn(
+          `Clerk session rejected: ${state.reason ?? 'authentication_state'}`,
+        );
         throw new UnauthorizedException('Sesión no válida');
       }
 
@@ -97,6 +106,7 @@ export class ClerkSessionVerifierService {
         claims.sid !== auth.sessionId ||
         claims.iss !== config.issuer
       ) {
+        this.logger.warn('Clerk session rejected: claims_mismatch');
         throw new UnauthorizedException('Sesión no válida');
       }
 
@@ -106,6 +116,7 @@ export class ClerkSessionVerifierService {
       const session = await client.sessions.getSession(auth.sessionId);
 
       if (session.status !== 'active' || session.userId !== auth.userId) {
+        this.logger.warn('Clerk session rejected: authoritative_session');
         throw new UnauthorizedException('Sesión no válida');
       }
 
@@ -118,6 +129,9 @@ export class ClerkSessionVerifierService {
         throw error;
       }
 
+      const kind =
+        error instanceof Error ? error.constructor.name : 'UnknownError';
+      this.logger.warn(`Clerk session verification failed: ${kind}`);
       throw new UnauthorizedException('Sesión no válida');
     }
   }

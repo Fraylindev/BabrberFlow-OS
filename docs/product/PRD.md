@@ -29,6 +29,19 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
 
 Este documento no convierte una visión futura o una pantalla existente en una capacidad aprobada.
 
+## Visión futura registrada
+
+La evolución prevista, todavía sin autorización de implementación, está definida en [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md):
+
+- completar el panel en el orden Equipo → Configuración del negocio/CMS → Analytics → Resumen final;
+- convertir `/[slug]` en el mini-sitio tenant-scoped de cada negocio con información, ubicación, horarios, branding, galería, fotos de servicios, promociones, CTA y reserva pública;
+- recorrer servicio → profesional o cualquiera → fecha/hora → datos mínimos del cliente → método de pago;
+- permitir pago en local sin cobro confirmado y transferencia con comprobante pendiente de verificación, sin crear automáticamente un `Payment`;
+- ampliar Pagos mediante un contrato formal futuro para pago anticipado, verificación, evidencia, pago pendiente y propina separada;
+- usar en el futuro Resend para correo automático y `wa.me` como acción manual con mensaje prellenado y editable, siempre coherente con estados reales.
+
+Esta visión no cambia el contrato Invoice–Payment aprobado ni el estado **IMPLEMENTADO / EN REVISIÓN** de Facturación-B.
+
 ## Principios de producto
 
 - Definir usuario, problema, resultado y criterio observable antes del contrato o código.
@@ -54,6 +67,7 @@ Este documento no convierte una visión futura o una pantalla existente en una c
 - No iniciar A0.6-B/C/D, retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
 - No publicar precios, límites de planes, testimonios o cifras comerciales sin decisión y evidencia del propietario.
 - No crear un flujo de organizaciones adicionales hasta definir su contrato atómico, permisos, límites, auditoría y UX.
+- No implementar Configuración/CMS, mini-sitio, medios, promociones, cuentas bancarias, transferencias, comprobantes, propinas, Resend ni nuevos estados de Booking hasta completar y aprobar sus planes y contratos propios.
 
 ## Proceso
 

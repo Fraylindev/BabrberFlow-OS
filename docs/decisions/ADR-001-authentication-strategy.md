@@ -293,6 +293,17 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Web TypeScript, lint y build finalizaron con exit `0`. QA en navegador con sesiones Clerk Development verificó BARBER sin acceso a Equipo, OWNER con gestión de invitaciones, login, recuperación visible, logout, registro visible sin crear cuentas y layouts de 390 px y 1440 px sin overflow. La consola no mostró errores de aplicación; únicamente el aviso esperado de claves Development. No se crearon identidades ni se enviaron invitaciones durante este QA.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario. El cierre comprende Security A0.5 completo, incluidos los subalcances A, B, C y D; las etiquetas C/D no agregan en este ADR contratos o evidencia distintos de los ya documentados. Ese cierre no autorizó A0.6; la autorización posterior se limita al resultado A0.6-A documentado a continuación.
 
+## Correctivo operativo de acceso e invitaciones de Equipo B — IMPLEMENTADO / EN REVISIÓN
+
+- No cambia la decisión aprobada: Clerk sigue siendo autoridad de identidad y NestJS conserva `User`, `Organization`, `Membership`, tenant y rol como autoridad de negocio.
+- Se elimina del recorrido normal la competencia visual entre autenticación y onboarding. Login redirige directamente al dashboard; registro termina en `/dashboard/setup`, ya bajo sesión Clerk. El comando backend permanece `POST /auth/clerk/onboarding` y mantiene su transacción e invariantes de A0.3-A.
+- `/auth/continue` queda como puente de compatibilidad sin formulario. El dashboard representa `ONBOARDING_REQUIRED`, `NO_ACCESS` y `READY`; solo `READY` monta el panel y consultas tenant-scoped.
+- Next middleware y Nest aceptan el mismo desfase máximo de 10 segundos para tokens Clerk. Esto evita decisiones opuestas de sesión sin omitir firma, issuer, `authorizedParties`, claims, expiración o comprobación remota del estado de la sesión.
+- Una invitación abierta con una sesión distinta exige un cambio explícito de cuenta preservando el ticket en el navegador. El UUID local continúa siendo el único localizador enviado al backend. Los errores 401/403/409 se consideran terminales y no se reintentan; 429/503 y fallos transitorios conservan reintento real.
+- El diagnóstico del caso reportado distinguió una invitación nueva todavía pendiente de otra anterior revocada; no se identificó de forma concluyente cuál enlace se abrió. La cuenta OWNER indicada no correspondía al correo invitado. El flujo dirige al destinatario a la invitación vigente y a su propia cuenta, conservando el control de identidad.
+- QA con Clerk Development y PostgreSQL desechable confirmó login directo, onboarding restringido, aceptación completa `PENDING → ACCEPTED`, creación única de Membership y entrada al dashboard, además de estado revocado sin acción inútil. No se registran PII, tickets, tokens ni cookies como evidencia.
+- Estado: **IMPLEMENTADO / EN REVISIÓN** dentro de Equipo B. No reabre ni degrada el cierre de Security A0.5 y no autoriza A0.6-B, retiro legacy A0.7, Prisma o Supabase.
+
 ## Resultado de Security A0.6-A — CERRADO / APROBADO
 
 - `Client.userId` introduce el vínculo B2C explícito hacia `User`, nullable y único por tenant. Es deliberadamente independiente de Membership: reclamar una reserva no concede acceso B2B ni crea rol CUSTOMER.

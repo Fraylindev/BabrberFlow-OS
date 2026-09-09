@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { SignIn } from "@clerk/nextjs";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { AuthShell } from "@/components/auth/AuthShell";
-import { clerkAppearance } from "@/components/auth/clerk-appearance";
-import { AUTH_ROUTES, resolveDashboardRedirect } from "@/lib/auth-routes";
+import { SignIn } from '@clerk/nextjs';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { AuthShell } from '@/components/auth/AuthShell';
+import { clerkAppearance } from '@/components/auth/clerk-appearance';
+import { AUTH_ROUTES, resolveDashboardRedirect } from '@/lib/auth-routes';
 
 export default function LoginPage() {
   return (
@@ -17,9 +17,8 @@ export default function LoginPage() {
 
 function LoginContent() {
   const searchParams = useSearchParams();
-  const requested = searchParams.get("next");
+  const requested = searchParams.get('next');
   const next = resolveDashboardRedirect(requested);
-  const continueUrl = `/auth/continue?next=${encodeURIComponent(next)}`;
 
   return (
     <AuthShell
@@ -31,7 +30,7 @@ function LoginContent() {
         routing="path"
         path={AUTH_ROUTES.login}
         signUpUrl={AUTH_ROUTES.register}
-        forceRedirectUrl={continueUrl}
+        forceRedirectUrl={next}
         appearance={clerkAppearance}
       />
     </AuthShell>

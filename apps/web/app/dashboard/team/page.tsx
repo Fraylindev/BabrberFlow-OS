@@ -135,7 +135,6 @@ function ScopedTeamPage({
   const [revokeMember, setRevokeMember] =
     useState<TeamDirectoryMember | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const members = useTeamMembersQuery(scopeKey, memberPage, view === "MEMBERS");
   const invitations = useTeamInvitationsQuery({
@@ -149,7 +148,6 @@ function ScopedTeamPage({
   function reportSuccess(message: string) {
     if (!isCurrentScope()) return;
     setActionError(null);
-    setSuccessMessage(message);
     toast(message, "success");
   }
 
@@ -191,15 +189,6 @@ function ScopedTeamPage({
           </Button>
         }
       />
-
-      {successMessage && (
-        <div
-          role="status"
-          className="mb-5 rounded-sm border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
-        >
-          {successMessage}
-        </div>
-      )}
 
       <Card tone="light" className="mb-5 p-1.5">
         <div className="grid grid-cols-2 gap-1" role="tablist" aria-label="Secciones de Equipo">

@@ -8,6 +8,46 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-09 — Equipo B: aprobación y reconciliación de esquema legacy
+
+**Estado:** **CERRADO / APROBADO** por decisión explícita del propietario. No cambia endpoints, DTOs, permisos, Prisma ni migraciones.
+
+- Equipo B (Entrega B Frontend y correctivo de invitaciones Clerk/estabilidad de acceso) pasa a **CERRADO / APROBADO**. El propietario confirmó que las invitaciones funcionan correctamente.
+- La instancia PostgreSQL local legacy fue reconciliada con `prisma db push --accept-data-loss` para resolver el drift de esquema que impedía el cálculo de ingresos en Resumen (`P2022`, columna `invoiceId` ausente en `Payment`). `prisma migrate status` confirma sincronización completa con las 19 migraciones. Los datos financieros legacy afectados correspondían a columnas y constraints del modelo anterior de `Payment` que no coincidían con el contrato aprobado de Facturación-A.
+- Validación posterior: API TypeScript, lint y 406 unitarias/11 omitidas; Web TypeScript, lint y 55/55 pruebas. No se modificó código fuente.
+
+## 2026-09-08 — Correctivo Equipo B: autoridad de Clerk y activación recuperable
+
+**Estado:** **CERRADO / APROBADO** (incluido en la aprobación de Equipo B del 2026-09-09). No cambia endpoints, DTOs, permisos, Prisma ni migraciones.
+
+- Clerk es la única autoridad de login, registro, verificación, recuperación, contraseña, logout y sesión en la web. El onboarding de negocio sigue usando exactamente `POST /auth/clerk/onboarding`; se trasladó desde el puente de autenticación al estado restringido `/dashboard/setup` después de que Clerk establezca la sesión.
+- El login ya no rebota por `/auth/continue`: abre el destino `/dashboard` validado. El registro entra a `/dashboard/setup`. El layout consulta el bootstrap local y, hasta recibir `READY`, no monta navegación ni datos del tenant; `ONBOARDING_REQUIRED` y `NO_ACCESS` tienen destinos internos explícitos.
+- Next middleware y `ClerkSessionVerifierService` usan la misma tolerancia máxima de `10_000 ms` para evitar decisiones opuestas ante un `iat` ligeramente adelantado. El backend conserva firma, issuer, subject/session id, `authorizedParties` y comprobación autoritativa de sesión.
+- La aceptación de invitación con una sesión ya activa exige un cambio explícito de cuenta y conserva el enlace original. Los errores 401/403/409 son terminales, no ofrecen reintento y explican que debe abrirse la invitación más reciente con su correo destinatario; solo 429/503/fallo transitorio mantienen una nueva petición real.
+- Diagnóstico del caso reportado: la invitación local más reciente seguía `PENDING` y Clerk `pending`; también existía una anterior `REVOKED`. Sin el localizador exacto de la navegación reportada no se atribuye definitivamente el fallo a uno de esos enlaces. La cuenta OWNER indicada por el propietario no coincidía con el correo invitado: el backend debe rechazar esa combinación. No se mutaron las invitaciones ni identidades del propietario durante el diagnóstico.
+- QA aislado en Clerk Development y PostgreSQL desechable confirmó invitación nueva `PENDING → ACCEPTED`, una sola Membership, entrada al dashboard y enlace revocado sin botón de reintento. La evidencia no incluye correo, ticket, token, cookie ni identificador Clerk.
+- Validación final: API TypeScript, lint y build; 406 unitarias aprobadas/11 omitidas; 121/121 E2E completas sobre PostgreSQL aislado con rol no privilegiado y 19 migraciones, incluidas 14/14 dirigidas de Equipo. Web TypeScript, lint, build y 55/55 pruebas aprobaron. El bootstrap termina como error recuperable al exceder 15 segundos, cancela la solicitud y descarta resultados tardíos. El registro real de un propietario nuevo verificó correo con Clerk, guardó su nombre cuando faltaba, creó el negocio desde el panel restringido y llegó al dashboard.
+- Verificación local posterior, expresamente autorizada: web `3001` y API `3000` se reiniciaron sobre la base habitual, sin migraciones ni alteraciones de invitaciones. La cuenta OWNER inició sesión en el primer intento y abrió Equipo; una recarga mantuvo el acceso sin reintentos. La aceptación del enlace específico reportado sigue pendiente de QA con la identidad destinataria, no con la cuenta OWNER.
+- Riesgo independiente confirmado en la base habitual: Resumen falla con Prisma `P2022` por una columna `invoiceId` ausente. La instancia legacy no se declara reconciliada; la reproducibilidad de las 19 migraciones en QA no corrige esa instancia. No se aplicaron migraciones ni se modificaron sus datos. No hay commit ni push del correctivo.
+
+## 2026-09-07 — Correctivo Equipo B: bootstrap de sesión y configuración local de invitaciones
+
+**Estado:** **IMPLEMENTADO / EN REVISIÓN**. No cambia endpoints, DTOs, permisos, Prisma ni migraciones.
+
+- `ClerkSessionVerifierService` configura `clockSkewInMs: 10_000` para absorber únicamente el desfase menor entre el reloj local y el `iat` emitido por Clerk. Se mantienen la verificación SDK de firma, `authorizedParties`, issuer/subject/session id y la consulta autoritativa `sessions.getSession`; un token inválido, una sesión no activa o claims inconsistentes continúan rechazándose.
+- Los rechazos de sesión se registran por categoría técnica segura (`authentication_state`, `claims_mismatch` o `authoritative_session`), sin token, correo, identidad ni otra PII. La regresión unitaria exige que la tolerancia se envíe al SDK junto con las restricciones existentes.
+- La configuración de ejemplo queda alineada con los puertos vigentes: API `:3000`, web `:3001`, CORS/partes autorizadas en `:3001` y `CLERK_INVITATION_REDIRECT_URL` hacia `/accept-invitation`. La ausencia de esta última variable sigue fallando de forma cerrada; no se inventa una URL en ejecución.
+- Evidencia integrada aislada: el bootstrap inicial y una recarga fría respondieron HTTP 200 sin reintento manual, y crear una invitación nueva respondió HTTP 201. Las suites finales aprobaron 406 unitarias API/11 omitidas, 11/11 E2E de Equipo, TypeScript, lint, build y Prisma validate/generate.
+
+## 2026-09-06 — Correctivo Equipo B: estabilidad del flujo Clerk
+
+**Estado:** **IMPLEMENTADO / EN REVISIÓN**. No se cambian DTOs, endpoints de negocio, permisos, Prisma ni migraciones.
+
+- La aceptación mantiene el UUID local de la invitación aunque Clerk reescriba la URL/hash durante el cambio entre registro e inicio de sesión. Cuando el perfil Clerk no tiene nombre, la web lo solicita y lo guarda antes de llamar a `POST /auth/clerk/invitations/:id/accept`; no se relaja la validación backend.
+- Reenviar una invitación pendiente o vencida trata como estado terminal externo los errores Clerk `404`, `409` o `422` de la revocación compensatoria y continúa con una nueva invitación. Un fallo de configuración o disponibilidad conserva `503`; un límite Clerk `429` se devuelve como error seguro y propaga `retryAfterSeconds` cuando el proveedor lo informa.
+- El cliente web conserva el header `Retry-After` numérico en `ApiError` y lo presenta sin exponer códigos, trazas ni PII. El banner de éxito fijo de Equipo fue eliminado; el contrato visual usa el `ToastProvider` existente con expiración automática.
+- Regresiones unitarias cubren el reenvío cuando la invitación externa ya es terminal, el `429` seguro con tiempo real y la retención del localizador durante la reescritura del widget. Las mutaciones de rol/revocación y sus contratos permanecen sin cambios.
+
 ## 2026-09-03 — Equipo Entrega B Frontend
 
 **Estado:** **IMPLEMENTADO / EN REVISIÓN**. Equipo A Backend queda **CERRADO / APROBADO** por decisión oficial del propietario sobre `1270ce9958b3da78f1d2be27d06545a8546c6d43`.

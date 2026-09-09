@@ -22,6 +22,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`FRONTEND_STANDARD.md`](product/FRONTEND_STANDARD.md): implementación y evidencia frontend.
 - [`UI_PATTERNS.md`](product/UI_PATTERNS.md): patrones reutilizables de interacción.
 - [`FEATURE_BRIEF_TEMPLATE.md`](features/FEATURE_BRIEF_TEMPLATE.md): plantilla previa a una entrega funcional.
+- [`CONFIGURACION_CMS_PAGOS_VISION.md`](features/CONFIGURACION_CMS_PAGOS_VISION.md): visión futura no autorizada para Configuración/CMS, mini-sitio público, reserva pública y Pagos.
 
 ### Arquitectura y seguridad
 

@@ -79,7 +79,15 @@ test("invitation revocation only yields an API id after final confirmation", () 
 });
 
 test("team errors use safe task language", () => {
-  assert.match(teamErrorMessage(new ApiError(429, "throttler"), "role"), /Espera/);
+  assert.match(teamErrorMessage(new ApiError(429, "throttler", 7), "role"), /7 s/);
+  assert.doesNotMatch(
+    teamErrorMessage(new ApiError(429, "throttler"), "role"),
+    /minutos/,
+  );
+  assert.doesNotMatch(
+    teamErrorMessage(new ApiError(503, "clerk"), "resend"),
+    /minutos/,
+  );
   assert.match(teamErrorMessage(new ApiError(409, "owner_count"), "revokeMember"), /propietario/);
   assert.equal(
     teamErrorMessage(new Error("database unavailable"), "members"),

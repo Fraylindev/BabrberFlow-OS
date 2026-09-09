@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { SignUp } from "@clerk/nextjs";
-import { AuthShell } from "@/components/auth/AuthShell";
-import { clerkAppearance } from "@/components/auth/clerk-appearance";
+import { SignUp } from '@clerk/nextjs';
+import { AuthShell } from '@/components/auth/AuthShell';
+import { clerkAppearance } from '@/components/auth/clerk-appearance';
+import { AUTH_ROUTES } from '@/lib/auth-routes';
 
 export default function RegisterPage() {
   return (
@@ -13,9 +14,9 @@ export default function RegisterPage() {
     >
       <SignUp
         routing="path"
-        path="/register"
-        signInUrl="/login"
-        forceRedirectUrl="/auth/continue?mode=onboarding"
+        path={AUTH_ROUTES.register}
+        signInUrl={AUTH_ROUTES.login}
+        forceRedirectUrl={AUTH_ROUTES.dashboardSetup}
         appearance={clerkAppearance}
       />
     </AuthShell>

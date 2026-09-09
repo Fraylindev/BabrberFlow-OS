@@ -4,10 +4,14 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  HttpException,
+  HttpStatus,
+  Logger,
   NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { isClerkAPIResponseError } from '@clerk/backend/errors';
 import {
   Prisma,
   ProfessionalStatus,
@@ -90,8 +94,17 @@ const OPEN_INVITATION_STATUSES = [
   TeamInvitationStatus.REVOKING,
 ] as const;
 
+const TERMINAL_CLERK_INVITATION_CODES = new Set([
+  'invitation_already_accepted',
+  'invitation_already_revoked',
+  'invitation_not_found',
+  'resource_not_found',
+]);
+
 @Injectable()
 export class TeamInvitationsService {
+  private readonly logger = new Logger(TeamInvitationsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
@@ -213,22 +226,73 @@ export class TeamInvitationsService {
           ),
         });
       return created.id;
-    } catch {
-      throw new ServiceUnavailableException(
+    } catch (error) {
+      this.throwClerkFailure(
+        'create invitation',
+        error,
         'No pudimos enviar la invitación en este momento.',
       );
     }
   }
 
+  private throwClerkFailure(
+    operation: string,
+    error: unknown,
+    fallbackMessage: string,
+  ): never {
+    if (isClerkAPIResponseError(error)) {
+      const code = error.errors[0]?.code ?? 'unknown';
+      const status = error.status;
+      const retryAfter =
+        typeof error.retryAfter === 'number' &&
+        Number.isFinite(error.retryAfter)
+          ? Math.max(0, Math.ceil(error.retryAfter))
+          : null;
+      this.logger.warn(
+        `Clerk ${operation} failed status=${status} code=${code}`,
+      );
+      if (status === 429) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.TOO_MANY_REQUESTS,
+            message: 'El servicio de invitaciones está temporalmente limitado.',
+            ...(retryAfter !== null ? { retryAfterSeconds: retryAfter } : {}),
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+    } else {
+      this.logger.warn(`Clerk ${operation} failed with an unknown error`);
+    }
+    throw new ServiceUnavailableException(fallbackMessage);
+  }
+
   private async revokeClerkInvitation(
     clerkInvitationId: string,
+    options: { allowAlreadyTerminal?: boolean } = {},
   ): Promise<void> {
     try {
       await this.verifier
         .getClient()
         .invitations.revokeInvitation(clerkInvitationId);
-    } catch {
-      throw new ServiceUnavailableException(
+    } catch (error) {
+      const terminalCode = isClerkAPIResponseError(error)
+        ? error.errors[0]?.code
+        : undefined;
+      if (
+        options.allowAlreadyTerminal &&
+        isClerkAPIResponseError(error) &&
+        ([404, 409].includes(error.status) ||
+          TERMINAL_CLERK_INVITATION_CODES.has(terminalCode ?? ''))
+      ) {
+        this.logger.warn(
+          `Clerk revoke invitation reached terminal state status=${error.status} code=${error.errors[0]?.code ?? 'unknown'}`,
+        );
+        return;
+      }
+      this.throwClerkFailure(
+        'revoke invitation',
+        error,
         'No pudimos actualizar la invitación en este momento.',
       );
     }
@@ -241,8 +305,15 @@ export class TeamInvitationsService {
       await this.verifier
         .getClient()
         .invitations.revokeInvitation(clerkInvitationId);
-    } catch {
+    } catch (error) {
       // Compensación best-effort. La fila local queda FAILED para impedir uso.
+      if (isClerkAPIResponseError(error)) {
+        this.logger.warn(
+          `Clerk compensation failed status=${error.status} code=${error.errors[0]?.code ?? 'unknown'}`,
+        );
+      } else {
+        this.logger.warn('Clerk compensation failed with an unknown error');
+      }
     }
   }
 
@@ -414,7 +485,9 @@ export class TeamInvitationsService {
         (original.status === TeamInvitationStatus.PENDING ||
           original.status === TeamInvitationStatus.EXPIRED)
       ) {
-        await this.revokeClerkInvitation(original.clerkInvitationId);
+        await this.revokeClerkInvitation(original.clerkInvitationId, {
+          allowAlreadyTerminal: true,
+        });
       } else if (original.clerkInvitationId) {
         await this.safeRevokeClerkInvitation(original.clerkInvitationId);
       }
@@ -526,8 +599,10 @@ export class TeamInvitationsService {
     let clerkUser: ClerkUserProfile;
     try {
       clerkUser = await this.verifier.getClient().users.getUser(clerkUserId);
-    } catch {
-      throw new ServiceUnavailableException(
+    } catch (error) {
+      this.throwClerkFailure(
+        'load user profile',
+        error,
         'Servicio de autenticación no disponible temporalmente',
       );
     }
@@ -586,7 +661,9 @@ export class TeamInvitationsService {
       if (!accepted) throw this.neutralConflict();
     } catch (error) {
       if (error instanceof ConflictException) throw error;
-      throw new ServiceUnavailableException(
+      this.throwClerkFailure(
+        'verify invitation',
+        error,
         'No pudimos verificar la invitación en este momento.',
       );
     }

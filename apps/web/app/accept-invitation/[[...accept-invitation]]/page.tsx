@@ -1,16 +1,18 @@
-"use client";
+'use client';
 
-import { SignUp, useAuth as useClerkAuth } from "@clerk/nextjs";
-import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AuthShell } from "@/components/auth/AuthShell";
-import { clerkAppearance } from "@/components/auth/clerk-appearance";
-import { AUTH_ROUTES } from "@/lib/auth-routes";
+import { SignUp, useAuth as useClerkAuth } from '@clerk/nextjs';
+import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { AuthShell } from '@/components/auth/AuthShell';
+import { Button } from '@/components/ui/Button';
+import { clerkAppearance } from '@/components/auth/clerk-appearance';
+import { AUTH_ROUTES } from '@/lib/auth-routes';
 import {
   invitationCompleteUrl,
   invitationIdFromSearchParams,
   invitationLoginUrl,
-} from "@/lib/invitation-navigation";
+  retainInvitationId,
+} from '@/lib/invitation-navigation';
 
 export default function AcceptInvitationPage() {
   return (
@@ -22,18 +24,28 @@ export default function AcceptInvitationPage() {
 
 function AcceptInvitationContent() {
   const clerk = useClerkAuth();
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const invitationId = invitationIdFromSearchParams(searchParams);
-  const completeUrl = invitationId
-    ? invitationCompleteUrl(invitationId)
-    : null;
+  // Clerk can rewrite the URL/hash while the widget changes between sign-up
+  // and sign-in. Capture our local UUID once so that rewrite cannot discard
+  // the invitation context before the completion route is reached.
+  const [invitationId] = useState(() =>
+    retainInvitationId(null, invitationIdFromSearchParams(searchParams)),
+  );
+  const completeUrl = invitationId ? invitationCompleteUrl(invitationId) : null;
+  const [switchingAccount, setSwitchingAccount] = useState(false);
+  const [switchError, setSwitchError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (clerk.isLoaded && clerk.isSignedIn && completeUrl) {
-      router.replace(completeUrl);
+  async function switchToInvitedAccount() {
+    if (switchingAccount) return;
+    setSwitchingAccount(true);
+    setSwitchError(null);
+    try {
+      await clerk.signOut({ redirectUrl: window.location.href });
+    } catch {
+      setSwitchError('No pudimos cerrar la sesión actual. Vuelve a intentarlo.');
+      setSwitchingAccount(false);
     }
-  }, [clerk.isLoaded, clerk.isSignedIn, completeUrl, router]);
+  }
 
   if (!invitationId || !completeUrl) {
     return (
@@ -53,12 +65,22 @@ function AcceptInvitationContent() {
     return (
       <AuthShell
         eyebrow="Invitación de equipo"
-        title="Preparando tu acceso"
-        description="Estamos confirmando el espacio de trabajo al que te invitaron."
+        title="Usa la cuenta invitada"
+        description="Para evitar activar el acceso en la cuenta equivocada, cierra la sesión actual y continúa con el mismo correo que recibió esta invitación."
       >
-        <p role="status" className="text-sm text-[var(--color-muted)]">
-          Un momento…
-        </p>
+        <div className="flex w-full flex-col gap-3">
+          {switchError && (
+            <p
+              role="alert"
+              className="rounded-sm bg-[var(--color-danger-bg)] px-3 py-2 text-sm text-[var(--color-danger)]"
+            >
+              {switchError}
+            </p>
+          )}
+          <Button disabled={switchingAccount} onClick={() => void switchToInvitedAccount()}>
+            {switchingAccount ? 'Cerrando sesión…' : 'Continuar con otra cuenta'}
+          </Button>
+        </div>
       </AuthShell>
     );
   }

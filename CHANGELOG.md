@@ -4,6 +4,37 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-09 — Equipo B: aprobación y reconciliación de esquema legacy
+
+- El propietario confirmó que las invitaciones funcionan correctamente y aprobó explícitamente Equipo B (Entrega B Frontend y correctivo de invitaciones Clerk/estabilidad de acceso). El estado pasa de **IMPLEMENTADO / EN REVISIÓN** a **CERRADO / APROBADO**.
+- El fallo independiente de Resumen por esquema legacy (`P2022`, columna `invoiceId` ausente en la tabla `Payment`) fue reconciliado mediante `prisma db push --accept-data-loss`, que sincronizó la instancia PostgreSQL local con el schema vigente de las 19 migraciones. `prisma migrate status` confirma "Database schema is up to date". Los datos financieros legacy afectados eran columnas y constraints obsoletos del modelo anterior de `Payment` (`bookingId`, `status`, `amount` directo) que ya no corresponden al contrato aprobado de Facturación-A.
+- Validación posterior a la reconciliación: API TypeScript, lint y 406 unitarias/11 omitidas; Web TypeScript, lint y 55/55 pruebas; Prisma migrate status confirma sincronización completa. No se modificó código fuente.
+
+## 2026-09-08 — Correctivo Equipo B: acceso directo e invitaciones recuperables
+
+- Verificación final autorizada en la base local habitual: login OWNER en el primer intento, Equipo accesible y recarga sin reintentos; servidores activos en web `3001` / API `3000`, sin mutar invitaciones. Resumen conserva un fallo independiente por esquema legacy (`P2022`, columna `invoiceId` ausente); no se migró ni se declara recuperada esa base. La aceptación de la invitación específica requiere QA con su destinatario.
+- Clerk pasa a controlar de extremo a extremo la identidad de la web. Login y registro ya no dependen del formulario de negocio ni del puente `/auth/continue`; el alta de la barbería se presenta dentro de `/dashboard/setup` después de iniciar la sesión.
+- El dashboard distingue los estados locales de acceso y no monta navegación ni datos de negocio antes de `READY`. La pantalla intermedia queda reducida a un único “Cargando…” estable, sin la secuencia indefinida de mensajes “Preparando”.
+- Se igualó en 10 segundos la tolerancia acotada del middleware Next y el verificador Nest para impedir el bucle dashboard → login cuando Clerk ya consideraba iniciada la sesión. Las validaciones criptográficas, origen y estado autoritativo siguen intactas.
+- Una invitación abierta mientras hay otra sesión obliga a cambiar de cuenta conservando el enlace. Una invitación revocada, vencida, reemplazada o abierta con otra identidad ya no muestra “Intentar de nuevo”; el texto indica abrir la más reciente con el correo destinatario. Los fallos realmente transitorios sí ejecutan un nuevo intento.
+- QA real aislado cubrió login directo, cuenta sin organización en `/dashboard/setup`, invitación nueva, creación de cuenta Clerk, nombre mínimo, aceptación, Membership y dashboard; también validó el estado revocado sin reintento y la presentación a 375 px. Equipo B permanece **IMPLEMENTADO / EN REVISIÓN**.
+- Validación final: TypeScript/lint/build API y web, 55/55 pruebas web, 406 unitarias API/11 omitidas y 121/121 E2E completas aisladas. El bootstrap tiene un plazo máximo de 15 segundos con cancelación y error recuperable. Un registro OWNER nuevo completó verificación de correo Clerk, nombre, alta de negocio en el panel y entrada al dashboard.
+
+## 2026-09-07 — Correctivo Equipo B: acceso inicial e invitaciones locales
+
+- Se corrigió el primer bootstrap después del login en dos límites reales: la web obtiene explícitamente el token actual antes de consultar el API, y el verificador admite un desfase máximo de 10 segundos para el `iat` de Clerk sin relajar firma, origen autorizado, claims ni estado autoritativo de la sesión.
+- Los rechazos de Clerk quedan clasificados en logs seguros sin PII. La configuración de ejemplo alinea API `:3000`, web `:3001` y documenta la URL de retorno obligatoria para invitaciones; su ausencia había provocado el `503` local al invitar.
+- QA integrado con Clerk Development y PostgreSQL desechable verificó el dashboard en primer intento y recarga fría (`GET /auth/clerk/bootstrap` HTTP 200), además de crear una invitación real de prueba con HTTP 201 y toast temporal. En 375 px no hubo overflow.
+- Aprobaron TypeScript, lint y build de API/web, 406 unitarias API/11 omitidas, 11/11 E2E aisladas, 46/46 pruebas web y Prisma validate/generate. Equipo B permanece **IMPLEMENTADO / EN REVISIÓN**; cambio de tenant y el ciclo externo completo de invitación quedan para el QA final del propietario.
+
+## 2026-09-06 — Correctivo Equipo B: invitaciones Clerk y feedback temporal
+
+- Se preserva el localizador UUID de la invitación al cambiar Clerk entre registro e inicio de sesión, evitando que una reescritura de URL/hash termine en una invitación inválida.
+- La activación solicita un nombre cuando el perfil Clerk no lo tiene y solo después confirma la invitación; la aceptación sigue creando Membership/Professional según el contrato aprobado y es idempotente.
+- El reenvío tolera de forma segura que Clerk ya haya llevado la invitación anterior a un estado terminal antes de crear el reemplazo. Los errores externos se registran con estado/código técnico sin PII; los límites 429 conservan `Retry-After` cuando existe y la UI muestra un tiempo real de reintento.
+- Se retiró el banner verde persistente de Equipo: los éxitos usan únicamente el toast temporal de 3 segundos. Las confirmaciones de revocación permanecen intactas.
+- Regresiones añadidas para localizador, límites/errores seguros y reenvío terminal. Equipo B permanece **IMPLEMENTADO / EN REVISIÓN** hasta el QA y aprobación explícita del propietario.
+
 ## 2026-09-03 — Correctivo de confirmación al revocar invitaciones de Equipo
 
 - “Revocar” abre ahora un modal accesible que identifica el correo afectado y advierte que la invitación dejará de ser válida y requerirá una nueva invitación para acceder.
@@ -98,6 +129,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 - Validación final: TypeScript, lint y build API/web en exit `0`; 354 unitarias API pasadas/11 omitidas y 27/27 web. Diff del alcance sin errores de whitespace.
 - Publicación autorizada por el propietario el 2026-08-30 en un único checkpoint sobre `27214da509e9a94358924e6a8be6c2eed8fd793f`, con estado **IMPLEMENTADO / EN REVISIÓN**. No cierra Profesionales ni Facturación-B. La revisión previa y las capturas del propietario no se presentan como ejecución nueva de toda la matriz visual; quedan pendientes OWNER → BARBER → OWNER, cambio de organización con modal abierto, perfil/disponibilidad, error/reintento, móvil, teclado y consola. El fixture QA se conserva, sin incluir credenciales ni artefactos.
 - Por autorización adicional se incluye el cambio del propietario en `auth/continue/page.tsx`: “Usar otra cuenta” reutiliza logout existente, no envía onboarding y se deshabilita mientras se crea el negocio. Solo se limpia whitespace final. Cinco regresiones unitarias del componente verifican botón, disabled, contrato y redirecciones. Navegador local confirmó redirección sin sesión a login; logout Clerk autenticado pendiente. No se modifica backend ni configuración de identidad.
+
+## 2026-08-30 — Visión futura de Configuración/CMS, mini-sitio y Pagos
+
+- Se registró, sin implementación, la evolución de `/[slug]` a mini-sitio tenant-scoped y el orden futuro Equipo → Configuración del negocio/CMS → Analytics → Resumen final.
+- La planificación futura incluye contenido público, branding, galería, fotos de servicios, promociones, cuentas bancarias, métodos de pago y plantillas de notificación.
+- El recorrido público objetivo termina en pago en local sin cobro confirmado o transferencia con comprobante pendiente de verificación; el comprobante no crea automáticamente un `Payment`.
+- Una futura ampliación formal de Pagos deberá cubrir anticipo, evidencia, verificación, pendiente y propina separada sin reinterpretar ni romper el Payment completo único vigente.
+- Resend queda como dirección futura para correo automático y `wa.me` como acción manual editable; “En proceso” solo podrá existir con un estado real de Booking.
+- Estado: **VISIÓN FUTURA / PLANIFICACIÓN DOCUMENTAL**. No cambia código, contratos, ADR, Facturación-A ni Facturación-B, que permanece **IMPLEMENTADA / EN REVISIÓN**.
 
 ## 2026-08-29 — Auditoría integral desde `2ffd44d`
 

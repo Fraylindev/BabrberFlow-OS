@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -10,9 +10,10 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from "react";
-import { useAuth as useClerkAuth } from "@clerk/nextjs";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+} from 'react';
+import { useAuth as useClerkAuth } from '@clerk/nextjs';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { runAuthOperation } from './auth-operation';
 import {
   api,
   ApiError,
@@ -21,7 +22,7 @@ import {
   type ClerkBootstrapState,
   type ClerkMembership,
   configureApiAuth,
-} from "./api";
+} from './api';
 
 interface AuthContextValue {
   isLoaded: boolean;
@@ -30,7 +31,7 @@ interface AuthContextValue {
   state: ClerkBootstrapState | null;
   error: string | null;
   user: AuthUser | null;
-  organization: ClerkMembership["organization"] | null;
+  organization: ClerkMembership['organization'] | null;
   memberships: ClerkMembership[];
   selectOrganization: (organizationId: string) => void;
   refresh: () => Promise<ClerkBootstrapResponse | null>;
@@ -40,19 +41,19 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function clearLegacySession() {
-  window.localStorage.removeItem("bf_token");
-  window.localStorage.removeItem("bf_session");
-  document.cookie = "kb_session=; path=/; max-age=0; SameSite=Lax";
+  window.localStorage.removeItem('bf_token');
+  window.localStorage.removeItem('bf_session');
+  document.cookie = 'kb_session=; path=/; max-age=0; SameSite=Lax';
 }
 
 function friendlyBootstrapError(error: unknown): string {
   if (error instanceof ApiError && error.status === 401) {
-    return "Tu sesión ya no está disponible. Vuelve a iniciar sesión.";
+    return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
   }
   if (error instanceof ApiError && error.status === 503) {
-    return "El acceso no está disponible en este momento. Intenta de nuevo en unos minutos.";
+    return 'No pudimos consultar tu acceso. Revisa tu conexión y vuelve a intentarlo.';
   }
-  return "No pudimos preparar tu espacio de trabajo. Revisa tu conexión e intenta de nuevo.";
+  return 'No pudimos preparar tu espacio de trabajo. Revisa tu conexión e intenta de nuevo.';
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -67,26 +68,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null);
 
   const bootstrapQuery = useQuery({
-    queryKey: ["auth", "clerk-bootstrap", userId],
-    queryFn: () => api.get<ClerkBootstrapResponse>("/auth/clerk/bootstrap"),
+    queryKey: ['auth', 'clerk-bootstrap', userId],
+    queryFn: ({ signal }) => runAuthOperation(async (requestSignal) => {
+      // The query can start before the layout effect registers business auth.
+      // Bootstrap needs only the current Clerk session, never a previous tenant.
+      const token = await getToken();
+      if (!token) throw new ApiError(401, 'Sesión no válida');
+      return api.get<ClerkBootstrapResponse>('/auth/clerk/bootstrap', undefined, {
+        signal: requestSignal,
+        authContext: { token, organizationId: null },
+      });
+    }, signal),
     enabled: clerkLoaded && clerkSignedIn,
     retry: false,
     staleTime: 0,
   });
 
-  const bootstrap = clerkSignedIn ? bootstrapQuery.data ?? null : null;
-  const memberships = useMemo(
-    () => bootstrap?.memberships ?? [],
-    [bootstrap?.memberships],
-  );
+  const bootstrap = clerkSignedIn ? (bootstrapQuery.data ?? null) : null;
+  const memberships = useMemo(() => bootstrap?.memberships ?? [], [bootstrap?.memberships]);
   const selectedMembership = useMemo(() => {
     const selected = memberships.find(
       ({ organization }) => organization.id === selectedOrganizationId,
     );
     if (selected) return selected;
     const preferred = memberships.find(
-      ({ organization }) =>
-        organization.id === bootstrap?.preferredOrganizationId,
+      ({ organization }) => organization.id === bootstrap?.preferredOrganizationId,
     );
     return preferred ?? memberships[0] ?? null;
   }, [bootstrap?.preferredOrganizationId, memberships, selectedOrganizationId]);
@@ -102,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     if (!clerkLoaded || !clerkSignedIn) return null;
     const result = await bootstrapQuery.refetch();
+    if (result.error) return null;
     return result.data ?? null;
   }, [bootstrapQuery, clerkLoaded, clerkSignedIn]);
 
@@ -114,31 +121,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           organizationId: selectedMembership.organization.id,
         }
       : null;
-  const businessScope = user
-    ? `${user.id}:${user.organizationId}:${user.role}`
-    : null;
+  const businessScope = user ? `${user.id}:${user.organizationId}:${user.role}` : null;
   const previousBusinessScope = useRef<string | null>(null);
 
   useEffect(() => {
     const previous = previousBusinessScope.current;
     if (previous && businessScope && previous !== businessScope) {
       queryClient.removeQueries({
-        predicate: (query) => query.queryKey[0] !== "auth",
+        predicate: (query) => query.queryKey[0] !== 'auth',
       });
     }
     previousBusinessScope.current = businessScope;
   }, [businessScope, queryClient]);
 
   function selectOrganization(organizationId: string) {
-    if (
-      !memberships.some(
-        (membership) => membership.organization.id === organizationId,
-      )
-    ) {
+    if (!memberships.some((membership) => membership.organization.id === organizationId)) {
       return;
     }
     queryClient.removeQueries({
-      predicate: (query) => query.queryKey[0] !== "auth",
+      predicate: (query) => query.queryKey[0] !== 'auth',
     });
     setSelectedOrganizationId(organizationId);
   }
@@ -146,16 +147,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function logout() {
     queryClient.clear();
     setSelectedOrganizationId(null);
-    await signOut({ redirectUrl: "/login" });
+    await signOut({ redirectUrl: '/login' });
   }
 
-  const isLoaded =
-    clerkLoaded &&
-    (!clerkSignedIn || !bootstrapQuery.isLoading);
+  const isLoaded = clerkLoaded && (!clerkSignedIn || !bootstrapQuery.isLoading);
   const isReady = Boolean(isLoaded && clerkSignedIn && user);
-  const error = bootstrapQuery.error
-    ? friendlyBootstrapError(bootstrapQuery.error)
-    : null;
+  const error = bootstrapQuery.error ? friendlyBootstrapError(bootstrapQuery.error) : null;
 
   return (
     <AuthContext.Provider
@@ -180,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth debe usarse dentro de <AuthProvider>");
+  if (!context) throw new Error('useAuth debe usarse dentro de <AuthProvider>');
   return context;
 }
 

@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  HttpException,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { ClerkAPIResponseError } from '@clerk/backend/errors';
 import { TeamInvitationStatus, UserRole } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -56,12 +58,14 @@ describe('TeamInvitationsService', () => {
     logTransactional,
   } as unknown as AuditService;
   const createInvitation = jest.fn();
+  const revokeInvitation = jest.fn();
+  const getInvitationList = jest.fn();
   const verifier = {
     getClient: () => ({
       invitations: {
         createInvitation,
-        revokeInvitation: jest.fn(),
-        getInvitationList: jest.fn(),
+        revokeInvitation,
+        getInvitationList,
       },
       users: { getUser: jest.fn() },
     }),
@@ -185,5 +189,67 @@ describe('TeamInvitationsService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(transaction).not.toHaveBeenCalled();
     expect(createInvitation).not.toHaveBeenCalled();
+  });
+
+  it('expone un límite externo de Clerk como 429 seguro con Retry-After', async () => {
+    tx.teamInvitation.create.mockResolvedValue(
+      invitation(TeamInvitationStatus.CREATING),
+    );
+    transaction.mockImplementation((callback: (client: typeof tx) => unknown) =>
+      callback(tx),
+    );
+    createInvitation.mockRejectedValue(
+      new ClerkAPIResponseError('rate limited', {
+        status: 429,
+        retryAfter: 4,
+        data: [{ code: 'rate_limit', message: 'rate limited' }],
+      }),
+    );
+
+    const failure = service.create(organizationId, actorUserId, {
+      email: 'barber@example.test',
+      role: UserRole.BARBER,
+      expiresInDays: 30,
+    });
+    await expect(failure).rejects.toBeInstanceOf(HttpException);
+    await expect(failure).rejects.toMatchObject({
+      status: 429,
+      response: {
+        statusCode: 429,
+        retryAfterSeconds: 4,
+      },
+    });
+  });
+
+  it('permite reenviar cuando Clerk ya marcó la invitación externa como terminal', async () => {
+    teamInvitation.findFirst.mockResolvedValue(
+      invitation(TeamInvitationStatus.PENDING),
+    );
+    teamInvitation.update.mockResolvedValue(
+      invitation(TeamInvitationStatus.PENDING),
+    );
+    revokeInvitation.mockRejectedValue(
+      new ClerkAPIResponseError('already accepted', {
+        status: 422,
+        data: [
+          { code: 'invitation_already_accepted', message: 'already accepted' },
+        ],
+      }),
+    );
+    createInvitation.mockResolvedValue({ id: 'inv_replacement' });
+
+    await expect(
+      service.resend(organizationId, actorUserId, invitationId),
+    ).resolves.toEqual(
+      expect.objectContaining({ status: TeamInvitationStatus.PENDING }),
+    );
+    expect(createInvitation).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith({
+      organizationId,
+      userId: actorUserId,
+      action: 'RESEND',
+      entity: 'TeamInvitation',
+      entityId: invitationId,
+    });
   });
 });
