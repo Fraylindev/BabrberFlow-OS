@@ -1,8 +1,10 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
-Actualizado: 2026-09-11. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+Actualizado: 2026-09-12. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
-Trabajo autorizado vigente: estabilización secuencial de la auditoría, puntos 1 → 6. Los seis puntos están **VERIFICADOS** y su evidencia vive en [ESTABILIZACION_2026_09.md](docs/quality/ESTABILIZACION_2026_09.md). La base actual tiene 20 migraciones, checks comprobados, credenciales runtime/migrador separadas y puerto loopback; la restauración temporal fue verificada y eliminada. Esto demuestra recuperabilidad del estado respaldado, no recuperación de pérdidas anteriores. El gate web añade tipos Next regenerables, pruebas de componente y smoke tests Chrome; el workflow versionado reproduce instalación, auditoría, Prisma, PostgreSQL aislado, pruebas y builds. La planificación de Configuración/CMS queda preparada, pero no autoriza implementación ni cambia aprobaciones de módulos. Persiste un gate crítico previo a producción: retirar o aislar formalmente el superusuario bootstrap `barberflow` y reducir los grants DML de `kortek_runtime` al mínimo comprobado.
+Checkpoint documental autorizado posterior: Configuración/CMS **C0 COMPLETADO / EN REVISIÓN DEL PROPIETARIO**, sobre la base `22a27c499c58fe7405f1a8da304c11c8b08d0190`. La [auditoría y brief C0](docs/features/CONFIGURACION_CMS_C0_AUDITORIA.md) inventaría Organization, horario y `/[slug]`, propone roles/publicación/preview y registra discrepancias y decisiones D1–D6. No se modificó código, frontend, backend, Prisma ni migraciones. C1–C3 no están iniciados ni aprobados; la entrega documental no cambia aprobaciones previas ni aplica los ajustes recomendados al plan.
+
+Base de estabilización previa: auditoría secuencial, puntos 1 → 6. Los seis puntos están **VERIFICADOS** y su evidencia vive en [ESTABILIZACION_2026_09.md](docs/quality/ESTABILIZACION_2026_09.md). La base actual tiene 20 migraciones, checks comprobados, credenciales runtime/migrador separadas y puerto loopback; la restauración temporal fue verificada y eliminada. Esto demuestra recuperabilidad del estado respaldado, no recuperación de pérdidas anteriores. El gate web añade tipos Next regenerables, pruebas de componente y smoke tests Chrome; el workflow versionado reproduce instalación, auditoría, Prisma, PostgreSQL aislado, pruebas y builds. La planificación de Configuración/CMS queda preparada, pero no autoriza implementación ni cambia aprobaciones de módulos. Persiste un gate crítico previo a producción: retirar o aislar formalmente el superusuario bootstrap `barberflow` y reducir los grants DML de `kortek_runtime` al mínimo comprobado.
 
 Verificación operativa del acceso: con autorización expresa para conectar la base local habitual, OWNER inició sesión al primer intento, abrió Equipo y mantuvo acceso tras recargar, sin mutar invitaciones existentes. Equipo B está **CERRADO / APROBADO** por decisión explícita del propietario. La reconciliación autoritativa posterior de PostgreSQL es la del punto 2: respaldo/restauración comprobados, migración aditiva `20260909120000_restore_invoice_integrity_checks`, 20 migraciones y verificación de constraints/índices. La entrada anterior sobre `db push --accept-data-loss` es evidencia histórica y no sustituye ese cierre ni demuestra recuperación de datos perdidos antes de la estabilización.
 
@@ -94,7 +96,7 @@ Gobierno y estándares:
 | 5 | Facturación-B Frontend | **CERRADO / APROBADO** | Aprobación oficial 2026-08-30 del frontend vigente en `bc3d1524d5ca185d46e963c086296895407f9cce`; sin ampliaciones |
 | 6 | Equipo — Entrega A Backend | **CERRADO / APROBADO** | Aprobación oficial del propietario sobre `1270ce9958b3da78f1d2be27d06545a8546c6d43` |
 | 6 | Equipo — Entrega B Frontend | **CERRADO / APROBADO** | Aprobación explícita del propietario 2026-09-09; directorio, invitaciones y gestión de accesos sobre los contratos aprobados |
-| 7 | Configuración del negocio / CMS | **VISIÓN FUTURA / PENDIENTE DE PLAN** | Administrará contenido público, branding, medios, promociones, opciones de pago y plantillas; sin contrato ni implementación autorizados |
+| 7 | Configuración del negocio / CMS | **C0 COMPLETADO / EN REVISIÓN DEL PROPIETARIO** | [Auditoría y brief](docs/features/CONFIGURACION_CMS_C0_AUDITORIA.md); C1 pendiente de aprobación y decisiones D1–D6. Sin contrato ni implementación nuevos |
 | 8 | Analytics modular | **PENDIENTE** | Debe completarse antes de revisar el Resumen |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
 
@@ -257,7 +259,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - `Organization.timeZone` existe en persistencia/contratos de disponibilidad, pero todavía no hay UI/endpoint autorizado de configuración general.
 - El vínculo backend B2C de A0.6-A está aprobado; todavía no existe el recorrido público posterior a reserva ni el historial/autoservicio del cliente.
 - El frontend de Servicios, imágenes y Cloudinary requieren auditoría, aprobación y autorización propias; no adelantarlos desde Entrega A Backend.
-- La visión de Configuración/CMS y Pagos todavía carece de matriz de roles, contrato de publicación, política de medios, custodia de comprobantes, máquina de estados financieros y compatibilidad/migración aprobadas; no está Ready para implementación.
+- Configuración/CMS dispone del brief C0 con propuesta de roles, publicación, compatibilidad y QA, pendiente de decisiones D1–D6 y aprobación para C1; no está Ready para implementación. Medios, custodia de comprobantes, estados financieros y Pagos conservan sus contratos y políticas pendientes de definición/aprobación en entregas separadas.
 - Configuración productiva de CORS, URLs y secretos depende del entorno y debe validarse antes de despliegue.
 - No existe un pipeline CI/CD versionado; los gates siguen dependiendo de ejecución local explícita.
 - `sharp`, `postcss`, `nanoid` y `deepmerge-ts` usan overrides de seguridad en `pnpm-workspace.yaml` hasta que Next/Prisma publiquen rangos transitivos compatibles; cada actualización debe revalidar build, Prisma, E2E y `pnpm audit`. ESLint web permanece en 9 por los peers de plugins de `eslint-config-next`, aunque esa rama ya aparece deprecada en el registro.
@@ -266,6 +268,8 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - El historial contiene decisiones revocadas válidas en su fecha; nunca debe usarse como estado actual sin contrastar este documento y el código.
 
 ## 8. Próximo paso autorizado
+
+Configuración/CMS: revisar el [entregable C0](docs/features/CONFIGURACION_CMS_C0_AUDITORIA.md) y resolver sus decisiones D1–D6. **C0 completado. Pendiente aprobación del propietario para iniciar C1.** No iniciar backend, frontend, Prisma, migraciones ni C2/C3 por este checkpoint. La discrepancia de etiqueta del correctivo BARBER entre AGENTS y el cierre posterior se registra en C0 sin modificar su contrato ni conceder aprobaciones nuevas.
 
 1. Security A0.5 completo (A, B, C y D), Security A0.6-A y el correctivo transversal de aislamiento del Resumen están **CERRADOS / APROBADOS** por decisión explícita del propietario.
 2. Facturación-A Backend está **CERRADO / APROBADO** sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`.

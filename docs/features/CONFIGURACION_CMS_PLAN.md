@@ -2,6 +2,8 @@
 
 Estado: **PLAN PREPARADO / PENDIENTE DE APROBACIÓN**. No autoriza frontend, backend, Prisma, migraciones, medios, pagos ni integraciones.
 
+Checkpoint 2026-09-12: únicamente C0 fue autorizado y su [auditoría y brief](CONFIGURACION_CMS_C0_AUDITORIA.md) está **COMPLETADO / EN REVISIÓN DEL PROPIETARIO**. El documento hermano contiene inventario, matrices, propuestas, discrepancias, decisiones pendientes y QA futuro. La secuencia propuesta de este plan se conserva; sus ajustes recomendados requieren decisión explícita. C1–C3 no están iniciados ni aprobados.
+
 ## 1. Resultado y límites
 
 El siguiente módulo debe permitir que OWNER/ADMIN administren de forma segura la identidad pública y operación configurable de su negocio, preparando `/[slug]` como mini-sitio sin mezclar pagos, archivos o notificaciones antes de sus contratos. BARBER y RECEPTIONIST tendrán solo el acceso que se apruebe explícitamente; el plan no lo presume.
@@ -59,3 +61,5 @@ No se salta de C0 a UI ni se agrupan C1–C3 en un checkpoint por conveniencia.
 ## 7. Criterio de cierre de la planificación
 
 C0 puede solicitar aprobación para contrato solo cuando exista un inventario código/schema/consumidores, matriz campo × visibilidad × rol, flujo borrador/publicado, no-alcance por fase, amenazas, estrategia de compatibilidad/migración y criterios observables de QA. Este documento por sí solo no satisface ese gate.
+
+La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables y su mapa de comprobación en §12. **C0 completado. Pendiente aprobación del propietario para iniciar C1.**

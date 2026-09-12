@@ -4,6 +4,15 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-12 — Configuración/CMS: C0 documental completado, en revisión
+
+- Se ejecutó únicamente la auditoría y brief C0 sobre `22a27c499c58fe7405f1a8da304c11c8b08d0190`, en `ai/antigravity-qa`, con árbol inicialmente limpio.
+- [CONFIGURACION_CMS_C0_AUDITORIA.md](docs/features/CONFIGURACION_CMS_C0_AUDITORIA.md) reúne inventario real de schema/API/consumidores, matrices por campo y rol, propuesta editorial/preview, no-alcance por fase, amenazas, compatibilidad, QA futuro y decisiones D1–D6 del propietario.
+- Hallazgos: findMine expone todos los escalares a cuatro roles B2B; booking-data conserva UUID de Organization; horario JSON ya consumido pese al comentario legacy; falta modelo editorial; conversión pública de hora dependiente del navegador; slug sin política de rutas reservadas; WhatsApp legacy existente y discrepancia documental de estado BARBER. Se registran, sin implementarlos ni reabrir módulos.
+- Se conserva el contrato propio BARBER A1 más teléfono privado; CMS no duplica perfil Professional ni modifica disponibilidad individual. Plan original conserva su secuencia; los ajustes propuestos quedan pendientes de decisión.
+- Solo documentación: auditoría nueva y sincronización de plan, índice y PROJECT_MASTER. Sin cambios en frontend, backend, Prisma, migraciones, medios, pagos, integraciones ni BACKEND_CHANGES. Validación documental de enlaces, estados y diff; no builds ni QA funcional nuevo.
+- **C0 completado. Pendiente aprobación del propietario para iniciar C1.** No se inicia ni aprueba C1–C3.
+
 ## 2026-09-11 — Estabilización: gates y documentación verificados
 
 - Se diagnosticaron como escrituras parciales dos tipos generados de `.next/dev`; el nuevo gate limpia únicamente tipos generados, ejecuta `next typegen` y comprueba TypeScript.
