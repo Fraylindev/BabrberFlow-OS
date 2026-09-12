@@ -26,6 +26,7 @@ import {
 } from './availability.util';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
 import { zonedLocalDateTimeToUtc } from '../professionals/professional-availability.util';
+import { projectContent } from '../cms/cms.projection';
 
 type PublicClientAction = 'CREATE' | 'RESTORE' | null;
 
@@ -40,18 +41,40 @@ export class PublicBookingService {
     private availabilityService: ProfessionalAvailabilityService,
   ) {}
 
-  private async resolveOrganization(slug: string) {
-    const organization = await this.prisma.db.organization.findUnique({
-      where: { slug },
-    });
-    if (!organization || !organization.isActive) {
-      throw new NotFoundException('No existe una organización con ese slug');
+  private async resolveOrganization(
+    slug: string,
+    db: Prisma.TransactionClient = this.prisma.db,
+  ) {
+    if (process.env.PUBLIC_BOOKING_CLOSED === 'true') {
+      throw new NotFoundException('Información no disponible.');
     }
-    return organization;
+    const organization = await db.organization.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        slug: true,
+        isActive: true,
+        deletedAt: true,
+        businessHours: true,
+        timeZone: true,
+        cmsPage: { select: { isPublished: true, publishedSnapshot: true } },
+      },
+    });
+    if (
+      !organization ||
+      !organization.isActive ||
+      organization.deletedAt ||
+      !organization.cmsPage?.isPublished ||
+      !organization.cmsPage.publishedSnapshot
+    ) {
+      throw new NotFoundException('Información no disponible.');
+    }
+    return { ...organization, cmsPage: organization.cmsPage };
   }
 
   async getBookingData(slug: string) {
     const organization = await this.resolveOrganization(slug);
+    const content = projectContent(organization.cmsPage.publishedSnapshot);
     const [services, professionals] = await Promise.all([
       this.prisma.db.service.findMany({
         where: { organizationId: organization.id, isActive: true },
@@ -75,10 +98,9 @@ export class PublicBookingService {
 
     return {
       organization: {
-        id: organization.id,
-        name: organization.name,
+        name: content.publicName,
         slug: organization.slug,
-        phone: organization.phone,
+        phone: content.phone,
       },
       whatsappBaseUrl: process.env.WHATSAPP_BASE_URL || 'https://wa.me/',
       services,
@@ -219,6 +241,11 @@ export class PublicBookingService {
     };
 
     const result = await this.prisma.db.$transaction(async (transaction) => {
+      await transaction.$queryRaw(
+        Prisma.sql`SELECT "id" FROM "Organization" WHERE "id" = ${organization.id} FOR UPDATE`,
+      );
+      // Retiro y nueva reserva se ordenan bajo el mismo bloqueo. No usar estado precargado.
+      await this.resolveOrganization(slug, transaction);
       const clientResult = await this.findOrCreateClient(
         transaction,
         organization.id,

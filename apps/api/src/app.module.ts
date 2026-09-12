@@ -12,6 +12,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PublicBookingModule } from './public-booking/public-booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { CmsModule } from './cms/cms.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     InvoicesModule,
     PublicBookingModule,
     AnalyticsModule,
+    CmsModule,
   ],
   controllers: [],
   providers: [],

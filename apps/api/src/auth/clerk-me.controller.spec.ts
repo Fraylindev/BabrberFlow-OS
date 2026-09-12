@@ -1,5 +1,6 @@
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ClerkMeController } from './clerk-me.controller';
+import { UserRole } from '@prisma/client';
 
 describe('ClerkMeController', () => {
   const organizationId = 'f28b2d63-79b6-43f3-8d5a-a24a4ba3fc82';
@@ -19,10 +20,10 @@ describe('ClerkMeController', () => {
   it('reutiliza directamente OrganizationsService.findMine con el tenant autenticado', async () => {
     findMine.mockResolvedValue(organization);
 
-    await expect(controller.findMine(organizationId)).resolves.toBe(
-      organization,
-    );
+    await expect(
+      controller.findMine(organizationId, UserRole.OWNER),
+    ).resolves.toBe(organization);
     expect(findMine).toHaveBeenCalledTimes(1);
-    expect(findMine).toHaveBeenCalledWith(organizationId);
+    expect(findMine).toHaveBeenCalledWith(organizationId, UserRole.OWNER);
   });
 });

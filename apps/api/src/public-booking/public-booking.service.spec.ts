@@ -14,6 +14,17 @@ const ORGANIZATION = {
   isActive: true,
   businessHours: null,
   timeZone: 'America/Santo_Domingo',
+  deletedAt: null,
+  cmsPage: {
+    isPublished: true,
+    publishedSnapshot: {
+      publicName: 'Demo',
+      phone: null,
+      description: null,
+      address: null,
+      googleMapsUrl: null,
+    },
+  },
 };
 const CLIENT_ID = '00000000-0000-4000-8000-000000000002';
 const BOOKING = {
@@ -40,6 +51,8 @@ const DTO = {
 
 function createDependencies() {
   const transaction = {
+    $queryRaw: jest.fn().mockResolvedValue([{ id: ORGANIZATION.id }]),
+    organization: { findUnique: jest.fn().mockResolvedValue(ORGANIZATION) },
     client: {
       findFirst: jest.fn(),
       create: jest.fn(),

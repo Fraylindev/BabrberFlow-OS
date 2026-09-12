@@ -5,6 +5,7 @@ import { Roles } from './decorators/roles.decorator';
 import { ClerkAuthGuard } from './guards/clerk-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { B2B_ROLES } from './roles.constants';
+import { UserRole } from '@prisma/client';
 
 @Controller('auth/clerk')
 export class ClerkMeController {
@@ -13,7 +14,10 @@ export class ClerkMeController {
   @UseGuards(ClerkAuthGuard, RolesGuard)
   @Roles(...B2B_ROLES)
   @Get('me')
-  findMine(@GetUser('organizationId') organizationId: string) {
-    return this.organizationsService.findMine(organizationId);
+  findMine(
+    @GetUser('organizationId') organizationId: string,
+    @GetUser('role') role: UserRole,
+  ) {
+    return this.organizationsService.findMine(organizationId, role);
   }
 }

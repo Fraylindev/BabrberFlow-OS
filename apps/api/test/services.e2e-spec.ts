@@ -100,6 +100,12 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
       ),
     );
     ownerToken = tokenByRole.get(UserRole.OWNER)!;
+    // Las altas nuevas C1 requieren publicación explícita del OWNER para el catálogo público.
+    await requestApp(app)
+      .post('/organizations/mine/cms/publish')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ expectedVersion: 0, idempotencyKey: crypto.randomUUID() })
+      .expect(200);
     adminToken = tokenByRole.get(UserRole.ADMIN)!;
     barberToken = tokenByRole.get(UserRole.BARBER)!;
     receptionistToken = tokenByRole.get(UserRole.RECEPTIONIST)!;

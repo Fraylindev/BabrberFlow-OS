@@ -12,6 +12,7 @@ import { normalizeAccountEmail } from '../auth/organization-slug';
 import { ListTeamMembersDto } from './dto/list-team-members.dto';
 import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
 import { RevokeTeamMemberAccessDto } from './dto/revoke-team-member-access.dto';
+import { organizationSelectForRole } from './organization-projection';
 
 const TEAM_ROLES = [
   UserRole.OWNER,
@@ -52,9 +53,10 @@ export class OrganizationsService {
   ) {}
 
   // 🔒 Multi-tenancy: Buscar únicamente la organización asociada al token
-  async findMine(organizationId: string) {
+  async findMine(organizationId: string, role: UserRole) {
     return await this.prisma.db.organization.findUnique({
       where: { id: organizationId },
+      select: organizationSelectForRole(role),
     });
   }
 

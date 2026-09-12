@@ -29,8 +29,11 @@ export class OrganizationsController {
   @UseGuards(B2bAuthGuard, RolesGuard)
   @Roles(...B2B_ROLES)
   @Get('mine')
-  findMine(@GetUser('organizationId') organizationId: string) {
-    return this.organizationsService.findMine(organizationId);
+  findMine(
+    @GetUser('organizationId') organizationId: string,
+    @GetUser('role') role: UserRole,
+  ) {
+    return this.organizationsService.findMine(organizationId, role);
   }
 
   @UseGuards(B2bAuthGuard, RolesGuard)

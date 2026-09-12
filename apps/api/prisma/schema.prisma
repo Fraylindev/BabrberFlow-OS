@@ -104,6 +104,35 @@ model Organization {
   professionalWeeklySchedules    ProfessionalWeeklySchedule[]
   professionalAvailabilityBlocks ProfessionalAvailabilityBlock[]
   teamInvitations                TeamInvitation[]
+  cmsPage                        CmsPage?
+}
+
+// Agregado editorial independiente; Organization conserva identidad y operación.
+model CmsPage {
+  organizationId    String         @id
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  version           Int            @default(0)
+  draftRevision     Int            @default(0)
+  draft             Json
+  publishedSnapshot Json?
+  publishedRevision Int?
+  isPublished       Boolean        @default(false)
+  operations        CmsOperation[]
+}
+
+// Recibo sin contenido editorial ni PII. La clave se limita al tenant/actor.
+model CmsOperation {
+  organizationId    String
+  page              CmsPage @relation(fields: [organizationId], references: [organizationId], onDelete: Restrict)
+  actorUserId       String
+  key               String
+  operation         String
+  requestHash       String
+  version           Int
+  publishedRevision Int?
+  isPublished       Boolean
+
+  @@id([organizationId, actorUserId, key])
 }
 
 // Identidad global: una cuenta puede pertenecer a varias organizaciones a

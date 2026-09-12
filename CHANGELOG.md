@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-12 — Configuración/CMS C1 backend implementado, en revisión
+
+- Ejecutado C1 sobre `5cbe35a` con D1–D6 fijadas por el propietario: agregado editorial aditivo separado, DTOs/normalización, permisos, preview privado, publicación/retiro, revisión optimista, idempotencia y auditoría según D5. [Contrato y evidencia](docs/features/CONFIGURACION_CMS_C1_CONTRATO.md).
+- H1 elimina UUID de Organization en booking-data y conserva slug/localizadores de reserva; H2 limita mine/clerk-me a id/name/slug/timeZone por rol. Publicación cambia snapshot, no Organization operativa. Retiro bloquea nuevas reservas, con carrera PostgreSQL comprobada, y conserva operación/historial.
+- Migración 21 solo ensayada en clúster PostgreSQL aislado: compatibilidad inicial name/phone, altas nuevas sin publicar, doble backfill sin revivir retiradas, reserva/factura/pago históricos intactos y respaldo/restauración verificados. La base habitual solo se inventarió en lectura, sin mostrar PII ni mutarla.
+- API TypeScript, lint, build, 511 unitarias y 181 E2E aisladas terminaron con exit 0. Las 11 pruebas omitidas son preexistentes. Se cubrieron roles, IDOR, campos, concurrencia, idempotencia, fallos reales de AuditLog, invalidación, privacidad, horarios y regresiones del asistente público.
+- Estado **IMPLEMENTADO / EN REVISIÓN**. Detenerse en C1: sin frontend, H5, medios, promociones, banca, notificaciones, ampliación de Pagos ni C2/C3. El checkpoint no equivale a aprobación backend ni despliegue habitual/productivo.
+
 ## 2026-09-12 — Configuración/CMS: C0 documental completado, en revisión
 
 - Se ejecutó únicamente la auditoría y brief C0 sobre `22a27c499c58fe7405f1a8da304c11c8b08d0190`, en `ai/antigravity-qa`, con árbol inicialmente limpio.

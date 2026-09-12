@@ -1,8 +1,8 @@
 # Configuración/CMS — plan de próxima entrega
 
-Estado: **PLAN PREPARADO / PENDIENTE DE APROBACIÓN**. No autoriza frontend, backend, Prisma, migraciones, medios, pagos ni integraciones.
+Estado: **C1 IMPLEMENTADO / EN REVISIÓN**. El propietario fijó D1–D6 y autorizó contrato/backend, migración aditiva y ensayos aislados, ya ejecutados. Detenerse después de C1; C2/C3, medios, pagos e integraciones permanecen sin autorización.
 
-Checkpoint 2026-09-12: únicamente C0 fue autorizado y su [auditoría y brief](CONFIGURACION_CMS_C0_AUDITORIA.md) está **COMPLETADO / EN REVISIÓN DEL PROPIETARIO**. El documento hermano contiene inventario, matrices, propuestas, discrepancias, decisiones pendientes y QA futuro. La secuencia propuesta de este plan se conserva; sus ajustes recomendados requieren decisión explícita. C1–C3 no están iniciados ni aprobados.
+Checkpoint 2026-09-12: tras la [auditoría y brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md), la autorización expresa resuelve D1–D6. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) define la implementación y evidencia. La secuencia C1 → aprobación backend → C2 → C3 se conserva; ninguna aprobación se deduce de un commit/push.
 
 ## 1. Resultado y límites
 
@@ -13,7 +13,7 @@ Quedan fuera de la primera entrega: Cloudinary u otro proveedor, galería binari
 ## 2. Secuencia propuesta
 
 1. **C0 — auditoría y brief de producto:** inventariar campos reales de Organization, horario y ruta pública; decidir qué es interno/público, roles, borrador/publicado, copy, estados, responsive y accesibilidad.
-2. **C1 — contrato backend de perfil público:** proyección mínima tenant-scoped, validación, concurrencia, auditoría sin PII e idempotencia. Solo después de aprobación se evalúa si el modelo actual basta o requiere migración.
+2. **C1 — contrato backend de perfil público:** proyección mínima tenant-scoped, validación, concurrencia, auditoría sin PII e idempotencia. D5 autoriza el agregado editorial separado y la migración aditiva; diseño y ensayo se resuelven dentro de C1 antes de su aprobación backend.
 3. **C2 — frontend de configuración base:** consumir exclusivamente C1, con loading/vacío/error/reintento/éxito, confirmaciones y aislamiento inmediato al cambiar usuario, tenant o rol.
 4. **C3 — publicación del mini-sitio:** leer únicamente la proyección pública aprobada; no exponer UUID, correo privado, datos bancarios ni contenido no publicado.
 5. **Entregas separadas posteriores:** medios; promociones; métodos/cuentas; plantillas/notificaciones; ampliación de Pagos. Cada una necesita brief, contrato, seguridad y aprobación propios.
@@ -62,4 +62,4 @@ No se salta de C0 a UI ni se agrupan C1–C3 en un checkpoint por conveniencia.
 
 C0 puede solicitar aprobación para contrato solo cuando exista un inventario código/schema/consumidores, matriz campo × visibilidad × rol, flujo borrador/publicado, no-alcance por fase, amenazas, estrategia de compatibilidad/migración y criterios observables de QA. Este documento por sí solo no satisface ese gate.
 
-La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables y su mapa de comprobación en §12. **C0 completado. Pendiente aprobación del propietario para iniciar C1.**
+La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y autorizó C1. La salida actual es un checkpoint backend validado para su revisión, sin iniciar C2/C3.

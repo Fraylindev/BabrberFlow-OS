@@ -23,8 +23,9 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`UI_PATTERNS.md`](product/UI_PATTERNS.md): patrones reutilizables de interacción.
 - [`FEATURE_BRIEF_TEMPLATE.md`](features/FEATURE_BRIEF_TEMPLATE.md): plantilla previa a una entrega funcional.
 - [`CONFIGURACION_CMS_PAGOS_VISION.md`](features/CONFIGURACION_CMS_PAGOS_VISION.md): visión futura no autorizada para Configuración/CMS, mini-sitio público, reserva pública y Pagos.
-- [`CONFIGURACION_CMS_PLAN.md`](features/CONFIGURACION_CMS_PLAN.md): próximo plan modular de Configuración/CMS, preparado pero no autorizado para implementar.
-- [`CONFIGURACION_CMS_C0_AUDITORIA.md`](features/CONFIGURACION_CMS_C0_AUDITORIA.md): C0 completado, en revisión del propietario; inventario real, brief, matrices, discrepancias y decisiones pendientes antes de C1. Sin implementación autorizada.
+- [`CONFIGURACION_CMS_PLAN.md`](features/CONFIGURACION_CMS_PLAN.md): secuencia modular; C1 autorizado con D1–D6 fijadas, C2/C3 pendientes.
+- [`CONFIGURACION_CMS_C0_AUDITORIA.md`](features/CONFIGURACION_CMS_C0_AUDITORIA.md): auditoría y brief históricos; propuestas D1–D6 resueltas por la autorización C1 posterior.
+- [`CONFIGURACION_CMS_C1_CONTRATO.md`](features/CONFIGURACION_CMS_C1_CONTRATO.md): contrato backend, migración/rollback y evidencia C1; no autoriza frontend ni mini-sitio.
 
 ### Arquitectura y seguridad
 

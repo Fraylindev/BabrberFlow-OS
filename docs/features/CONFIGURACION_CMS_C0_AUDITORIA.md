@@ -1,5 +1,7 @@
 # Configuración/CMS — C0: auditoría y brief de producto
 
+Nota posterior: el propietario fijó D1–D6 y autorizó C1 completo, con parada antes de C2/C3. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) contiene las decisiones vigentes y su evidencia; las etiquetas de propuesta/no autorización del cuerpo siguiente describen el checkpoint C0 histórico.
+
 Fecha: 2026-09-12. Estado: **C0 COMPLETADO / EN REVISIÓN DEL PROPIETARIO**. C1, C2 y C3 no están iniciados ni aprobados.
 
 ## 1. Identificación, alcance y método

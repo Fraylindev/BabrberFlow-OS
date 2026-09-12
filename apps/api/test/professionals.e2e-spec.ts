@@ -61,6 +61,26 @@ describe('Profesionales: perfil propio BARBER (e2e PostgreSQL)', () => {
     tenantBId = tenantB.id;
     barberId = barber.id;
 
+    // C1: fixture público tras publicación explícita de un OWNER, sin elevar al BARBER.
+    const owner = await prisma.db.user.create({
+      data: {
+        name: 'Owner fixture',
+        email: `cms-owner-${suffix}@identity.test`,
+        memberships: {
+          create: { organizationId: tenantAId, role: UserRole.OWNER },
+        },
+      },
+    });
+    const ownerToken = await jwt.signAsync({
+      sub: owner.id,
+      organizationId: tenantAId,
+    });
+    await requestApp(app)
+      .post('/organizations/mine/cms/publish')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ expectedVersion: 0, idempotencyKey: crypto.randomUUID() })
+      .expect(200);
+
     await prisma.db.membership.createMany({
       data: [
         { userId: barberId, organizationId: tenantAId, role: UserRole.BARBER },
