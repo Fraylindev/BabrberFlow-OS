@@ -21,10 +21,10 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
 ## Capacidades y estado
 
 - Reservas y Clientes están cerrados según [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
-- Profesionales tiene backend aprobado; su frontend y el módulo completo siguen en revisión.
-- Facturación-A Backend está cerrado/aprobado y Facturación-B Frontend permanece implementado/en revisión.
+- Profesionales, Servicios, Facturación interna y Equipo están cerrados/aprobados según sus checkpoints vigentes.
+- Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados; cualquier pago anticipado, transferencia, reembolso o propina requiere contrato posterior.
 - El Resumen sigue congelado como agregador, aunque sus correctivos transversales de aislamiento y estabilidad tienen estado propio.
-- Servicios y los módulos posteriores no se abren por la mera existencia de código legacy; requieren auditoría y autorización modular.
+- Configuración/CMS y los módulos posteriores no se abren por la mera existencia de código legacy; requieren auditoría y autorización modular.
 - Security A0.5 y A0.6-A están cerrados/aprobados. A0.6-B/C/D y el retiro legacy siguen pendientes de autorización.
 
 Este documento no convierte una visión futura o una pantalla existente en una capacidad aprobada.
@@ -40,7 +40,7 @@ La evolución prevista, todavía sin autorización de implementación, está def
 - ampliar Pagos mediante un contrato formal futuro para pago anticipado, verificación, evidencia, pago pendiente y propina separada;
 - usar en el futuro Resend para correo automático y `wa.me` como acción manual con mensaje prellenado y editable, siempre coherente con estados reales.
 
-Esta visión no cambia el contrato Invoice–Payment aprobado ni el estado **IMPLEMENTADO / EN REVISIÓN** de Facturación-B.
+Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / APROBADO** de Facturación-B.
 
 ## Principios de producto
 
@@ -63,7 +63,7 @@ Esta visión no cambia el contrato Invoice–Payment aprobado ni el estado **IMP
 
 ## No-alcance vigente
 
-- No cerrar Facturación-B ni Profesionales por inferencia.
+- No reabrir ni ampliar módulos cerrados por inferencia.
 - No iniciar A0.6-B/C/D, retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
 - No publicar precios, límites de planes, testimonios o cifras comerciales sin decisión y evidencia del propietario.
 - No crear un flujo de organizaciones adicionales hasta definir su contrato atómico, permisos, límites, auditoría y UX.

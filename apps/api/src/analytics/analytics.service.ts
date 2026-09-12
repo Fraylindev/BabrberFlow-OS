@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { BookingStatus } from '@prisma/client';
+import { BookingStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   addDaysToIsoDate,
@@ -16,6 +16,8 @@ import {
 // parámetro configurable todavía porque nadie lo pidió (YAGNI). Si se
 // necesita un rango elegible más adelante, es un cambio de una línea aquí.
 const TOP_PROFESSIONAL_WINDOW_DAYS = 30;
+const DASHBOARD_READ_MAX_WAIT_MS = 2_000;
+const DASHBOARD_READ_TIMEOUT_MS = 8_000;
 
 @Injectable()
 export class AnalyticsService {
@@ -23,7 +25,23 @@ export class AnalyticsService {
 
   async getDashboard(organizationId: string) {
     const now = new Date();
-    const organization = await this.prisma.db.organization.findUnique({
+    return this.prisma.db.$transaction(
+      (transaction) =>
+        this.getDashboardInTransaction(transaction, organizationId, now),
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead,
+        maxWait: DASHBOARD_READ_MAX_WAIT_MS,
+        timeout: DASHBOARD_READ_TIMEOUT_MS,
+      },
+    );
+  }
+
+  private async getDashboardInTransaction(
+    transaction: Prisma.TransactionClient,
+    organizationId: string,
+    now: Date,
+  ) {
+    const organization = await transaction.organization.findUnique({
       where: { id: organizationId },
       select: { timeZone: true },
     });
@@ -46,26 +64,41 @@ export class AnalyticsService {
       bookingsCancelledToday,
       topProfessionalGroup,
     ] = await Promise.all([
-      this.sumPaidInvoices(organizationId, startOfToday, startOfTomorrow),
-      this.sumPaidInvoices(organizationId, startOfYesterday, startOfToday),
-      this.sumPaidInvoices(organizationId, startOf7DaysAgo, startOfTomorrow),
-      this.prisma.db.booking.count({
+      this.sumPaidInvoices(
+        transaction,
+        organizationId,
+        startOfToday,
+        startOfTomorrow,
+      ),
+      this.sumPaidInvoices(
+        transaction,
+        organizationId,
+        startOfYesterday,
+        startOfToday,
+      ),
+      this.sumPaidInvoices(
+        transaction,
+        organizationId,
+        startOf7DaysAgo,
+        startOfTomorrow,
+      ),
+      transaction.booking.count({
         where: {
           organizationId,
           startTime: { gte: startOfToday, lt: startOfTomorrow },
         },
       }),
-      this.prisma.db.booking.count({
+      transaction.booking.count({
         where: { organizationId, status: BookingStatus.PENDING },
       }),
-      this.prisma.db.booking.count({
+      transaction.booking.count({
         where: {
           organizationId,
           status: BookingStatus.CANCELLED,
           updatedAt: { gte: startOfToday, lt: startOfTomorrow },
         },
       }),
-      this.prisma.db.booking.groupBy({
+      transaction.booking.groupBy({
         by: ['professionalId'],
         where: {
           organizationId,
@@ -86,8 +119,8 @@ export class AnalyticsService {
 
     if (topProfessionalGroup.length > 0) {
       const top = topProfessionalGroup[0];
-      const professional = await this.prisma.db.professional.findUnique({
-        where: { id: top.professionalId },
+      const professional = await transaction.professional.findFirst({
+        where: { id: top.professionalId, organizationId },
         select: { id: true, name: true },
       });
       if (professional) {
@@ -116,11 +149,12 @@ export class AnalyticsService {
   }
 
   private async sumPaidInvoices(
+    transaction: Prisma.TransactionClient,
     organizationId: string,
     from: Date,
     to: Date,
   ): Promise<number> {
-    const result = await this.prisma.db.invoice.aggregate({
+    const result = await transaction.invoice.aggregate({
       where: {
         organizationId,
         payment: {

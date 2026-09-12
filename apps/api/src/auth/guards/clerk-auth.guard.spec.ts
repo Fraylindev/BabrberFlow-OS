@@ -1,4 +1,8 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import type { AuthenticatedRequest } from '../types/authenticated-request';
 import type { PrismaService } from '../../prisma/prisma.service';
@@ -170,13 +174,25 @@ describe('ClerkAuthGuard', () => {
 
   it('falla cerrado cuando una dependencia lanza un error inesperado sin exponer detalles', async () => {
     // Simula un error de infraestructura (p. ej. BD caída) que no sea UnauthorizedException.
-    // El guard debe convertirlo en 401 genérico; el detalle solo va al log interno.
+    // La caída de PostgreSQL no invalida la sesión; no exponer detalles.
     findUser.mockRejectedValue(new Error('Prisma: connection refused'));
 
     await expect(
       guard.canActivate(makeContext(makeRequest())),
     ).rejects.toMatchObject({
-      message: 'Sesión no válida para esta organización',
+      status: 503,
+      message: 'No pudimos consultar tu acceso. Vuelve a intentarlo.',
     });
+  });
+
+  it('preserva indisponibilidad del verificador sin consultar datos ni inyectar usuario', async () => {
+    const failure = new ServiceUnavailableException(
+      'Servicio temporalmente no disponible',
+    );
+    verify.mockRejectedValue(failure);
+    const request = makeRequest();
+    await expect(guard.canActivate(makeContext(request))).rejects.toBe(failure);
+    expect(findUser).not.toHaveBeenCalled();
+    expect(findMembership).not.toHaveBeenCalled();
   });
 });

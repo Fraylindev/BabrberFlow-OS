@@ -21,7 +21,11 @@ Backend NestJS del SaaS multi-tenant. El estado vigente y el gobierno están en 
 pnpm --filter api start:dev
 ```
 
-Por defecto escucha en el puerto definido por `PORT` en `.env` (se recomienda `3001` para no chocar con `apps/web`, que usa el `3000`).
+Por defecto escucha en el puerto definido por `PORT` en `.env` (`3000` en el ejemplo); `apps/web` usa `3001`. Ambos servicios enlazan loopback en desarrollo.
+
+## Validación de persistencia
+
+Las E2E solo aceptan una base terminada en `_test`, con propietario no privilegiado y sin acceso a la base principal. Después de compilar, `node dist/prisma/verify-integrity.cli.js` comprueba en modo de solo lectura los constraints e índices suplementarios publicados. El procedimiento de roles runtime/migrador está en [`ops/README.md`](ops/README.md).
 
 ## Estructura
 

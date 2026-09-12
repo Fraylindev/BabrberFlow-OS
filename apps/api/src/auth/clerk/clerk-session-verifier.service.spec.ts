@@ -1,4 +1,12 @@
-import { UnauthorizedException } from '@nestjs/common';
+import {
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import {
+  ClerkAPIResponseError,
+  TokenVerificationErrorReason,
+} from '@clerk/backend/errors';
+import { CLERK_VERIFICATION_TIMEOUT_MS } from './clerk-deadline';
 import type { ClerkBackendClient } from './clerk-auth.providers';
 import type { ClerkAuthConfig } from './clerk-auth.config';
 import type {
@@ -142,14 +150,15 @@ describe('ClerkSessionVerifierService', () => {
     await expect(
       service.verify(new Request('http://localhost:3000/secure')),
     ).rejects.toMatchObject({
-      message: 'Sesión no válida',
+      status: 503,
+      message: 'Servicio de autenticación no disponible temporalmente',
     });
   });
 
   it('falla cerrado cuando el cargador de configuración lanza al invocar verify()', async () => {
     // Simula el guard invocado sin variables Clerk en el entorno.
     // El loader lanza (como haría loadClerkAuthConfig sin CLERK_SECRET_KEY);
-    // el servicio debe convertirlo en 401 genérico sin exponer el detalle.
+    // Configuración ausente no prueba sesión inválida: responder 503 sin detalles.
     const failingLoader: ClerkConfigLoader = () => {
       throw new Error('CLERK_SECRET_KEY no está configurado para Clerk.');
     };
@@ -165,7 +174,8 @@ describe('ClerkSessionVerifierService', () => {
     await expect(
       failingService.verify(new Request('http://localhost:3000/secure')),
     ).rejects.toMatchObject({
-      message: 'Sesión no válida',
+      status: 503,
+      message: 'Servicio de autenticación no disponible temporalmente',
     });
   });
 
@@ -201,5 +211,98 @@ describe('ClerkSessionVerifierService', () => {
 
     expect(factoryCallCount).toBe(1);
     expect(freshService.getClient()).toBe(client);
+  });
+
+  it.each([401, 429, 500, 503])(
+    'no confunde un fallo BAPI %s con una sesión revocada',
+    async (status) => {
+      getSession.mockRejectedValue(
+        new ClerkAPIResponseError('private upstream detail', {
+          status,
+          data: [
+            { code: 'upstream_failure', message: 'private upstream detail' },
+          ],
+        }),
+      );
+      await expect(
+        service.verify(new Request('http://localhost/secure')),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    },
+  );
+
+  it('mantiene 401 si Clerk confirma que la sesión no existe', async () => {
+    getSession.mockRejectedValue(
+      new ClerkAPIResponseError('session missing', {
+        status: 404,
+        data: [{ code: 'resource_not_found', message: 'session missing' }],
+      }),
+    );
+    await expect(
+      service.verify(new Request('http://localhost/secure')),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('considera indisponibilidad el fallo de descarga JWKS devuelto como estado', async () => {
+    authenticateRequest.mockResolvedValue({
+      isAuthenticated: false,
+      status: 'signed-out',
+      reason: TokenVerificationErrorReason.RemoteJWKFailedToLoad,
+    });
+    await expect(
+      service.verify(new Request('http://localhost/secure')),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    expect(getSession).not.toHaveBeenCalled();
+  });
+
+  it('acota la espera y no consulta la sesión tras una autenticación tardía', async () => {
+    jest.useFakeTimers();
+    try {
+      let release!: (value: ReturnType<typeof signedInState>) => void;
+      authenticateRequest.mockReturnValue(
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+      );
+      const verification = service.verify(
+        new Request('http://localhost/secure'),
+      );
+      const rejected = expect(verification).rejects.toBeInstanceOf(
+        ServiceUnavailableException,
+      );
+      await jest.advanceTimersByTimeAsync(CLERK_VERIFICATION_TIMEOUT_MS);
+      await rejected;
+      release(signedInState());
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(getSession).not.toHaveBeenCalled();
+      expect(jest.getTimerCount()).toBe(0);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('no entrega una sesión cuya consulta autoritativa termina después del límite', async () => {
+    jest.useFakeTimers();
+    try {
+      let release!: (value: object) => void;
+      getSession.mockReturnValue(
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+      );
+      const verification = service.verify(
+        new Request('http://localhost/secure'),
+      );
+      const rejected = expect(verification).rejects.toBeInstanceOf(
+        ServiceUnavailableException,
+      );
+      await jest.advanceTimersByTimeAsync(CLERK_VERIFICATION_TIMEOUT_MS);
+      await rejected;
+      release({ id: sessionId, userId, status: 'active' });
+      await Promise.resolve();
+      expect(jest.getTimerCount()).toBe(0);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

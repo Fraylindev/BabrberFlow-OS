@@ -1,3 +1,5 @@
+name: barberflow-os
+
 services:
 
   postgres:
@@ -7,11 +9,11 @@ services:
 
     environment:
       POSTGRES_USER: barberflow
-      POSTGRES_PASSWORD: barberflow_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD in the ignored root .env}
       POSTGRES_DB: barberflow
 
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
 
     volumes:
       - postgres_data:/var/lib/postgresql/data

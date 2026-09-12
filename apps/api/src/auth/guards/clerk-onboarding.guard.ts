@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
@@ -35,14 +36,19 @@ export class ClerkOnboardingGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof ServiceUnavailableException
+      ) {
         throw error;
       }
 
       const kind =
         error instanceof Error ? error.constructor.name : 'UnknownError';
       this.logger.error(`Error inesperado en ClerkOnboardingGuard: ${kind}`);
-      throw new UnauthorizedException('Sesión no válida');
+      throw new ServiceUnavailableException(
+        'Servicio de autenticación no disponible temporalmente',
+      );
     }
   }
 }

@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
@@ -70,15 +71,18 @@ export class ClerkAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof ServiceUnavailableException
+      ) {
         throw error;
       }
 
       this.logger.error(
         `Error inesperado en ClerkAuthGuard: ${error instanceof Error ? error.constructor.name : 'UnknownError'}`,
       );
-      throw new UnauthorizedException(
-        'Sesión no válida para esta organización',
+      throw new ServiceUnavailableException(
+        'No pudimos consultar tu acceso. Vuelve a intentarlo.',
       );
     }
   }

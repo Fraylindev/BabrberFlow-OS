@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { B2B_ROLES } from './roles.constants';
 
@@ -9,24 +9,30 @@ export class ClerkBootstrapService {
   constructor(private readonly prisma: PrismaService) {}
 
   async resolve(clerkUserId: string) {
-    const user = await this.prisma.db.user.findUnique({
-      where: { clerkUserId },
-      select: {
-        id: true,
-        name: true,
-        lastOrganizationId: true,
-        memberships: {
-          where: { role: { in: B2B_ROLES } },
-          orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-          select: {
-            role: true,
-            organization: {
-              select: { id: true, name: true, slug: true },
+    const user = await this.prisma.db.user
+      .findUnique({
+        where: { clerkUserId },
+        select: {
+          id: true,
+          name: true,
+          lastOrganizationId: true,
+          memberships: {
+            where: { role: { in: B2B_ROLES } },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            select: {
+              role: true,
+              organization: {
+                select: { id: true, name: true, slug: true },
+              },
             },
           },
         },
-      },
-    });
+      })
+      .catch(() => {
+        throw new ServiceUnavailableException(
+          'No pudimos consultar tu acceso. Vuelve a intentarlo.',
+        );
+      });
 
     if (!user) {
       return {

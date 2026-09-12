@@ -11,6 +11,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
 import { ClerkOnboardingDto } from './dto/clerk-onboarding.dto';
+import { CLERK_VERIFICATION_TIMEOUT_MS } from './clerk/clerk-deadline';
 
 describe('ClerkOnboardingService', () => {
   let service: ClerkOnboardingService;
@@ -108,6 +109,30 @@ describe('ClerkOnboardingService', () => {
   });
 
   describe('fetchClerkProfile (resolución y validación)', () => {
+    it('un perfil tardío no crea organización, usuario ni Membership después del límite', async () => {
+      jest.useFakeTimers();
+      try {
+        let release!: (value: ReturnType<typeof mockClerkUser>) => void;
+        clerkUsersMock.getUser.mockReturnValue(
+          new Promise((resolve) => {
+            release = resolve;
+          }),
+        );
+        const pending = service.onboardOwner(clerkUserId, validDto);
+        const rejected = expect(pending).rejects.toBeInstanceOf(
+          ServiceUnavailableException,
+        );
+        await jest.advanceTimersByTimeAsync(CLERK_VERIFICATION_TIMEOUT_MS);
+        await rejected;
+        release(mockClerkUser());
+        await jest.advanceTimersByTimeAsync(0);
+        expect(prismaMock.db.user.findUnique).not.toHaveBeenCalled();
+        expect(prismaMock.db.$transaction).not.toHaveBeenCalled();
+        expect(jest.getTimerCount()).toBe(0);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
     it('lanza 503 cuando el SDK de Clerk lanza un error al consultar el perfil', async () => {
       clerkUsersMock.getUser.mockRejectedValue(new Error('Clerk API Timeout'));
 

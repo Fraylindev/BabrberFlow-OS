@@ -42,6 +42,8 @@ Si el enlace se abre con otra sesión activa, la web exige cerrar esa cuenta y c
 3. el frontend muestra solo acciones autorizadas sin sustituir el control backend;
 4. errores esperados se traducen a lenguaje de tarea y permiten recuperación.
 
+El Resumen obtiene agenda/carga paginadas desde `GET /analytics/summary` y métricas desde `GET /analytics/dashboard` como dependencias independientes. El servidor fija el día en `Organization.timeZone`; BARBER recibe solo su agenda vinculada. Cambiar usuario, tenant o rol desmonta el estado anterior y aborta/ignora respuestas tardías.
+
 Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se leen en sus entradas vigentes; este mapa no concede permisos nuevos.
 
 ## 5. Reserva pública y continuidad B2C

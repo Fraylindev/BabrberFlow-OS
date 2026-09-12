@@ -1,6 +1,6 @@
 # Visión futura — Configuración/CMS, mini-sitio público y Pagos
 
-Estado: **VISIÓN FUTURA / PLANIFICACIÓN DOCUMENTAL**. Esta definición no autoriza implementación, no cambia contratos vigentes y no altera el estado **IMPLEMENTADO / EN REVISIÓN** de Facturación-B.
+Estado: **VISIÓN FUTURA / PLANIFICACIÓN DOCUMENTAL**. Esta definición no autoriza implementación, no cambia contratos vigentes y no altera el estado **CERRADO / APROBADO** de Facturación-B. El plan modular preparado se encuentra en [`CONFIGURACION_CMS_PLAN.md`](CONFIGURACION_CMS_PLAN.md).
 
 ## 1. Propósito y secuencia
 
@@ -103,4 +103,3 @@ Debe producir una máquina de estados formal para reserva, evidencia, verificaci
 - No se modifica `/[slug]`, Reservas, Facturación-A, Facturación-B, Analytics, Clerk, Supabase ni estados de Booking.
 - No se activa Resend, carga de archivos, transferencias, cuentas bancarias, promociones ni notificaciones.
 - No se cierra ni aprueba Facturación-B.
-

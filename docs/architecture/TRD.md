@@ -31,7 +31,7 @@ JWT legacy ─────► B2bAuthGuard ──┘
 - La baja o cambio de Membership tiene efecto en la siguiente petición.
 - JWT/password backend permanece solo para rollback hasta un A0.7 autorizado.
 
-El alta inicial separa identidad y negocio: Clerk termina primero la sesión y `/dashboard/setup` consume después el onboarding atómico existente. Antes de `READY`, el layout no monta navegación ni datos tenant. `/auth/continue` es solo compatibilidad de redirección y no contiene formularios ni decisiones de negocio. Las rutas genéricas `POST /organizations` y `GET /organizations/by-slug/:slug` están retiradas porque una creaba tenants sin Membership y la otra exponía UUID interno sin consumidor vigente. Un futuro flujo multi-organización necesita contrato propio.
+El alta inicial separa identidad y negocio: Clerk termina primero la sesión y `/dashboard/setup` consume después el onboarding atómico existente. Antes de `READY`, el layout no monta navegación ni datos tenant. `/auth/continue` es solo compatibilidad de redirección y no contiene formularios ni decisiones de negocio. El middleware Clerk se limita a rutas de autenticación y dashboard; la landing y `/[slug]` públicos no lo atraviesan, aunque el `ClerkProvider` raíz mantiene la obligación de configurar la instancia al ejecutar la web. Las rutas genéricas `POST /organizations` y `GET /organizations/by-slug/:slug` están retiradas porque una creaba tenants sin Membership y la otra exponía UUID interno sin consumidor vigente. Un futuro flujo multi-organización necesita contrato propio.
 
 ## Capas backend
 
@@ -45,13 +45,14 @@ El alta inicial separa identidad y negocio: Clerk termina primero la sesión y `
 
 `Organization` es el tenant y `Membership` une `User × Organization × Role`. Toda consulta de negocio aplica `organizationId` derivado del contexto autenticado; BARBER añade ownership por Professional cuando el contrato lo exige.
 
-PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitaciones, vínculo B2C y Facturación. Las 19 migraciones vigentes se aplican desde cero sobre PostgreSQL 16; los checks y exclusiones no deben reconstruirse por inferencia desde Prisma.
+PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitaciones, vínculo B2C y Facturación. Las 20 migraciones vigentes se aplican desde cero sobre PostgreSQL 16; los checks, exclusiones e índices suplementarios se verifican además mediante el CLI de integridad y no deben reconstruirse por inferencia desde Prisma.
 
 ## Frontend
 
 - React Query gestiona estado remoto y purga datos de negocio al cambiar el contexto.
 - Resumen y Facturación añaden claves `usuario + organización + rol` y control de solicitudes tardías.
 - `api.ts` obtiene la sesión en cada petición; no persiste el JWT legacy.
+- El gate limpio regenera los tipos Next antes de TypeScript; las pruebas web incluyen lógica, componentes y smoke tests Chrome en escritorio/375 px.
 - Las pantallas deben cubrir loading, empty, error/reintento, pending y success.
 - La autorización vive en API; una build limpia no sustituye QA en navegador.
 
@@ -63,7 +64,7 @@ Prisma continuará sobre PostgreSQL cuando se traslade a Supabase. Supabase Auth
 
 - rate limiting y caché son locales al proceso;
 - JWT/password legacy aumenta superficie hasta A0.7;
-- no existe CI/CD versionado;
+- el workflow versionado ejecuta gates de calidad; no despliega ni sustituye QA funcional autenticado;
 - configuración y titularidad de enlaces comerciales deben verificarse antes de producción;
 - Supabase y planes productivos siguen sujetos a gates de pago, backup y restore.
 

@@ -1,15 +1,14 @@
 import type {
   AnalyticsDashboard,
   AuthUser,
-  Booking,
-  Professional,
+  DashboardOperationalSummary,
 } from "./api";
 
 export interface DashboardSummaryData {
-  bookings: Booking[];
-  professionals: Professional[];
+  operational: DashboardOperationalSummary | null;
   analytics: AnalyticsDashboard | null;
-  nextBookingId: string | undefined;
+  operationalError: string | null;
+  analyticsError: string | null;
 }
 
 export interface DashboardSummaryState {

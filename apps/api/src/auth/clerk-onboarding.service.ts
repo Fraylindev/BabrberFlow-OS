@@ -10,6 +10,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
+import { withClerkDeadline } from './clerk/clerk-deadline';
 import { ClerkOnboardingDto } from './dto/clerk-onboarding.dto';
 import {
   normalizeAccountEmail,
@@ -74,7 +75,9 @@ export class ClerkOnboardingService {
     let clerkUser: ClerkUserProfile;
     try {
       const client = this.verifier.getClient();
-      clerkUser = await client.users.getUser(clerkUserId);
+      clerkUser = await withClerkDeadline(() =>
+        client.users.getUser(clerkUserId),
+      );
     } catch {
       throw new ServiceUnavailableException(
         'Servicio de autenticación no disponible temporalmente',

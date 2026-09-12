@@ -25,6 +25,7 @@ import {
 } from '../common/prisma-error.util';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
+import { withClerkDeadline } from './clerk/clerk-deadline';
 import {
   CLERK_INVITATION_REDIRECT_URL,
   type ClerkInvitationRedirectUrlLoader,
@@ -138,6 +139,21 @@ export class TeamInvitationsService {
     return new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
   }
 
+  /** Compare the exact generation reserved before leaving PostgreSQL for Clerk. */
+  private generation(invitation: InvitationRecord) {
+    return {
+      id: invitation.id,
+      organizationId: invitation.organizationId,
+      status: invitation.status,
+      AND: { clerkInvitationId: invitation.clerkInvitationId },
+      updatedAt: invitation.updatedAt,
+    };
+  }
+
+  private nextVersion(invitation: InvitationRecord): Date {
+    return new Date(Math.max(Date.now(), invitation.updatedAt.getTime() + 1));
+  }
+
   private async expirePending(organizationId?: string): Promise<void> {
     const staleBefore = new Date(Date.now() - 10 * 60 * 1000);
     await this.prisma.db.teamInvitation.updateMany({
@@ -213,19 +229,27 @@ export class TeamInvitationsService {
     expiresInDays: number,
   ): Promise<string> {
     try {
-      const created = await this.verifier
-        .getClient()
-        .invitations.createInvitation({
-          emailAddress: invitation.email,
-          expiresInDays,
-          ignoreExisting: true,
-          notify: true,
-          redirectUrl: buildTeamInvitationRedirectUrl(
-            this.loadInvitationRedirectUrl(),
-            invitation.id,
-          ),
-        });
-      return created.id;
+      return await withClerkDeadline(async (signal) => {
+        const created = await this.verifier
+          .getClient()
+          .invitations.createInvitation({
+            emailAddress: invitation.email,
+            expiresInDays,
+            ignoreExisting: true,
+            notify: true,
+            redirectUrl: buildTeamInvitationRedirectUrl(
+              this.loadInvitationRedirectUrl(),
+              invitation.id,
+            ),
+          });
+        if (signal.aborted) {
+          // The SDK cannot abort writes. Revoke only this late external result;
+          // it must never be attached to a newer local invitation generation.
+          await this.safeRevokeClerkInvitation(created.id);
+          signal.throwIfAborted();
+        }
+        return created.id;
+      });
     } catch (error) {
       this.throwClerkFailure(
         'create invitation',
@@ -272,9 +296,11 @@ export class TeamInvitationsService {
     options: { allowAlreadyTerminal?: boolean } = {},
   ): Promise<void> {
     try {
-      await this.verifier
-        .getClient()
-        .invitations.revokeInvitation(clerkInvitationId);
+      await withClerkDeadline(() =>
+        this.verifier
+          .getClient()
+          .invitations.revokeInvitation(clerkInvitationId),
+      );
     } catch (error) {
       const terminalCode = isClerkAPIResponseError(error)
         ? error.errors[0]?.code
@@ -302,9 +328,11 @@ export class TeamInvitationsService {
     clerkInvitationId: string,
   ): Promise<void> {
     try {
-      await this.verifier
-        .getClient()
-        .invitations.revokeInvitation(clerkInvitationId);
+      await withClerkDeadline(() =>
+        this.verifier
+          .getClient()
+          .invitations.revokeInvitation(clerkInvitationId),
+      );
     } catch (error) {
       // Compensación best-effort. La fila local queda FAILED para impedir uso.
       if (isClerkAPIResponseError(error)) {
@@ -317,14 +345,14 @@ export class TeamInvitationsService {
     }
   }
 
-  private async markFailed(
-    invitationId: string,
-    expectedStatuses: TeamInvitationStatus[],
-  ): Promise<void> {
+  private async markFailed(invitation: InvitationRecord): Promise<void> {
     try {
       await this.prisma.db.teamInvitation.updateMany({
-        where: { id: invitationId, status: { in: expectedStatuses } },
-        data: { status: TeamInvitationStatus.FAILED },
+        where: this.generation(invitation),
+        data: {
+          status: TeamInvitationStatus.FAILED,
+          updatedAt: this.nextVersion(invitation),
+        },
       });
     } catch {
       // El estado transitorio conserva el bloqueo y permite reconciliación.
@@ -403,27 +431,24 @@ export class TeamInvitationsService {
         expiresInDays,
       );
     } catch (error) {
-      await this.markFailed(localInvitation.id, [
-        TeamInvitationStatus.CREATING,
-      ]);
+      await this.markFailed(localInvitation);
       throw error;
     }
 
     try {
       const invitation = await this.prisma.db.teamInvitation.update({
-        where: { id: localInvitation.id },
+        where: this.generation(localInvitation),
         data: {
           clerkInvitationId,
           status: TeamInvitationStatus.PENDING,
+          updatedAt: this.nextVersion(localInvitation),
         },
         select: INVITATION_SELECT,
       });
       return this.project(invitation);
     } catch {
       await this.safeRevokeClerkInvitation(clerkInvitationId);
-      await this.markFailed(localInvitation.id, [
-        TeamInvitationStatus.CREATING,
-      ]);
+      await this.markFailed(localInvitation);
       throw new ServiceUnavailableException(
         'No pudimos completar la invitación en este momento.',
       );
@@ -469,13 +494,14 @@ export class TeamInvitationsService {
       throw this.neutralConflict();
     }
 
+    const pending = {
+      ...original,
+      status: TeamInvitationStatus.RESENDING,
+      updatedAt: this.nextVersion(original),
+    };
     const reserved = await this.prisma.db.teamInvitation.updateMany({
-      where: {
-        id: invitationId,
-        organizationId,
-        status: original.status,
-      },
-      data: { status: TeamInvitationStatus.RESENDING },
+      where: this.generation(original),
+      data: { status: pending.status, updatedAt: pending.updatedAt },
     });
     if (reserved.count !== 1) throw this.neutralConflict();
 
@@ -492,10 +518,7 @@ export class TeamInvitationsService {
         await this.safeRevokeClerkInvitation(original.clerkInvitationId);
       }
     } catch (error) {
-      await this.prisma.db.teamInvitation.updateMany({
-        where: { id: invitationId, status: TeamInvitationStatus.RESENDING },
-        data: { status: original.status },
-      });
+      await this.markFailed(pending);
       throw error;
     }
 
@@ -503,22 +526,23 @@ export class TeamInvitationsService {
     let clerkInvitationId: string;
     try {
       clerkInvitationId = await this.createClerkInvitation(
-        { ...original, status: TeamInvitationStatus.RESENDING },
+        pending,
         expiresInDays,
       );
     } catch (error) {
-      await this.markFailed(invitationId, [TeamInvitationStatus.RESENDING]);
+      await this.markFailed(pending);
       throw error;
     }
 
     try {
       const invitation = await this.prisma.db.teamInvitation.update({
-        where: { id: invitationId },
+        where: this.generation(pending),
         data: {
           clerkInvitationId,
           status: TeamInvitationStatus.PENDING,
           expiresAt: this.expiresAt(expiresInDays),
           revokedAt: null,
+          updatedAt: this.nextVersion(pending),
         },
         select: INVITATION_SELECT,
       });
@@ -532,7 +556,7 @@ export class TeamInvitationsService {
       return this.project(invitation);
     } catch {
       await this.safeRevokeClerkInvitation(clerkInvitationId);
-      await this.markFailed(invitationId, [TeamInvitationStatus.RESENDING]);
+      await this.markFailed(pending);
       throw new ServiceUnavailableException(
         'No pudimos completar el reenvío en este momento.',
       );
@@ -553,36 +577,47 @@ export class TeamInvitationsService {
       throw this.neutralConflict();
     }
 
+    const pending = {
+      ...original,
+      status: TeamInvitationStatus.REVOKING,
+      updatedAt: this.nextVersion(original),
+    };
     const reserved = await this.prisma.db.teamInvitation.updateMany({
-      where: {
-        id: invitationId,
-        organizationId,
-        status: original.status,
-      },
-      data: { status: TeamInvitationStatus.REVOKING },
+      where: this.generation(original),
+      data: { status: pending.status, updatedAt: pending.updatedAt },
     });
     if (reserved.count !== 1) throw this.neutralConflict();
 
     try {
       if (original.clerkInvitationId) {
-        await this.revokeClerkInvitation(original.clerkInvitationId);
+        await this.revokeClerkInvitation(original.clerkInvitationId, {
+          allowAlreadyTerminal: true,
+        });
       }
     } catch (error) {
-      await this.prisma.db.teamInvitation.updateMany({
-        where: { id: invitationId, status: TeamInvitationStatus.REVOKING },
-        data: { status: original.status },
-      });
+      await this.markFailed(pending);
       throw error;
     }
 
-    const invitation = await this.prisma.db.teamInvitation.update({
-      where: { id: invitationId },
-      data: {
-        status: TeamInvitationStatus.REVOKED,
-        revokedAt: new Date(),
-      },
-      select: INVITATION_SELECT,
-    });
+    const invitation = await this.prisma.db.teamInvitation
+      .update({
+        where: this.generation(pending),
+        data: {
+          status: TeamInvitationStatus.REVOKED,
+          revokedAt: new Date(),
+          updatedAt: this.nextVersion(pending),
+        },
+        select: INVITATION_SELECT,
+      })
+      .catch((error: unknown) => {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2025'
+        ) {
+          throw this.neutralConflict();
+        }
+        throw error;
+      });
     await this.audit.log({
       organizationId,
       userId: actorUserId,
@@ -716,10 +751,11 @@ export class TeamInvitationsService {
   }
 
   private async acceptTransaction(
-    invitationId: string,
+    verifiedInvitation: InvitationRecord,
     clerkUserId: string,
     profile: VerifiedClerkProfile,
   ): Promise<AcceptTeamInvitationResult> {
+    const invitationId = verifiedInvitation.id;
     return this.prisma.db.$transaction(
       async (tx) => {
         await tx.$queryRaw(
@@ -742,7 +778,11 @@ export class TeamInvitationsService {
 
         if (
           invitation.status !== TeamInvitationStatus.PENDING ||
-          invitation.expiresAt <= new Date()
+          invitation.expiresAt <= new Date() ||
+          invitation.clerkInvitationId !==
+            verifiedInvitation.clerkInvitationId ||
+          invitation.updatedAt.getTime() !==
+            verifiedInvitation.updatedAt.getTime()
         ) {
           throw this.neutralConflict();
         }
@@ -849,6 +889,28 @@ export class TeamInvitationsService {
     );
   }
 
+  private async resolvePreviouslyAccepted(
+    invitationId: string,
+    clerkUserId: string,
+  ): Promise<AcceptTeamInvitationResult> {
+    return this.prisma.db.$transaction(
+      async (tx) => {
+        await tx.$queryRaw(
+          Prisma.sql`SELECT "id" FROM "TeamInvitation" WHERE "id" = ${invitationId} FOR UPDATE`,
+        );
+        const invitation = await tx.teamInvitation.findUnique({
+          where: { id: invitationId },
+          select: INVITATION_SELECT,
+        });
+        if (!invitation) throw this.neutralConflict();
+        const result = await this.resolveAccepted(tx, invitation, clerkUserId);
+        if (!result) throw this.neutralConflict();
+        return result;
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
+  }
+
   async accept(
     invitationId: string,
     clerkUserId: string,
@@ -865,28 +927,38 @@ export class TeamInvitationsService {
       throw this.neutralConflict();
     }
 
+    // The verified Clerk session and acceptedByUserId are authoritative for a
+    // completed local acceptance. Retrying must not depend on an external
+    // invitation record that Clerk may no longer return.
+    if (invitation.status === TeamInvitationStatus.ACCEPTED) {
+      return this.resolvePreviouslyAccepted(invitationId, clerkUserId);
+    }
+
     if (
       invitation.status === TeamInvitationStatus.PENDING &&
       invitation.expiresAt <= new Date()
     ) {
       const expired = await this.prisma.db.teamInvitation.updateMany({
-        where: {
-          id: invitation.id,
-          status: TeamInvitationStatus.PENDING,
-        },
+        where: this.generation(invitation),
         data: { status: TeamInvitationStatus.EXPIRED },
       });
       if (expired.count === 1) throw this.neutralConflict();
     }
 
-    const profile = await this.fetchVerifiedClerkProfile(clerkUserId);
-    if (profile.email !== invitation.email) throw this.neutralConflict();
-    await this.verifyAcceptedInClerk(invitation, profile.email);
+    const profile = await withClerkDeadline(async (signal) => {
+      const verifiedProfile = await this.fetchVerifiedClerkProfile(clerkUserId);
+      signal.throwIfAborted();
+      if (verifiedProfile.email !== invitation.email)
+        throw this.neutralConflict();
+      await this.verifyAcceptedInClerk(invitation, verifiedProfile.email);
+      signal.throwIfAborted();
+      return verifiedProfile;
+    });
 
     const maxAttempts = 3;
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       try {
-        return await this.acceptTransaction(invitationId, clerkUserId, profile);
+        return await this.acceptTransaction(invitation, clerkUserId, profile);
       } catch (error) {
         const retryable =
           isSerializationFailureError(error) || isUniqueConstraintError(error);

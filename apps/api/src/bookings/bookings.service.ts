@@ -8,12 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
-import {
-  BookingStatus,
-  ProfessionalStatus,
-  type Booking,
-  type Prisma,
-} from '@prisma/client';
+import { BookingStatus, ProfessionalStatus, type Prisma } from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
@@ -24,6 +19,27 @@ export const bookingClientResponseSelect = {
   email: true,
   phone: true,
 } satisfies Prisma.ClientSelect;
+
+export const bookingMutationResponseSelect = {
+  id: true,
+  clientId: true,
+  professionalId: true,
+  serviceId: true,
+  startTime: true,
+  endTime: true,
+  status: true,
+} satisfies Prisma.BookingSelect;
+
+export const bookingListResponseSelect = {
+  ...bookingMutationResponseSelect,
+  client: { select: bookingClientResponseSelect },
+  professional: { select: { id: true, name: true } },
+  service: { select: { id: true, name: true, duration: true } },
+} satisfies Prisma.BookingSelect;
+
+type BookingMutationResponse = Prisma.BookingGetPayload<{
+  select: typeof bookingMutationResponseSelect;
+}>;
 
 const BARBER_STATUS_TRANSITIONS: Partial<
   Record<BookingStatus, readonly BookingStatus[]>
@@ -64,7 +80,7 @@ export class BookingsService {
     createBookingDto: CreateBookingDto,
     transaction?: Prisma.TransactionClient,
     requirePublicProfessional = false,
-  ): Promise<Booking> {
+  ): Promise<BookingMutationResponse> {
     if (transaction) {
       return this.createInTransaction(
         transaction,
@@ -89,7 +105,7 @@ export class BookingsService {
     organizationId: string,
     createBookingDto: CreateBookingDto,
     requirePublicProfessional: boolean,
-  ): Promise<Booking> {
+  ): Promise<BookingMutationResponse> {
     const db = transaction;
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
 
@@ -164,6 +180,7 @@ export class BookingsService {
           startTime: startDate,
           endTime: endDate,
         },
+        select: bookingMutationResponseSelect,
       });
     } catch (error) {
       this.rethrowScheduleConflict(error);
@@ -187,6 +204,7 @@ export class BookingsService {
         status: { not: BookingStatus.CANCELLED },
         ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
       },
+      select: { id: true },
     });
 
     if (conflictingBooking) {
@@ -216,11 +234,7 @@ export class BookingsService {
         ...(from ? { startTime: { gte: from } } : {}),
         ...(to ? { endTime: { lte: to } } : {}),
       },
-      include: {
-        client: { select: bookingClientResponseSelect },
-        professional: true,
-        service: true,
-      },
+      select: bookingListResponseSelect,
       orderBy: { startTime: 'asc' },
     });
   }
@@ -256,7 +270,7 @@ export class BookingsService {
     id: string,
     organizationId: string,
     dto: RescheduleBookingDto,
-  ): Promise<Booking> {
+  ): Promise<BookingMutationResponse> {
     return this.prisma.db.$transaction((tx) =>
       this.rescheduleInTransaction(tx, id, organizationId, dto),
     );
@@ -267,9 +281,10 @@ export class BookingsService {
     id: string,
     organizationId: string,
     dto: RescheduleBookingDto,
-  ): Promise<Booking> {
+  ): Promise<BookingMutationResponse> {
     const booking = await transaction.booking.findFirst({
       where: { id, organizationId },
+      select: bookingMutationResponseSelect,
     });
     if (!booking) {
       throw new NotFoundException('Reserva no encontrada en esta barbería');
@@ -341,6 +356,7 @@ export class BookingsService {
           startTime: startDate,
           endTime: endDate,
         },
+        select: bookingMutationResponseSelect,
       });
     } catch (error) {
       this.rethrowScheduleConflict(error);
@@ -352,7 +368,7 @@ export class BookingsService {
     organizationId: string,
     updateBookingStatusDto: UpdateBookingStatusDto,
     professionalId?: string,
-  ): Promise<Booking> {
+  ): Promise<BookingMutationResponse> {
     return this.prisma.db.$transaction((tx) =>
       this.updateStatusInTransaction(
         tx,
@@ -370,13 +386,14 @@ export class BookingsService {
     organizationId: string,
     updateBookingStatusDto: UpdateBookingStatusDto,
     professionalId?: string,
-  ): Promise<Booking> {
+  ): Promise<BookingMutationResponse> {
     const booking = await transaction.booking.findFirst({
       where: {
         id,
         organizationId,
         ...(professionalId ? { professionalId } : {}),
       },
+      select: bookingMutationResponseSelect,
     });
 
     if (!booking) {
@@ -433,6 +450,7 @@ export class BookingsService {
           ...(professionalId ? { professionalId } : {}),
         },
         data: { status: updateBookingStatusDto.status },
+        select: bookingMutationResponseSelect,
       });
     } catch (error) {
       this.rethrowScheduleConflict(error);
@@ -440,7 +458,7 @@ export class BookingsService {
   }
 
   private assertServiceEndedForCompletion(
-    booking: Pick<Booking, 'endTime'>,
+    booking: Pick<BookingMutationResponse, 'endTime'>,
     updateBookingStatusDto: UpdateBookingStatusDto,
   ): void {
     if (

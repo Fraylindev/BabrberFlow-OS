@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useReducer, useRef, useState } from "react";
-import { api, AnalyticsDashboard, Booking, Professional } from "@/lib/api";
+import { api, AnalyticsDashboard, DashboardOperationalSummary } from "@/lib/api";
+import { loadDashboardSummary, summaryDateLabel, summaryGreeting } from "@/lib/dashboard-summary-load";
 import { formatMoney } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -11,6 +12,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
+import { SummaryPagination } from "@/components/dashboard/SummaryPagination";
 import { TrendStat } from "@/components/ui/TrendStat";
 import { Reveal } from "@/components/ui/Reveal";
 import { useToast } from "@/components/ui/Toast";
@@ -22,30 +24,12 @@ import {
   dashboardSummaryScopeKey,
 } from "@/lib/dashboard-summary-state";
 
-function isToday(dateStr: string) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  return (
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate()
-  );
-}
-
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 12) return "Buenos días";
-  if (h < 19) return "Buenas tardes";
-  return "Buenas noches";
-}
-
-const TODAY_LABEL = new Date().toLocaleDateString("es-DO", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-});
-
 export default function DashboardHome() {
+  const { user } = useAuth();
+  return <DashboardHomeScope key={dashboardSummaryScopeKey(user) ?? "no-context"} />;
+}
+
+function DashboardHomeScope() {
   const { user, organization } = useAuth();
   const { toast } = useToast();
   // Analytics es solo para roles con visión de negocio — un BARBER
@@ -53,7 +37,10 @@ export default function DashboardHome() {
   const canSeeAnalytics = user?.role !== "BARBER";
   const canCreateClient = user?.role !== "BARBER";
   const canCreateCatalog = user?.role === "OWNER" || user?.role === "ADMIN";
-  const scopeKey = dashboardSummaryScopeKey(user);
+  const [agendaPage, setAgendaPage] = useState(1);
+  const [workloadPage, setWorkloadPage] = useState(1);
+  const authScopeKey = dashboardSummaryScopeKey(user);
+  const scopeKey = authScopeKey ? `${authScopeKey}:${agendaPage}:${workloadPage}` : null;
   const requestIdRef = useRef(0);
   const [reloadKey, setReloadKey] = useState(0);
   const [summaryState, dispatchSummary] = useReducer(
@@ -65,11 +52,11 @@ export default function DashboardHome() {
   // Esto los oculta en el mismo render del cambio, antes de que corra el efecto
   // que inicia la carga nueva.
   const currentSummary = dashboardSummaryForScope(summaryState, scopeKey);
-  const bookings = currentSummary?.data?.bookings ?? null;
-  const professionals = currentSummary?.data?.professionals ?? null;
+  const operational = currentSummary?.data?.operational ?? null;
   const analytics = currentSummary?.data?.analytics ?? null;
-  const nextBookingId = currentSummary?.data?.nextBookingId;
-  const error = currentSummary?.error ?? null;
+  const nextBookingId = operational?.agenda.nextBookingId;
+  const error = currentSummary?.error ?? currentSummary?.data?.operationalError ?? null;
+  const analyticsError = currentSummary?.data?.analyticsError ?? null;
 
   useEffect(() => {
     const requestId = ++requestIdRef.current;
@@ -79,31 +66,20 @@ export default function DashboardHome() {
     }
 
     let active = true;
+    const controller = new AbortController();
     dispatchSummary({ type: "start", scopeKey, requestId });
 
-    Promise.all([
-      api.get<Booking[]>("/bookings"),
-      api.get<Professional[]>("/professionals"),
-      canSeeAnalytics ? api.get<AnalyticsDashboard>("/analytics/dashboard") : Promise.resolve(null),
-    ])
-      .then(([b, p, a]) => {
+    loadDashboardSummary(
+      api.get<DashboardOperationalSummary>("/analytics/summary", { agendaPage: String(agendaPage), workloadPage: String(workloadPage) }, { signal: controller.signal }),
+      canSeeAnalytics ? api.get<AnalyticsDashboard>("/analytics/dashboard", undefined, { signal: controller.signal }) : Promise.resolve(null),
+    )
+      .then((data) => {
         if (!active) return;
-        const now = Date.now();
-        const todayList = b
-          .filter((x) => isToday(x.startTime))
-          .sort((x, y) => x.startTime.localeCompare(y.startTime));
         dispatchSummary({
           type: "success",
           scopeKey,
           requestId,
-          data: {
-            bookings: b,
-            professionals: p,
-            analytics: a,
-            nextBookingId: todayList.find(
-              (x) => new Date(x.startTime).getTime() >= now,
-            )?.id,
-          },
+          data,
         });
       })
       .catch(() => {
@@ -118,21 +94,15 @@ export default function DashboardHome() {
 
     return () => {
       active = false;
+      controller.abort();
     };
-  }, [canSeeAnalytics, reloadKey, scopeKey]);
+  }, [canSeeAnalytics, reloadKey, scopeKey, agendaPage, workloadPage]);
 
   const loading = currentSummary?.loading ?? true;
-  const todayBookings = (bookings || [])
-    .filter((b) => isToday(b.startTime))
-    .sort((a, b) => a.startTime.localeCompare(b.startTime));
-  const completedToday = todayBookings.filter((b) => b.status === "COMPLETED").length;
-
-  const activeProfessionals = (professionals || []).filter((p) => p.isActive !== false);
-  const workload = activeProfessionals.map((p) => ({
-    professional: p,
-    count: todayBookings.filter((b) => b.professionalId === p.id).length,
-  }));
-  const idleProfessionals = workload.filter((w) => w.count === 0);
+  const todayBookings = operational?.agenda.items ?? [];
+  const completedToday = operational?.agenda.completed ?? 0;
+  const workload = operational?.workload?.items ?? [];
+  const idleCount = operational?.workload?.idleCount ?? 0;
 
   const publicUrl =
     typeof window !== "undefined" && organization
@@ -151,7 +121,7 @@ export default function DashboardHome() {
   // Negocio recién creado: sin profesionales y sin ninguna cita todavía
   // — la agenda vacía y los widgets de carga no aportan nada útil
   // todavía, mejor guiar los primeros pasos.
-  const isBrandNew = !error && !loading && (professionals?.length ?? 0) === 0 && (bookings?.length ?? 0) === 0;
+  const isBrandNew = canCreateCatalog && !error && !loading && operational?.isBrandNew;
 
   const alerts: { text: string; href: string }[] = [];
   if (analytics) {
@@ -171,10 +141,9 @@ export default function DashboardHome() {
         href: "/dashboard/bookings",
       });
     }
-    if (!isBrandNew && idleProfessionals.length > 0) {
-      const names = idleProfessionals.map((w) => w.professional.name).join(", ");
+    if (!isBrandNew && idleCount > 0) {
       alerts.push({
-        text: `${idleProfessionals.length === 1 ? names : `${idleProfessionals.length} profesionales`} sin citas hoy`,
+        text: `${idleCount} profesional${idleCount === 1 ? "" : "es"} sin citas hoy`,
         href: "/dashboard/professionals",
       });
     }
@@ -187,13 +156,13 @@ export default function DashboardHome() {
           pantalla. No se duplican aquí. */}
       <PageHeader
         tone="light"
-        title={`${greeting()}, ${user?.name?.split(" ")[0] ?? ""}`}
-        description={TODAY_LABEL}
+        title={`${operational ? summaryGreeting(operational.generatedAt, operational.timeZone) : "Hola"}, ${user?.name?.split(" ")[0] ?? ""}`}
+        description={operational ? summaryDateLabel(operational.generatedAt, operational.timeZone) : "Resumen del negocio"}
       />
 
-      {error && (
+      {(error || analyticsError) && (
         <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-sm border border-[var(--dash-danger)]/30 bg-[var(--dash-danger-bg)] px-4 py-3 sm:flex-row sm:items-center">
-          <p role="alert" className="text-sm text-[var(--dash-danger)]">{error}</p>
+          <div role="alert" className="text-sm text-[var(--dash-danger)]">{error && <p>{error}</p>}{analyticsError && <p>{analyticsError}</p>}</div>
           <Button
             type="button"
             tone="light"
@@ -206,7 +175,7 @@ export default function DashboardHome() {
         </div>
       )}
 
-      {canSeeAnalytics && !error && (
+      {canSeeAnalytics && !analyticsError && (
         <Reveal>
           <Card tone="light" className="mb-6 p-4 sm:p-6">
             {loading || !analytics ? (
@@ -243,11 +212,11 @@ export default function DashboardHome() {
                     día que Ingresos ya no puede dar por sí sola, ahora
                     que completar una cita no factura automáticamente
                     (ver PROJECT_MASTER.md §52.1/§52.2). */}
-                <TrendStat
+                {!error && <TrendStat
                   label="Completadas hoy"
                   value={completedToday}
                   displayValue={String(completedToday)}
-                />
+                />}
               </div>
             )}
           </Card>
@@ -375,6 +344,7 @@ export default function DashboardHome() {
                           </p>
                           <p className="truncate text-xs text-[var(--dash-text-muted)]">
                             {new Date(b.startTime).toLocaleTimeString("es-DO", {
+                              timeZone: operational?.timeZone,
                               hour: "2-digit",
                               minute: "2-digit",
                             })}{" "}
@@ -388,6 +358,7 @@ export default function DashboardHome() {
                     ))}
                   </ul>
                 )}
+                {!loading && operational && <SummaryPagination label="Páginas de agenda de hoy" page={operational.agenda.page} totalPages={operational.agenda.totalPages} onPage={setAgendaPage} />}
               </div>
             </Card>
           </Reveal>
@@ -413,11 +384,11 @@ export default function DashboardHome() {
                 ) : (
                   <ul className="flex flex-col gap-3">
                     {workload.map((w) => (
-                      <li key={w.professional.id} className="flex items-center gap-3">
-                        <Avatar name={w.professional.name} size="sm" />
+                      <li key={w.id} className="flex items-center gap-3">
+                        <Avatar name={w.name} size="sm" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm text-[var(--dash-text)]">
-                            {w.professional.name}
+                            {w.name}
                           </p>
                         </div>
                         <span className="shrink-0 font-[family-name:var(--font-mono)] text-sm text-[var(--dash-text-muted)]">
@@ -427,10 +398,11 @@ export default function DashboardHome() {
                     ))}
                   </ul>
                 )}
+                {!loading && operational?.workload && <SummaryPagination label="Páginas de carga de hoy" page={operational.workload.page} totalPages={operational.workload.totalPages} onPage={setWorkloadPage} />}
               </Card>
             )}
 
-            {canSeeAnalytics && (
+            {canSeeAnalytics && !analyticsError && (
               <Card tone="light" className="p-6">
                 <p className="text-xs font-medium uppercase tracking-wider text-[var(--dash-text-muted)]">
                   Profesional del mes

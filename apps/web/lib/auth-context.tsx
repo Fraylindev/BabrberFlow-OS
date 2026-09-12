@@ -69,16 +69,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const bootstrapQuery = useQuery({
     queryKey: ['auth', 'clerk-bootstrap', userId],
-    queryFn: ({ signal }) => runAuthOperation(async (requestSignal) => {
-      // The query can start before the layout effect registers business auth.
-      // Bootstrap needs only the current Clerk session, never a previous tenant.
-      const token = await getToken();
-      if (!token) throw new ApiError(401, 'Sesión no válida');
-      return api.get<ClerkBootstrapResponse>('/auth/clerk/bootstrap', undefined, {
-        signal: requestSignal,
-        authContext: { token, organizationId: null },
-      });
-    }, signal),
+    queryFn: ({ signal }) =>
+      runAuthOperation(async (requestSignal) => {
+        // The query can start before the layout effect registers business auth.
+        // Bootstrap needs only the current Clerk session, never a previous tenant.
+        const token = await getToken();
+        if (!token) throw new ApiError(401, 'Sesión no válida');
+        return api.get<ClerkBootstrapResponse>('/auth/clerk/bootstrap', undefined, {
+          signal: requestSignal,
+          authContext: { token, organizationId: null },
+        });
+      }, signal),
     enabled: clerkLoaded && clerkSignedIn,
     retry: false,
     staleTime: 0,
@@ -103,14 +104,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: await getToken(),
       organizationId: selectedMembership?.organization.id ?? null,
     }));
-  }, [getToken, selectedMembership?.organization.id]);
+  }, [
+    getToken,
+    userId,
+    clerkSignedIn,
+    selectedMembership?.organization.id,
+    selectedMembership?.role,
+  ]);
 
+  const refetchBootstrap = bootstrapQuery.refetch;
   const refresh = useCallback(async () => {
     if (!clerkLoaded || !clerkSignedIn) return null;
-    const result = await bootstrapQuery.refetch();
+    const result = await refetchBootstrap();
     if (result.error) return null;
     return result.data ?? null;
-  }, [bootstrapQuery, clerkLoaded, clerkSignedIn]);
+  }, [refetchBootstrap, clerkLoaded, clerkSignedIn]);
 
   const user =
     bootstrap?.user && selectedMembership

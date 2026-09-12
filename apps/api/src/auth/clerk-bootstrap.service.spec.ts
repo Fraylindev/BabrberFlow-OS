@@ -10,6 +10,14 @@ describe('ClerkBootstrapService', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
+  it('no presenta onboarding ni sesión inválida cuando PostgreSQL no responde', async () => {
+    findUnique.mockRejectedValue(new Error('private connection detail'));
+    await expect(service.resolve('synthetic_identity')).rejects.toMatchObject({
+      status: 503,
+      message: 'No pudimos consultar tu acceso. Vuelve a intentarlo.',
+    });
+  });
+
   it('indica onboarding sin buscar por correo cuando el sub no está enlazado', async () => {
     findUnique.mockResolvedValue(null);
 

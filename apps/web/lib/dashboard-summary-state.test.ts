@@ -10,29 +10,20 @@ import {
 
 function summary(label: string): DashboardSummaryData {
   return {
-    bookings: [
+    operational: {
+      generatedAt: '2026-08-24T14:00:00.000Z', timeZone: 'America/Santo_Domingo', isBrandNew: false,
+      agenda: { page: 1, limit: 20, total: 1, totalPages: 1, completed: 0, nextBookingId: null, items: [
       {
         id: `booking-${label}`,
         startTime: "2026-08-24T14:00:00.000Z",
         endTime: "2026-08-24T14:30:00.000Z",
         status: "CONFIRMED",
-        clientId: `client-${label}`,
-        professionalId: `professional-${label}`,
-        serviceId: `service-${label}`,
+        client: { name: 'Cliente' }, professional: { name: label }, service: { name: 'Servicio' },
       },
-    ],
-    professionals: [
-      {
-        id: `professional-${label}`,
-        name: `Profesional ${label}`,
-        avatar: null,
-        specialty: null,
-        status: "ACTIVE",
-        isActive: true,
-      },
-    ],
+      ] }, workload: null,
+    },
     analytics: null,
-    nextBookingId: `booking-${label}`,
+    operationalError: null, analyticsError: null,
   };
 }
 
@@ -117,7 +108,7 @@ test("an old A response cannot overwrite a newer A request after A to B to A", (
     requestId: 3,
     data: summary("A-new"),
   });
-  assert.equal(state.data?.bookings[0]?.id, "booking-A-new");
+  assert.equal(state.data?.operational?.agenda.items[0]?.id, "booking-A-new");
 });
 
 test("a late error from another role does not replace the current state", () => {

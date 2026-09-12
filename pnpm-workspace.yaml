@@ -5,10 +5,15 @@ overrides:
   deepmerge-ts: 8.0.0
   nanoid: 3.3.18
   postcss: 8.5.25
-  sharp: 0.35.0
+  sharp: 0.35.4
+  # Security fixes within the current transitive major versions.
+  multer: 2.3.0
+  qs: 6.16.0
 allowBuilds:
   '@prisma/client': false
   '@prisma/engines': false
+  # Vitest/Vite requieren el binario nativo de esbuild para ejecutar las pruebas.
+  esbuild: true
   prisma: false
   sharp: true
   unrs-resolver: true

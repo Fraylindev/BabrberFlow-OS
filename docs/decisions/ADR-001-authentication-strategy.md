@@ -293,7 +293,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Web TypeScript, lint y build finalizaron con exit `0`. QA en navegador con sesiones Clerk Development verificó BARBER sin acceso a Equipo, OWNER con gestión de invitaciones, login, recuperación visible, logout, registro visible sin crear cuentas y layouts de 390 px y 1440 px sin overflow. La consola no mostró errores de aplicación; únicamente el aviso esperado de claves Development. No se crearon identidades ni se enviaron invitaciones durante este QA.
 - Estado: **CERRADO / APROBADO** por decisión explícita del propietario. El cierre comprende Security A0.5 completo, incluidos los subalcances A, B, C y D; las etiquetas C/D no agregan en este ADR contratos o evidencia distintos de los ya documentados. Ese cierre no autorizó A0.6; la autorización posterior se limita al resultado A0.6-A documentado a continuación.
 
-## Correctivo operativo de acceso e invitaciones de Equipo B — IMPLEMENTADO / EN REVISIÓN
+## Correctivo operativo de acceso e invitaciones de Equipo B — CERRADO / APROBADO
 
 - No cambia la decisión aprobada: Clerk sigue siendo autoridad de identidad y NestJS conserva `User`, `Organization`, `Membership`, tenant y rol como autoridad de negocio.
 - Se elimina del recorrido normal la competencia visual entre autenticación y onboarding. Login redirige directamente al dashboard; registro termina en `/dashboard/setup`, ya bajo sesión Clerk. El comando backend permanece `POST /auth/clerk/onboarding` y mantiene su transacción e invariantes de A0.3-A.
@@ -302,7 +302,15 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 - Una invitación abierta con una sesión distinta exige un cambio explícito de cuenta preservando el ticket en el navegador. El UUID local continúa siendo el único localizador enviado al backend. Los errores 401/403/409 se consideran terminales y no se reintentan; 429/503 y fallos transitorios conservan reintento real.
 - El diagnóstico del caso reportado distinguió una invitación nueva todavía pendiente de otra anterior revocada; no se identificó de forma concluyente cuál enlace se abrió. La cuenta OWNER indicada no correspondía al correo invitado. El flujo dirige al destinatario a la invitación vigente y a su propia cuenta, conservando el control de identidad.
 - QA con Clerk Development y PostgreSQL desechable confirmó login directo, onboarding restringido, aceptación completa `PENDING → ACCEPTED`, creación única de Membership y entrada al dashboard, además de estado revocado sin acción inútil. No se registran PII, tickets, tokens ni cookies como evidencia.
-- Estado: **IMPLEMENTADO / EN REVISIÓN** dentro de Equipo B. No reabre ni degrada el cierre de Security A0.5 y no autoriza A0.6-B, retiro legacy A0.7, Prisma o Supabase.
+- Estado: **CERRADO / APROBADO** dentro de Equipo B por decisión explícita del propietario. No reabre ni degrada el cierre de Security A0.5 y no autoriza A0.6-B, retiro legacy A0.7, Prisma o Supabase.
+
+## Estabilización operacional — 2026-09-11
+
+- La verificación autoritativa de sesión tiene un presupuesto total de 8 segundos. Una sesión/claim inválido conserva `401`; configuración, red o dependencia Clerk/PostgreSQL indisponible conserva `503` recuperable. El SDK no ofrece cancelación física por operación BAPI, por lo que los resultados tardíos se descartan y las compensaciones externas siguen siendo best-effort.
+- Bootstrap, onboarding e invitaciones preservan ese límite antes de cualquier escritura. Las generaciones de invitación se revalidan en la transacción para impedir que una respuesta tardía reviva o sustituya otra invitación.
+- La web acota token, petición y lectura, aborta al desmontar o cambiar identidad/tenant/rol y no permite efectos tardíos. Una aceptación local ya persistida puede repetirse por la misma identidad exacta sin enlazar por correo.
+- El middleware Clerk se aplica solo a dashboard y rutas de autenticación. La landing y `/[slug]` son públicas y no lo atraviesan; el `ClerkProvider` raíz todavía exige configuración válida de la instancia. Toda ruta de dashboard continúa verificando sesión y la API vuelve a resolver Membership/rol.
+- Esta estabilización no retira JWT/password legacy, no cambia Prisma ni amplía permisos. Evidencia completa en [`ESTABILIZACION_2026_09.md`](../quality/ESTABILIZACION_2026_09.md).
 
 ## Resultado de Security A0.6-A — CERRADO / APROBADO
 
@@ -327,7 +335,7 @@ Cada checkpoint requiere contrato/threat model, validaciones, QA aplicable, docu
 ## Nota operativa de recuperación local — 2026-08-20
 
 - La instancia PostgreSQL nativa tenía las cuatro reglas `host` locales en `trust`. Antes de corregirlas se creó `pg_hba.conf.backup-20260819-234953`; solo esas reglas volvieron a `scram-sha-256` y se verificó una conexión autenticada con contraseña SCRAM.
-- `barberflow` era superusuario. Se preservaron el rol, el login, la herencia, su base y sus objetos, retirando únicamente `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` y `BYPASSRLS`.
+- En la instancia nativa auditada en 2026-08-20, `barberflow` fue degradado. Esa evidencia no aplica al clúster Docker vigente: allí `barberflow`, creado como `POSTGRES_USER`, conserva `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` y `BYPASSRLS`. La API usa `kortek_runtime` y migraciones `kortek_migrator`, pero el administrador bootstrap debe retirarse o aislarse formalmente antes de producción.
 - La base nativa inspeccionada tiene 0 Users, 0 Organizations y 0 Memberships. Los 19 usuarios citados por A0.1 son evidencia histórica y no se reinterpretan como estado actual; este saneamiento no eliminó datos.
 
 ## Fuera de alcance del diagnóstico Security A0-D

@@ -76,6 +76,18 @@ Una compilación limpia no satisface este gate.
 
 Un cambio exclusivamente documental no ejecuta builds por defecto. Debe validar enlaces sintácticos y semánticos, estados, estructura de skills, ausencia de contradicciones, `git diff --check` y diff completo.
 
+## Gate automatizado base
+
+El workflow versionado de calidad debe ejecutar, sin secretos ni datos principales:
+
+- instalación congelada y peers estrictos, más auditoría de dependencias de producción;
+- Prisma validate/generate, migraciones desde cero, status/diff y verificación suplementaria de constraints/índices;
+- TypeScript y lint de API/web; para web, regeneración limpia de tipos Next sin un `next dev` concurrente;
+- unitarias API, pruebas web de lógica y componentes, builds de producción y E2E PostgreSQL aisladas;
+- smoke tests Chrome de una superficie pública en escritorio y 375 px.
+
+CI prueba reproducibilidad; no sustituye QA autenticado, roles, fallos externos ni aprobación del propietario.
+
 ## Relevo o pausa
 
 Si falta tiempo, contexto, acceso o validación:

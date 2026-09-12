@@ -38,7 +38,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
 
-  await app.listen(process.env.PORT ?? 3000);
+  // Local development is not exposed to the LAN by default. A deployment
+  // behind its own network boundary must opt in through HOST explicitly.
+  await app.listen(process.env.PORT ?? 3000, process.env.HOST ?? '127.0.0.1');
 }
 
 // Manejamos la promesa para cumplir con las reglas estrictas de ESLint

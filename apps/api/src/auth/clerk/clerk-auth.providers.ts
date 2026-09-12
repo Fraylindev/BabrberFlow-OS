@@ -15,7 +15,7 @@ export const CLERK_INVITATION_REDIRECT_URL = Symbol(
 /**
  * Función que, al invocarse, lee el entorno y devuelve la configuración Clerk.
  * Se evalúa en la primera petición que llegue al guard, no al arrancar el módulo.
- * Si las variables no están presentes en ese momento el guard falla cerrado con 401.
+ * Si las variables no están presentes en ese momento el guard falla cerrado con 503.
  */
 export type ClerkConfigLoader = () => ClerkAuthConfig;
 export type ClerkInvitationRedirectUrlLoader = () => string;

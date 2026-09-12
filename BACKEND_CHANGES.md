@@ -8,6 +8,55 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-11 — Estabilización: puntos 5–6 verificados
+
+- No cambia DTOs, Prisma ni contratos de negocio. El middleware Clerk deja fuera las rutas públicas `/` y `/[slug]`; dashboard, login, registro, continuidad e invitaciones continúan dentro del matcher y la API conserva sesión + Membership + rol como autoridad. El provider raíz sigue requiriendo configuración Clerk válida.
+- Gate web reproducible: regeneración limpia de tipos Next, 71 pruebas de lógica, 3 de componente, build y 3 smoke tests Chrome aprobados (desktop/375 px; una omisión intencional por proyecto). El archivo `.next/dev/types` histórico estaba truncado y fue retirado tras documentarlo.
+- CI versionado con PostgreSQL `_test`, propietario no privilegiado, migraciones, status/diff, verificador de constraints/índices, E2E y gates API/web. Auditoría de producción local sin vulnerabilidades.
+- Documentación vigente reconciliada y plan Configuración/CMS preparado sin implementación ni autorización de contrato. Puntos 1–6 **VERIFICADOS**.
+
+## 2026-09-11 — Auditoría PostgreSQL posterior a estabilización
+
+- No cambia endpoints, DTOs, Prisma ni contratos. Una conexión con la configuración real de la API confirmó `current_user = kortek_runtime`; migraciones usan `kortek_migrator`. Ambos roles carecen de `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` y `BYPASSRLS`, y runtime no tiene ownership ni DDL sobre la base de aplicación.
+- El rol bootstrap `barberflow` sí conserva todos esos atributos globales. Además, `kortek_runtime` mantiene CRUD general sobre las tablas de aplicación y `CONNECT` heredado hacia otras bases del clúster. Queda prohibido salir a producción hasta separar un administrador explícito fuera de la aplicación, retirar o bloquear el rol legacy con transferencia de ownership verificada y reducir grants runtime al mínimo probado. No se aplicaron cambios PostgreSQL en esta auditoría.
+
+## 2026-09-11 — Estabilización: punto 4 verificado
+
+- `GET /bookings` conserva rutas, filtros, roles y aislamiento, pero sustituye las relaciones Prisma completas por una proyección explícita: `{ id, clientId, professionalId, serviceId, startTime, endTime, status, client: { id, name, email, phone }, professional: { id, name }, service: { id, name, duration } }`. No expone `organizationId`, `userId`, teléfono/biografía del Professional, precio/metadatos del Service ni timestamps internos.
+- `POST /bookings`, `PATCH /bookings/:id` y `PATCH /bookings/:id/status` devuelven únicamente `{ id, clientId, professionalId, serviceId, startTime, endTime, status }`. El flujo público continúa construyendo su DTO propio desde esos campos. No cambia ningún DTO de entrada, permiso o transición.
+- `GET /analytics/dashboard` no cambia su cuerpo. Todas sus lecturas usan una única instantánea PostgreSQL `REPEATABLE READ`, con `maxWait` de 2 segundos y `timeout` de 8 segundos; `now`, `Organization.timeZone`, ingresos, conteos y Professional destacado quedan consistentes. El Professional se vuelve a limitar por `organizationId`.
+- Nuevo `GET /analytics/summary`, disponible para los cuatro roles B2B. Acepta `agendaPage` y `workloadPage` opcionales (enteros 1–1000000, por defecto 1) y pagina ambas listas a 20 registros. El día se obtiene de `Organization.timeZone` y se filtra antes de paginar; orden estable por hora/ID y nombre/ID.
+- `agenda` expone exclusivamente hora/estado y nombres necesarios, más totales completos, completadas y próxima reserva. OWNER/ADMIN/RECEPTIONIST reciben el tenant; BARBER queda limitado a su Professional vinculado y, sin vínculo, recibe cero resultados. `workload` solo existe para roles globales y cuenta profesionales ACTIVE, incluida la cantidad total sin citas, sobre todo el conjunto.
+- La web deja de consultar todo `/bookings` y la primera página de `/professionals`. Operación y métricas son dependencias independientes: un fallo no falsifica ni borra la otra fuente. Fechas/horas se presentan con el instante y zona autoritativos, y ambas listas ofrecen paginación visible.
+- Sin Prisma ni migración. Todas las lecturas de cada endpoint Analytics usan snapshot `REPEATABLE READ` acotado. Aprobaron 437 unitarias API/11 omitidas, 138 E2E aisladas, 71 pruebas web, TypeScript/lint/build y QA real OWNER/BARBER, tenant A→B→A, error/reintento y 375 px. Punto 4 **VERIFICADO**; evidencia detallada en `docs/quality/ESTABILIZACION_2026_09.md`.
+
+## 2026-09-11 — Estabilización: punto 3 verificado
+
+- Sin endpoints, DTOs, permisos ni modelos nuevos. La verificación Clerk diferencia sesión inválida (`401`) de dependencia/configuración indisponible (`503`) y descarta resultados después del límite de 8 segundos. Bootstrap conserva ese significado ante fallo PostgreSQL; no anuncia onboarding por una caída de la base.
+- Invitaciones comparan la generación exacta al reservar/finalizar y aceptar. Un resultado tardío no revive ni sobreescribe otra generación. Revocación externa ya terminal permite completar la revocación local; fallo incierto queda `FAILED`, recuperable por los contratos existentes. Límite real `429` conserva Retry-After cuando Clerk lo proporciona. Compensación externa best-effort, sin afirmar cancelación física del SDK.
+- Una aceptación local ya persistida es repetible por la misma identidad aunque la consulta externa posterior no esté disponible; se resuelve por el vínculo local exacto y no por correo. Otra identidad continúa recibiendo rechazo neutro. Esto permite recuperar un bootstrap temporalmente fallido sin duplicar Membership ni depender de una invitación externa ya terminal.
+- TypeScript/lint/build, 430 unitarias y 132 E2E aisladas aprobadas. QA real aislado verificó login, cambio de tenant/rol, ciclo de invitación, cambio de rol, revocación, error/reintento y móvil. Se retiraron las dos identidades sintéticas, la base y los archivos del fixture; no se tocaron datos habituales. Punto 3 **VERIFICADO**, sin publicación ni cambio de aprobaciones históricas. Evidencia en [ESTABILIZACION_2026_09.md](docs/quality/ESTABILIZACION_2026_09.md).
+
+## 2026-09-10 — Estabilización: punto 2 verificado
+
+- Reparación aditiva `20260909120000_restore_invoice_integrity_checks` aplicada tras respaldo/restauración local explícitamente autorizados y comprobados. Conteos/huellas de negocio intactos; 20 migraciones, checks e índices verificados y diff Prisma sin diferencias. No se afirma recuperar pérdidas previas.
+- Runtime y migrador separados, con verificación por TCP, secretos distintos fuera de Git y procedimiento en `apps/api/ops`. PostgreSQL solo en loopback, conservando el volumen original.
+- 127 E2E aisladas aprobadas; QA real de lecturas OWNER en Equipo/Resumen con runtime. Copias temporales y contenedor de restauración eliminados; archivos protegidos intactos. Sin cambios de endpoints, DTOs o permisos de negocio.
+- Punto 3 en curso; no es cierre ni aprobación del objetivo completo. Sin commit/push.
+
+## 2026-09-09 — Estabilización: verificador de integridad del punto 2
+
+- Preparación local **EN CURSO**, sin publicar y sin modificar endpoints, datos o permisos. Se añade un CLI de solo lectura para comprobar definiciones y validación de checks/exclusiones, FKs tenant e índices críticos no completamente representados por Prisma.
+- Siete regresiones, TypeScript, lint y build aprobados; comprobación satisfactoria contra PostgreSQL aislado. La base habitual conserva el gate de respaldo/restauración pendiente de autorización; no se declara reconciliada.
+- Alcance, comandos y evidencia en [ESTABILIZACION_2026_09.md](docs/quality/ESTABILIZACION_2026_09.md).
+- Reparación aditiva preparada `20260909120000_restore_invoice_integrity_checks`, sin cambios de filas/modelo/contratos ni reescritura de ledger. Seis E2E aisladas aprobadas; no aplicada a la base habitual. Su aplicación sigue condicionada al respaldo/restauración autorizado y verificado.
+
+## 2026-09-09 — Estabilización secuencial: punto 1 verificado
+
+- Sin cambios de endpoints, DTOs, roles o persistencia. El listener API usa `HOST=127.0.0.1` por defecto; la exposición externa requiere configuración explícita.
+- Overrides transitivos de seguridad para multer y qs; validaciones API aprobadas, incluidas 406 unitarias (11 omitidas) y 121 E2E sobre PostgreSQL aislado con migraciones desde cero.
+- QA de compatibilidad completado tras recuperar PostgreSQL por Docker, con API real y sesión OWNER, sin mutaciones de datos. Se inicia el punto 2; no se declara todavía reconciliada la base habitual. Detalles en [ESTABILIZACION_2026_09.md](docs/quality/ESTABILIZACION_2026_09.md).
+
 ## 2026-09-09 — Equipo B: aprobación y reconciliación de esquema legacy
 
 **Estado:** **CERRADO / APROBADO** por decisión explícita del propietario. No cambia endpoints, DTOs, permisos, Prisma ni migraciones.

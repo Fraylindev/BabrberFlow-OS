@@ -353,11 +353,18 @@ describe('Security A0.4 team invitations (e2e)', () => {
       professionalCreated: true,
     });
 
+    const acceptedLocal = await prisma.db.teamInvitation.findUniqueOrThrow({
+      where: { id: invitation.id },
+    });
+    externalInvitations.delete(acceptedLocal.clerkInvitationId ?? '');
+    failGetUser = true;
+
     const second = await requestApp(app)
       .post(`/auth/clerk/invitations/${invitation.id}/accept`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
     expect(second.body).toEqual(first.body);
+    failGetUser = false;
 
     const user = await prisma.db.user.findUniqueOrThrow({
       where: { clerkUserId },
@@ -660,5 +667,138 @@ describe('Security A0.4 team invitations (e2e)', () => {
         },
       }),
     ).rejects.toBeDefined();
+  });
+
+  it.each(['resend', 'revoke'] as const)(
+    'rechaza aceptación verificada antes de %s sin crear identidad ni acceso parcial',
+    async (operation) => {
+      const owner = await createActor(UserRole.OWNER);
+      const email = `${unique('generation-race')}@a04.test`;
+      const invitation = await createInvitation(owner, email);
+      await markAccepted(invitation.id);
+      const clerkUserId = `user_${unique('generation-race')}`;
+      const token = `token_${unique('generation-race')}`;
+      sessions.set(token, clerkUserId);
+      addProfile(clerkUserId, email);
+      const before = await prisma.db.teamInvitation.findUniqueOrThrow({
+        where: { id: invitation.id },
+      });
+
+      clerkClient.invitations.getInvitationList.mockImplementationOnce(
+        async ({ query }) => {
+          const verified = externalInvitations.get(query ?? '');
+          if (!verified) throw new Error('Missing synthetic invitation');
+          const snapshot = { ...verified };
+          await requestApp(app)
+            .post(`/auth/clerk/invitations/${invitation.id}/${operation}`)
+            .set('Authorization', `Bearer ${owner.token}`)
+            .set(ORGANIZATION_ID_HEADER, owner.organizationId)
+            .expect(200);
+          return { data: [snapshot], totalCount: 1 };
+        },
+      );
+
+      await requestApp(app)
+        .post(`/auth/clerk/invitations/${invitation.id}/accept`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(409);
+      expect(await prisma.db.user.count({ where: { clerkUserId } })).toBe(0);
+      expect(
+        await prisma.db.membership.count({
+          where: { organizationId: owner.organizationId },
+        }),
+      ).toBe(1);
+      expect(
+        await prisma.db.professional.count({
+          where: { organizationId: owner.organizationId },
+        }),
+      ).toBe(0);
+      expect(
+        await prisma.db.auditLog.count({
+          where: { entityId: invitation.id, action: 'ACCEPT' },
+        }),
+      ).toBe(0);
+      const current = await prisma.db.teamInvitation.findUniqueOrThrow({
+        where: { id: invitation.id },
+      });
+      expect(current.status).toBe(
+        operation === 'resend'
+          ? TeamInvitationStatus.PENDING
+          : TeamInvitationStatus.REVOKED,
+      );
+      expect(current.updatedAt.getTime()).toBeGreaterThan(
+        before.updatedAt.getTime(),
+      );
+
+      if (operation === 'resend') {
+        expect(current.clerkInvitationId).not.toBe(before.clerkInvitationId);
+        await markAccepted(invitation.id);
+        await requestApp(app)
+          .post(`/auth/clerk/invitations/${invitation.id}/accept`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(201);
+        await requestApp(app)
+          .post(`/auth/clerk/invitations/${invitation.id}/accept`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(200);
+        expect(
+          await prisma.db.membership.count({
+            where: { organizationId: owner.organizationId },
+          }),
+        ).toBe(2);
+      }
+    },
+  );
+
+  it('un reenvío externo tardío no revive ni sobreescribe una generación posterior', async () => {
+    const owner = await createActor(UserRole.OWNER);
+    const invitation = await createInvitation(
+      owner,
+      `${unique('late-resend')}@a04.test`,
+    );
+    const externalId = `inv_${unique('late')}`;
+    let newerUpdatedAt!: Date;
+    clerkClient.invitations.createInvitation.mockImplementationOnce(
+      async ({ emailAddress, redirectUrl }) => {
+        externalInvitations.set(externalId, {
+          id: externalId,
+          emailAddress,
+          redirectUrl,
+          status: 'pending',
+        });
+        const reserved = await prisma.db.teamInvitation.findUniqueOrThrow({
+          where: { id: invitation.id },
+        });
+        expect(reserved.status).toBe(TeamInvitationStatus.RESENDING);
+        // Simulate a later recovered operation, not a change to production data.
+        newerUpdatedAt = new Date(reserved.updatedAt.getTime() + 1);
+        await prisma.db.teamInvitation.update({
+          where: { id: invitation.id },
+          data: {
+            status: TeamInvitationStatus.REVOKED,
+            revokedAt: new Date(),
+            updatedAt: newerUpdatedAt,
+          },
+        });
+        return externalInvitations.get(externalId)!;
+      },
+    );
+    await requestApp(app)
+      .post(`/auth/clerk/invitations/${invitation.id}/resend`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .set(ORGANIZATION_ID_HEADER, owner.organizationId)
+      .expect(503);
+    const current = await prisma.db.teamInvitation.findUniqueOrThrow({
+      where: { id: invitation.id },
+    });
+    expect(current.status).toBe(TeamInvitationStatus.REVOKED);
+    expect(current.updatedAt).toEqual(newerUpdatedAt);
+    expect(current.clerkInvitationId).not.toBe(externalId);
+    expect(externalInvitations.get(externalId)?.status).toBe('revoked');
+    expect(
+      await prisma.db.auditLog.count({
+        where: { entityId: invitation.id, action: 'RESEND' },
+      }),
+    ).toBe(0);
   });
 });

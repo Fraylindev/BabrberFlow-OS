@@ -23,6 +23,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`UI_PATTERNS.md`](product/UI_PATTERNS.md): patrones reutilizables de interacción.
 - [`FEATURE_BRIEF_TEMPLATE.md`](features/FEATURE_BRIEF_TEMPLATE.md): plantilla previa a una entrega funcional.
 - [`CONFIGURACION_CMS_PAGOS_VISION.md`](features/CONFIGURACION_CMS_PAGOS_VISION.md): visión futura no autorizada para Configuración/CMS, mini-sitio público, reserva pública y Pagos.
+- [`CONFIGURACION_CMS_PLAN.md`](features/CONFIGURACION_CMS_PLAN.md): próximo plan modular de Configuración/CMS, preparado pero no autorizado para implementar.
 
 ### Arquitectura y seguridad
 
@@ -36,6 +37,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 - [`DELIVERY_GATES.md`](quality/DELIVERY_GATES.md): controles por etapa y protocolo de relevo.
 - [`DEFINITION_OF_DONE.md`](quality/DEFINITION_OF_DONE.md): condiciones de terminación verificable.
+- [`ESTABILIZACION_2026_09.md`](quality/ESTABILIZACION_2026_09.md): ejecución y evidencia de los seis puntos de estabilización sobre la base auditada.
 - [`BACKEND_CHANGES.md`](../BACKEND_CHANGES.md): contratos de API y persistencia, leídos de lo más reciente a lo antiguo.
 - [`CHANGELOG.md`](../CHANGELOG.md): historia cronológica; una entrada describe su fecha, no el estado actual.
 - [`docs/history/`](history/): snapshots preservados que nunca sustituyen fuentes vigentes.

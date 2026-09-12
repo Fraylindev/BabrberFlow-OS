@@ -1,4 +1,8 @@
-import { INestApplication, UnauthorizedException } from '@nestjs/common';
+import {
+  INestApplication,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { UserRole } from '@prisma/client';
 import { request as httpRequest, type Server } from 'node:http';
@@ -93,6 +97,48 @@ describe('Security A0.5-A bootstrap and B2B dual auth (e2e)', () => {
   });
 
   afterAll(async () => app.close());
+
+  it('conserva 503 de infraestructura al entrar por bootstrap o por una ruta B2B', async () => {
+    const owner = await fixture(UserRole.OWNER);
+    for (const path of ['/auth/clerk/bootstrap', '/organizations/mine']) {
+      verifier.verify.mockRejectedValueOnce(
+        new ServiceUnavailableException(
+          'Servicio de autenticación no disponible temporalmente',
+        ),
+      );
+      const response = await requestApp(app)
+        .get(path)
+        .set('Authorization', `Bearer ${owner.token}`)
+        .set(ORGANIZATION_ID_HEADER, owner.organizationId)
+        .expect(503);
+      expect(response.body as unknown).toMatchObject({ statusCode: 503 });
+    }
+    await requestApp(app)
+      .get('/auth/clerk/bootstrap')
+      .set('Authorization', `Bearer ${owner.token}`)
+      .expect(200);
+  });
+
+  it('una caída de PostgreSQL en bootstrap no anuncia onboarding ni devuelve detalles internos', async () => {
+    const owner = await fixture(UserRole.OWNER);
+    const failure = jest
+      .spyOn(prisma.db.user, 'findUnique')
+      .mockRejectedValueOnce(new Error('private connection detail'));
+    try {
+      const response = await requestApp(app)
+        .get('/auth/clerk/bootstrap')
+        .set('Authorization', `Bearer ${owner.token}`)
+        .expect(503);
+      expect(response.body as unknown).toMatchObject({
+        message: 'No pudimos consultar tu acceso. Vuelve a intentarlo.',
+      });
+      expect(JSON.stringify(response.body)).not.toMatch(
+        /private connection|ONBOARDING_REQUIRED/,
+      );
+    } finally {
+      failure.mockRestore();
+    }
+  });
 
   function unique(label: string): string {
     sequence += 1;

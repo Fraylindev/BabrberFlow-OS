@@ -4,7 +4,11 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
-import { BookingsService } from './bookings.service';
+import {
+  bookingListResponseSelect,
+  bookingMutationResponseSelect,
+  BookingsService,
+} from './bookings.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
@@ -27,7 +31,10 @@ type TestBooking = {
 };
 type FindFirstArgs = [{ where: { status?: { not?: BookingStatus } } }];
 type CreateBookingArgs = [
-  { data: { startTime: Date; endTime: Date; [key: string]: unknown } },
+  {
+    data: { startTime: Date; endTime: Date; [key: string]: unknown };
+    select?: Prisma.BookingSelect;
+  },
 ];
 type UpdateBookingArgs = [
   {
@@ -37,6 +44,7 @@ type UpdateBookingArgs = [
       startTime: Date;
       endTime: Date;
     };
+    select?: Prisma.BookingSelect;
   },
 ];
 
@@ -138,6 +146,9 @@ describe('BookingsService — conflictos de reservas', () => {
 
     expect(result.id).toBe('booking-nuevo');
     expect(prisma.db.booking.create).toHaveBeenCalledTimes(1);
+    expect(prisma.db.booking.create.mock.calls[0][0].select).toEqual(
+      bookingMutationResponseSelect,
+    );
     expect(availability.assertAvailableForBooking).toHaveBeenCalledWith(
       prisma.db,
       ORG_ID,
@@ -365,6 +376,9 @@ describe('BookingsService — reprogramar (reschedule)', () => {
 
     expect(result.id).toBe(EXISTING_BOOKING.id);
     expect(prisma.db.booking.update).toHaveBeenCalledTimes(1);
+    expect(prisma.db.booking.update.mock.calls[0][0].select).toEqual(
+      bookingMutationResponseSelect,
+    );
   });
 
   // ── Nueva regla: sin ProfessionalService ─────────────────────────────────
@@ -518,6 +532,7 @@ describe('BookingsService - BARBER status authorization', () => {
         organizationId: ORG_ID,
         professionalId: PROFESSIONAL.id,
       },
+      select: bookingMutationResponseSelect,
     });
     expect(prisma.db.booking.update).toHaveBeenCalledWith({
       where: {
@@ -526,6 +541,7 @@ describe('BookingsService - BARBER status authorization', () => {
         professionalId: PROFESSIONAL.id,
       },
       data: { status: BookingStatus.CONFIRMED },
+      select: bookingMutationResponseSelect,
     });
   });
 
@@ -566,6 +582,7 @@ describe('BookingsService - BARBER status authorization', () => {
           professionalId: PROFESSIONAL.id,
         },
         data: { status },
+        select: bookingMutationResponseSelect,
       });
     },
   );
@@ -638,6 +655,7 @@ describe('BookingsService - BARBER status authorization', () => {
     expect(prisma.db.booking.update).toHaveBeenCalledWith({
       where: { id: 'booking-id', organizationId: ORG_ID },
       data: { status: BookingStatus.CANCELLED },
+      select: bookingMutationResponseSelect,
     });
   });
 
@@ -697,6 +715,7 @@ describe('BookingsService - BARBER status authorization', () => {
       expect(prisma.db.booking.update).toHaveBeenCalledWith({
         where: { id: 'booking-id', organizationId: ORG_ID },
         data: { status: targetStatus },
+        select: bookingMutationResponseSelect,
       });
     },
   );
@@ -768,19 +787,17 @@ describe('BookingsService - Client security regressions', () => {
     expect(prisma.db.booking.create).not.toHaveBeenCalled();
   });
 
-  it('selects only safe client contact fields in booking lists', async () => {
+  it('selects an explicit minimal booking projection for lists', async () => {
     prisma.db.booking.findMany.mockResolvedValue([]);
 
     await service.findAll(ORG_ID);
 
     const args = prisma.db.booking.findMany.mock.calls[0][0] as {
-      include: { client: { select: Record<string, boolean> } };
+      select: Record<string, unknown>;
     };
-    expect(args.include.client.select).toEqual({
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-    });
+    expect(args.select).toEqual(bookingListResponseSelect);
+    expect(args.select).not.toHaveProperty('organizationId');
+    expect(args.select).not.toHaveProperty('createdAt');
+    expect(args.select).not.toHaveProperty('updatedAt');
   });
 });

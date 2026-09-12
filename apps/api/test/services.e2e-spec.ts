@@ -559,7 +559,33 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
           .expect(200)
       ).body as unknown,
     );
-    expect(bookings.some((booking) => booking.id === bookingId)).toBe(true);
+    const historicalBooking = bookings.find(
+      (booking) => booking.id === bookingId,
+    );
+    expect(historicalBooking).toBeDefined();
+    expect(Object.keys(historicalBooking ?? {}).sort()).toEqual(
+      [
+        'client',
+        'clientId',
+        'endTime',
+        'id',
+        'professional',
+        'professionalId',
+        'service',
+        'serviceId',
+        'startTime',
+        'status',
+      ].sort(),
+    );
+    expect(Object.keys(asRecord(historicalBooking?.client)).sort()).toEqual(
+      ['email', 'id', 'name', 'phone'].sort(),
+    );
+    expect(
+      Object.keys(asRecord(historicalBooking?.professional)).sort(),
+    ).toEqual(['id', 'name'].sort());
+    expect(Object.keys(asRecord(historicalBooking?.service)).sort()).toEqual(
+      ['duration', 'id', 'name'].sort(),
+    );
 
     const publicAfter = asRecord(
       (

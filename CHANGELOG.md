@@ -4,6 +4,51 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-11 — Estabilización: gates y documentación verificados
+
+- Se diagnosticaron como escrituras parciales dos tipos generados de `.next/dev`; el nuevo gate limpia únicamente tipos generados, ejecuta `next typegen` y comprueba TypeScript.
+- Se añadieron pruebas de componente para la paginación del Resumen y smoke tests Chrome reales en desktop/375 px. El matcher Clerk se limita a autenticación/dashboard, por lo que landing y slugs públicos no atraviesan ese middleware; el provider raíz aún requiere configuración.
+- El workflow de calidad reproduce auditoría, Prisma, PostgreSQL aislado, integridad, pruebas y builds sin desplegar. Localmente aprobaron instalación estricta, audit sin vulnerabilidades, 71 pruebas web de lógica, 3 de componente, build y 3 smoke tests; la evidencia API/E2E completa del punto 4 permanece vigente.
+- Se reconciliaron estado modular, 20 migraciones, puertos, CI y límites de recuperación en las fuentes vigentes. El plan de Configuración/CMS queda **PENDIENTE DE APROBACIÓN**, sin código ni contrato implementado. Los puntos 1–6 quedan verificados.
+
+## 2026-09-11 — Auditoría de separación de roles PostgreSQL
+
+- Se verificó por conexión real que la API local usa `kortek_runtime` y las migraciones `kortek_migrator`, ambos sin atributos globales elevados. El rol bootstrap `barberflow` continúa como superusuario del clúster y runtime conserva grants DML más amplios de lo estrictamente necesario y acceso heredado a otras bases.
+- No se modificó PostgreSQL. Retirar o aislar el superusuario de aplicación nominal y recortar los grants runtime quedan como gate obligatorio antes de producción.
+
+## 2026-09-11 — Estabilización: proyecciones y lecturas consistentes verificadas
+
+- Reservas deja de exponer objetos Prisma completos de Professional, Service y Booking; responde solo los campos que consumen Agenda/Resumen y conserva contacto mínimo del Client.
+- Analytics mantiene el mismo contrato, pero fija zona/tiempo y agregados en una instantánea `REPEATABLE READ` acotada; el profesional destacado se vuelve a resolver dentro del tenant.
+- El Resumen usa una lectura operacional paginada y tenant-scoped: fecha del negocio, agenda y carga con totales completos, sin descargar el historial ni confundir una página de profesionales con todo el equipo. BARBER recibe solo su agenda.
+- Agenda y métricas fallan de forma independiente, terminan su carga y tienen reintento sin datos obsoletos. Las horas se presentan en la zona autoritativa del negocio; paginación y 375 px no tienen overflow.
+- Sin Prisma ni migración. Aprobaron 437 unitarias API/11 omitidas, 138 E2E aisladas, 71 pruebas web, TypeScript/lint/build y QA real OWNER/BARBER con tenant A→B→A y caída/recuperación. Punto 4 verificado; inicia exclusivamente el punto 5.
+
+## 2026-09-11 — Estabilización: acceso e invitaciones verificados
+
+- Distingue indisponibilidad de sesión inválida; acota esperas y protege invitaciones frente a respuestas tardías y cambios concurrentes de generación.
+- Cliente HTTP conserva errores HTTP no JSON y descarta solicitudes/efectos del contexto anterior. Finalización de invitación ofrece login sin sesión y se aísla por identidad/localizador, sin tocar el archivo protegido de continuidad.
+- La misma identidad puede repetir una aceptación local ya persistida aunque Clerk no vuelva a entregar el registro externo; no se enlaza por correo ni se amplía acceso a otra identidad.
+- 430 unitarias API, 132 E2E aisladas y 66 pruebas web aprobadas, con TypeScript/lint/build de ambas aplicaciones. QA real aislado completó login, tenant/rol, invitación, aceptación, cambio de rol, revocación, recuperación y 375 px. Fixture, dos identidades sintéticas y base temporal eliminados. Punto 3 verificado; inicia exclusivamente el punto 4. Sin commit/push.
+
+## 2026-09-10 — Estabilización: integridad y credenciales PostgreSQL verificadas
+
+- Se restauraron los dos checks de Invoice mediante migración aditiva, después de comprobar el respaldo en aislamiento y la conservación de las huellas de datos. Se separaron las credenciales runtime/migrador, se restringió PostgreSQL a loopback y se retiró la contraseña versionada de ejemplo. Esta evidencia no implicaba degradar el rol bootstrap del clúster.
+- Regresión de 127 E2E aprobada y QA real de Equipo/Resumen con el rol limitado. Copias temporales de recuperación eliminadas; respaldo preexistente y archivo protegido intactos.
+- Puntos 1–2 verificados; inicia el punto 3. Sin publicación ni ampliación a Configuración/CMS.
+
+## 2026-09-09 — Estabilización: preparación de integridad del punto 2
+
+- Verificador de catálogos PostgreSQL de solo lectura, con siete regresiones y validación en la instancia sintética aislada. No repara ni copia datos; complementa los comandos de Prisma.
+- Migración aditiva de restauración de los dos checks de Invoice preparada y validada mediante seis E2E aisladas, incluyendo históricos inválidos y repetibilidad. No aplicada a barberflow; sin modificaciones de filas ni contratos.
+- Punto 2 aún en curso: respaldo/restauración de la base habitual pendiente de autorización expresa. No se avanza al punto 3 ni se publica un checkpoint.
+
+## 2026-09-09 — Estabilización secuencial: punto 1 verificado
+
+- Actualización local de Next/eslint-config-next, sharp, multer y qs para resolver los avisos detectados; API y web enlazadas por defecto a loopback. No cambia contratos ni aprobaciones de módulos.
+- Audit de producción y peers limpios; validaciones API/web, Prisma y 121 E2E aisladas aprobadas. Tras recuperar PostgreSQL por Docker, QA OWNER real con navegación y recarga a Resumen/Equipo, modal cancelado, desktop/375 px sin overflow ni errores de consola.
+- Sin publicación. Inicia el punto 2; evidencia y continuación en [ESTABILIZACION_2026_09.md](docs/quality/ESTABILIZACION_2026_09.md).
+
 ## 2026-09-09 — Equipo B: aprobación y reconciliación de esquema legacy
 
 - El propietario confirmó que las invitaciones funcionan correctamente y aprobó explícitamente Equipo B (Entrega B Frontend y correctivo de invitaciones Clerk/estabilidad de acceso). El estado pasa de **IMPLEMENTADO / EN REVISIÓN** a **CERRADO / APROBADO**.

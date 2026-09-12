@@ -3,6 +3,7 @@ export async function runAuthOperation<T>(
   operation: (signal: AbortSignal) => Promise<T>,
   parentSignal?: AbortSignal,
   timeoutMs = 15_000,
+  timeoutError = new Error('La consulta de acceso tardó demasiado. Vuelve a intentarlo.'),
 ): Promise<T> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -15,7 +16,7 @@ export async function runAuthOperation<T>(
     };
     parentSignal?.addEventListener('abort', onAbort, { once: true });
     timer = setTimeout(() => {
-      const reason = new Error('La consulta de acceso tardó demasiado. Vuelve a intentarlo.');
+      const reason = timeoutError;
       controller.abort(reason);
       reject(reason);
     }, timeoutMs);

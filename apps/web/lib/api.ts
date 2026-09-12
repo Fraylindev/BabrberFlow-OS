@@ -4,7 +4,10 @@
  * manejar errores del backend (NestJS ValidationPipe) y tipar respuestas.
  */
 
+import { runAuthOperation } from './auth-operation.ts';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+export const API_REQUEST_TIMEOUT_MS = 30_000;
 
 export class ApiError extends Error {
   status: number;
@@ -32,11 +35,18 @@ let resolveApiAuth: ApiAuthResolver = async () => ({
   token: null,
   organizationId: null,
 });
+let authScope = new AbortController();
 
 export function configureApiAuth(resolver: ApiAuthResolver) {
+  authScope.abort();
+  const scope = new AbortController();
+  authScope = scope;
   resolveApiAuth = resolver;
   return () => {
-    resolveApiAuth = async () => ({ token: null, organizationId: null });
+    scope.abort();
+    if (authScope === scope) {
+      resolveApiAuth = async () => ({ token: null, organizationId: null });
+    }
   };
 }
 
@@ -51,40 +61,74 @@ async function requestWithHeaders<T>(
 ): Promise<ApiResponse<T>> {
   const { authContext, ...requestOptions } = options;
   const isPublicRequest = path.startsWith('/public/');
-  const auth =
-    authContext ??
-    (isPublicRequest ? { token: null, organizationId: null } : await resolveApiAuth());
+  const resolver = resolveApiAuth;
+  const scopeSignal = !authContext && !isPublicRequest ? authScope.signal : null;
+  const signals = [scopeSignal, requestOptions.signal].filter((signal): signal is AbortSignal =>
+    Boolean(signal),
+  );
+  const parentSignal = signals.length ? AbortSignal.any(signals) : undefined;
+  return runAuthOperation(
+    async (signal) => {
+      const auth =
+        authContext ?? (isPublicRequest ? { token: null, organizationId: null } : await resolver());
+      signal.throwIfAborted();
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...requestOptions,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
-      ...(auth.organizationId ? { 'x-organization-id': auth.organizationId } : {}),
-      ...requestOptions.headers,
+      const res = await fetch(`${API_URL}${path}`, {
+        ...requestOptions,
+        signal,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
+          ...(auth.organizationId ? { 'x-organization-id': auth.organizationId } : {}),
+          ...requestOptions.headers,
+        },
+      });
+
+      // 204 No Content u otras respuestas sin cuerpo
+      const text = await res.text();
+      signal.throwIfAborted();
+      let data: unknown = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        if (res.ok)
+          throw new ApiError(502, 'Recibimos una respuesta incompleta. Vuelve a intentarlo.');
+      }
+
+      if (!res.ok) {
+        // NestJS devuelve { message: string | string[], statusCode, error }
+        const body = data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
+        const message =
+          res.status >= 500
+            ? 'No pudimos completar la solicitud. Revisa tu conexión y vuelve a intentarlo.'
+            : typeof body.message === 'string'
+              ? body.message
+              : Array.isArray(body.message) &&
+                  body.message.every((item) => typeof item === 'string')
+                ? body.message.join('. ')
+                : 'No pudimos completar la solicitud. Vuelve a intentarlo.';
+        const retryAfterHeader = res.headers.get('Retry-After');
+        const retryAfterSeconds =
+          retryAfterHeader && /^\d+(?:\.\d+)?$/.test(retryAfterHeader)
+            ? Math.max(0, Math.ceil(Number(retryAfterHeader)))
+            : retryAfterHeader && Number.isFinite(Date.parse(retryAfterHeader))
+              ? Math.max(0, Math.ceil((Date.parse(retryAfterHeader) - Date.now()) / 1000))
+              : typeof body.retryAfterSeconds === 'number' &&
+                  Number.isFinite(body.retryAfterSeconds)
+                ? Math.max(0, Math.ceil(body.retryAfterSeconds))
+                : null;
+        throw new ApiError(res.status, message, retryAfterSeconds);
+      }
+
+      return { data: data as T, headers: res.headers };
     },
-  });
-
-  // 204 No Content u otras respuestas sin cuerpo
-  const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
-
-  if (!res.ok) {
-    // NestJS devuelve { message: string | string[], statusCode, error }
-    const message = Array.isArray(data?.message)
-      ? data.message.join('. ')
-      : data?.message || 'Ocurrió un error inesperado.';
-    const retryAfterHeader = res.headers.get('Retry-After');
-    const retryAfterSeconds =
-      retryAfterHeader && /^\d+(?:\.\d+)?$/.test(retryAfterHeader)
-        ? Math.max(0, Math.ceil(Number(retryAfterHeader)))
-        : typeof data?.retryAfterSeconds === 'number' && Number.isFinite(data.retryAfterSeconds)
-          ? Math.max(0, Math.ceil(data.retryAfterSeconds))
-          : null;
-    throw new ApiError(res.status, message, retryAfterSeconds);
-  }
-
-  return { data: data as T, headers: res.headers };
+    parentSignal,
+    API_REQUEST_TIMEOUT_MS,
+    new ApiError(
+      503,
+      'La solicitud tardó demasiado. Revisa el estado antes de volver a intentarlo.',
+    ),
+  );
 }
 
 async function request<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
@@ -97,17 +141,22 @@ export const api = {
     const url = params ? `${path}?${new URLSearchParams(params).toString()}` : path;
     return request<T>(url, { ...options, method: 'GET' });
   },
-  getWithHeaders: <T>(path: string, params?: Record<string, string>) => {
+  getWithHeaders: <T>(
+    path: string,
+    params?: Record<string, string>,
+    options: ApiRequestOptions = {},
+  ) => {
     const url = params ? `${path}?${new URLSearchParams(params).toString()}` : path;
-    return requestWithHeaders<T>(url, { method: 'GET' });
+    return requestWithHeaders<T>(url, { ...options, method: 'GET' });
   },
-  post: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-  put: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
-  patch: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  post: <T>(path: string, body?: unknown, options: ApiRequestOptions = {}) =>
+    request<T>(path, { ...options, method: 'POST', body: JSON.stringify(body) }),
+  put: <T>(path: string, body?: unknown, options: ApiRequestOptions = {}) =>
+    request<T>(path, { ...options, method: 'PUT', body: JSON.stringify(body) }),
+  patch: <T>(path: string, body?: unknown, options: ApiRequestOptions = {}) =>
+    request<T>(path, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
+  delete: <T>(path: string, options: ApiRequestOptions = {}) =>
+    request<T>(path, { ...options, method: 'DELETE' }),
 };
 
 // === Tipos que reflejan las entidades reales del backend (Prisma) ===
@@ -288,10 +337,9 @@ export interface Booking {
   clientId: string;
   professionalId: string;
   serviceId: string;
-  notes?: string | null;
   client?: ClientContact;
-  professional?: Professional;
-  service?: Service;
+  professional?: Pick<Professional, 'id' | 'name'>;
+  service?: Pick<Service, 'id' | 'name' | 'duration'>;
 }
 
 /**
@@ -401,4 +449,31 @@ export interface AnalyticsDashboard {
     name: string;
     completedBookings: number;
   } | null;
+}
+
+export interface DashboardOperationalSummary {
+  generatedAt: string;
+  timeZone: string;
+  agenda: {
+    items: Array<Pick<Booking, 'id' | 'startTime' | 'endTime' | 'status'> & {
+      client: { name: string };
+      service: { name: string };
+      professional: { name: string };
+    }>;
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    completed: number;
+    nextBookingId: string | null;
+  };
+  workload: {
+    items: Array<{ id: string; name: string; count: number }>;
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    idleCount: number;
+  } | null;
+  isBrandNew: boolean;
 }

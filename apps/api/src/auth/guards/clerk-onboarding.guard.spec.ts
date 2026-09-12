@@ -1,4 +1,8 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ClerkSessionVerifierService } from '../clerk/clerk-session-verifier.service';
 import { ClerkOnboardingGuard } from './clerk-onboarding.guard';
 import type { ClerkOnboardingRequest } from './clerk-onboarding.guard';
@@ -67,13 +71,23 @@ describe('ClerkOnboardingGuard', () => {
     );
   });
 
-  it('falla cerrado con UnauthorizedException genérico ante error inesperado', async () => {
+  it('falla cerrado con 503 genérico ante error inesperado de infraestructura', async () => {
     verifier.verify.mockRejectedValue(new Error('Network failure'));
 
     const context = createContext();
 
     await expect(guard.canActivate(context)).rejects.toThrow(
-      new UnauthorizedException('Sesión no válida'),
+      new ServiceUnavailableException(
+        'Servicio de autenticación no disponible temporalmente',
+      ),
     );
+  });
+
+  it('preserva un 503 explícito del verificador', async () => {
+    const failure = new ServiceUnavailableException(
+      'Servicio temporalmente no disponible',
+    );
+    verifier.verify.mockRejectedValue(failure);
+    await expect(guard.canActivate(createContext())).rejects.toBe(failure);
   });
 });

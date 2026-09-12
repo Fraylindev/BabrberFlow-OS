@@ -27,5 +27,14 @@ export const proxy = clerkMiddleware(
 );
 
 export const config = {
-  matcher: ['/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico)).*)'],
+  // Las páginas públicas no necesitan atravesar el middleware de autenticación.
+  // El middleware permanece en cada ruta que crea, recupera o consume sesión.
+  matcher: [
+    '/dashboard/:path*',
+    '/auth/:path*',
+    '/login/:path*',
+    '/register/:path*',
+    '/accept-invitation/:path*',
+    '/invitation-login/:path*',
+  ],
 };

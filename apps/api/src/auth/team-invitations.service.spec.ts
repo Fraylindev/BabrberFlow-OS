@@ -1,10 +1,12 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { ClerkAPIResponseError } from '@clerk/backend/errors';
-import { TeamInvitationStatus, UserRole } from '@prisma/client';
+import { Prisma, TeamInvitationStatus, UserRole } from '@prisma/client';
+import { CLERK_VERIFICATION_TIMEOUT_MS } from './clerk/clerk-deadline';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
@@ -27,7 +29,7 @@ function invitation(status: TeamInvitationStatus) {
       status === TeamInvitationStatus.CREATING ? null : 'inv_test',
     invitedByUserId: actorUserId,
     acceptedByUserId: null,
-    expiresAt: new Date('2026-09-20T12:00:00.000Z'),
+    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     acceptedAt: null,
     revokedAt: null,
     createdAt: now,
@@ -80,9 +82,13 @@ describe('TeamInvitationsService', () => {
   );
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
     teamInvitation.updateMany.mockResolvedValue({ count: 1 });
     teamInvitation.findFirst.mockResolvedValue(null);
+    revokeInvitation.mockResolvedValue({ id: 'inv_test', status: 'revoked' });
+    transaction.mockImplementation((callback: (client: typeof tx) => unknown) =>
+      callback(tx),
+    );
   });
 
   it('termina la transacción local antes de llamar a Clerk', async () => {
@@ -153,9 +159,15 @@ describe('TeamInvitationsService', () => {
     expect(teamInvitation.updateMany).toHaveBeenCalledWith({
       where: {
         id: invitationId,
-        status: { in: [TeamInvitationStatus.CREATING] },
+        organizationId,
+        status: TeamInvitationStatus.CREATING,
+        AND: { clerkInvitationId: null },
+        updatedAt: invitation(TeamInvitationStatus.CREATING).updatedAt,
       },
-      data: { status: TeamInvitationStatus.FAILED },
+      data: {
+        status: TeamInvitationStatus.FAILED,
+        updatedAt: expect.any(Date) as unknown,
+      },
     });
     expect(teamInvitation.update).not.toHaveBeenCalled();
   });
@@ -251,5 +263,147 @@ describe('TeamInvitationsService', () => {
       entity: 'TeamInvitation',
       entityId: invitationId,
     });
+  });
+
+  it('acota la creación y compensa una respuesta externa tardía sin publicar el enlace', async () => {
+    jest.useFakeTimers();
+    try {
+      const creating = invitation(TeamInvitationStatus.CREATING);
+      tx.teamInvitation.create.mockResolvedValue(creating);
+      let release!: (value: { id: string }) => void;
+      createInvitation.mockReturnValue(
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+      );
+      const result = service.create(organizationId, actorUserId, {
+        email: creating.email,
+        role: UserRole.BARBER,
+        expiresInDays: 30,
+      });
+      const rejected = expect(result).rejects.toBeInstanceOf(
+        ServiceUnavailableException,
+      );
+      await jest.advanceTimersByTimeAsync(CLERK_VERIFICATION_TIMEOUT_MS);
+      await rejected;
+      expect(teamInvitation.update).not.toHaveBeenCalled();
+      release({ id: 'inv_late_only' });
+      await jest.advanceTimersByTimeAsync(0);
+      expect(revokeInvitation).toHaveBeenCalledWith('inv_late_only');
+      expect(teamInvitation.update).not.toHaveBeenCalled();
+      expect(jest.getTimerCount()).toBe(0);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('no sobreescribe una generación nueva cuando el reenvío pierde su reserva', async () => {
+    const original = invitation(TeamInvitationStatus.PENDING);
+    teamInvitation.findFirst.mockResolvedValue(original);
+    createInvitation.mockResolvedValue({ id: 'inv_losing_generation' });
+    teamInvitation.update.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('not found', {
+        code: 'P2025',
+        clientVersion: 'test',
+      }),
+    );
+    await expect(
+      service.resend(organizationId, actorUserId, invitationId),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    expect(teamInvitation.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: invitationId,
+          organizationId,
+          status: TeamInvitationStatus.RESENDING,
+          AND: { clerkInvitationId: original.clerkInvitationId },
+          updatedAt: expect.any(Date) as unknown,
+        },
+      }),
+    );
+    expect(revokeInvitation).toHaveBeenLastCalledWith('inv_losing_generation');
+    expect(teamInvitation.updateMany).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: {
+          id: invitationId,
+          organizationId,
+          status: TeamInvitationStatus.RESENDING,
+          AND: { clerkInvitationId: original.clerkInvitationId },
+          updatedAt: expect.any(Date) as unknown,
+        },
+      }),
+    );
+    expect(log).not.toHaveBeenCalled();
+  });
+
+  it('rechaza una revocación tardía si la generación reservada ya cambió', async () => {
+    teamInvitation.findFirst.mockResolvedValue(
+      invitation(TeamInvitationStatus.PENDING),
+    );
+    teamInvitation.update.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('not found', {
+        code: 'P2025',
+        clientVersion: 'test',
+      }),
+    );
+    await expect(
+      service.revoke(organizationId, actorUserId, invitationId),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(teamInvitation.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: invitationId,
+          organizationId,
+          status: TeamInvitationStatus.REVOKING,
+          AND: { clerkInvitationId: 'inv_test' },
+          updatedAt: expect.any(Date) as unknown,
+        },
+      }),
+    );
+    expect(log).not.toHaveBeenCalled();
+  });
+
+  it('completa de forma idempotente la revocación externa ya terminal', async () => {
+    teamInvitation.findFirst.mockResolvedValue(
+      invitation(TeamInvitationStatus.PENDING),
+    );
+    teamInvitation.update.mockResolvedValue(
+      invitation(TeamInvitationStatus.REVOKED),
+    );
+    revokeInvitation.mockRejectedValue(
+      new ClerkAPIResponseError('already revoked', {
+        status: 422,
+        data: [
+          { code: 'invitation_already_revoked', message: 'already revoked' },
+        ],
+      }),
+    );
+    await expect(
+      service.revoke(organizationId, actorUserId, invitationId),
+    ).resolves.toMatchObject({ status: TeamInvitationStatus.REVOKED });
+    expect(log).toHaveBeenCalledTimes(1);
+  });
+
+  it('deja FAILED ante revocación incierta y no anuncia que sigue pendiente', async () => {
+    teamInvitation.findFirst.mockResolvedValue(
+      invitation(TeamInvitationStatus.PENDING),
+    );
+    revokeInvitation.mockRejectedValue(new Error('network unavailable'));
+    await expect(
+      service.revoke(organizationId, actorUserId, invitationId),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    expect(teamInvitation.updateMany).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId,
+          status: TeamInvitationStatus.REVOKING,
+        }) as unknown,
+        data: expect.objectContaining({
+          status: TeamInvitationStatus.FAILED,
+        }) as unknown,
+      }),
+    );
+    expect(teamInvitation.update).not.toHaveBeenCalled();
+    expect(log).not.toHaveBeenCalled();
   });
 });
