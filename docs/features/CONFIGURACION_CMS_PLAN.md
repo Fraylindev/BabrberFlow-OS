@@ -1,6 +1,6 @@
 # Configuración/CMS — plan de próxima entrega
 
-Estado: **C1 IMPLEMENTADO / EN REVISIÓN**. El propietario fijó D1–D6 y autorizó contrato/backend, migración aditiva y ensayos aislados, ya ejecutados. Detenerse después de C1; C2/C3, medios, pagos e integraciones permanecen sin autorización.
+Estado: **C1 CERRADO / APROBADO** por decisión explícita del propietario el 2026-09-12 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. El propietario fijó D1–D6 y aprobó el contrato/backend, migración aditiva y ensayos aislados entregados. Detenerse después de C1; C2/C3, medios, pagos e integraciones permanecen sin autorización.
 
 Checkpoint 2026-09-12: tras la [auditoría y brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md), la autorización expresa resuelve D1–D6. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) define la implementación y evidencia. La secuencia C1 → aprobación backend → C2 → C3 se conserva; ninguna aprobación se deduce de un commit/push.
 
@@ -62,4 +62,4 @@ No se salta de C0 a UI ni se agrupan C1–C3 en un checkpoint por conveniencia.
 
 C0 puede solicitar aprobación para contrato solo cuando exista un inventario código/schema/consumidores, matriz campo × visibilidad × rol, flujo borrador/publicado, no-alcance por fase, amenazas, estrategia de compatibilidad/migración y criterios observables de QA. Este documento por sí solo no satisface ese gate.
 
-La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y autorizó C1. La salida actual es un checkpoint backend validado para su revisión, sin iniciar C2/C3.
+La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y aprobó explícitamente C1. El contrato backend queda cerrado; C2/C3 requieren autorización propia y no se inician por esta aprobación.

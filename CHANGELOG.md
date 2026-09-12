@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-12 — Configuración/CMS C1 cerrado y aprobado
+
+- Aprobación explícita del propietario («Apruebo C1») sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`: **C1 CERRADO / APROBADO**.
+- Sincronizados PROJECT_MASTER, BACKEND_CHANGES, contrato C1, plan e índice documental. Se conserva la evidencia e incidencias de la implementación aprobada; este registro no cambia código ni ejecuta migraciones.
+- C2/C3 permanecen sin iniciar y pendientes de autorización; tampoco se ejecuta despliegue habitual/productivo. Validación exclusivamente documental de estados, enlaces y diff.
+
 ## 2026-09-12 — Configuración/CMS C1 backend implementado, en revisión
 
 - Ejecutado C1 sobre `5cbe35a` con D1–D6 fijadas por el propietario: agregado editorial aditivo separado, DTOs/normalización, permisos, preview privado, publicación/retiro, revisión optimista, idempotencia y auditoría según D5. [Contrato y evidencia](docs/features/CONFIGURACION_CMS_C1_CONTRATO.md).

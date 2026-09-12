@@ -1,6 +1,6 @@
 # Configuración/CMS C1 — contrato y evidencia backend
 
-Fecha: 2026-09-12. Estado: **IMPLEMENTADO / EN REVISIÓN**. Base: `5cbe35a`, rama `ai/antigravity-qa`. El propietario fijó D1–D6 y autorizó ejecutar C1 completo y detenerse. C2/C3, medios, promociones, banca, notificaciones, Pagos y hallazgos fuera de D6 siguen sin autorización. No se modifica frontend ni los modelos Booking, Invoice, Payment o Professional.
+Fecha: 2026-09-12. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo C1») sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. Base de implementación: `5cbe35a`, rama `ai/antigravity-qa`. El propietario fijó D1–D6 y autorizó ejecutar C1 completo y detenerse. C2/C3, medios, promociones, banca, notificaciones, Pagos y hallazgos fuera de D6 siguen sin autorización. No se modifica frontend ni los modelos Booking, Invoice, Payment o Professional.
 
 Este contrato concreta las secciones 4–8, 10 y 11 del [brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md). Sus propuestas D1–D6 quedan sustituidas por las decisiones expresas del propietario y este contrato; C0 conserva su evidencia histórica.
 
@@ -134,4 +134,4 @@ Incidencias resueltas antes del resultado final: sandbox impidió initdb y resol
 
 Incidencia de inspección del restore, fuera de C1: el verificador textual existente devolvió exit 1 por `ProfessionalWeeklySchedule_minutes_check`; pg_dump/restore elimina un par de paréntesis redundantes de una conjunción. Las desigualdades y límites son idénticos por asociatividad de AND. La comprobación SQL independiente de todas las combinaciones de borde y rango (start −1…1441, end −1…1442) confirma cero diferencias; constraints validados e índices válidos. No se modificó ese modelo, constraint, verificador ni hallazgo fuera de D6. Esta incidencia no se cuenta como un pase del verificador textual sobre el restore.
 
-Sin aprobación del backend ni autorización de C2/C3. **C1 completo para revisión; detenerse aquí.** El SHA local/remoto y la limpieza final se reportan en la entrega Git; commit/push no equivalen a despliegue o aprobación.
+**C1 CERRADO / APROBADO** por el propietario el 2026-09-12 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`, con SHA local/remoto verificado y árbol limpio en la entrega. La aprobación conserva el contrato, evidencia e incidencias documentados; no añade validaciones ni despliegue habitual/productivo. **Detenerse aquí: C2/C3 pendientes de autorización.**

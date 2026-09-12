@@ -8,6 +8,10 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-12 — Aprobación explícita de Configuración/CMS C1
+
+El propietario aprobó C1 («Apruebo C1») sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. Estado: **CERRADO / APROBADO**. Se conserva el [contrato y evidencia C1](docs/features/CONFIGURACION_CMS_C1_CONTRATO.md), incluidas D1–D6 e H1/H2, sin cambios de código, API o persistencia en este registro. C2/C3 y despliegue habitual/productivo siguen pendientes de autorización.
+
 ## 2026-09-12 — Configuración/CMS C1: contrato/backend implementado, en revisión
 
 El propietario fijó D1–D6 y autorizó C1 completo con parada antes de C2/C3. [Contrato, amenazas, despliegue, rollback y evidencia](docs/features/CONFIGURACION_CMS_C1_CONTRATO.md). **IMPLEMENTADO / EN REVISIÓN**, sin aprobación backend ni autorización frontend.
