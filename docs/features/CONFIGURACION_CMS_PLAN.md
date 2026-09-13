@@ -1,6 +1,6 @@
 # Configuración/CMS — plan de próxima entrega
 
-Estado: **C1 CERRADO / APROBADO** por decisión explícita del propietario el 2026-09-12 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. El propietario fijó D1–D6 y posteriormente aprobó **C2** el 2026-09-13 sobre `7dd9986264aeb1cb144351296626cfa65028349a`, documentado en [frontend y QA C2](CONFIGURACION_CMS_C2_FRONTEND.md). C3, medios, pagos e integraciones permanecen sin autorización. La autorización operacional del 2026-09-13 permite aplicar C1 en la única base de prueba y crear cuentas para QA; es independiente de la aprobación C2 y no autoriza un despliegue productivo.
+Estado: **C1 y C2 CERRADOS / APROBADOS**. C3 fue autorizado el 2026-09-13 y su [proyección pública backend](CONFIGURACION_CMS_C3_BACKEND.md) está **IMPLEMENTADA / EN REVISIÓN**. El frontend C3 espera aprobación explícita del backend y confirmación previa del cambio visible de `/{slug}` para tenants existentes. Medios, pagos e integraciones permanecen fuera. La autorización operacional del 2026-09-13 permitió aplicar C1 en la única base de prueba y crear cuentas para QA; no autoriza un despliegue productivo.
 
 Checkpoint 2026-09-12: tras la [auditoría y brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md), la autorización expresa resuelve D1–D6. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) define la implementación y evidencia. La secuencia C1 → aprobación backend → C2 → C3 se conserva; ninguna aprobación se deduce de un commit/push.
 

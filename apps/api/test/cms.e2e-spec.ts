@@ -305,6 +305,9 @@ describe('CMS C1 (PostgreSQL aislado, HTTP y guards reales)', () => {
       name: 'Nombre operativo',
       slug: tenant.slug,
       phone: '+18095551234',
+      description: null,
+      address: null,
+      googleMapsUrl: null,
     });
     expect(JSON.stringify(publicA.body)).not.toMatch(
       /organizationId|private|8095559999|Nombre B|Descripción nueva/,
@@ -323,9 +326,14 @@ describe('CMS C1 (PostgreSQL aislado, HTTP y guards reales)', () => {
       name: 'Nombre B',
       slug: tenant.slug,
       phone: '+18095552222',
+      description: 'Descripción nueva',
+      address: 'Dirección nueva',
+      googleMapsUrl: 'https://www.google.com/maps/place/Test',
     });
     expect(JSON.stringify(publicB.body)).not.toContain(tenant.id);
-    expect(JSON.stringify(publicB.body)).not.toContain('Descripción nueva'); // C3 no activado.
+    expect(JSON.stringify(publicB.body)).not.toMatch(
+      /private\.example\.test|Legacy privado|Legacy dirección|private|8095559999/,
+    );
     expect(
       await prisma.db.organization.findUnique({ where: { id: tenant.id } }),
     ).toEqual(before);

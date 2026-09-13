@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Configuración/CMS C3 backend implementado, en revisión
+
+- `booking-data` incorpora descripción, dirección y enlace de mapa únicamente desde el snapshot publicado; nombre/teléfono usan esa misma revisión y slug conserva su función de localizador.
+- La allowlist pública excluye UUID de tenant, correo, borrador, campos operativos, banca y legacy. Se mantienen retiro/inactividad neutros en catálogo, disponibilidad y creación.
+- Sin nueva ruta, Prisma, migración, roles ni cambios en reservas/Facturación/claims/perfil BARBER. Tipos, lint, build, 512 unitarias y 181 E2E aisladas pasan con exit 0.
+- Estado **IMPLEMENTADO / EN REVISIÓN**. El frontend que cambia visiblemente `/{slug}` no se inicia hasta aprobación backend y confirmación expresa de activación.
+
 ## 2026-09-13 — Configuración/CMS C2 cerrado y aprobado
 
 - Aprobación explícita del propietario («Apruebo C2») sobre `7dd9986264aeb1cb144351296626cfa65028349a`: **C2 CERRADO / APROBADO**.

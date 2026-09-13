@@ -229,6 +229,46 @@ describe('PublicBookingService - secure public creation', () => {
 });
 
 describe('PublicBookingService - active public catalog', () => {
+  it('projects only the published C3 organization fields without tenant internals', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
+    );
+    const publishedSnapshot = {
+      publicName: 'Nombre publicado',
+      description: 'Descripción publicada',
+      phone: '+18095551234',
+      address: 'Dirección publicada',
+      googleMapsUrl: 'https://www.google.com/maps/place/Test',
+    };
+    dependencies.prisma.db.organization.findUnique.mockResolvedValue({
+      ...ORGANIZATION,
+      name: 'Nombre operativo privado',
+      phone: '+18095559999',
+      email: 'private@example.test',
+      cmsPage: { isPublished: true, publishedSnapshot },
+    });
+    dependencies.prisma.db.service.findMany.mockResolvedValue([]);
+    dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+
+    const result = await service.getBookingData(ORGANIZATION.slug);
+
+    expect(result.organization).toEqual({
+      name: publishedSnapshot.publicName,
+      slug: ORGANIZATION.slug,
+      phone: publishedSnapshot.phone,
+      description: publishedSnapshot.description,
+      address: publishedSnapshot.address,
+      googleMapsUrl: publishedSnapshot.googleMapsUrl,
+    });
+    expect(JSON.stringify(result)).not.toMatch(
+      /00000000-0000-4000-8000-000000000001|private@example\.test|Nombre operativo privado|18095559999/,
+    );
+  });
+
   it('lists only active services from the resolved organization', async () => {
     const dependencies = createDependencies();
     const service = new PublicBookingService(

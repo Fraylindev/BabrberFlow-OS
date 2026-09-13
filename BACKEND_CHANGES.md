@@ -8,6 +8,12 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-13 — Configuración/CMS C3: proyección pública backend
+
+Estado: **IMPLEMENTADO / EN REVISIÓN**. [`GET /public/:slug/booking-data`](docs/features/CONFIGURACION_CMS_C3_BACKEND.md) amplía de forma aditiva `organization` a `{ name, slug, phone, description, address, googleMapsUrl }`. Salvo el slug localizador, los valores salen exclusivamente de `CmsPage.publishedSnapshot`; los opcionales son `string | null`. No se crea otra ruta y no se expone UUID de tenant, correo, borrador, campos operativos, banca ni metadatos internos.
+
+Las tres rutas públicas conservan el `404` neutro común para tenant inexistente, inactivo, borrado, sin publicar o retirado. Catálogo, disponibilidad, creación y reservas existentes mantienen el contrato C1. Sin Prisma/migración, roles, mutaciones, Facturación, claims B2C ni Professional. El frontend C3 y su activación visible esperan aprobación explícita de este backend y confirmación del propietario.
+
 ## 2026-09-12 — Aprobación explícita de Configuración/CMS C1
 
 El propietario aprobó C1 («Apruebo C1») sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. Estado: **CERRADO / APROBADO**. Se conserva el [contrato y evidencia C1](docs/features/CONFIGURACION_CMS_C1_CONTRATO.md), incluidas D1–D6 e H1/H2, sin cambios de código, API o persistencia en este registro. C2/C3 y despliegue habitual/productivo siguen pendientes de autorización.
