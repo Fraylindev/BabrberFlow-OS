@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Configuración/CMS C2 cerrado y aprobado
+
+- Aprobación explícita del propietario («Apruebo C2») sobre `7dd9986264aeb1cb144351296626cfa65028349a`: **C2 CERRADO / APROBADO**.
+- Sincronizados PROJECT_MASTER, evidencia C2, plan e índice documental. Se conservan implementación, QA y validaciones del candidato; este registro no cambia código, contratos, datos ni ejecuta nuevas pruebas o migraciones.
+- C3 y entregas posteriores permanecen pendientes de autorización propia. Validación documental de enlaces, estados y diff.
+
 ## 2026-09-13 — Configuración/CMS C2 frontend implementado, en revisión
 
 - Editor `/dashboard/settings` y preview autenticado sobre C1 aprobado: cinco campos, controles optimistas, confirmaciones OWNER, comparación de conflictos y reintento idempotente tras resultado incierto. ADMIN prepara/revisa; BARBER/RECEPTIONIST sin nuevo acceso CMS. [Implementación y QA](docs/features/CONFIGURACION_CMS_C2_FRONTEND.md).

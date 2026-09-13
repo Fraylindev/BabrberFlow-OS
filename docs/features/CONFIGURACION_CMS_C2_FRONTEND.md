@@ -1,6 +1,6 @@
 # Configuración/CMS C2 — editor y preview privado
 
-Entrega: 2026-09-13. **IMPLEMENTADO / EN REVISIÓN**, autorizado expresamente por el propietario después de la aprobación C1 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. Base C2: `a03742f955692a6735d5af5f4cde9738565505c6`, rama `ai/antigravity-qa`, árbol inicial limpio. Pendiente auditoría y aprobación del propietario; C3 no está autorizado.
+Entrega: 2026-09-13. **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo C2») sobre `7dd9986264aeb1cb144351296626cfa65028349a`. C2 fue autorizado después de la aprobación C1 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. Base C2: `a03742f955692a6735d5af5f4cde9738565505c6`, rama `ai/antigravity-qa`, árbol inicial limpio. Se conserva la evidencia del candidato aprobado; C3 no está autorizado.
 
 ## Brief y aceptación
 
@@ -14,7 +14,7 @@ Una instancia por visita y claves por usuario/tenant/rol aíslan lecturas, formu
 
 Se reutilizan Field, Button, Card, Modal, PageHeader, React Query y cliente HTTP central. QA exige escritorio/375 px, acciones alcanzables, teclado, foco y anuncios accesibles, cuatro roles, dos tenants, conflictos y respuestas tardías. TypeScript, lint y build deben terminar con exit 0; pruebas automáticas no sustituyen navegador autenticado.
 
-Fuera de alcance: C3/rutas públicas nuevas, H5, medios, promociones, banca, notificaciones, Pagos y cambios de contrato. La autorización posterior del propietario permite aplicar C1 en la única base existente, identificada expresamente como datos de prueba, y crear los cuatro roles en dos negocios. No es un despliegue productivo ni aprobación de C2.
+Fuera de alcance: C3/rutas públicas nuevas, H5, medios, promociones, banca, notificaciones, Pagos y cambios de contrato. La autorización posterior del propietario permite aplicar C1 en la única base existente, identificada expresamente como datos de prueba, y crear los cuatro roles en dos negocios. Esa autorización operacional no constituía aprobación de C2; el cierre explícito posterior se registra en la cabecera. No es un despliegue productivo.
 
 ## Entorno autorizado (2026-09-13)
 
@@ -72,4 +72,4 @@ URL de revisión local: `http://localhost:3001/dashboard/settings`. API y web se
 
 Norte queda sin publicar y con borrador preparado por ADMIN; Sur queda sin publicar con opcionales iniciales vacíos. Publicar es una acción explícita del OWNER. La página pública vigente solo consume nombre/teléfono; mini-sitio C3 no activado. Cachés ya descargadas en otros navegadores no se pueden retirar físicamente: se conserva la limitación C1 y la revalidación autoritativa de nuevas reservas. Revalidación de la experiencia pública corresponde a C3. H5 y los hallazgos fuera de D6 siguen reportados en C0, sin cambios.
 
-Siguiente paso: auditoría/aprobación del propietario sobre este candidato. No iniciar C3 ni entregas posteriores por inferencia.
+Cierre documental 2026-09-13: aprobación explícita del propietario sobre `7dd9986264aeb1cb144351296626cfa65028349a`. No cambia código ni ejecuta nuevas pruebas o migraciones; conserva los resultados anteriores. Siguiente paso: esperar autorización propia de C3. No iniciar C3 ni entregas posteriores por inferencia.
