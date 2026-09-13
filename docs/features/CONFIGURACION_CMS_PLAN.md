@@ -1,12 +1,12 @@
 # Configuración/CMS — plan de próxima entrega
 
-Estado: **C1 CERRADO / APROBADO** por decisión explícita del propietario el 2026-09-12 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. El propietario fijó D1–D6 y aprobó el contrato/backend, migración aditiva y ensayos aislados entregados. Detenerse después de C1; C2/C3, medios, pagos e integraciones permanecen sin autorización.
+Estado: **C1 CERRADO / APROBADO** por decisión explícita del propietario el 2026-09-12 sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. El propietario fijó D1–D6 y posteriormente autorizó **C2**, documentado en [frontend y QA C2](CONFIGURACION_CMS_C2_FRONTEND.md). C3, medios, pagos e integraciones permanecen sin autorización. La autorización operacional del 2026-09-13 permite aplicar C1 en la única base de prueba y crear cuentas para QA; no aprueba C2 ni un despliegue productivo.
 
 Checkpoint 2026-09-12: tras la [auditoría y brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md), la autorización expresa resuelve D1–D6. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) define la implementación y evidencia. La secuencia C1 → aprobación backend → C2 → C3 se conserva; ninguna aprobación se deduce de un commit/push.
 
 ## 1. Resultado y límites
 
-El siguiente módulo debe permitir que OWNER/ADMIN administren de forma segura la identidad pública y operación configurable de su negocio, preparando `/[slug]` como mini-sitio sin mezclar pagos, archivos o notificaciones antes de sus contratos. BARBER y RECEPTIONIST tendrán solo el acceso que se apruebe explícitamente; el plan no lo presume.
+El módulo permite que OWNER/ADMIN preparen la identidad pública de su negocio; solo OWNER publica/retira. BARBER y RECEPTIONIST no reciben acceso CMS. Slug, horario global y zona permanecen de solo lectura en C1–C3. La evolución de `/[slug]` a mini-sitio conserva su fase separada.
 
 Quedan fuera de la primera entrega: Cloudinary u otro proveedor, galería binaria, fotos de servicios, promociones ejecutables, cuentas bancarias, comprobantes, transferencias, Resend, `wa.me`, nuevos estados de Booking y cambios a Invoice/Payment.
 
@@ -62,4 +62,4 @@ No se salta de C0 a UI ni se agrupan C1–C3 en un checkpoint por conveniencia.
 
 C0 puede solicitar aprobación para contrato solo cuando exista un inventario código/schema/consumidores, matriz campo × visibilidad × rol, flujo borrador/publicado, no-alcance por fase, amenazas, estrategia de compatibilidad/migración y criterios observables de QA. Este documento por sí solo no satisface ese gate.
 
-La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y aprobó explícitamente C1. El contrato backend queda cerrado; C2/C3 requieren autorización propia y no se inician por esta aprobación.
+La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y aprobó explícitamente C1. C2 se ejecuta por su autorización posterior independiente; C3 requiere autorización propia después de la revisión de C2.

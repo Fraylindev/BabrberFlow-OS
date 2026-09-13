@@ -20,6 +20,17 @@ export function HomeIcon(props: IconProps) {
   );
 }
 
+export function SettingsIcon(props: IconProps) {
+  return (
+    <svg {...base} aria-hidden {...props}>
+      <path d="M3 5h14M3 10h14M3 15h14" />
+      <circle cx="7" cy="5" r="2" fill="var(--dash-sidebar-bg)" />
+      <circle cx="13" cy="10" r="2" fill="var(--dash-sidebar-bg)" />
+      <circle cx="8" cy="15" r="2" fill="var(--dash-sidebar-bg)" />
+    </svg>
+  );
+}
+
 export function CalendarIcon(props: IconProps) {
   return (
     <svg {...base} aria-hidden {...props}>

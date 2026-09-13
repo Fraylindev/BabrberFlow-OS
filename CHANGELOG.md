@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Configuración/CMS C2 frontend implementado, en revisión
+
+- Editor `/dashboard/settings` y preview autenticado sobre C1 aprobado: cinco campos, controles optimistas, confirmaciones OWNER, comparación de conflictos y reintento idempotente tras resultado incierto. ADMIN prepara/revisa; BARBER/RECEPTIONIST sin nuevo acceso CMS. [Implementación y QA](docs/features/CONFIGURACION_CMS_C2_FRONTEND.md).
+- Aislamiento por usuario/tenant/rol/visita, abortado y descarte tardío A → B → A; `no-store`, `noindex`, tipos H1/H2 mínimos e invalidación explícita de caché pública local tras publicar/retirar. Slug, horario y zona solo lectura.
+- Por autorización operacional explícita, aplicada migración 21 a la única base declarada de prueba, con respaldo y restore aislado verificados. Cuatro identidades Clerk y ocho Memberships nuevas en dos negocios. Sin secretos/fixtures operativos versionados ni cambio de contrato/backend.
+- Web TypeScript, lint, 74 pruebas de lógica, 15 de componente y build en exit 0. QA real cuatro roles, dos tenants, concurrencia entre pestañas, fallo de red/recuperación, publicación/retiro, escritorio/375 px, teclado, foco y semántica accesible.
+- **IMPLEMENTADO / EN REVISIÓN**, pendiente auditoría/aprobación del propietario. C3, H5, medios, promociones, banca, notificaciones y ampliación de Pagos fuera de alcance.
+
 ## 2026-09-12 — Configuración/CMS C1 cerrado y aprobado
 
 - Aprobación explícita del propietario («Apruebo C1») sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`: **C1 CERRADO / APROBADO**.

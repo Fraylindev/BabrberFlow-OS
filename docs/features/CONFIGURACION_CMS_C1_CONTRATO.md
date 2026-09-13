@@ -1,5 +1,7 @@
 # Configuración/CMS C1 — contrato y evidencia backend
 
+Actualización operacional 2026-09-13: el propietario autorizó posteriormente C2 y aplicar esta migración en la única base existente, declarada de prueba. Migración aplicada, respaldo/restauración comprobados y cuentas de QA creadas: [evidencia C2](CONFIGURACION_CMS_C2_FRONTEND.md). Las referencias siguientes a la base sin migrar y a la parada en C1 describen el checkpoint del 2026-09-12. El contrato no cambia; C3 sigue sin autorización.
+
 Fecha: 2026-09-12. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo C1») sobre `288a62d30e7005a849d9e6d107daed635f7a89b2`. Base de implementación: `5cbe35a`, rama `ai/antigravity-qa`. El propietario fijó D1–D6 y autorizó ejecutar C1 completo y detenerse. C2/C3, medios, promociones, banca, notificaciones, Pagos y hallazgos fuera de D6 siguen sin autorización. No se modifica frontend ni los modelos Booking, Invoice, Payment o Professional.
 
 Este contrato concreta las secciones 4–8, 10 y 11 del [brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md). Sus propuestas D1–D6 quedan sustituidas por las decisiones expresas del propietario y este contrato; C0 conserva su evidencia histórica.

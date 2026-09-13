@@ -6,6 +6,7 @@ import {
   TagIcon,
   ReceiptIcon,
   TeamIcon,
+  SettingsIcon,
 } from "./NavIcons";
 import type { UserRole } from "@/lib/api";
 
@@ -53,6 +54,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Organización",
     items: [
       { href: "/dashboard/team", label: "Equipo", icon: TeamIcon, roles: ["OWNER", "ADMIN"] },
+      { href: "/dashboard/settings", label: "Configuración", icon: SettingsIcon, roles: ["OWNER", "ADMIN"] },
     ],
   },
 ];

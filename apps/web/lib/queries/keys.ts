@@ -6,6 +6,10 @@
 import type { ServiceSort } from "../service-ui";
 
 export const queryKeys = {
+  cms: {
+    editor: (scope: string, visit: string) => ['cms', scope, visit, 'editor'] as const,
+    preview: (scope: string, visit: string) => ['cms', scope, visit, 'preview'] as const,
+  },
   bookings: {
     all: ["bookings"] as const,
   },

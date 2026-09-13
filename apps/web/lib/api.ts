@@ -173,8 +173,6 @@ export interface Organization {
   id: string;
   name: string;
   slug: string;
-  email?: string;
-  phone?: string | null;
   timeZone?: string;
 }
 
@@ -397,7 +395,6 @@ export interface InvoicePage {
 
 export interface PublicBookingData {
   organization: {
-    id: string;
     name: string;
     slug: string;
     phone: string | null;
