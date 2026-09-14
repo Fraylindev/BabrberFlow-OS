@@ -71,7 +71,7 @@ No es facturación fiscal y no incluye anulaciones, reembolsos, pagos parciales 
 
 ## 7. Visión futura: ampliaciones del mini-sitio y elección de pago
 
-La base C3 de mini-sitio, CTA y reserva descrita en la sección 5 está implementada/en revisión. Las ampliaciones siguientes son una dirección de producto **no implementada** y no sustituyen los flujos ni contratos vigentes:
+La base C3 de mini-sitio, CTA y reserva descrita en la sección 5 está cerrada/aprobada. Las ampliaciones siguientes son una dirección de producto **no implementada** y no sustituyen los flujos ni contratos vigentes:
 
 1. ampliar Configuración/CMS con horarios editables, branding, galería, fotos de servicios y promociones reales;
 2. extender el recorrido actual después de los datos mínimos con una elección de pago en local o transferencia;

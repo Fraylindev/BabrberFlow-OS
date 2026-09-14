@@ -1,6 +1,6 @@
 # Configuración/CMS C3 — mini-sitio público
 
-Entrega: 2026-09-13. Estado: **IMPLEMENTADO / EN REVISIÓN**. El propietario aprobó el backend C3 sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745` y confirmó expresamente la activación visible antes de iniciar este frontend. Rama `ai/antigravity-qa`. No hay despliegue productivo.
+Entrega: 2026-09-13. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo Frontend C3») el 2026-09-13 sobre `425641574b2504fd34967b9a4558218d74b7c11f`. El propietario había aprobado el backend C3 sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745` y confirmado expresamente la activación visible antes de iniciar este frontend. Rama `ai/antigravity-qa`. No hay despliegue productivo.
 
 ## Resultado y criterios
 
@@ -55,6 +55,8 @@ Entorno: build local de producción Next en `http://localhost:3001`, API en `htt
 
 El selector de fecha nativo del navegador de automatización necesitó entrada por segmentos; una pestaña del instrumento se recuperó abriendo otra sin afectar API, web ni datos. No se atribuye ese fallo al producto. El tenant de QA queda publicado y contiene la reserva sintética usada para comprobar la conservación exigida por D3.
 
+Hallazgo fuera de D6, reportado antes de la aprobación y no corregido en C3: una manipulación malformada de fecha durante la automatización provocó que el API registrara `RangeError: Invalid time value` en `professional-availability.util.ts`. El recorrido con fecha válida y la reserva pública completaron correctamente. Su endurecimiento requiere alcance propio; H5 continúa igualmente sin cambios.
+
 ## Gate
 
-Este checkpoint activa el comportamiento visible autorizado en el código y queda listo para auditoría del propietario. Commit/push no equivalen a aprobación final ni despliegue. C3 solo podrá marcarse **CERRADO / APROBADO** después de la aprobación explícita del propietario sobre el checkpoint frontend.
+El propietario aprobó explícitamente este checkpoint frontend sobre `425641574b2504fd34967b9a4558218d74b7c11f`. Configuración/CMS C3 queda **CERRADO / APROBADO**. La aprobación no equivale a despliegue productivo y no autoriza medios, promociones, banca, notificaciones, Pagos, H5 ni otra entrega posterior.

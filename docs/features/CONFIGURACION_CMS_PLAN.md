@@ -1,6 +1,6 @@
 # Configuración/CMS — plan de próxima entrega
 
-Estado: **C1, C2 y backend C3 CERRADOS / APROBADOS**. El propietario aprobó la [proyección pública backend](CONFIGURACION_CMS_C3_BACKEND.md) y confirmó el cambio visible de `/{slug}` el 2026-09-13. El [frontend C3](CONFIGURACION_CMS_C3_FRONTEND.md) está **IMPLEMENTADO / EN REVISIÓN**, pendiente de aprobación final. Medios, pagos e integraciones permanecen fuera. La autorización operacional del 2026-09-13 permitió aplicar C1 en la única base de prueba y crear cuentas para QA; no autoriza un despliegue productivo.
+Estado: **C1, C2 y C3 CERRADOS / APROBADOS**. El propietario aprobó la [proyección pública backend](CONFIGURACION_CMS_C3_BACKEND.md), confirmó el cambio visible de `/{slug}` y aprobó finalmente el [frontend C3](CONFIGURACION_CMS_C3_FRONTEND.md) el 2026-09-13. Medios, pagos e integraciones permanecen fuera. La autorización operacional del 2026-09-13 permitió aplicar C1 en la única base de prueba y crear cuentas para QA; no autoriza un despliegue productivo.
 
 Checkpoint 2026-09-12: tras la [auditoría y brief C0](CONFIGURACION_CMS_C0_AUDITORIA.md), la autorización expresa resuelve D1–D6. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) define la implementación y evidencia. La secuencia C1 → aprobación backend → C2 → C3 se conserva; ninguna aprobación se deduce de un commit/push.
 
@@ -62,4 +62,4 @@ No se salta de C0 a UI ni se agrupan C1–C3 en un checkpoint por conveniencia.
 
 C0 puede solicitar aprobación para contrato solo cuando exista un inventario código/schema/consumidores, matriz campo × visibilidad × rol, flujo borrador/publicado, no-alcance por fase, amenazas, estrategia de compatibilidad/migración y criterios observables de QA. Este documento por sí solo no satisface ese gate.
 
-La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y aprobó explícitamente C1. C2 queda cerrado/aprobado por su decisión posterior independiente; C3 sigue requiriendo autorización propia.
+La [auditoría C0](CONFIGURACION_CMS_C0_AUDITORIA.md) aporta esos entregables. El propietario resolvió D1–D6 y aprobó explícitamente C1. C2 y C3 quedaron cerrados/aprobados mediante decisiones posteriores independientes. Ninguna entrega posterior queda autorizada por esos cierres.

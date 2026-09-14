@@ -4,6 +4,13 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Configuración/CMS C3 frontend cerrado y aprobado
+
+- Aprobación explícita del propietario («Apruebo Frontend C3») sobre `425641574b2504fd34967b9a4558218d74b7c11f`: frontend C3 y Configuración/CMS C3 quedan **CERRADOS / APROBADOS**.
+- Se conserva la implementación y evidencia aprobadas: proyección publicada exclusiva, retiro público transversal, reserva existente preservada, regresión del asistente, 96 pruebas web, lint, tipos, build y QA real.
+- El hallazgo de fecha malformada en `professional-availability.util.ts` permanece reportado fuera de D6 y sin corrección en este cierre. H5 y las entregas posteriores tampoco cambian.
+- Esta aprobación no despliega a producción ni autoriza medios, promociones, banca, notificaciones, Pagos u otro módulo.
+
 ## 2026-09-13 — Configuración/CMS C3 frontend implementado, en revisión
 
 - Tras la aprobación explícita del backend C3 y la confirmación del cambio visible, `/{slug}` presenta nombre, descripción, teléfono y ubicación únicamente desde la revisión publicada, con CTA hacia el asistente existente.
