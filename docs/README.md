@@ -23,11 +23,12 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`UI_PATTERNS.md`](product/UI_PATTERNS.md): patrones reutilizables de interacción.
 - [`FEATURE_BRIEF_TEMPLATE.md`](features/FEATURE_BRIEF_TEMPLATE.md): plantilla previa a una entrega funcional.
 - [`CONFIGURACION_CMS_PAGOS_VISION.md`](features/CONFIGURACION_CMS_PAGOS_VISION.md): visión futura no autorizada para Configuración/CMS, mini-sitio público, reserva pública y Pagos.
-- [`CONFIGURACION_CMS_PLAN.md`](features/CONFIGURACION_CMS_PLAN.md): secuencia modular; C1/C2 cerrados y aprobados; C3 backend en revisión; D1–D6 fijadas.
+- [`CONFIGURACION_CMS_PLAN.md`](features/CONFIGURACION_CMS_PLAN.md): secuencia modular; C1/C2 y backend C3 cerrados/aprobados; frontend C3 en revisión; D1–D6 fijadas.
 - [`CONFIGURACION_CMS_C0_AUDITORIA.md`](features/CONFIGURACION_CMS_C0_AUDITORIA.md): auditoría y brief históricos; propuestas D1–D6 resueltas por la autorización C1 posterior.
 - [`CONFIGURACION_CMS_C1_CONTRATO.md`](features/CONFIGURACION_CMS_C1_CONTRATO.md): contrato backend, migración/rollback y evidencia C1; no autoriza frontend ni mini-sitio.
 - [`CONFIGURACION_CMS_C2_FRONTEND.md`](features/CONFIGURACION_CMS_C2_FRONTEND.md): editor/preview privado, integración C1 y QA con cuatro roles en dos negocios de prueba.
-- [`CONFIGURACION_CMS_C3_BACKEND.md`](features/CONFIGURACION_CMS_C3_BACKEND.md): proyección pública C3 implementada; pendiente de aprobación backend y confirmación antes del cambio visible de `/{slug}`.
+- [`CONFIGURACION_CMS_C3_BACKEND.md`](features/CONFIGURACION_CMS_C3_BACKEND.md): proyección pública C3 cerrada/aprobada y autorización del cambio visible de `/{slug}`.
+- [`CONFIGURACION_CMS_C3_FRONTEND.md`](features/CONFIGURACION_CMS_C3_FRONTEND.md): mini-sitio público, revalidación de retiro, integración de reserva y QA real de C3.
 
 ### Arquitectura y seguridad
 

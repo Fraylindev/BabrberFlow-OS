@@ -45,7 +45,7 @@ El alta inicial separa identidad y negocio: Clerk termina primero la sesión y `
 
 `Organization` es el tenant y `Membership` une `User × Organization × Role`. Toda consulta de negocio aplica `organizationId` derivado del contexto autenticado; BARBER añade ownership por Professional cuando el contrato lo exige.
 
-PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitaciones, vínculo B2C y Facturación. Las 20 migraciones vigentes se aplican desde cero sobre PostgreSQL 16; los checks, exclusiones e índices suplementarios se verifican además mediante el CLI de integridad y no deben reconstruirse por inferencia desde Prisma.
+PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitaciones, vínculo B2C, Configuración/CMS y Facturación. Las 21 migraciones vigentes se aplican desde cero sobre PostgreSQL 16; los checks, exclusiones e índices suplementarios se verifican además mediante el CLI de integridad y no deben reconstruirse por inferencia desde Prisma.
 
 ## Frontend
 
@@ -55,6 +55,7 @@ PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitacion
 - El gate limpio regenera los tipos Next antes de TypeScript; las pruebas web incluyen lógica, componentes y smoke tests Chrome en escritorio/375 px.
 - Las pantallas deben cubrir loading, empty, error/reintento, pending y success.
 - La autorización vive en API; una build limpia no sustituye QA en navegador.
+- `/{slug}` consume la proyección publicada de `booking-data`, revalida al recuperar foco y antes de montar la reserva, y presenta el mismo estado neutro para inexistente, inactivo, borrado o retirado. No recibe UUID de Organization ni correo privado.
 
 ## Persistencia administrada aprobada, no implementada
 

@@ -25,6 +25,8 @@
 
 ## Contenido, auditoría y finanzas
 
+- `CmsPage`: agregado editorial uno a uno por Organization, separado de los escalares operativos. Conserva borrador, revisión optimista, snapshot publicado y estado/fechas de publicación sin reutilizar `Organization.active` o `deletedAt`.
+- `CmsOperation`: recibo idempotente de mutaciones editoriales por organización, actor, tipo y clave; no guarda contenido ni PII.
 - `GalleryImage`: contenido asociado a Organization; su API/almacenamiento no está autorizado.
 - `AuditLog`: guarda organización, actor, acción, entidad e ID sin relación dura a User; no debe contener PII o notas.
 - `Invoice`: registro interno inmutable, único por Booking completada y tenant-consistente. Conserva el snapshot positivo `Decimal(65,2)` del precio del Service y moneda `DOP`; su estado API se deriva de la existencia de Payment.

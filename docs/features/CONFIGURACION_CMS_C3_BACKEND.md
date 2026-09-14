@@ -1,6 +1,6 @@
 # Configuración/CMS C3 — contrato público backend
 
-Entrega: 2026-09-13. Estado: **IMPLEMENTADO / EN REVISIÓN**, pendiente de aprobación explícita del backend antes de iniciar el frontend de C3. Base: `e7425e7`, rama `ai/antigravity-qa`. C1 y C2 permanecen cerrados/aprobados; D1–D6 no cambian.
+Entrega: 2026-09-13. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo backend C3 y confirmo la activación visible») sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745`. Base: `e7425e7`, rama `ai/antigravity-qa`. C1 y C2 permanecen cerrados/aprobados; D1–D6 no cambian.
 
 ## Resultado y alcance
 
@@ -31,9 +31,9 @@ Amenazas comprobadas: fuga de borrador o campos operativos, exposición del UUID
 
 El cambio de respuesta es aditivo. Los snapshots de compatibilidad de tenants existentes contienen únicamente nombre/teléfono; los tres campos nuevos aparecen como `null`, sin copiar columnas legacy. Altas posteriores siguen sin publicar. Clientes C1 pueden ignorar las claves añadidas. Revertir este lector elimina solo las claves añadidas y no altera snapshot, borrador, estado editorial ni reservas.
 
-## Activación controlada y gate
+## Activación controlada y gate cumplido
 
-Este checkpoint no cambia todavía la interfaz pública ni despliega a producción. El futuro frontend de C3 sí modificará visiblemente `/{slug}` para tenants existentes publicados: añadirá estructura de mini-sitio y mostrará descripción, dirección y enlace de mapa cuando estén publicados. Conforme a la instrucción del propietario, ese cambio visible no se aplica hasta recibir, después de revisar este contrato backend, aprobación explícita del backend y confirmación de la activación.
+Este checkpoint no cambió por sí mismo la interfaz pública ni desplegó a producción. El propietario aprobó después este contrato y confirmó expresamente el cambio visible de `/{slug}` para tenants existentes publicados. Esa decisión habilitó el frontend C3, documentado por separado en [`CONFIGURACION_CMS_C3_FRONTEND.md`](CONFIGURACION_CMS_C3_FRONTEND.md).
 
 Tras esa aprobación, el frontend deberá reconsultar `booking-data` al recuperar foco y antes de avanzar desde el perfil hacia la reserva, presentar un `404` neutro tras retiro/inactividad, mantener catálogo y asistente actuales, y consumir la allowlist sin propagar campos innecesarios. H5 queda reportado y no se corrige en C3.
 

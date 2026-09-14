@@ -25,9 +25,10 @@ export function usePublicBookingData(slug: string) {
   return useQuery({
     queryKey: publicBookingKeys(slug).data,
     queryFn: () => api.get<PublicBookingData>(`/public/${slug}/booking-data`),
-    // Los servicios/profesionales de una barbería casi no cambian durante
-    // una sesión de reserva — evita refetch en cada paso del wizard.
+    // C3: publicación/retiro debe comprobarse incluso dentro de la ventana
+    // de frescura cuando el visitante regresa a esta pestaña.
     staleTime: 60 * 1000,
+    refetchOnWindowFocus: "always",
   });
 }
 

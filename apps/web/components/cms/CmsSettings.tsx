@@ -349,8 +349,8 @@ function Editor({
           </p>
         )}
         <p className="text-sm text-[var(--dash-text-muted)]">
-          La vista previa permite revisar todos los campos. La página de reservas actual muestra el
-          nombre y el teléfono publicados; el mini-sitio completo corresponde a una etapa posterior.
+          La vista previa permite revisar todos los campos. El mini-sitio público muestra únicamente
+          la versión publicada y habilita nuevas reservas mientras la página permanezca publicada.
         </p>
       </Card>
       <div role="status" aria-live="polite" className="text-sm">

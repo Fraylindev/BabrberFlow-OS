@@ -48,12 +48,14 @@ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se l
 
 ## 5. Reserva pública y continuidad B2C
 
-1. `/public/:slug/booking-data` entrega catálogo y profesionales públicos mínimos;
-2. disponibilidad usa servicios/profesionales activos, horario efectivo y protección concurrente;
-3. la persona reserva como invitada con datos mínimos;
-4. Client y Booking se crean o reactivan atómicamente;
-5. la opción legacy de cuenta con contraseña permanece temporalmente en el contrato público como rollback;
-6. A0.6-A permite reclamar después una reserva con sesión Clerk mediante un vínculo `Client.userId`, sin Membership CUSTOMER.
+1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales;
+2. `/public/:slug/booking-data` entrega esa proyección, catálogo y profesionales públicos mínimos sin UUID de Organization;
+3. la página revalida publicación al recuperar foco y antes de abrir el asistente; inexistente, inactivo, borrado o retirado recibe una presentación neutra;
+4. disponibilidad usa servicios/profesionales activos, horario efectivo y protección concurrente;
+5. la persona reserva como invitada con datos mínimos;
+6. Client y Booking se crean o reactivan atómicamente; retirar bloquea altas nuevas y conserva reservas existentes;
+7. la opción legacy de cuenta con contraseña permanece temporalmente en el contrato público como rollback;
+8. A0.6-A permite reclamar después una reserva con sesión Clerk mediante un vínculo `Client.userId`, sin Membership CUSTOMER.
 
 A0.6-B/C/D todavía no implementan un recorrido Clerk público posterior a reserva ni autoservicio de cliente.
 
@@ -67,18 +69,14 @@ A0.6-B/C/D todavía no implementan un recorrido Clerk público posterior a reser
 
 No es facturación fiscal y no incluye anulaciones, reembolsos, pagos parciales o comisiones.
 
-## 7. Visión futura: mini-sitio y reserva con elección de pago
+## 7. Visión futura: ampliaciones del mini-sitio y elección de pago
 
-Este recorrido es una dirección de producto **no implementada** y no sustituye los flujos ni contratos vigentes:
+La base C3 de mini-sitio, CTA y reserva descrita en la sección 5 está implementada/en revisión. Las ampliaciones siguientes son una dirección de producto **no implementada** y no sustituyen los flujos ni contratos vigentes:
 
-1. Configuración/CMS publica la proyección mínima del negocio en `/[slug]`: información, ubicación, horarios, branding, galería, fotos de servicios y promociones reales;
-2. la persona elige servicio;
-3. elige profesional o “cualquiera”;
-4. elige fecha y hora;
-5. aporta sus datos mínimos;
-6. elige pago en local o transferencia;
-7. pago en local crea la reserva sin cobro confirmado;
-8. transferencia muestra cuentas habilitadas del tenant y admite un comprobante pendiente de verificación, sin crear automáticamente un `Payment`.
+1. ampliar Configuración/CMS con horarios editables, branding, galería, fotos de servicios y promociones reales;
+2. extender el recorrido actual después de los datos mínimos con una elección de pago en local o transferencia;
+3. pago en local crea la reserva sin cobro confirmado;
+4. transferencia muestra cuentas habilitadas del tenant y admite un comprobante pendiente de verificación, sin crear automáticamente un `Payment`.
 
 La relación entre reserva, retención de horario, comprobante, verificación, pago anticipado, Invoice y propina necesita un contrato futuro. El Payment completo único vigente no se usa como estado pendiente. Las notificaciones futuras prevén correo automático con Resend y una acción manual `wa.me` editable; cualquier mensaje debe representar el estado real de Booking. Ver [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md).
 

@@ -4,6 +4,19 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Configuración/CMS C3 frontend implementado, en revisión
+
+- Tras la aprobación explícita del backend C3 y la confirmación del cambio visible, `/{slug}` presenta nombre, descripción, teléfono y ubicación únicamente desde la revisión publicada, con CTA hacia el asistente existente.
+- Revalida al recuperar foco y antes de iniciar la reserva; retiro/inactividad muestran una presentación neutra y un fallo transitorio conserva reintento. Opcionales vacíos y catálogo no reservable tienen estados propios.
+- QA real OWNER cubrió perfil, reserva completa, retiro con `booking-data`/`availability`/`bookings` en 404, reserva interna conservada, republicación, teclado, foco, consola y 375 px sin overflow.
+- Web: 74 pruebas de lógica, 22 de componente, lint, tipos y build en exit 0. H5 y las entregas de medios, promociones, banca, notificaciones y Pagos permanecen fuera.
+- Estado **IMPLEMENTADO / EN REVISIÓN**; sin despliegue productivo y pendiente de aprobación final del propietario. [Alcance y evidencia](docs/features/CONFIGURACION_CMS_C3_FRONTEND.md).
+
+## 2026-09-13 — Configuración/CMS C3 backend cerrado y aprobado
+
+- Aprobación explícita del propietario («Apruebo backend C3 y confirmo la activación visible») sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745`: backend C3 **CERRADO / APROBADO**.
+- La misma decisión autoriza iniciar el frontend y aplicar el comportamiento visible previamente declarado para tenants publicados; no autoriza despliegue productivo ni entregas posteriores.
+
 ## 2026-09-13 — Configuración/CMS C3 backend implementado, en revisión
 
 - `booking-data` incorpora descripción, dirección y enlace de mapa únicamente desde el snapshot publicado; nombre/teléfono usan esa misma revisión y slug conserva su función de localizador.

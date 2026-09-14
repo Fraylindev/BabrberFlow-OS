@@ -24,17 +24,17 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
 - Profesionales, Servicios, Facturación interna y Equipo están cerrados/aprobados según sus checkpoints vigentes.
 - Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados; cualquier pago anticipado, transferencia, reembolso o propina requiere contrato posterior.
 - El Resumen sigue congelado como agregador, aunque sus correctivos transversales de aislamiento y estabilidad tienen estado propio.
-- Configuración/CMS y los módulos posteriores no se abren por la mera existencia de código legacy; requieren auditoría y autorización modular.
+- Configuración/CMS C1/C2 y el backend C3 están cerrados/aprobados; el mini-sitio frontend C3 está implementado/en revisión. Cualquier ampliación posterior requiere autorización modular propia.
 - Security A0.5 y A0.6-A están cerrados/aprobados. A0.6-B/C/D y el retiro legacy siguen pendientes de autorización.
 
 Este documento no convierte una visión futura o una pantalla existente en una capacidad aprobada.
 
 ## Visión futura registrada
 
-La evolución prevista, todavía sin autorización de implementación, está definida en [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md):
+La base C3 ya convierte `/{slug}` en un mini-sitio con la proyección publicada y el asistente existente. La evolución adicional, todavía sin autorización de implementación, está definida en [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md):
 
 - completar el panel en el orden Equipo → Configuración del negocio/CMS → Analytics → Resumen final;
-- convertir `/[slug]` en el mini-sitio tenant-scoped de cada negocio con información, ubicación, horarios, branding, galería, fotos de servicios, promociones, CTA y reserva pública;
+- ampliar el mini-sitio con horarios editables, branding, galería, fotos de servicios y promociones;
 - recorrer servicio → profesional o cualquiera → fecha/hora → datos mínimos del cliente → método de pago;
 - permitir pago en local sin cobro confirmado y transferencia con comprobante pendiente de verificación, sin crear automáticamente un `Payment`;
 - ampliar Pagos mediante un contrato formal futuro para pago anticipado, verificación, evidencia, pago pendiente y propina separada;
@@ -67,7 +67,7 @@ Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / AP
 - No iniciar A0.6-B/C/D, retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
 - No publicar precios, límites de planes, testimonios o cifras comerciales sin decisión y evidencia del propietario.
 - No crear un flujo de organizaciones adicionales hasta definir su contrato atómico, permisos, límites, auditoría y UX.
-- No implementar Configuración/CMS, mini-sitio, medios, promociones, cuentas bancarias, transferencias, comprobantes, propinas, Resend ni nuevos estados de Booking hasta completar y aprobar sus planes y contratos propios.
+- No ampliar Configuración/CMS o el mini-sitio más allá de C3 ni implementar medios, promociones, cuentas bancarias, transferencias, comprobantes, propinas, Resend o nuevos estados de Booking hasta completar y aprobar sus planes y contratos propios.
 
 ## Proceso
 

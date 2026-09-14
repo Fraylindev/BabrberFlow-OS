@@ -398,6 +398,9 @@ export interface PublicBookingData {
     name: string;
     slug: string;
     phone: string | null;
+    description: string | null;
+    address: string | null;
+    googleMapsUrl: string | null;
   };
   services: Pick<Service, 'id' | 'name' | 'description' | 'duration' | 'price'>[];
   professionals: Pick<Professional, 'id' | 'name' | 'bio' | 'avatar'>[];

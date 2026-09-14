@@ -10,9 +10,9 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ## 2026-09-13 — Configuración/CMS C3: proyección pública backend
 
-Estado: **IMPLEMENTADO / EN REVISIÓN**. [`GET /public/:slug/booking-data`](docs/features/CONFIGURACION_CMS_C3_BACKEND.md) amplía de forma aditiva `organization` a `{ name, slug, phone, description, address, googleMapsUrl }`. Salvo el slug localizador, los valores salen exclusivamente de `CmsPage.publishedSnapshot`; los opcionales son `string | null`. No se crea otra ruta y no se expone UUID de tenant, correo, borrador, campos operativos, banca ni metadatos internos.
+Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo backend C3 y confirmo la activación visible») sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745`. [`GET /public/:slug/booking-data`](docs/features/CONFIGURACION_CMS_C3_BACKEND.md) amplía de forma aditiva `organization` a `{ name, slug, phone, description, address, googleMapsUrl }`. Salvo el slug localizador, los valores salen exclusivamente de `CmsPage.publishedSnapshot`; los opcionales son `string | null`. No se crea otra ruta y no se expone UUID de tenant, correo, borrador, campos operativos, banca ni metadatos internos.
 
-Las tres rutas públicas conservan el `404` neutro común para tenant inexistente, inactivo, borrado, sin publicar o retirado. Catálogo, disponibilidad, creación y reservas existentes mantienen el contrato C1. Sin Prisma/migración, roles, mutaciones, Facturación, claims B2C ni Professional. El frontend C3 y su activación visible esperan aprobación explícita de este backend y confirmación del propietario.
+Las tres rutas públicas conservan el `404` neutro común para tenant inexistente, inactivo, borrado, sin publicar o retirado. Catálogo, disponibilidad, creación y reservas existentes mantienen el contrato C1. Sin Prisma/migración, roles, mutaciones, Facturación, claims B2C ni Professional. La aprobación y confirmación del propietario habilitaron el frontend C3; no autorizan despliegue productivo.
 
 ## 2026-09-12 — Aprobación explícita de Configuración/CMS C1
 
