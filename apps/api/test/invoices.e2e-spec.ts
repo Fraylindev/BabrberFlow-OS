@@ -700,7 +700,13 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
       asArray(openFrom.body as unknown).map((item) => asRecord(item).id),
     ).toContain(receptionInvoice.id);
 
-    for (const query of ['from=2026-08-11&to=2026-08-10', 'from=2026-02-30']) {
+    for (const query of [
+      'from=2026-08-11&to=2026-08-10',
+      'from=2026-02-30',
+      'from=92026-06-14',
+      'to=9999-99-99',
+      'from=14/mm/92026',
+    ]) {
       const invalid = await requestApp(app)
         .get(`/invoices?${query}`)
         .set('Authorization', `Bearer ${ownerToken}`);

@@ -28,6 +28,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
   const [resolvedProfessionalId, setResolvedProfessionalId] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [selectedStartTime, setSelectedStartTime] = useState("");
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
@@ -88,17 +89,20 @@ export function PublicMiniSite({ slug }: { slug: string }) {
   function handleSlotSelect(slot: PublicAvailabilitySlot) {
     setTime(slot.time);
     setResolvedProfessionalId(slot.professionalId);
+    setSelectedStartTime(slot.startTime);
   }
 
   async function handleConfirm() {
     setSubmitError(null);
+    if (!selectedStartTime) {
+      setSubmitError("Vuelve al paso de fecha y elige un horario antes de confirmar.");
+      return;
+    }
     try {
-      // H5 permanece fuera de C3: se conserva la conversión existente sin modificarla.
-      const startTime = new Date(`${date}T${time}:00`).toISOString();
       const response = await createBooking.mutateAsync({
         serviceId,
         professionalId: resolvedProfessionalId,
-        startTime,
+        startTime: selectedStartTime,
         clientName: clientName.trim(),
         clientPhone: clientPhone.trim(),
         clientEmail: clientEmail.trim() || undefined,
@@ -251,14 +255,31 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 slug={slug}
                 data={data}
                 serviceId={serviceId}
-                setServiceId={setServiceId}
+                setServiceId={(nextServiceId) => {
+                  if (nextServiceId === serviceId) return;
+                  setServiceId(nextServiceId);
+                  setProfessionalId(null);
+                  setResolvedProfessionalId("");
+                  setDate("");
+                  setTime("");
+                  setSelectedStartTime("");
+                }}
                 professionalId={professionalId}
-                setProfessionalId={setProfessionalId}
+                setProfessionalId={(nextProfessionalId) => {
+                  if (nextProfessionalId === professionalId) return;
+                  setProfessionalId(nextProfessionalId);
+                  setResolvedProfessionalId("");
+                  setDate("");
+                  setTime("");
+                  setSelectedStartTime("");
+                }}
                 date={date}
                 time={time}
                 onDateChange={(nextDate) => {
                   setDate(nextDate);
                   setTime("");
+                  setResolvedProfessionalId("");
+                  setSelectedStartTime("");
                 }}
                 onSlotSelect={handleSlotSelect}
                 clientName={clientName}

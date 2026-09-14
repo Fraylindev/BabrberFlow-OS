@@ -20,6 +20,44 @@ export function hasExplicitTimeZone(value: string): boolean {
 }
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
+const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const HH_MM_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+interface IsoDateParts {
+  year: number;
+  month: number;
+  day: number;
+}
+
+function utcDateFromParts({ year, month, day }: IsoDateParts): Date {
+  const value = new Date(0);
+  value.setUTCHours(0, 0, 0, 0);
+  value.setUTCFullYear(year, month - 1, day);
+  return value;
+}
+
+function parseIsoDate(value: string): IsoDateParts | null {
+  const match = ISO_DATE_PATTERN.exec(value);
+  if (!match) return null;
+  const parts = {
+    year: Number(match[1]),
+    month: Number(match[2]),
+    day: Number(match[3]),
+  };
+  if (parts.year < 1 || parts.month < 1 || parts.month > 12 || parts.day < 1) {
+    return null;
+  }
+  const normalized = utcDateFromParts(parts);
+  return normalized.getUTCFullYear() === parts.year &&
+    normalized.getUTCMonth() === parts.month - 1 &&
+    normalized.getUTCDate() === parts.day
+    ? parts
+    : null;
+}
+
+export function isValidIsoDate(value: string): boolean {
+  return parseIsoDate(value) !== null;
+}
 
 function formatterFor(timeZone: string): Intl.DateTimeFormat {
   const cached = formatterCache.get(timeZone);
@@ -75,18 +113,22 @@ export function getZonedDateParts(
   const day = Number(parts.day);
   return {
     date: `${parts.year}-${parts.month}-${parts.day}`,
-    dayOfWeek: new Date(Date.UTC(year, month - 1, day)).getUTCDay(),
+    dayOfWeek: utcDateFromParts({ year, month, day }).getUTCDay(),
     hour: Number(parts.hour),
     minute: Number(parts.minute),
     second: Number(parts.second),
   };
 }
 
-export function addDaysToIsoDate(date: string, days: number): string {
-  const [year, month, day] = date.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 1, day + days))
-    .toISOString()
-    .slice(0, 10);
+export function addDaysToIsoDate(date: string, days: number): string | null {
+  const parts = parseIsoDate(date);
+  if (!parts || !Number.isSafeInteger(days)) return null;
+  const result = utcDateFromParts(parts);
+  result.setUTCDate(result.getUTCDate() + days);
+  if (!Number.isFinite(result.getTime())) return null;
+  const year = result.getUTCFullYear();
+  if (year < 1 || year > 9999) return null;
+  return `${String(year).padStart(4, '0')}-${String(result.getUTCMonth() + 1).padStart(2, '0')}-${String(result.getUTCDate()).padStart(2, '0')}`;
 }
 
 export function zonedLocalDateTimeToUtc(
@@ -94,31 +136,36 @@ export function zonedLocalDateTimeToUtc(
   time: string,
   timeZone: string,
 ): Date | null {
-  const [year, month, day] = date.split('-').map(Number);
-  const [hour, minute] = time.split(':').map(Number);
-  const desiredUtc = Date.UTC(year, month - 1, day, hour, minute, 0);
+  const dateParts = parseIsoDate(date);
+  const timeMatch = HH_MM_PATTERN.exec(time);
+  if (!dateParts || !timeMatch) return null;
+  const hour = Number(timeMatch[1]);
+  const minute = Number(timeMatch[2]);
+  const desiredDate = utcDateFromParts(dateParts);
+  desiredDate.setUTCHours(hour, minute, 0, 0);
+  const desiredUtc = desiredDate.getTime();
   let candidate = desiredUtc;
 
-  for (let iteration = 0; iteration < 3; iteration += 1) {
-    const parts = getZonedDateParts(new Date(candidate), timeZone);
-    const representedAsUtc = Date.UTC(
-      Number(parts.date.slice(0, 4)),
-      Number(parts.date.slice(5, 7)) - 1,
-      Number(parts.date.slice(8, 10)),
-      parts.hour,
-      parts.minute,
-      parts.second,
-    );
-    candidate += desiredUtc - representedAsUtc;
-  }
+  try {
+    for (let iteration = 0; iteration < 3; iteration += 1) {
+      const parts = getZonedDateParts(new Date(candidate), timeZone);
+      const representedParts = parseIsoDate(parts.date);
+      if (!representedParts) return null;
+      const representedDate = utcDateFromParts(representedParts);
+      representedDate.setUTCHours(parts.hour, parts.minute, parts.second, 0);
+      candidate += desiredUtc - representedDate.getTime();
+    }
 
-  const result = new Date(candidate);
-  const verified = getZonedDateParts(result, timeZone);
-  return verified.date === date &&
-    verified.hour === hour &&
-    verified.minute === minute
-    ? result
-    : null;
+    const result = new Date(candidate);
+    const verified = getZonedDateParts(result, timeZone);
+    return verified.date === date &&
+      verified.hour === hour &&
+      verified.minute === minute
+      ? result
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 export function isIntervalInsideWindows(

@@ -29,6 +29,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`CONFIGURACION_CMS_C2_FRONTEND.md`](features/CONFIGURACION_CMS_C2_FRONTEND.md): editor/preview privado, integración C1 y QA con cuatro roles en dos negocios de prueba.
 - [`CONFIGURACION_CMS_C3_BACKEND.md`](features/CONFIGURACION_CMS_C3_BACKEND.md): proyección pública C3 cerrada/aprobada y autorización del cambio visible de `/{slug}`.
 - [`CONFIGURACION_CMS_C3_FRONTEND.md`](features/CONFIGURACION_CMS_C3_FRONTEND.md): mini-sitio público, revalidación de retiro, integración de reserva y QA real de C3.
+- [`RESERVA_PUBLICA_H5_FECHAS.md`](features/RESERVA_PUBLICA_H5_FECHAS.md): correctivos H5 y fecha estricta; contrato aditivo, superficies de entrada y evidencia.
 
 ### Arquitectura y seguridad
 

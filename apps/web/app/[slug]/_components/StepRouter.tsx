@@ -67,6 +67,7 @@ export function StepRouter(props: StepRouterProps) {
           slug={props.slug}
           serviceId={props.serviceId}
           professionalId={props.professionalId ?? ANY_PROFESSIONAL}
+          minimumBookingDate={data.minimumBookingDate}
           date={props.date}
           time={props.time}
           onDateChange={props.onDateChange}

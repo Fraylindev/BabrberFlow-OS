@@ -70,12 +70,11 @@ export class DashboardSummaryService {
       );
     }
     const today = getZonedDateParts(now, timeZone).date;
+    const tomorrow = addDaysToIsoDate(today, 1);
     const from = zonedLocalDateTimeToUtc(today, '00:00', timeZone);
-    const to = zonedLocalDateTimeToUtc(
-      addDaysToIsoDate(today, 1),
-      '00:00',
-      timeZone,
-    );
+    const to = tomorrow
+      ? zonedLocalDateTimeToUtc(tomorrow, '00:00', timeZone)
+      : null;
     if (!from || !to) {
       throw new ServiceUnavailableException(
         'No fue posible calcular el día del negocio.',

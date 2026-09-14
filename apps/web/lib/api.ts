@@ -394,6 +394,7 @@ export interface InvoicePage {
 // === Flujo público B2C (sin autenticación) ===
 
 export interface PublicBookingData {
+  minimumBookingDate: string;
   organization: {
     name: string;
     slug: string;
@@ -422,6 +423,7 @@ export interface PublicBookingResult {
 export interface PublicAvailabilitySlot {
   time: string; // "HH:mm"
   professionalId: string; // a quién quedaría asignada la cita en este bloque
+  startTime: string; // instante UTC autoritativo calculado por el backend
 }
 
 export interface PublicAvailabilityResponse {

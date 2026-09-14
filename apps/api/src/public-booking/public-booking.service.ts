@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  ServiceUnavailableException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -25,7 +26,11 @@ import {
   resolveBusinessHours,
 } from './availability.util';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
-import { zonedLocalDateTimeToUtc } from '../professionals/professional-availability.util';
+import {
+  getZonedDateParts,
+  isValidTimeZone,
+  zonedLocalDateTimeToUtc,
+} from '../professionals/professional-availability.util';
 import { projectContent } from '../cms/cms.projection';
 
 type PublicClientAction = 'CREATE' | 'RESTORE' | null;
@@ -74,6 +79,11 @@ export class PublicBookingService {
 
   async getBookingData(slug: string) {
     const organization = await this.resolveOrganization(slug);
+    if (!isValidTimeZone(organization.timeZone)) {
+      throw new ServiceUnavailableException(
+        'No fue posible calcular la fecha del negocio.',
+      );
+    }
     const content = projectContent(organization.cmsPage.publishedSnapshot);
     const [services, professionals] = await Promise.all([
       this.prisma.db.service.findMany({
@@ -97,6 +107,8 @@ export class PublicBookingService {
     ]);
 
     return {
+      minimumBookingDate: getZonedDateParts(new Date(), organization.timeZone)
+        .date,
       organization: {
         name: content.publicName,
         slug: organization.slug,
@@ -113,6 +125,15 @@ export class PublicBookingService {
 
   async getAvailability(slug: string, query: GetAvailabilityQueryDto) {
     const organization = await this.resolveOrganization(slug);
+    if (!isValidTimeZone(organization.timeZone)) {
+      throw new ServiceUnavailableException(
+        'No fue posible calcular la fecha del negocio.',
+      );
+    }
+    const dayRange = this.availabilityService.getUtcRangeForLocalDate(
+      query.date,
+      organization.timeZone,
+    );
     const service = await this.prisma.db.service.findFirst({
       where: {
         id: query.serviceId,
@@ -159,11 +180,6 @@ export class PublicBookingService {
       return { date: query.date, serviceId: query.serviceId, slots: [] };
     }
 
-    const dayRange = this.availabilityService.getUtcRangeForLocalDate(
-      query.date,
-      organization.timeZone,
-    );
-
     const businessHours = resolveBusinessHours(organization.businessHours);
     const candidateTimes = generateCandidateSlots(
       businessHours,
@@ -184,7 +200,11 @@ export class PublicBookingService {
     );
 
     const now = new Date();
-    const slots: { time: string; professionalId: string }[] = [];
+    const slots: {
+      time: string;
+      professionalId: string;
+      startTime: string;
+    }[] = [];
     for (const time of candidateTimes) {
       const slotStart = zonedLocalDateTimeToUtc(
         query.date,
@@ -215,7 +235,11 @@ export class PublicBookingService {
           ),
       );
       if (freeProfessionalId) {
-        slots.push({ time, professionalId: freeProfessionalId });
+        slots.push({
+          time,
+          professionalId: freeProfessionalId,
+          startTime: slotStart.toISOString(),
+        });
       }
     }
 

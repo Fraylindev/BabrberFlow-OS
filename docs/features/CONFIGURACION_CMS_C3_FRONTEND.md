@@ -2,6 +2,8 @@
 
 Entrega: 2026-09-13. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo Frontend C3») el 2026-09-13 sobre `425641574b2504fd34967b9a4558218d74b7c11f`. El propietario había aprobado el backend C3 sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745` y confirmado expresamente la activación visible antes de iniciar este frontend. Rama `ai/antigravity-qa`. No hay despliegue productivo.
 
+Nota posterior: H5 y la fecha malformada registrados en este cierre histórico fueron corregidos el 2026-09-13 en un checkpoint separado, sin reabrir C3. Ver [`RESERVA_PUBLICA_H5_FECHAS.md`](RESERVA_PUBLICA_H5_FECHAS.md).
+
 ## Resultado y criterios
 
 La persona visitante abre `/{slug}` y recibe la identidad publicada del negocio antes de iniciar la reserva. La página consume exclusivamente `GET /public/:slug/booking-data`, cuya proyección C3 fue aprobada, y muestra:

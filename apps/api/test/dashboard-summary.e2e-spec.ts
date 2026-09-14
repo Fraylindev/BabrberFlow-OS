@@ -43,7 +43,7 @@ describe('Resumen acotado (PostgreSQL aislado)', () => {
     const today = getZonedDateParts(new Date(), timeZone).date;
     from = zonedLocalDateTimeToUtc(today, '00:00', timeZone)!;
     const tomorrow = zonedLocalDateTimeToUtc(
-      addDaysToIsoDate(today, 1),
+      addDaysToIsoDate(today, 1)!,
       '00:00',
       timeZone,
     )!;

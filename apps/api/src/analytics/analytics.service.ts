@@ -176,8 +176,8 @@ export class AnalyticsService {
       );
     }
     const today = getZonedDateParts(now, timeZone).date;
-    const atStart = (date: string) =>
-      zonedLocalDateTimeToUtc(date, '00:00', timeZone);
+    const atStart = (date: string | null) =>
+      date ? zonedLocalDateTimeToUtc(date, '00:00', timeZone) : null;
     const startOfToday = atStart(today);
     const startOfYesterday = atStart(addDaysToIsoDate(today, -1));
     const startOf7DaysAgo = atStart(addDaysToIsoDate(today, -6));

@@ -15,6 +15,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import {
   addDaysToIsoDate,
+  isValidIsoDate,
   isValidTimeZone,
   zonedLocalDateTimeToUtc,
 } from '../professionals/professional-availability.util';
@@ -105,11 +106,7 @@ export class InvoicesService {
       ['to', to],
     ] as const) {
       if (!value) continue;
-      const [year, month, day] = value.split('-').map(Number);
-      const normalized = new Date(Date.UTC(year, month - 1, day))
-        .toISOString()
-        .slice(0, 10);
-      if (normalized !== value) {
+      if (!isValidIsoDate(value)) {
         throw new BadRequestException(
           `${field} debe ser una fecha calendario válida`,
         );
@@ -139,12 +136,9 @@ export class InvoicesService {
     const from = query.from
       ? zonedLocalDateTimeToUtc(query.from, '00:00', organization.timeZone)
       : null;
-    const exclusiveTo = query.to
-      ? zonedLocalDateTimeToUtc(
-          addDaysToIsoDate(query.to, 1),
-          '00:00',
-          organization.timeZone,
-        )
+    const dayAfterTo = query.to ? addDaysToIsoDate(query.to, 1) : null;
+    const exclusiveTo = dayAfterTo
+      ? zonedLocalDateTimeToUtc(dayAfterTo, '00:00', organization.timeZone)
       : null;
     if ((query.from && !from) || (query.to && !exclusiveTo)) {
       throw new BadRequestException('El rango de fechas no es válido');

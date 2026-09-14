@@ -4,6 +4,14 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Correctivos H5 y validación de fechas implementados, en revisión
+
+- El API calcula el día mínimo en la zona del negocio y devuelve por slot el instante UTC autoritativo; el navegador lo reenvía sin reinterpretar fecha/hora con su propia zona.
+- Disponibilidad pública e invoices validan calendario ISO estricto. La utilidad compartida rechaza fechas/horas/zonas imposibles o extremas sin `RangeError`; se verificaron también sus consumidores internos de Analytics y Resumen.
+- Contrato aditivo, sin exponer `timeZone` ni UUID tenant, sin Prisma/migración y sin abrir otro módulo. Configuración/CMS C1–C3 permanece cerrado/aprobado.
+- API: 526 unitarias y 182 E2E aprobadas; web: 74 pruebas de lógica y 23 de componente; lint, tipos y builds en exit 0. QA real llegó al resumen, validó `09:00` → `13:00Z`, respuestas `400`, consola y 375 px sin crear otra reserva.
+- Estado **IMPLEMENTADO / EN REVISIÓN**, pendiente de aprobación explícita del propietario. [Alcance y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
+
 ## 2026-09-13 — Configuración/CMS C3 frontend cerrado y aprobado
 
 - Aprobación explícita del propietario («Apruebo Frontend C3») sobre `425641574b2504fd34967b9a4558218d74b7c11f`: frontend C3 y Configuración/CMS C3 quedan **CERRADOS / APROBADOS**.

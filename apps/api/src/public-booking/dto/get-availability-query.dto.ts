@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional, Matches } from 'class-validator';
+import {
+  IsISO8601,
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  Matches,
+} from 'class-validator';
 
 export class GetAvailabilityQueryDto {
   @IsString()
@@ -14,5 +20,9 @@ export class GetAvailabilityQueryDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'date debe tener el formato YYYY-MM-DD',
   })
+  @IsISO8601(
+    { strict: true },
+    { message: 'date debe ser una fecha calendario válida' },
+  )
   date!: string;
 }

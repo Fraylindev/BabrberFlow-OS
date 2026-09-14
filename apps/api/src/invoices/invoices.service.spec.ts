@@ -129,15 +129,18 @@ describe('InvoicesService', () => {
     expect(db.invoice.findMany).not.toHaveBeenCalled();
   });
 
-  it('rechaza fechas calendario imposibles antes de consultar datos', async () => {
-    const { service, db } = createHarness();
+  it.each(['2026-02-30', '92026-06-14', '14/mm/92026'])(
+    'rechaza la fecha calendario inválida %s antes de consultar datos',
+    async (from) => {
+      const { service, db } = createHarness();
 
-    await expect(service.findAll(USER, { from: '2026-02-30' })).rejects.toThrow(
-      BadRequestException,
-    );
-    expect(db.organization.findFirst).not.toHaveBeenCalled();
-    expect(db.invoice.count).not.toHaveBeenCalled();
-  });
+      await expect(service.findAll(USER, { from })).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(db.organization.findFirst).not.toHaveBeenCalled();
+      expect(db.invoice.count).not.toHaveBeenCalled();
+    },
+  );
 
   it('emite desde el precio server-side y audita en la misma transacción', async () => {
     const { service, tx, audit } = createHarness();

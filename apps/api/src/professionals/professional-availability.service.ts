@@ -341,12 +341,11 @@ export class ProfessionalAvailabilityService {
     date: string,
     timeZone: string,
   ): { start: Date; end: Date } {
+    const nextDate = addDaysToIsoDate(date, 1);
     const start = zonedLocalDateTimeToUtc(date, '00:00', timeZone);
-    const end = zonedLocalDateTimeToUtc(
-      addDaysToIsoDate(date, 1),
-      '00:00',
-      timeZone,
-    );
+    const end = nextDate
+      ? zonedLocalDateTimeToUtc(nextDate, '00:00', timeZone)
+      : null;
     if (!start || !end) throw new BadRequestException('Fecha inválida');
     return { start, end };
   }

@@ -5,6 +5,7 @@ import { ApiError, api, PublicBookingData } from "@/lib/api";
 import { PublicMiniSite } from "./PublicMiniSite";
 
 const published: PublicBookingData = {
+  minimumBookingDate: "2026-09-13",
   organization: {
     name: "Estudio Norte",
     slug: "estudio-norte",
@@ -156,5 +157,72 @@ describe("Mini-sitio público C3", () => {
     expect(screen.queryByText("Nuestra ubicación")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Llamar/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Reservar cita" })).toBeVisible();
+  });
+
+  it("usa la fecha mínima y el instante UTC autoritativos del backend", async () => {
+    vi.mocked(api.get)
+      .mockReset()
+      .mockResolvedValueOnce(published)
+      .mockResolvedValueOnce(published)
+      .mockResolvedValueOnce({
+        date: "2099-01-05",
+        serviceId: "service-1",
+        slots: [
+          {
+            time: "10:00",
+            professionalId: "professional-1",
+            startTime: "2099-01-05T14:00:00.000Z",
+          },
+        ],
+      });
+    vi.mocked(api.post).mockResolvedValueOnce({
+      booking: {
+        id: "booking-1",
+        serviceId: "service-1",
+        professionalId: "professional-1",
+        startTime: "2099-01-05T14:00:00.000Z",
+        endTime: "2099-01-05T14:30:00.000Z",
+        status: "PENDING",
+      },
+      accountCreated: false,
+      accountCreationError: null,
+    });
+    vi.spyOn(window, "open").mockImplementation(() => null);
+    mount();
+
+    fireEvent.click(await screen.findByRole("button", { name: "Reservar cita" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Corte clásico/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    fireEvent.click(screen.getByRole("button", { name: /Alex/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+    const dateInput = screen.getByLabelText("Fecha");
+    expect(dateInput).toHaveAttribute("min", published.minimumBookingDate);
+    fireEvent.change(dateInput, { target: { value: "2099-01-05" } });
+    fireEvent.click(await screen.findByRole("button", { name: "10:00" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+    fireEvent.change(screen.getByLabelText("Nombre completo"), {
+      target: { value: "Cliente QA" },
+    });
+    fireEvent.change(screen.getByLabelText("Teléfono"), {
+      target: { value: "8095551234" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar reserva" }));
+
+    await waitFor(() =>
+      expect(api.post).toHaveBeenCalledWith("/public/estudio-norte/bookings", {
+        serviceId: "service-1",
+        professionalId: "professional-1",
+        startTime: "2099-01-05T14:00:00.000Z",
+        clientName: "Cliente QA",
+        clientPhone: "8095551234",
+        clientEmail: undefined,
+        createAccount: false,
+        password: undefined,
+      }),
+    );
   });
 });

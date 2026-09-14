@@ -56,6 +56,7 @@ PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitacion
 - Las pantallas deben cubrir loading, empty, error/reintento, pending y success.
 - La autorización vive en API; una build limpia no sustituye QA en navegador.
 - `/{slug}` consume la proyección publicada de `booking-data`, revalida al recuperar foco y antes de montar la reserva, y presenta el mismo estado neutro para inexistente, inactivo, borrado o retirado. No recibe UUID de Organization ni correo privado.
+- Reserva pública mantiene `Organization.timeZone` solo en servidor: `booking-data` expone el día mínimo del negocio y `availability` convierte cada hora local a un `startTime` UTC autoritativo. El navegador presenta la hora local y reenvía ese instante sin convertirlo con su propia zona. Fechas públicas y filtros `from`/`to` de Facturación cruzan validación ISO calendario estricta; la utilidad compartida devuelve fallo controlado ante entradas imposibles o extremas.
 
 ## Persistencia administrada aprobada, no implementada
 

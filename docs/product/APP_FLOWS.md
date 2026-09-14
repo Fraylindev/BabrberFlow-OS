@@ -49,10 +49,10 @@ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se l
 ## 5. Reserva pública y continuidad B2C
 
 1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales;
-2. `/public/:slug/booking-data` entrega esa proyección, catálogo y profesionales públicos mínimos sin UUID de Organization;
+2. `/public/:slug/booking-data` entrega esa proyección, catálogo, profesionales públicos mínimos y la fecha mínima calculada en la zona del negocio, sin UUID de Organization ni la zona;
 3. la página revalida publicación al recuperar foco y antes de abrir el asistente; inexistente, inactivo, borrado o retirado recibe una presentación neutra;
-4. disponibilidad usa servicios/profesionales activos, horario efectivo y protección concurrente;
-5. la persona reserva como invitada con datos mínimos;
+4. disponibilidad exige una fecha calendario ISO real, usa servicios/profesionales activos, horario efectivo y protección concurrente, y entrega por slot el instante UTC autoritativo además de la hora local visible;
+5. el navegador reenvía ese instante sin reinterpretarlo según su zona y la persona reserva como invitada con datos mínimos;
 6. Client y Booking se crean o reactivan atómicamente; retirar bloquea altas nuevas y conserva reservas existentes;
 7. la opción legacy de cuenta con contraseña permanece temporalmente en el contrato público como rollback;
 8. A0.6-A permite reclamar después una reserva con sesión Clerk mediante un vínculo `Client.userId`, sin Membership CUSTOMER.

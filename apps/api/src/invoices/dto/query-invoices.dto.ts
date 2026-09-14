@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, Matches } from 'class-validator';
+import { IsIn, IsISO8601, IsOptional, Matches } from 'class-validator';
 
 export const INVOICE_STATES = ['ISSUED', 'PAID'] as const;
 export type InvoiceState = (typeof INVOICE_STATES)[number];
@@ -22,11 +22,19 @@ export class QueryInvoicesDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'from debe usar el formato YYYY-MM-DD',
   })
+  @IsISO8601(
+    { strict: true },
+    { message: 'from debe ser una fecha calendario válida' },
+  )
   from?: string;
 
   @IsOptional()
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'to debe usar el formato YYYY-MM-DD',
   })
+  @IsISO8601(
+    { strict: true },
+    { message: 'to debe ser una fecha calendario válida' },
+  )
   to?: string;
 }

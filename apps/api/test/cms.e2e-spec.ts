@@ -577,7 +577,11 @@ describe('CMS C1 (PostgreSQL aislado, HTTP y guards reales)', () => {
       .expect(200);
     expect(record(availability.body).slots).toEqual(
       expect.arrayContaining([
-        { time: '10:00', professionalId: body.professionalId },
+        {
+          time: '10:00',
+          professionalId: body.professionalId,
+          startTime: '2099-01-05T14:00:00.000Z',
+        },
       ]),
     );
     const created = await requestApp(app)
@@ -613,6 +617,22 @@ describe('CMS C1 (PostgreSQL aislado, HTTP y guards reales)', () => {
     expect(
       await prisma.db.organization.findUnique({ where: { id: tenant.id } }),
     ).toMatchObject({ isActive: true, deletedAt: null });
+  });
+  it('rechaza fechas públicas malformadas o imposibles con 400', async () => {
+    const body = await catalogue();
+    await publish();
+    for (const date of [
+      '2026-02-30',
+      '2026-13-01',
+      '0000-01-01',
+      '92026-06-14',
+      '14/mm/92026',
+    ]) {
+      await requestApp(app)
+        .get(`/public/${tenant.slug}/availability`)
+        .query({ date, serviceId: body.serviceId })
+        .expect(400);
+    }
   });
   it.each(['inactive', 'deleted', 'unpublished', 'absent'])(
     '%s devuelve presentación pública neutra en todas las rutas',

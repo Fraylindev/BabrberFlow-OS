@@ -8,6 +8,17 @@ G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobiern
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
 
+## 2026-09-13 — Reserva pública: instante autoritativo y fechas estrictas
+
+Estado: **IMPLEMENTADO / EN REVISIÓN**. [Contrato y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
+
+- `GET /public/:slug/booking-data` añade `minimumBookingDate: YYYY-MM-DD`, calculada con la zona almacenada del negocio. No expone `timeZone` ni UUID de Organization.
+- Cada slot de `GET /public/:slug/availability` añade `startTime`, instante ISO UTC autoritativo para la combinación de fecha/hora local. `time` y `professionalId` permanecen compatibles.
+- `POST /public/:slug/bookings` no cambia: la web reenvía el `startTime` del slot, sin reconstruirlo en la zona del navegador.
+- `date` de disponibilidad y `from`/`to` de `GET /invoices` requieren fecha calendario ISO real. Fechas imposibles, años fuera de cuatro dígitos y formatos malformados responden `400`; la utilidad compartida ya no lanza `RangeError`.
+
+Sin Prisma, migración, roles, persistencia ni cambios de CMS. Los endpoints públicos mantienen `no-store`, límites existentes y `404` neutro por retiro/inactividad.
+
 ## 2026-09-13 — Configuración/CMS C3: proyección pública backend
 
 Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo backend C3 y confirmo la activación visible») sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745`. [`GET /public/:slug/booking-data`](docs/features/CONFIGURACION_CMS_C3_BACKEND.md) amplía de forma aditiva `organization` a `{ name, slug, phone, description, address, googleMapsUrl }`. Salvo el slug localizador, los valores salen exclusivamente de `CmsPage.publishedSnapshot`; los opcionales son `string | null`. No se crea otra ruta y no se expone UUID de tenant, correo, borrador, campos operativos, banca ni metadatos internos.

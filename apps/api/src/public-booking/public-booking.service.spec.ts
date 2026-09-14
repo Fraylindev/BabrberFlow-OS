@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { BookingStatus, ProfessionalStatus } from '@prisma/client';
+import { ServiceUnavailableException } from '@nestjs/common';
 import { PublicBookingService } from './public-booking.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
@@ -256,6 +257,7 @@ describe('PublicBookingService - active public catalog', () => {
 
     const result = await service.getBookingData(ORGANIZATION.slug);
 
+    expect(result.minimumBookingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(result.organization).toEqual({
       name: publishedSnapshot.publicName,
       slug: ORGANIZATION.slug,
@@ -267,6 +269,53 @@ describe('PublicBookingService - active public catalog', () => {
     expect(JSON.stringify(result)).not.toMatch(
       /00000000-0000-4000-8000-000000000001|private@example\.test|Nombre operativo privado|18095559999/,
     );
+  });
+
+  it('derives the minimum booking date from the business zone without exposing it', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-09-14T02:00:00.000Z'));
+    try {
+      const dependencies = createDependencies();
+      const service = new PublicBookingService(
+        dependencies.prisma as unknown as PrismaService,
+        dependencies.bookings as unknown as BookingsService,
+        dependencies.audit as unknown as AuditService,
+        dependencies.availability as unknown as ProfessionalAvailabilityService,
+      );
+      dependencies.prisma.db.service.findMany.mockResolvedValue([]);
+      dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+
+      const result = await service.getBookingData(ORGANIZATION.slug);
+
+      expect(result.minimumBookingDate).toBe('2026-09-13');
+      expect(JSON.stringify(result)).not.toContain(ORGANIZATION.timeZone);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('fails availability safely when the stored business zone is invalid', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
+    );
+    dependencies.prisma.db.organization.findUnique.mockResolvedValue({
+      ...ORGANIZATION,
+      timeZone: 'Not/A_Time_Zone',
+    });
+
+    await expect(
+      service.getAvailability(ORGANIZATION.slug, {
+        date: '2026-09-13',
+        serviceId: BOOKING.serviceId,
+      }),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    expect(
+      dependencies.availability.getUtcRangeForLocalDate,
+    ).not.toHaveBeenCalled();
+    expect(dependencies.prisma.db.service.findFirst).not.toHaveBeenCalled();
   });
 
   it('lists only active services from the resolved organization', async () => {
@@ -373,5 +422,34 @@ describe('PublicBookingService - active public catalog', () => {
       slots: [],
     });
     expect(JSON.stringify(result)).not.toContain('note');
+  });
+
+  it('returns the authoritative UTC instant with every visible slot', async () => {
+    const dependencies = createDependencies();
+    const service = new PublicBookingService(
+      dependencies.prisma as unknown as PrismaService,
+      dependencies.bookings as unknown as BookingsService,
+      dependencies.audit as unknown as AuditService,
+      dependencies.availability as unknown as ProfessionalAvailabilityService,
+    );
+    dependencies.prisma.db.service.findFirst.mockResolvedValue({
+      duration: 30,
+    });
+    dependencies.prisma.db.professional.findMany.mockResolvedValue([
+      { id: BOOKING.professionalId },
+    ]);
+    dependencies.bookings.findActiveBookingsInRange.mockResolvedValue([]);
+    dependencies.availability.isAvailableInContext.mockReturnValue(true);
+
+    const result = await service.getAvailability(ORGANIZATION.slug, {
+      date: '2099-01-05',
+      serviceId: BOOKING.serviceId,
+    });
+
+    expect(result.slots[0]).toEqual({
+      time: '09:00',
+      professionalId: BOOKING.professionalId,
+      startTime: '2099-01-05T13:00:00.000Z',
+    });
   });
 });
