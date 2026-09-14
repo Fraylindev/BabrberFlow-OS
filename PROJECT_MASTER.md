@@ -2,7 +2,7 @@
 
 Actualizado: 2026-09-13. Este documento describe el producto y el estado actual. El historial completo anterior a G0 se preserva en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
-Reserva pública — correctivos H5 y fechas: **IMPLEMENTADO / EN REVISIÓN** por autorización explícita del propietario después de cerrar Configuración/CMS C1–C3. El servidor entrega el día mínimo del negocio y el instante UTC autoritativo de cada slot; la web ya no interpreta la hora con la zona del navegador. Disponibilidad pública y filtros de Facturación rechazan fechas imposibles o malformadas con `400`, y la utilidad compartida falla de forma controlada. Sin Prisma/migración, roles, exposición de `timeZone`/UUID tenant ni apertura de otro módulo. API: 526 unitarias y 182 E2E aprobadas; web: 74 pruebas de lógica y 23 de componente; lint, tipos y builds en exit 0; QA real desktop/375 px sin error de aplicación. [Contrato, superficies de entrada y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
+Reserva pública — correctivos H5 y fechas: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo los correctivos H5 y fechas sobre 8fd7b1f») el 2026-09-13 sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`. El servidor entrega el día mínimo del negocio y el instante UTC autoritativo de cada slot; la web ya no interpreta la hora con la zona del navegador. Disponibilidad pública y filtros de Facturación rechazan fechas imposibles o malformadas con `400`, y la utilidad compartida falla de forma controlada. Sin Prisma/migración, roles, exposición de `timeZone`/UUID tenant ni apertura de otro módulo. API: 526 unitarias y 182 E2E aprobadas; web: 74 pruebas de lógica y 23 de componente; lint, tipos y builds en exit 0; QA real desktop/375 px sin error de aplicación. [Contrato, superficies de entrada y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
 
 Configuración/CMS C3 backend: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo backend C3 y confirmo la activación visible») el 2026-09-13 sobre `51a248833d5cf4aff77ca8b4f9a2be72ac9b8745`. `GET /public/:slug/booking-data` incorpora descripción, dirección y mapa desde el snapshot publicado, con allowlist sin UUID de tenant, correo, borrador ni campos operativos; retiro/inactividad sigue cubriendo catálogo, disponibilidad y creación. [Contrato y evidencia backend](docs/features/CONFIGURACION_CMS_C3_BACKEND.md).
 
@@ -105,7 +105,7 @@ Gobierno y estándares:
 | 6 | Equipo — Entrega A Backend | **CERRADO / APROBADO** | Aprobación oficial del propietario sobre `1270ce9958b3da78f1d2be27d06545a8546c6d43` |
 | 6 | Equipo — Entrega B Frontend | **CERRADO / APROBADO** | Aprobación explícita del propietario 2026-09-09; directorio, invitaciones y gestión de accesos sobre los contratos aprobados |
 | 7 | Configuración del negocio / CMS | **CERRADO / APROBADO** | C1–C3 aprobados; proyección pública y mini-sitio activos en el código, sin despliegue productivo |
-| 7.1 | Reserva pública — H5 y fechas | **IMPLEMENTADO / EN REVISIÓN** | Instantes de slot autoritativos y fechas calendario estrictas; pendiente aprobación del propietario |
+| 7.1 | Reserva pública — H5 y fechas | **CERRADO / APROBADO** | Aprobación explícita sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c` |
 | 8 | Analytics modular | **PENDIENTE** | Debe completarse antes de revisar el Resumen |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
 
@@ -268,7 +268,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 - `Organization.timeZone` existe en persistencia/contratos de disponibilidad; C2 la consume en lectura. No hay UI/endpoint autorizado para editarla.
 - El vínculo backend B2C de A0.6-A está aprobado; todavía no existe el recorrido público posterior a reserva ni el historial/autoservicio del cliente.
 - El frontend de Servicios, imágenes y Cloudinary requieren auditoría, aprobación y autorización propias; no adelantarlos desde Entrega A Backend.
-- Configuración/CMS C1–C3 están cerrados/aprobados con D1–D6 fijadas: OWNER/ADMIN editan y ven preview; solo OWNER publica/retira. El agregado separado preserva borrador/snapshot y estado; la ruta pública consume únicamente la proyección publicada. H5 y la fecha malformada quedaron implementados después en un checkpoint separado todavía en revisión; no se editan slug, horario ni zona. Medios, promociones, banca, comprobantes, notificaciones y Pagos conservan sus entregas separadas.
+- Configuración/CMS C1–C3 están cerrados/aprobados con D1–D6 fijadas: OWNER/ADMIN editan y ven preview; solo OWNER publica/retira. El agregado separado preserva borrador/snapshot y estado; la ruta pública consume únicamente la proyección publicada. H5 y la fecha malformada quedaron cerrados/aprobados después en un checkpoint separado; no se editan slug, horario ni zona. Medios, promociones, banca, comprobantes, notificaciones y Pagos conservan sus entregas separadas.
 - Configuración productiva de CORS, URLs y secretos depende del entorno y debe validarse antes de despliegue.
 - No existe un pipeline CI/CD versionado; los gates siguen dependiendo de ejecución local explícita.
 - `sharp`, `postcss`, `nanoid` y `deepmerge-ts` usan overrides de seguridad en `pnpm-workspace.yaml` hasta que Next/Prisma publiquen rangos transitivos compatibles; cada actualización debe revalidar build, Prisma, E2E y `pnpm audit`. ESLint web permanece en 9 por los peers de plugins de `eslint-config-next`, aunque esa rama ya aparece deprecada en el registro.
@@ -278,7 +278,7 @@ Cada módulo comienza con auditoría. No avanzar por el mero hecho de que exista
 
 ## 8. Próximo paso autorizado
 
-Configuración/CMS C1–C3: **CERRADOS / APROBADOS**. El único alcance autorizado posterior es revisar y aprobar los correctivos H5/fechas ya implementados; no hay otro módulo autorizado. La migración 21 permanece aplicada en la base de prueba y el tenant usado para QA quedó publicado. No desplegar a producción ni iniciar medios, promociones, banca, notificaciones, Pagos u otro módulo por inferencia.
+Configuración/CMS C1–C3 y los correctivos H5/fechas: **CERRADOS / APROBADOS**. No hay otra entrega autorizada. La migración 21 permanece aplicada en la base de prueba y el tenant usado para QA quedó publicado. No desplegar a producción ni iniciar medios, promociones, banca, notificaciones, Pagos u otro módulo por inferencia.
 
 1. Security A0.5 completo (A, B, C y D), Security A0.6-A y el correctivo transversal de aislamiento del Resumen están **CERRADOS / APROBADOS** por decisión explícita del propietario.
 2. Facturación-A Backend está **CERRADO / APROBADO** sobre `21761ac573b075ec627c0e91593d61a4279c2b8f`.

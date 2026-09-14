@@ -10,7 +10,7 @@ G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en 
 
 ## 2026-09-13 — Reserva pública: instante autoritativo y fechas estrictas
 
-Estado: **IMPLEMENTADO / EN REVISIÓN**. [Contrato y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
+Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo los correctivos H5 y fechas sobre 8fd7b1f») el 2026-09-13 sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`. [Contrato y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
 
 - `GET /public/:slug/booking-data` añade `minimumBookingDate: YYYY-MM-DD`, calculada con la zona almacenada del negocio. No expone `timeZone` ni UUID de Organization.
 - Cada slot de `GET /public/:slug/availability` añade `startTime`, instante ISO UTC autoritativo para la combinación de fecha/hora local. `time` y `professionalId` permanecen compatibles.

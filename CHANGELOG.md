@@ -4,6 +4,12 @@ Todas las entradas están en español, siguiendo el idioma del resto del proyect
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
 
+## 2026-09-13 — Correctivos H5 y fechas cerrados y aprobados
+
+- Aprobación explícita del propietario («Apruebo los correctivos H5 y fechas sobre 8fd7b1f») sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`.
+- Se conserva la implementación y evidencia aceptadas: instante UTC autoritativo por slot, fecha mínima del negocio, calendario ISO estricto, 526 unitarias API, 182 E2E aisladas, 97 pruebas web, lint, tipos, builds y QA real.
+- Estado **CERRADO / APROBADO**. Configuración/CMS C1–C3 permanece cerrado/aprobado; no hay despliegue productivo ni autorización de otro módulo.
+
 ## 2026-09-13 — Correctivos H5 y validación de fechas implementados, en revisión
 
 - El API calcula el día mínimo en la zona del negocio y devuelve por slot el instante UTC autoritativo; el navegador lo reenvía sin reinterpretar fecha/hora con su propia zona.

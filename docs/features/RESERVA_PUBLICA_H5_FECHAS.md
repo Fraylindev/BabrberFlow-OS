@@ -1,6 +1,6 @@
 # Reserva pública — correctivos H5 y validación de fechas
 
-Entrega: 2026-09-13. Estado: **IMPLEMENTADO / EN REVISIÓN**. El propietario cerró Configuración/CMS C1–C3 y autorizó expresamente corregir H5 y endurecer las fechas antes de abrir otro módulo. Rama `ai/antigravity-qa`. Sin despliegue productivo.
+Entrega: 2026-09-13. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo los correctivos H5 y fechas sobre 8fd7b1f») el 2026-09-13 sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`. Configuración/CMS C1–C3 continúa cerrado/aprobado. Rama `ai/antigravity-qa`. Sin despliegue productivo.
 
 ## Resultado y alcance
 
@@ -56,4 +56,4 @@ Entorno: build local de producción Next en `http://localhost:3001`, API compila
 
 ## Gate
 
-El checkpoint permanece **IMPLEMENTADO / EN REVISIÓN** hasta la aprobación explícita del propietario. Configuración/CMS C1–C3 continúa **CERRADO / APROBADO** y este correctivo no abre otro módulo ni autoriza despliegue productivo.
+El propietario aprobó explícitamente el checkpoint sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`. Los correctivos H5 y fechas quedan **CERRADOS / APROBADOS**. Configuración/CMS C1–C3 conserva su cierre y esta aprobación no abre otro módulo ni autoriza despliegue productivo.
