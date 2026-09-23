@@ -1,10 +1,13 @@
 import { InputField } from "@/components/ui/Field";
+import { EmailConsent } from '@/components/notifications/EmailConsent';
 import { NavButtons, StepWrapper } from "./shared";
 
 interface ContactStepProps {
   clientName: string;
   clientPhone: string;
   clientEmail: string;
+  emailOptedIn: boolean;
+  onEmailOptInChange: (value: boolean) => void;
   onNameChange: (v: string) => void;
   onPhoneChange: (v: string) => void;
   onEmailChange: (v: string) => void;
@@ -16,6 +19,8 @@ export function ContactStep({
   clientName,
   clientPhone,
   clientEmail,
+  emailOptedIn,
+  onEmailOptInChange,
   onNameChange,
   onPhoneChange,
   onEmailChange,
@@ -43,6 +48,7 @@ export function ContactStep({
           value={clientEmail}
           onChange={(e) => onEmailChange(e.target.value)}
         />
+        <EmailConsent tone="dark" checked={emailOptedIn} onChange={onEmailOptInChange} />
       </div>
       <NavButtons
         onBack={onBack}

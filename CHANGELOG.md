@@ -1,8 +1,111 @@
 # CHANGELOG
 
+## 2026-09-22 — Notificaciones C3 cerrado / aprobado
+
+- El propietario revisó visualmente las cinco plantillas y aprobó el checkpoint C3. El recorrido real produjo CREATED, CONFIRMED, RESCHEDULED, COMPLETED y CANCELLED; las cinco intenciones quedaron `DELIVERED` con recibos `email.sent` y `email.delivered` durables.
+- El canal EMAIL quedó pausado, la API y la web locales de QA se detuvieron y el webhook temporal de Resend fue eliminado desde su panel. No se activó producción ni se cambiaron otros módulos.
+- Evidencia completa: [NOTIFICACIONES_C3_ACTIVACION.md](docs/features/NOTIFICACIONES_C3_ACTIVACION.md).
+
+## 2026-09-16 — Inicio autorizado de Notificaciones C3
+
+- C2 aprobado explícitamente. Activación temporal y prueba real de cinco plantillas autorizadas; sin producción ni otro módulo.
+- Base C3 separada autorizada, 24 migraciones existentes y cola vacía; C2 preservado. Dominio Verified observado en Resend, endpoint temporal corregido con autorización; túnel aún indisponible.
+- Correctivo From con nombre visible y worker sin anidación: 35 pruebas de adaptador, 649 unitarias, 26 PostgreSQL; tipos/lint/build exit 0. No hay envíos reales todavía.
+- Evidencia y pendientes en docs/features/NOTIFICACIONES_C3_ACTIVACION.md. C3 EN CURSO / INCOMPLETO; sin staging, commit ni push.
+
+## 2026-09-16 — Notificaciones C2 implementado / en revisión
+
+- Aprobación explícita C1 registrada sobre la base c7d43ad03a65a900a930a1a0d69dd258b8516a1e. Corregido §5: ensayo con datos previos y restore ya resueltos en §10.
+- C2 incorpora historial global/por reserva, preferencia versionada con revisión de contacto y reintento autorizado, además de opt-in voluntario en altas. Sin contratos backend nuevos ni cambios de comportamiento CMS/H5/WhatsApp.
+- Pruebas y QA en docs/features/NOTIFICACIONES_C2_FRONTEND.md: 109 de lógica + 47 de componente; TypeScript, lint y build en exit 0. QA real de cuatro roles, dos tenants, escritorio/375 px, teclado, conflicto, recuperación, reintento y altas pública/interna con PostgreSQL aislado y correo desactivado.
+- Corregido montaje de consultas después de la limpieza de caché de autenticación al cambiar negocio; regresión automatizada y QA de aislamiento. Las dos altas verificadas conservan consentimiento y cero despachos.
+- C2 IMPLEMENTADO / EN REVISIÓN DEL PROPIETARIO; no implica aprobación ni activación C3. Incidencias temporales de QA resueltas. Sin envío real, staging, commit, push ni despliegue.
+
+
+## 2026-09-15 — Notificaciones C1 entregado para revisión
+
+- Cerrada implementación backend y evidencia de C0 §5 aplicable, con reprogramación PENDING/CONFIRMED, cambio exclusivo de profesional, reactivación, COMPLETED único, NO_SHOW, permisos y privacidad.
+- Versión de plantilla persistida junto al sobre sellado; reintentos conservan contenido/remitente/clave incluso tras cambio de configuración. Migración 24 aditiva, solo QA aislado.
+- 640 unitarias y 227 E2E aprobadas; último caso HTTP adicional verificado en suite de 22. Productor/worker: 24 casos; concurrencia previa de Reservas: 9. Tipos, lint, build y Prisma verificados. Backup/restore con correos despachados y CLI desactivado comprobados.
+- Estado IMPLEMENTADO / EN REVISIÓN DEL PROPIETARIO. No implica aprobación backend, C2 ni activación C3. CMS, H5/fechas y WhatsApp preservados; sin staging, commit, push ni migración habitual.
+
+## 2026-09-15 — Notificaciones C1: integración y pruebas, aún incompleto
+
+- Captura transaccional conectada a creación interna/pública, estado y reprogramación. Rutas privadas, preferencias aditivas, rechazo BARBER para registrarlas, webhook firmado y CLI independiente implementados. El canal permanece desactivado.
+- Regresión integrada: 640 unitarias y 208 E2E aprobadas. Ampliaciones posteriores: 22 pruebas PostgreSQL del productor/worker y 18 HTTP; 9 pruebas reales de concurrencia de Reservas aprobadas tras actualizar la limpieza de sus fixtures. No sumar ejecuciones repetidas como pruebas distintas.
+- Ensayo 21 → 23, preservación de datos controlados, pg_dump/restore con hash coincidente y ausencia de drift Prisma. Serialización determinista del sobre para reintentos después de JSONB.
+- Falta cerrar auditoría/cobertura, persistencia explícita de versión de plantilla, recuperación con intenciones despachadas y gates finales. C1 sigue incompleto/no aprobado; sin C2, activación C3, commit, push ni cambios de CMS/H5/WhatsApp.
+
+## 2026-09-14 — Inicio autorizado de Notificaciones C1
+
+- Contrato C1 en construcción con D1–D10, cinco eventos y matriz C0 §5.1–5.7/5.9/5.10 aplicable al backend; C2 requiere aprobación explícita posterior.
+- Reglas/plantillas, DTOs, productor y servicio/controladores iniciales; migración aditiva 22 y trigger de invalidación de contacto. 91 pruebas de dominio/adaptador y 14 PostgreSQL reales aprobadas, incluidas reprogramaciones concurrentes y COMPLETED único.
+- Implementación incompleta y sin conectar a rutas operativas; falta worker/proveedor y validación integral. Base habitual, CMS/H5/WhatsApp y frontend preservados. Sin staging, commit, push, despliegue ni envío real.
+
 Todas las entradas están en español, siguiendo el idioma del resto del proyecto. Formato libre, orientado a decisiones y cambios reales — no es un changelog de versión semántica de paquete.
 
 > Cada entrada es una fotografía histórica de su fecha. Para estado vigente usar [`PROJECT_MASTER.md`](PROJECT_MASTER.md). Las referencias antiguas a secciones numeradas de PROJECT_MASTER apuntan al snapshot preservado en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
+
+## 2026-09-14 — Notificaciones C0: decisiones del propietario fijadas
+
+- Registradas D1–D10 en [C0](docs/features/NOTIFICACIONES_C0_AUDITORIA.md): correo automático primero; WhatsApp manual D3-A solo diseñado para segunda entrega. D2-A se amplía a reprogramación activa con nueva fecha/hora y entrada real a COMPLETED, sin marketing; NO_SHOW no notifica.
+- Resend/remitente central, variables mínimas con nueva fecha/hora, Organization.name y cinco textos fijos sin editor; Client.email corroborado y omisión silenciosa, opt-in explícito, permisos A, outbox PostgreSQL + worker sin Redis, 5 intentos/24 h, supresión de obsoletos y purga privada a 30 días. From/dominio se aportarán antes de activar C3.
+- Actualización exclusivamente documental y de criterios de contrato/QA futuro; sin autorización de C1 por inferencia, implementación, cambios a módulos cerrados, staging, commit, push ni despliegue. Controles generales sincronizados y trabajo previo preservado.
+
+## 2026-09-14 — Notificaciones C0: auditoría documental para elección
+
+Entrada posterior de auditoría: **Notificaciones C0 documental entregado**, autorizado por el propietario según roadmap §5. [Documento C0](docs/features/NOTIFICACIONES_C0_AUDITORIA.md) con evidencia del código, decisiones D1–D10 y propuesta de contrato para elección, sin implementación ni aprobación de C1. Incluye separación entre correo automático y WhatsApp manual del personal, correo opcional/discrepancias al reutilizar Client, permisos reales, outbox, reintentos, deduplicación y mensajes obsoletos. Solo documento y referencias de estado; sin cambios de código, contratos vigentes, base, dependencias, staging, commit, push ni despliegue. Se preservan íntegros los módulos cerrados y el trabajo previo de WhatsApp.
+
+## 2026-09-14 — WhatsApp C3 cerrado/aprobado por el propietario
+
+- Decisión explícita: «Apruebo WhatsApp C3». WhatsApp manual C1–C3 queda **CERRADO / APROBADO** sobre el árbol local con base `c7d43ad03a65a900a930a1a0d69dd258b8516a1e`.
+- [Documento de cierre C3](docs/features/WHATSAPP_C3_ACTIVACION.md) y controles sincronizados. Se conserva la prueba manual satisfactoria de Norte y Sur en iPhone 11 como confirmación del propietario, sin atribuir pruebas nuevas ni ampliar sus límites.
+- Cierre exclusivamente documental. Sin cambios de runtime, datos, dependencias, staging, commit, push ni despliegue; no autoriza otro módulo ni producción.
+
+## 2026-09-14 — WhatsApp C3: prueba física satisfactoria y documento de cierre en revisión final
+
+- El propietario confirmó para Norte y Sur la apertura de WhatsApp con destinatario y mensaje correctos desde un iPhone 11 físico. Ambos enlaces abrieron directamente la aplicación instalada; resultados satisfactorios.
+- [WHATSAPP_C3_ACTIVACION.md](docs/features/WHATSAPP_C3_ACTIVACION.md) registra la evidencia como confirmación manual del propietario, la correspondencia de números reales y sus límites. No se atribuye ejecución del recorrido integral de reserva en el iPhone, envío ni entrega.
+- C3 **IMPLEMENTADO / EN REVISIÓN FINAL**; se resuelve la falta de evidencia física. La confirmación de QA no equivale a aprobación final del checkpoint. C2 sigue cerrado/aprobado; los fixtures históricos se preservan.
+- Solo actualización documental, sin runtime, base de datos, dependencias, staging, commit, push, despliegue ni otro módulo.
+
+## 2026-09-14 — C3: números internacionales confirmados y enlaces preparados
+
+- El propietario aportó dos números reales y confirmó +1 para Norte y Sur. El helper productivo generó ambos enlaces; aserciones de dominio, destinatario, mensaje exacto, parámetro único y fragmento terminaron con exit 0.
+- Documento C3 actualizado; los teléfonos completos no se duplican en documentación versionable. Pendiente apertura manual en teléfono físico; no se acredita cierre ni se modifican fixtures, datos publicados o runtime. Sin commit, push ni despliegue.
+
+## 2026-09-14 — WhatsApp C2 aprobado; C3 preparado, pendiente de prueba física
+
+- El propietario aprobó C2 sobre el árbol local con base `c7d43ad03a65a900a930a1a0d69dd258b8516a1e` y autorizó C3, exigiendo apertura efectiva de WhatsApp y texto esperado en teléfono real para ambos negocios C2.
+- Creado [WHATSAPP_C3_ACTIVACION.md](docs/features/WHATSAPP_C3_ACTIVACION.md) con alcance, protocolo manual, matriz de evidencia, límites y continuación. C3 **PAUSADO / INCOMPLETO**; no es documento de cierre acreditado.
+- La inspección confirma que C2 ya conecta la acción en el código local y que sus dos negocios/números son fixtures con API y destino externo interceptados. No hay evidencia de cuenta WhatsApp ni acceso a teléfono físico desde las herramientas; se solicitó la colaboración manual del propietario y la correspondencia de números controlados.
+- Solo documentación y sincronización de estado; evidencia C2 preservada, sin atribuir QA externo nuevo. Sin cambios de runtime, datos, dependencias, staging, commit, push, despliegue ni otro módulo.
+
+## 2026-09-14 — WhatsApp C1 aprobado y C2 frontend implementado, en revisión
+
+- El propietario aprobó C1 sobre `c7d43ad03a65a900a930a1a0d69dd258b8516a1e` y autorizó C2 según D1–D6, ejecución de cada vector C1 §4 y QA real de popup bloqueado y accesibilidad.
+- Eliminada la apertura automática de PublicMiniSite y el mensaje con datos de reserva. Ambas superficies usan el enlace nativo único de SuccessView: teléfono publicado validado estrictamente, dominio/mensaje fijos, estado «Tu reserva quedó registrada», explicación previa, pestaña nueva anunciada y sin controles interactivos anidados.
+- Web: 106 pruebas de lógica (32 nuevas), 30 de componente (7 nuevas), 16 escenarios Chrome en escritorio/375 px; tipos, lint y build en exit `0`. La denegación real sandbox conserva éxito/enlace sin nueva reserva. [Informe, vectores, límites y capturas](docs/features/WHATSAPP_C2_FRONTEND.md).
+- C2 **IMPLEMENTADO / EN REVISIÓN**, sin aprobación final, staging, commit, push ni despliegue. Sin cambios de API, CMS, H5/fechas, dependencias, base de datos ni otros módulos; trabajo previo preservado.
+
+## 2026-09-14 — WhatsApp manual: contrato C1 y pruebas backend
+
+- El propietario fijó D1–D6 A y autorizó C1. [WHATSAPP_C1_CONTRATO.md](docs/features/WHATSAPP_C1_CONTRATO.md) documenta contrato existente, validación futura del teléfono, textos exactos, privacidad, compatibilidad legacy y gate antes de C2.
+- Se conserva el contrato sin nuevos endpoints/campos y sin cambios productivos. La suite HTTP de WhatsApp comprueba la proyección publicada, aislamiento, rechazo de campos extra, errores y preservación de `PENDING`. Evidencia y comandos en el contrato.
+- C1 completado/en revisión: 23 pruebas HTTP nuevas, 549 pruebas API aprobadas y 11 omisiones preexistentes; tipos y lint con exit `0`. C2 no iniciado. No se modifican CMS, H5/fechas, otros módulos, dependencias ni base de datos. Se preserva la documentación previa. Sin commit, push ni despliegue.
+
+## 2026-09-14 — WhatsApp manual: C0 documentado para revisión
+
+- A petición del propietario, guardado [WHATSAPP_C0_AUDITORIA.md](docs/features/WHATSAPP_C0_AUDITORIA.md) con la auditoría presentada en conversación, D1–D6 como opciones abiertas, recomendaciones y contrato condicionado a su elección.
+- Alcance exclusivo de auditoría/documentación; sin aprobación de opciones, implementación, cambios a CMS/H5 ni estados de Booking. Se sincronizan índice, PROJECT_MASTER, nota posterior del roadmap y referencia en flujos.
+- Se preservan cambios locales preexistentes de backend WhatsApp detectados al iniciar esta entrega; no se implementan, prueban ni aprueban desde C0. Validación exclusivamente documental, sin builds, base de datos, envíos, commit ni push.
+
+## 2026-09-14 — Auditoría comparativa y roadmap posterior a CMS
+
+- Entregado [roadmap de WhatsApp, Pagos, Notificaciones y Medios/Promociones](docs/features/ROADMAP_POST_CMS_AUDITORIA.md) mediante revisión estática sobre `c7d43ad`, cuyo código coincide con la base funcional aprobada `8fd7b1f`.
+- Se comparan acoplamiento, riesgo, complejidad y dependencias; se separan medios públicos, promociones editoriales y descuentos ejecutables, así como cobro interno vigente y ampliación futura de Pagos.
+- H8 queda reconciliado documentalmente: existe apertura pública legacy de WhatsApp, mientras la acción operativa del personal y plantillas siguen siendo futuras. El API entrega `whatsappBaseUrl`, pero la web todavía usa `https://wa.me/` fijo; la afirmación histórica del 2026-07-23 sobre adopción frontend no describe el consumidor actual. No se corrige el código ni se retira el campo.
+- Solo documentación y validación de enlaces, estados y diff; sin pruebas funcionales, builds, base de datos, envíos ni implementación. C1–C3 y H5/fechas conservan su cierre. No hay checkpoint abierto ni C0 de candidato iniciado; el propietario elegirá y autorizará cuál abordar.
 
 ## 2026-09-13 — Correctivos H5 y fechas cerrados y aprobados
 

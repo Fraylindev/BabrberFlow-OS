@@ -285,6 +285,14 @@ export class PublicBookingService {
           professionalId: dto.professionalId,
           clientId: clientResult.id,
           startTime: dto.startTime,
+          ...(dto.emailNotifications
+            ? {
+                emailNotifications: {
+                  ...dto.emailNotifications,
+                  reviewedEmail: normalized.email ?? undefined,
+                },
+              }
+            : {}),
         },
         transaction,
         true,

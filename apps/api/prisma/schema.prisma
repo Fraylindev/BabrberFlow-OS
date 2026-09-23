@@ -358,6 +358,9 @@ model Client {
 
   email String?
 
+  emailRevision    Int                      @default(0)
+  emailPreferences BookingEmailPreference[]
+
   phone String?
 
   notes String?
@@ -375,6 +378,7 @@ model Client {
   // opcional para permitir walk-ins sin correo.
   @@unique([organizationId, email])
   @@unique([organizationId, userId])
+  @@unique([id, organizationId])
 }
 
 model Service {
@@ -430,8 +434,9 @@ model Booking {
 
   createdAt DateTime @default(now())
 
-  updatedAt DateTime @updatedAt
-  Invoice   Invoice?
+  updatedAt       DateTime                @updatedAt
+  Invoice         Invoice?
+  emailPreference BookingEmailPreference?
 
   // The 20260811180000_booking_schedule_exclusion migration also adds a
   // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
@@ -494,6 +499,102 @@ model Notification {
   read Boolean @default(false)
 
   createdAt DateTime @default(now())
+}
+
+// Notificaciones transaccionales C1; separado del registro Notification legacy.
+model BookingEmailPreference {
+  bookingId               String
+  organizationId          String
+  booking                 Booking             @relation(fields: [bookingId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  clientId                String
+  client                  Client              @relation(fields: [clientId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  sequence                Int                 @default(0)
+  version                 Int                 @default(0)
+  optedIn                 Boolean             @default(false)
+  noticeVersion           String?
+  recordedAt              DateTime?
+  source                  String?
+  reviewedContactRevision Int?
+  events                  BookingEmailEvent[]
+
+  @@id([bookingId, organizationId])
+  @@index([clientId, organizationId])
+}
+
+model BookingEmailEvent {
+  bookingId         String
+  organizationId    String
+  sequence          Int
+  preference        BookingEmailPreference @relation(fields: [bookingId, organizationId], references: [bookingId, organizationId], onDelete: Restrict)
+  kind              String
+  bookingStatus     BookingStatus
+  startTime         DateTime
+  endTime           DateTime
+  serviceId         String
+  professionalId    String
+  contactRevision   Int
+  preferenceVersion Int
+  createdAt         DateTime               @default(now())
+  intent            EmailOutbox?
+
+  @@id([bookingId, organizationId, sequence])
+}
+
+model EmailOutbox {
+  id                String                @id @default(uuid())
+  bookingId         String
+  organizationId    String
+  eventSequence     Int
+  event             BookingEmailEvent     @relation(fields: [bookingId, organizationId, eventSequence], references: [bookingId, organizationId, sequence], onDelete: Restrict)
+  channel           String                @default("EMAIL")
+  status            String                @default("PENDING")
+  reason            String?
+  attempts          Int                   @default(0)
+  createdAt         DateTime              @default(now())
+  expiresAt         DateTime
+  nextAttemptAt     DateTime              @default(now())
+  retryAfter        DateTime?
+  leaseToken        String?
+  leaseExpiresAt    DateTime?
+  firstDispatchedAt DateTime?
+  closedAt          DateTime?
+  recipient         String?
+  sealedPayload     Json?
+  templateVersion   String?
+  providerId        String?               @unique
+  providerEventAt   DateTime?
+  webhooks          EmailWebhookReceipt[]
+
+  @@unique([bookingId, organizationId, eventSequence])
+  @@unique([id, organizationId])
+  @@index([status, nextAttemptAt])
+  @@index([organizationId, createdAt, id])
+  @@index([closedAt])
+}
+
+model EmailWebhookReceipt {
+  id             String      @id
+  notificationId String
+  organizationId String
+  notification   EmailOutbox @relation(fields: [notificationId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  kind           String
+  occurredAt     DateTime
+}
+
+model EmailAbuseBucket {
+  key         String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@id([key, windowStart])
+  @@index([windowStart])
+}
+
+model EmailChannelControl {
+  id        String   @id
+  paused    Boolean  @default(false)
+  reason    String?
+  updatedAt DateTime @default(now())
 }
 
 model AuditLog {

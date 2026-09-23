@@ -38,7 +38,7 @@ La base C3 ya convierte `/{slug}` en un mini-sitio con la proyección publicada 
 - recorrer servicio → profesional o cualquiera → fecha/hora → datos mínimos del cliente → método de pago;
 - permitir pago en local sin cobro confirmado y transferencia con comprobante pendiente de verificación, sin crear automáticamente un `Payment`;
 - ampliar Pagos mediante un contrato formal futuro para pago anticipado, verificación, evidencia, pago pendiente y propina separada;
-- usar en el futuro Resend para correo automático y `wa.me` como acción manual con mensaje prellenado y editable, siempre coherente con estados reales.
+- usar en el futuro Resend para correo automático y ampliar WhatsApp con una acción operativa manual, mensaje prellenado y editable, siempre coherente con estados reales. La acción pública [WhatsApp C2](../features/WHATSAPP_C2_FRONTEND.md), aprobada por el propietario, con verificación física satisfactoria documentada en [C3](../features/WHATSAPP_C3_ACTIVACION.md) y aprobación explícita de C3, permite abrir manualmente `wa.me` hacia el teléfono publicado elegible del negocio después de registrar la reserva, con mensaje genérico sin datos del cliente. No equivale a envío automático ni a un módulo de plantillas. La [auditoría posterior a CMS](../features/ROADMAP_POST_CMS_AUDITORIA.md) distingue ambos alcances.
 
 Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / APROBADO** de Facturación-B.
 

@@ -49,6 +49,8 @@ PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitacion
 
 ## Frontend
 
+Actualización aditiva — Notificaciones C1 implementado/en revisión: 24 migraciones en el árbol; las tres nuevas se ensayaron solo en PostgreSQL aislado. Booking y correo comparten transacción local; worker separado con leases PostgreSQL y Resend fuera de transacción. Snapshot y versión de plantilla sellados; recuperación y límites compartidos verificados. Sin Redis. Canal desactivado por defecto; C2 requiere aprobación del contrato. [Contrato y evidencia](../features/NOTIFICACIONES_C1_CONTRATO.md).
+
 - React Query gestiona estado remoto y purga datos de negocio al cambiar el contexto.
 - Resumen y Facturación añaden claves `usuario + organización + rol` y control de solicitudes tardías.
 - `api.ts` obtiene la sesión en cada petición; no persiste el JWT legacy.

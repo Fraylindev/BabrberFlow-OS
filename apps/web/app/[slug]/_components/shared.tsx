@@ -5,12 +5,6 @@ export function formatMoney(value: string | number) {
   return `RD$${Number(value).toLocaleString("es-DO", { minimumFractionDigits: 0 })}`;
 }
 
-export function waLink(phone: string | null | undefined, message: string) {
-  const digits = (phone || "").replace(/\D/g, "");
-  if (!digits) return null;
-  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
-}
-
 export function StepWrapper({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>

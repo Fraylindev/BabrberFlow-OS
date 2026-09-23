@@ -16,6 +16,14 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
+- [`NOTIFICACIONES_C3_ACTIVACION.md`](features/NOTIFICACIONES_C3_ACTIVACION.md): C3 cerrado/aprobado tras QA real de las cinco plantillas y cinco entregas `DELIVERED`; canal pausado, webhook temporal eliminado y sin producción.
+
+- [`NOTIFICACIONES_C2_FRONTEND.md`](features/NOTIFICACIONES_C2_FRONTEND.md): C2 cerrado/aprobado explícitamente; historial, opt-in y reintento. Pruebas, QA real de cuatro roles/dos tenants y altas pública/interna documentados. C3 temporal autorizado; ver documento de activación.
+
+- [`NOTIFICACIONES_C1_CONTRATO.md`](features/NOTIFICACIONES_C1_CONTRATO.md): backend aprobado explícitamente; cinco eventos, outbox/worker, preferencias, permisos, reintentos y retención. Evidencia HTTP/PostgreSQL, migración y recuperación. C2 aprobado; C3 temporal en curso.
+
+- [`NOTIFICACIONES_C0_AUDITORIA.md`](features/NOTIFICACIONES_C0_AUDITORIA.md): C0 con D1–D10 fijadas por el propietario; correo automático para cinco eventos, incluidos reprogramación y completado sin marketing. WhatsApp manual diseñado para segunda entrega; opt-in, permisos, outbox y retención fijados. Sin implementación ni C1 autorizado; remitente real antes de activar C3.
+
 - [`PRD.md`](product/PRD.md): definición vigente del producto y sus límites.
 - [`APP_FLOWS.md`](product/APP_FLOWS.md): recorridos reales y fronteras entre etapas.
 - [`PRODUCT_STANDARD.md`](product/PRODUCT_STANDARD.md): criterios permanentes para definir una capacidad.
@@ -30,6 +38,12 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`CONFIGURACION_CMS_C3_BACKEND.md`](features/CONFIGURACION_CMS_C3_BACKEND.md): proyección pública C3 cerrada/aprobada y autorización del cambio visible de `/{slug}`.
 - [`CONFIGURACION_CMS_C3_FRONTEND.md`](features/CONFIGURACION_CMS_C3_FRONTEND.md): mini-sitio público, revalidación de retiro, integración de reserva y QA real de C3.
 - [`RESERVA_PUBLICA_H5_FECHAS.md`](features/RESERVA_PUBLICA_H5_FECHAS.md): correctivos H5 y fecha estricta cerrados/aprobados; contrato aditivo, superficies de entrada y evidencia.
+- [`ROADMAP_POST_CMS_AUDITORIA.md`](features/ROADMAP_POST_CMS_AUDITORIA.md): auditoría comparativa histórica de WhatsApp, Pagos, Notificaciones y Medios/Promociones; la autorización posterior aprobó C1 y comprende C2 de WhatsApp.
+- [`WHATSAPP_C0_AUDITORIA.md`](features/WHATSAPP_C0_AUDITORIA.md): auditoría y alternativas históricas; D1–D6 resueltas en A por el propietario al autorizar C1.
+- [`WHATSAPP_C1_CONTRATO.md`](features/WHATSAPP_C1_CONTRATO.md): contrato backend existente aprobado, pruebas automáticas y decisiones D1–D6.
+- [`WHATSAPP_C2_FRONTEND.md`](features/WHATSAPP_C2_FRONTEND.md): implementación del enlace manual compartido, ejecución de vectores y evidencia de QA de navegador, popup bloqueado y accesibilidad.
+
+- [`WHATSAPP_C3_ACTIVACION.md`](features/WHATSAPP_C3_ACTIVACION.md): C2 aprobado; activación C3 documentada con prueba manual satisfactoria de ambos destinos en iPhone 11, confirmada por el propietario; C3 cerrado/aprobado explícitamente el 2026-09-14.
 
 ### Arquitectura y seguridad
 

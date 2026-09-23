@@ -1,7 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState, FormEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, FormEvent, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { canReadBookingEmails, EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
+import { EmailConsent } from '@/components/notifications/EmailConsent';
 import {
   ApiError,
   Booking,
@@ -433,6 +436,7 @@ export default function BookingsPage() {
                   onReschedule={() => setRescheduleTarget(b)}
                   onIssueInvoice={() => handleIssueInvoice(b.id)}
                 />
+                {canReadBookingEmails(user?.role) && <Link href={`/dashboard/bookings/${b.id}/notifications`} className="mt-3 inline-block text-sm underline focus-visible:outline-2">Avisos por correo</Link>}
               </article>
             ))}
           </div>
@@ -531,6 +535,7 @@ export default function BookingsPage() {
                         onReschedule={() => setRescheduleTarget(b)}
                         onIssueInvoice={() => handleIssueInvoice(b.id)}
                       />
+                      {canReadBookingEmails(user?.role) && <Link href={`/dashboard/bookings/${b.id}/notifications`} className="mt-2 inline-block text-xs underline focus-visible:outline-2">Avisos por correo</Link>}
                     </td>
                   </tr>
                 ))}
@@ -550,6 +555,7 @@ export default function BookingsPage() {
       {/* ── Modal: crear reserva ─────────────────────────────────────────── */}
       {createOpen && (
         <CreateBookingModal
+          key={scopeKey}
           onClose={() => setCreateOpen(false)}
           onCreated={() => {
             setCreateOpen(false);
@@ -581,6 +587,17 @@ function CreateBookingModal({
   onClose: () => void;
   onCreated: () => void;
 }) {
+  const { user } = useAuth();
+  const mayRecordEmail = canReadBookingEmails(user?.role);
+  const [emailOptedIn, setEmailOptedIn] = useState(false);
+  const [reviewedEmail, setReviewedEmail] = useState('');
+  const [emailReviewed, setEmailReviewed] = useState(false);
+  const visit = useRef({ active: true });
+  useLayoutEffect(() => {
+    const current = { active: true };
+    visit.current = current;
+    return () => { current.active = false; };
+  }, []);
   const {
     data: clients = [],
     isLoading: loadingClients,
@@ -620,7 +637,13 @@ function CreateBookingModal({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const currentVisit = visit.current;
+    if (createBooking.isPending) return;
     setError(null);
+    if (mayRecordEmail && emailOptedIn && (!emailReviewed || !reviewedEmail.trim())) {
+      setError('Revisa el correo con el cliente y confirma su elección antes de reservar.');
+      return;
+    }
 
     // Validación justo antes de enviar, usando el tiempo actual.
     if (!clientId || !professionalId || !serviceId) {
@@ -643,9 +666,15 @@ function CreateBookingModal({
         professionalId,
         serviceId,
         startTime: selectedDate.toISOString(),
+        ...(mayRecordEmail ? { emailNotifications: {
+          optedIn: emailOptedIn, noticeVersion: EMAIL_NOTICE_VERSION,
+          ...(emailOptedIn ? { reviewedEmail: reviewedEmail.trim() } : {}),
+        } } : {}),
       });
+      if (!currentVisit.active) return;
       onCreated();
     } catch (err) {
+      if (!currentVisit.active) return;
       setError(err instanceof ApiError ? err.message : 'No se pudo crear la reserva.');
     }
   }
@@ -701,7 +730,7 @@ function CreateBookingModal({
               name="clientId"
               clients={clients}
               value={clientId}
-              onChange={setClientId}
+              onChange={(id) => { setClientId(id); setEmailOptedIn(false); setEmailReviewed(false); setReviewedEmail(''); }}
               required
             />
           </BookingFormSection>
@@ -766,6 +795,24 @@ function CreateBookingModal({
               required
             />
           </BookingFormSection>
+
+          {mayRecordEmail && <section className="space-y-3" aria-label="Avisos por correo de la reserva">
+            <h3 className="text-sm font-semibold">Avisos por correo (opcional)</h3>
+            <p className="text-sm text-[var(--dash-text-muted)]">Lee este aviso al cliente y registra únicamente su elección.</p>
+            <EmailConsent checked={emailOptedIn} disabled={createBooking.isPending}
+              onChange={(checked) => { setEmailOptedIn(checked); setEmailReviewed(false); setReviewedEmail(''); }} />
+            {emailOptedIn && <>
+              <label className="block text-sm">Correo revisado con el cliente
+                <input type="email" required maxLength={254} autoComplete="off" value={reviewedEmail}
+                  disabled={createBooking.isPending} className="mt-2 w-full rounded-md border border-[var(--dash-border)] p-2 focus-visible:outline-2"
+                  onChange={(event) => { setReviewedEmail(event.target.value); setEmailReviewed(false); }} />
+              </label>
+              <label className="flex items-start gap-3 text-sm"><input type="checkbox" className="mt-1 h-5 w-5 shrink-0"
+                checked={emailReviewed} disabled={createBooking.isPending} onChange={(event) => setEmailReviewed(event.target.checked)} />
+                <span>El cliente eligió recibir estos avisos y revisé con él su correo registrado.</span></label>
+              <p className="text-xs text-[var(--dash-text-muted)]">Debe coincidir con el correo de su ficha. No cambia el contacto ni verifica la propiedad del buzón.</p>
+            </>}
+          </section>}
 
           {error && (
             <p

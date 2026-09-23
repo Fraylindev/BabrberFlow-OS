@@ -107,6 +107,7 @@ describePostgres('Booking PostgreSQL concurrency guarantee', () => {
       expect(rejected).toBeDefined();
       expect(isBookingScheduleConflictError(rejected?.reason)).toBe(true);
     } finally {
+      await cleanupNotificationFixture(organization.id);
       await prisma.booking.deleteMany({
         where: { organizationId: organization.id },
       });
@@ -115,6 +116,9 @@ describePostgres('Booking PostgreSQL concurrency guarantee', () => {
         prisma.service.delete({ where: { id: service.id } }),
         prisma.professional.delete({ where: { id: professional.id } }),
       ]);
+      await prisma.cmsPage.deleteMany({
+        where: { organizationId: organization.id },
+      });
       await prisma.organization.delete({ where: { id: organization.id } });
     }
   });
@@ -151,11 +155,22 @@ describePostgres('Booking PostgreSQL concurrency guarantee', () => {
   }
 
   async function cleanupIntegrityFixture(organizationId: string) {
+    await cleanupNotificationFixture(organizationId);
     await prisma.booking.deleteMany({ where: { organizationId } });
     await prisma.client.deleteMany({ where: { organizationId } });
     await prisma.service.deleteMany({ where: { organizationId } });
     await prisma.professional.deleteMany({ where: { organizationId } });
+    await prisma.cmsPage.deleteMany({ where: { organizationId } });
     await prisma.organization.delete({ where: { id: organizationId } });
+  }
+
+  async function cleanupNotificationFixture(organizationId: string) {
+    await prisma.emailWebhookReceipt.deleteMany({ where: { organizationId } });
+    await prisma.emailOutbox.deleteMany({ where: { organizationId } });
+    await prisma.bookingEmailEvent.deleteMany({ where: { organizationId } });
+    await prisma.bookingEmailPreference.deleteMany({
+      where: { organizationId },
+    });
   }
 
   async function expectArchiveIntegrity(

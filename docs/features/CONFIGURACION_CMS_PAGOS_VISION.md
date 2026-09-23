@@ -68,7 +68,7 @@ La ampliación requerirá un contrato técnico y una decisión arquitectónica p
 ## 5. Notificaciones futuras
 
 - El correo automático usará Resend una vez aprobados integración, eventos, consentimiento, remitentes, reintentos y tratamiento de fallos.
-- WhatsApp será una acción manual mediante `wa.me`, con mensaje prellenado y editable por la persona operadora; no se presupone envío automático.
+- La futura capacidad operativa WhatsApp será una acción manual mediante `wa.me`, con mensaje prellenado y editable por la persona operadora; no se presupone envío automático. Ya existe una acción pública legacy distinta: tras reservar, la web intenta abrir WhatsApp hacia el teléfono publicado del negocio y ofrece un botón posterior. No hay editor en Kortek ni evidencia de envío/entrega; el API entrega `whatsappBaseUrl`, pero la web usa una base fija. La [auditoría posterior a CMS](ROADMAP_POST_CMS_AUDITORIA.md) resuelve la discrepancia documental H8, sin corregir el código ni autorizar el módulo.
 - Las plantillas se administrarán desde Configuración y deberán reflejar el estado real de la reserva.
 - “En proceso” solo podrá mostrarse si existe como estado real de Booking con transiciones, permisos y persistencia definidos; no puede introducirse únicamente como copy.
 

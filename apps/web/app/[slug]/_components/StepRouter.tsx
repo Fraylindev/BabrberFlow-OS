@@ -26,6 +26,8 @@ interface StepRouterProps {
   clientPhone: string;
   setClientPhone: (v: string) => void;
   clientEmail: string;
+  emailOptedIn: boolean;
+  setEmailOptedIn: (value: boolean) => void;
   setClientEmail: (v: string) => void;
   createAccount: boolean;
   setCreateAccount: (v: boolean) => void;
@@ -79,6 +81,8 @@ export function StepRouter(props: StepRouterProps) {
     case "contact":
       return (
         <ContactStep
+          emailOptedIn={props.emailOptedIn}
+          onEmailOptInChange={props.setEmailOptedIn}
           clientName={props.clientName}
           clientPhone={props.clientPhone}
           clientEmail={props.clientEmail}

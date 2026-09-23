@@ -2,6 +2,8 @@
 
 Nota posterior: el propietario fijó D1–D6 y autorizó C1 completo, con parada antes de C2/C3. El [contrato C1](CONFIGURACION_CMS_C1_CONTRATO.md) contiene las decisiones vigentes y su evidencia; las etiquetas de propuesta/no autorización del cuerpo siguiente describen el checkpoint C0 histórico.
 
+Nota posterior 2026-09-14 — H8: la [auditoría comparativa posterior a CMS](ROADMAP_POST_CMS_AUDITORIA.md) reconcilia la documentación de WhatsApp: existe apertura pública legacy hacia el negocio; la capacidad operativa con plantillas editables sigue siendo futura. El API entrega `whatsappBaseUrl` y la web conserva base fija sin consumirlo. Se mantiene el hallazgo histórico de §9 y la divergencia técnica pendiente de alcance; no se inició el C0 de WhatsApp ni se modificó código.
+
 Fecha: 2026-09-12. Estado: **C0 COMPLETADO / EN REVISIÓN DEL PROPIETARIO**. C1, C2 y C3 no están iniciados ni aprobados.
 
 ## 1. Identificación, alcance y método

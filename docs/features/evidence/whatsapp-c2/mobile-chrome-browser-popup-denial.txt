@@ -1,0 +1,2 @@
+Blocked opening 'https://wa.me/18095551234?text=Hola.%20Acabo%20de%20registrar%20una%20reserva%20en%20su%20p%C3%A1gina%20y%20quisiera%20consultar%20con%20ustedes.' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.
+Blocked opening 'https://wa.me/18095551234?text=Hola.%20Acabo%20de%20registrar%20una%20reserva%20en%20su%20p%C3%A1gina%20y%20quisiera%20consultar%20con%20ustedes.' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.

@@ -13,6 +13,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
 
+// This suite isolates Booking rules; notifications/locks are exercised against
+// PostgreSQL by the notification integration suites, not emulated by these mocks.
+jest.mock('../notifications/notification-producer', () => ({
+  lockEmailClient: jest.fn().mockResolvedValue(undefined),
+  lockEmailBooking: jest.fn().mockResolvedValue(undefined),
+  recordBookingEmailChange: jest.fn().mockResolvedValue(undefined),
+}));
+
 function createMockAvailability() {
   return {
     assertAvailableForBooking: jest.fn().mockResolvedValue(undefined),

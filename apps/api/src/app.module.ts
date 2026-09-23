@@ -13,6 +13,7 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { PublicBookingModule } from './public-booking/public-booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { CmsModule } from './cms/cms.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { CmsModule } from './cms/cms.module';
     PublicBookingModule,
     AnalyticsModule,
     CmsModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [],

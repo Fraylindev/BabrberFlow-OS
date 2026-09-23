@@ -59,6 +59,8 @@ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se l
 
 A0.6-B/C/D todavía no implementan un recorrido Clerk público posterior a reserva ni autoservicio de cliente.
 
+WhatsApp público [C2](../features/WHATSAPP_C2_FRONTEND.md), aprobado por el propietario sobre [C1 aprobado](../features/WHATSAPP_C1_CONTRATO.md), con prueba física satisfactoria confirmada por el propietario en [activación C3](../features/WHATSAPP_C3_ACTIVACION.md), cerrado/aprobado explícitamente por el propietario: tras crear la reserva se muestra «Tu reserva quedó registrada». Solo si el teléfono publicado del slug actual tiene `+` explícito y cumple la validación estricta se presenta una explicación previa y un único enlace «Abrir WhatsApp» en pestaña nueva. PublicMiniSite ya no abre automáticamente; renderiza el mismo SuccessView, con dominio y mensaje genérico fijos, sin datos de la reserva en el texto. Teléfono inelegible omite enlace y auxiliar. El clic no repite el POST, confirma Booking ni acredita envío/entrega. El API conserva `whatsappBaseUrl` legacy sin que la acción lo consuma. Bloqueo del navegador conserva el resultado y la opción de reintentar el enlace; no se promete detectar ni sortear ese bloqueo. CMS/H5 mantienen sus contratos y estado.
+
 ## 6. Facturación interna
 
 1. una Booking solo se completa después de `endTime` según el reloj del servidor;
@@ -78,7 +80,7 @@ La base C3 de mini-sitio, CTA y reserva descrita en la sección 5 está cerrada/
 3. pago en local crea la reserva sin cobro confirmado;
 4. transferencia muestra cuentas habilitadas del tenant y admite un comprobante pendiente de verificación, sin crear automáticamente un `Payment`.
 
-La relación entre reserva, retención de horario, comprobante, verificación, pago anticipado, Invoice y propina necesita un contrato futuro. El Payment completo único vigente no se usa como estado pendiente. Las notificaciones futuras prevén correo automático con Resend y una acción manual `wa.me` editable; cualquier mensaje debe representar el estado real de Booking. Ver [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md).
+La relación entre reserva, retención de horario, comprobante, verificación, pago anticipado, Invoice y propina necesita un contrato futuro. El Payment completo único vigente no se usa como estado pendiente. Las notificaciones futuras prevén correo automático con Resend y una acción operativa manual `wa.me` editable por el personal, adicional a la acción pública descrita en §5; cualquier mensaje debe representar el estado real de Booking. Ver [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md).
 
 ## 8. Flujo de entrega
 

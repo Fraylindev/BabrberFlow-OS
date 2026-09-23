@@ -42,6 +42,11 @@ export class BookingsController {
     @Body() createBookingDto: CreateBookingDto,
   ) {
     if (user.role === UserRole.BARBER) {
+      if (createBookingDto.emailNotifications !== undefined) {
+        throw new ForbiddenException(
+          'No puedes registrar preferencias de correo',
+        );
+      }
       const professional = await this.professionalsService.findByUserId(
         user.id,
         user.organizationId,

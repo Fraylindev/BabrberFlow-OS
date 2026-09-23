@@ -35,6 +35,8 @@
 
 ## Invariantes
 
+Notificaciones C1 implementado/en revisión: `Client.emailRevision` invalida corroboración incluso A → B → A; `BookingEmailPreference` conserva secuencia/consentimiento/revisión por reserva y tenant; `BookingEmailEvent` guarda eventos durables; `EmailOutbox` guarda intención, lease, presupuesto y snapshot privado purgable y versión de plantilla persistida. `EmailWebhookReceipt` deduplica señales externas; `EmailAbuseBucket` limita envíos entre workers; `EmailChannelControl` pausa el canal compartido. FKs compuestas refuerzan tenant. `Notification` legacy se conserva intacto y no se usa como outbox. [Contrato C1 y estado real](../features/NOTIFICACIONES_C1_CONTRATO.md); no implica aprobación ni activación.
+
 - Todo dato de negocio debe aislarse por `organizationId` en consultas y contratos.
 - Relaciones sin clave compuesta tenant-scoped requieren que el servicio valide la organización de todos los recursos en la operación autoritativa.
 - No usar hard-delete para datos operativos o financieros sin una decisión explícita.

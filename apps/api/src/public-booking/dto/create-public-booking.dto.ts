@@ -12,6 +12,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { PublicEmailPreferenceInput } from '../../notifications/email-preference.dto';
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MIN_LENGTH_MESSAGE,
@@ -22,7 +23,7 @@ import {
   CLIENT_PHONE_INPUT_MAX_LENGTH,
 } from '../../clients/clients.constants';
 
-export class CreatePublicBookingDto {
+export class CreatePublicBookingDto extends PublicEmailPreferenceInput {
   @IsUUID()
   @IsNotEmpty()
   serviceId!: string;

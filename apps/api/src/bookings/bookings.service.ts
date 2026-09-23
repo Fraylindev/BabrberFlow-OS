@@ -12,6 +12,11 @@ import { BookingStatus, ProfessionalStatus, type Prisma } from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import {
+  lockEmailBooking,
+  lockEmailClient,
+  recordBookingEmailChange,
+} from '../notifications/notification-producer';
 
 export const bookingClientResponseSelect = {
   id: true,
@@ -109,6 +114,15 @@ export class BookingsService {
     const db = transaction;
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
 
+    try {
+      await lockEmailClient(transaction, organizationId, clientId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new BadRequestException('Cliente no encontrado en esta barbería');
+      }
+      throw error;
+    }
+
     const lockedProfessional = await lockProfessionalForBookingIntegrity(
       transaction,
       professionalId,
@@ -171,7 +185,7 @@ export class BookingsService {
     );
 
     try {
-      return await db.booking.create({
+      const created = await db.booking.create({
         data: {
           organizationId,
           clientId,
@@ -182,6 +196,20 @@ export class BookingsService {
         },
         select: bookingMutationResponseSelect,
       });
+      const choice = createBookingDto.emailNotifications;
+      await recordBookingEmailChange(
+        transaction,
+        organizationId,
+        null,
+        created,
+        choice
+          ? {
+              ...choice,
+              source: requirePublicProfessional ? 'PUBLIC' : 'STAFF',
+            }
+          : undefined,
+      );
+      return created;
     } catch (error) {
       this.rethrowScheduleConflict(error);
     }
@@ -282,6 +310,7 @@ export class BookingsService {
     organizationId: string,
     dto: RescheduleBookingDto,
   ): Promise<BookingMutationResponse> {
+    await lockEmailBooking(transaction, organizationId, id);
     const booking = await transaction.booking.findFirst({
       where: { id, organizationId },
       select: bookingMutationResponseSelect,
@@ -348,7 +377,7 @@ export class BookingsService {
     );
 
     try {
-      return await transaction.booking.update({
+      const updated = await transaction.booking.update({
         where: { id, organizationId },
         data: {
           professionalId,
@@ -358,6 +387,13 @@ export class BookingsService {
         },
         select: bookingMutationResponseSelect,
       });
+      await recordBookingEmailChange(
+        transaction,
+        organizationId,
+        booking,
+        updated,
+      );
+      return updated;
     } catch (error) {
       this.rethrowScheduleConflict(error);
     }
@@ -387,6 +423,7 @@ export class BookingsService {
     updateBookingStatusDto: UpdateBookingStatusDto,
     professionalId?: string,
   ): Promise<BookingMutationResponse> {
+    await lockEmailBooking(transaction, organizationId, id);
     const booking = await transaction.booking.findFirst({
       where: {
         id,
@@ -443,7 +480,7 @@ export class BookingsService {
     }
 
     try {
-      return await transaction.booking.update({
+      const updated = await transaction.booking.update({
         where: {
           id,
           organizationId,
@@ -452,6 +489,13 @@ export class BookingsService {
         data: { status: updateBookingStatusDto.status },
         select: bookingMutationResponseSelect,
       });
+      await recordBookingEmailChange(
+        transaction,
+        organizationId,
+        booking,
+        updated,
+      );
+      return updated;
     } catch (error) {
       this.rethrowScheduleConflict(error);
     }

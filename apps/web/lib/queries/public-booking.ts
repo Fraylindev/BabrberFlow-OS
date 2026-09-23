@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { EmailOptIn } from '@/lib/notification-ui';
 import {
   api,
   PublicAvailabilityResponse,
@@ -64,6 +65,7 @@ export interface CreatePublicBookingInput {
   clientName: string;
   clientPhone: string;
   clientEmail?: string;
+  emailNotifications?: EmailOptIn;
   createAccount?: boolean;
   password?: string;
 }

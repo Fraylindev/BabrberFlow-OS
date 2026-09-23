@@ -1,5 +1,17 @@
 # BACKEND_CHANGES.md
 
+## 2026-09-22 — Notificaciones C3: QA real cerrado
+
+El propietario aprobó el QA real de las cinco plantillas. CREATED, CONFIRMED, RESCHEDULED, COMPLETED y CANCELLED quedaron `DELIVERED` mediante Resend, con recibos `email.sent` y `email.delivered` persistidos en la base C3. El canal permanece desactivado y el webhook temporal fue eliminado; no hay cambio adicional de contrato ni activación productiva. [Evidencia C3](docs/features/NOTIFICACIONES_C3_ACTIVACION.md).
+
+## 2026-09-16 — Notificaciones C3: configuración de From
+
+C2 aprobado explícitamente y C3 temporal autorizado. From admite una dirección central con nombre visible explícito, sin anidarlo con el nombre de organización. Dirección desnuda conserva comportamiento C1; rechazo de controles/múltiples direcciones y snapshot inmutable. Sin endpoints, DTOs, schema ni permisos nuevos. 35 pruebas de adaptador, 649 unitarias y 26 PostgreSQL; tipos/lint/build exit 0. Activación y QA real todavía incompletos: [evidencia C3](docs/features/NOTIFICACIONES_C3_ACTIVACION.md). Sin producción ni publicación Git.
+
+## 2026-09-15 — Notificaciones C1 implementado, en revisión
+
+[Contrato C1 y evidencia](docs/features/NOTIFICACIONES_C1_CONTRATO.md): preferencias aditivas en alta interna/pública, GET /notifications, GET /bookings/:id/notifications, GET/PATCH /bookings/:id/email-preference, POST /notifications/:id/retry y webhook firmado de Resend. Cinco eventos, incluido nuevo horario y COMPLETED transaccional; permisos D8, outbox atómico, worker, 5 intentos/24 h, purga 30 días y versión de plantilla sellada. Migraciones 22–24 ensayadas solo en QA aislado; recuperación desde respaldo verificada. 640 unitarias y 227 E2E aprobadas, más repetición HTTP final de 22 casos. **IMPLEMENTADO / EN REVISIÓN, NO APROBADO**. Sin C2, activación C3, cambios CMS/H5/WhatsApp ni publicación Git.
+
 Registro de cambios de contrato de API de Kortek Booking. Cada entrada indica endpoint, cambio, motivo e impacto en consumidores.
 
 > Leer de arriba hacia abajo: la entrada más reciente aplicable define el contrato vigente. Los estados dentro de entradas antiguas son fotografías de su fecha. El estado actual del producto vive en [`PROJECT_MASTER.md`](PROJECT_MASTER.md) y las referencias a secciones numeradas antiguas se conservan en [`docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md`](docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md).
@@ -7,6 +19,19 @@ Registro de cambios de contrato de API de Kortek Booking. Cada entrada indica en
 G0 no cambia endpoints, DTOs, persistencia ni contratos; solo reorganiza gobierno y documentación.
 
 G0.1 tampoco cambia contratos. Documenta el riesgo vigente de autenticación en [`ADR-001`](docs/decisions/ADR-001-authentication-strategy.md) y propone Security A0 para una entrega posterior, sujeta a aprobación.
+
+## 2026-09-14 — Aprobación de WhatsApp C1 y consumidor C2
+
+El propietario aprobó explícitamente [C1](docs/features/WHATSAPP_C1_CONTRATO.md) sobre `c7d43ad03a65a900a930a1a0d69dd258b8516a1e`. Contrato **CERRADO / APROBADO**, sin cambio de endpoints, DTOs, campos ni persistencia. [C2 frontend](docs/features/WHATSAPP_C2_FRONTEND.md) implementa la acción manual y queda en revisión; no modifica `PENDING` ni consume `whatsappBaseUrl` como destino. La evidencia API de la entrada anterior se conserva, sin atribuirle QA nuevo de backend.
+
+## 2026-09-14 — WhatsApp C1: aclaración del contrato backend existente
+
+Estado: **C1 COMPLETADO / EN REVISIÓN DEL PROPIETARIO**, pendiente de aprobación explícita antes de C2. 23 pruebas HTTP nuevas; suite API 549 aprobadas, 11 omisiones preexistentes; tipos y lint en exit `0`. [Contrato y pruebas](docs/features/WHATSAPP_C1_CONTRATO.md).
+
+- D1–D6 fijadas en A. Sin nuevos endpoints/campos ni cambios de DTO, respuesta, persistencia o permisos. `GET /public/:slug/booking-data` conserva `organization.phone` del snapshot publicado y `whatsappBaseUrl` como **legacy no usado por esta acción**; C2 usará `https://wa.me/` fijo.
+- El backend preserva el teléfono publicado sin inferir país ni sustituirlo por contactos privados. La elegibilidad WhatsApp (`+` explícito, 7–15 dígitos), mensaje genérico, copy «Tu reserva quedó registrada» y apertura manual única se especifican para C2, todavía no iniciado.
+- `POST /public/:slug/bookings` mantiene el estado recibido (`PENDING` al crear), allowlist y rechazo de campos extra. No hay envío, confirmación ni evento de WhatsApp.
+- Se añaden pruebas HTTP Nest/Supertest con persistencia simulada para contacto publicado, dos tenants, privacidad, retiro, errores, compatibilidad legacy y creación. No se atribuye QA de navegador ni integración PostgreSQL a esta suite.
 
 ## 2026-09-13 — Reserva pública: instante autoritativo y fechas estrictas
 

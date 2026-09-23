@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, Booking, BookingFilters, BookingStatus, RescheduleBookingInput } from "@/lib/api";
 import { queryKeys } from "./keys";
+import type { EmailOptIn } from '@/lib/notification-ui';
 
 /**
  * GET /bookings?from=&to=&status= — filtros todos opcionales.
@@ -28,6 +29,7 @@ export interface CreateBookingInput {
   professionalId: string;
   serviceId: string;
   startTime: string;
+  emailNotifications?: EmailOptIn & { reviewedEmail?: string };
 }
 
 export function useCreateBooking() {

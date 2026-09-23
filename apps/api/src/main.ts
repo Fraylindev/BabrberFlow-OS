@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import { globalValidationPipeOptions } from './common/validation.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
   // Cabeceras de seguridad HTTP estándar (X-Content-Type-Options,
   // X-Frame-Options, HSTS, etc.) — no existía ninguna protección de este

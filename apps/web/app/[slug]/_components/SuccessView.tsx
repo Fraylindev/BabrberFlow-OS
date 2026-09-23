@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/Button";
+import { useId } from "react";
 import { PublicBookingResult } from "@/lib/api";
-import { waLink } from "./shared";
+import { bookingWhatsAppLink, WHATSAPP_EXPLANATION } from "@/lib/whatsapp-link";
 
 interface SuccessViewProps {
   result: PublicBookingResult;
-  organizationName: string;
   organizationPhone: string | null;
   serviceName?: string;
   professionalName?: string;
@@ -14,19 +13,19 @@ interface SuccessViewProps {
 
 export function SuccessView({
   result,
-  organizationName,
   organizationPhone,
   serviceName,
   professionalName,
   date,
   time,
 }: SuccessViewProps) {
-  const link = waLink(organizationPhone, `Hola! Quería confirmar mi cita en ${organizationName}.`);
+  const link = bookingWhatsAppLink(organizationPhone);
+  const explanationId = useId();
 
   return (
     <div className="text-center">
-      <p className="font-[family-name:var(--font-display)] text-xl text-[var(--color-paper)]">
-        ¡Tu cita quedó confirmada!
+      <p role="status" className="font-[family-name:var(--font-display)] text-xl text-[var(--color-paper)]">
+        Tu reserva quedó registrada
       </p>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
         {serviceName} el {date} a las {time} con {professionalName}.
@@ -37,9 +36,21 @@ export function SuccessView({
         </p>
       )}
       {link && (
-        <a href={link} target="_blank" rel="noopener noreferrer" className="mt-6 inline-block">
-          <Button className="px-6 py-3">Abrir WhatsApp</Button>
-        </a>
+        <div className="mt-6">
+          <p id={explanationId} className="text-sm leading-6 text-[var(--color-muted)]">
+            {WHATSAPP_EXPLANATION}
+          </p>
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abrir WhatsApp (se abre en una pestaña nueva)"
+            aria-describedby={explanationId}
+            className="mt-4 inline-flex min-h-12 items-center justify-center rounded-sm bg-[var(--color-brass)] px-6 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-brass-hover)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brass)]"
+          >
+            Abrir WhatsApp
+          </a>
+        </div>
       )}
     </div>
   );

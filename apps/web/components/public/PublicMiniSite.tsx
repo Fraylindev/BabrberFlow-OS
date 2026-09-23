@@ -10,7 +10,7 @@ import { BookingHeader } from "@/app/[slug]/_components/BookingHeader";
 import { ANY_PROFESSIONAL } from "@/app/[slug]/_components/ProfessionalStep";
 import { Step, StepRouter } from "@/app/[slug]/_components/StepRouter";
 import { SuccessView } from "@/app/[slug]/_components/SuccessView";
-import { waLink } from "@/app/[slug]/_components/shared";
+import { EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
 
 const STEP_ORDER: Step[] = ["service", "professional", "datetime", "contact", "account", "confirm"];
 
@@ -32,6 +32,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+  const [emailOptedIn, setEmailOptedIn] = useState(false);
   const [createAccount, setCreateAccount] = useState(false);
   const [password, setPassword] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -57,7 +58,6 @@ export function PublicMiniSite({ slug }: { slug: string }) {
   }
   if (isError) return <PublicLoadError onRetry={() => void refetch()} pending={isFetching} />;
 
-  const organization = data.organization;
   const canBook = data.services.length > 0 && data.professionals.length > 0;
   const selectedService = data.services.find((service) => service.id === serviceId);
   const selectedProfessional = data.professionals.find(
@@ -106,14 +106,11 @@ export function PublicMiniSite({ slug }: { slug: string }) {
         clientName: clientName.trim(),
         clientPhone: clientPhone.trim(),
         clientEmail: clientEmail.trim() || undefined,
+        ...(emailOptedIn ? { emailNotifications: { optedIn: true, noticeVersion: EMAIL_NOTICE_VERSION } } : {}),
         createAccount,
         password: createAccount ? password : undefined,
       });
       setResult(response);
-
-      const message = `Hola, ${clientName.trim()}! Tu cita en ${organization.name} para ${selectedService?.name} quedó registrada para el ${date} a las ${time}.`;
-      const link = waLink(organization.phone, message);
-      if (link) window.open(link, "_blank");
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 404) {
         setPublicUnavailable(true);
@@ -241,7 +238,6 @@ export function PublicMiniSite({ slug }: { slug: string }) {
             {result ? (
               <SuccessView
                 result={result}
-                organizationName={data.organization.name}
                 organizationPhone={data.organization.phone}
                 serviceName={selectedService?.name}
                 professionalName={professionalLabel}
@@ -287,7 +283,9 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 clientPhone={clientPhone}
                 setClientPhone={setClientPhone}
                 clientEmail={clientEmail}
-                setClientEmail={setClientEmail}
+                setClientEmail={(email) => { setClientEmail(email); setEmailOptedIn(false); }}
+                emailOptedIn={emailOptedIn}
+                setEmailOptedIn={setEmailOptedIn}
                 createAccount={createAccount}
                 setCreateAccount={setCreateAccount}
                 password={password}

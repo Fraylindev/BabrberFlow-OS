@@ -20,7 +20,7 @@ export async function createE2eApp(
   }
 
   const moduleFixture = await builder.compile();
-  const app = moduleFixture.createNestApplication();
+  const app = moduleFixture.createNestApplication({ rawBody: true });
   app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
   await app.init();
   return app;
