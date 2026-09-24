@@ -31,9 +31,11 @@ Solo después de confirmar migraciones, diff, constraints y huellas de datos se 
 - `kortek-media-c1-test`: `media_c1_grants_test`, `media_c1_qa`, `media_c1_real_test`, `media_c1_restore_test`, `media_c1_test`, `media_c2_test`;
 - `kortek-notifications-c1-test`: `kortek_notifications_c2_test`, `kortek_notifications_c3_test`, `kortek_notifications_recovery_test`, `kortek_notifications_restore_test`, `kortek_notifications_test`, `kortek_notifications_upgrade_test`.
 
-La enumeración posterior confirmó que en el contenedor principal permanecen únicamente `barberflow` y la base de mantenimiento `postgres`; en el contenedor de Medios solo `postgres`. El contenedor de Notificaciones volvió a su estado detenido. El respaldo local se conservó. No se tocaron `main`, otras bases de otros contenedores, proveedores ni entornos productivos.
+La enumeración posterior confirmó que en el contenedor principal permanecen únicamente `barberflow` y la base de mantenimiento `postgres`; en los contenedores QA solo quedaba `postgres`. El contenedor de Notificaciones volvió inicialmente a su estado detenido. El respaldo local se conservó.
 
 Una revisión de grants posterior a la limpieza detectó que las ACL predeterminadas del rol migrador habían añadido DELETE a las tablas nuevas de Medios y UPDATE/DELETE a `MediaOperation`, por encima del contrato C1. Se revocaron solo esos privilegios sobrantes en desarrollo. El resultado efectivo quedó en SELECT/INSERT/UPDATE para `MediaAsset`, `MediaGalleryOrder`, `MediaPromotion` y `MediaPurgeJob`; SELECT/INSERT para `MediaOperation`. El cotejo de las 18 tablas anteriores siguió idéntico después. La política predeterminada amplia para futuras tablas y los grants históricos de otros módulos continúan como riesgo de endurecimiento previo a producción ya registrado en `PROJECT_MASTER.md`; C3 no los amplía ni los modifica.
+
+En el mantenimiento posterior solicitado por el propietario se verificó que `kortek-media-c1-test` y `kortek-notifications-c1-test` estaban detenidos y tenían cada uno un único volumen anónimo; se eliminaron ambos contenedores con `docker rm -v`. La comprobación final confirmó ausencia de los dos contenedores y sus volúmenes. `barberflow-postgres` siguió accesible con 25 migraciones; el respaldo local conservó tamaño y SHA-256. No se tocaron `main`, otras bases de otros contenedores, proveedores ni entornos productivos.
 
 ## Gate pendiente
 

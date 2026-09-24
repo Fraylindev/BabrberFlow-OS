@@ -5,6 +5,7 @@
 - El propietario aprobó C2 y autorizó [C3 documental](docs/features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md) sin otra prueba Cloudinary. La cuota de moderación queda operativamente en 0 hasta el próximo ciclo, según el rechazo real `420` y el `503` observado en C2. C3 no activó producción ni cambió contratos o código.
 - `barberflow` se respaldó con `pg_dump -Fc` y se restauró en una base temporal: 18 tablas y 343 filas coincidieron en conteo y huella. CMS ya estaba en migración 21; H5/fechas y WhatsApp no requieren migración. Se aplicaron las tres de Notificaciones y la de Medios, quedando 25/25. Prisma validate/status/diff e integridad PostgreSQL pasaron; datos originales conservados.
 - Tras confirmar desarrollo se eliminaron 14 bases QA/temporales sin sesiones activas. Una revisión posterior corrigió los grants efectivos de Medios heredados en exceso para cumplir el mínimo C1. El respaldo permanece local, ignorado por Git. C3 queda en revisión del propietario; sin tocar `main` ni desplegar.
+- A solicitud posterior del propietario se eliminaron también los contenedores QA detenidos `kortek-media-c1-test` y `kortek-notifications-c1-test` con sus dos volúmenes anónimos. Se verificó que los cuatro recursos desaparecieron; `barberflow-postgres`, sus 25 migraciones y el respaldo local conservaron su estado.
 
 ## 2026-09-24 — Medios/Promociones C2: QA funcional y visual completado, en revisión
 
