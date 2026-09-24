@@ -1,6 +1,6 @@
-# Medios/Promociones C1 — contrato backend en construcción
+# Medios/Promociones C1 — contrato backend aprobado
 
-Inicio: 2026-09-23. Estado: **C1 IMPLEMENTADO / EN REVISIÓN; BACKEND NO APROBADO**. La purga puntual y el ciclo integrado Cloudinary Free con moderación Rekognition aprobaron en QA aislada; el propietario todavía debe auditar y aprobar C1 antes de C2. Base Git inspeccionada: `44b0e506d1ca66747aa832a95a63a6824e3c5bf9`, rama `ai/antigravity-qa`. Este documento registra las decisiones expresas del propietario sobre [C0](MEDIOS_PROMOCIONES_C0_AUDITORIA.md) y el backend C1 local. Las rutas de §5 existen en el árbol de trabajo, sin despliegue. Configuración/CMS C1–C3, H5/fechas, WhatsApp C1–C3 y Notificaciones C1–C3 permanecen intactos.
+Inicio: 2026-09-23. Estado: **C1 APROBADO** por instrucción explícita del propietario para proceder a C2. La purga puntual y el ciclo integrado Cloudinary Free con moderación Rekognition aprobaron en QA aislada; el propietario aprobó C1 sobre la base indicada y autorizó C2. Base Git inspeccionada: `44b0e506d1ca66747aa832a95a63a6824e3c5bf9`; implementación C1 en `e0ad768ca44fd1e0c301051a7824efa9f77e1def`, rama `ai/antigravity-qa`. Este documento registra las decisiones expresas del propietario sobre [C0](MEDIOS_PROMOCIONES_C0_AUDITORIA.md) y el backend C1 local. Las rutas de §5 están implementadas sin despliegue productivo. Configuración/CMS C1–C3, H5/fechas, WhatsApp C1–C3 y Notificaciones C1–C3 permanecen intactos.
 
 ## 1. Decisiones fijadas y brief
 
@@ -72,7 +72,7 @@ En cuenta **Cloudinary Free de QA aislada**, C1 debe: subir una imagen sintétic
 
 ## 5. Operaciones API candidatas y permisos
 
-Estas rutas están implementadas en el árbol local C1 y pendientes de aprobación. `organizationId`, actor y rol proceden solo de sesión/Membership, nunca del body. UUIDs ajenos e inexistentes reciben el mismo 404. Todo privado usa `Cache-Control: private, no-store`. Publicar, retirar y cambiar el orden exigen versión esperada e `idempotencyKey` UUIDv4, con revalidación de rol al reproducir un recibo; la edición simple de metadatos exige revisión esperada.
+Estas rutas fueron aprobadas para el consumo C2; no hay activación productiva. `organizationId`, actor y rol proceden solo de sesión/Membership, nunca del body. UUIDs ajenos e inexistentes reciben el mismo 404. Todo privado usa `Cache-Control: private, no-store`. Publicar, retirar y cambiar el orden exigen versión esperada e `idempotencyKey` UUIDv4, con revalidación de rol al reproducir un recibo; la edición simple de metadatos exige revisión esperada.
 
 Los recibos durables de mutación conservan ID, estado y revisión, sin cuerpo promocional, alt text ni caption; el listado privado entrega el borrador completo bajo autorización. Así, una purga de imagen no deja texto editorial duplicado en la tabla de idempotencia.
 
@@ -130,4 +130,4 @@ La selección del propietario es **Rekognition AI Moderation Free, 50 imágenes/
 
 Una carga sintética previa a la suscripción con `moderation=aws_rek` recibió **HTTP 420** antes de aceptar el activo y `destroy` devolvió `not found`; el comando terminó **exit 1**. Cloudinary documenta 420 como límite de solicitudes: ese intento no fue un pase. La activación Free y la E2E integrada posterior sí obtuvieron aprobación y purga verificadas.
 
-Estado: **IMPLEMENTADO / EN REVISIÓN**. Los gates completos de API/Prisma/PostgreSQL y la cuenta Free han pasado, con prueba localizada posterior de la carrera de subida/purga. **C1 no está aprobado por el propietario**; C2 sigue cerrado. La capacidad queda limitada por la cuota compartida de 50 moderaciones; agotamiento o error bloquean publicación y no activan un upgrade. No degradar a `upload` público, `private` con derivados públicos ni afirmar que el ocultamiento del mini-sitio revoca URLs.
+Estado: **C1 APROBADO** por el propietario para iniciar C2. Los gates completos de API/Prisma/PostgreSQL y la cuenta Free han pasado, con prueba localizada posterior de la carrera de subida/purga. C2 conserva su propia validación y aprobación; ver [estado C2](MEDIOS_PROMOCIONES_C2_FRONTEND.md). La capacidad queda limitada por la cuota compartida de 50 moderaciones; agotamiento o error bloquean publicación y no activan un upgrade. No degradar a `upload` público, `private` con derivados públicos ni afirmar que el ocultamiento del mini-sitio revoca URLs.

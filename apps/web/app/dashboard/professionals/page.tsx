@@ -27,6 +27,7 @@ import {
   useUpdateProfessionalVisibility,
 } from "@/lib/queries/professionals";
 import { ProfessionalAvailabilityModal } from "./ProfessionalAvailabilityModal";
+import { OwnAvatarControl } from '@/components/media/OwnAvatarControl';
 import { useToast } from "@/components/ui/Toast";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -409,6 +410,7 @@ function ScopedProfessionalsPage({
       {manageOwnOpen && isBarber && (
         <OwnProfileManagementModal
           query={ownQuery}
+          scope={scopeKey}
           onClose={() => setManageOwnOpen(false)}
           onEdit={() => {
             setManageOwnOpen(false);
@@ -568,11 +570,13 @@ function OwnProfilePanel({
 
 function OwnProfileManagementModal({
   query,
+  scope,
   onClose,
   onEdit,
   onAvailability,
 }: {
   query: ReturnType<typeof useOwnProfessionalQuery>;
+  scope: string;
   onClose: () => void;
   onEdit: () => void;
   onAvailability: (professionalName: string) => void;
@@ -627,6 +631,7 @@ function OwnProfileManagementModal({
             Puedes actualizar tu información y disponibilidad. Tu teléfono no se publica; solo lo
             pueden consultar tú y quienes administran el negocio.
           </p>
+          <OwnAvatarControl professionalId={query.data.id} scope={`${scope}:own-avatar:${query.data.id}`} />
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Button tone="light" className="min-h-11" onClick={onEdit}>
               Editar información
@@ -754,7 +759,6 @@ function ProfessionalFormModal({
   const [name, setName] = useState(professional?.name ?? "");
   const [specialty, setSpecialty] = useState(professional?.specialty ?? "");
   const [bio, setBio] = useState(professional?.bio ?? "");
-  const [avatar, setAvatar] = useState(professional?.avatar ?? "");
   const [phone, setPhone] = useState(
     professional && "phone" in professional ? (professional.phone ?? "") : "",
   );
@@ -778,7 +782,6 @@ function ProfessionalFormModal({
         name,
         specialty,
         bio,
-        avatar,
         phone,
         experienceYears,
       });
@@ -862,16 +865,6 @@ function ProfessionalFormModal({
             onChange={(event) => setExperienceYears(event.target.value)}
           />
         </div>
-        <InputField
-          tone="light"
-          label="URL de foto (opcional)"
-          name={`${mode}-professional-avatar`}
-          type="url"
-          maxLength={2048}
-          placeholder="https://…"
-          value={avatar}
-          onChange={(event) => setAvatar(event.target.value)}
-        />
         <FieldWrapper
           label="Biografía (opcional)"
           htmlFor={`${mode}-professional-bio`}

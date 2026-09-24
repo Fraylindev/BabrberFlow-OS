@@ -4,6 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError, api, PublicBookingData } from "@/lib/api";
 import { PublicMiniSite } from "./PublicMiniSite";
 
+vi.mock('@/lib/queries/media', () => ({
+  usePublicMedia: () => ({ data: null, isError: false, error: null, isFetching: false, refetch: vi.fn() }),
+}));
+
 const published: PublicBookingData = {
   minimumBookingDate: "2026-09-13",
   organization: {

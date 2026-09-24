@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ApiError, PublicAvailabilitySlot, PublicBookingResult } from "@/lib/api";
+import { ApiError, PublicAvailabilitySlot, PublicBookingResult, publicMediaUrl } from "@/lib/api";
 import { useCreatePublicBooking, usePublicBookingData } from "@/lib/queries/public-booking";
+import { usePublicMedia } from '@/lib/queries/media';
+import { isPublicMedia, type PublicMediaImage } from '@/lib/media-ui';
 import { Brand } from "@/components/Brand";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -17,6 +19,7 @@ const STEP_ORDER: Step[] = ["service", "professional", "datetime", "contact", "a
 export function PublicMiniSite({ slug }: { slug: string }) {
   const { data, error, isLoading, isError, isFetching, refetch } = usePublicBookingData(slug);
   const createBooking = useCreatePublicBooking(slug);
+  const mediaQuery = usePublicMedia(slug, Boolean(data));
   const bookingHeading = useRef<HTMLHeadingElement>(null);
 
   const [bookingStarted, setBookingStarted] = useState(false);
@@ -47,7 +50,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
     return () => window.cancelAnimationFrame(frame);
   }, [bookingStarted]);
 
-  const isRetired = publicUnavailable || (isError && error instanceof ApiError && error.status === 404);
+  const isRetired = publicUnavailable || (isError && error instanceof ApiError && error.status === 404) || (mediaQuery.isError && mediaQuery.error instanceof ApiError && mediaQuery.error.status === 404);
 
   if (isLoading) return <PublicLoading />;
   if (isRetired || !data) {
@@ -59,6 +62,14 @@ export function PublicMiniSite({ slug }: { slug: string }) {
   if (isError) return <PublicLoadError onRetry={() => void refetch()} pending={isFetching} />;
 
   const canBook = data.services.length > 0 && data.professionals.length > 0;
+  const media = !mediaQuery.isError && isPublicMedia(mediaQuery.data) ? mediaQuery.data : null;
+  const bookingData = media ? {
+    ...data,
+    professionals: data.professionals.map((professional) => {
+      const managed = media.professionals.find((item) => item.professionalId === professional.id);
+      return managed ? { ...professional, avatar: publicMediaUrl(managed.avatar.url) || null } : professional;
+    }),
+  } : data;
   const selectedService = data.services.find((service) => service.id === serviceId);
   const selectedProfessional = data.professionals.find(
     (professional) => professional.id === resolvedProfessionalId,
@@ -184,8 +195,19 @@ export function PublicMiniSite({ slug }: { slug: string }) {
               </p>
             )}
           </div>
+          {media?.hero && <PublicImage image={media.hero} className="mb-8 max-h-[28rem] w-full rounded-sm object-cover" />}
         </div>
       </section>
+
+      {mediaQuery.isError && <section className="mx-auto max-w-6xl px-5 py-5 sm:px-8" aria-live="polite"><p className="text-sm text-[var(--color-muted)]">Las fotos y promociones no están disponibles ahora.</p><Button variant="secondary" className="mt-3" disabled={mediaQuery.isFetching} onClick={() => void mediaQuery.refetch()}>{mediaQuery.isFetching ? 'Reintentando…' : 'Reintentar fotos'}</Button></section>}
+
+      {media && (media.gallery.length > 0 || media.promotions.length > 0) && <section className="border-b border-[var(--color-border)]" aria-label="Fotos y novedades"><div className="mx-auto max-w-6xl space-y-12 px-5 py-12 sm:px-8 lg:px-12">
+        {media.gallery.length > 0 && <div><h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-paper)]">Galería</h2><div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{media.gallery.map((image) => <figure key={image.id} className="min-w-0"><PublicImage image={image} className="aspect-[4/3] w-full rounded-sm object-cover" />{image.caption && <figcaption className="mt-2 text-sm text-[var(--color-muted)]">{image.caption}</figcaption>}</figure>)}</div></div>}
+        {media.promotions.length > 0 && <div><h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-paper)]">Novedades</h2><div className="mt-6 grid gap-4 sm:grid-cols-2">{media.promotions.map((promotion) => <article key={promotion.id} className="min-w-0 overflow-hidden rounded-sm border border-[var(--color-border)] p-4">{promotion.image && <PublicImage image={promotion.image} className="mb-4 aspect-[4/3] w-full rounded-sm object-cover" />}<h3 className="text-xl font-semibold text-[var(--color-paper)]">{promotion.title}</h3><p className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--color-muted)]">{promotion.body}</p></article>)}</div></div>}
+      </div></section>}
+
+      {media && media.services.length > 0 && <section className="border-b border-[var(--color-border)]" aria-labelledby="service-photos-title"><div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 lg:px-12"><h2 id="service-photos-title" className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-paper)]">Servicios</h2><div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{media.services.map(({ serviceId, image }) => { const service = data.services.find((item) => item.id === serviceId); return service ? <figure key={serviceId}><PublicImage image={image} className="aspect-[4/3] w-full rounded-sm object-cover" /><figcaption className="mt-2 text-sm text-[var(--color-paper)]">{service.name}</figcaption></figure> : null; })}</div></div></section>}
+      {media && media.professionals.length > 0 && <section className="border-b border-[var(--color-border)]" aria-labelledby="team-photos-title"><div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 lg:px-12"><h2 id="team-photos-title" className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-paper)]">Nuestro equipo</h2><div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{media.professionals.map(({ professionalId, avatar }) => { const professional = data.professionals.find((item) => item.id === professionalId); return professional ? <figure key={professionalId}><PublicImage image={avatar} className="aspect-square w-full rounded-sm object-cover" /><figcaption className="mt-2 text-sm text-[var(--color-paper)]">{professional.name}</figcaption></figure> : null; })}</div></div></section>}
 
       {(data.organization.address || data.organization.googleMapsUrl) && (
         <section className="border-b border-[var(--color-border)]" aria-labelledby="location-title">
@@ -249,7 +271,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 step={step}
                 setStep={setStep}
                 slug={slug}
-                data={data}
+                data={bookingData}
                 serviceId={serviceId}
                 setServiceId={(nextServiceId) => {
                   if (nextServiceId === serviceId) return;
@@ -306,6 +328,14 @@ export function PublicMiniSite({ slug }: { slug: string }) {
       </footer>
     </main>
   );
+}
+
+function PublicImage({ image, className }: { image: PublicMediaImage; className: string }) {
+  const src = publicMediaUrl(image.url);
+  if (!src) return null;
+  // The API issues short-lived, no-store URLs; Next's image optimizer must not cache them.
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt={image.decorative ? '' : image.altText || ''} className={className} loading="lazy" />;
 }
 
 function PublicLoading() {

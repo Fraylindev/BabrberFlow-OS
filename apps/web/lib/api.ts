@@ -7,6 +7,10 @@
 import { runAuthOperation } from './auth-operation.ts';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+export function publicMediaUrl(path: string): string {
+  const match = /^\/public\/([a-zA-Z0-9_-]+)\/media\/([a-zA-Z0-9_.-]+)$/.exec(path);
+  return match ? `/media-proxy/${match[1]}/${match[2]}` : '';
+}
 export const API_REQUEST_TIMEOUT_MS = 30_000;
 
 export class ApiError extends Error {
@@ -77,7 +81,7 @@ async function requestWithHeaders<T>(
         ...requestOptions,
         signal,
         headers: {
-          'Content-Type': 'application/json',
+          ...(!(requestOptions.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
           ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
           ...(auth.organizationId ? { 'x-organization-id': auth.organizationId } : {}),
           ...requestOptions.headers,
@@ -151,6 +155,8 @@ export const api = {
   },
   post: <T>(path: string, body?: unknown, options: ApiRequestOptions = {}) =>
     request<T>(path, { ...options, method: 'POST', body: JSON.stringify(body) }),
+  upload: <T>(path: string, body: FormData, options: ApiRequestOptions = {}) =>
+    request<T>(path, { ...options, method: 'POST', body }),
   put: <T>(path: string, body?: unknown, options: ApiRequestOptions = {}) =>
     request<T>(path, { ...options, method: 'PUT', body: JSON.stringify(body) }),
   patch: <T>(path: string, body?: unknown, options: ApiRequestOptions = {}) =>

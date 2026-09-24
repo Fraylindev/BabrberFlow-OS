@@ -55,6 +55,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/dashboard/team", label: "Equipo", icon: TeamIcon, roles: ["OWNER", "ADMIN"] },
       { href: "/dashboard/notifications", label: "Notificaciones", icon: ReceiptIcon, roles: ["OWNER", "ADMIN"] },
+      { href: "/dashboard/media", label: "Medios y promociones", icon: TagIcon, roles: ["OWNER", "ADMIN"] },
       { href: "/dashboard/settings", label: "Configuración", icon: SettingsIcon, roles: ["OWNER", "ADMIN"] },
     ],
   },

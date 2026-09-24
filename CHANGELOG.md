@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-09-24 — Medios/Promociones C2: QA funcional y visual completado, en revisión
+
+- En PostgreSQL QA aislado, API/web locales y Clerk Development se recorrieron OWNER, ADMIN, BARBER y RECEPTIONIST en dos tenants. Siete imágenes sintéticas obtuvieron aprobación Cloudinary real; pasaron publicación de galería, orden/hero, foto de servicio, promoción con imagen y avatar propio, además de retiro/cuarentena, aislamiento `404`, denegación `403` y conflicto `409` con recuperación visible.
+- Chrome desktop/375 px verificó consola sin `pageerror`, teclado/foco y responsive. Se corrigieron el texto comprimido del orden móvil, la oferta de republicar una revisión ya publicada, la recuperación del conflicto y la carga pública bloqueada por CORP mediante una ruta de imagen del mismo origen. TypeScript, lint, 111 pruebas de lógica, 48 de componente, build y Playwright 2/2 terminaron exit `0` tras estos cambios.
+- Con autorización posterior del propietario se publicó temporalmente una página CMS **solo** en `media_c2_test` y se restauró en `finally`: proyección real con hero, galería, servicio, avatar y promoción; cinco imágenes WebP `200` en ambos tamaños; proyección y localizador `404` al restaurar. Tras delegación expresa del propietario, se agotó la cuota de moderación de QA con imágenes sintéticas borradas: primer rechazo Cloudinary `420`, después upload real del editor `503` con mensaje claro, archivo retenido y sin publicación. [Evidencia y límites](docs/features/MEDIOS_PROMOCIONES_C2_FRONTEND.md). C2 continúa en revisión, sin producción.
+
+## 2026-09-23 — Medios/Promociones C2 implementado localmente / QA autenticado pendiente
+
+- El propietario aprobó C1 sobre la base `44b0e506d1ca66747aa832a95a63a6824e3c5bf9` y autorizó C2. Se agregó el editor OWNER/ADMIN de imágenes, galería/portada y promociones; control de avatar propio BARBER; y consumo de la proyección nueva en el mini-sitio.
+- La UI explica expresamente la cuota agotada o error de moderación y que la imagen no se publicó. El formulario de Profesionales dejó de enviar URL de avatar, como exige C1.
+- [Alcance, pruebas y QA C2](docs/features/MEDIOS_PROMOCIONES_C2_FRONTEND.md): TypeScript, lint, build y 111 pruebas de lógica + 48 de componente pasaron; Chrome desktop/375 px pasó con respuestas HTTP controladas. Falta QA autenticado con roles, tenants e integración real; C2 no está aprobado. Sin producción, commit ni push, y sin cambios CMS, H5/fechas, WhatsApp o Notificaciones.
+
 ## 2026-09-23 — Medios/Promociones C1 iniciado
 
 - El propietario aprobó C0 y fijó D1–D8/D5b, incluidos fotos de servicio, avatar propio BARBER sin aprobación OWNER previa, hero, imagen opcional de promoción y Cloudinary `authenticated` Free condicionado a prueba real de retiro.

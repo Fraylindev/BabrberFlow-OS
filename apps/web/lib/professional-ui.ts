@@ -4,7 +4,6 @@ export interface ProfessionalProfileDraft {
   name: string;
   specialty: string;
   bio: string;
-  avatar: string;
   phone: string;
   experienceYears: string;
 }
@@ -15,7 +14,6 @@ export function professionalProfileInput(draft: ProfessionalProfileDraft) {
     name: draft.name.trim(),
     specialty: draft.specialty.trim() || null,
     bio: draft.bio.trim() || null,
-    avatar: draft.avatar.trim() || null,
     phone: draft.phone.trim() || null,
     experienceYears: draft.experienceYears.trim() === '' ? null : Number(draft.experienceYears),
   };

@@ -15,12 +15,12 @@ test('profile form sends only editable fields and normalizes optional values', (
   };
   assert.deepEqual(professionalProfileInput(draft), {
     name: 'Nombre profesional', specialty: 'Corte', bio: 'Biografía',
-    avatar: 'https://example.com/avatar.jpg', phone: '+18095550101', experienceYears: 5,
+    phone: '+18095550101', experienceYears: 5,
   });
   assert.deepEqual(professionalProfileInput({
-    name: 'Nombre', specialty: ' ', bio: '', avatar: '', phone: ' ', experienceYears: '',
+    name: 'Nombre', specialty: ' ', bio: '', phone: ' ', experienceYears: '',
   }), {
-    name: 'Nombre', specialty: null, bio: null, avatar: null, phone: null, experienceYears: null,
+    name: 'Nombre', specialty: null, bio: null, phone: null, experienceYears: null,
   });
   assert.equal(professionalProfileInput({ ...draft, experienceYears: '0' }).experienceYears, 0);
 });

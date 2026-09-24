@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { api, ApiError, API_REQUEST_TIMEOUT_MS, configureApiAuth } from './api.ts';
+import { api, ApiError, API_REQUEST_TIMEOUT_MS, configureApiAuth, publicMediaUrl } from './api.ts';
+
+test('serves only signed media locators through the same-origin image path', () => {
+  assert.equal(publicMediaUrl('/public/qa-test/media/payload.signature'), '/media-proxy/qa-test/payload.signature');
+  assert.equal(publicMediaUrl('https://cloudinary.example/private-image'), '');
+  assert.equal(publicMediaUrl('/public/qa-test/media/../other'), '');
+});
 
 test('preserves non-JSON HTTP errors and real Retry-After without exposing the body', async (t) => {
   const cleanup = configureApiAuth(async () => ({ token: null, organizationId: null }));
