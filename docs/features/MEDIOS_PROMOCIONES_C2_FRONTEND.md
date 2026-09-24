@@ -1,6 +1,6 @@
 # Medios/Promociones C2 — editor y mini-sitio
 
-Actualizado: 2026-09-24. Estado: **IMPLEMENTADO LOCALMENTE / QA FUNCIONAL Y VISUAL COMPLETADO / EN REVISIÓN**. C1 fue aprobado expresamente por el propietario sobre la base `44b0e506d1ca66747aa832a95a63a6824e3c5bf9`; implementación C1 en `e0ad768ca44fd1e0c301051a7824efa9f77e1def`. C2 no activa producción ni se declara aprobado. No se modifican códigos CMS, H5/fechas, WhatsApp o Notificaciones; únicamente se publicó y restauró temporalmente un registro CMS en la base aislada de QA con autorización posterior.
+Actualizado: 2026-09-24. Estado: **CERRADO / APROBADO** expresamente por el propietario después del QA funcional y visual real. C1 fue aprobado expresamente sobre la base `44b0e506d1ca66747aa832a95a63a6824e3c5bf9`; implementación C1 en `e0ad768ca44fd1e0c301051a7824efa9f77e1def`. La aprobación de C2 autoriza [C3 documental](MEDIOS_PROMOCIONES_C3_ACTIVACION.md), sin activar producción. No se modificaron códigos CMS, H5/fechas, WhatsApp o Notificaciones; únicamente se publicó y restauró temporalmente un registro CMS en la base aislada de QA con autorización posterior.
 
 ## 1. Brief y criterios
 
@@ -64,4 +64,4 @@ API NestJS y build Next locales en `localhost:3000/3001`, PostgreSQL Docker aisl
 
 ## 5. Estado y continuación
 
-Gate 5 y QA de Gate 6 terminaron localmente; C2 permanece **en revisión**, pendiente de auditoría y aprobación explícita del propietario. Antes del checkpoint candidato se revisan diff completo, secretos, estado Git y evidencia; el commit/push, si se realiza, solo será a `origin/ai/antigravity-qa` y no representa despliegue ni aprobación. La cuota compartida de 50 moderaciones/mes sigue siendo un límite operativo de C1; C2 no la amplía.
+Gate 5 y QA de Gate 6 terminaron localmente. El propietario aprobó C2 y autorizó [C3 como cierre documental](MEDIOS_PROMOCIONES_C3_ACTIVACION.md), sin repetir Cloudinary: la cuota de moderación quedó operativamente en 0 hasta el próximo ciclo. El commit/push de C3, si se realiza, solo será a `origin/ai/antigravity-qa` y no representa despliegue ni aprobación final de C3. La cuota compartida de 50 moderaciones/mes sigue siendo un límite operativo de C1; C2 no la amplía.

@@ -1,5 +1,9 @@
 # BACKEND_CHANGES.md
 
+## 2026-09-24 — Aplicación local de migraciones ya aprobadas
+
+Sin endpoints, DTOs ni schema nuevos. La base de desarrollo `barberflow` recibió las migraciones 22–24 de Notificaciones y la 25 de Medios/Promociones después de un `pg_dump -Fc` restaurado y cotejado. CMS (21) ya estaba aplicada; H5/fechas y WhatsApp no tienen migraciones. Prisma validate/status/diff, el verificador de constraints/índices y la comparación de las 18 tablas anteriores terminaron correctamente: 25/25, sin drift ni pérdida detectada de las 343 filas previas. Los grants efectivos de las cinco tablas de Medios, ampliados por ACL predeterminadas, se restringieron al mínimo DML aprobado en C1; las ACL predeterminadas globales no cambiaron. [Evidencia y limpieza QA posterior](docs/features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md). No hubo despliegue productivo.
+
 ## 2026-09-23 — Medios/Promociones C1 backend implementado, en revisión
 
 Estado: **C1 IMPLEMENTADO / EN REVISIÓN; NO APROBADO**, sin despliegue ni C2. [Contrato y evidencia](docs/features/MEDIOS_PROMOCIONES_C1_CONTRATO.md). Se añaden `POST /media/uploads`, `GET /media`, `PATCH /media/:id`, publicación/retiro/cuarentena por ID, orden/hero con revisión separada, borradores/publicación/retiro de promociones y `GET /public/:slug/media` con localizadores de imagen propios de 60 s. OWNER/ADMIN preparan contenido; OWNER publica contenido editorial; BARBER solo carga/publica su avatar propio tras moderación aprobada. La edición de perfiles rechaza nuevas URLs arbitrarias de avatar y conserva lectura legacy. Ninguna ruta añade descuentos, precios, cupos o disponibilidad.
