@@ -45,11 +45,15 @@ El alta inicial separa identidad y negocio: Clerk termina primero la sesión y `
 
 `Organization` es el tenant y `Membership` une `User × Organization × Role`. Toda consulta de negocio aplica `organizationId` derivado del contexto autenticado; BARBER añade ownership por Professional cuando el contrato lo exige.
 
-PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitaciones, vínculo B2C, Configuración/CMS y Facturación. Las 21 migraciones vigentes se aplican desde cero sobre PostgreSQL 16; los checks, exclusiones e índices suplementarios se verifican además mediante el CLI de integridad y no deben reconstruirse por inferencia desde Prisma.
+PostgreSQL refuerza invariantes de agenda, disponibilidad individual, invitaciones, vínculo B2C, Configuración/CMS, Facturación, Notificaciones y Medios. Hay 25 migraciones versionadas, aplicadas en la base local de desarrollo según [Medios C3](../features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md); el workflow las aplica desde cero sobre PostgreSQL 16 aislado. Los checks, exclusiones e índices suplementarios se verifican además mediante el CLI de integridad y no deben reconstruirse por inferencia desde Prisma.
+
+## Notificaciones y medios
+
+Notificaciones C1–C3 están cerradas/aprobadas: Booking y la intención de correo comparten transacción local; un worker separado usa leases PostgreSQL y Resend fuera de esa transacción. Snapshot y versión de plantilla quedan sellados. Las cinco entregas reales de C3 se verificaron; el canal permanece pausado, sin activación productiva. [Contrato](../features/NOTIFICACIONES_C1_CONTRATO.md) y [activación](../features/NOTIFICACIONES_C3_ACTIVACION.md).
+
+Medios/Promociones C1–C3 están cerrados/aprobados; el backend controla custodia Cloudinary `authenticated`, moderación, publicación, proyección pública y purga durable. C3 cerró el mantenimiento documental con aprobación expresa del propietario. El agotamiento observado de cuota Free en QA y el control operativo previo a tráfico externo están en [C3](../features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md). Ninguna de estas aprobaciones activa producción.
 
 ## Frontend
-
-Actualización aditiva — Notificaciones C1 implementado/en revisión: 24 migraciones en el árbol; las tres nuevas se ensayaron solo en PostgreSQL aislado. Booking y correo comparten transacción local; worker separado con leases PostgreSQL y Resend fuera de transacción. Snapshot y versión de plantilla sellados; recuperación y límites compartidos verificados. Sin Redis. Canal desactivado por defecto; C2 requiere aprobación del contrato. [Contrato y evidencia](../features/NOTIFICACIONES_C1_CONTRATO.md).
 
 - React Query gestiona estado remoto y purga datos de negocio al cambiar el contexto.
 - Resumen y Facturación añaden claves `usuario + organización + rol` y control de solicitudes tardías.
@@ -69,6 +73,7 @@ Prisma continuará sobre PostgreSQL cuando se traslade a Supabase. Supabase Auth
 - rate limiting y caché son locales al proceso;
 - JWT/password legacy aumenta superficie hasta A0.7;
 - el workflow versionado ejecuta gates de calidad; no despliega ni sustituye QA funcional autenticado;
+- el smoke Chrome local del [2026-09-24](../quality/AUDITORIA_INTEGRAL_2026_09_24.md) terminó con exit `1`; los scripts `ops/` de provisión de roles citados por documentación anterior no están en el checkout;
 - configuración y titularidad de enlaces comerciales deben verificarse antes de producción;
 - Supabase y planes productivos siguen sujetos a gates de pago, backup y restore.
 

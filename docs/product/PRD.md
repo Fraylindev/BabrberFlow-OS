@@ -25,20 +25,22 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
 - Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados; cualquier pago anticipado, transferencia, reembolso o propina requiere contrato posterior.
 - El Resumen sigue congelado como agregador, aunque sus correctivos transversales de aislamiento y estabilidad tienen estado propio.
 - Configuración/CMS C1, C2 y C3 están cerrados/aprobados. Cualquier ampliación posterior requiere autorización modular propia.
+- WhatsApp público manual C1–C3 y Notificaciones transaccionales C1–C3 están cerrados/aprobados; el canal de correo permanece pausado y no hay activación productiva.
+- Medios y promociones editoriales C1–C3 están cerrados/aprobados. La cuota de moderación observada en QA quedó agotada hasta un nuevo ciclo comprobado; no hay activación productiva.
 - Security A0.5 y A0.6-A están cerrados/aprobados. A0.6-B/C/D y el retiro legacy siguen pendientes de autorización.
 
 Este documento no convierte una visión futura o una pantalla existente en una capacidad aprobada.
 
 ## Visión futura registrada
 
-La base C3 ya convierte `/{slug}` en un mini-sitio con la proyección publicada y el asistente existente. La evolución adicional, todavía sin autorización de implementación, está definida en [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md):
+La base C3 ya convierte `/{slug}` en un mini-sitio con la proyección publicada y el asistente existente. Medios C1–C2 añadió galería, fotos de servicios, avatar propio y promociones editoriales; Notificaciones C1–C3 añadió correo transaccional con el canal pausado. La evolución restante, todavía sin autorización de implementación, parte de la [visión histórica](../features/CONFIGURACION_CMS_PAGOS_VISION.md):
 
 - completar el panel en el orden Equipo → Configuración del negocio/CMS → Analytics → Resumen final;
-- ampliar el mini-sitio con horarios editables, branding, galería, fotos de servicios y promociones;
+- ampliar el mini-sitio con horarios editables y branding adicional; los descuentos ejecutables requieren contrato financiero distinto de las promociones editoriales aprobadas;
 - recorrer servicio → profesional o cualquiera → fecha/hora → datos mínimos del cliente → método de pago;
 - permitir pago en local sin cobro confirmado y transferencia con comprobante pendiente de verificación, sin crear automáticamente un `Payment`;
 - ampliar Pagos mediante un contrato formal futuro para pago anticipado, verificación, evidencia, pago pendiente y propina separada;
-- usar en el futuro Resend para correo automático y ampliar WhatsApp con una acción operativa manual, mensaje prellenado y editable, siempre coherente con estados reales. La acción pública [WhatsApp C2](../features/WHATSAPP_C2_FRONTEND.md), aprobada por el propietario, con verificación física satisfactoria documentada en [C3](../features/WHATSAPP_C3_ACTIVACION.md) y aprobación explícita de C3, permite abrir manualmente `wa.me` hacia el teléfono publicado elegible del negocio después de registrar la reserva, con mensaje genérico sin datos del cliente. No equivale a envío automático ni a un módulo de plantillas. La [auditoría posterior a CMS](../features/ROADMAP_POST_CMS_AUDITORIA.md) distingue ambos alcances.
+- activar operativamente el correo transaccional ya aprobado con Resend mediante un gate productivo posterior; ampliar WhatsApp con una acción operativa manual y mensaje editable, siempre coherente con estados reales. La acción pública [WhatsApp C2](../features/WHATSAPP_C2_FRONTEND.md), aprobada con [C3](../features/WHATSAPP_C3_ACTIVACION.md), abre manualmente `wa.me` hacia el teléfono publicado elegible después de registrar la reserva, con mensaje genérico sin datos del cliente. No equivale a envío automático ni a un módulo de plantillas.
 
 Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / APROBADO** de Facturación-B.
 
@@ -67,7 +69,7 @@ Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / AP
 - No iniciar A0.6-B/C/D, retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
 - No publicar precios, límites de planes, testimonios o cifras comerciales sin decisión y evidencia del propietario.
 - No crear un flujo de organizaciones adicionales hasta definir su contrato atómico, permisos, límites, auditoría y UX.
-- No ampliar Configuración/CMS o el mini-sitio más allá de C3 ni implementar medios, promociones, cuentas bancarias, transferencias, comprobantes, propinas, Resend o nuevos estados de Booking hasta completar y aprobar sus planes y contratos propios.
+- No ampliar Configuración/CMS, Medios/Promociones o Notificaciones más allá de sus alcances aprobados, ni activar canales productivos, cuentas bancarias, transferencias, comprobantes, propinas, descuentos ejecutables o nuevos estados de Booking por inferencia. Cada ampliación exige plan, contrato y aprobación propios.
 
 ## Proceso
 

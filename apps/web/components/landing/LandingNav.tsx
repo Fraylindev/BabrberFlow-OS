@@ -73,11 +73,9 @@ export function LandingNav() {
 
       <div
         id="landing-mobile-menu"
-        className={`grid overflow-hidden transition-[grid-template-rows] duration-[var(--duration-base)] ease-[var(--ease-out)] md:hidden ${
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
+        className={open ? "md:hidden" : "hidden"}
       >
-        <div className="min-h-0">
+        <div>
           <div className="flex flex-col gap-4 border-t border-[var(--color-border)] px-4 py-4">
             {LINKS.map((l) => (
               <a

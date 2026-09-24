@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { BookingStatus, ProfessionalStatus } from '@prisma/client';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { PublicBookingService } from './public-booking.service';
@@ -211,21 +211,29 @@ describe('PublicBookingService - secure public creation', () => {
   });
 
   it('keeps booking success when secondary CUSTOMER account creation fails', async () => {
+    const log = jest.spyOn(Logger.prototype, 'error').mockImplementation();
     dependencies.transaction.client.findFirst.mockResolvedValue(null);
     dependencies.transaction.client.create.mockResolvedValue({ id: CLIENT_ID });
     dependencies.prisma.db.user.findFirst.mockRejectedValue(
-      new Error('database unavailable'),
+      new Error('ana@example.com: private database detail'),
     );
+    try {
+      const result = await service.createBooking('demo', {
+        ...DTO,
+        createAccount: true,
+        password: 'ValidPassword123!',
+      });
 
-    const result = await service.createBooking('demo', {
-      ...DTO,
-      createAccount: true,
-      password: 'ValidPassword123!',
-    });
-
-    expect(result.booking.id).toBe(BOOKING.id);
-    expect(result.accountCreated).toBe(false);
-    expect(result.accountCreationError).toBe('ACCOUNT_CREATION_FAILED');
+      expect(result.booking.id).toBe(BOOKING.id);
+      expect(result.accountCreated).toBe(false);
+      expect(result.accountCreationError).toBe('ACCOUNT_CREATION_FAILED');
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(
+        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
+      );
+    } finally {
+      log.mockRestore();
+    }
   });
 });
 

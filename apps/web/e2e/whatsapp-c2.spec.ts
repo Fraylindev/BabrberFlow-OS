@@ -50,6 +50,10 @@ async function fixture(context: BrowserContext) {
         services: [{ id: 'service-qa', name: 'Corte QA', description: null, duration: 30, price: '500.00' }],
         professionals: [{ id: 'professional-qa', name: 'Alex QA', bio: null, avatar: null }],
       } : { message: 'Información no disponible.' } });
+    } else if (url.pathname.endsWith('/media')) {
+      await route.fulfill({ headers, json: {
+        hero: null, gallery: [], services: [], professionals: [], promotions: [],
+      } });
     } else if (url.pathname.endsWith('/availability')) {
       await route.fulfill({ headers, json: { date: '2099-01-05', serviceId: 'service-qa',
         slots: [{ time: '10:00', professionalId: 'professional-qa', startTime: result.booking.startTime }],
@@ -90,6 +94,7 @@ async function success(root: Page | FrameLocator) {
 }
 
 test('C2 full flow: loading/pending, no automatic popup, native accessible link, keyboard and repeated click', async ({ page, context }, info) => {
+  test.setTimeout(60_000);
   const state = await fixture(context);
   let releaseCatalog!: () => void;
   state.catalogGate = new Promise((resolve) => { releaseCatalog = resolve; });

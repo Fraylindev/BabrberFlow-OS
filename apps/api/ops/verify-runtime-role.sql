@@ -28,5 +28,23 @@ BEGIN
     OR NOT has_table_privilege('public."Membership"', 'DELETE') THEN
     RAISE EXCEPTION 'Runtime lacks required application privileges';
   END IF;
+  IF NOT has_table_privilege('public."MediaAsset"', 'SELECT')
+    OR NOT has_table_privilege('public."MediaAsset"', 'INSERT')
+    OR NOT has_table_privilege('public."MediaAsset"', 'UPDATE')
+    OR NOT has_table_privilege('public."MediaOperation"', 'SELECT')
+    OR NOT has_table_privilege('public."MediaOperation"', 'INSERT')
+    OR NOT has_type_privilege('public."MediaAssetPurpose"', 'USAGE')
+    OR NOT has_type_privilege('public."MediaAssetStatus"', 'USAGE')
+    OR NOT has_type_privilege('public."MediaModerationStatus"', 'USAGE') THEN
+    RAISE EXCEPTION 'Runtime lacks required media privileges';
+  END IF;
+  IF has_table_privilege('public."MediaOperation"', 'UPDATE')
+    OR has_table_privilege('public."MediaOperation"', 'DELETE')
+    OR has_table_privilege('public."MediaAsset"', 'DELETE')
+    OR has_table_privilege('public."MediaGalleryOrder"', 'DELETE')
+    OR has_table_privilege('public."MediaPromotion"', 'DELETE')
+    OR has_table_privilege('public."MediaPurgeJob"', 'DELETE') THEN
+    RAISE EXCEPTION 'Runtime exceeds media contract privileges';
+  END IF;
 END $$;
 COMMIT;

@@ -27,7 +27,8 @@
 
 - `CmsPage`: agregado editorial uno a uno por Organization, separado de los escalares operativos. Conserva borrador, revisión optimista, snapshot publicado y estado/fechas de publicación sin reutilizar `Organization.active` o `deletedAt`.
 - `CmsOperation`: recibo idempotente de mutaciones editoriales por organización, actor, tipo y clave; no guarda contenido ni PII.
-- `GalleryImage`: contenido asociado a Organization; su API/almacenamiento no está autorizado.
+- `GalleryImage`: tabla legacy asociada a Organization; no es la custodia de archivos del contrato nuevo de Medios.
+- `MediaAsset`, `MediaGalleryOrder`, `MediaPromotion`, `MediaOperation` y `MediaPurgeJob`: activos moderados, orden/portada, promociones editoriales, recibos idempotentes y purga durable tenant-scoped de [Medios C1](../features/MEDIOS_PROMOCIONES_C1_CONTRATO.md). C1–C3 están cerrados/aprobados; no hay activación productiva.
 - `AuditLog`: guarda organización, actor, acción, entidad e ID sin relación dura a User; no debe contener PII o notas.
 - `Invoice`: registro interno inmutable, único por Booking completada y tenant-consistente. Conserva el snapshot positivo `Decimal(65,2)` del precio del Service y moneda `DOP`; su estado API se deriva de la existencia de Payment.
 - `Payment`: cobro completo único por Invoice. Conserva método, fecha real asignada por servidor y actor local denormalizado; no duplica importe, Booking ni estado.
@@ -35,7 +36,7 @@
 
 ## Invariantes
 
-Notificaciones C1 implementado/en revisión: `Client.emailRevision` invalida corroboración incluso A → B → A; `BookingEmailPreference` conserva secuencia/consentimiento/revisión por reserva y tenant; `BookingEmailEvent` guarda eventos durables; `EmailOutbox` guarda intención, lease, presupuesto y snapshot privado purgable y versión de plantilla persistida. `EmailWebhookReceipt` deduplica señales externas; `EmailAbuseBucket` limita envíos entre workers; `EmailChannelControl` pausa el canal compartido. FKs compuestas refuerzan tenant. `Notification` legacy se conserva intacto y no se usa como outbox. [Contrato C1 y estado real](../features/NOTIFICACIONES_C1_CONTRATO.md); no implica aprobación ni activación.
+Notificaciones C1–C3 están cerradas/aprobadas: `Client.emailRevision` invalida corroboración incluso A → B → A; `BookingEmailPreference` conserva secuencia/consentimiento/revisión por reserva y tenant; `BookingEmailEvent` guarda eventos durables; `EmailOutbox` guarda intención, lease, presupuesto, snapshot privado purgable y versión de plantilla. `EmailWebhookReceipt` deduplica señales externas; `EmailAbuseBucket` limita envíos entre workers; `EmailChannelControl` pausa el canal compartido. FKs compuestas refuerzan tenant. `Notification` legacy permanece intacto y no se usa como outbox. El [contrato C1](../features/NOTIFICACIONES_C1_CONTRATO.md) y [QA C3](../features/NOTIFICACIONES_C3_ACTIVACION.md) no implican activación productiva: el canal sigue pausado.
 
 - Todo dato de negocio debe aislarse por `organizationId` en consultas y contratos.
 - Relaciones sin clave compuesta tenant-scoped requieren que el servicio valide la organización de todos los recursos en la operación autoritativa.

@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-09-24 — Medios/Promociones C3 aprobado; correctivos de smoke, roles y H4
+
+- El propietario cerró y aprobó Medios/Promociones C3, sin activar producción. El seguimiento autorizado de la auditoría recuperó los SQL históricos desde `apps/api/ops/`, ajustó los grants de Medios al contrato C1/C3 y los verificó sobre 25 migraciones desde cero en PostgreSQL aislado con `kortek_runtime` no privilegiado.
+- El fixture WhatsApp responde ahora `/media`; se corrigió el menú móvil que bajo carga podía conservar 0 px de alto aun expandido. El smoke Chrome completo terminó exit `0` con 21 aprobados y 1 omisión intencional del caso móvil en desktop. H4 dejó de registrar `error.stack` o mensajes de excepción; conserva una señal fija sin PII. [Evidencia y límites](docs/quality/CORRECTIVOS_2026_09_24.md).
+
+Las entradas siguientes conservan el estado observado antes de esta aprobación y estos correctivos.
+
+## 2026-09-24 — Auditoría integral y roadmap documental
+
+- Se registró la [auditoría transversal](docs/quality/AUDITORIA_INTEGRAL_2026_09_24.md) sobre `0e4d30f`: 25 migraciones, workflow de calidad versionado, validaciones locales de API/web/Prisma y `pnpm audit --prod` en exit `0`; el smoke Chrome terminó con **18 aprobadas, 1 omitida y 3 fallidas**, exit `1`. No se ejecutaron nuevas E2E PostgreSQL ni QA autenticado o de proveedores.
+- Se identificaron fixtures/aserción de navegador por corregir, los scripts `ops/` de roles ausentes, contradicciones entre fuentes vigentes y una superficie de log técnico para revisar. Se sincronizaron producto, arquitectura, estado e instrucciones locales sin alterar contratos ni código. El roadmap conserva el gate C3 y prioriza 14 candidatos; Medios C3 sigue **en revisión del propietario**, sin producción ni autorización de otro módulo.
+
 ## 2026-09-24 — Cierre documental C3 de Medios/Promociones y mantenimiento local
 
 - El propietario aprobó C2 y autorizó [C3 documental](docs/features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md) sin otra prueba Cloudinary. La cuota de moderación queda operativamente en 0 hasta el próximo ciclo, según el rechazo real `420` y el `503` observado en C2. C3 no activó producción ni cambió contratos o código.

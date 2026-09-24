@@ -1,6 +1,8 @@
 # Visión futura — Configuración/CMS, mini-sitio público y Pagos
 
-Estado: **VISIÓN FUTURA / PLANIFICACIÓN DOCUMENTAL**. Esta definición no autoriza implementación, no cambia contratos vigentes y no altera el estado **CERRADO / APROBADO** de Facturación-B. El plan modular preparado se encuentra en [`CONFIGURACION_CMS_PLAN.md`](CONFIGURACION_CMS_PLAN.md).
+Estado: **VISIÓN HISTÓRICA / PLANIFICACIÓN DOCUMENTAL NO AUTORIZANTE**. Esta definición no autoriza implementación, no cambia contratos vigentes y no altera el estado **CERRADO / APROBADO** de Facturación-B. El plan modular preparado se encuentra en [`CONFIGURACION_CMS_PLAN.md`](CONFIGURACION_CMS_PLAN.md).
+
+Nota de vigencia 2026-09-24: este documento conserva la visión tal como se formuló antes de las entregas posteriores. CMS C1–C3, WhatsApp público C1–C3, Notificaciones C1–C3 y Medios/Promociones C1–C3 fueron aprobados después. Para comportamiento actual y próximos candidatos, consultar [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md) y la [auditoría integral](../quality/AUDITORIA_INTEGRAL_2026_09_24.md), con su [seguimiento autorizado](../quality/CORRECTIVOS_2026_09_24.md). Las frases futuras de abajo no revocan esas aprobaciones ni autorizan Pagos, banca, descuentos o activación productiva.
 
 ## 1. Propósito y secuencia
 

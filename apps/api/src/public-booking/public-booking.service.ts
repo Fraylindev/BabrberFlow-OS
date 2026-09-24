@@ -445,7 +445,6 @@ export class PublicBookingService {
       }
       this.logger.error(
         'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
-        error instanceof Error ? error.stack : String(error),
       );
       return { created: false, error: 'ACCOUNT_CREATION_FAILED' };
     }

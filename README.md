@@ -12,10 +12,12 @@ Requisitos: Node.js 20.9+, pnpm 11.18 y Docker con PostgreSQL 16.
 2. Sustituye los placeholders Clerk por claves Development propias; nunca las versiones.
 3. Inicia PostgreSQL con `docker compose up -d postgres`.
 4. Ejecuta `pnpm install --frozen-lockfile`.
-5. Aplica el esquema con `pnpm --filter api exec prisma migrate deploy`.
-6. Inicia ambos servicios con `pnpm dev`.
+5. En una base nueva, aplica el esquema con una conexión administrativa aislada; luego provisiona los roles con [`apps/api/ops/provision-database-roles.sql`](apps/api/ops/provision-database-roles.sql). En actualizaciones posteriores, usa exclusivamente el migrador para `pnpm --filter api exec prisma migrate deploy`. La API debe arrancar solo con runtime.
+6. Inicia ambos servicios con `pnpm dev` después de verificar ambos roles.
 
 Sin overrides, la API usa `http://localhost:3000` y la web `http://localhost:3001`; ambos listeners quedan en loopback.
+
+Los scripts originales están versionados en [`apps/api/ops/`](apps/api/ops/README.md), no en un directorio `ops/` de la raíz. Se verificaron desde cero en PostgreSQL aislado; el procedimiento y sus límites están en la [evidencia del correctivo](docs/quality/CORRECTIVOS_2026_09_24.md). No usar el superusuario bootstrap como credencial de API.
 
 ## Validación
 

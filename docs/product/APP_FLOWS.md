@@ -48,7 +48,7 @@ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se l
 
 ## 5. Reserva pública y continuidad B2C
 
-1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales;
+1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales; consume por separado la proyección pública de medios aprobada cuando está disponible;
 2. `/public/:slug/booking-data` entrega esa proyección, catálogo, profesionales públicos mínimos y la fecha mínima calculada en la zona del negocio, sin UUID de Organization ni la zona;
 3. la página revalida publicación al recuperar foco y antes de abrir el asistente; inexistente, inactivo, borrado o retirado recibe una presentación neutra;
 4. disponibilidad exige una fecha calendario ISO real, usa servicios/profesionales activos, horario efectivo y protección concurrente, y entrega por slot el instante UTC autoritativo además de la hora local visible;
@@ -60,6 +60,8 @@ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se l
 A0.6-B/C/D todavía no implementan un recorrido Clerk público posterior a reserva ni autoservicio de cliente.
 
 WhatsApp público [C2](../features/WHATSAPP_C2_FRONTEND.md), aprobado por el propietario sobre [C1 aprobado](../features/WHATSAPP_C1_CONTRATO.md), con prueba física satisfactoria confirmada por el propietario en [activación C3](../features/WHATSAPP_C3_ACTIVACION.md), cerrado/aprobado explícitamente por el propietario: tras crear la reserva se muestra «Tu reserva quedó registrada». Solo si el teléfono publicado del slug actual tiene `+` explícito y cumple la validación estricta se presenta una explicación previa y un único enlace «Abrir WhatsApp» en pestaña nueva. PublicMiniSite ya no abre automáticamente; renderiza el mismo SuccessView, con dominio y mensaje genérico fijos, sin datos de la reserva en el texto. Teléfono inelegible omite enlace y auxiliar. El clic no repite el POST, confirma Booking ni acredita envío/entrega. El API conserva `whatsappBaseUrl` legacy sin que la acción lo consuma. Bloqueo del navegador conserva el resultado y la opción de reintentar el enlace; no se promete detectar ni sortear ese bloqueo. CMS/H5 mantienen sus contratos y estado.
+
+Medios/Promociones [C1–C3](../features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md) están cerrados/aprobados: el editor privado gestiona imágenes, galería/portada y promociones editoriales; el mini-sitio recibe solo proyección publicada y localizadores propios. C3 no activa producción. Notificaciones [C1–C3](../features/NOTIFICACIONES_C3_ACTIVACION.md) están cerradas/aprobadas para cinco eventos de correo con opt-in, historial y reintento; el canal permanece pausado y sin operación productiva.
 
 ## 6. Facturación interna
 
@@ -73,14 +75,14 @@ No es facturación fiscal y no incluye anulaciones, reembolsos, pagos parciales 
 
 ## 7. Visión futura: ampliaciones del mini-sitio y elección de pago
 
-La base C3 de mini-sitio, CTA y reserva descrita en la sección 5 está cerrada/aprobada. Las ampliaciones siguientes son una dirección de producto **no implementada** y no sustituyen los flujos ni contratos vigentes:
+La base C3 de mini-sitio, CTA y reserva descrita en la sección 5 está cerrada/aprobada. Medios editoriales y correo transaccional alcanzaron después las aprobaciones indicadas arriba. Las ampliaciones siguientes son una dirección de producto **no implementada** y no sustituyen los flujos ni contratos vigentes:
 
-1. ampliar Configuración/CMS con horarios editables, branding, galería, fotos de servicios y promociones reales;
+1. ampliar Configuración/CMS con horarios editables y branding adicional; cualquier descuento ejecutable exige contrato financiero separado de las promociones editoriales actuales;
 2. extender el recorrido actual después de los datos mínimos con una elección de pago en local o transferencia;
 3. pago en local crea la reserva sin cobro confirmado;
 4. transferencia muestra cuentas habilitadas del tenant y admite un comprobante pendiente de verificación, sin crear automáticamente un `Payment`.
 
-La relación entre reserva, retención de horario, comprobante, verificación, pago anticipado, Invoice y propina necesita un contrato futuro. El Payment completo único vigente no se usa como estado pendiente. Las notificaciones futuras prevén correo automático con Resend y una acción operativa manual `wa.me` editable por el personal, adicional a la acción pública descrita en §5; cualquier mensaje debe representar el estado real de Booking. Ver [`CONFIGURACION_CMS_PAGOS_VISION.md`](../features/CONFIGURACION_CMS_PAGOS_VISION.md).
+La relación entre reserva, retención de horario, comprobante, verificación, pago anticipado, Invoice y propina necesita un contrato futuro. El Payment completo único vigente no se usa como estado pendiente. El correo automático con Resend ya existe en el alcance aprobado y pausado de Notificaciones; la acción operativa manual `wa.me` editable por el personal sigue siendo futura y distinta de la acción pública de §5. Cualquier mensaje debe representar el estado real de Booking. Ver la [visión histórica](../features/CONFIGURACION_CMS_PAGOS_VISION.md) y el [roadmap actualizado](../quality/AUDITORIA_INTEGRAL_2026_09_24.md).
 
 ## 8. Flujo de entrega
 

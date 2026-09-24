@@ -16,16 +16,16 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
-- [`MEDIOS_PROMOCIONES_C3_ACTIVACION.md`](features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md): C2 aprobado, C3 documental en revisión, cuota de moderación en 0 hasta el próximo ciclo, respaldo/restauración y actualización verificada de desarrollo a 25 migraciones, con limpieza posterior de QA.
+- [`MEDIOS_PROMOCIONES_C3_ACTIVACION.md`](features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md): C3 cerrado/aprobado expresamente, cuota de moderación en 0 hasta el próximo ciclo, respaldo/restauración y actualización verificada de desarrollo a 25 migraciones, con limpieza posterior de QA.
 - [`MEDIOS_PROMOCIONES_C2_FRONTEND.md`](features/MEDIOS_PROMOCIONES_C2_FRONTEND.md): editor de medios/promociones, avatar propio y consumo público; QA funcional/visual de cuatro roles, dos tenants, proyección pública real y cuota de moderación agotada con `503` real. C2 cerrado/aprobado.
 - [`MEDIOS_PROMOCIONES_C1_CONTRATO.md`](features/MEDIOS_PROMOCIONES_C1_CONTRATO.md): decisiones D1–D8/D5b y backend C1 aprobados expresamente para C2; Cloudinary Free y Rekognition Free probados en ciclo integrado real.
 - [`MEDIOS_PROMOCIONES_C0_AUDITORIA.md`](features/MEDIOS_PROMOCIONES_C0_AUDITORIA.md): auditoría documental C0 aprobada; sus opciones históricas quedaron resueltas en la autorización posterior de C1.
 
 - [`NOTIFICACIONES_C3_ACTIVACION.md`](features/NOTIFICACIONES_C3_ACTIVACION.md): C3 cerrado/aprobado tras QA real de las cinco plantillas y cinco entregas `DELIVERED`; canal pausado, webhook temporal eliminado y sin producción.
 
-- [`NOTIFICACIONES_C2_FRONTEND.md`](features/NOTIFICACIONES_C2_FRONTEND.md): C2 cerrado/aprobado explícitamente; historial, opt-in y reintento. Pruebas, QA real de cuatro roles/dos tenants y altas pública/interna documentados. C3 temporal autorizado; ver documento de activación.
+- [`NOTIFICACIONES_C2_FRONTEND.md`](features/NOTIFICACIONES_C2_FRONTEND.md): C2 cerrado/aprobado explícitamente; historial, opt-in y reintento. Pruebas, QA real de cuatro roles/dos tenants y altas pública/interna documentados. C3 temporal fue aprobado después; ver documento de activación.
 
-- [`NOTIFICACIONES_C1_CONTRATO.md`](features/NOTIFICACIONES_C1_CONTRATO.md): backend aprobado explícitamente; cinco eventos, outbox/worker, preferencias, permisos, reintentos y retención. Evidencia HTTP/PostgreSQL, migración y recuperación. C2 aprobado; C3 temporal en curso.
+- [`NOTIFICACIONES_C1_CONTRATO.md`](features/NOTIFICACIONES_C1_CONTRATO.md): backend aprobado explícitamente; cinco eventos, outbox/worker, preferencias, permisos, reintentos y retención. Evidencia HTTP/PostgreSQL, migración y recuperación; C2–C3 aprobados después, canal pausado.
 
 - [`NOTIFICACIONES_C0_AUDITORIA.md`](features/NOTIFICACIONES_C0_AUDITORIA.md): C0 con D1–D10 fijadas por el propietario; correo automático para cinco eventos, incluidos reprogramación y completado sin marketing. WhatsApp manual diseñado para segunda entrega; opt-in, permisos, outbox y retención fijados. Sin implementación ni C1 autorizado; remitente real antes de activar C3.
 
@@ -35,7 +35,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 - [`FRONTEND_STANDARD.md`](product/FRONTEND_STANDARD.md): implementación y evidencia frontend.
 - [`UI_PATTERNS.md`](product/UI_PATTERNS.md): patrones reutilizables de interacción.
 - [`FEATURE_BRIEF_TEMPLATE.md`](features/FEATURE_BRIEF_TEMPLATE.md): plantilla previa a una entrega funcional.
-- [`CONFIGURACION_CMS_PAGOS_VISION.md`](features/CONFIGURACION_CMS_PAGOS_VISION.md): visión futura no autorizada para Configuración/CMS, mini-sitio público, reserva pública y Pagos.
+- [`CONFIGURACION_CMS_PAGOS_VISION.md`](features/CONFIGURACION_CMS_PAGOS_VISION.md): visión histórica parcialmente realizada por entregas posteriores; Pagos, banca y otras ampliaciones conservan autorización propia.
 - [`CONFIGURACION_CMS_PLAN.md`](features/CONFIGURACION_CMS_PLAN.md): secuencia modular; C1–C3 cerrados/aprobados; D1–D6 fijadas y entregas posteriores fuera.
 - [`CONFIGURACION_CMS_C0_AUDITORIA.md`](features/CONFIGURACION_CMS_C0_AUDITORIA.md): auditoría y brief históricos; propuestas D1–D6 resueltas por la autorización C1 posterior.
 - [`CONFIGURACION_CMS_C1_CONTRATO.md`](features/CONFIGURACION_CMS_C1_CONTRATO.md): contrato backend, migración/rollback y evidencia C1; no autoriza frontend ni mini-sitio.
@@ -60,6 +60,8 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Calidad y publicación
 
+- [`AUDITORIA_INTEGRAL_2026_09_24.md`](quality/AUDITORIA_INTEGRAL_2026_09_24.md): inventario transversal y roadmap de 14 candidatos en el momento de la auditoría; su gate C3 y H1/H2/H4 tienen seguimiento posterior autorizado.
+- [`CORRECTIVOS_2026_09_24.md`](quality/CORRECTIVOS_2026_09_24.md): seguimiento autorizado tras esa auditoría; smoke Chrome, roles PostgreSQL originales y log de reserva pública.
 - [`DELIVERY_GATES.md`](quality/DELIVERY_GATES.md): controles por etapa y protocolo de relevo.
 - [`DEFINITION_OF_DONE.md`](quality/DEFINITION_OF_DONE.md): condiciones de terminación verificable.
 - [`ESTABILIZACION_2026_09.md`](quality/ESTABILIZACION_2026_09.md): ejecución y evidencia de los seis puntos de estabilización sobre la base auditada.

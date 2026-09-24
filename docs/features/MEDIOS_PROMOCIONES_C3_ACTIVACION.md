@@ -1,6 +1,6 @@
 # Medios/Promociones C3 — cierre documental y mantenimiento local
 
-Fecha: 2026-09-24. Estado: **C3 DOCUMENTADO / EN REVISIÓN DEL PROPIETARIO**. El propietario aprobó expresamente C2 y autorizó este cierre documental junto con el mantenimiento de la base de desarrollo. No hubo nueva prueba real con Cloudinary ni despliegue productivo. No se cambiaron contratos ni código; los permisos efectivos de Medios en desarrollo se ajustaron al contrato C1 aprobado, como se registra abajo.
+Fecha: 2026-09-24. Estado: **C3 CERRADO / APROBADO** por decisión expresa posterior del propietario («Apruebo Medios/Promociones C3»). El propietario había aprobado C2 y autorizado este cierre documental junto con el mantenimiento de la base de desarrollo. No hubo nueva prueba real con Cloudinary ni despliegue productivo. No se cambiaron contratos ni código; los permisos efectivos de Medios en desarrollo se ajustaron al contrato C1 aprobado, como se registra abajo.
 
 ## Cierre de C2 y cuota
 
@@ -37,6 +37,6 @@ Una revisión de grants posterior a la limpieza detectó que las ACL predetermin
 
 En el mantenimiento posterior solicitado por el propietario se verificó que `kortek-media-c1-test` y `kortek-notifications-c1-test` estaban detenidos y tenían cada uno un único volumen anónimo; se eliminaron ambos contenedores con `docker rm -v`. La comprobación final confirmó ausencia de los dos contenedores y sus volúmenes. `barberflow-postgres` siguió accesible con 25 migraciones; el respaldo local conservó tamaño y SHA-256. No se tocaron `main`, otras bases de otros contenedores, proveedores ni entornos productivos.
 
-## Gate pendiente
+## Gate de activación externa
 
-La ejecución de C3 queda documentada para revisión del propietario. Un commit/push a `origin/ai/antigravity-qa` es un checkpoint revisable y no constituye aprobación final de C3 ni despliegue. Antes de cualquier activación externa siguen vigentes los controles operativos de cuota/costo, seguridad, configuración y aprobación explícita.
+El propietario aprobó C3 después de revisar la entrega. Un commit/push a `origin/ai/antigravity-qa` no constituye despliegue. Antes de cualquier activación externa siguen vigentes los controles operativos de cuota/costo, seguridad, configuración y aprobación explícita de esa activación.
