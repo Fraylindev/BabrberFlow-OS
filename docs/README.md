@@ -16,6 +16,9 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
+- [`MEDIOS_PROMOCIONES_C1_CONTRATO.md`](features/MEDIOS_PROMOCIONES_C1_CONTRATO.md): decisiones D1–D8/D5b fijadas por el propietario, backend C1 local implementado, en revisión; Cloudinary Free y moderación Rekognition Free probados en ciclo integrado real de subida, publicación y retiro, con gates finales aún pendientes; sin C2.
+- [`MEDIOS_PROMOCIONES_C0_AUDITORIA.md`](features/MEDIOS_PROMOCIONES_C0_AUDITORIA.md): auditoría documental C0 aprobada; sus opciones históricas quedaron resueltas en la autorización posterior de C1.
+
 - [`NOTIFICACIONES_C3_ACTIVACION.md`](features/NOTIFICACIONES_C3_ACTIVACION.md): C3 cerrado/aprobado tras QA real de las cinco plantillas y cinco entregas `DELIVERED`; canal pausado, webhook temporal eliminado y sin producción.
 
 - [`NOTIFICACIONES_C2_FRONTEND.md`](features/NOTIFICACIONES_C2_FRONTEND.md): C2 cerrado/aprobado explícitamente; historial, opt-in y reintento. Pruebas, QA real de cuatro roles/dos tenants y altas pública/interna documentados. C3 temporal autorizado; ver documento de activación.

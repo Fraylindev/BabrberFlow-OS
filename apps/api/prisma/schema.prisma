@@ -54,6 +54,28 @@ enum PaymentMethod {
   TRANSFER
 }
 
+enum MediaAssetPurpose {
+  GALLERY
+  SERVICE
+  PROFESSIONAL_AVATAR
+  PROMOTION
+}
+
+enum MediaAssetStatus {
+  STAGED
+  APPROVED
+  PUBLISHED
+  QUARANTINED
+  RETIRED
+  PURGED
+}
+
+enum MediaModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Organization {
   id String @id @default(uuid())
 
@@ -105,6 +127,129 @@ model Organization {
   professionalAvailabilityBlocks ProfessionalAvailabilityBlock[]
   teamInvitations                TeamInvitation[]
   cmsPage                        CmsPage?
+  mediaAssets                    MediaAsset[]
+  mediaPromotions                MediaPromotion[]
+  mediaGalleryOrder              MediaGalleryOrder?
+  mediaPurgeJobs                 MediaPurgeJob[]
+  mediaOperations                MediaOperation[]
+}
+
+// Custodia editorial independiente de GalleryImage legacy y CmsPage.
+// targetId se valida siempre con organizationId en la misma transacción;
+// nunca se interpreta como permiso ni URL del proveedor.
+model MediaAsset {
+  id                 String                @id @default(uuid())
+  organizationId     String
+  organization       Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  purpose            MediaAssetPurpose
+  targetId           String?
+  cloudAssetId       String?               @unique
+  cloudPublicId      String?               @unique
+  cloudVersion       Int?
+  sha256             String
+  bytes              Int
+  width              Int
+  height             Int
+  status             MediaAssetStatus      @default(STAGED)
+  moderationStatus   MediaModerationStatus @default(PENDING)
+  revision           Int                   @default(1)
+  publishedRevision  Int?
+  altText            String
+  caption            String?
+  decorative         Boolean               @default(false)
+  publishedAltText   String?
+  publishedCaption   String?
+  publishedDecorative Boolean?
+  uploadedByUserId   String
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  publishedAt        DateTime?
+  quarantinedAt      DateTime?
+  retiredAt          DateTime?
+  purgedAt           DateTime?
+  stagingExpiresAt   DateTime
+  purgeAfter         DateTime?
+  purgeJob           MediaPurgeJob?
+  promotion          MediaPromotion?
+
+  @@index([organizationId, status, purpose, targetId])
+  @@index([organizationId, stagingExpiresAt])
+  @@unique([organizationId, id])
+}
+
+// Revisión del orden totalmente separada de la revisión de cada imagen.
+model MediaGalleryOrder {
+  organizationId    String       @id
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  version           Int          @default(0)
+  draftRevision     Int          @default(0)
+  draftAssetIds     Json
+  draftHeroAssetId  String?
+  publishedRevision Int?
+  publishedAssetIds Json?
+  publishedHeroAssetId String?
+  updatedAt         DateTime     @updatedAt
+}
+
+model MediaPromotion {
+  id               String       @id @default(uuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  version          Int          @default(0)
+  draftRevision    Int          @default(1)
+  draftTitle       String
+  draftBody        String
+  draftStartDate   String
+  draftEndDate     String
+  imageAssetId     String?      @unique
+  imageAsset       MediaAsset?  @relation(fields: [organizationId, imageAssetId], references: [organizationId, id], onDelete: Restrict)
+  publishedRevision Int?
+  publishedTitle   String?
+  publishedBody    String?
+  publishedImageAssetId String?
+  timeZone         String?
+  startsAtUtc      DateTime?
+  endsAtUtc        DateTime?
+  isPublished      Boolean      @default(false)
+  retiredAt        DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([organizationId, isPublished, startsAtUtc, endsAtUtc])
+  @@unique([organizationId, imageAssetId])
+}
+
+// Trabajo durable de purga; un fallo del proveedor no reabre entrega pública.
+model MediaPurgeJob {
+  assetId        String     @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  asset          MediaAsset @relation(fields: [organizationId, assetId], references: [organizationId, id], onDelete: Restrict)
+  attempts       Int        @default(0)
+  nextAttemptAt  DateTime
+  completedAt    DateTime?
+  lastErrorCode  String?
+  createdAt      DateTime   @default(now())
+
+  @@index([nextAttemptAt, completedAt])
+  @@index([organizationId, completedAt])
+  @@unique([organizationId, assetId])
+}
+
+model MediaOperation {
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actorUserId    String
+  key            String
+  operation      String
+  requestHash    String
+  resourceId     String
+  resultRevision Int
+  result         Json
+  createdAt      DateTime @default(now())
+
+  @@id([organizationId, actorUserId, key])
+  @@index([organizationId, resourceId])
 }
 
 // Agregado editorial independiente; Organization conserva identidad y operación.

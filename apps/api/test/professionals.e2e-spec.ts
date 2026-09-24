@@ -210,7 +210,7 @@ describe('Profesionales: perfil propio BARBER (e2e PostgreSQL)', () => {
     }
   });
 
-  it('edita toda la información pública propia de A1 sin modificar al colega', async () => {
+  it('edita el perfil propio sin aceptar URL de avatar ajena a Medios', async () => {
     const colleagueBefore = await prisma.db.professional.findUniqueOrThrow({
       where: { id: otherProfessionalId },
     });
@@ -218,7 +218,6 @@ describe('Profesionales: perfil propio BARBER (e2e PostgreSQL)', () => {
       name: '  Perfil actualizado  ',
       bio: '  Biografía pública de prueba  ',
       specialty: '  Corte clásico  ',
-      avatar: '  https://example.com/profile.jpg  ',
       experienceYears: 7,
     };
     const response = await requestApp(app)
@@ -232,7 +231,7 @@ describe('Profesionales: perfil propio BARBER (e2e PostgreSQL)', () => {
         name: 'Perfil actualizado',
         bio: 'Biografía pública de prueba',
         specialty: 'Corte clásico',
-        avatar: 'https://example.com/profile.jpg',
+        avatar: null,
         experienceYears: 7,
         phone: null,
         status: 'ACTIVE',
@@ -332,6 +331,7 @@ describe('Profesionales: perfil propio BARBER (e2e PostgreSQL)', () => {
     { name: '   ' },
     { name: 'x'.repeat(121) },
     { avatar: 'data:image/png;base64,AAAA' },
+    { avatar: 'https://example.com/profile.jpg' },
     { experienceYears: -1 },
     { experienceYears: 1.5 },
     { phone: 'x'.repeat(31) },

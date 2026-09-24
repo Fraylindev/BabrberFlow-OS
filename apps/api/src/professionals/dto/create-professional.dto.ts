@@ -1,16 +1,15 @@
 import {
   IsInt,
+  IsEmpty,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUrl,
   Matches,
   MaxLength,
   Min,
 } from 'class-validator';
 import { Transform, type TransformFnParams } from 'class-transformer';
 import {
-  PROFESSIONAL_AVATAR_MAX_LENGTH,
   PROFESSIONAL_BIO_MAX_LENGTH,
   PROFESSIONAL_NAME_MAX_LENGTH,
   PROFESSIONAL_PHONE_MAX_LENGTH,
@@ -38,11 +37,9 @@ export class CreateProfessionalDto {
   phone?: string | null;
 
   @Transform(trimString)
-  @IsString()
   @IsOptional()
-  @MaxLength(PROFESSIONAL_AVATAR_MAX_LENGTH)
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
-  avatar?: string | null;
+  @IsEmpty({ message: 'El avatar se sube desde Medios.' })
+  avatar?: null;
 
   @Transform(trimString)
   @IsString()

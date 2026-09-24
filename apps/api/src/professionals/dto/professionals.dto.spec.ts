@@ -15,13 +15,11 @@ describe('Professional DTO validation', () => {
   it('trims string fields before applying validation limits', () => {
     const dto = plainToInstance(CreateProfessionalDto, {
       name: '  Ana  ',
-      avatar: '  https://example.com/avatar.jpg  ',
       bio: '  Bio  ',
     });
 
     expect(validateSync(dto)).toEqual([]);
     expect(dto.name).toBe('Ana');
-    expect(dto.avatar).toBe('https://example.com/avatar.jpg');
     expect(dto.bio).toBe('Bio');
   });
 
@@ -56,7 +54,6 @@ describe('Professional DTO validation', () => {
     const dto = plainToInstance(UpdateOwnProfessionalDto, {
       name: '  Ana  ',
       bio: '  Bio  ',
-      avatar: '  https://example.com/avatar.jpg  ',
       specialty: '  Fade  ',
       experienceYears: 5,
       phone: '  +18095550101  ',
@@ -67,7 +64,6 @@ describe('Professional DTO validation', () => {
     expect(dto).toEqual({
       name: 'Ana',
       bio: 'Bio',
-      avatar: 'https://example.com/avatar.jpg',
       specialty: 'Fade',
       experienceYears: 5,
       phone: '+18095550101',
@@ -97,6 +93,7 @@ describe('Professional DTO validation', () => {
     { phone: 'x'.repeat(31) },
     { avatar: 'javascript:alert(1)' },
     { avatar: 'data:image/png;base64,AAAA' },
+    { avatar: 'https://example.com/avatar.jpg' },
     { experienceYears: -1 },
     { experienceYears: 1.5 },
   ])('rejects invalid own profile payload %#', (payload) => {

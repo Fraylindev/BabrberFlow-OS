@@ -14,6 +14,7 @@ import { PublicBookingModule } from './public-booking/public-booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { CmsModule } from './cms/cms.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     AnalyticsModule,
     CmsModule,
     NotificationsModule,
+    MediaModule,
   ],
   controllers: [],
   providers: [],

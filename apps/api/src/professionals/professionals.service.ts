@@ -54,6 +54,7 @@ export class ProfessionalsService {
     userId: string,
     dto: CreateProfessionalDto,
   ): Promise<ProfessionalManagementResponseDto> {
+    this.assertManagedAvatar(dto.avatar);
     const created = await this.prisma.db.professional.create({
       data: { ...this.normalizeCreate(dto), organizationId },
       select: professionalManagementSelect,
@@ -183,6 +184,7 @@ export class ProfessionalsService {
     userId: string,
     dto: UpdateProfessionalDto,
   ): Promise<ProfessionalManagementResponseDto> {
+    this.assertManagedAvatar(dto.avatar);
     this.assertNonEmptyPatch(dto);
     await this.findOwnedOrThrow(id, organizationId);
     return this.updateManagementProfile(
@@ -198,6 +200,7 @@ export class ProfessionalsService {
     organizationId: string,
     dto: UpdateOwnProfessionalDto,
   ): Promise<ProfessionalOwnProfileResponseDto> {
+    this.assertManagedAvatar(dto.avatar);
     this.assertNonEmptyPatch(dto);
     const current = await this.prisma.db.professional.findFirst({
       where: { userId, organizationId },
@@ -458,6 +461,12 @@ export class ProfessionalsService {
     });
     if (!professional) throw new NotFoundException('Profesional no encontrado');
     return professional;
+  }
+
+  private assertManagedAvatar(value: unknown): void {
+    if (value !== undefined && value !== null) {
+      throw new BadRequestException('El avatar se sube desde Medios.');
+    }
   }
 
   private normalizeCreate(dto: CreateProfessionalDto) {

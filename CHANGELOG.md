@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-09-23 — Medios/Promociones C1 iniciado
+
+- El propietario aprobó C0 y fijó D1–D8/D5b, incluidos fotos de servicio, avatar propio BARBER sin aprobación OWNER previa, hero, imagen opcional de promoción y Cloudinary `authenticated` Free condicionado a prueba real de retiro.
+- [Contrato C1 implementado, en revisión](docs/features/MEDIOS_PROMOCIONES_C1_CONTRATO.md): agregado de activos, galería/hero, servicios, avatar administrado, promociones editoriales, proyección pública y purga durable, con migración 25 aplicada solo a PostgreSQL QA aislado. En Cloudinary Free, original y tres derivados dieron 200 antes y 404 desde +7 s tras destroy/invalidate; Admin API informó cero activos QA remanentes. El propietario autorizó activar Rekognition AI Moderation Free y aceptó sus términos; “Installed Add-ons” confirmó Free, $0/50 moderaciones mensuales y uso 1/50. La E2E integrada real pasó con `aws_rek=approved`, publicación, proxy público, retiro y 404 repetidos de original/tres derivados conocidos; Admin API 404 y cero remanentes QA. Una regresión adicional cubre desactivación durante una subida y purga durable de su ID remoto. Prisma validate/generate/status/diff, unitarias API (682 aprobadas, 11 omitidas), tipos, lint, build y 18 suites E2E/244 pruebas, más 1 E2E Cloudinary real, terminaron exit 0. `pnpm audit --prod` no encontró vulnerabilidades conocidas. Prisma no detecta drift; respaldo/restauración QA coincide en recuentos y hash; un segundo despliegue desde cero verificó privilegios mínimos de `kortek_runtime`. C1 aún no aprobado y C2 cerrado. Se añadieron `cloudinary` y `sharp` al API; no se tocaron CMS, H5/fechas, WhatsApp, Notificaciones ni frontend.
+
+## 2026-09-22 — Medios/Promociones C0 documental
+
+- Auditoría [C0](docs/features/MEDIOS_PROMOCIONES_C0_AUDITORIA.md) autorizada solo para medios públicos y promociones editoriales. D1–D8 presentan opciones de alcance, custodia/revocación, validación, publicación, límite editorial, vigencia, permisos y retiro; ninguna está seleccionada todavía.
+- Sin código, Prisma, contratos ejecutables, archivos de otros módulos, subidas, proveedor activado, cambios de precio/cupo/disponibilidad, commit, push ni despliegue. Configuración/CMS C1–C3, H5/fechas, WhatsApp C1–C3 y Notificaciones C1–C3 conservan su aprobación.
+
 ## 2026-09-22 — Notificaciones C3 cerrado / aprobado
 
 - El propietario revisó visualmente las cinco plantillas y aprobó el checkpoint C3. El recorrido real produjo CREATED, CONFIRMED, RESCHEDULED, COMPLETED y CANCELLED; las cinco intenciones quedaron `DELIVERED` con recibos `email.sent` y `email.delivered` durables.
