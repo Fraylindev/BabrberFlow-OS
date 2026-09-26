@@ -4,13 +4,14 @@ import {
   Post,
   Body,
   Param,
+  Query,
   UseGuards,
-  UseInterceptors,
+  Header,
 } from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { PublicBookingService } from './public-booking.service';
 import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
+import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
 
 // Sin JwtAuthGuard a propósito — esta es la puerta de entrada para
 // clientes anónimos. El aislamiento por organización se resuelve
@@ -23,18 +24,26 @@ import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
 export class PublicBookingController {
   constructor(private readonly publicBookingService: PublicBookingService) {}
 
-  // Cacheado 15s — es la única lectura pública de alto tráfico repetido
-  // (cualquier visitante de la página de reservas la llama) y de baja
-  // frecuencia de cambio real (servicios/profesionales no cambian minuto
-  // a minuto). CacheInterceptor usa la URL completa como key por
-  // defecto, y el :slug ya forma parte de la URL — cada organización
-  // cachea por separado, sin riesgo de mezclar datos entre tenants.
-  // Nunca aplicado a POST /bookings (una mutación jamás se cachea).
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(15000)
+  // C1: estado editorial autoritativo por petición, también entre réplicas.
+  @Header('Cache-Control', 'no-store')
   @Get('booking-data')
   getBookingData(@Param('slug') slug: string) {
     return this.publicBookingService.getBookingData(slug);
+  }
+
+  // Sin CacheInterceptor a propósito: a diferencia de booking-data, esta
+  // respuesta depende de reservas que pueden crearse en cualquier momento
+  // — cachearla arriesga mostrar un horario ya ocupado como disponible.
+  // 30 solicitudes/minuto por IP: generoso para el uso normal de la UI
+  // (cambiar de fecha/profesional varias veces), no para abusarlo.
+  @Throttle({ default: { limit: 30, ttl: 60000 } })
+  @Get('availability')
+  @Header('Cache-Control', 'no-store')
+  getAvailability(
+    @Param('slug') slug: string,
+    @Query() query: GetAvailabilityQueryDto,
+  ) {
+    return this.publicBookingService.getAvailability(slug, query);
   }
 
   // 5 solicitudes/minuto por IP — override explícito, más estricto que
@@ -42,6 +51,7 @@ export class PublicBookingController {
   // para uso legítimo, insuficiente para llenar la agenda de spam.
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('bookings')
+  @Header('Cache-Control', 'no-store')
   createBooking(
     @Param('slug') slug: string,
     @Body() dto: CreatePublicBookingDto,

@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// HTTP/security budget shared by API replicas; separate from EmailAbuseBucket.
+// key is an HMAC digest, never a raw IP, email or token.
+model SecurityRateBucket {
+  key          String   @id
+  count        Int
+  expiresAt    DateTime @db.Timestamptz(6)
+  blockedUntil DateTime? @db.Timestamptz(6)
+
+  @@index([expiresAt])
+}
+
 enum UserRole {
   // B2B — personal interno con acceso al panel de gestión
   OWNER
@@ -18,6 +29,17 @@ enum UserRole {
   CUSTOMER
 }
 
+enum TeamInvitationStatus {
+  CREATING
+  PENDING
+  RESENDING
+  REVOKING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+  FAILED
+}
+
 enum BookingStatus {
   PENDING
   CONFIRMED
@@ -26,17 +48,43 @@ enum BookingStatus {
   NO_SHOW
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  REFUNDED
-  FAILED
+enum ProfessionalStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum AvailabilityBlockStatus {
+  ACTIVE
+  CANCELLED
 }
 
 enum PaymentMethod {
   CASH
   CARD
   TRANSFER
+}
+
+enum MediaAssetPurpose {
+  GALLERY
+  SERVICE
+  PROFESSIONAL_AVATAR
+  PROMOTION
+}
+
+enum MediaAssetStatus {
+  STAGED
+  APPROVED
+  PUBLISHED
+  QUARANTINED
+  RETIRED
+  PURGED
+}
+
+enum MediaModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model Organization {
@@ -62,6 +110,8 @@ model Organization {
 
   businessHours Json?
 
+  timeZone String @default("America/Santo_Domingo")
+
   isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
@@ -82,32 +132,193 @@ model Organization {
 
   bookings Booking[]
 
-  payments Payment[]
-  Invoice  Invoice[]
+  payments                       Payment[]
+  invoices                       Invoice[]
+  professionalWeeklySchedules    ProfessionalWeeklySchedule[]
+  professionalAvailabilityBlocks ProfessionalAvailabilityBlock[]
+  teamInvitations                TeamInvitation[]
+  cmsPage                        CmsPage?
+  mediaAssets                    MediaAsset[]
+  mediaPromotions                MediaPromotion[]
+  mediaGalleryOrder              MediaGalleryOrder?
+  mediaPurgeJobs                 MediaPurgeJob[]
+  mediaOperations                MediaOperation[]
 }
 
-// Identidad global — una sola cuenta, un solo password, puede pertenecer
-// a varias organizaciones a la vez a través de Membership. El rol y la
-// organización activa YA NO viven aquí (ver Membership).
+// Custodia editorial independiente de GalleryImage legacy y CmsPage.
+// targetId se valida siempre con organizationId en la misma transacción;
+// nunca se interpreta como permiso ni URL del proveedor.
+model MediaAsset {
+  id                 String                @id @default(uuid())
+  organizationId     String
+  organization       Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  purpose            MediaAssetPurpose
+  targetId           String?
+  cloudAssetId       String?               @unique
+  cloudPublicId      String?               @unique
+  cloudVersion       Int?
+  sha256             String
+  bytes              Int
+  width              Int
+  height             Int
+  status             MediaAssetStatus      @default(STAGED)
+  moderationStatus   MediaModerationStatus @default(PENDING)
+  revision           Int                   @default(1)
+  publishedRevision  Int?
+  altText            String
+  caption            String?
+  decorative         Boolean               @default(false)
+  publishedAltText   String?
+  publishedCaption   String?
+  publishedDecorative Boolean?
+  uploadedByUserId   String
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  publishedAt        DateTime?
+  quarantinedAt      DateTime?
+  retiredAt          DateTime?
+  purgedAt           DateTime?
+  stagingExpiresAt   DateTime
+  purgeAfter         DateTime?
+  purgeJob           MediaPurgeJob?
+  promotion          MediaPromotion?
+
+  @@index([organizationId, status, purpose, targetId])
+  @@index([organizationId, stagingExpiresAt])
+  @@unique([organizationId, id])
+}
+
+// Revisión del orden totalmente separada de la revisión de cada imagen.
+model MediaGalleryOrder {
+  organizationId    String       @id
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  version           Int          @default(0)
+  draftRevision     Int          @default(0)
+  draftAssetIds     Json
+  draftHeroAssetId  String?
+  publishedRevision Int?
+  publishedAssetIds Json?
+  publishedHeroAssetId String?
+  updatedAt         DateTime     @updatedAt
+}
+
+model MediaPromotion {
+  id               String       @id @default(uuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  version          Int          @default(0)
+  draftRevision    Int          @default(1)
+  draftTitle       String
+  draftBody        String
+  draftStartDate   String
+  draftEndDate     String
+  imageAssetId     String?      @unique
+  imageAsset       MediaAsset?  @relation(fields: [organizationId, imageAssetId], references: [organizationId, id], onDelete: Restrict)
+  publishedRevision Int?
+  publishedTitle   String?
+  publishedBody    String?
+  publishedImageAssetId String?
+  timeZone         String?
+  startsAtUtc      DateTime?
+  endsAtUtc        DateTime?
+  isPublished      Boolean      @default(false)
+  retiredAt        DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([organizationId, isPublished, startsAtUtc, endsAtUtc])
+  @@unique([organizationId, imageAssetId])
+}
+
+// Trabajo durable de purga; un fallo del proveedor no reabre entrega pública.
+model MediaPurgeJob {
+  assetId        String     @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  asset          MediaAsset @relation(fields: [organizationId, assetId], references: [organizationId, id], onDelete: Restrict)
+  attempts       Int        @default(0)
+  nextAttemptAt  DateTime
+  completedAt    DateTime?
+  lastErrorCode  String?
+  createdAt      DateTime   @default(now())
+
+  @@index([nextAttemptAt, completedAt])
+  @@index([organizationId, completedAt])
+  @@unique([organizationId, assetId])
+}
+
+model MediaOperation {
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actorUserId    String
+  key            String
+  operation      String
+  requestHash    String
+  resourceId     String
+  resultRevision Int
+  result         Json
+  createdAt      DateTime @default(now())
+
+  @@id([organizationId, actorUserId, key])
+  @@index([organizationId, resourceId])
+}
+
+// Agregado editorial independiente; Organization conserva identidad y operación.
+model CmsPage {
+  organizationId    String         @id
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  version           Int            @default(0)
+  draftRevision     Int            @default(0)
+  draft             Json
+  publishedSnapshot Json?
+  publishedRevision Int?
+  isPublished       Boolean        @default(false)
+  operations        CmsOperation[]
+}
+
+// Recibo sin contenido editorial ni PII. La clave se limita al tenant/actor.
+model CmsOperation {
+  organizationId    String
+  page              CmsPage @relation(fields: [organizationId], references: [organizationId], onDelete: Restrict)
+  actorUserId       String
+  key               String
+  operation         String
+  requestHash       String
+  version           Int
+  publishedRevision Int?
+  isPublished       Boolean
+
+  @@id([organizationId, actorUserId, key])
+}
+
+// Identidad global: una cuenta puede pertenecer a varias organizaciones a
+// través de Membership. El rol y la organización activa no viven aquí.
 model User {
   id String @id @default(uuid())
 
+  // Enlace externo Clerk nullable y único. Nunca se infiere por correo.
+  clerkUserId String? @unique
+
   email String @unique
 
-  password String
+  password String?
 
   name String
 
-  // Última organización en la que operó — el login de un solo paso la usa
-  // para resolver el JWT sin pedirle al usuario que elija cada vez.
-  // register/invite la pueblan al crear la membresía nueva.
+  // Preferencia de organización; nunca concede acceso sin Membership.
   lastOrganizationId String?
 
   memberships Membership[]
 
-  // Vínculo opcional 1:1 — solo existe cuando este usuario tiene un
-  // perfil de Professional asociado (ej. un BARBER con acceso al panel).
-  professional Professional?
+  // Un User puede tener como máximo un Professional por organización,
+  // y por tanto varios perfiles si pertenece a organizaciones distintas.
+  professionals Professional[]
+
+  sentTeamInvitations     TeamInvitation[] @relation("TeamInvitationInviter")
+  acceptedTeamInvitations TeamInvitation[] @relation("TeamInvitationAcceptor")
+
+  // Vínculo B2C explícito con registros Client. No concede Membership ni rol.
+  clients Client[]
 
   createdAt DateTime @default(now())
 
@@ -139,6 +350,35 @@ model Membership {
   @@unique([userId, organizationId])
 }
 
+model TeamInvitation {
+  id String @id @default(uuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  email               String
+  role                UserRole
+  createPublicProfile Boolean              @default(false)
+  status              TeamInvitationStatus @default(CREATING)
+
+  clerkInvitationId String? @unique
+
+  invitedByUserId String
+  invitedByUser   User   @relation("TeamInvitationInviter", fields: [invitedByUserId], references: [id])
+
+  acceptedByUserId String?
+  acceptedByUser   User?   @relation("TeamInvitationAcceptor", fields: [acceptedByUserId], references: [id])
+
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([organizationId, status, createdAt, id])
+  @@index([organizationId, email])
+}
+
 model Professional {
   id String @id @default(uuid())
 
@@ -158,23 +398,84 @@ model Professional {
 
   experienceYears Int?
 
-  isActive Boolean @default(true)
+  status ProfessionalStatus @default(INACTIVE)
 
-  // Vínculo opcional y único hacia el User que puede iniciar sesión como
-  // este profesional (ej. un BARBER viendo su propia agenda). Un
+  isPublic Boolean @default(false)
+
+  // Vínculo opcional hacia el User que puede iniciar sesión como este
+  // profesional (ej. un BARBER viendo su propia agenda). Un
   // Professional puede existir sin cuenta de acceso — no todos los
   // profesionales necesitan entrar al panel.
-  userId String? @unique
+  userId String?
 
   user User? @relation(fields: [userId], references: [id])
 
   professionalServices ProfessionalService[]
+
+  weeklySchedule ProfessionalWeeklySchedule[]
+
+  availabilityBlocks ProfessionalAvailabilityBlock[]
 
   bookings Booking[]
 
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, userId])
+  @@unique([id, organizationId], map: "Professional_id_organizationId_key")
+  @@index([organizationId, status, name, id])
+}
+
+model ProfessionalWeeklySchedule {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  professionalId String
+
+  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "ProfessionalWeeklySchedule_professionalId_fkey")
+
+  dayOfWeek Int
+
+  startMinute Int
+
+  endMinute Int
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, professionalId, dayOfWeek], map: "ProfessionalSchedule_org_prof_day_idx")
+}
+
+model ProfessionalAvailabilityBlock {
+  id String @id @default(uuid())
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  professionalId String
+
+  professional Professional @relation(fields: [professionalId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "ProfessionalAvailabilityBlock_professionalId_fkey")
+
+  startTime DateTime
+
+  endTime DateTime
+
+  status AvailabilityBlockStatus @default(ACTIVE)
+
+  note String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, professionalId, status, startTime], map: "ProfessionalBlock_org_prof_status_start_idx")
+  @@index([organizationId, professionalId, endTime], map: "ProfessionalBlock_org_prof_end_idx")
 }
 
 model GalleryImage {
@@ -201,11 +502,20 @@ model Client {
 
   organizationId String
 
+  // Identidad B2C opcional. El enlace requiere una sesión Clerk verificada y
+  // nunca se infiere automáticamente por coincidencia de correo.
+  userId String?
+
   organization Organization @relation(fields: [organizationId], references: [id])
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   name String
 
   email String?
+
+  emailRevision    Int                      @default(0)
+  emailPreferences BookingEmailPreference[]
 
   phone String?
 
@@ -223,6 +533,8 @@ model Client {
   // cliente de varias barberías como registros independientes. email
   // opcional para permitir walk-ins sin correo.
   @@unique([organizationId, email])
+  @@unique([organizationId, userId])
+  @@unique([id, organizationId])
 }
 
 model Service {
@@ -238,7 +550,7 @@ model Service {
 
   duration Int
 
-  price Decimal
+  price Decimal @db.Decimal(65, 2)
 
   isActive Boolean @default(true)
 
@@ -276,36 +588,35 @@ model Booking {
 
   status BookingStatus @default(PENDING)
 
-  payment Payment?
-
   createdAt DateTime @default(now())
 
-  updatedAt DateTime @updatedAt
-  Invoice   Invoice?
+  updatedAt       DateTime                @updatedAt
+  Invoice         Invoice?
+  emailPreference BookingEmailPreference?
 
+  // The 20260811180000_booking_schedule_exclusion migration also adds a
+  // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
+
+  @@unique([id, organizationId], map: "Booking_id_organizationId_key")
   // Acelera GET /bookings (listado filtrado por estado, ordenado por
   // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
   @@index([organizationId, status, createdAt])
 }
 
 model Payment {
-  id String @id @default(uuid())
+  id               String        @id @default(uuid())
+  organizationId   String
+  organization     Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  invoiceId        String        @unique
+  invoice          Invoice       @relation(fields: [invoiceId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  method           PaymentMethod
+  paidAt           DateTime
+  recordedByUserId String
+  createdAt        DateTime      @default(now())
 
-  organizationId String
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-
-  bookingId String @unique
-
-  booking Booking @relation(fields: [bookingId], references: [id])
-
-  amount Decimal
-
-  method PaymentMethod
-
-  status PaymentStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
+  @@unique([invoiceId, organizationId], map: "Payment_invoiceId_organizationId_key")
+  @@unique([id, organizationId], map: "Payment_id_organizationId_key")
+  @@index([organizationId, paidAt, id], map: "Payment_org_paidAt_id_idx")
 }
 
 model ProfessionalService {
@@ -346,10 +657,109 @@ model Notification {
   createdAt DateTime @default(now())
 }
 
+// Notificaciones transaccionales C1; separado del registro Notification legacy.
+model BookingEmailPreference {
+  bookingId               String
+  organizationId          String
+  booking                 Booking             @relation(fields: [bookingId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  clientId                String
+  client                  Client              @relation(fields: [clientId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  sequence                Int                 @default(0)
+  version                 Int                 @default(0)
+  optedIn                 Boolean             @default(false)
+  noticeVersion           String?
+  recordedAt              DateTime?
+  source                  String?
+  reviewedContactRevision Int?
+  events                  BookingEmailEvent[]
+
+  @@id([bookingId, organizationId])
+  @@index([clientId, organizationId])
+}
+
+model BookingEmailEvent {
+  bookingId         String
+  organizationId    String
+  sequence          Int
+  preference        BookingEmailPreference @relation(fields: [bookingId, organizationId], references: [bookingId, organizationId], onDelete: Restrict)
+  kind              String
+  bookingStatus     BookingStatus
+  startTime         DateTime
+  endTime           DateTime
+  serviceId         String
+  professionalId    String
+  contactRevision   Int
+  preferenceVersion Int
+  createdAt         DateTime               @default(now())
+  intent            EmailOutbox?
+
+  @@id([bookingId, organizationId, sequence])
+}
+
+model EmailOutbox {
+  id                String                @id @default(uuid())
+  bookingId         String
+  organizationId    String
+  eventSequence     Int
+  event             BookingEmailEvent     @relation(fields: [bookingId, organizationId, eventSequence], references: [bookingId, organizationId, sequence], onDelete: Restrict)
+  channel           String                @default("EMAIL")
+  status            String                @default("PENDING")
+  reason            String?
+  attempts          Int                   @default(0)
+  createdAt         DateTime              @default(now())
+  expiresAt         DateTime
+  nextAttemptAt     DateTime              @default(now())
+  retryAfter        DateTime?
+  leaseToken        String?
+  leaseExpiresAt    DateTime?
+  firstDispatchedAt DateTime?
+  closedAt          DateTime?
+  recipient         String?
+  sealedPayload     Json?
+  templateVersion   String?
+  providerId        String?               @unique
+  providerEventAt   DateTime?
+  webhooks          EmailWebhookReceipt[]
+
+  @@unique([bookingId, organizationId, eventSequence])
+  @@unique([id, organizationId])
+  @@index([status, nextAttemptAt])
+  @@index([organizationId, createdAt, id])
+  @@index([closedAt])
+}
+
+model EmailWebhookReceipt {
+  id             String      @id
+  notificationId String
+  organizationId String
+  notification   EmailOutbox @relation(fields: [notificationId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  kind           String
+  occurredAt     DateTime
+}
+
+model EmailAbuseBucket {
+  key         String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@id([key, windowStart])
+  @@index([windowStart])
+}
+
+model EmailChannelControl {
+  id        String   @id
+  paused    Boolean  @default(false)
+  reason    String?
+  updatedAt DateTime @default(now())
+}
+
 model AuditLog {
   id String @id @default(uuid())
 
-  organizationId String
+  // NULL se reserva exclusivamente para eventos de seguridad pre-tenant,
+  // cuando todavía no existe una Organization autoritativa. Nunca se
+  // inventa un tenant para satisfacer el registro de auditoría.
+  organizationId String?
 
   // Sin relación/FK a propósito: un registro de auditoría debe sobrevivir
   // aunque el usuario que hizo la acción deje de existir más adelante —
@@ -366,24 +776,19 @@ model AuditLog {
   createdAt DateTime @default(now())
 }
 
-enum InvoiceStatus {
-  UNPAID
-  PAID
-  REFUNDED
-}
-
 model Invoice {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id])
-  bookingId      String        @unique
-  booking        Booking       @relation(fields: [bookingId], references: [id])
-  amount         Decimal
-  status         InvoiceStatus @default(UNPAID)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  bookingId      String       @unique
+  booking        Booking      @relation(fields: [bookingId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  amount         Decimal      @db.Decimal(65, 2)
+  currency       String       @default("DOP")
+  payment        Payment?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  // Misma razón que en Booking — soporta /analytics/dashboard (revenue
-  // por rango de fecha, filtrado por status=PAID) sin escanear toda la tabla.
-  @@index([organizationId, status, createdAt])
+  @@unique([bookingId, organizationId], map: "Invoice_bookingId_organizationId_key")
+  @@unique([id, organizationId], map: "Invoice_id_organizationId_key")
+  @@index([organizationId, createdAt, id], map: "Invoice_org_createdAt_id_idx")
 }

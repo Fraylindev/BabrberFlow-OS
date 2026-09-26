@@ -1,0 +1,84 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { EmailOptIn } from '@/lib/notification-ui';
+import {
+  api,
+  PublicAvailabilityResponse,
+  PublicBookingData,
+  PublicBookingResult,
+} from "@/lib/api";
+
+export function publicBookingKeys(slug: string) {
+  return {
+    data: ["public-booking", slug, "data"] as const,
+    availability: (serviceId: string, date: string, professionalId?: string) =>
+      [
+        "public-booking",
+        slug,
+        "availability",
+        serviceId,
+        date,
+        professionalId ?? "any",
+      ] as const,
+  };
+}
+
+export function usePublicBookingData(slug: string) {
+  return useQuery({
+    queryKey: publicBookingKeys(slug).data,
+    queryFn: () => api.get<PublicBookingData>(`/public/${slug}/booking-data`),
+    // C3: publicación/retiro debe comprobarse incluso dentro de la ventana
+    // de frescura cuando el visitante regresa a esta pestaña.
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: "always",
+  });
+}
+
+interface AvailabilityParams {
+  serviceId: string;
+  date: string;
+  professionalId?: string;
+}
+
+export function useAvailability(slug: string, params: AvailabilityParams) {
+  const { serviceId, date, professionalId } = params;
+  return useQuery({
+    queryKey: publicBookingKeys(slug).availability(serviceId, date, professionalId),
+    queryFn: () => {
+      const search = new URLSearchParams({ serviceId, date });
+      if (professionalId) search.set("professionalId", professionalId);
+      return api.get<PublicAvailabilityResponse>(
+        `/public/${slug}/availability?${search.toString()}`,
+      );
+    },
+    enabled: Boolean(serviceId && date),
+    // La disponibilidad puede cambiar en cuanto alguien más reserva —
+    // ventana de frescura corta, no cero, para no golpear el endpoint en
+    // cada render mientras el cliente decide.
+    staleTime: 15 * 1000,
+  });
+}
+
+export interface CreatePublicBookingInput {
+  serviceId: string;
+  professionalId: string;
+  startTime: string;
+  clientName: string;
+  clientPhone: string;
+  clientEmail?: string;
+  emailNotifications?: EmailOptIn;
+  createAccount?: boolean;
+  password?: string;
+}
+
+export function useCreatePublicBooking(slug: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreatePublicBookingInput) =>
+      api.post<PublicBookingResult>(`/public/${slug}/bookings`, input),
+    onSuccess: () => {
+      // Invalida toda la disponibilidad de esta barbería — la cita recién
+      // creada debe desaparecer de cualquier grilla que se vuelva a abrir.
+      queryClient.invalidateQueries({ queryKey: ["public-booking", slug, "availability"] });
+    },
+  });
+}

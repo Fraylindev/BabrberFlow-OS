@@ -1,72 +1,69 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
-type ToastVariant = "success" | "error" | "info";
+type ToastType = "success" | "error" | "info";
 
-interface ToastItem {
+interface ToastMessage {
   id: number;
-  message: string;
-  variant: ToastVariant;
+  text: string;
+  type: ToastType;
 }
 
-interface ToastContextValue {
-  toast: (message: string, variant?: ToastVariant) => void;
+interface ToastContextType {
+  toast: (text: string, type?: ToastType) => void;
 }
 
-const ToastContext = createContext<ToastContextValue | null>(null);
+const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-const VARIANT_STYLES: Record<ToastVariant, string> = {
-  success: "border-[var(--color-success)]/40 text-[var(--color-success)]",
-  error: "border-[var(--color-danger)]/40 text-[var(--color-danger)]",
-  info: "border-[var(--color-brass)]/40 text-[var(--color-brass)]",
-};
-
-let nextId = 1;
+export function useToast() {
+  const context = useContext(ToastContext);
+  if (!context) {
+    throw new Error("useToast debe usarse dentro de un ToastProvider");
+  }
+  return context;
+}
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<ToastItem[]>([]);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const toast = useCallback((message: string, variant: ToastVariant = "info") => {
-    const id = nextId++;
-    setItems((prev) => [...prev, { id, message, variant }]);
+  const toast = useCallback((text: string, type: ToastType = "success") => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, text, type }]);
     setTimeout(() => {
-      setItems((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
   }, []);
 
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="pointer-events-none fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
-        {items.map((item) => (
+      {/* Contenedor flotante inferior derecho, moderno y limpio */}
+      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0">
+        {toasts.map((t) => (
           <div
-            key={item.id}
-            role="status"
-            className={`pointer-events-auto max-w-xs rounded-sm border bg-[var(--color-surface)] px-4 py-3 text-sm shadow-lg animate-[toast-in_0.15s_ease-out] ${VARIANT_STYLES[item.variant]}`}
+            key={t.id}
+            className="pointer-events-auto flex items-center gap-3 rounded-md border border-gray-200 bg-white px-4 py-3 shadow-lg ring-1 ring-black/5 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
           >
-            {item.message}
+            {t.type === "success" && (
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold text-xs">
+                ✓
+              </span>
+            )}
+            {t.type === "error" && (
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600 font-bold text-xs">
+                ✕
+              </span>
+            )}
+            {t.type === "info" && (
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold text-xs">
+                i
+              </span>
+            )}
+            <p className="text-sm font-medium text-gray-800 truncate">{t.text}</p>
           </div>
         ))}
       </div>
-      <style>{`
-        @keyframes toast-in {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </ToastContext.Provider>
   );
-}
-
-export function useToast() {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error("useToast debe usarse dentro de <ToastProvider>");
-  return ctx;
 }

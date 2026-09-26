@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Kortek encrypted PostgreSQL backup
+
+[Timer]
+OnCalendar=*-*-* 05:17:00 UTC
+Persistent=true
+RandomizedDelaySec=300
+Unit=kortek-backup.service
+
+[Install]
+WantedBy=timers.target

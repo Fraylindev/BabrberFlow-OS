@@ -1,0 +1,106 @@
+# Public deployment manifest. No secret value belongs here.
+domain:
+  registered: kortek.cloud
+  purpose: main-site
+
+development:
+  status: local
+  webOrigin: http://localhost:3001
+  apiOrigin: http://localhost:3000
+  database: local-barberflow
+  clerkPlan: development
+  corsAllowedOrigins: [http://localhost:3001]
+  mfaEnforcement: false
+  emailEnabled: false
+
+staging:
+  status: planned-dns-and-hosting
+  webOrigin: https://staging.booking.kortek.cloud
+  apiOrigin: https://api.staging.booking.kortek.cloud
+  database: isolated-free-project-required
+  clerkPlan: hobby
+  corsAllowedOrigins: [https://staging.booking.kortek.cloud]
+  mfaEnforcement: false
+  emailEnabled: false
+
+production:
+  status: database-cutover-complete-service-unpublished
+  webConfigurationGate: build-and-start-fail-closed
+  webArtifactBinding: public-environment-sha256
+  webOrigin: https://booking.kortek.cloud
+  apiOrigin: https://api.booking.kortek.cloud
+  databaseProjectRef: ilaoolpcrlmqkftirjog
+  databaseRegion: us-east-1
+  databasePlan: supabase-free
+  databaseRuntimeRole: kortek_runtime
+  databaseTlsMode: require
+  databaseCertificatePolicy: strict
+  clerkPlan: hobby
+  clerkInstance: production
+  clerkInstanceId: ins_3JrrToaAqH6sYe2bFXr3TdVnc3L
+  clerkDomainStatus: verified-tls-issued
+  clerkCredentialStatus: verified-instance-binding-local-dpapi
+  clerkSessionSmokeStatus: provider-active-browser-api-pending
+  clerkAccountPortalSignUpFallback: https://accounts.booking.kortek.cloud/user
+  clerkAccountPortalSignInFallback: https://accounts.booking.kortek.cloud/user
+  clerkAccountPortalRedirectPhase: c1-profile-before-public-app
+  clerkPasswordMinimumLength: 15
+  clerkRejectCompromisedPasswords: true
+  clerkDeviceTrust: true
+  clerkSessionMaximumDays: 7
+  clerkProviderMfaRequired: false
+  clerkDnsRecords:
+    - {type: CNAME, name: clerk.booking, value: frontend-api.clerk.services, ttl: 3600, proxied: false}
+    - {type: CNAME, name: accounts.booking, value: accounts.clerk.services, ttl: 3600, proxied: false}
+    - {type: CNAME, name: clkmail.booking, value: mail.somdxjhrfpup.clerk.services, ttl: 3600, proxied: false}
+    - {type: CNAME, name: clk._domainkey.booking, value: dkim1.somdxjhrfpup.clerk.services, ttl: 3600, proxied: false}
+    - {type: CNAME, name: clk2._domainkey.booking, value: dkim2.somdxjhrfpup.clerk.services, ttl: 3600, proxied: false}
+  corsAllowedOrigins: [https://booking.kortek.cloud]
+  clerkAuthorizedParties: [https://booking.kortek.cloud]
+  clerkInvitationRedirectUrl: https://booking.kortek.cloud/accept-invitation
+  mfaEnforcement: false
+  emailEnabled: false
+  requiredApiVariables:
+    - APP_RELEASE
+    - NODE_ENV
+    - DEPLOY_ENV
+    - HOST
+    - PORT
+    - DATABASE_URL
+    - JWT_SECRET
+    - RATE_LIMIT_SECRET
+    - WEB_PUBLIC_ORIGIN
+    - API_PUBLIC_ORIGIN
+    - CORS_ALLOWED_ORIGINS
+    - CLERK_SECRET_KEY
+    - CLERK_PUBLISHABLE_KEY
+    - CLERK_AUTHORIZED_PARTIES
+    - CLERK_INVITATION_REDIRECT_URL
+    - PUBLIC_BOOKING_CLOSED
+    - REQUIRE_INTERNAL_MFA
+    - NOTIFICATIONS_EMAIL_ENABLED
+    - NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED
+    - CLOUDINARY_CLOUD_NAME
+    - CLOUDINARY_API_KEY
+    - CLOUDINARY_API_SECRET
+  requiredWebBuildVariables:
+    - DEPLOY_ENV
+    - WEB_PUBLIC_ORIGIN
+    - CLERK_SECRET_KEY
+    - NEXT_PUBLIC_API_URL
+    - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  backup:
+    method: oci-always-free-vm-to-private-object-storage
+    schedule: daily-05:17-utc
+    restoreDrill: weekly-sunday-06:30-utc
+    encryption: gpg-aes256
+    credentialSource: systemd-loadcredential
+    githubActionStatus: prepared-inactive-on-nondefault-branch
+
+# Keep API runtime, migrator, emergency admin, worker and backup credentials
+# distinct. Remote API PostgreSQL URLs require sslaccept=strict, a runtime
+# username (with the project ref for Supabase), and no host socket override.
+# The API gate rejects missing variables, development Clerk keys in production,
+# duplicate TLS options, and localhost/wildcard CORS origins.
+# staging/production requires NODE_ENV=production. Security switches must use
+# literal true/false strings without leading or trailing whitespace.

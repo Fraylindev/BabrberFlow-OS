@@ -2,9 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { globalValidationPipeOptions } from './common/validation.config';
+import { validateProductionConfig } from './common/production-config';
+import {
+  createHttpTelemetry,
+  SafeHttpExceptionFilter,
+} from './common/http-telemetry';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  validateProductionConfig();
+  const app = await NestFactory.create(AppModule, { rawBody: true });
+  app.use(createHttpTelemetry());
+  app.useGlobalFilters(new SafeHttpExceptionFilter());
 
   // Cabeceras de seguridad HTTP estándar (X-Content-Type-Options,
   // X-Frame-Options, HSTS, etc.) — no existía ninguna protección de este
@@ -25,6 +34,13 @@ async function bootstrap() {
   app.enableCors({
     origin: allowedOrigins,
     credentials: true,
+    exposedHeaders: [
+      'X-Total-Count',
+      'X-Page',
+      'X-Limit',
+      'X-Total-Pages',
+      'X-Request-Id',
+    ],
   });
 
   // Sin esto, Nest no reenvía SIGTERM/SIGINT a los hooks de ciclo de vida
@@ -34,18 +50,18 @@ async function bootstrap() {
   // limpio de conexiones en cada redeploy en vez de dejarlas colgadas.
   app.enableShutdownHooks();
 
-  // Activamos validación estricta en toda la aplicación
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // Elimina campos no definidos en el DTO
-      forbidNonWhitelisted: true, // Lanza error si envían campos extra
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
 
-  await app.listen(process.env.PORT ?? 3000);
+  // Local development is not exposed to the LAN by default. A deployment
+  // behind its own network boundary must opt in through HOST explicitly.
+  await app.listen(process.env.PORT ?? 3000, process.env.HOST ?? '127.0.0.1');
 }
 
 // Manejamos la promesa para cumplir con las reglas estrictas de ESLint
 bootstrap().catch((err) => {
-  console.error('Error starting server:', err);
+  console.error(
+    'API_START_FAILED',
+    err instanceof Error ? err.constructor.name : 'UnknownError',
+  );
+  process.exitCode = 1;
 });

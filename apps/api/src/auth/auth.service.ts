@@ -1,25 +1,29 @@
+import { Prisma } from '@prisma/client';
 import {
   Injectable,
   BadRequestException,
   UnauthorizedException,
   ConflictException,
-  Inject,
 } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { isUniqueConstraintError } from '../common/prisma-error.util';
+import {
+  isSerializationFailureError,
+  isUniqueConstraintError,
+} from '../common/prisma-error.util';
 import { AttemptLimiter } from './attempt-limiter';
 import { AuditService } from '../audit/audit.service';
+import {
+  normalizeAccountEmail,
+  normalizeOrganizationSlug,
+} from './organization-slug';
 
 // Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
-// attempt-limiter.ts para el porqué de este enfoque (por cuenta, en
-// memoria, no persistido). 8/10min en login: generoso para alguien que
+// attempt-limiter.ts para el presupuesto compartido por cuenta. 8/10min en login: generoso para alguien que
 // se equivoca de verdad, estricto contra un ataque sostenido. 5/10min en
 // cambio de contraseña: más estricto porque ya requiere un token robado
 // como precondición — cualquier intento ahí es más sospechoso de por sí.
@@ -44,17 +48,20 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cache: Cache,
     private audit: AuditService,
   ) {
+    const rateLimitSecret =
+      process.env.RATE_LIMIT_SECRET ?? process.env.JWT_SECRET ?? '';
     this.loginLimiter = new AttemptLimiter(
-      this.cache,
+      this.prisma,
+      rateLimitSecret,
       'login-attempts',
       LOGIN_MAX_ATTEMPTS,
       LOGIN_WINDOW_MS,
     );
     this.passwordChangeLimiter = new AttemptLimiter(
-      this.cache,
+      this.prisma,
+      rateLimitSecret,
       'password-change-attempts',
       PASSWORD_CHANGE_MAX_ATTEMPTS,
       PASSWORD_CHANGE_WINDOW_MS,
@@ -67,18 +74,21 @@ export class AuthService {
   // (Invitar a alguien que YA tiene cuenta a una organización adicional
   // es un caso distinto, cubierto por TeamService.inviteUser().)
   async register(registerDto: RegisterDto) {
-    const { name, email, password, organizationId } = registerDto;
+    const {
+      name,
+      email,
+      password,
+      organizationName,
+      organizationSlug,
+      organizationEmail,
+    } = registerDto;
 
-    const organization = await this.prisma.db.organization.findUnique({
-      where: { id: organizationId },
-    });
-
-    if (!organization) {
-      throw new BadRequestException('La organización no existe');
-    }
-
+    const normalizedEmail = normalizeAccountEmail(email);
+    const normalizedOrganizationEmail =
+      normalizeAccountEmail(organizationEmail);
+    const normalizedSlug = normalizeOrganizationSlug(organizationSlug);
     const existingUser = await this.prisma.db.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUser) {
@@ -89,39 +99,94 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    try {
-      const user = await this.prisma.db.$transaction(async (tx) => {
-        const createdUser = await tx.user.create({
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-            lastOrganizationId: organizationId,
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+
+    while (attempt < MAX_RETRIES) {
+      try {
+        const user = await this.prisma.db.$transaction(
+          async (tx) => {
+            const org = await tx.organization.create({
+              data: {
+                name: organizationName,
+                slug: normalizedSlug,
+                email: normalizedOrganizationEmail,
+              },
+            });
+
+            const createdUser = await tx.user.create({
+              data: {
+                name,
+                email: normalizedEmail,
+                password: hashedPassword,
+                lastOrganizationId: org.id,
+              },
+            });
+
+            await tx.membership.create({
+              data: {
+                userId: createdUser.id,
+                organizationId: org.id,
+                role: 'OWNER',
+              },
+            });
+
+            await this.audit.logTransactional(
+              {
+                organizationId: org.id,
+                userId: createdUser.id,
+                action: 'CREATE',
+                entity: 'Organization',
+                entityId: org.id,
+              },
+              tx,
+            );
+
+            return createdUser;
           },
-        });
-
-        await tx.membership.create({
-          data: {
-            userId: createdUser.id,
-            organizationId,
-            role: 'OWNER',
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           },
-        });
-
-        return createdUser;
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'email')) {
-        throw new ConflictException(
-          'Ya existe una cuenta con este correo. Inicia sesión en vez de registrarte de nuevo.',
         );
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          lastOrganizationId: user.lastOrganizationId,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          clerkUserId: user.clerkUserId,
+        };
+      } catch (err: unknown) {
+        if (isSerializationFailureError(err)) {
+          attempt++;
+          if (attempt >= MAX_RETRIES) {
+            throw new ConflictException(
+              'No se pudo completar el registro debido a un conflicto concurrente tras varios intentos.',
+            );
+          }
+          continue;
+        }
+
+        if (isUniqueConstraintError(err, 'slug')) {
+          throw new ConflictException(
+            'El slug de la organización ya está en uso. Elige otro.',
+          );
+        }
+        if (isUniqueConstraintError(err, 'email')) {
+          // En caso de que el email ya exista en Organization
+          throw new ConflictException(
+            'Ya existe una organización o cuenta con este correo.',
+          );
+        }
+        throw err;
       }
-      throw err;
     }
+
+    throw new ConflictException(
+      'No se pudo completar el registro debido a un conflicto concurrente tras varios intentos.',
+    );
   }
 
   // Login de un solo paso. Resuelve la organización activa vía
@@ -133,7 +198,8 @@ export class AuthService {
   // aplicado en el controller. Solo cuenta intentos con contraseña
   // incorrecta — nunca penaliza a alguien que ya inició sesión bien.
   async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
+    const { password } = loginDto;
+    const email = normalizeAccountEmail(loginDto.email);
 
     await this.loginLimiter.assertNotLocked(
       email,
@@ -142,9 +208,10 @@ export class AuthService {
 
     const user = await this.prisma.db.user.findUnique({ where: { email } });
 
-    const isPasswordValid = user
-      ? await bcrypt.compare(password, user.password)
-      : false;
+    const isPasswordValid =
+      user && user.password
+        ? await bcrypt.compare(password, user.password)
+        : false;
 
     if (!user || !isPasswordValid) {
       await this.loginLimiter.recordFailure(email);
@@ -191,6 +258,21 @@ export class AuthService {
       organizationId: membership.organizationId,
     };
 
+    const organization = await this.prisma.db.organization.findUnique({
+      where: {
+        id: membership.organizationId,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
+
+    if (!organization) {
+      throw new UnauthorizedException('La organización no existe');
+    }
+
     return {
       user: {
         id: user.id,
@@ -200,6 +282,7 @@ export class AuthService {
         role: membership.role,
       },
       accessToken: await this.jwtService.signAsync(payload),
+      organization,
     };
   }
 
@@ -226,6 +309,13 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    if (!user.password) {
+      await this.passwordChangeLimiter.recordFailure(userId);
+      throw new BadRequestException(
+        'La cuenta no tiene contraseña local configurada.',
+      );
     }
 
     const isCurrentValid = await bcrypt.compare(

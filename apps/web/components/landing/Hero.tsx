@@ -1,74 +1,69 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
+import { LANDING_PHOTOS } from "@/lib/landing-photos";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-20 sm:px-6 sm:pb-28 sm:pt-28">
-      {/* Resplandor decorativo — sin imágenes, solo gradiente */}
+    <section className="relative flex min-h-[100svh] items-end overflow-hidden">
+      <Image
+        src={LANDING_PHOTOS.heroInterior.src}
+        alt={LANDING_PHOTOS.heroInterior.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="cinematic-grade object-cover"
+      />
+      {/* Velo negro con acento rojo en la base — la gradación se hace
+          una sola vez a nivel de imagen (.cinematic-grade); este overlay
+          solo controla legibilidad y el resplandor de marca. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-20 blur-[120px]"
-        style={{ background: "var(--color-brass)" }}
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.35)_0%,rgba(10,10,10,0.55)_40%,var(--color-ink)_100%)]"
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
+        style={{ background: "linear-gradient(0deg, rgba(225,29,46,0.18), transparent)" }}
+      />
+      <div aria-hidden className="film-grain absolute inset-0" />
 
-      <div className="relative mx-auto max-w-3xl text-center">
-        <span className="inline-block rounded-full border border-[var(--color-border-strong)] px-3 py-1 text-xs text-[var(--color-brass)]">
-          Hecho para barberías y salones que quieren verse profesionales
-        </span>
-
-        <h1 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-semibold leading-tight text-[var(--color-paper)] sm:text-5xl md:text-6xl">
-          El sistema operativo de tu barbería, no una hoja de cálculo con pasos extra.
-        </h1>
-
-        <p className="mx-auto mt-6 max-w-xl text-base text-[var(--color-muted)] sm:text-lg">
-          Reservas sin fricción para tus clientes, un panel real para tu equipo, y
-          los números claros para ti. Todo en un solo lugar, con tu marca al frente.
-        </p>
-
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/register">
-            <Button className="w-full px-6 py-3 text-base sm:w-auto">
-              Registra tu barbería gratis
-            </Button>
-          </Link>
-          <a href="#planes">
-            <Button variant="secondary" className="w-full px-6 py-3 text-base sm:w-auto">
-              Ver planes
-            </Button>
-          </a>
-        </div>
-      </div>
-
-      {/* Mockup del producto construido con nuestros propios componentes —
-          sin capturas de pantalla ni imágenes externas. */}
-      <div className="relative mx-auto mt-16 max-w-2xl rounded-sm border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-4 shadow-2xl sm:p-6">
-        <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
-          <p className="font-[family-name:var(--font-display)] text-sm text-[var(--color-paper)]">
-            Agenda de hoy
-          </p>
-          <span className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-muted)]">
-            Elite Barber Shop
+      <Container size="wide" className="relative w-full pb-20 pt-40 sm:pb-28">
+        <Reveal className="max-w-4xl">
+          {/* AQUÍ ESTÁ EL CAMBIO 1: text-white font-semibold para la frase */}
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-brass)]/40 bg-[var(--color-ink)]/50 px-3 py-1 text-xs uppercase tracking-wider text-white font-semibold backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-brass)]" />
+            Para barberías que se toman en serio su negocio
           </span>
-        </div>
-        <div className="mt-3 flex flex-col divide-y divide-[var(--color-border)]">
-          {[
-            { client: "Josué M.", detail: "Corte + barba con Ana", time: "10:00 AM", status: "CONFIRMED" },
-            { client: "Ramón P.", detail: "Fade clásico con Luis", time: "11:30 AM", status: "PENDING" },
-            { client: "Deivi R.", detail: "Afeitado tradicional con Ana", time: "1:00 PM", status: "COMPLETED" },
-          ].map((row) => (
-            <div key={row.client} className="flex items-center justify-between py-3">
-              <div className="text-left">
-                <p className="text-sm text-[var(--color-paper)]">{row.client}</p>
-                <p className="text-xs text-[var(--color-muted)]">
-                  {row.time} · {row.detail}
-                </p>
-              </div>
-              <Badge status={row.status} />
-            </div>
-          ))}
-        </div>
-      </div>
+
+          <h1 className="mt-7 font-[family-name:var(--font-display)] text-6xl font-semibold leading-[0.94] text-[var(--color-paper)] sm:text-7xl lg:text-8xl">
+            Tu barbería,
+            <br />
+            organizada <span className="text-[var(--color-brass)]">de verdad.</span>
+          </h1>
+
+          <p className="mt-7 max-w-xl text-lg text-[var(--color-paper)]/75 sm:text-xl">
+            Reservas sin fricción para tus clientes, un panel real para tu equipo,
+            y la operación clara para ti. Con tu marca al frente, siempre.
+          </p>
+
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <Link href="/register">
+              <Button className="w-full px-8 py-4 text-base sm:w-auto text-white font-semibold">
+                Registra tu barbería
+              </Button>
+            </Link>
+            <a
+              href="#modulos"
+              className="text-sm font-medium text-[var(--color-paper)] underline decoration-[var(--color-brass)] underline-offset-4 transition-colors hover:text-[var(--color-brass)]"
+            >
+              Explorar módulos →
+            </a>
+          </div>
+        </Reveal>
+      </Container>
     </section>
   );
 }

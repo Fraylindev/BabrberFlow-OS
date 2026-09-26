@@ -1,0 +1,149 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import type { DashboardSummaryData } from "./dashboard-summary-state.ts";
+import {
+  INITIAL_DASHBOARD_SUMMARY_STATE,
+  dashboardSummaryForScope,
+  dashboardSummaryReducer,
+  dashboardSummaryScopeKey,
+} from "./dashboard-summary-state.ts";
+
+function summary(label: string): DashboardSummaryData {
+  return {
+    operational: {
+      generatedAt: '2026-08-24T14:00:00.000Z', timeZone: 'America/Santo_Domingo', isBrandNew: false,
+      agenda: { page: 1, limit: 20, total: 1, totalPages: 1, completed: 0, nextBookingId: null, items: [
+      {
+        id: `booking-${label}`,
+        startTime: "2026-08-24T14:00:00.000Z",
+        endTime: "2026-08-24T14:30:00.000Z",
+        status: "CONFIRMED",
+        client: { name: 'Cliente' }, professional: { name: label }, service: { name: 'Servicio' },
+      },
+      ] }, workload: null,
+    },
+    analytics: null,
+    operationalError: null, analyticsError: null,
+  };
+}
+
+test("the business scope includes user, organization, and role", () => {
+  assert.equal(
+    dashboardSummaryScopeKey({
+      id: "user-1",
+      organizationId: "organization-1",
+      role: "OWNER",
+    }),
+    "user-1:organization-1:OWNER",
+  );
+  assert.equal(dashboardSummaryScopeKey(null), null);
+});
+
+test("changing organization clears the previous summary immediately", () => {
+  let state = dashboardSummaryReducer(INITIAL_DASHBOARD_SUMMARY_STATE, {
+    type: "start",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 1,
+  });
+  state = dashboardSummaryReducer(state, {
+    type: "success",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 1,
+    data: summary("A"),
+  });
+
+  assert.equal(
+    dashboardSummaryForScope(state, "user-1:organization-b:BARBER"),
+    null,
+  );
+
+  state = dashboardSummaryReducer(state, {
+    type: "start",
+    scopeKey: "user-1:organization-b:BARBER",
+    requestId: 2,
+  });
+
+  assert.equal(state.scopeKey, "user-1:organization-b:BARBER");
+  assert.equal(state.data, null);
+  assert.equal(state.error, null);
+  assert.equal(state.loading, true);
+});
+
+test("a late response from the previous organization is ignored", () => {
+  const state = dashboardSummaryReducer(INITIAL_DASHBOARD_SUMMARY_STATE, {
+    type: "start",
+    scopeKey: "user-1:organization-b:BARBER",
+    requestId: 2,
+  });
+
+  const unchanged = dashboardSummaryReducer(state, {
+    type: "success",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 1,
+    data: summary("A-late"),
+  });
+
+  assert.equal(unchanged, state);
+  assert.equal(unchanged.data, null);
+});
+
+test("an old A response cannot overwrite a newer A request after A to B to A", () => {
+  let state = dashboardSummaryReducer(INITIAL_DASHBOARD_SUMMARY_STATE, {
+    type: "start",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 3,
+  });
+
+  state = dashboardSummaryReducer(state, {
+    type: "success",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 1,
+    data: summary("A-old"),
+  });
+  assert.equal(state.data, null);
+
+  state = dashboardSummaryReducer(state, {
+    type: "success",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 3,
+    data: summary("A-new"),
+  });
+  assert.equal(state.data?.operational?.agenda.items[0]?.id, "booking-A-new");
+});
+
+test("a late error from another role does not replace the current state", () => {
+  const state = dashboardSummaryReducer(INITIAL_DASHBOARD_SUMMARY_STATE, {
+    type: "start",
+    scopeKey: "user-1:organization-a:BARBER",
+    requestId: 4,
+  });
+
+  const unchanged = dashboardSummaryReducer(state, {
+    type: "error",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 3,
+    message: "late error",
+  });
+
+  assert.equal(unchanged, state);
+  assert.equal(unchanged.error, null);
+});
+
+test("a current error reaches a terminal state without retaining tenant data", () => {
+  let state = dashboardSummaryReducer(INITIAL_DASHBOARD_SUMMARY_STATE, {
+    type: "start",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 5,
+  });
+
+  state = dashboardSummaryReducer(state, {
+    type: "error",
+    scopeKey: "user-1:organization-a:OWNER",
+    requestId: 5,
+    message: "No pudimos cargar el resumen.",
+  });
+
+  assert.equal(state.loading, false);
+  assert.equal(state.data, null);
+  assert.equal(state.error, "No pudimos cargar el resumen.");
+});

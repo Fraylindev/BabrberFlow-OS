@@ -1,0 +1,680 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/whatsapp-c2.spec.ts",
+      "--workers=1",
+      "--reporter=json"
+    ],
+    "configFile": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\web\\playwright.config.ts",
+    "rootDir": "C:/Users/Fraylin/Desktop/Kortek-Booking/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Fraylin/Desktop/Kortek-Booking/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop-chrome",
+        "name": "desktop-chrome",
+        "testDir": "C:/Users/Fraylin/Desktop/Kortek-Booking/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/Fraylin/Desktop/Kortek-Booking/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/Fraylin/Desktop/Kortek-Booking/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec next start -H 127.0.0.1 -p 3011",
+      "url": "http://127.0.0.1:3011",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "whatsapp-c2.spec.ts",
+      "file": "whatsapp-c2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "C2 full flow: loading/pending, no automatic popup, native accessible link, keyboard and repeated click",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3663,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:39.514Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "environment.json",
+                      "contentType": "application/json",
+                      "body": "eyJicm93c2VyIjoiMTUyLjAuNzk3Ny44MyIsInZpZXdwb3J0Ijp7IndpZHRoIjoxMjgwLCJoZWlnaHQiOjcyMH0sInJvbGUiOiJhbm9ueW1vdXMiLCJhcGkiOiJjb250cm9sbGVkIEMxIEhUVFAgcmVzcG9uc2VzIiwiZXh0ZXJuYWxOYXZpZ2F0aW9uIjoiaW50ZXJjZXB0ZWQifQ=="
+                    },
+                    {
+                      "name": "console.json",
+                      "contentType": "application/json",
+                      "body": "WwogICJDbGVyazogQ2xlcmsgaGFzIGJlZW4gbG9hZGVkIHdpdGggZGV2ZWxvcG1lbnQga2V5cy4gRGV2ZWxvcG1lbnQgaW5zdGFuY2VzIGhhdmUgc3RyaWN0IHVzYWdlIGxpbWl0cyBhbmQgc2hvdWxkIG5vdCBiZSB1c2VkIHdoZW4gZGVwbG95aW5nIHlvdXIgYXBwbGljYXRpb24gdG8gcHJvZHVjdGlvbi4gTGVhcm4gbW9yZTogaHR0cHM6Ly9jbGVyay5jb20vZG9jcy9kZXBsb3ltZW50cy9vdmVydmlldyIKXQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-1af8363d491f6ca02daf",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 92,
+          "column": 1
+        },
+        {
+          "title": "C2 ineligible published phone null preserves success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2045,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:43.546Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-5a62f54ad50086f84181",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 154,
+          "column": 3
+        },
+        {
+          "title": "C2 ineligible published phone \"8095551234\" preserves success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3103,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:45.606Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-56f49a9e10828f3c3a28",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 154,
+          "column": 3
+        },
+        {
+          "title": "C2 ineligible published phone \"+18095551234\\n\" preserves success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1639,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:48.728Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-9b2c9a9e45a09861cd1b",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 154,
+          "column": 3
+        },
+        {
+          "title": "C2 booking conflict then explicit recovery; retired catalog removes success/contact",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2413,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:50.386Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-199aec7da06f8cb76f2c",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 167,
+          "column": 1
+        },
+        {
+          "title": "C2 two slugs A → B → A use only their published recipient",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5131,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:52.815Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-c66970cc6b009be5073c",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 192,
+          "column": 1
+        },
+        {
+          "title": "C2 catalog error recovers explicitly; POST 404 never shows success or WhatsApp",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5412,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:09:57.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-a038951b6ce4c6a37238",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 205,
+          "column": 1
+        },
+        {
+          "title": "C2 real browser popup denial: sandbox blocks native link, success remains and retry creates no booking",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chrome",
+              "projectName": "desktop-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1551,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:03.398Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-popup-denial.txt",
+                      "contentType": "text/plain",
+                      "body": "QmxvY2tlZCBvcGVuaW5nICdodHRwczovL3dhLm1lLzE4MDk1NTUxMjM0P3RleHQ9SG9sYS4lMjBBY2FibyUyMGRlJTIwcmVnaXN0cmFyJTIwdW5hJTIwcmVzZXJ2YSUyMGVuJTIwc3UlMjBwJUMzJUExZ2luYSUyMHklMjBxdWlzaWVyYSUyMGNvbnN1bHRhciUyMGNvbiUyMHVzdGVkZXMuJyBpbiBhIG5ldyB3aW5kb3cgYmVjYXVzZSB0aGUgcmVxdWVzdCB3YXMgbWFkZSBpbiBhIHNhbmRib3hlZCBmcmFtZSB3aG9zZSAnYWxsb3ctcG9wdXBzJyBwZXJtaXNzaW9uIGlzIG5vdCBzZXQuCkJsb2NrZWQgb3BlbmluZyAnaHR0cHM6Ly93YS5tZS8xODA5NTU1MTIzND90ZXh0PUhvbGEuJTIwQWNhYm8lMjBkZSUyMHJlZ2lzdHJhciUyMHVuYSUyMHJlc2VydmElMjBlbiUyMHN1JTIwcCVDMyVBMWdpbmElMjB5JTIwcXVpc2llcmElMjBjb25zdWx0YXIlMjBjb24lMjB1c3RlZGVzLicgaW4gYSBuZXcgd2luZG93IGJlY2F1c2UgdGhlIHJlcXVlc3Qgd2FzIG1hZGUgaW4gYSBzYW5kYm94ZWQgZnJhbWUgd2hvc2UgJ2FsbG93LXBvcHVwcycgcGVybWlzc2lvbiBpcyBub3Qgc2V0Lg=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-178afe568a5c5c12244c",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 223,
+          "column": 1
+        },
+        {
+          "title": "C2 full flow: loading/pending, no automatic popup, native accessible link, keyboard and repeated click",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3280,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:05.943Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "environment.json",
+                      "contentType": "application/json",
+                      "body": "eyJicm93c2VyIjoiMTUyLjAuNzk3Ny44MyIsInZpZXdwb3J0Ijp7IndpZHRoIjozNzUsImhlaWdodCI6ODEyfSwicm9sZSI6ImFub255bW91cyIsImFwaSI6ImNvbnRyb2xsZWQgQzEgSFRUUCByZXNwb25zZXMiLCJleHRlcm5hbE5hdmlnYXRpb24iOiJpbnRlcmNlcHRlZCJ9"
+                    },
+                    {
+                      "name": "console.json",
+                      "contentType": "application/json",
+                      "body": "WwogICJDbGVyazogQ2xlcmsgaGFzIGJlZW4gbG9hZGVkIHdpdGggZGV2ZWxvcG1lbnQga2V5cy4gRGV2ZWxvcG1lbnQgaW5zdGFuY2VzIGhhdmUgc3RyaWN0IHVzYWdlIGxpbWl0cyBhbmQgc2hvdWxkIG5vdCBiZSB1c2VkIHdoZW4gZGVwbG95aW5nIHlvdXIgYXBwbGljYXRpb24gdG8gcHJvZHVjdGlvbi4gTGVhcm4gbW9yZTogaHR0cHM6Ly9jbGVyay5jb20vZG9jcy9kZXBsb3ltZW50cy9vdmVydmlldyIKXQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-2b7e382cda734bdfef02",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 92,
+          "column": 1
+        },
+        {
+          "title": "C2 ineligible published phone null preserves success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1277,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:09.557Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-b6f19545270d77ff4ae4",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 154,
+          "column": 3
+        },
+        {
+          "title": "C2 ineligible published phone \"8095551234\" preserves success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1310,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:10.849Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-4304616c3dd72659d261",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 154,
+          "column": 3
+        },
+        {
+          "title": "C2 ineligible published phone \"+18095551234\\n\" preserves success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1390,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:12.174Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-542e953afee100cfab29",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 154,
+          "column": 3
+        },
+        {
+          "title": "C2 booking conflict then explicit recovery; retired catalog removes success/contact",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1354,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:13.579Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-23a6405f531b469d9ddf",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 167,
+          "column": 1
+        },
+        {
+          "title": "C2 two slugs A → B → A use only their published recipient",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4159,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:14.947Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-6cf17f756b3d483eee89",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 192,
+          "column": 1
+        },
+        {
+          "title": "C2 catalog error recovers explicitly; POST 404 never shows success or WhatsApp",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4874,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:19.122Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-760b3bed2c9d968ab0fb",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 205,
+          "column": 1
+        },
+        {
+          "title": "C2 real browser popup denial: sandbox blocks native link, success remains and retry creates no booking",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1795,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-14T17:10:24.014Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-popup-denial.txt",
+                      "contentType": "text/plain",
+                      "body": "QmxvY2tlZCBvcGVuaW5nICdodHRwczovL3dhLm1lLzE4MDk1NTUxMjM0P3RleHQ9SG9sYS4lMjBBY2FibyUyMGRlJTIwcmVnaXN0cmFyJTIwdW5hJTIwcmVzZXJ2YSUyMGVuJTIwc3UlMjBwJUMzJUExZ2luYSUyMHklMjBxdWlzaWVyYSUyMGNvbnN1bHRhciUyMGNvbiUyMHVzdGVkZXMuJyBpbiBhIG5ldyB3aW5kb3cgYmVjYXVzZSB0aGUgcmVxdWVzdCB3YXMgbWFkZSBpbiBhIHNhbmRib3hlZCBmcmFtZSB3aG9zZSAnYWxsb3ctcG9wdXBzJyBwZXJtaXNzaW9uIGlzIG5vdCBzZXQuCkJsb2NrZWQgb3BlbmluZyAnaHR0cHM6Ly93YS5tZS8xODA5NTU1MTIzND90ZXh0PUhvbGEuJTIwQWNhYm8lMjBkZSUyMHJlZ2lzdHJhciUyMHVuYSUyMHJlc2VydmElMjBlbiUyMHN1JTIwcCVDMyVBMWdpbmElMjB5JTIwcXVpc2llcmElMjBjb25zdWx0YXIlMjBjb24lMjB1c3RlZGVzLicgaW4gYSBuZXcgd2luZG93IGJlY2F1c2UgdGhlIHJlcXVlc3Qgd2FzIG1hZGUgaW4gYSBzYW5kYm94ZWQgZnJhbWUgd2hvc2UgJ2FsbG93LXBvcHVwcycgcGVybWlzc2lvbiBpcyBub3Qgc2V0Lg=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f1d33504c941789a60c-9c5268d9327e53a7aacb",
+          "file": "whatsapp-c2.spec.ts",
+          "line": 223,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-14T17:09:36.309Z",
+    "duration": 50136.112,
+    "expected": 16,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

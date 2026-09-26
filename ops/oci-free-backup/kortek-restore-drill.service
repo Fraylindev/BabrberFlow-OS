@@ -1,0 +1,17 @@
+[Unit]
+Description=Kortek isolated restore drill of latest Supabase Free backup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=opc
+Group=opc
+LoadCredential=encryption-passphrase:/etc/kortek-backup/encryption-passphrase
+StateDirectory=kortek-backup
+ExecStart=/usr/local/libexec/kortek-restore-drill.sh
+TimeoutStartSec=900
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

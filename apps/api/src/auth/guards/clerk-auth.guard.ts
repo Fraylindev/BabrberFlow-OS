@@ -1,0 +1,117 @@
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { isUUID } from 'class-validator';
+import { Request } from 'express';
+import { PrismaService } from '../../prisma/prisma.service';
+import { ClerkSessionVerifierService } from '../clerk/clerk-session-verifier.service';
+import { toWebRequest } from '../clerk/to-web-request';
+import { AuthenticatedRequest } from '../types/authenticated-request';
+import { assertInternalMfa } from '../internal-mfa-policy';
+
+export const ORGANIZATION_ID_HEADER = 'x-organization-id';
+
+@Injectable()
+export class ClerkAuthGuard implements CanActivate {
+  private readonly logger = new Logger(ClerkAuthGuard.name);
+
+  constructor(
+    private readonly verifier: ClerkSessionVerifierService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+
+    // readOrganizationId lanza UnauthorizedException directamente; se deja fuera
+    // del try/catch para que no sea capturado ni transformado.
+    const organizationId = this.readOrganizationId(request);
+
+    try {
+      const session = await this.verifier.verify(toWebRequest(request));
+
+      const user = await this.prisma.db.user.findUnique({
+        where: { clerkUserId: session.clerkUserId },
+        select: { id: true, email: true, name: true },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException(
+          'Sesión no válida para esta organización',
+        );
+      }
+
+      const membership = await this.prisma.db.membership.findUnique({
+        where: {
+          userId_organizationId: {
+            userId: user.id,
+            organizationId,
+          },
+        },
+        select: { organizationId: true, role: true },
+      });
+
+      if (!membership) {
+        throw new UnauthorizedException(
+          'Sesión no válida para esta organización',
+        );
+      }
+
+      assertInternalMfa(session.secondFactorVerified);
+
+      request.user = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        organizationId: membership.organizationId,
+        role: membership.role,
+      };
+
+      return true;
+    } catch (error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof ForbiddenException ||
+        error instanceof ServiceUnavailableException
+      ) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Error inesperado en ClerkAuthGuard: ${error instanceof Error ? error.constructor.name : 'UnknownError'}`,
+      );
+      throw new ServiceUnavailableException(
+        'No pudimos consultar tu acceso. Vuelve a intentarlo.',
+      );
+    }
+  }
+
+  private readOrganizationId(request: Request): string {
+    const header = request.headers[ORGANIZATION_ID_HEADER];
+    const rawHeaderOccurrences = request.rawHeaders.reduce(
+      (count, value, index) =>
+        index % 2 === 0 && value.toLowerCase() === ORGANIZATION_ID_HEADER
+          ? count + 1
+          : count,
+      0,
+    );
+
+    if (
+      rawHeaderOccurrences !== 1 ||
+      typeof header !== 'string' ||
+      !isUUID(header)
+    ) {
+      throw new UnauthorizedException(
+        'Sesión no válida para esta organización',
+      );
+    }
+
+    return header;
+  }
+}

@@ -1,57 +1,63 @@
 import {
+  ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
-  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { isUniqueConstraintError } from '../common/prisma-error.util';
+import { Prisma, ProfessionalStatus, UserRole } from '@prisma/client';
+import { AuditService } from '../audit/audit.service';
+import { isSerializationFailureError } from '../common/prisma-error.util';
+import { normalizeAccountEmail } from '../auth/organization-slug';
+import { ListTeamMembersDto } from './dto/list-team-members.dto';
+import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
+import { RevokeTeamMemberAccessDto } from './dto/revoke-team-member-access.dto';
+import { organizationSelectForRole } from './organization-projection';
+
+const TEAM_ROLES = [
+  UserRole.OWNER,
+  UserRole.ADMIN,
+  UserRole.BARBER,
+  UserRole.RECEPTIONIST,
+] as const;
+
+const TEAM_MEMBER_SELECT = {
+  id: true,
+  userId: true,
+  role: true,
+  createdAt: true,
+  user: {
+    select: {
+      name: true,
+      email: true,
+    },
+  },
+} satisfies Prisma.MembershipSelect;
+
+type TeamMemberRecord = Prisma.MembershipGetPayload<{
+  select: typeof TEAM_MEMBER_SELECT;
+}>;
+
+type TeamProfessionalProjection = {
+  name: string;
+  status: ProfessionalStatus;
+} | null;
+
+type TeamManagerRole = (typeof UserRole)['OWNER' | 'ADMIN'];
 
 @Injectable()
 export class OrganizationsService {
-  constructor(private prisma: PrismaService) {}
-
-  async create(createOrganizationDto: CreateOrganizationDto) {
-    try {
-      return await this.prisma.db.organization.create({
-        data: createOrganizationDto,
-      });
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'slug')) {
-        throw new ConflictException(
-          'Ese enlace (slug) ya está en uso por otra barbería. Elige otro.',
-        );
-      }
-      if (isUniqueConstraintError(err, 'email')) {
-        throw new ConflictException(
-          'Ya existe una organización registrada con ese correo.',
-        );
-      }
-      throw err;
-    }
-  }
+  constructor(
+    private prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
 
   // 🔒 Multi-tenancy: Buscar únicamente la organización asociada al token
-  async findMine(organizationId: string) {
+  async findMine(organizationId: string, role: UserRole) {
     return await this.prisma.db.organization.findUnique({
       where: { id: organizationId },
+      select: organizationSelectForRole(role),
     });
-  }
-
-  // Público: resuelve el slug legible (ej. "elite-barber-shop") al id
-  // interno que necesitan /auth/login y /auth/register. Solo expone lo
-  // mínimo necesario para ese propósito, nunca datos sensibles.
-  async findBySlug(slug: string) {
-    const organization = await this.prisma.db.organization.findUnique({
-      where: { slug },
-      select: { id: true, name: true, slug: true },
-    });
-
-    if (!organization) {
-      throw new NotFoundException('No existe una organización con ese slug');
-    }
-
-    return organization;
   }
 
   // 🔒 Lista el equipo consultando Membership (no User directamente —
@@ -72,17 +78,339 @@ export class OrganizationsService {
             id: true,
             name: true,
             email: true,
-            professional: true,
           },
         },
       },
     });
 
-    return memberships.map((m) => ({
-      membershipId: m.id,
-      role: m.role,
-      memberSince: m.createdAt,
-      user: m.user,
-    }));
+    const userIds = memberships.map((membership) => membership.user.id);
+    const professionals =
+      userIds.length === 0
+        ? []
+        : await this.prisma.db.professional.findMany({
+            where: { organizationId, userId: { in: userIds } },
+            select: {
+              id: true,
+              userId: true,
+              name: true,
+              bio: true,
+              avatar: true,
+              specialty: true,
+              experienceYears: true,
+              status: true,
+              isPublic: true,
+            },
+          });
+    const professionalByUserId = new Map(
+      professionals.flatMap((professional) =>
+        professional.userId ? [[professional.userId, professional]] : [],
+      ),
+    );
+
+    return memberships.map((membership) => {
+      const professional = professionalByUserId.get(membership.user.id);
+      return {
+        membershipId: membership.id,
+        role: membership.role,
+        memberSince: membership.createdAt,
+        user: {
+          ...membership.user,
+          professional: professional
+            ? {
+                id: professional.id,
+                name: professional.name,
+                bio: professional.bio,
+                avatar: professional.avatar,
+                specialty: professional.specialty,
+                experienceYears: professional.experienceYears,
+                status: professional.status,
+                isActive: professional.status === ProfessionalStatus.ACTIVE,
+                isPublic: professional.isPublic,
+              }
+            : null,
+        },
+      };
+    });
+  }
+
+  /**
+   * Contrato de Equipo. Se mantiene separado de `findMembers`, cuyo payload
+   * con IDs sostiene el vínculo administrativo existente de Profesionales.
+   * Esta proyección no revela identificadores internos ni datos privados.
+   */
+  async findTeamMembers(organizationId: string, query: ListTeamMembersDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const where: Prisma.MembershipWhereInput = {
+      organizationId,
+      role: { in: [...TEAM_ROLES] },
+    };
+    const [memberships, total] = await this.prisma.db.$transaction([
+      this.prisma.db.membership.findMany({
+        where,
+        orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+        skip: (page - 1) * limit,
+        take: limit,
+        select: TEAM_MEMBER_SELECT,
+      }),
+      this.prisma.db.membership.count({ where }),
+    ]);
+
+    const professionalByUserId = await this.findTeamProfessionals(
+      this.prisma.db,
+      organizationId,
+      memberships.map((membership) => membership.userId),
+    );
+
+    return {
+      items: memberships.map((membership) =>
+        this.projectTeamMember(
+          membership,
+          professionalByUserId.get(membership.userId) ?? null,
+        ),
+      ),
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async updateTeamMemberRole(
+    organizationId: string,
+    actorUserId: string,
+    dto: UpdateTeamMemberRoleDto,
+  ) {
+    const email = normalizeAccountEmail(dto.email);
+
+    return this.runTeamMutation(async (tx) => {
+      await this.lockOrganization(tx, organizationId);
+      const actorRole = await this.resolveManagerRole(
+        tx,
+        organizationId,
+        actorUserId,
+      );
+      const target = await this.findManagedMember(tx, organizationId, email);
+      if (!target) throw new NotFoundException('Miembro no disponible');
+
+      this.assertCanManageTarget(actorRole, target.role);
+      if (target.role === dto.role) {
+        return this.projectTeamMember(
+          target,
+          await this.findTeamProfessional(tx, organizationId, target.userId),
+        );
+      }
+      if (target.role === UserRole.OWNER) {
+        await this.assertAnotherOwnerExists(tx, organizationId);
+      }
+
+      const updated = await tx.membership.update({
+        where: { id: target.id },
+        data: { role: dto.role },
+        select: TEAM_MEMBER_SELECT,
+      });
+      await this.audit.logTransactional(
+        {
+          organizationId,
+          userId: actorUserId,
+          action: 'UPDATE_ROLE',
+          entity: 'Membership',
+          entityId: updated.id,
+        },
+        tx,
+      );
+
+      return this.projectTeamMember(
+        updated,
+        await this.findTeamProfessional(tx, organizationId, updated.userId),
+      );
+    });
+  }
+
+  async revokeTeamMemberAccess(
+    organizationId: string,
+    actorUserId: string,
+    dto: RevokeTeamMemberAccessDto,
+  ): Promise<void> {
+    const email = normalizeAccountEmail(dto.email);
+
+    await this.runTeamMutation(async (tx) => {
+      await this.lockOrganization(tx, organizationId);
+      const actorRole = await this.resolveManagerRole(
+        tx,
+        organizationId,
+        actorUserId,
+      );
+      const target = await this.findManagedMember(tx, organizationId, email);
+
+      // Revocar un acceso ya ausente es idempotente y no revela si el correo
+      // pertenece a otro tenant o no existe.
+      if (!target) return;
+
+      this.assertCanManageTarget(actorRole, target.role);
+      if (target.role === UserRole.OWNER) {
+        await this.assertAnotherOwnerExists(tx, organizationId);
+      }
+
+      await tx.membership.delete({ where: { id: target.id } });
+      await this.audit.logTransactional(
+        {
+          organizationId,
+          userId: actorUserId,
+          action: 'REVOKE_ACCESS',
+          entity: 'Membership',
+          entityId: target.id,
+        },
+        tx,
+      );
+    });
+  }
+
+  private projectTeamMember(
+    membership: TeamMemberRecord,
+    professional: TeamProfessionalProjection,
+  ) {
+    return {
+      name: membership.user.name,
+      email: membership.user.email,
+      role: membership.role,
+      accessStatus: 'ACTIVE' as const,
+      professional,
+    };
+  }
+
+  private async findTeamProfessionals(
+    client: Prisma.TransactionClient | PrismaService['db'],
+    organizationId: string,
+    userIds: string[],
+  ): Promise<Map<string, Exclude<TeamProfessionalProjection, null>>> {
+    if (userIds.length === 0) return new Map();
+
+    const professionals = await client.professional.findMany({
+      where: { organizationId, userId: { in: userIds } },
+      select: { userId: true, name: true, status: true },
+    });
+    return new Map(
+      professionals.flatMap((professional) =>
+        professional.userId
+          ? [
+              [
+                professional.userId,
+                { name: professional.name, status: professional.status },
+              ] as const,
+            ]
+          : [],
+      ),
+    );
+  }
+
+  private async findTeamProfessional(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    userId: string,
+  ): Promise<TeamProfessionalProjection> {
+    return tx.professional.findFirst({
+      where: { organizationId, userId },
+      select: { name: true, status: true },
+    });
+  }
+
+  private async findManagedMember(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    email: string,
+  ): Promise<TeamMemberRecord | null> {
+    return tx.membership.findFirst({
+      where: {
+        organizationId,
+        role: { in: [...TEAM_ROLES] },
+        user: { email },
+      },
+      select: TEAM_MEMBER_SELECT,
+    });
+  }
+
+  private async resolveManagerRole(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    actorUserId: string,
+  ): Promise<TeamManagerRole> {
+    const membership = await tx.membership.findUnique({
+      where: {
+        userId_organizationId: { userId: actorUserId, organizationId },
+      },
+      select: { role: true },
+    });
+    if (
+      membership?.role !== UserRole.OWNER &&
+      membership?.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException('No tienes permiso para gestionar Equipo');
+    }
+    return membership.role;
+  }
+
+  private assertCanManageTarget(
+    actorRole: TeamManagerRole,
+    targetRole: UserRole,
+  ): void {
+    if (actorRole === UserRole.ADMIN && targetRole === UserRole.OWNER) {
+      throw new ForbiddenException(
+        'No tienes permiso para modificar este acceso',
+      );
+    }
+  }
+
+  private async assertAnotherOwnerExists(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+  ): Promise<void> {
+    const owners = await tx.membership.count({
+      where: { organizationId, role: UserRole.OWNER },
+    });
+    if (owners <= 1) {
+      throw new ConflictException(
+        'La organización debe conservar al menos un OWNER con acceso',
+      );
+    }
+  }
+
+  private async lockOrganization(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+  ): Promise<void> {
+    const locked = await tx.$queryRaw<Array<{ id: string }>>(
+      Prisma.sql`SELECT "id" FROM "Organization" WHERE "id" = ${organizationId} FOR UPDATE`,
+    );
+    if (locked.length !== 1) {
+      throw new NotFoundException('Organización no disponible');
+    }
+  }
+
+  private async runTeamMutation<T>(
+    operation: (tx: Prisma.TransactionClient) => Promise<T>,
+  ): Promise<T> {
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        return await this.prisma.db.$transaction(operation, {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        });
+      } catch (error) {
+        if (isSerializationFailureError(error) && attempt < maxAttempts) {
+          continue;
+        }
+        if (isSerializationFailureError(error)) {
+          throw new ConflictException(
+            'El equipo cambió al mismo tiempo. Intenta nuevamente.',
+          );
+        }
+        throw error;
+      }
+    }
+
+    throw new ConflictException(
+      'El equipo cambió al mismo tiempo. Intenta nuevamente.',
+    );
   }
 }

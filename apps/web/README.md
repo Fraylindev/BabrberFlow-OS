@@ -1,21 +1,25 @@
-# Kortek OS — Web
+# Kortek Booking — Web
 
-Frontend Next.js del SaaS multi-tenant Kortek OS. Ver `MAESTRO.md` en la raíz del repositorio para la documentación completa del proyecto.
+Frontend Next.js del producto multi-tenant. El estado vigente y el gobierno están en [`../../docs/README.md`](../../docs/README.md) y [`../../PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 
-## Requisitos
+## Desarrollo
 
-- Node.js 20+
-- pnpm
-- La API (`apps/api`) corriendo y accesible
+1. Copia `.env.example` a `.env.local`.
+2. Configura claves Clerk Development propias, sin versionarlas.
+3. Inicia la API en `http://localhost:3000`.
+4. Desde la raíz ejecuta `pnpm --filter web dev`.
 
-## Ejecutar en desarrollo
+La web escucha en `http://localhost:3001` por defecto y consume `NEXT_PUBLIC_API_URL`.
+
+## Validación
 
 ```bash
-pnpm dev
+pnpm --filter web type-check
+pnpm --filter web type-check:clean
+pnpm --filter web lint
+pnpm --filter web test
+pnpm --filter web build
+pnpm --filter web test:browser
 ```
 
-Escucha en el puerto 3000 por defecto — si la API también usa 3000 en tu `.env`, cámbiala a otro puerto (ver `apps/api/.env.example`).
-
-## Estado actual
-
-En reconstrucción activa. La versión anterior era en gran parte un scaffold estático sin integración real con la API.
+`type-check:clean` elimina exclusivamente tipos generados, ejecuta `next typegen` y comprueba las fuentes; debe usarse sin un servidor `next dev` concurrente. `test` incluye lógica y componentes; `test:browser` requiere Chrome y un build vigente. La autenticación interna usa Clerk y el contexto de negocio proviene del bootstrap local de NestJS; la web no persiste el JWT legacy. Las páginas públicas no atraviesan el middleware Clerk.

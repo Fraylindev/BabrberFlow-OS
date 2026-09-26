@@ -1,40 +1,93 @@
 import {
-  Injectable,
-  NotFoundException,
   BadRequestException,
+  ConflictException,
+  Injectable,
+  ServiceUnavailableException,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { UserRole } from '@prisma/client';
+import { Prisma, ProfessionalStatus, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
+import { AuditService } from '../audit/audit.service';
 import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
+import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
+import { PublicBookingResponseDto } from './dto/public-booking-response.dto';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
+import {
+  normalizeClientEmail,
+  normalizeClientName,
+  normalizeClientPhone,
+} from '../clients/client-normalization.util';
+import {
+  generateCandidateSlots,
+  rangesOverlap,
+  resolveBusinessHours,
+} from './availability.util';
+import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import {
+  getZonedDateParts,
+  isValidTimeZone,
+  zonedLocalDateTimeToUtc,
+} from '../professionals/professional-availability.util';
+import { projectContent } from '../cms/cms.projection';
+
+type PublicClientAction = 'CREATE' | 'RESTORE' | null;
 
 @Injectable()
 export class PublicBookingService {
+  private readonly logger = new Logger(PublicBookingService.name);
+
   constructor(
     private prisma: PrismaService,
     private bookingsService: BookingsService,
+    private audit: AuditService,
+    private availabilityService: ProfessionalAvailabilityService,
   ) {}
 
-  private async resolveOrganization(slug: string) {
-    const organization = await this.prisma.db.organization.findUnique({
-      where: { slug },
-    });
-    if (!organization || !organization.isActive) {
-      throw new NotFoundException('No existe una organización con ese slug');
+  private async resolveOrganization(
+    slug: string,
+    db: Prisma.TransactionClient = this.prisma.db,
+  ) {
+    if (process.env.PUBLIC_BOOKING_CLOSED === 'true') {
+      throw new NotFoundException('Información no disponible.');
     }
-    return organization;
+    const organization = await db.organization.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        slug: true,
+        isActive: true,
+        deletedAt: true,
+        businessHours: true,
+        timeZone: true,
+        cmsPage: { select: { isPublished: true, publishedSnapshot: true } },
+      },
+    });
+    if (
+      !organization ||
+      !organization.isActive ||
+      organization.deletedAt ||
+      !organization.cmsPage?.isPublished ||
+      !organization.cmsPage.publishedSnapshot
+    ) {
+      throw new NotFoundException('Información no disponible.');
+    }
+    return { ...organization, cmsPage: organization.cmsPage };
   }
 
-  // Datos públicos mínimos para armar el formulario de reserva: solo lo
-  // que un visitante anónimo necesita ver, nada sensible.
   async getBookingData(slug: string) {
     const organization = await this.resolveOrganization(slug);
-
+    if (!isValidTimeZone(organization.timeZone)) {
+      throw new ServiceUnavailableException(
+        'No fue posible calcular la fecha del negocio.',
+      );
+    }
+    const content = projectContent(organization.cmsPage.publishedSnapshot);
     const [services, professionals] = await Promise.all([
       this.prisma.db.service.findMany({
-        where: { organizationId: organization.id },
+        where: { organizationId: organization.id, isActive: true },
         select: {
           id: true,
           name: true,
@@ -44,17 +97,25 @@ export class PublicBookingService {
         },
       }),
       this.prisma.db.professional.findMany({
-        where: { organizationId: organization.id, isActive: true },
+        where: {
+          organizationId: organization.id,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
+        },
         select: { id: true, name: true, bio: true, avatar: true },
       }),
     ]);
 
     return {
+      minimumBookingDate: getZonedDateParts(new Date(), organization.timeZone)
+        .date,
       organization: {
-        id: organization.id,
-        name: organization.name,
+        name: content.publicName,
         slug: organization.slug,
-        phone: organization.phone,
+        phone: content.phone,
+        description: content.description,
+        address: content.address,
+        googleMapsUrl: content.googleMapsUrl,
       },
       whatsappBaseUrl: process.env.WHATSAPP_BASE_URL || 'https://wa.me/',
       services,
@@ -62,104 +123,306 @@ export class PublicBookingService {
     };
   }
 
-  async createBooking(slug: string, dto: CreatePublicBookingDto) {
+  async getAvailability(slug: string, query: GetAvailabilityQueryDto) {
     const organization = await this.resolveOrganization(slug);
+    if (!isValidTimeZone(organization.timeZone)) {
+      throw new ServiceUnavailableException(
+        'No fue posible calcular la fecha del negocio.',
+      );
+    }
+    const dayRange = this.availabilityService.getUtcRangeForLocalDate(
+      query.date,
+      organization.timeZone,
+    );
+    const service = await this.prisma.db.service.findFirst({
+      where: {
+        id: query.serviceId,
+        organizationId: organization.id,
+        isActive: true,
+      },
+      select: { duration: true },
+    });
+    if (!service) {
+      throw new BadRequestException('Servicio no encontrado en esta barbería');
+    }
 
+    let candidateProfessionalIds: string[];
+    if (query.professionalId) {
+      const professional = await this.prisma.db.professional.findFirst({
+        where: {
+          id: query.professionalId,
+          organizationId: organization.id,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
+        },
+        select: { id: true },
+      });
+      if (!professional) {
+        throw new BadRequestException(
+          'Profesional no encontrado en esta barbería',
+        );
+      }
+      candidateProfessionalIds = [professional.id];
+    } else {
+      const activeProfessionals = await this.prisma.db.professional.findMany({
+        where: {
+          organizationId: organization.id,
+          status: ProfessionalStatus.ACTIVE,
+          isPublic: true,
+        },
+        select: { id: true },
+        orderBy: { name: 'asc' },
+      });
+      candidateProfessionalIds = activeProfessionals.map((item) => item.id);
+    }
+
+    if (candidateProfessionalIds.length === 0) {
+      return { date: query.date, serviceId: query.serviceId, slots: [] };
+    }
+
+    const businessHours = resolveBusinessHours(organization.businessHours);
+    const candidateTimes = generateCandidateSlots(
+      businessHours,
+      service.duration,
+    );
+    const existingBookings =
+      await this.bookingsService.findActiveBookingsInRange(
+        organization.id,
+        candidateProfessionalIds,
+        dayRange.start,
+        dayRange.end,
+      );
+    const availabilityContext = await this.availabilityService.getPublicContext(
+      organization.id,
+      candidateProfessionalIds,
+      dayRange.start,
+      dayRange.end,
+    );
+
+    const now = new Date();
+    const slots: {
+      time: string;
+      professionalId: string;
+      startTime: string;
+    }[] = [];
+    for (const time of candidateTimes) {
+      const slotStart = zonedLocalDateTimeToUtc(
+        query.date,
+        time,
+        organization.timeZone,
+      );
+      if (!slotStart) continue;
+      const slotEnd = new Date(slotStart.getTime() + service.duration * 60000);
+      if (slotStart <= now) continue;
+
+      const freeProfessionalId = candidateProfessionalIds.find(
+        (professionalId) =>
+          this.availabilityService.isAvailableInContext(
+            availabilityContext,
+            professionalId,
+            slotStart,
+            slotEnd,
+          ) &&
+          !existingBookings.some(
+            (booking) =>
+              booking.professionalId === professionalId &&
+              rangesOverlap(
+                slotStart,
+                slotEnd,
+                booking.startTime,
+                booking.endTime,
+              ),
+          ),
+      );
+      if (freeProfessionalId) {
+        slots.push({
+          time,
+          professionalId: freeProfessionalId,
+          startTime: slotStart.toISOString(),
+        });
+      }
+    }
+
+    return { date: query.date, serviceId: query.serviceId, slots };
+  }
+
+  async createBooking(
+    slug: string,
+    dto: CreatePublicBookingDto,
+  ): Promise<PublicBookingResponseDto> {
+    const organization = await this.resolveOrganization(slug);
     if (dto.createAccount && !dto.clientEmail) {
       throw new BadRequestException(
         'Se necesita un correo para crear la cuenta',
       );
     }
 
-    const client = await this.findOrCreateClient(organization.id, dto);
+    const normalizedPhone = normalizeClientPhone(dto.clientPhone);
+    if (!normalizedPhone) {
+      throw new BadRequestException('Se necesita un teléfono válido');
+    }
+    const normalized = {
+      name: normalizeClientName(dto.clientName),
+      phone: normalizedPhone,
+      email: normalizeClientEmail(dto.clientEmail),
+    };
 
-    // Reutiliza tal cual la validación y detección de conflictos de
-    // BookingsService — cero lógica de negocio duplicada.
-    const booking = await this.bookingsService.create(organization.id, {
-      serviceId: dto.serviceId,
-      professionalId: dto.professionalId,
-      clientId: client.id,
-      startTime: dto.startTime,
+    const result = await this.prisma.db.$transaction(async (transaction) => {
+      await transaction.$queryRaw(
+        Prisma.sql`SELECT "id" FROM "Organization" WHERE "id" = ${organization.id} FOR UPDATE`,
+      );
+      // Retiro y nueva reserva se ordenan bajo el mismo bloqueo. No usar estado precargado.
+      await this.resolveOrganization(slug, transaction);
+      const clientResult = await this.findOrCreateClient(
+        transaction,
+        organization.id,
+        normalized,
+      );
+      const booking = await this.bookingsService.create(
+        organization.id,
+        {
+          serviceId: dto.serviceId,
+          professionalId: dto.professionalId,
+          clientId: clientResult.id,
+          startTime: dto.startTime,
+          ...(dto.emailNotifications
+            ? {
+                emailNotifications: {
+                  ...dto.emailNotifications,
+                  reviewedEmail: normalized.email ?? undefined,
+                },
+              }
+            : {}),
+        },
+        transaction,
+        true,
+      );
+      return { booking, clientResult };
     });
+
+    await this.auditPublicClientAction(
+      organization.id,
+      result.clientResult.id,
+      result.clientResult.action,
+    );
 
     let accountCreated = false;
     let accountCreationError: string | null = null;
-
-    if (dto.createAccount && dto.clientEmail && dto.password) {
-      const result = await this.tryCreateCustomerAccount(
+    if (dto.createAccount && normalized.email && dto.password) {
+      const account = await this.tryCreateCustomerAccount(
         organization.id,
-        dto.clientName,
-        dto.clientEmail,
+        normalized.name,
+        normalized.email,
         dto.password,
       );
-      accountCreated = result.created;
-      accountCreationError = result.error;
+      accountCreated = account.created;
+      accountCreationError = account.error;
     }
 
-    // La reserva SIEMPRE se confirma aunque falle la creación de cuenta
-    // (es una funcionalidad secundaria dentro del flujo) — accountCreated
-    // en false con un motivo es la respuesta correcta, no un 409 que
-    // tumbe una reserva que sí se hizo.
-    return { booking, client, accountCreated, accountCreationError };
+    return {
+      booking: {
+        id: result.booking.id,
+        serviceId: result.booking.serviceId,
+        professionalId: result.booking.professionalId,
+        startTime: result.booking.startTime,
+        endTime: result.booking.endTime,
+        status: result.booking.status,
+      },
+      accountCreated,
+      accountCreationError,
+    };
   }
 
-  // Empareja por teléfono dentro de la organización primero (no hay
-  // restricción única sobre el teléfono, es un match best-effort). Si no
-  // hay match y sí se crea, protege contra la restricción única nueva de
-  // (organizationId, email): si alguien ya existe con ese correo pero
-  // otro teléfono, reutiliza ese cliente en vez de fallar la reserva.
   private async findOrCreateClient(
+    transaction: Prisma.TransactionClient,
     organizationId: string,
-    dto: CreatePublicBookingDto,
-  ) {
-    const existing = await this.prisma.db.client.findFirst({
-      where: { organizationId, phone: dto.clientPhone },
+    input: { name: string; phone: string; email: string | null },
+  ): Promise<{ id: string; action: PublicClientAction }> {
+    const byPhone = await transaction.client.findFirst({
+      where: { organizationId, phone: input.phone },
+      select: { id: true, isActive: true },
     });
-    if (existing) return existing;
+    const byEmail = input.email
+      ? await transaction.client.findFirst({
+          where: {
+            organizationId,
+            email: { equals: input.email, mode: 'insensitive' },
+          },
+          select: { id: true, isActive: true },
+        })
+      : null;
+
+    if (byPhone && byEmail && byPhone.id !== byEmail.id) {
+      throw new ConflictException(
+        'El correo y el teléfono corresponden a clientes diferentes.',
+      );
+    }
+
+    const existing = byPhone ?? byEmail;
+    if (existing) {
+      if (existing.isActive) return { id: existing.id, action: null };
+      const restored = await transaction.client.update({
+        where: { id: existing.id, organizationId },
+        data: { isActive: true },
+        select: { id: true },
+      });
+      return { id: restored.id, action: 'RESTORE' };
+    }
 
     try {
-      return await this.prisma.db.client.create({
+      const created = await transaction.client.create({
         data: {
           organizationId,
-          name: dto.clientName,
-          phone: dto.clientPhone,
-          email: dto.clientEmail,
+          name: input.name,
+          phone: input.phone,
+          email: input.email,
         },
+        select: { id: true },
       });
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'email') && dto.clientEmail) {
-        const byEmail = await this.prisma.db.client.findFirst({
-          where: { organizationId, email: dto.clientEmail },
-        });
-        if (byEmail) return byEmail;
+      return { id: created.id, action: 'CREATE' };
+    } catch (error) {
+      if (isUniqueConstraintError(error, 'email')) {
+        throw new ConflictException(
+          'Ya existe un cliente con ese correo en esta organización.',
+        );
       }
-      throw err;
+      throw error;
     }
   }
 
-  // Crea la cuenta CUSTOMER (identidad global) + su Membership en esta
-  // organización. Nunca lanza — si el correo ya existe en Kortek
-  // (en cualquier organización), no se adjunta nada a esa cuenta ajena
-  // sin verificar contraseña; se reporta el motivo, la reserva ya
-  // confirmada sigue siendo válida.
+  private async auditPublicClientAction(
+    organizationId: string,
+    clientId: string,
+    action: PublicClientAction,
+  ) {
+    if (!action) return;
+    await this.audit.log({
+      organizationId,
+      userId: null,
+      action,
+      entity: 'Client',
+      entityId: clientId,
+    });
+  }
+
   private async tryCreateCustomerAccount(
     organizationId: string,
     name: string,
     email: string,
     password: string,
   ): Promise<{ created: boolean; error: string | null }> {
-    const existing = await this.prisma.db.user.findUnique({
-      where: { email },
-    });
-    if (existing) {
-      return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     try {
-      await this.prisma.db.$transaction(async (tx) => {
-        const user = await tx.user.create({
+      const existing = await this.prisma.db.user.findFirst({
+        where: { email: { equals: email, mode: 'insensitive' } },
+        select: { id: true },
+      });
+      if (existing) {
+        return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await this.prisma.db.$transaction(async (transaction) => {
+        const user = await transaction.user.create({
           data: {
             name,
             email,
@@ -167,17 +430,23 @@ export class PublicBookingService {
             lastOrganizationId: organizationId,
           },
         });
-        await tx.membership.create({
-          data: { userId: user.id, organizationId, role: UserRole.CUSTOMER },
+        await transaction.membership.create({
+          data: {
+            userId: user.id,
+            organizationId,
+            role: UserRole.CUSTOMER,
+          },
         });
       });
       return { created: true, error: null };
-    } catch (err) {
-      if (isUniqueConstraintError(err, 'email')) {
-        // Carrera: alguien creó esa cuenta entre el chequeo y el create.
+    } catch (error) {
+      if (isUniqueConstraintError(error, 'email')) {
         return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
       }
-      throw err;
+      this.logger.error(
+        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
+      );
+      return { created: false, error: 'ACCOUNT_CREATION_FAILED' };
     }
   }
 }

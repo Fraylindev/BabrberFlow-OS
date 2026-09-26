@@ -13,6 +13,17 @@ import { Prisma } from '@prisma/client';
  * (cualquier campo). Si se pasa, confirma que el campo colisionado
  * coincide con `field` (Prisma expone los campos en error.meta.target).
  */
+export function isSerializationFailureError(error: unknown): boolean {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError)) return false;
+
+  if (error.code === 'P2034') return true;
+
+  // PostgreSQL 40001 surfaced through $queryRaw is wrapped by Prisma as
+  // P2010 rather than P2034. Treat only that exact database code as a
+  // serialization failure so the caller can safely retry the transaction.
+  return error.code === 'P2010' && error.meta?.code === '40001';
+}
+
 export function isUniqueConstraintError(
   error: unknown,
   field?: string,
@@ -39,5 +50,37 @@ export function isForeignKeyConstraintError(error: unknown): boolean {
   return (
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === 'P2003'
+  );
+}
+
+export function isRecordNotFoundError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2025'
+  );
+}
+
+/**
+ * Prisma can expose an unmapped PostgreSQL EXCLUDE violation as an unknown
+ * request error (current engine) or P2004 (other engines/versions). Keep this
+ * check specific to the schedule constraint so unrelated integrity errors are
+ * never converted to HTTP 409.
+ */
+export function isBookingScheduleConflictError(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+    return error.message.includes('Booking_professional_schedule_excl');
+  }
+
+  if (
+    !(error instanceof Prisma.PrismaClientKnownRequestError) ||
+    error.code !== 'P2004'
+  ) {
+    return false;
+  }
+
+  const databaseError = error.meta?.database_error;
+  return (
+    typeof databaseError === 'string' &&
+    databaseError.includes('Booking_professional_schedule_excl')
   );
 }

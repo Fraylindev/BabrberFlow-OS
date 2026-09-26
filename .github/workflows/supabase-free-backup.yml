@@ -1,0 +1,110 @@
+name: Supabase Free encrypted backup and restore drill
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-free-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Require configured secrets
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          test -n "$SUPABASE_DB_URL"
+          test "${#BACKUP_PASSPHRASE}" -ge 32
+
+      - name: Dump application schema using PostgreSQL 17
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          mkdir -m 700 "$RUNNER_TEMP/kortek-backup"
+          docker run --rm -e DATABASE_URL -v "$RUNNER_TEMP/kortek-backup:/backup" postgres:17 \
+            sh -c 'pg_dump --format=custom --schema=public --no-owner --no-acl \
+              --file=/backup/backup.dump "$DATABASE_URL"'
+          test -s "$RUNNER_TEMP/kortek-backup/backup.dump"
+
+      - name: Encrypt and cap artifact size within Free budget
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          printf %s "$BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback \
+            --passphrase-fd 0 --symmetric --cipher-algo AES256 \
+            --output "$RUNNER_TEMP/kortek-backup/backup.dump.gpg" \
+            "$RUNNER_TEMP/kortek-backup/backup.dump"
+          rm "$RUNNER_TEMP/kortek-backup/backup.dump"
+          bytes=$(stat -c%s "$RUNNER_TEMP/kortek-backup/backup.dump.gpg")
+          test "$bytes" -le 52428800
+          cd "$RUNNER_TEMP/kortek-backup"
+          sha256sum backup.dump.gpg > backup.dump.gpg.sha256
+
+      - name: Store encrypted copy outside Supabase
+        uses: actions/upload-artifact@v4
+        with:
+          name: kortek-supabase-free-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/kortek-backup/backup.dump.gpg
+            ${{ runner.temp }}/kortek-backup/backup.dump.gpg.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+  restore_drill:
+    needs: backup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Retrieve encrypted artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kortek-supabase-free-${{ github.run_id }}
+          path: ${{ runner.temp }}/kortek-restore
+
+      - name: Verify, decrypt and restore in isolated PostgreSQL
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          cd "$RUNNER_TEMP/kortek-restore"
+          export POSTGRES_PASSWORD=$(openssl rand -hex 32)
+          container="kortek-restore-${GITHUB_RUN_ID}"
+          trap 'docker stop "$container" >/dev/null 2>&1 || true; rm -f backup.dump' EXIT
+          docker run --rm -d --network none --name "$container" \
+            -e POSTGRES_PASSWORD postgres:17 >/dev/null
+          for attempt in $(seq 1 30); do
+            if docker exec "$container" pg_isready -U postgres -d postgres >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          docker exec "$container" pg_isready -U postgres -d postgres >/dev/null
+          sha256sum --check backup.dump.gpg.sha256
+          printf %s "$BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback \
+            --passphrase-fd 0 --decrypt --output backup.dump backup.dump.gpg
+          docker exec "$container" \
+            psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q \
+              -c 'CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public'
+          docker run --rm -v "$RUNNER_TEMP/kortek-restore:/backup" postgres:17 \
+            sh -c 'pg_restore -l /backup/backup.dump | sed "/ SCHEMA - public /s/^/;/" > /backup/restore.list'
+          docker cp backup.dump "$container:/tmp/backup.dump"
+          docker cp restore.list "$container:/tmp/restore.list"
+          docker exec "$container" \
+            pg_restore --exit-on-error --single-transaction --no-owner --no-acl \
+              -L /tmp/restore.list \
+              -U postgres -d postgres /tmp/backup.dump
+          tables=$(docker exec "$container" \
+            psql -U postgres -d postgres -Atqc \
+              "SELECT count(*) FROM pg_tables WHERE schemaname='public'")
+          migrations=$(docker exec "$container" \
+            psql -U postgres -d postgres -Atqc \
+              'SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NOT NULL')
+          test "$tables" -ge 31
+          test "$migrations" -ge 26
+          echo "Restore drill passed: $tables tables, $migrations completed migrations"
