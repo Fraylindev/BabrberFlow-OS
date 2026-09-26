@@ -5,8 +5,9 @@
  */
 
 import { runAuthOperation } from './auth-operation.ts';
+import { resolveWebApiBase } from './web-deployment-config.ts';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = resolveWebApiBase(process.env.NEXT_PUBLIC_API_URL, process.env.NODE_ENV);
 export function publicMediaUrl(path: string): string {
   const match = /^\/public\/([a-zA-Z0-9_-]+)\/media\/([a-zA-Z0-9_.-]+)$/.exec(path);
   return match ? `/media-proxy/${match[1]}/${match[2]}` : '';

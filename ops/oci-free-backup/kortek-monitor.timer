@@ -1,0 +1,11 @@
+[Unit]
+Description=Minute Kortek operational metrics
+
+[Timer]
+OnCalendar=*-*-* *:*:10
+Persistent=true
+RandomizedDelaySec=5
+Unit=kortek-monitor.service
+
+[Install]
+WantedBy=timers.target

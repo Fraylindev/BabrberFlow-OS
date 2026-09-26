@@ -30,8 +30,8 @@ export class EmailWorker {
   ) {}
 
   async tick(): Promise<boolean> {
-    await this.housekeeping();
     if (!this.config.enabled) return false;
+    await this.housekeeping();
     const control = await this.db.emailChannelControl.findUnique({
       where: { id: 'EMAIL' },
     });

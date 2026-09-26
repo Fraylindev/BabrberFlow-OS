@@ -1,0 +1,20 @@
+[Unit]
+Description=Kortek free-tier operational metrics
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=opc
+Group=opc
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+LoadCredential=database-password:/etc/kortek-backup/database-password
+EnvironmentFile=/etc/kortek-monitor/public-http-monitor.conf
+StateDirectory=kortek-monitor
+ExecStart=/usr/local/libexec/kortek-monitor.sh
+TimeoutStartSec=180
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

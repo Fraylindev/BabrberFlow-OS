@@ -60,6 +60,8 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Calidad y publicación
 
+- [`BASE_PREPRODUCCION_C0_AUDITORIA.md`](quality/BASE_PREPRODUCCION_C0_AUDITORIA.md): C0 documental del ítem 3, aprobado después por el propietario con D1–D13 fijadas.
+- [`BASE_PREPRODUCCION_C1_EVIDENCIA.md`](quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md): C1 cerrado/aprobado por instrucción del propietario, con D2 aceptado como excepción local, recepción de alarmas y custodia externa GPG confirmadas; limpieza local comprobada. Activación C3 y publicación Git conservan su estado separado.
 - [`AUDITORIA_INTEGRAL_2026_09_24.md`](quality/AUDITORIA_INTEGRAL_2026_09_24.md): inventario transversal y roadmap de 14 candidatos en el momento de la auditoría; su gate C3 y H1/H2/H4 tienen seguimiento posterior autorizado.
 - [`CORRECTIVOS_2026_09_24.md`](quality/CORRECTIVOS_2026_09_24.md): seguimiento autorizado tras esa auditoría; smoke Chrome, roles PostgreSQL originales y log de reserva pública.
 - [`DELIVERY_GATES.md`](quality/DELIVERY_GATES.md): controles por etapa y protocolo de relevo.

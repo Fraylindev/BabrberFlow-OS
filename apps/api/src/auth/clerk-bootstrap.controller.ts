@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { ClerkBootstrapService } from './clerk-bootstrap.service';
+import { assertInternalMfa } from './internal-mfa-policy';
 import {
   ClerkOnboardingGuard,
   type ClerkOnboardingRequest,
@@ -16,7 +17,7 @@ import {
 export class ClerkBootstrapController {
   constructor(private readonly bootstrap: ClerkBootstrapService) {}
 
-  @UseGuards(ClerkOnboardingGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, ClerkOnboardingGuard)
   @Throttle({ default: { limit: 30, ttl: 60000 } })
   @Get('bootstrap')
   resolve(@Req() request: ClerkOnboardingRequest) {
@@ -24,6 +25,7 @@ export class ClerkBootstrapController {
     if (!clerkUserId) {
       throw new UnauthorizedException('Sesión no válida');
     }
+    assertInternalMfa(request.clerkSession?.secondFactorVerified);
     return this.bootstrap.resolve(clerkUserId);
   }
 }

@@ -15,6 +15,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { CmsModule } from './cms/cms.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MediaModule } from './media/media.module';
+import { PostgresThrottlerStorage } from './security/postgres-throttler.storage';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
@@ -22,8 +24,8 @@ import { MediaModule } from './media/media.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    // Caché en memoria (sin Redis — no forma parte del stack todavía,
-    // mismo criterio ya aplicado al rate limiting). Registrado global
+    // Caché de lectura en memoria; el presupuesto de seguridad usa PostgreSQL.
+    // Registrado global
     // para que cualquier módulo pueda inyectar CACHE_MANAGER o usar
     // CacheInterceptor, pero NO se aplica por defecto a ningún endpoint
     // — cada uno lo adopta explícitamente donde tiene sentido (ver
@@ -36,9 +38,21 @@ import { MediaModule } from './media/media.module';
     // duplicando configuración si otro módulo lo necesitaba). Límite base
     // generoso — el guard mismo sigue sin aplicarse a ningún endpoint por
     // defecto: cada controlador lo activa explícitamente con @UseGuards
-    // (login y la reserva pública, ver sus respectivos archivos), así no
+    // (auth, reserva pública, CMS y medios), así no
     // se cambia el comportamiento de ninguna ruta que no lo pidió.
-    ThrottlerModule.forRoot([{ name: 'default', ttl: 60000, limit: 100 }]),
+    ThrottlerModule.forRootAsync({
+      imports: [PrismaModule],
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) => ({
+        throttlers: [{ name: 'default', ttl: 60000, limit: 100 }],
+        storage: new PostgresThrottlerStorage(
+          prisma,
+          process.env.RATE_LIMIT_SECRET ?? process.env.JWT_SECRET ?? '',
+        ),
+        errorMessage:
+          'Demasiados intentos. Espera un momento y vuelve a probar.',
+      }),
+    }),
     PrismaModule,
     OrganizationsModule,
     AuthModule,

@@ -18,7 +18,7 @@ import { CmsService } from './cms.service';
 import { CmsMutationDto, SaveCmsDraftDto } from './cms.dto';
 
 @Controller('organizations/mine/cms')
-@UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
+@UseGuards(ThrottlerGuard, B2bAuthGuard, RolesGuard)
 @Roles(UserRole.OWNER, UserRole.ADMIN)
 @Throttle({ default: { limit: 30, ttl: 60000 } })
 export class CmsController {

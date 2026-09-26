@@ -25,6 +25,7 @@ import type { ClerkAuthConfig } from './clerk-auth.config';
 export interface VerifiedClerkSession {
   clerkUserId: string;
   sessionId: string;
+  secondFactorVerified?: boolean;
 }
 
 // Clerk puede emitir el JWT unos segundos por delante del reloj del host.
@@ -157,6 +158,13 @@ export class ClerkSessionVerifierService {
       return {
         clerkUserId: auth.userId,
         sessionId: auth.sessionId,
+        ...(Array.isArray(auth.factorVerificationAge)
+          ? {
+              secondFactorVerified:
+                typeof auth.factorVerificationAge[1] === 'number' &&
+                auth.factorVerificationAge[1] >= 0,
+            }
+          : {}),
       };
     } catch (error) {
       if (

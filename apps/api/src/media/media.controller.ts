@@ -24,7 +24,7 @@ import { MediaMutationDto, UpdateMediaDto, UploadMediaDto } from './media.dto';
 import { MEDIA_MAX_BYTES } from './media-policy';
 
 @Controller('media')
-@UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
+@UseGuards(ThrottlerGuard, B2bAuthGuard, RolesGuard)
 @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.BARBER)
 @Throttle({ default: { limit: 30, ttl: 60000 } })
 export class MediaController {

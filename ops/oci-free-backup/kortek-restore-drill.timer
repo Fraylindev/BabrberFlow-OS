@@ -1,0 +1,11 @@
+[Unit]
+Description=Weekly Kortek isolated restore drill
+
+[Timer]
+OnCalendar=Sun *-*-* 06:30:00 UTC
+Persistent=true
+RandomizedDelaySec=300
+Unit=kortek-restore-drill.service
+
+[Install]
+WantedBy=timers.target

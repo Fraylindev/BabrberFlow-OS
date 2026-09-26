@@ -11,6 +11,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import type { AuthenticatedRequest } from '../types/authenticated-request';
 import type { JwtPayload } from '../strategies/jwt.strategy';
 import { ClerkAuthGuard } from './clerk-auth.guard';
+import { assertLegacyAuthAllowed } from '../internal-mfa-policy';
 
 /**
  * Compatibilidad temporal para el panel B2B durante la migración a Clerk.
@@ -51,6 +52,8 @@ export class B2bAuthGuard implements CanActivate {
     if (!isUUID(payload.sub) || !isUUID(payload.organizationId)) {
       throw this.unauthorized();
     }
+
+    assertLegacyAuthAllowed();
 
     try {
       const membership = await this.prisma.db.membership.findUnique({

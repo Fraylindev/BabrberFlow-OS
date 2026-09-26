@@ -1,0 +1,18 @@
+[Unit]
+Description=Kortek Supabase Free encrypted PostgreSQL backup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=opc
+Group=opc
+LoadCredential=database-password:/etc/kortek-backup/database-password
+LoadCredential=encryption-passphrase:/etc/kortek-backup/encryption-passphrase
+StateDirectory=kortek-backup
+ExecStart=/usr/local/libexec/kortek-backup.sh
+TimeoutStartSec=900
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

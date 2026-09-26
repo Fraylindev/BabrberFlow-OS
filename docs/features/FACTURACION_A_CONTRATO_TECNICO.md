@@ -318,7 +318,7 @@ Threat model mínimo:
 ### Cobro
 
 1. Transacción PostgreSQL `SERIALIZABLE` con reintento acotado.
-2. Bloquear Invoice tenant/ownership-scoped y volver a verificar `Booking.endTime <= now` server-side.
+2. Leer Invoice tenant/ownership-scoped, bloquear su Booking vinculada y volver a verificar `Booking.endTime <= now` server-side. Correctivo de Base previa a producción C1 del 2026-09-26, en revisión: la fila bloqueada es Booking para mantener Invoice sin UPDATE runtime; SERIALIZABLE y Payment único conservan concurrencia e idempotencia.
 3. Si no existe Payment, crearlo con método del DTO, `paidAt = now` del servidor y actor de sesión; crear AuditLog `RECORD_INVOICE_PAYMENT`.
 4. Si ya existe con el mismo método, devolverlo `200` sin cambiar `paidAt`, actor ni auditoría.
 5. Si existe con otro método, devolver `409`.

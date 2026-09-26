@@ -18,7 +18,7 @@ import { GalleryOrderDto, GalleryOrderPublishDto } from './media.dto';
 import { MediaGalleryService } from './media-gallery.service';
 
 @Controller('media/gallery-order')
-@UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
+@UseGuards(ThrottlerGuard, B2bAuthGuard, RolesGuard)
 @Roles(UserRole.OWNER, UserRole.ADMIN)
 @Throttle({ default: { limit: 30, ttl: 60000 } })
 export class MediaGalleryController {

@@ -36,6 +36,7 @@ jobs:
       E2E_PRIMARY_DATABASE_NAME: barberflow
       E2E_PRIMARY_DATABASE_USER: barberflow_runtime
       NODE_ENV: test
+      DEPLOY_ENV: development
       NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ZXhhbXBsZS5jbGVyay5hY2NvdW50cy5kZXYk
       # Placeholder sin capacidad; evita modo keyless en el smoke público.
@@ -78,6 +79,24 @@ jobs:
           pnpm --filter api exec prisma migrate deploy
           pnpm --filter api exec prisma migrate status
           pnpm --filter api exec prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --exit-code
+
+      - name: Runtime privilege matrix gate
+        env:
+          PGPASSWORD: ci-postgres-only
+        run: |
+          # A separate clone preserves the E2E runner's ownership/permissions.
+          psql -h 127.0.0.1 -U postgres -d postgres -X -v ON_ERROR_STOP=1 \
+            -c 'CREATE DATABASE kortek_ci_grants_test TEMPLATE kortek_ci_test OWNER postgres'
+          psql -h 127.0.0.1 -U postgres -d kortek_ci_grants_test -X -v ON_ERROR_STOP=1 \
+            -f apps/api/ops/provision-database-roles.sql
+          KORTEK_CI_RUNTIME_PASSWORD="$(openssl rand -hex 32)"
+          printf '::add-mask::%s\n' "$KORTEK_CI_RUNTIME_PASSWORD"
+          printf "ALTER ROLE kortek_runtime PASSWORD '%s';\n" "$KORTEK_CI_RUNTIME_PASSWORD" \
+            | psql -h 127.0.0.1 -U postgres -d kortek_ci_grants_test -X -v ON_ERROR_STOP=1
+          PGPASSWORD="$KORTEK_CI_RUNTIME_PASSWORD" \
+            psql -h 127.0.0.1 -U kortek_runtime -d kortek_ci_grants_test -X -v ON_ERROR_STOP=1 \
+              -f apps/api/ops/verify-runtime-role.sql
+          unset KORTEK_CI_RUNTIME_PASSWORD
 
       - name: TypeScript and lint
         run: |

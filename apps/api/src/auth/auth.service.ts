@@ -4,10 +4,7 @@ import {
   BadRequestException,
   UnauthorizedException,
   ConflictException,
-  Inject,
 } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -26,8 +23,7 @@ import {
 } from './organization-slug';
 
 // Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
-// attempt-limiter.ts para el porqué de este enfoque (por cuenta, en
-// memoria, no persistido). 8/10min en login: generoso para alguien que
+// attempt-limiter.ts para el presupuesto compartido por cuenta. 8/10min en login: generoso para alguien que
 // se equivoca de verdad, estricto contra un ataque sostenido. 5/10min en
 // cambio de contraseña: más estricto porque ya requiere un token robado
 // como precondición — cualquier intento ahí es más sospechoso de por sí.
@@ -52,17 +48,20 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cache: Cache,
     private audit: AuditService,
   ) {
+    const rateLimitSecret =
+      process.env.RATE_LIMIT_SECRET ?? process.env.JWT_SECRET ?? '';
     this.loginLimiter = new AttemptLimiter(
-      this.cache,
+      this.prisma,
+      rateLimitSecret,
       'login-attempts',
       LOGIN_MAX_ATTEMPTS,
       LOGIN_WINDOW_MS,
     );
     this.passwordChangeLimiter = new AttemptLimiter(
-      this.cache,
+      this.prisma,
+      rateLimitSecret,
       'password-change-attempts',
       PASSWORD_CHANGE_MAX_ATTEMPTS,
       PASSWORD_CHANGE_WINDOW_MS,

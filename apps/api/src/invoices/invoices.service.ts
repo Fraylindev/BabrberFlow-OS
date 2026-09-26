@@ -304,7 +304,9 @@ export class InvoicesService {
       WHERE i."id" = ${invoiceId}
         AND i."organizationId" = ${user.organizationId}
         ${ownership}
-      FOR UPDATE OF i
+      -- Row locks require UPDATE privileges. Invoice is immutable (SELECT,
+      -- INSERT only); its unique Booking provides the serialization lock.
+      FOR UPDATE OF b
     `);
     const locked = rows[0];
     if (!locked) {

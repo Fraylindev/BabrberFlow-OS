@@ -29,6 +29,8 @@ Facturación-A es un registro operativo interno. No es comprobante fiscal, e-CF 
 
 ## Permisos
 
+Correctivo operativo C1 de Base previa a producción (2026-09-26, **EN REVISIÓN**): el cobro bloquea la Booking vinculada a Invoice, en lugar de la fila Invoice. PostgreSQL exige UPDATE para `SELECT FOR UPDATE`; Invoice conserva únicamente SELECT/INSERT runtime. Booking única por Invoice, SERIALIZABLE, Payment único y auditoría transaccional mantienen la serialización/idempotencia. El ensayo HTTP runtime produjo 201/200 concurrentes con un Payment/AuditLog, conflicto 409 para otro método y 404 entre tenants. No amplía el contrato financiero aprobado ni sus permisos de negocio.
+
 - OWNER, ADMIN y RECEPTIONIST consultan, emiten y cobran dentro de su tenant.
 - BARBER vinculado consulta, emite y cobra únicamente sus propias reservas; puede completar su Booking mediante el contrato vigente de Reservas solo después de `endTime`.
 - BARBER ajeno recibe `404` neutro y BARBER sin vínculo obtiene listado vacío sin inferir recursos.

@@ -24,7 +24,7 @@ import {
 import { MediaPromotionsService } from './media-promotions.service';
 
 @Controller('media/promotions')
-@UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
+@UseGuards(ThrottlerGuard, B2bAuthGuard, RolesGuard)
 @Roles(UserRole.OWNER, UserRole.ADMIN)
 @Throttle({ default: { limit: 30, ttl: 60000 } })
 export class MediaPromotionsController {

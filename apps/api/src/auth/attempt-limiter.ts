@@ -1,48 +1,82 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-import type { Cache } from 'cache-manager';
+import { createHmac } from 'node:crypto';
+import {
+  HttpException,
+  HttpStatus,
+  ServiceUnavailableException,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * Bloqueo temporal por cuenta contra fuerza bruta — complementa (no
- * reemplaza) el límite por IP de @nestjs/throttler ya existente en las
- * rutas. Un atacante que rota de IP sigue tropezando con esto, porque la
- * clave es el identificador de la cuenta (email o userId), no la IP.
- *
- * Usa el CACHE_MANAGER en memoria ya registrado globalmente (Fase 1 de
- * la auditoría) — nada nuevo que instalar, nada que persistir en la
- * base de datos (evita el vector de "bloquear la cuenta de otro a
- * propósito" que tendría un lockout guardado en User).
- *
- * Contrato: se registra un fallo solo cuando el intento fue
- * efectivamente incorrecto (nunca en cada request), y se resetea el
- * contador en cuanto hay un éxito — así un usuario real que se equivocó
- * una vez no queda cerca del límite para su próximo intento legítimo.
- */
+/** Shared failed-attempt budget, keyed by HMAC of the normalized account. */
 export class AttemptLimiter {
   constructor(
-    private readonly cache: Cache,
+    private readonly prisma: PrismaService,
+    private readonly secret: string,
     private readonly keyPrefix: string,
     private readonly maxAttempts: number,
     private readonly windowMs: number,
-  ) {}
+  ) {
+    if (secret.length < 32) {
+      throw new Error('RATE_LIMIT_SECRET must contain at least 32 characters');
+    }
+  }
 
   private key(identifier: string): string {
-    return `${this.keyPrefix}:${identifier.toLowerCase().trim()}`;
+    return createHmac('sha256', this.secret)
+      .update(`${this.keyPrefix}:${identifier.toLowerCase().trim()}`)
+      .digest('hex');
   }
 
   async assertNotLocked(identifier: string, message: string): Promise<void> {
-    const attempts = (await this.cache.get<number>(this.key(identifier))) ?? 0;
-    if (attempts >= this.maxAttempts) {
+    let bucket: { count: number; expiresAt: Date } | null;
+    try {
+      bucket = await this.prisma.db.securityRateBucket.findUnique({
+        where: { key: this.key(identifier) },
+        select: { count: true, expiresAt: true },
+      });
+    } catch {
+      throw new ServiceUnavailableException(
+        'Servicio temporalmente no disponible. Vuelve a intentarlo.',
+      );
+    }
+    if (
+      bucket &&
+      bucket.count >= this.maxAttempts &&
+      bucket.expiresAt.getTime() > Date.now()
+    ) {
       throw new HttpException(message, HttpStatus.TOO_MANY_REQUESTS);
     }
   }
 
   async recordFailure(identifier: string): Promise<void> {
-    const k = this.key(identifier);
-    const attempts = (await this.cache.get<number>(k)) ?? 0;
-    await this.cache.set(k, attempts + 1, this.windowMs);
+    const key = this.key(identifier);
+    try {
+      await this.prisma.db.$queryRaw(Prisma.sql`
+        INSERT INTO "SecurityRateBucket" ("key", "count", "expiresAt", "blockedUntil")
+        VALUES (${key}, 1, NOW() + ${this.windowMs} * INTERVAL '1 millisecond', NULL)
+        ON CONFLICT ("key") DO UPDATE SET
+          "count" = CASE WHEN "SecurityRateBucket"."expiresAt" <= NOW()
+            THEN 1 ELSE LEAST("SecurityRateBucket"."count"::bigint + 1, 2147483647)::int END,
+          "expiresAt" = CASE WHEN "SecurityRateBucket"."expiresAt" <= NOW()
+            THEN NOW() + ${this.windowMs} * INTERVAL '1 millisecond'
+            ELSE "SecurityRateBucket"."expiresAt" END
+      `);
+    } catch {
+      throw new ServiceUnavailableException(
+        'Servicio temporalmente no disponible. Vuelve a intentarlo.',
+      );
+    }
   }
 
   async reset(identifier: string): Promise<void> {
-    await this.cache.del(this.key(identifier));
+    try {
+      await this.prisma.db.securityRateBucket.deleteMany({
+        where: { key: this.key(identifier) },
+      });
+    } catch {
+      throw new ServiceUnavailableException(
+        'Servicio temporalmente no disponible. Vuelve a intentarlo.',
+      );
+    }
   }
 }

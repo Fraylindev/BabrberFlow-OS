@@ -14,12 +14,13 @@ import { ClerkOnboardingGuard } from './guards/clerk-onboarding.guard';
 import type { ClerkOnboardingRequest } from './guards/clerk-onboarding.guard';
 import { ClerkOnboardingService } from './clerk-onboarding.service';
 import { ClerkOnboardingDto } from './dto/clerk-onboarding.dto';
+import { assertInternalMfa } from './internal-mfa-policy';
 
 @Controller('auth/clerk')
 export class ClerkOnboardingController {
   constructor(private readonly onboardingService: ClerkOnboardingService) {}
 
-  @UseGuards(ClerkOnboardingGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, ClerkOnboardingGuard)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('onboarding')
   async onboard(
@@ -31,6 +32,8 @@ export class ClerkOnboardingController {
     if (!clerkUserId) {
       throw new UnauthorizedException('Sesión no válida');
     }
+
+    assertInternalMfa(req.clerkSession?.secondFactorVerified);
 
     const result = await this.onboardingService.onboardOwner(clerkUserId, dto);
     res.status(result.isNew ? HttpStatus.CREATED : HttpStatus.OK);

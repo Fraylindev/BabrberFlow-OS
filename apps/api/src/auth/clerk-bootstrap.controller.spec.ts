@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import type { ClerkOnboardingRequest } from './guards/clerk-onboarding.guard';
 import { ClerkBootstrapController } from './clerk-bootstrap.controller';
 import type { ClerkBootstrapService } from './clerk-bootstrap.service';
@@ -9,7 +9,12 @@ describe('ClerkBootstrapController', () => {
     resolve,
   } as unknown as ClerkBootstrapService);
 
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    delete process.env.REQUIRE_INTERNAL_MFA;
+  });
+
+  afterAll(() => delete process.env.REQUIRE_INTERNAL_MFA);
 
   it('resuelve exclusivamente el sub verificado por el guard', async () => {
     const request = {
@@ -27,6 +32,16 @@ describe('ClerkBootstrapController', () => {
     expect(() => controller.resolve({} as ClerkOnboardingRequest)).toThrow(
       UnauthorizedException,
     );
+    expect(resolve).not.toHaveBeenCalled();
+  });
+
+  it('exige segundo factor antes de revelar las organizaciones si se activa MFA', () => {
+    process.env.REQUIRE_INTERNAL_MFA = 'true';
+    expect(() =>
+      controller.resolve({
+        clerkSession: { clerkUserId: 'user_clerk_123', sessionId: 'sess_123' },
+      } as ClerkOnboardingRequest),
+    ).toThrow(ForbiddenException);
     expect(resolve).not.toHaveBeenCalled();
   });
 });

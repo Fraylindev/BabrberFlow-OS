@@ -46,7 +46,7 @@ export class OrganizationsController {
     return this.organizationsService.findTeamMembers(organizationId, query);
   }
 
-  @UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, B2bAuthGuard, RolesGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Patch('mine/team-members/role')
@@ -62,7 +62,7 @@ export class OrganizationsController {
     );
   }
 
-  @UseGuards(B2bAuthGuard, RolesGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, B2bAuthGuard, RolesGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('mine/team-members/revoke')

@@ -3,9 +3,17 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { globalValidationPipeOptions } from './common/validation.config';
+import { validateProductionConfig } from './common/production-config';
+import {
+  createHttpTelemetry,
+  SafeHttpExceptionFilter,
+} from './common/http-telemetry';
 
 async function bootstrap() {
+  validateProductionConfig();
   const app = await NestFactory.create(AppModule, { rawBody: true });
+  app.use(createHttpTelemetry());
+  app.useGlobalFilters(new SafeHttpExceptionFilter());
 
   // Cabeceras de seguridad HTTP estándar (X-Content-Type-Options,
   // X-Frame-Options, HSTS, etc.) — no existía ninguna protección de este
@@ -26,7 +34,13 @@ async function bootstrap() {
   app.enableCors({
     origin: allowedOrigins,
     credentials: true,
-    exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Limit', 'X-Total-Pages'],
+    exposedHeaders: [
+      'X-Total-Count',
+      'X-Page',
+      'X-Limit',
+      'X-Total-Pages',
+      'X-Request-Id',
+    ],
   });
 
   // Sin esto, Nest no reenvía SIGTERM/SIGINT a los hooks de ciclo de vida
@@ -45,5 +59,9 @@ async function bootstrap() {
 
 // Manejamos la promesa para cumplir con las reglas estrictas de ESLint
 bootstrap().catch((err) => {
-  console.error('Error starting server:', err);
+  console.error(
+    'API_START_FAILED',
+    err instanceof Error ? err.constructor.name : 'UnknownError',
+  );
+  process.exitCode = 1;
 });

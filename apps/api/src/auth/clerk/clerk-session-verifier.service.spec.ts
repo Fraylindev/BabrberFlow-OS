@@ -27,6 +27,7 @@ function signedInState(overrides: Record<string, unknown> = {}) {
       isAuthenticated: true,
       userId,
       sessionId,
+      factorVerificationAge: overrides.fva,
       sessionClaims: {
         sub: userId,
         sid: sessionId,
@@ -89,6 +90,19 @@ describe('ClerkSessionVerifierService', () => {
     });
     expect(getSession).toHaveBeenCalledWith(sessionId);
   });
+
+  it.each([
+    [[0, 0], true],
+    [[0, -1], false],
+  ])(
+    'interpreta fva firmado %j como segundo factor %s',
+    async (fva, expected) => {
+      authenticateRequest.mockResolvedValue(signedInState({ fva }));
+      await expect(
+        service.verify(new Request('http://localhost:3000/secure')),
+      ).resolves.toMatchObject({ secondFactorVerified: expected });
+    },
+  );
 
   it.each([
     [

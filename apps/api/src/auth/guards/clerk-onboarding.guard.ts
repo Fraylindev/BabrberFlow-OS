@@ -14,6 +14,7 @@ export interface ClerkOnboardingRequest extends Request {
   clerkSession?: {
     clerkUserId: string;
     sessionId: string;
+    secondFactorVerified?: boolean;
   };
 }
 
@@ -32,6 +33,9 @@ export class ClerkOnboardingGuard implements CanActivate {
       request.clerkSession = {
         clerkUserId: session.clerkUserId,
         sessionId: session.sessionId,
+        ...(typeof session.secondFactorVerified === 'boolean'
+          ? { secondFactorVerified: session.secondFactorVerified }
+          : {}),
       };
 
       return true;

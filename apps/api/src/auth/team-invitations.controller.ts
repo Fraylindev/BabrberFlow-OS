@@ -16,6 +16,7 @@ import {
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { UserRole } from '@prisma/client';
+import { assertInternalMfa } from './internal-mfa-policy';
 import { GetUser } from './decorators/get-user.decorator';
 import { Roles } from './decorators/roles.decorator';
 import { CreateTeamInvitationDto } from './dto/create-team-invitation.dto';
@@ -82,7 +83,7 @@ export class TeamInvitationsController {
 export class TeamInvitationAcceptanceController {
   constructor(private readonly invitations: TeamInvitationsService) {}
 
-  @UseGuards(ClerkOnboardingGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, ClerkOnboardingGuard)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post(':id/accept')
   async accept(
@@ -94,6 +95,8 @@ export class TeamInvitationAcceptanceController {
     if (!clerkUserId) {
       throw new UnauthorizedException('Sesión no válida');
     }
+
+    assertInternalMfa(request.clerkSession?.secondFactorVerified);
 
     const result = await this.invitations.accept(invitationId, clerkUserId);
     response.status(result.isNew ? HttpStatus.CREATED : HttpStatus.OK);

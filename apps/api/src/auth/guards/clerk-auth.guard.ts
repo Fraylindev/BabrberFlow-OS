@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   Logger,
   ServiceUnavailableException,
@@ -12,6 +13,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { ClerkSessionVerifierService } from '../clerk/clerk-session-verifier.service';
 import { toWebRequest } from '../clerk/to-web-request';
 import { AuthenticatedRequest } from '../types/authenticated-request';
+import { assertInternalMfa } from '../internal-mfa-policy';
 
 export const ORGANIZATION_ID_HEADER = 'x-organization-id';
 
@@ -61,6 +63,8 @@ export class ClerkAuthGuard implements CanActivate {
         );
       }
 
+      assertInternalMfa(session.secondFactorVerified);
+
       request.user = {
         id: user.id,
         email: user.email,
@@ -73,6 +77,7 @@ export class ClerkAuthGuard implements CanActivate {
     } catch (error) {
       if (
         error instanceof UnauthorizedException ||
+        error instanceof ForbiddenException ||
         error instanceof ServiceUnavailableException
       ) {
         throw error;

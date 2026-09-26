@@ -21,7 +21,7 @@ import {
 export class ClerkCustomerClaimsController {
   constructor(private readonly claims: ClerkCustomerClaimsService) {}
 
-  @UseGuards(ClerkOnboardingGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, ClerkOnboardingGuard)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('claims')
   async claim(

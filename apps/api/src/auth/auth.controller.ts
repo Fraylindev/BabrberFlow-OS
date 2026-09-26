@@ -11,6 +11,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { GetUser } from './decorators/get-user.decorator';
 import { UserRole } from '@prisma/client';
+import { assertLegacyAuthAllowed } from './internal-mfa-policy';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
+    assertLegacyAuthAllowed();
     return this.authService.register(registerDto);
   }
 
@@ -42,6 +44,7 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('login')
   login(@Body() loginDto: LoginDto) {
+    assertLegacyAuthAllowed();
     return this.authService.login(loginDto);
   }
 
@@ -49,7 +52,7 @@ export class AuthController {
   // con un rol distinto a OWNER (ver InviteUserDto). Límite por IP más
   // holgado (20/min) — ya requiere estar autenticado como OWNER/ADMIN,
   // el riesgo de fuerza bruta es mucho menor que en login.
-  @UseGuards(JwtAuthGuard, RolesGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, JwtAuthGuard, RolesGuard)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('invite')
@@ -58,6 +61,7 @@ export class AuthController {
     @GetUser('id') invitedBy: string,
     @Body() inviteUserDto: InviteUserDto,
   ) {
+    assertLegacyAuthAllowed();
     return this.teamService.inviteUser(
       organizationId,
       invitedBy,
@@ -70,7 +74,7 @@ export class AuthController {
   // IP (10/min) + bloqueo por cuenta en AuthService.updatePassword()
   // (protege contra fuerza bruta de la contraseña actual con un token
   // robado).
-  @UseGuards(JwtAuthGuard, ThrottlerGuard)
+  @UseGuards(ThrottlerGuard, JwtAuthGuard)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Patch('update-password')
   updatePassword(
@@ -78,6 +82,7 @@ export class AuthController {
     @GetUser('organizationId') organizationId: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
+    assertLegacyAuthAllowed();
     return this.authService.updatePassword(
       userId,
       organizationId,

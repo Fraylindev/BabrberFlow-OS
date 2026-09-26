@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// HTTP/security budget shared by API replicas; separate from EmailAbuseBucket.
+// key is an HMAC digest, never a raw IP, email or token.
+model SecurityRateBucket {
+  key          String   @id
+  count        Int
+  expiresAt    DateTime @db.Timestamptz(6)
+  blockedUntil DateTime? @db.Timestamptz(6)
+
+  @@index([expiresAt])
+}
+
 enum UserRole {
   // B2B — personal interno con acceso al panel de gestión
   OWNER

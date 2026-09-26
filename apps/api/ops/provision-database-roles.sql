@@ -52,18 +52,11 @@ BEGIN
 END $$;
 
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC, kortek_runtime;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO kortek_runtime;
-REVOKE ALL ON TABLE public."_prisma_migrations" FROM kortek_runtime;
--- C1/C3 media contract is narrower than the historical default DML grants.
-REVOKE DELETE ON public."MediaAsset", public."MediaGalleryOrder",
-  public."MediaPromotion", public."MediaPurgeJob" FROM kortek_runtime;
-REVOKE UPDATE, DELETE ON public."MediaOperation" FROM kortek_runtime;
 GRANT USAGE ON TYPE public."MediaAssetPurpose", public."MediaAssetStatus",
   public."MediaModerationStatus" TO kortek_runtime;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM PUBLIC, kortek_runtime;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO kortek_runtime;
 ALTER DEFAULT PRIVILEGES FOR ROLE kortek_migrator IN SCHEMA public
-  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO kortek_runtime;
-ALTER DEFAULT PRIVILEGES FOR ROLE kortek_migrator IN SCHEMA public
   GRANT USAGE, SELECT ON SEQUENCES TO kortek_runtime;
 COMMIT;
+\ir apply-runtime-grants.sql

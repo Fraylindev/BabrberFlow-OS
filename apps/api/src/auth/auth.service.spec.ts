@@ -1,27 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-
-function createInMemoryCache() {
-  const store = new Map<string, unknown>();
-  return {
-    get: jest.fn((key: string) => Promise.resolve(store.get(key))),
-    set: jest.fn((key: string, value: unknown) => {
-      store.set(key, value);
-      return Promise.resolve();
-    }),
-    del: jest.fn((key: string) => {
-      store.delete(key);
-      return Promise.resolve();
-    }),
-  };
-}
 
 type RegisterTx = {
   organization: { create: jest.Mock };
@@ -30,8 +14,34 @@ type RegisterTx = {
 };
 
 function createMockPrisma() {
+  const buckets = new Map<string, { count: number; expiresAt: Date }>();
   return {
     db: {
+      securityRateBucket: {
+        findUnique: jest.fn(({ where }: { where: { key: string } }) =>
+          Promise.resolve(buckets.get(where.key) ?? null),
+        ),
+        deleteMany: jest.fn(({ where }: { where: { key: string } }) => {
+          buckets.delete(where.key);
+          return Promise.resolve({ count: 1 });
+        }),
+      },
+      $queryRaw: jest.fn((query: Prisma.Sql) => {
+        const key = query.values[0] as string;
+        const windowMs = query.values[1] as number;
+        const prior = buckets.get(key);
+        buckets.set(key, {
+          count:
+            prior && prior.expiresAt.getTime() > Date.now()
+              ? prior.count + 1
+              : 1,
+          expiresAt:
+            prior && prior.expiresAt.getTime() > Date.now()
+              ? prior.expiresAt
+              : new Date(Date.now() + windowMs),
+        });
+        return Promise.resolve([]);
+      }),
       user: {
         findUnique: jest.fn(),
         update: jest.fn(),
@@ -78,12 +88,11 @@ const registerInput = {
 describe('AuthService — autenticación', () => {
   let service: AuthService;
   let prisma: ReturnType<typeof createMockPrisma>;
-  let cache: ReturnType<typeof createInMemoryCache>;
   let audit: { log: jest.Mock; logTransactional: jest.Mock };
 
   beforeEach(async () => {
     prisma = createMockPrisma();
-    cache = createInMemoryCache();
+    process.env.RATE_LIMIT_SECRET = 'r'.repeat(32);
     audit = {
       log: jest.fn().mockResolvedValue(undefined),
       logTransactional: jest.fn().mockResolvedValue(undefined),
@@ -99,7 +108,6 @@ describe('AuthService — autenticación', () => {
             signAsync: jest.fn().mockResolvedValue('fake.jwt.token'),
           },
         },
-        { provide: CACHE_MANAGER, useValue: cache },
         { provide: AuditService, useValue: audit },
       ],
     }).compile();
