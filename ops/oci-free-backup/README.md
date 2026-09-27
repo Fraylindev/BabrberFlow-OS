@@ -4,6 +4,8 @@ Estado C1: VM Oracle Always Free `kortek-free-services` en Ashburn (`150.136.7.1
 
 Actualización 2026-09-27: API publicada bajo autorización posterior en esta misma VM, ahora 2 OCPU/12 GB, con Podman rootless/Caddy y solo TCP 80/443 públicos. Worker y los tres timers siguen activos. La declaración anterior de API no publicada y las referencias inferiores al firewall describen C1 histórico. [Operación API](../oci-api/README.md) y [evidencia externa](../../docs/quality/API_OCI_DESPLIEGUE.md). Sondas conjuntas web/API siguen desactivadas; EMAIL sigue pausado.
 
+Seguimiento 2026-09-27: el propietario confirma recepción repetida de alarmas HTTP con `State=FIRING` y `State=OK`; queda cerrado el pendiente de recepción de notificaciones. Esto no cambia que `KORTEK_PUBLIC_HTTP_ENABLED=false` en la configuración de sondas ni acredita muestras de `public_web_up`/`public_api_up` o el origen exacto de esas notificaciones. Mantener esa distinción en el gate C3.
+
 Actualización 2026-09-26: **C1 CERRADO / APROBADO** por instrucción expresa del propietario, con excepción D2 del bootstrap local aceptada. Confirmó recepción de alarmas en `vps@kortek.cloud` y custodia de la frase GPG en gestor externo a VM/equipo. Portapapeles actual e historial local limpiados y terminales temporales cerradas, verificados sin leer el secreto. Las menciones inferiores a confirmaciones pendientes describen el ensayo anterior; quedan resueltas por esta declaración del propietario. La recuperación independiente y el restore manual están probados; transferencia nueva Cloud Shell → equipo, RTO integral y primera ejecución semanal por horario no se acreditan. Activación pública/EMAIL y C3 conservan sus gates. [Cierre y evidencia](../../docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md).
 
 Riesgo del hosting gratuito: [Oracle puede reclamar instancias Always Free
@@ -68,8 +70,10 @@ de las dos métricas `up < 1` sostenido tres minutos, con el destinatario operat
 ya confirmado, y ensayar disparo/recuperación. Después habilitar el switch y
 comprobar muestras reales. El umbral sostenido exige caídas consecutivas; no
 alertar por ausencia de estas métricas mientras el switch esté apagado. Mantener
-la alarma existente de ausencia del monitor. Esta preparación no abre servicio,
-no acredita uptime productivo público y no crea alarmas HTTP activas.
+la alarma existente de ausencia del monitor. El propietario confirmó recepción
+repetida de notificaciones HTTP `State=FIRING`/`State=OK`; la regla concreta
+debe cotejarse con las dos métricas públicas antes de declarar ese ensayo parte
+de C3. Esta preparación no abre servicio ni acredita uptime productivo público.
 
 ## Alertas y umbrales iniciales
 
@@ -77,10 +81,12 @@ El primer backup producido por horario, 2026-09-26 05:21:39 UTC, se restauró
 otra vez a las 06:02:08 UTC: 31 tablas, 30 entradas de migración, 25 reservas,
 checksum válido y exit `0`. El ensayo acotado `alarm-drill.sh` detuvo el worker
 con envío deshabilitado y lo recuperó automáticamente: OCI registró **Firing**
-a las 06:01 UTC y **Ok** a las 06:05 UTC. Servicio/heartbeat comprobados activos;
-la recepción del correo debe confirmarla el destinatario.
+a las 06:01 UTC y **Ok** a las 06:05 UTC. Servicio/heartbeat comprobados activos.
+El propietario confirmó el 2026-09-27 la recepción repetida de alarmas HTTP en
+estados `FIRING` y `OK`; queda cerrada la confirmación de recepción, sin inferir
+qué regla o métrica generó cada mensaje.
 
-Tema OCI Notifications: `kortek-booking-operations`; suscripción `vps@kortek.cloud` confirmada como **Active** por OCI. Dueño: propietario/operador de Kortek Booking. Canal: email, 24/7. Verificar recepción y recuperación en ensayo controlado. Alarma de ausencia supervisa que la publicación de métricas siga viva incluso si cae el VM/monitor.
+Tema OCI Notifications: `kortek-booking-operations`; suscripción `vps@kortek.cloud` confirmada como **Active** por OCI. Dueño: propietario/operador de Kortek Booking. Canal: email, 24/7. Recepción y recuperación confirmadas por el propietario; correlacionar ensayos futuros con la regla/métrica de origen. Alarma de ausencia supervisa que la publicación de métricas siga viva incluso si cae el VM/monitor.
 
 | Alarma activa | Condición | Acción inicial |
 | --- | --- | --- |
@@ -93,11 +99,11 @@ Tema OCI Notifications: `kortek-booking-operations`; suscripción `vps@kortek.cl
 | `kortek-prod-backup-capacity` | `bucket_bytes > 7000000000`, 5 min | Revisar capacidad y retención antes del tope preventivo de 8 GB; no borrar automáticamente. |
 | `kortek-prod-operational-errors` | `operational_errors_5m > 0`, 1 min | Revisar códigos seguros de backup/restore/worker y fallos del supervisor, recuperar servicio y comprobar heartbeat/último artefacto. |
 
-La alarma de errores operativos registró **Firing 06:36 UTC → Ok 06:44 UTC** durante el ensayo de supervisor del 26 de septiembre. La cuota de backup tiene alarma activa; no se llenó el bucket para probarla. La recepción del correo sigue pendiente de confirmación del destinatario.
+La alarma de errores operativos registró **Firing 06:36 UTC → Ok 06:44 UTC** durante el ensayo de supervisor del 26 de septiembre. La cuota de backup tiene alarma activa; no se llenó el bucket para probarla. La recepción de alarmas HTTP fue confirmada por el propietario el 27 de septiembre; no se ha verificado aquí que esos mensajes provinieran de las sondas públicas desactivadas.
 
 El API C1 produce `HTTP_REQUEST` con ID aleatorio propio, entorno, SHA Git (`APP_RELEASE` obligatorio en producción), plantilla de ruta, método, status, duración y clase de error permitida. Nunca incluye cuerpos, parámetros, query, tokens, cabeceras, mensajes crudos ni stack. Tres pruebas HTTP de privacidad pasaron. Una excepción inesperada devuelve un 500 genérico; el 400 de JSON malformado tampoco devuelve fragmentos privados. Los errores HTTP de negocio conservan su contrato. La versión de despliegue debe ser el commit que realmente produjo el artefacto, incluyendo C1 antes de publicarlo.
 
-Los nuevos agregados son `worker_errors_5m`, `backup_errors_5m`, `restore_errors_5m`, `supervisor_errors_5m`, `http_requests_5m`, `http_5xx_5m`, `http_429_5m`, `http_p95_ms_5m`, `operational_errors_5m`. Un fallo puede producir más de un código: el total cuenta señales, no incidentes únicos. **Cero solicitudes HTTP actualmente indica API no desplegada**, no disponibilidad ni ausencia acreditada de errores de usuarios.
+Los nuevos agregados son `worker_errors_5m`, `backup_errors_5m`, `restore_errors_5m`, `supervisor_errors_5m`, `http_requests_5m`, `http_5xx_5m`, `http_429_5m`, `http_p95_ms_5m`, `operational_errors_5m`. Un fallo puede producir más de un código: el total cuenta señales, no incidentes únicos. Un cero en solicitudes HTTP indica que no se observaron solicitudes en esa ventana; la API ya está desplegada, y el cero no acredita disponibilidad ni ausencia de errores de usuarios.
 
 Umbrales propuestos para servicios aún sin activar, con el mismo propietario, canal email 24/7 y ensayo obligatorio en su activación:
 
