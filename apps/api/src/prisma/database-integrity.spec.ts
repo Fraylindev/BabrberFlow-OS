@@ -20,6 +20,23 @@ const fixture = () => ({
 });
 
 describe('supplemental PostgreSQL integrity', () => {
+  it('accepts the exact PG18 restored conjunction and still rejects a weakened operator', () => {
+    const { constraints, indexes } = fixture();
+    const checks = constraints.filter((c) =>
+      [
+        'ProfessionalWeeklySchedule_minutes_check',
+        'BusinessScheduleWindow_minutes_check',
+      ].includes(c.name),
+    );
+    for (const check of checks)
+      check.definition =
+        'CHECK ((("startMinute" >= 0) AND ("startMinute" <= 1439) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))';
+    expect(inspectDatabaseIntegrity(constraints, indexes)).toEqual([]);
+    checks[1].definition = checks[1].definition.replace(' AND ', ' OR ');
+    expect(inspectDatabaseIntegrity(constraints, indexes)).toEqual([
+      'changed constraint: BusinessScheduleWindow_minutes_check',
+    ]);
+  });
   it('accepts the exact published definitions', () => {
     const { constraints, indexes } = fixture();
     expect(inspectDatabaseIntegrity(constraints, indexes)).toEqual([]);

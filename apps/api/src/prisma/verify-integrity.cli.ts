@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import {
+  inspectBusinessScheduleIntegrity,
+  ScheduleTriggerMetadata,
+  ScheduleFunctionMetadata,
+} from './business-schedule-integrity';
+import {
   ConstraintMetadata,
   IndexMetadata,
   inspectDatabaseIntegrity,
@@ -26,7 +31,18 @@ async function main() {
         FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid
         WHERE c.relnamespace = 'public'::regnamespace
       `;
-        return inspectDatabaseIntegrity(constraints, indexes);
+        const triggers = await tx.$queryRaw<ScheduleTriggerMetadata[]>`
+          SELECT tgname AS name, pg_get_triggerdef(oid) AS definition, tgenabled::text AS enabled
+          FROM pg_trigger WHERE tgname IN ('BusinessSchedule_complete_week','BusinessScheduleDay_complete_week','BusinessScheduleWindow_limit')
+        `;
+        const functions = await tx.$queryRaw<ScheduleFunctionMetadata[]>`
+          SELECT prosrc AS source, prosecdef AS "securityDefiner" FROM pg_proc
+          WHERE pronamespace='public'::regnamespace AND proname='validate_business_schedule' AND pronargs=0
+        `;
+        return [
+          ...inspectDatabaseIntegrity(constraints, indexes),
+          ...inspectBusinessScheduleIntegrity(triggers, functions),
+        ];
       },
       { timeout: 15000 },
     );

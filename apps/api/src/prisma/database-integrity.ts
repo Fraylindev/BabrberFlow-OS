@@ -68,6 +68,76 @@ export const REQUIRED_CONSTRAINTS = [
     'ProfessionalAvailabilityBlock_professionalId_fkey',
     'FOREIGN KEY ("professionalId", "organizationId") REFERENCES "Professional"(id, "organizationId") ON UPDATE CASCADE ON DELETE CASCADE',
   ],
+  [
+    'BusinessClosure',
+    'BusinessClosure_cancel_check',
+    'CHECK ((((status = \'ACTIVE\'::"AvailabilityBlockStatus") AND ("cancelledAt" IS NULL)) OR ((status = \'CANCELLED\'::"AvailabilityBlockStatus") AND ("cancelledAt" IS NOT NULL))))',
+  ],
+  [
+    'BusinessClosure',
+    'BusinessClosure_organizationId_fkey',
+    'FOREIGN KEY ("organizationId") REFERENCES "BusinessSchedule"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT',
+  ],
+  [
+    'BusinessClosure',
+    'BusinessClosure_range_check',
+    'CHECK ((("startDate" <= "endDate") AND (("startMinute" >= 0) AND ("startMinute" <= 1439)) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute") AND (("startDate" = "endDate") OR (("startMinute" = 0) AND ("endMinute" = 1440)))))',
+  ],
+  [
+    'BusinessSchedule',
+    'BusinessSchedule_category_check',
+    "CHECK (((\"legacyCategory\" IS NULL) OR (\"legacyCategory\" = ANY (ARRAY['SQL_NULL'::text, 'JSON_NULL'::text, 'VALID'::text, 'INVALID'::text]))))",
+  ],
+  [
+    'BusinessSchedule',
+    'BusinessSchedule_confirmation_check',
+    'CHECK (((state <> \'CONFIRMED\'::"BusinessScheduleState") OR "zoneConfirmed"))',
+  ],
+  [
+    'BusinessSchedule',
+    'BusinessSchedule_organizationId_fkey',
+    'FOREIGN KEY ("organizationId") REFERENCES "Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT',
+  ],
+  [
+    'BusinessSchedule',
+    'BusinessSchedule_revision_check',
+    'CHECK ((revision >= 0))',
+  ],
+  [
+    'BusinessScheduleDay',
+    'BusinessScheduleDay_day_check',
+    'CHECK ((("dayOfWeek" >= 0) AND ("dayOfWeek" <= 6)))',
+  ],
+  [
+    'BusinessScheduleDay',
+    'BusinessScheduleDay_organizationId_fkey',
+    'FOREIGN KEY ("organizationId") REFERENCES "BusinessSchedule"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT',
+  ],
+  [
+    'BusinessScheduleRevision',
+    'BusinessScheduleRevision_organizationId_fkey',
+    'FOREIGN KEY ("organizationId") REFERENCES "BusinessSchedule"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT',
+  ],
+  [
+    'BusinessScheduleRevision',
+    'BusinessScheduleRevision_revision_check',
+    'CHECK ((revision > 0))',
+  ],
+  [
+    'BusinessScheduleWindow',
+    'BusinessScheduleWindow_day_fkey',
+    'FOREIGN KEY ("organizationId", "dayOfWeek") REFERENCES "BusinessScheduleDay"("organizationId", "dayOfWeek") ON UPDATE CASCADE ON DELETE RESTRICT',
+  ],
+  [
+    'BusinessScheduleWindow',
+    'BusinessScheduleWindow_minutes_check',
+    'CHECK (((("startMinute" >= 0) AND ("startMinute" <= 1439)) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))',
+  ],
+  [
+    'BusinessScheduleWindow',
+    'BusinessScheduleWindow_no_overlap',
+    'EXCLUDE USING gist ("organizationId" WITH =, "dayOfWeek" WITH =, int4range("startMinute", "endMinute", \'[)\'::text) WITH &&)',
+  ],
 ] as const;
 
 export const REQUIRED_INDEXES = [
@@ -107,6 +177,11 @@ export type IndexMetadata = {
   ready: boolean;
 };
 
+// pg_dump/restore on PG18 flattens the first nested AND of these two CHECKs.
+// Only this exact observed equivalent is accepted, never arbitrary normalization.
+const RESTORED_MINUTES_CHECK =
+  'CHECK ((("startMinute" >= 0) AND ("startMinute" <= 1439) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))';
+
 export function inspectDatabaseIntegrity(
   constraints: ConstraintMetadata[],
   indexes: IndexMetadata[],
@@ -120,7 +195,11 @@ export function inspectDatabaseIntegrity(
     else {
       if (!actual.validated) failures.push(`unvalidated constraint: ${name}`);
       // Deliberately fail closed on a different expression, even if its name matches.
-      if (actual.definition !== definition)
+      const restoredEquivalent =
+        (name === 'ProfessionalWeeklySchedule_minutes_check' ||
+          name === 'BusinessScheduleWindow_minutes_check') &&
+        actual.definition === RESTORED_MINUTES_CHECK;
+      if (actual.definition !== definition && !restoredEquivalent)
         failures.push(`changed constraint: ${name}`);
     }
   }

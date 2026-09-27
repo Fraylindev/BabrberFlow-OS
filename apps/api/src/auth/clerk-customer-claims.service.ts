@@ -106,7 +106,7 @@ export class ClerkCustomerClaimsService {
       FROM "Booking" b
       INNER JOIN "Organization" o ON o."id" = b."organizationId"
       WHERE b."id" = ${bookingId} AND o."slug" = ${organizationSlug}
-      FOR UPDATE OF b
+      FOR UPDATE OF o
     `;
     const booking = bookings[0];
     if (!booking) {
@@ -122,6 +122,19 @@ export class ClerkCustomerClaimsService {
     `;
     const client = clients[0];
     if (!client) {
+      throw new NotFoundException('No se encontró la reserva.');
+    }
+
+    // Match the scheduling order: Organization -> Client -> Booking.
+    const currentBookings = await tx.$queryRaw<LockedBooking[]>`
+      SELECT b."id", b."organizationId", b."clientId"
+      FROM "Booking" b
+      WHERE b."id" = ${booking.id}
+        AND b."organizationId" = ${booking.organizationId}
+        AND b."clientId" = ${client.id}
+      FOR UPDATE OF b
+    `;
+    if (!currentBookings[0]) {
       throw new NotFoundException('No se encontró la reserva.');
     }
 

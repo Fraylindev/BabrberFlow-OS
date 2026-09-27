@@ -1,5 +1,10 @@
 # BACKEND_CHANGES.md
 
+## 2026-09-27 — Horario y zona del negocio C1
+
+**BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. D1–D15 A autorizadas; agregado relacional, semana/cierres/impacto/revisión y confirmación de zona, roles y lock Organization compartido por Booking/A2/correo/claims. Nuevas altas sin confirmar, legacy fiel hasta transición; tenant productivo SQL_NULL sin confirmar. Tipos/lint/build, 763 unitarias, 26 integraciones C1, 9 concurrencias, 75 HTTP y 26 productor/worker pasaron; migración 26→27, grants/integridad y restore 35/35 verificados. [Contrato](docs/features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](docs/features/HORARIO_ZONA_C1_EVIDENCIA.md). Lógica backend aprobada expresamente por el propietario y cambio integrado en su proyecto local; 763 unitarias, tipos/lint/build y Prisma vuelven a pasar allí. [Integración local](docs/features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md). El propietario autorizó expresamente commit/push C1 a origin/ai/antigravity-qa. Sin aplicar migraciones a bases, frontend o implantación. La aprobación C1 no cierra el módulo ni autoriza C2.
+
+
 ## 2026-09-27 — API detrás de Caddy en OCI
 
 **IMPLEMENTADO / EN REVISIÓN**, despliegue autorizado y ejecutado. Nest configura confianza únicamente en proxy loopback para staging/producción; Caddy sustituye X-Forwarded-For con el cliente real y elimina Forwarded. Evita que el presupuesto PostgreSQL agrupe a todos los clientes como loopback, sin confiar en peers privados/remotos ni cambiar DTOs/roles. Tres pruebas nuevas del límite de proxy; tipos/lint/build, 724 unitarias (11 omitidas) y 23 negativos del startup compilado tanto local como imagen ARM pasaron, exit 0. HTTPS externo, CORS exacto, Supabase runtime READ ONLY/TLS y recuperación API/Caddy pasaron. EMAIL/reserva pública conservan flags; login positivo navegador→API conserva su gate separado. [Evidencia operativa](docs/quality/API_OCI_DESPLIEGUE.md).

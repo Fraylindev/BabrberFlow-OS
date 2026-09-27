@@ -9,7 +9,7 @@ import {
   addDaysToIsoDate,
   getZonedDateParts,
   isValidTimeZone,
-  zonedLocalDateTimeToUtc,
+  utcRangeForLocalDate,
 } from '../professionals/professional-availability.util';
 
 // Ventana fija de 30 días para "profesional del mes" — no se expone como
@@ -177,11 +177,11 @@ export class AnalyticsService {
     }
     const today = getZonedDateParts(now, timeZone).date;
     const atStart = (date: string | null) =>
-      date ? zonedLocalDateTimeToUtc(date, '00:00', timeZone) : null;
+      date ? utcRangeForLocalDate(date, timeZone)?.start : null;
     const startOfToday = atStart(today);
     const startOfYesterday = atStart(addDaysToIsoDate(today, -1));
     const startOf7DaysAgo = atStart(addDaysToIsoDate(today, -6));
-    const startOfTomorrow = atStart(addDaysToIsoDate(today, 1));
+    const startOfTomorrow = utcRangeForLocalDate(today, timeZone)?.end;
     const startOfWindow = atStart(
       addDaysToIsoDate(today, 1 - TOP_PROFESSIONAL_WINDOW_DAYS),
     );

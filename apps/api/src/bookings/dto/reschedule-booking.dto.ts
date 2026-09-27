@@ -1,4 +1,5 @@
-import { IsOptional, IsDateString, IsUUID } from 'class-validator';
+import { IsOptional, IsDateString, IsUUID, Matches } from 'class-validator';
+import { ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN } from '../../professionals/professional-availability.util';
 
 export class RescheduleBookingDto {
   @IsUUID()
@@ -10,6 +11,7 @@ export class RescheduleBookingDto {
   serviceId?: string;
 
   @IsDateString()
+  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN)
   @IsOptional()
   startTime?: string;
 }

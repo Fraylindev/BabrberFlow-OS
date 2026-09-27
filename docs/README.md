@@ -16,6 +16,9 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
+- [`HORARIO_ZONA_C1_CONTRATO.md`](features/HORARIO_ZONA_C1_CONTRATO.md) y [`HORARIO_ZONA_C1_EVIDENCIA.md`](features/HORARIO_ZONA_C1_EVIDENCIA.md): D1–D15 A autorizadas; lógica backend C1 aprobada e integrada en el proyecto local. [Integración local](features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md); frontend/QA e implantación conservan gates propios.
+- [`HORARIO_ZONA_C0_AUDITORIA.md`](features/HORARIO_ZONA_C0_AUDITORIA.md): auditoría histórica; las alternativas A fueron seleccionadas posteriormente para C1.
+
 - [`MEDIOS_PROMOCIONES_C3_ACTIVACION.md`](features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md): C3 cerrado/aprobado expresamente, cuota de moderación en 0 hasta el próximo ciclo, respaldo/restauración y actualización verificada de desarrollo a 25 migraciones, con limpieza posterior de QA.
 - [`MEDIOS_PROMOCIONES_C2_FRONTEND.md`](features/MEDIOS_PROMOCIONES_C2_FRONTEND.md): editor de medios/promociones, avatar propio y consumo público; QA funcional/visual de cuatro roles, dos tenants, proyección pública real y cuota de moderación agotada con `503` real. C2 cerrado/aprobado.
 - [`MEDIOS_PROMOCIONES_C1_CONTRATO.md`](features/MEDIOS_PROMOCIONES_C1_CONTRATO.md): decisiones D1–D8/D5b y backend C1 aprobados expresamente para C2; Cloudinary Free y Rekognition Free probados en ciclo integrado real.

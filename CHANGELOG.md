@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-09-27 — Horario y zona del negocio C1
+
+**BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. D1–D15 A autorizadas; agregado relacional, semana/cierres/impacto/revisión y confirmación de zona, roles y lock Organization compartido por Booking/A2/correo/claims. Nuevas altas sin confirmar, legacy fiel hasta transición; tenant productivo SQL_NULL sin confirmar. Tipos/lint/build, 763 unitarias, 26 integraciones C1, 9 concurrencias, 75 HTTP y 26 productor/worker pasaron; migración 26→27, grants/integridad y restore 35/35 verificados. [Contrato](docs/features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](docs/features/HORARIO_ZONA_C1_EVIDENCIA.md). Lógica backend aprobada expresamente por el propietario y cambio integrado en su proyecto local; 763 unitarias, tipos/lint/build y Prisma vuelven a pasar allí. [Integración local](docs/features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md). El propietario autorizó expresamente commit/push C1 a origin/ai/antigravity-qa. Sin aplicar migraciones a bases, frontend o implantación. La aprobación C1 no cierra el módulo ni autoriza C2.
+
+
+## 2026-09-27 — Horario y zona del negocio: C0 documental entregado
+
+- Autorizado únicamente el C0 del ítem 4 del roadmap. [Informe](docs/features/HORARIO_ZONA_C0_AUDITORIA.md) con el formato de Base previa a producción: evidencia, hallazgos, D1–D15 con opciones/trade-offs/recomendaciones y gates futuros. Decisiones pendientes de elección del propietario; C0 no aprobado y C1 no autorizado.
+- Auditados JSON legacy/fallback, ausencia de semana/cierres globales, zona autoritativa, reservas futuras/en curso, herencia y bloqueos individuales, locks, permisos, consumidores y pruebas existentes. Registradas discrepancias del comentario legacy, lectura RECEPTIONIST y hora del navegador en agenda interna, sin alterar código ni contratos.
+- Solo informe y sincronización de índice/PROJECT_MASTER/historial. Sin PATCH libre del JSON propuesto, acceso a bases, cambios de datos/configuración, tests/builds o QA funcional nuevo; verificación documental de enlaces, estados y diff. Sin staging, commit ni push.
+
 ## 2026-09-27 — API desplegada en Oracle Always Free
 
 - Verificados cuenta Free Tier, cuota de prueba y beneficio Always Free vigente 2 OCPU/12 GB. Medidos worker, monitor, backup cifrado y restore aislado antes de dimensionar; ambos trabajos terminaron exit 0.

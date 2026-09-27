@@ -6,6 +6,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { AuditService } from '../audit/audit.service';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import {
+  policyFromOrganization,
+  type BusinessPolicyOrganization,
+} from '../business-schedule/business-schedule.policy';
 
 const ORGANIZATION = {
   id: '00000000-0000-4000-8000-000000000001',
@@ -14,6 +18,14 @@ const ORGANIZATION = {
   phone: null,
   isActive: true,
   businessHours: null,
+  businessSchedule: {
+    state: 'LEGACY_UNCONFIRMED',
+    zoneConfirmed: false,
+    legacyPublicAllowed: true,
+    days: [],
+    closures: [],
+    revision: 0,
+  },
   timeZone: 'America/Santo_Domingo',
   deletedAt: null,
   cmsPage: {
@@ -84,7 +96,12 @@ function createDependencies() {
       start: new Date('2099-01-01T04:00:00.000Z'),
       end: new Date('2099-01-02T04:00:00.000Z'),
     }),
-    getPublicContext: jest.fn().mockResolvedValue({}),
+    getPublicContext: jest.fn().mockResolvedValue({
+      timeZone: ORGANIZATION.timeZone,
+      policy: policyFromOrganization(
+        ORGANIZATION as unknown as BusinessPolicyOrganization,
+      ),
+    }),
     isAvailableInContext: jest.fn().mockReturnValue(true),
   };
   return { transaction, prisma, bookings, audit, availability };

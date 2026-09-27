@@ -1,5 +1,10 @@
 # Modelo de datos — mapa vigente
 
+## C1 aprobado e integrado localmente — Horario y zona
+
+**BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. BusinessSchedule/Day/Window/Closure/Revision forman el agregado operativo por tenant; Organization conserva la zona autoritativa. Revisión esperada y lock Organization antes de Client/Booking/Professional protegen comandos globales y dependencias. Estado legacy no confirmado conserva diagnóstico/lectura; confirmado usa solo el agregado y falla cerrado ante corrupción. Revisión durable, motivos privados y cierres cancelados preservan historia. [Contrato](../features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](../features/HORARIO_ZONA_C1_EVIDENCIA.md). Estas relaciones están integradas en el código del proyecto local; el archivo de migración sigue pendiente de aplicación autorizada. No afirman migración productiva ni autorización C2.
+
+
 ## Fuente autoritativa
 
 [`apps/api/prisma/schema.prisma`](../../apps/api/prisma/schema.prisma) y las migraciones en [`apps/api/prisma/migrations/`](../../apps/api/prisma/migrations/) son la verdad ejecutable. Este documento explica relaciones; si difiere, auditar el código y corregir este mapa, nunca inferir que el Markdown altera la base.

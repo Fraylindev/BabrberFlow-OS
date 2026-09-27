@@ -294,6 +294,7 @@ describe('AuthService — autenticación', () => {
       expect(mockTx.organization.create).toHaveBeenCalledWith({
         data: {
           name: 'Nueva Barberia',
+          businessSchedule: { create: {} },
           slug: 'nueva-barberia',
           email: 'org@barberia.com',
         },
@@ -360,6 +361,7 @@ describe('AuthService — autenticación', () => {
       expect(mockTx.organization.create).toHaveBeenCalledWith({
         data: {
           name: 'Barber',
+          businessSchedule: { create: {} },
           slug: 'barber',
           email: 'contacto@barber.com',
         },

@@ -12,6 +12,8 @@ import { BookingStatus, ProfessionalStatus, type Prisma } from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import { lockOrganizationSchedule } from '../common/organization-schedule-lock';
+import { hasExplicitTimeZone } from '../professionals/professional-availability.util';
 import {
   lockEmailBooking,
   lockEmailClient,
@@ -112,6 +114,7 @@ export class BookingsService {
     requirePublicProfessional: boolean,
   ): Promise<BookingMutationResponse> {
     const db = transaction;
+    await lockOrganizationSchedule(transaction, organizationId);
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
 
     try {
@@ -159,6 +162,13 @@ export class BookingsService {
     // individual y para futura restricción opcional por profesional.
 
     const startDate = new Date(startTime);
+    if (
+      !hasExplicitTimeZone(startTime) ||
+      !Number.isFinite(startDate.getTime())
+    )
+      throw new BadRequestException(
+        'Indica una fecha y hora válidas del negocio.',
+      );
     if (startDate.getTime() < Date.now()) {
       throw new BadRequestException(
         'No se puede reservar una cita en una fecha u hora que ya pasó',
@@ -352,6 +362,14 @@ export class BookingsService {
     const startDate = dto.startTime
       ? new Date(dto.startTime)
       : booking.startTime;
+    if (
+      dto.startTime &&
+      (!hasExplicitTimeZone(dto.startTime) ||
+        !Number.isFinite(startDate.getTime()))
+    )
+      throw new BadRequestException(
+        'Indica una fecha y hora válidas del negocio.',
+      );
     if (startDate.getTime() < Date.now()) {
       throw new BadRequestException(
         'No se puede reprogramar una cita a una fecha u hora que ya pasó',
@@ -458,7 +476,7 @@ export class BookingsService {
     const reactivatesFutureSchedule =
       booking.status === BookingStatus.CANCELLED &&
       FUTURE_OPERATIONAL_STATUSES.includes(updateBookingStatusDto.status) &&
-      booking.startTime.getTime() > Date.now();
+      booking.endTime.getTime() > Date.now();
     if (reactivatesFutureSchedule) {
       const lockedProfessional = await lockProfessionalForBookingIntegrity(
         transaction,

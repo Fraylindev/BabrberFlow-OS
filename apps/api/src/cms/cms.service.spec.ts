@@ -30,6 +30,17 @@ function fixture(role: UserRole = UserRole.OWNER) {
         deletedAt: null,
         slug: 'tenant',
         businessHours: null,
+        businessSchedule: {
+          state: 'CONFIRMED',
+          zoneConfirmed: true,
+          revision: 0,
+          legacyPublicAllowed: false,
+          closures: [],
+          days: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+            dayOfWeek,
+            windows: [],
+          })),
+        },
         timeZone: 'America/Santo_Domingo',
       }),
     },

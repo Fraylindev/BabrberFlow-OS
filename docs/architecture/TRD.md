@@ -1,5 +1,10 @@
 # TRD — Arquitectura técnica vigente
 
+## C1 aprobado e integrado localmente — Horario y zona
+
+**BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. BusinessSchedule/Day/Window/Closure/Revision forman el agregado operativo por tenant; Organization conserva la zona autoritativa. Revisión esperada y lock Organization antes de Client/Booking/Professional protegen comandos globales y dependencias. Estado legacy no confirmado conserva diagnóstico/lectura; confirmado usa solo el agregado y falla cerrado ante corrupción. Revisión durable, motivos privados y cierres cancelados preservan historia. [Contrato](../features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](../features/HORARIO_ZONA_C1_EVIDENCIA.md). Estas relaciones están integradas en el código del proyecto local; el archivo de migración sigue pendiente de aplicación autorizada. No afirman migración productiva ni autorización C2.
+
+
 ## Alcance y fuentes
 
 Este documento describe la arquitectura que ejecuta el repositorio. El código y Prisma son la verdad ejecutable; [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) documenta contratos y [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md) estados.

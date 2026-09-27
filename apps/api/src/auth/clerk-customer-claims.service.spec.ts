@@ -43,6 +43,7 @@ describe('ClerkCustomerClaimsService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    queryRaw.mockReset();
     getVerifiedClerkProfile.mockResolvedValue({
       name: 'Customer QA',
       email: 'customer@example.test',
@@ -51,6 +52,7 @@ describe('ClerkCustomerClaimsService', () => {
       (callback: (client: typeof tx) => Promise<unknown>) => callback(tx),
     );
     queryRaw.mockResolvedValueOnce([booking]).mockResolvedValueOnce([client]);
+    queryRaw.mockResolvedValue([booking]);
     findUser.mockResolvedValue(null);
     createUser.mockResolvedValue({
       id: '0d2216b9-f649-4ad3-b661-87f29889eaff',
@@ -97,7 +99,8 @@ describe('ClerkCustomerClaimsService', () => {
     queryRaw.mockReset();
     queryRaw
       .mockResolvedValueOnce([booking])
-      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }]);
+      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }])
+      .mockResolvedValueOnce([booking]);
     findUser.mockResolvedValueOnce({ clerkUserId: 'clerk_customer' });
 
     await expect(service.claim('clerk_customer', dto)).resolves.toEqual({

@@ -8,7 +8,12 @@ import { AvailabilityBlockStatus, BookingStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
-import { resolveBusinessHours } from '../public-booking/availability.util';
+import {
+  businessPolicySelect,
+  insideBusinessPolicy,
+  policyFromOrganization,
+  type BusinessPolicy,
+} from '../business-schedule/business-schedule.policy';
 import {
   AvailabilityBlockResponseDto,
   CreateAvailabilityBlockDto,
@@ -20,13 +25,14 @@ import {
 } from './dto/professional-availability.dto';
 import {
   AvailabilityWindow,
-  addDaysToIsoDate,
   hasExplicitTimeZone,
-  isIntervalInsideWindows,
   isValidTimeZone,
   minuteToHHmm,
   parseHHmm,
-  zonedLocalDateTimeToUtc,
+  utcRangeForLocalDate,
+  isUnambiguousInstant,
+  legacyZonedLocalDateTimeToUtc,
+  addDaysToIsoDate,
 } from './professional-availability.util';
 
 const FUTURE_BOOKING_STATUSES: BookingStatus[] = [
@@ -40,8 +46,7 @@ const AVAILABILITY_CONFLICT_MESSAGE =
 
 interface AvailabilityContext {
   timeZone: string;
-  globalOpenMinute: number;
-  globalCloseMinute: number;
+  policy: BusinessPolicy;
   schedules: Map<string, AvailabilityWindow[]>;
   blocks: Map<string, Array<{ startTime: Date; endTime: Date }>>;
 }
@@ -92,6 +97,7 @@ export class ProfessionalAvailabilityService {
         professionalId,
         organizationId,
         shifts,
+        new Date(),
       );
       await transaction.professionalWeeklySchedule.deleteMany({
         where: { professionalId, organizationId },
@@ -140,7 +146,6 @@ export class ProfessionalAvailabilityService {
     dto: CreateAvailabilityBlockDto,
   ): Promise<AvailabilityBlockResponseDto> {
     const range = this.normalizeBlockRange(dto.startTime, dto.endTime);
-    this.assertFutureBlockEnd(range.endTime);
     const note = this.normalizeNote(dto.note);
     const block = await this.prisma.db.$transaction(async (transaction) => {
       await this.lockOwnedProfessionalOrThrow(
@@ -151,6 +156,14 @@ export class ProfessionalAvailabilityService {
       await this.assertBlockDoesNotAffectFutureBookings(
         transaction,
         professionalId,
+        organizationId,
+        range.startTime,
+        range.endTime,
+        new Date(),
+      );
+      this.assertFutureBlockEnd(range.endTime);
+      await this.assertBlockClock(
+        transaction,
         organizationId,
         range.startTime,
         range.endTime,
@@ -223,12 +236,19 @@ export class ProfessionalAvailabilityService {
       const status = dto.status ?? current.status;
       if (status === AvailabilityBlockStatus.ACTIVE) {
         this.assertFutureBlockEnd(range.endTime);
+        await this.assertBlockClock(
+          transaction,
+          organizationId,
+          range.startTime,
+          range.endTime,
+        );
         await this.assertBlockDoesNotAffectFutureBookings(
           transaction,
           professionalId,
           organizationId,
           range.startTime,
           range.endTime,
+          new Date(),
         );
       }
 
@@ -305,12 +325,16 @@ export class ProfessionalAvailabilityService {
     rangeStart: Date,
     rangeEnd: Date,
   ): Promise<AvailabilityContext> {
-    return this.loadContext(
-      this.prisma.db,
-      organizationId,
-      professionalIds,
-      rangeStart,
-      rangeEnd,
+    return this.prisma.db.$transaction(
+      (tx) =>
+        this.loadContext(
+          tx,
+          organizationId,
+          professionalIds,
+          rangeStart,
+          rangeEnd,
+        ),
+      { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
     );
   }
 
@@ -321,12 +345,10 @@ export class ProfessionalAvailabilityService {
     endTime: Date,
   ): boolean {
     if (
-      !isIntervalInsideWindows(
+      !insideBusinessPolicy(
+        context.policy,
         startTime,
         endTime,
-        context.timeZone,
-        context.globalOpenMinute,
-        context.globalCloseMinute,
         context.schedules.get(professionalId) ?? [],
       )
     ) {
@@ -340,14 +362,20 @@ export class ProfessionalAvailabilityService {
   getUtcRangeForLocalDate(
     date: string,
     timeZone: string,
+    legacy = false,
   ): { start: Date; end: Date } {
-    const nextDate = addDaysToIsoDate(date, 1);
-    const start = zonedLocalDateTimeToUtc(date, '00:00', timeZone);
-    const end = nextDate
-      ? zonedLocalDateTimeToUtc(nextDate, '00:00', timeZone)
-      : null;
-    if (!start || !end) throw new BadRequestException('Fecha inválida');
-    return { start, end };
+    if (legacy) {
+      const next = addDaysToIsoDate(date, 1),
+        start = legacyZonedLocalDateTimeToUtc(date, '00:00', timeZone),
+        end = next
+          ? legacyZonedLocalDateTimeToUtc(next, '00:00', timeZone)
+          : null;
+      if (!start || !end) throw new BadRequestException('Fecha inválida');
+      return { start, end };
+    }
+    const range = utcRangeForLocalDate(date, timeZone);
+    if (!range) throw new BadRequestException('Fecha inválida');
+    return range;
   }
 
   private readonly blockSelect = {
@@ -418,7 +446,7 @@ export class ProfessionalAvailabilityService {
     const [organization, schedules, blocks] = await Promise.all([
       db.organization.findUnique({
         where: { id: organizationId },
-        select: { timeZone: true, businessHours: true },
+        select: businessPolicySelect,
       }),
       db.professionalWeeklySchedule.findMany({
         where: { organizationId, professionalId: { in: professionalIds } },
@@ -447,7 +475,7 @@ export class ProfessionalAvailabilityService {
         'La zona horaria de la organización no es válida',
       );
     }
-    const globalHours = resolveBusinessHours(organization.businessHours);
+    const policy = policyFromOrganization(organization);
     const scheduleMap = new Map<string, AvailabilityWindow[]>();
     for (const schedule of schedules) {
       const values = scheduleMap.get(schedule.professionalId) ?? [];
@@ -465,8 +493,7 @@ export class ProfessionalAvailabilityService {
     }
     return {
       timeZone: organization.timeZone,
-      globalOpenMinute: globalHours.openMinutes,
-      globalCloseMinute: globalHours.closeMinutes,
+      policy,
       schedules: scheduleMap,
       blocks: blockMap,
     };
@@ -535,6 +562,28 @@ export class ProfessionalAvailabilityService {
     }
   }
 
+  private async assertBlockClock(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    start: Date,
+    end: Date,
+  ) {
+    const org = await tx.organization.findUnique({
+      where: { id: organizationId },
+      select: { timeZone: true, businessSchedule: { select: { state: true } } },
+    });
+    if (!org) throw new NotFoundException('Organización no encontrada');
+    if (
+      !isValidTimeZone(org.timeZone) ||
+      (org.businessSchedule?.state !== 'LEGACY_UNCONFIRMED' &&
+        (!isUnambiguousInstant(start, org.timeZone) ||
+          !isUnambiguousInstant(end, org.timeZone)))
+    )
+      throw new BadRequestException(
+        'Esa hora no existe o se repite. Elige otra franja.',
+      );
+  }
+
   private normalizeNote(value: string | null | undefined): string | null {
     if (value == null) return null;
     return value.trim() || null;
@@ -561,12 +610,13 @@ export class ProfessionalAvailabilityService {
     professionalId: string,
     organizationId: string,
     proposedSchedule: AvailabilityWindow[],
+    now: Date,
   ): Promise<void> {
     const bookings = await transaction.booking.findMany({
       where: {
         professionalId,
         organizationId,
-        startTime: { gt: new Date() },
+        endTime: { gt: now },
         status: { in: FUTURE_BOOKING_STATUSES },
       },
       select: { startTime: true, endTime: true },
@@ -602,7 +652,7 @@ export class ProfessionalAvailabilityService {
       )
     ) {
       throw new ConflictException(
-        'El nuevo horario afecta reservas futuras pendientes o confirmadas',
+        'El nuevo horario afecta reservas pendientes o confirmadas futuras o en curso',
       );
     }
   }
@@ -613,14 +663,15 @@ export class ProfessionalAvailabilityService {
     organizationId: string,
     startTime: Date,
     endTime: Date,
+    now: Date,
   ): Promise<void> {
     const booking = await transaction.booking.findFirst({
       where: {
         professionalId,
         organizationId,
         status: { in: FUTURE_BOOKING_STATUSES },
-        startTime: { gt: new Date(), lt: endTime },
-        endTime: { gt: startTime },
+        startTime: { lt: endTime },
+        endTime: { gt: startTime > now ? startTime : now },
       },
       select: { id: true },
     });

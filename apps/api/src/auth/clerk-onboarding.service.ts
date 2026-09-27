@@ -240,6 +240,7 @@ export class ClerkOnboardingService {
                 name: dto.organizationName,
                 slug: normalizedSlug,
                 email: normalizedOrgEmail,
+                businessSchedule: { create: {} },
               },
             });
 

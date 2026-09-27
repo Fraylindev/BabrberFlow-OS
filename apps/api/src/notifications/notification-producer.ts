@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { lockOrganizationSchedule } from '../common/organization-schedule-lock';
 import {
   classifyBookingChange,
   corroborateRecipient,
@@ -20,6 +21,7 @@ export async function lockEmailClient(
   organizationId: string,
   clientId: string,
 ) {
+  await lockOrganizationSchedule(tx, organizationId);
   const rows = await tx.$queryRaw<{ id: string }[]>(Prisma.sql`
     SELECT "id" FROM "Client"
     WHERE "id" = ${clientId} AND "organizationId" = ${organizationId}

@@ -12,6 +12,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN } from '../../professionals/professional-availability.util';
 import { PublicEmailPreferenceInput } from '../../notifications/email-preference.dto';
 import {
   PASSWORD_MIN_LENGTH,
@@ -33,6 +34,7 @@ export class CreatePublicBookingDto extends PublicEmailPreferenceInput {
   professionalId!: string;
 
   @IsISO8601()
+  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN)
   startTime!: string;
 
   @Transform(({ value }: { value: unknown }) =>

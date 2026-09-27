@@ -14,10 +14,9 @@ import {
 } from '../common/prisma-error.util';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  addDaysToIsoDate,
   isValidIsoDate,
   isValidTimeZone,
-  zonedLocalDateTimeToUtc,
+  utcRangeForLocalDate,
 } from '../professionals/professional-availability.util';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import {
@@ -134,11 +133,10 @@ export class InvoicesService {
     }
 
     const from = query.from
-      ? zonedLocalDateTimeToUtc(query.from, '00:00', organization.timeZone)
+      ? utcRangeForLocalDate(query.from, organization.timeZone)?.start
       : null;
-    const dayAfterTo = query.to ? addDaysToIsoDate(query.to, 1) : null;
-    const exclusiveTo = dayAfterTo
-      ? zonedLocalDateTimeToUtc(dayAfterTo, '00:00', organization.timeZone)
+    const exclusiveTo = query.to
+      ? utcRangeForLocalDate(query.to, organization.timeZone)?.end
       : null;
     if ((query.from && !from) || (query.to && !exclusiveTo)) {
       throw new BadRequestException('El rango de fechas no es válido');

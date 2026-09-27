@@ -55,7 +55,7 @@ BEGIN
     RAISE EXCEPTION 'Runtime exceeds media contract privileges';
   END IF;
 
-  -- Exact 26-migration baseline. New tables fail this gate until their
+  -- Exact 27-migration baseline. New tables fail this gate until their
   -- migration declares grants and the reviewed matrix is updated.
   FOR object_record IN
     SELECT c.oid, c.relname, m.allowed
@@ -63,6 +63,9 @@ BEGIN
     JOIN pg_namespace n ON n.oid = c.relnamespace
     LEFT JOIN (VALUES
       ('AuditLog','SI'), ('Booking','SIU'), ('BookingEmailEvent','SI'),
+      ('BusinessSchedule','SIU'), ('BusinessClosure','SIU'),
+      ('BusinessScheduleDay','SID'), ('BusinessScheduleWindow','SID'),
+      ('BusinessScheduleRevision','SI'),
       ('BookingEmailPreference','SIU'), ('Client','SIU'),
       ('CmsOperation','SI'), ('CmsPage','SIU'), ('EmailAbuseBucket','SIUD'),
       ('EmailChannelControl','SIU'), ('EmailOutbox','SIU'),
@@ -105,7 +108,7 @@ BEGIN
   END LOOP;
 
   IF (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
-      WHERE n.nspname='public' AND c.relkind IN ('r','p')) <> 31 THEN
+      WHERE n.nspname='public' AND c.relkind IN ('r','p')) <> 36 THEN
     RAISE EXCEPTION 'Public table matrix is incomplete';
   END IF;
   IF EXISTS (

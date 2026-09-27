@@ -20,6 +20,9 @@ jest.mock('../notifications/notification-producer', () => ({
   lockEmailBooking: jest.fn().mockResolvedValue(undefined),
   recordBookingEmailChange: jest.fn().mockResolvedValue(undefined),
 }));
+jest.mock('../common/organization-schedule-lock', () => ({
+  lockOrganizationSchedule: jest.fn().mockResolvedValue(undefined),
+}));
 
 function createMockAvailability() {
   return {

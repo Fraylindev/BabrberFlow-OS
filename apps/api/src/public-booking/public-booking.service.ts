@@ -20,18 +20,21 @@ import {
   normalizeClientName,
   normalizeClientPhone,
 } from '../clients/client-normalization.util';
-import {
-  generateCandidateSlots,
-  rangesOverlap,
-  resolveBusinessHours,
-} from './availability.util';
+import { rangesOverlap } from './availability.util';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
 import {
   getZonedDateParts,
   isValidTimeZone,
   zonedLocalDateTimeToUtc,
+  legacyZonedLocalDateTimeToUtc,
 } from '../professionals/professional-availability.util';
 import { projectContent } from '../cms/cms.projection';
+import {
+  businessPolicySelect,
+  canReadPublicSchedule,
+  candidatesForPolicy,
+  policyFromOrganization,
+} from '../business-schedule/business-schedule.policy';
 
 type PublicClientAction = 'CREATE' | 'RESTORE' | null;
 
@@ -60,8 +63,7 @@ export class PublicBookingService {
         slug: true,
         isActive: true,
         deletedAt: true,
-        businessHours: true,
-        timeZone: true,
+        ...businessPolicySelect,
         cmsPage: { select: { isPublished: true, publishedSnapshot: true } },
       },
     });
@@ -74,6 +76,22 @@ export class PublicBookingService {
     ) {
       throw new NotFoundException('Información no disponible.');
     }
+    if (!isValidTimeZone(organization.timeZone))
+      throw new ServiceUnavailableException(
+        'No fue posible calcular la fecha del negocio.',
+      );
+    let publiclyEligible: boolean;
+    try {
+      publiclyEligible = canReadPublicSchedule(
+        policyFromOrganization(organization),
+      );
+    } catch {
+      throw new ServiceUnavailableException(
+        'No fue posible calcular la fecha del negocio.',
+      );
+    }
+    if (!publiclyEligible)
+      throw new NotFoundException('Información no disponible.');
     return { ...organization, cmsPage: organization.cmsPage };
   }
 
@@ -133,6 +151,7 @@ export class PublicBookingService {
     const dayRange = this.availabilityService.getUtcRangeForLocalDate(
       query.date,
       organization.timeZone,
+      organization.businessSchedule?.state === 'LEGACY_UNCONFIRMED',
     );
     const service = await this.prisma.db.service.findFirst({
       where: {
@@ -180,11 +199,6 @@ export class PublicBookingService {
       return { date: query.date, serviceId: query.serviceId, slots: [] };
     }
 
-    const businessHours = resolveBusinessHours(organization.businessHours);
-    const candidateTimes = generateCandidateSlots(
-      businessHours,
-      service.duration,
-    );
     const existingBookings =
       await this.bookingsService.findActiveBookingsInRange(
         organization.id,
@@ -198,6 +212,12 @@ export class PublicBookingService {
       dayRange.start,
       dayRange.end,
     );
+    const candidateTimes = candidatesForPolicy(
+      availabilityContext.policy,
+      query.date,
+      getZonedDateParts(dayRange.start, availabilityContext.timeZone).dayOfWeek,
+      service.duration,
+    );
 
     const now = new Date();
     const slots: {
@@ -206,11 +226,11 @@ export class PublicBookingService {
       startTime: string;
     }[] = [];
     for (const time of candidateTimes) {
-      const slotStart = zonedLocalDateTimeToUtc(
-        query.date,
-        time,
-        organization.timeZone,
-      );
+      const convert =
+        availabilityContext.policy.state === 'LEGACY_UNCONFIRMED'
+          ? legacyZonedLocalDateTimeToUtc
+          : zonedLocalDateTimeToUtc;
+      const slotStart = convert(query.date, time, availabilityContext.timeZone);
       if (!slotStart) continue;
       const slotEnd = new Date(slotStart.getTime() + service.duration * 60000);
       if (slotStart <= now) continue;

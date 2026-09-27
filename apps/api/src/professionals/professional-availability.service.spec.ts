@@ -35,6 +35,14 @@ function createDependencies() {
       findUnique: jest.fn().mockResolvedValue({
         timeZone: TIME_ZONE,
         businessHours: null,
+        businessSchedule: {
+          state: 'LEGACY_UNCONFIRMED',
+          zoneConfirmed: false,
+          legacyPublicAllowed: false,
+          days: [],
+          closures: [],
+          revision: 0,
+        },
       }),
     },
     professional: {
@@ -151,7 +159,7 @@ describe('ProfessionalAvailabilityService', () => {
       },
     );
 
-    expect(db.$queryRaw).toHaveBeenCalledTimes(1);
+    expect(db.$queryRaw).toHaveBeenCalledTimes(2);
     expect(db.professionalWeeklySchedule.deleteMany).toHaveBeenCalledWith({
       where: {
         professionalId: PROFESSIONAL_ID,

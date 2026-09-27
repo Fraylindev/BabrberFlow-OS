@@ -111,6 +111,7 @@ export class AuthService {
                 name: organizationName,
                 slug: normalizedSlug,
                 email: normalizedOrganizationEmail,
+                businessSchedule: { create: {} },
               },
             });
 
