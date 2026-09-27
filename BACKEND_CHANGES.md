@@ -2,7 +2,7 @@
 
 ## 2026-09-27 — API detrás de Caddy en OCI
 
-Despliegue autorizado, EN EJECUCIÓN / INCOMPLETO. Nest configura confianza únicamente en proxy loopback para staging/producción; Caddy sustituye X-Forwarded-For con el cliente real y elimina Forwarded. Evita que el presupuesto PostgreSQL agrupe a todos los clientes como loopback, sin confiar en peers privados/remotos ni cambiar DTOs/roles. Tres pruebas nuevas del límite de proxy; tipos/lint/build, 724 unitarias (11 omitidas) y 23 negativos del startup compilado pasaron, exit 0. [Evidencia operativa](docs/quality/API_OCI_DESPLIEGUE.md).
+**IMPLEMENTADO / EN REVISIÓN**, despliegue autorizado y ejecutado. Nest configura confianza únicamente en proxy loopback para staging/producción; Caddy sustituye X-Forwarded-For con el cliente real y elimina Forwarded. Evita que el presupuesto PostgreSQL agrupe a todos los clientes como loopback, sin confiar en peers privados/remotos ni cambiar DTOs/roles. Tres pruebas nuevas del límite de proxy; tipos/lint/build, 724 unitarias (11 omitidas) y 23 negativos del startup compilado tanto local como imagen ARM pasaron, exit 0. HTTPS externo, CORS exacto, Supabase runtime READ ONLY/TLS y recuperación API/Caddy pasaron. EMAIL/reserva pública conservan flags; login positivo navegador→API conserva su gate separado. [Evidencia operativa](docs/quality/API_OCI_DESPLIEGUE.md).
 
 ## 2026-09-26 — Base previa a producción C1, control de abuso y operación
 

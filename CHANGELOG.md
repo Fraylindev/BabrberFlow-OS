@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## 2026-09-27 — Despliegue API Oracle autorizado, en ejecución
+## 2026-09-27 — API desplegada en Oracle Always Free
 
 - Verificados cuenta Free Tier, cuota de prueba y beneficio Always Free vigente 2 OCPU/12 GB. Medidos worker, monitor, backup cifrado y restore aislado antes de dimensionar; ambos trabajos terminaron exit 0.
-- VM redimensionada a 2/12 y servicios previos recuperados. DNS A API creado. Preparados contenedores API/Caddy con recursos limitados, secretos protegidos y CORS exacto confirmado por el propietario.
-- Express confía únicamente en proxy loopback para el presupuesto por cliente; Caddy sustituye forwarding headers. Validación y HTTPS externa pendientes. [Evidencia](docs/quality/API_OCI_DESPLIEGUE.md). EN EJECUCIÓN / INCOMPLETO, sin aprobación final.
+- VM redimensionada a 2/12 y servicios previos recuperados. API rootless 1,5 CPU/2 GiB y Caddy 0,25 CPU/256 MiB instalados con imágenes inmutables, secretos LoadCredential y certificados persistentes. Añadidos únicamente DNS A y TCP 80/443; reglas OCI originales preservadas. Delegación cgroup CPU habilitada y archivos Linux fijados a LF.
+- HTTPS externo pasó antes y después de SIGKILL de los lanzadores: TLS 1.3/Let's Encrypt válido, 308 HTTP, raíz 404 con UUID, privada 401, CORS solo Vercel productivo y puertos 3000/2019 inaccesibles. Supabase runtime comprobado en READ ONLY y TLS hacia pooler verificado con CA/hostname.
+- Express confía únicamente en proxy loopback; Caddy sustituye forwarding headers. Tipos/lint/build, 724 pruebas aprobadas (11 omitidas) y 23 negativos locales/imagen ARM pasaron. [Evidencia](docs/quality/API_OCI_DESPLIEGUE.md). **IMPLEMENTADO / EN REVISIÓN**, sin aprobación final, cambios de plan ni activación EMAIL/reserva pública.
 
 ## 2026-09-26 — Cierre de base previa a producción C1 con excepción D2
 

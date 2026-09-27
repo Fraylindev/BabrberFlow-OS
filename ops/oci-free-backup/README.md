@@ -2,6 +2,8 @@
 
 Estado C1: VM Oracle Always Free `kortek-free-services` en Ashburn (`150.136.7.19`), bucket privado `kortek-booking-encrypted-backups` en `idujavz2hijf`, proyecto Supabase Free productivo `ilaoolpcrlmqkftirjog`. No son un despliegue público de API/web. EMAIL permanece pausado.
 
+Actualización 2026-09-27: API publicada bajo autorización posterior en esta misma VM, ahora 2 OCPU/12 GB, con Podman rootless/Caddy y solo TCP 80/443 públicos. Worker y los tres timers siguen activos. La declaración anterior de API no publicada y las referencias inferiores al firewall describen C1 histórico. [Operación API](../oci-api/README.md) y [evidencia externa](../../docs/quality/API_OCI_DESPLIEGUE.md). Sondas conjuntas web/API siguen desactivadas; EMAIL sigue pausado.
+
 Actualización 2026-09-26: **C1 CERRADO / APROBADO** por instrucción expresa del propietario, con excepción D2 del bootstrap local aceptada. Confirmó recepción de alarmas en `vps@kortek.cloud` y custodia de la frase GPG en gestor externo a VM/equipo. Portapapeles actual e historial local limpiados y terminales temporales cerradas, verificados sin leer el secreto. Las menciones inferiores a confirmaciones pendientes describen el ensayo anterior; quedan resueltas por esta declaración del propietario. La recuperación independiente y el restore manual están probados; transferencia nueva Cloud Shell → equipo, RTO integral y primera ejecución semanal por horario no se acreditan. Activación pública/EMAIL y C3 conservan sus gates. [Cierre y evidencia](../../docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md).
 
 Riesgo del hosting gratuito: [Oracle puede reclamar instancias Always Free
@@ -9,7 +11,7 @@ inactivas](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Al
 La política contempla siete días con CPU p95, red y memoria A1 inferiores al
 20 %. La actividad del monitor no garantiza evitarlo. La alarma de ausencia
 detecta pérdida de métricas; recuperar servicios requiere acceso OCI independiente
-y clave de backup fuera del VM. El VM usa 1 OCPU/6 GB, dentro del límite A1
+y clave de backup fuera del VM. El VM usa 2 OCPU/12 GB, dentro del límite A1
 publicado de 2 OCPU/12 GB. No se generan cargas artificiales ni upgrades.
 
 Object Storage publica un límite gratuito de 50000 solicitudes/mes. Se sustituyó

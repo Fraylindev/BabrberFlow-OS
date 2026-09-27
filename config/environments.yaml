@@ -24,7 +24,22 @@ staging:
   emailEnabled: false
 
 production:
-  status: database-cutover-complete-service-unpublished
+  status: api-deployed-implementation-in-review
+  apiHost: oracle-always-free-podman
+  apiRelease: b5615869dcbec4bd174608f2373e73ff618fae26
+  apiImageId: 8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2
+  apiVm: kortek-free-services
+  apiVmOcpus: 2
+  apiVmMemoryGb: 12
+  apiCpuLimit: 1.5
+  apiMemoryLimitGiB: 2
+  apiDatabasePoolLimit: 4
+  reverseProxy: caddy-2.11.4
+  reverseProxyImageId: 8b20b62e1c76d212304053dc6484bd1f2186018e2baa217ce7a35cec0ded404c
+  apiTls: lets-encrypt-public-ca-verified
+  apiExternalSmoke: passed-2026-09-27
+  publicHttpMonitorEnabled: false
+  publicBookingClosed: true
   webConfigurationGate: build-and-start-fail-closed
   webArtifactBinding: public-environment-sha256
   webOrigin: https://booking.kortek.cloud

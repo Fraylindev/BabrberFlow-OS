@@ -1,6 +1,6 @@
 # Despliegue API — Oracle Always Free
 
-Fecha: 2026-09-27. **EN EJECUCIÓN / INCOMPLETO**. El propietario autorizó
+Fecha: 2026-09-27. **IMPLEMENTADO / EN REVISIÓN**. El propietario autorizó
 redimensionar la misma VM y publicar exclusivamente la API con TLS, CORS
 productivo y Supabase Free. Esto sustituye la falta de autorización de API
 pública registrada en C1; no aprueba el resultado final ni activa EMAIL.
@@ -33,7 +33,7 @@ EMAIL pausado, MFA conserva política Hobby y reserva pública cerrada.
 - Supabase MCP confirmó `Kortek Booking` ACTIVE_HEALTHY, PostgreSQL 17.6 y
   organización `plan=free`, `tier=tier_free`. Sin compra ni cambios de plan.
 
-## Implementación preparada
+## Implementación desplegada
 
 [Archivos operativos](../../ops/oci-api/README.md): API rootless con recursos
 limitados, Caddy con TLS automático/persistencia y secretos systemd. Corrección
@@ -42,7 +42,93 @@ desarrollo, IP reenviada con hop forjado y rechazo de peers privados/remotos.
 Sin cambio de contrato funcional. DNS A creado `api.booking` → `150.136.7.19`,
 DNS only; web ya resuelve por CNAME a Vercel.
 
-Pendientes: finalizar validaciones, construir imagen Arm, instalar credenciales
-protegidas, abrir únicamente TCP 80/443 en VCN/firewalld, iniciar API/Caddy y
-comprobar HTTPS desde fuera. La política del navegador solicitó confirmación
-en el momento de ampliar acceso de red; continúa el trabajo independiente.
+El propietario respondió a la confirmación de red «Toma la decision que
+consideres mejor en todos los ambitos para este caso». Se añadieron únicamente
+TCP 80/443 desde Internet a la security list y http/https en firewalld. Cloud
+Shell cotejó JSON anterior/posterior: `NETWORK_RULES_PRESERVED_OK`; reglas de
+ingress existentes y egress idénticas. No se abrió TCP 3000 ni el admin de Caddy.
+
+| Componente | Identidad desplegada | Recursos |
+| --- | --- | --- |
+| API ARM, código/APP_RELEASE | `b5615869dcbec4bd174608f2373e73ff618fae26` | 1,5 CPU / 2 GiB / 128 procesos, heap 1536 MiB |
+| API imagen inmutable | `8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2` | rootless opc, FS read-only, sin capacidades |
+| Caddy oficial 2.11.4 | `8b20b62e1c76d212304053dc6484bd1f2186018e2baa217ce7a35cec0ded404c` | 0,25 CPU / 256 MiB / 64 procesos, NET_BIND_SERVICE |
+
+API y Caddy están enabled/active bajo systemd. Credenciales API root:root/0600
+en `/etc/kortek-api/runtime-env` vía LoadCredential; CA Supabase montada read-only.
+Pool API 4, worker 2. Certificados Caddy persistidos bajo `/var/lib/kortek-caddy`.
+No se imprimieron secretos ni se incorporaron al contexto mínimo de Git archive.
+
+Muestra posterior: API 69,37 MB, Caddy 16,89 MB, worker 34,38 MB; host disponible
+9862 MiB, swap usado 0; disco raíz 15/30 GB, 16 GB disponibles. Inspección real
+API: Memory 2147483648, CpuQuota 150000/CpuPeriod 100000, OOMKilled false.
+Los límites dejan 0,25 OCPU fuera de las cuotas API/Caddy; son techos compartidos,
+no una reserva exclusiva. Backup/monitor/restore compiten bajo Linux y disponen
+del margen RAM observado; estas muestras no acreditan carga máxima de usuarios.
+
+## Validación real
+
+- Tipos, lint, build y suite API completa: 724 aprobadas, 11 omitidas,
+  59 suites aprobadas/2 omitidas, exit 0. Tres pruebas nuevas HTTP de confianza
+  del proxy. No cambió el contrato, schema, privilegios ni las dependencias.
+- Startup compilado local **y en la imagen ARM exacta**, red none: 23/23
+  configuraciones inseguras rechazadas antes de Nest, exit 0. Incluye CORS
+  ausente/localhost/wildcard, modos inconsistentes, Clerk development, secretos
+  ausentes, rol migrador/admin y TLS inseguro. Arranque positivo posterior con
+  NODE_ENV/DEPLOY_ENV production, claves live y orígenes HTTPS exactos.
+- Bash, unidades systemd y configuración Caddy validados, exit 0.
+- Prisma desde el contenedor API conectó al proyecto real `ilaoolpcrlmqkftirjog`:
+  transacción READ ONLY, database postgres, current_user kortek_runtime,
+  30 tablas visibles al rol, `PRODUCTION_RUNTIME_DB_OK` a 04:27:14 UTC. No se
+  concedió SELECT sobre `_prisma_migrations` para el smoke: su lectura fue denegada.
+- TLS API→pooler `aws-0-us-east-1.pooler.supabase.com:5432` verificado con la CA
+  instalada, hostname y verify_return_error: TLS 1.3, `Verification: OK`.
+  pg_stat_ssl dio false en el salto interno pooler→PostgreSQL; ese dato no mide
+  la conexión cliente→pooler. Runtime usa sslmode=require/sslaccept=strict.
+- SIGKILL a los lanzadores Podman de API y Caddy: cada unidad recuperó su
+  contenedor automáticamente, NRestarts 1, ambos activos, certificado conservado.
+  Worker y timers monitor/backup/restore-drill activos; `RECOVERY_OK_API_AND_CADDY`,
+  exit 0. No se dejó un contenedor huérfano ni se restauró sobre producción.
+
+## HTTPS desde fuera de la VM
+
+[`external-smoke.py`](../../ops/oci-api/external-smoke.py) ejecutado en el equipo
+Windows operador, sin túnel, proxy, --resolve ni --insecure. Pasó a 04:24:56 UTC
+y de nuevo tras recuperación a **04:28:38 UTC**, exit 0.
+[Resultado JSON real conservado](evidence/api-oci-2026-09-27.json).
+
+| Comprobación externa | Resultado |
+| --- | --- |
+| DNS real | api.booking.kortek.cloud → 150.136.7.19 |
+| Certificado y canal | Let's Encrypt YE2, SAN exacto, TLS 1.3, cadena/hostname validados |
+| Vigencia observada | 2026-09-27 03:26:06 a 2026-12-26 03:26:05 UTC |
+| GET HTTPS / | 404 JSON de Nest, X-Request-Id `89b5abc4-cb48-4edd-a18e-29dbf9a6ad85`, HSTS |
+| GET /professionals sin token | 401 JSON |
+| GET HTTP / | 308 → https://api.booking.kortek.cloud/ |
+| Preflight Vercel real | 204, ACAO https://booking.kortek.cloud, credentials true |
+| Localhost, dominio ajeno y * | sin ACAO, no CORS abierto |
+| TCP 3000 / 2019 | inaccesibles desde fuera |
+
+Raíz 404 y privada 401 son los contratos reales esperados; no se inventó un
+health endpoint ni se presentó el 404 como readiness de negocio. DB se acreditó
+separadamente. El login positivo navegador→API y QA del frontend conservan sus
+gates de producto; no se modificó ni redeplegó Vercel. Sondas HTTP conjuntas
+web/API permanecen false, con los monitores previos activos. EMAIL sigue false,
+PUBLIC_BOOKING_CLOSED true y Supabase/Oracle conservan sus planes gratuitos.
+
+## Incidencias resueltas y continuidad
+
+Podman build no admite --cpus en esta versión: se usaron periodo/cuota CPU.
+El primer build con cuotas detectó cgroup CPU no delegado; se instaló el drop-in
+user@1000 y se recuperaron worker/monitor tras su reinicio acotado. El primer
+arranque del wrapper detectó CRLF; se normalizó a LF y `.gitattributes` asegura
+LF para posteriores instalaciones. Esos intentos fallidos no cuentan como checks
+aprobados; las ejecuciones corregidas terminaron exit 0.
+
+El procedimiento de redeploy y rollback está en el [runbook](../../ops/oci-api/README.md).
+No hay migraciones ni cambios de plan en esta entrega. La imagen identifica el
+commit de código; el commit posterior de evidencia/documentación y normalización
+operativa no cambia el código ejecutado. La permanencia y renovación futura TLS
+requieren la VM/DNS disponibles; el hosting Free conserva el riesgo de reclamación
+por inactividad ya documentado en continuidad. Aprobación final del propietario
+no inferida del despliegue autorizado.

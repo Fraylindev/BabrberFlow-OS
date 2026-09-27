@@ -1,0 +1,4 @@
+ops/oci-api/*.sh text eol=lf
+ops/oci-api/*.service text eol=lf
+ops/oci-api/*.conf text eol=lf
+ops/oci-api/Caddyfile text eol=lf

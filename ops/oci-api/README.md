@@ -30,16 +30,28 @@ Clerk autorizado. EMAIL sigue pausado y la reserva pública conserva su cierre.
 
 Crear un contexto mínimo con los manifests raíz y los archivos API declarados
 en `api.Containerfile`; excluir dotenv, secretos, dumps y node_modules. Construir
-en el VM Arm con `podman build -f api.Containerfile -t localhost/kortek-api:<SHA> .`.
+en el VM Arm con:
+
+```bash
+podman build --network host --cpu-period 100000 --cpu-quota 150000 \
+  --memory 3g -f ops/oci-api/api.Containerfile -t localhost/kortek-api:<SHA> .
+```
+
 La instalación congelada pertenece al build reproducible de la imagen; no cambia
 dependencias ni lockfile del repositorio.
+
+Para límites rootless CPU/memoria, instalar `rootless-delegation.conf` en
+`/etc/systemd/system/user@1000.service.d/kortek-delegation.conf`, ejecutar
+daemon-reload y reiniciar `user@1000` en una ventana acotada con worker/monitor
+detenidos y recuperados después. Comprobar `DelegateControllers` y los cgroups
+reales. `.gitattributes` fija LF en archivos operativos; no instalar scripts CRLF.
 
 Antes de iniciar: ejecutar en esa imagen `node ops/production-startup-drill.cjs`;
 los 23 negativos deben rechazarse antes de Nest. Instalar la CA y wrapper en
 `/home/opc/kortek-api/` y `/usr/local/libexec/`; instalar unidades en
 `/etc/systemd/system/`. Validar Bash y `systemd-analyze verify` antes de habilitar.
 Configurar `KORTEK_API_IMAGE` con ID inmutable en la credencial y
-`KORTEK_CADDY_IMAGE` con digest oficial en `/etc/kortek-caddy/image.conf`.
+`KORTEK_CADDY_IMAGE` con ID inmutable oficial en `/etc/kortek-caddy/image.conf`.
 
 Verificar servicios y consumo con `systemctl` y `podman stats`. Desde un equipo
 externo, sin `--insecure` ni override DNS: HTTPS raíz debe entregar 404 JSON y
@@ -48,6 +60,12 @@ el origen exacto. Localhost, wildcard y otro dominio deben carecer de ACAO.
 Comprobar redirección HTTP a HTTPS, cadena/nombre/vigencia TLS y puertos 3000/2019
 cerrados desde fuera. Root 404 acredita transporte; no reemplaza la comprobación
 READ ONLY de DB ni un login funcional.
+
+`external-smoke.py` automatiza ese smoke con Python estándar desde un equipo
+externo. No usa túnel, proxy, credenciales, override DNS ni TLS inseguro.
+La conexión API→pooler exige CA/hostname; `pg_stat_ssl` observa el salto interno
+pooler→PostgreSQL y no demuestra ni refuta el TLS del cliente hacia el pooler.
+El runtime no tiene SELECT sobre `_prisma_migrations`; no concederlo para un smoke.
 
 ## Rollback
 
