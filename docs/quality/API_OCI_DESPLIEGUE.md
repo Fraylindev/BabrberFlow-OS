@@ -116,6 +116,41 @@ gates de producto; no se modificó ni redeplegó Vercel. Sondas HTTP conjuntas
 web/API permanecen false, con los monitores previos activos. EMAIL sigue false,
 PUBLIC_BOOKING_CLOSED true y Supabase/Oracle conservan sus planes gratuitos.
 
+## Seguimiento productivo informado por el propietario — 2026-09-27
+
+- El propietario confirmó que recibió varias alarmas HTTP con `State=FIRING` y
+  `State=OK`; queda cerrado el pendiente de confirmación de recepción y
+  recuperación. La configuración desplegada de sondas públicas sigue en
+  `KORTEK_PUBLIC_HTTP_ENABLED=false`; no se atribuye ese correo a las métricas
+  `public_web_up`/`public_api_up` ni se declara activado C3 sin verificar la
+  regla concreta y sus métricas de origen.
+- El propietario informó un registro real satisfactorio con un correo nuevo.
+  La consulta READ ONLY a Supabase confirma la última alta como `Dental Ross`,
+  organización creada el `2026-09-27 05:12:40.239 UTC`, seguida por su usuario,
+  membresía OWNER y auditoría `CREATE Organization` dentro de la misma
+  transacción. Esa hora se usó como límite estricto: esa organización y
+  cualquier dato creado desde entonces quedaron fuera de la limpieza.
+- `ClerkOnboardingService` rechaza el onboarding con conflicto neutral cuando
+  el correo verificado ya existe en `User` y pertenece a otro `clerkUserId`;
+  el camino de índice único también registra el evento genérico. Esto concuerda
+  con el 409 observado para identidades que colisionan con filas locales. No
+  demuestra que todo 409 sea un conflicto de correo: slug y correo de
+  Organization también pueden colisionar. Los eventos `CLERK_ONBOARDING_EMAIL_CONFLICT`
+  guardan intencionalmente `userId`, `organizationId`, `entityId` y PII nulos,
+  por lo que no se pueden atribuir a una dirección concreta.
+- El botón «Ver página pública» muestra «Información no disponible» mientras
+  `PUBLIC_BOOKING_CLOSED=true`, porque `PublicBookingService` devuelve 404 antes
+  de resolver la organización. Para `Dental Ross`, Supabase además confirma CMS
+  sin publicación/snapshot, cero servicios activos y cero profesionales
+  públicos activos. Resolver la causa requiere una etapa posterior autorizada;
+  no se cambia el switch en este checkpoint.
+- El respaldo cifrado previo al corte y el restore drill están registrados en
+  [la auditoría de inventario/limpieza](PRODUCCION_SUPABASE_LIMPIEZA_2026-09-27.md).
+  Tras confirmación directa del propietario se eliminó de forma atómica el
+  remanente anterior al corte (355 filas en 14 tenants); `Dental Ross` y todo
+  dato desde el corte se conservaron. Backup/restauración y conteos posteriores
+  están documentados en el informe enlazado.
+
 ## Incidencias resueltas y continuidad
 
 Podman build no admite --cpus en esta versión: se usaron periodo/cuota CPU.
