@@ -1,5 +1,9 @@
 # BACKEND_CHANGES.md
 
+## 2026-09-27 — API detrás de Caddy en OCI
+
+Despliegue autorizado, EN EJECUCIÓN / INCOMPLETO. Nest configura confianza únicamente en proxy loopback para staging/producción; Caddy sustituye X-Forwarded-For con el cliente real y elimina Forwarded. Evita que el presupuesto PostgreSQL agrupe a todos los clientes como loopback, sin confiar en peers privados/remotos ni cambiar DTOs/roles. Tres pruebas nuevas del límite de proxy; tipos/lint/build, 724 unitarias (11 omitidas) y 23 negativos del startup compilado pasaron, exit 0. [Evidencia operativa](docs/quality/API_OCI_DESPLIEGUE.md).
+
 ## 2026-09-26 — Base previa a producción C1, control de abuso y operación
 
 Revisión D8: corregidos dos bypass de configuración antes del despliegue. Un interruptor con espacios podía pasar la validación tras trim y apagarse en su consumidor; ahora exige true/false literales. DEPLOY_ENV staging/production con NODE_ENV ausente/development/test ya no omite el gate: exige NODE_ENV=production antes de Nest. Regresiones reprodujeron los fallos y pasaron tras corregir; 31 pruebas del validador, 23 rechazos del entrypoint compilado, tipos/lint/build y suite API completa (721 aprobadas/11 omitidas), exit `0`. Sin DTOs, roles, migraciones ni cambios en la configuración operativa Hobby/EMAIL apagado.

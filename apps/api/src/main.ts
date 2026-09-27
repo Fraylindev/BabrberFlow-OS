@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { globalValidationPipeOptions } from './common/validation.config';
 import { validateProductionConfig } from './common/production-config';
+import { configureProxyTrust } from './common/proxy-trust';
 import {
   createHttpTelemetry,
   SafeHttpExceptionFilter,
@@ -11,7 +13,10 @@ import {
 
 async function bootstrap() {
   validateProductionConfig();
-  const app = await NestFactory.create(AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
+  configureProxyTrust(app);
   app.use(createHttpTelemetry());
   app.useGlobalFilters(new SafeHttpExceptionFilter());
 

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-27 — Despliegue API Oracle autorizado, en ejecución
+
+- Verificados cuenta Free Tier, cuota de prueba y beneficio Always Free vigente 2 OCPU/12 GB. Medidos worker, monitor, backup cifrado y restore aislado antes de dimensionar; ambos trabajos terminaron exit 0.
+- VM redimensionada a 2/12 y servicios previos recuperados. DNS A API creado. Preparados contenedores API/Caddy con recursos limitados, secretos protegidos y CORS exacto confirmado por el propietario.
+- Express confía únicamente en proxy loopback para el presupuesto por cliente; Caddy sustituye forwarding headers. Validación y HTTPS externa pendientes. [Evidencia](docs/quality/API_OCI_DESPLIEGUE.md). EN EJECUCIÓN / INCOMPLETO, sin aprobación final.
+
 ## 2026-09-26 — Cierre de base previa a producción C1 con excepción D2
 
 - El propietario ordenó cerrar C1 con D2 aceptado como excepción documentada tras confirmar la custodia GPG externa; confirmó «Guardada externamente». Recepción de alarmas en `vps@kortek.cloud` también confirmada. C1 queda **CERRADO / APROBADO** para su alcance previo a activación.

@@ -1,0 +1,23 @@
+{
+    admin off
+    email vps@kortek.cloud
+    log default {
+        level ERROR
+        exclude http.log.error
+    }
+    servers {
+        protocols h1 h2
+    }
+}
+
+api.booking.kortek.cloud {
+    tls {
+        issuer acme {
+            dir https://acme-v02.api.letsencrypt.org/directory
+        }
+    }
+    reverse_proxy 127.0.0.1:3000 {
+        header_up -Forwarded
+        header_up X-Forwarded-For {remote_host}
+    }
+}

@@ -1,0 +1,19 @@
+[Unit]
+Description=Kortek API HTTPS reverse proxy
+Wants=network-online.target
+After=network-online.target kortek-api.service
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/kortek-caddy/image.conf
+ExecStart=/usr/bin/podman run --rm --replace --name kortek-caddy --network host --read-only --cap-drop ALL --cap-add NET_BIND_SERVICE --security-opt no-new-privileges --cpus 0.25 --memory 256m --memory-swap 256m --pids-limit 64 --tmpfs /tmp:rw,noexec,nosuid,size=32m -v /etc/kortek-caddy/Caddyfile:/etc/caddy/Caddyfile:ro,Z -v /var/lib/kortek-caddy/data:/data:Z -v /var/lib/kortek-caddy/config:/config:Z ${KORTEK_CADDY_IMAGE}
+ExecStop=/usr/bin/podman stop --time 30 --ignore kortek-caddy
+ExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-caddy
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=45
+
+[Install]
+WantedBy=multi-user.target
