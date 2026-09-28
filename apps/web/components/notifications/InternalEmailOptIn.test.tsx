@@ -11,7 +11,7 @@ const qa = vi.hoisted(() => ({
 vi.mock('@/lib/auth-context', () => ({ useAuth: () => ({ user: qa.user }) }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock('@/components/ui/Toast', () => ({ useToast: () => ({ toast: qa.toast }) }));
-vi.mock('@/lib/queries/invoices', () => ({ useCreateInvoice: () => ({ mutateAsync: vi.fn() }) }));
+vi.mock('@/lib/queries/invoices', () => ({ useCreateInvoice: () => ({ mutateAsync: vi.fn() }), useOrganizationTimeZoneQuery: () => ({ data: 'America/Santo_Domingo', isPending: false, isError: false }) }));
 vi.mock('@/lib/queries/bookings', () => ({
   useBookingsQuery: () => ({ data: [], isLoading: false, isError: false }),
   useCreateBooking: () => ({ mutateAsync: qa.create, isPending: false }),
@@ -24,9 +24,9 @@ vi.mock('@/lib/queries/clients', () => ({ useClientsQuery: () => ({ data: [
 ] }) }));
 vi.mock('@/lib/queries/professionals', () => ({ useProfessionalsQuery: () => ({ data: [{ id: 'professional', name: 'Profesional QA', isActive: true }] }) }));
 vi.mock('@/lib/queries/services', () => ({ useServicesQuery: () => ({ data: [{ id: 'service', name: 'Corte', duration: 30, isActive: true }] }) }));
-// The existing date picker has its own coverage; this boundary supplies its selected instant.
-vi.mock('@/components/ui/DateTimePicker', () => ({ DateTimePicker: ({ onChange }: { onChange: (value: string) => void }) =>
-  <button type="button" onClick={() => onChange('2099-01-05T14:00:00.000Z')}>Elegir horario QA</button> }));
+// The business-clock boundary supplies a wall-clock choice; submission resolves its instant.
+vi.mock('@/components/booking/BusinessDateTimeField', () => ({ BusinessDateTimeField: ({ onChange }: { onChange: (value: string) => void }) =>
+  <button type="button" onClick={() => onChange('2099-01-05T10:00')}>Elegir horario QA</button> }));
 
 beforeEach(() => {
   qa.user = { id: 'actor', organizationId: 'north', role: 'OWNER', name: 'QA' };
@@ -95,5 +95,7 @@ it('discards a late creation callback after leaving and returning to the tenant'
   rerender(<BookingsPage />);
   await act(async () => complete({ id: 'old-visit' }));
   expect(qa.toast).not.toHaveBeenCalled();
+  expect(screen.queryByLabelText(EMAIL_NOTICE_TEXT)).not.toBeInTheDocument();
+  fireEvent.click(screen.getAllByRole('button', { name: '+ Nueva reserva' })[0]);
   expect(screen.getByLabelText(EMAIL_NOTICE_TEXT)).not.toBeChecked();
 });

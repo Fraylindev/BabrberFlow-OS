@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { canReadBookingEmails, EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
 import { EmailConsent } from '@/components/notifications/EmailConsent';
 import {
-  ApiError,
   Booking,
   BookingFilters,
   BookingStatus,
@@ -27,55 +26,21 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { SelectField } from '@/components/ui/Field';
-import { DateTimePicker } from '@/components/ui/DateTimePicker';
+import { BusinessDateTimeField } from '@/components/booking/BusinessDateTimeField';
+import { businessDayRange, businessWeek, businessLocalToIso, businessLocalInput, formatBusinessInstant } from '@/lib/business-time';
+import { scheduleError } from '@/lib/business-schedule';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonListRows } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth-context';
 import { invoiceErrorMessage, invoiceScopeKey } from '@/lib/invoice-ui';
-import { useCreateInvoice } from '@/lib/queries/invoices';
+import { useCreateInvoice, useOrganizationTimeZoneQuery } from '@/lib/queries/invoices';
 import { ClientAutocomplete } from '@/components/booking/ClientAutocomplete';
 import { BookingActions } from '@/components/booking/BookingActions';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString('es-DO', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-function formatTimeOnly(iso: string) {
-  return new Date(iso).toLocaleTimeString('es-DO', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-/** Devuelve un string "YYYY-MM-DD" en hora local (no UTC) para inputs type=date */
-function toLocalDateString(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
-
-function toLocalBoundaryISOString(dateString: string, endOfDay = false) {
-  const [year, month, day] = dateString.split('-').map(Number);
-  if (!year || !month || !day) return undefined;
-  return new Date(
-    year,
-    month - 1,
-    day,
-    endOfDay ? 23 : 0,
-    endOfDay ? 59 : 0,
-    endOfDay ? 59 : 0,
-    endOfDay ? 999 : 0,
-  ).toISOString();
-}
+function formatDateTime(iso: string, timeZone: string) { return formatBusinessInstant(iso, timeZone); }
+function formatTimeOnly(iso: string, timeZone: string) { return formatBusinessInstant(iso, timeZone, true); }
 
 function getInitials(name?: string) {
   if (!name) return '—';
@@ -131,6 +96,14 @@ const STATUS_LABELS: Record<BookingStatus | 'ALL', string> = {
 
 // ─── Página principal ─────────────────────────────────────────────────────────
 export default function BookingsPage() {
+  const { user } = useAuth();
+  const scope = invoiceScopeKey(user);
+  const zone = useOrganizationTimeZoneQuery(scope);
+  if (!user || zone.isPending) return <Card tone="light" className="p-5"><p role="status">Cargando la hora del negocio…</p></Card>;
+  if (!zone.data || zone.isError) return <Card tone="light" className="space-y-3 p-5"><p role="alert">No pudimos conocer la hora del negocio. Reintenta antes de consultar o reservar.</p><Button tone="light" onClick={() => void zone.refetch()}>Reintentar hora del negocio</Button></Card>;
+  return <BookingsWorkspace key={`${scope}:${zone.data}`} timeZone={zone.data} />;
+}
+function BookingsWorkspace({ timeZone }: { timeZone: string }) {
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
@@ -143,24 +116,29 @@ export default function BookingsPage() {
   }, [scopeKey]);
 
   // ── Filtros ──────────────────────────────────────────────────────────────
-  const today = new Date();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-
-  const [fromDate, setFromDate] = useState(toLocalDateString(monday));
-  const [toDate, setToDate] = useState(toLocalDateString(sunday));
+  const defaults = businessWeek(new Date(), timeZone);
+  const [visitId] = useState(() => crypto.randomUUID());
+  const activeVisit = useRef({ active: false });
+  useLayoutEffect(() => {
+    const current = { active: true };
+    activeVisit.current = current;
+    return () => { current.active = false; };
+  }, []);
+  const [fromDate, setFromDate] = useState(defaults.from);
+  const [toDate, setToDate] = useState(defaults.to);
+  const fromRange = fromDate ? businessDayRange(fromDate, timeZone) : null;
+  const toRange = toDate ? businessDayRange(toDate, timeZone) : null;
+  const rangeError = Boolean((fromDate && !fromRange) || (toDate && !toRange) || (fromDate && toDate && fromDate > toDate));
   const [statusFilter, setStatusFilter] = useState<BookingStatus | 'ALL'>('ALL');
 
   const filters: BookingFilters = {
-    from: fromDate ? toLocalBoundaryISOString(fromDate) : undefined,
-    to: toDate ? toLocalBoundaryISOString(toDate, true) : undefined,
+    from: fromRange?.start,
+    to: toRange?.end,
     status: statusFilter !== 'ALL' ? statusFilter : undefined,
   };
 
   // ── Datos ────────────────────────────────────────────────────────────────
-  const { data: items, isLoading, isError, refetch } = useBookingsQuery(filters);
+  const { data: items, isLoading, isError, refetch } = useBookingsQuery(filters, `${scopeKey}:${visitId}`, !rangeError);
 
   // ── Mutaciones ───────────────────────────────────────────────────────────
   const updateStatus = useUpdateBookingStatus();
@@ -169,35 +147,39 @@ export default function BookingsPage() {
   const [issuingId, setIssuingId] = useState<string | null>(null);
 
   async function handleStatusChange(id: string, status: BookingStatus) {
+    const currentVisit = activeVisit.current;
     setUpdatingId(id);
     try {
       await updateStatus.mutateAsync({ id, status });
+      if (!currentVisit.active) return;
       toast('Estado de la reserva actualizado.', 'success');
     } catch (error) {
+      if (!currentVisit.active) return;
       toast(
-        error instanceof ApiError ? error.message : 'No se pudo actualizar el estado.',
+        scheduleError(error),
         'error',
       );
     } finally {
-      setUpdatingId(null);
+      if (currentVisit.active) setUpdatingId(null);
     }
   }
 
   async function handleIssueInvoice(bookingId: string) {
     if (!scopeKey) return;
     const operationScope = scopeKey;
+    const currentVisit = activeVisit.current;
     setIssuingId(bookingId);
     try {
       await createInvoice.mutateAsync({ bookingId, scopeKey: operationScope });
-      if (scopeRef.current !== operationScope) return;
+      if (!currentVisit.active || scopeRef.current !== operationScope) return;
       toast('Factura disponible.', 'success');
       router.push('/dashboard/invoices');
     } catch (error) {
-      if (scopeRef.current === operationScope) {
+      if (currentVisit.active && scopeRef.current === operationScope) {
         toast(invoiceErrorMessage(error, 'issue'), 'error');
       }
     } finally {
-      if (scopeRef.current === operationScope) setIssuingId(null);
+      if (currentVisit.active && scopeRef.current === operationScope) setIssuingId(null);
     }
   }
 
@@ -211,12 +193,12 @@ export default function BookingsPage() {
   // ── ¿Hay filtros activos distintos a los por defecto? ────────────────────
   const hasActiveFilters =
     statusFilter !== 'ALL' ||
-    fromDate !== toLocalDateString(monday) ||
-    toDate !== toLocalDateString(sunday);
+    fromDate !== defaults.from ||
+    toDate !== defaults.to;
 
   function clearFilters() {
-    setFromDate(toLocalDateString(monday));
-    setToDate(toLocalDateString(sunday));
+    setFromDate(defaults.from);
+    setToDate(defaults.to);
     setStatusFilter('ALL');
   }
 
@@ -232,6 +214,7 @@ export default function BookingsPage() {
           <Button
             tone="light"
             className="min-h-11 w-full shadow-sm sm:w-auto"
+            disabled={rangeError}
             onClick={() => setCreateOpen(true)}
           >
             + Nueva reserva
@@ -239,6 +222,8 @@ export default function BookingsPage() {
         }
       />
 
+      <p className="mb-3 text-sm text-[var(--dash-text-muted)]">Fechas y horarios en hora del negocio.</p>
+      {rangeError && <p role="alert" className="mb-3">Revisa el rango de fechas; esa fecha no está disponible en el negocio.</p>}
       {/* ── Barra de filtros ─────────────────────────────────────────────── */}
       <Card tone="light" className="mb-5 overflow-hidden rounded-xl">
         <div className="border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)]/70 px-4 py-2.5">
@@ -370,10 +355,10 @@ export default function BookingsPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="font-semibold capitalize text-[var(--dash-text)]">
-                      {formatDateTime(b.startTime)}
+                      {formatDateTime(b.startTime, timeZone)}
                     </p>
                     <p className="text-xs text-[var(--dash-text-muted)]">
-                      hasta {formatTimeOnly(b.endTime)}
+                      hasta {formatTimeOnly(b.endTime, timeZone)}
                     </p>
                   </div>
                   <Badge status={b.status} tone="light" />
@@ -474,13 +459,13 @@ export default function BookingsPage() {
                   >
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
                       <p
-                        title={formatDateTime(b.startTime)}
+                        title={formatDateTime(b.startTime, timeZone)}
                         className="truncate font-medium text-[var(--dash-text)]"
                       >
-                        {formatDateTime(b.startTime)}
+                        {formatDateTime(b.startTime, timeZone)}
                       </p>
                       <p className="truncate text-xs text-[var(--dash-text-muted)]">
-                        hasta {formatTimeOnly(b.endTime)}
+                        hasta {formatTimeOnly(b.endTime, timeZone)}
                       </p>
                     </td>
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
@@ -555,6 +540,7 @@ export default function BookingsPage() {
       {/* ── Modal: crear reserva ─────────────────────────────────────────── */}
       {createOpen && (
         <CreateBookingModal
+          timeZone={timeZone}
           key={scopeKey}
           onClose={() => setCreateOpen(false)}
           onCreated={() => {
@@ -567,6 +553,7 @@ export default function BookingsPage() {
       {/* ── Modal: reprogramar reserva ───────────────────────────────────── */}
       {rescheduleTarget && (
         <RescheduleBookingModal
+          timeZone={timeZone}
           booking={rescheduleTarget}
           onClose={() => setRescheduleTarget(null)}
           onRescheduled={() => {
@@ -581,9 +568,11 @@ export default function BookingsPage() {
 
 // ─── Modal: crear reserva ─────────────────────────────────────────────────────
 function CreateBookingModal({
+  timeZone,
   onClose,
   onCreated,
 }: {
+  timeZone: string;
   onClose: () => void;
   onCreated: () => void;
 }) {
@@ -654,7 +643,9 @@ function CreateBookingModal({
       setError('Debes seleccionar fecha y hora.');
       return;
     }
-    const selectedDate = new Date(startTime);
+    const instant = businessLocalToIso(startTime, timeZone);
+    if (!instant) { setError('Esa hora no existe o se repite en el negocio. Elige otra fecha u hora.'); return; }
+    const selectedDate = new Date(instant);
     if (selectedDate <= new Date()) {
       setError('La fecha y hora deben ser posteriores al momento actual.');
       return;
@@ -675,7 +666,7 @@ function CreateBookingModal({
       onCreated();
     } catch (err) {
       if (!currentVisit.active) return;
-      setError(err instanceof ApiError ? err.message : 'No se pudo crear la reserva.');
+      setError(scheduleError(err));
     }
   }
 
@@ -786,7 +777,7 @@ function CreateBookingModal({
             title="Fecha y hora"
             description="Elige el horario; los conflictos se validan al reservar."
           >
-            <DateTimePicker
+            <BusinessDateTimeField
               label="Horario de la reserva"
               id="modal-startTime"
               name="startTime"
@@ -846,10 +837,12 @@ function CreateBookingModal({
 
 // ─── Modal: reprogramar reserva ───────────────────────────────────────────────
 function RescheduleBookingModal({
+  timeZone,
   booking,
   onClose,
   onRescheduled,
 }: {
+  timeZone: string;
   booking: Booking;
   onClose: () => void;
   onRescheduled: () => void;
@@ -870,7 +863,14 @@ function RescheduleBookingModal({
 
   const [professionalId, setProfessionalId] = useState(booking.professionalId);
   const [serviceId, setServiceId] = useState(booking.serviceId);
-  const [startTime, setStartTime] = useState(booking.startTime);
+  const originalLocal = businessLocalInput(booking.startTime, timeZone);
+  const [startTime, setStartTime] = useState(originalLocal);
+  const rescheduleVisit = useRef({ active: false });
+  useLayoutEffect(() => {
+    const current = { active: true };
+    rescheduleVisit.current = current;
+    return () => { current.active = false; };
+  }, []);
   const [error, setError] = useState<string | null>(null);
 
   const loading = loadingProfessionals || loadingServices;
@@ -883,19 +883,23 @@ function RescheduleBookingModal({
   const hasChanges =
     professionalId !== booking.professionalId ||
     serviceId !== booking.serviceId ||
-    startTime !== booking.startTime;
+    startTime !== originalLocal;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
 
+    const currentVisit = rescheduleVisit.current;
+    if (reschedule.isPending) return;
     const body: RescheduleBookingInput = {};
     if (professionalId !== booking.professionalId) body.professionalId = professionalId;
     if (serviceId !== booking.serviceId) body.serviceId = serviceId;
 
     // Solo enviamos startTime si fue modificado
-    if (startTime !== booking.startTime) {
-      const selectedDate = new Date(startTime);
+    if (startTime !== originalLocal) {
+      const instant = businessLocalToIso(startTime, timeZone);
+      if (!instant) { setError('Esa hora no existe o se repite en el negocio. Elige otra fecha u hora.'); return; }
+      const selectedDate = new Date(instant);
       if (selectedDate <= new Date()) {
         setError('La nueva fecha y hora debe ser posterior al momento actual.');
         return;
@@ -910,9 +914,9 @@ function RescheduleBookingModal({
 
     try {
       await reschedule.mutateAsync({ id: booking.id, ...body });
-      onRescheduled();
+      if (currentVisit.active) onRescheduled();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'No se pudo reprogramar la reserva.');
+      if (currentVisit.active) setError(scheduleError(err));
     }
   }
 
@@ -961,7 +965,7 @@ function RescheduleBookingModal({
                   Reserva actual
                 </p>
                 <p className="mt-0.5 text-sm font-semibold capitalize text-[var(--dash-text)]">
-                  {formatDateTime(booking.startTime)}
+                  {formatDateTime(booking.startTime, timeZone)}
                 </p>
               </div>
               <Badge status={booking.status} tone="light" />
@@ -1051,7 +1055,7 @@ function RescheduleBookingModal({
             </div>
 
             <div className="mt-4 border-t border-[var(--dash-border)] pt-4">
-              <DateTimePicker
+              <BusinessDateTimeField
                 label="Nueva fecha y hora"
                 id="reschedule-startTime"
                 name="startTime"

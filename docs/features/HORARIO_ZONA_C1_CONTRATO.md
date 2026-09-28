@@ -2,6 +2,8 @@
 
 Fecha: 2026-09-27. **BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. El propietario seleccionó D1–D15 A y autorizó los pasos 2 y 4 de C0. El propietario aprobó expresamente la lógica del backend C1 y pidió integrarlo en su checkout local; la integración se completó sin ampliar etapa. Esta autorización comprende los ajustes backend de A2/H5/CMS y coordinación de dependencias; frontend, QA visual y producción necesitan sus gates expresos.
 
+**Continuación posterior:** C1 quedó confirmado en `b0357af`; el propietario autorizó después D14-A/C2. [Estado y evidencia C2](HORARIO_ZONA_C2_FRONTEND.md): implementado/en revisión local; QA frontend en producción real mantiene su gate expreso. El inventario vigente abarca Dental Ross y Prueba de oro al 19:33:52.343696Z, ambas SQL_NULL, sin dependencias en tablas existentes; cierres no aplicable, modelo C1 ausente. Las referencias inferiores al «único tenant» y a frontend todavía no autorizado describen el corte histórico de C1, no revocan esta autorización posterior. C2 no migró ni confirmó producción.
+
 ## Brief y decisiones
 
 OWNER confirma región y semana; OWNER/ADMIN mantienen semana y cierres. RECEPTIONIST/BARBER leen reglas globales sin motivos. CUSTOMER y visitantes no acceden a configuración o impactos. Semana de siete días explícitos, domingo=0, hasta cinco franjas por día/35 totales, minutos y fin `24:00` solo como extremo final. Contiguas globales se unen; individuales conservan su separación y `shifts: []` sigue heredando. Cierres completos de fechas inclusivas o parciales de una fecha solo restan, pueden superponerse y se cancelan conservando historia. Motivo privado opcional ≤500 caracteres.

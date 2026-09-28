@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from 'react';
 import {
   api,
   type Invoice,
@@ -49,18 +50,24 @@ export function useInvoicesQuery(
 }
 
 export function useOrganizationTimeZoneQuery(scopeKey: string | null) {
+  const [readyScope, setReadyScope] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    queueMicrotask(() => { if (active) setReadyScope(scopeKey); });
+    return () => { active = false; };
+  }, [scopeKey]);
   return useQuery({
     queryKey: scopeKey
       ? queryKeys.organizations.scope(scopeKey)
       : ["organizations", "disabled"],
-    queryFn: async () => {
-      const organization = await api.get<Organization>("/organizations/mine");
+    queryFn: async ({ signal }) => {
+      const organization = await api.get<Organization>("/organizations/mine", undefined, { signal, cache: 'no-store' });
       if (!organization.timeZone) {
         throw new Error("La zona horaria del negocio no está disponible");
       }
       return organization.timeZone;
     },
-    enabled: Boolean(scopeKey),
+    enabled: Boolean(scopeKey) && readyScope === scopeKey,
   });
 }
 

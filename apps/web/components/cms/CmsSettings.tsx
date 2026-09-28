@@ -7,7 +7,6 @@ import { useAuth } from '@/lib/auth-context';
 import {
   cmsFields,
   cmsForm,
-  cmsHours,
   cmsInput,
   cmsStatus,
   validateCmsForm,
@@ -22,6 +21,7 @@ import { FieldWrapper, InputField } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { clockLabel, WEEKDAY_LABELS } from '@/lib/business-schedule';
 
 const focusClass =
   'min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-accent)]';
@@ -37,6 +37,10 @@ const labels: Record<keyof CmsContent, string> = {
 
 function denied(error: unknown) {
   return error instanceof ApiError && (error.status === 401 || error.status === 403);
+}
+
+function minuteLabel(minute: number) {
+  return clockLabel(`${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`);
 }
 
 function friendlyError(error: unknown) {
@@ -73,7 +77,7 @@ export function CmsSettings() {
     <section className="min-w-0 space-y-6 text-[var(--dash-text)]">
       <PageHeader
         tone="light"
-        title="Configuración del negocio"
+        title="Página pública"
         description="Prepara y revisa la información pública de tu negocio."
       />
       {!isReady ? (
@@ -575,15 +579,25 @@ function Editor({
               </div>
               <div>
                 <dt className="font-medium">Horario global</dt>
-                <dd className="mt-1">{cmsHours(latest.readOnly.businessHours)}</dd>
+                <dd className="mt-1 space-y-2">
+                  {latest.readOnly.operationalSchedule?.state === 'CONFIRMED' ? (
+                    latest.readOnly.operationalSchedule.week.map(day => (
+                      <p key={day.dayOfWeek}>
+                        {WEEKDAY_LABELS[day.dayOfWeek]}: {day.windows.length
+                          ? day.windows.map(window => `${minuteLabel(window.startMinute)} a ${minuteLabel(window.endMinute)}`).join(' · ')
+                          : 'Cerrado'}
+                      </p>
+                    ))
+                  ) : <p>Horario todavía sin confirmar. Revísalo en Horario y zona.</p>}
+                </dd>
               </div>
               <div>
                 <dt className="font-medium">Referencia horaria</dt>
-                <dd className="mt-1">Hora del negocio. Se conserva la configuración actual.</dd>
+                <dd className="mt-1">Hora del negocio. La atención usa el horario operativo vigente.</dd>
               </div>
             </dl>
             <p className="text-xs text-[var(--dash-text-muted)]">
-              Estos datos no se editan desde esta pantalla.
+              La publicación de la página no cambia el horario operativo.
             </p>
           </Card>
           {latest.publishedSnapshot && (

@@ -94,12 +94,20 @@ test('validates staging against its separate declared origins', () => {
   const staging = {
     ...valid,
     DEPLOY_ENV: 'staging',
-    WEB_PUBLIC_ORIGIN: 'https://staging.booking.kortek.cloud',
+    WEB_PUBLIC_ORIGIN: 'https://qa.booking.kortek.cloud',
     NEXT_PUBLIC_API_URL: 'https://api.staging.booking.kortek.cloud',
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: testKey,
     CLERK_SECRET_KEY: 'sk_test_NON_SECRET_FIXTURE',
   };
   assert.doesNotThrow(() => validateWebDeploymentConfig(phases[0], staging));
+  assert.throws(
+    () =>
+      validateWebDeploymentConfig(phases[0], {
+        ...staging,
+        WEB_PUBLIC_ORIGIN: 'https://staging.booking.kortek.cloud',
+      }),
+    /variable=WEB_PUBLIC_ORIGIN/,
+  );
   assert.throws(
     () =>
       validateWebDeploymentConfig(phases[0], {

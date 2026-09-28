@@ -78,3 +78,26 @@ smoke externo. Cambios de datos posteriores exigen el protocolo de conciliación
 de C1; no restaurar sobre producción como parte de un rollback de contenedor.
 
 Estado/evidencia real: [despliegue API](../../docs/quality/API_OCI_DESPLIEGUE.md).
+
+## API de staging en la misma VM
+
+Staging usa el commit C1 `b0357af6`, imagen Podman inmutable y servicio
+`kortek-api-staging` separado de `kortek-api`. El wrapper
+[`api-staging-run.sh`](api-staging-run.sh) exige Cutover QA, Clerk de prueba,
+`WEB_PUBLIC_ORIGIN=https://qa.booking.kortek.cloud`, CORS/authorized parties
+exactos, correo desactivado y listener `127.0.0.1:3001`. La unidad
+[`kortek-api-staging.service`](kortek-api-staging.service) recibe
+`/etc/kortek-api-staging/runtime-env` root:root/0600 mediante LoadCredential.
+No reutilizar el archivo de producción; no incluir secretos en el build.
+
+Caddy atiende `api.staging.booking.kortek.cloud` hacia el puerto 3001 y
+`api.booking.kortek.cloud` hacia 3000. Validar un Caddyfile candidato antes
+de reemplazarlo y comprobar el smoke externo productivo antes y después de
+reiniciar el proxy. Para staging, comprobar DNS/TLS público, 404 de raíz,
+401 privada, ACAO exclusivo de `https://qa.booking.kortek.cloud`, DB QA y
+puertos privados cerrados. `systemctl status kortek-api-staging` y
+`podman inspect kortek-api-staging` acreditan servicio y límites; root 404 no
+acredita un flujo autenticado. Ante fallo de staging, detener solo su unidad
+y restaurar su wrapper/env protegidos; conservar API/Caddy productivos.
+
+[Alcance, ejecución y pendientes de Preview](../../docs/quality/STAGING_QA_2026-09-28.md).

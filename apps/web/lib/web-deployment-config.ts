@@ -91,7 +91,7 @@ export function validateWebDeploymentConfig(
   const expectedWeb =
     deployment === 'production'
       ? 'https://booking.kortek.cloud'
-      : 'https://staging.booking.kortek.cloud';
+      : 'https://qa.booking.kortek.cloud';
   const expectedApi =
     deployment === 'production'
       ? 'https://api.booking.kortek.cloud'
