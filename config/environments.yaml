@@ -14,7 +14,7 @@ development:
   emailEnabled: false
 
 staging:
-  status: api-deployed-preview-rebuild-pending
+  status: api-and-preview-deployed-authenticated-qa-pending
   apiHost: oracle-always-free-podman-shared-vm
   apiRelease: b0357af6b237466f7e5e17c2eff0901e2336ded1
   apiImageId: c9501c7ae3845f95081af884552b44cb5d1a5d8d52d5061ba24a87615c3e6cb9

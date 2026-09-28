@@ -1,12 +1,12 @@
 # Cutover QA y API de staging — 2026-09-28
 
-**API IMPLEMENTADA / EN REVISIÓN; WEB PREVIEW PENDIENTE DE NUEVA DEPLOYMENT.**
+**API Y WEB PREVIEW IMPLEMENTADAS / EN REVISIÓN; QA AUTENTICADO PENDIENTE.**
 El propietario confirmó cada escritura real de esta preparación. El alcance
 es Supabase Cutover QA `prirlabbnlcuvnzuaczp`, dos fixtures sintéticos y una
 segunda API en la VM OCI existente. El código desplegado del API es el commit
-publicado `b0357af6b237466f7e5e17c2eff0901e2336ded1` (C1); el frontend C2
-local no se ha publicado. El commit local de este checkpoint no supone push ni
-aprobación final.
+publicado `b0357af6b237466f7e5e17c2eff0901e2336ded1` (C1). El frontend C2
+se publicó después en Preview mediante el checkpoint `1dafcbe`, con
+autorización expresa de push. Ningún checkpoint supone aprobación final.
 
 ## Base aislada y fixtures
 
@@ -83,10 +83,18 @@ pública Clerk QA (`pk_test_`) coincide por SHA-256 con la local. La variable
 `https://qa.booking.kortek.cloud`; existe `CLERK_SECRET_KEY` tipo Secret, cuyo
 valor Vercel no revela. No se modificaron variables de Production.
 
-Vercel indica que se necesita una nueva deployment para aplicar variables.
-No se redeplegó el commit remoto anterior: su validación web todavía exige
-`staging.booking.kortek.cloud`, mientras el ajuste local aprobado exige el
-alias QA. Tras el push expresamente autorizado, la rama podrá compilar el
-ajuste y habrá que verificar artefacto, navegador, Clerk y flujo funcional.
-La autorización de push sigue pendiente; ningún build o smoke sustituye el
-QA frontend ni la aprobación final del propietario.
+No se redeplegó el commit remoto anterior: su validación web exigía
+`staging.booking.kortek.cloud`, mientras el ajuste aprobado exige el alias QA.
+El propietario autorizó el push del checkpoint `1dafcbe293db52acd2f8bf04334ba5e2bd63a348`;
+Git confirmó SHA local = remoto. Vercel creó [la deployment Preview](https://vercel.com/fraylindev/kortek-booking/F5q6az3TSmBs6YsMe35zGRzXB9ep)
+desde esa rama y ese commit: estado **Ready**, compilación de 31 s y dominios
+`qa.booking.kortek.cloud` y el alias propio de Vercel. La landing cargó en
+Chrome. Una petición HTTP sin sesión al dominio QA redirige al login de
+protección Vercel; no equivale a un error de build. El API staging y el API
+productivo siguieron respondiendo por HTTPS con certificado válido y 404
+esperado en la raíz después del push.
+
+Los fixtures de Cutover QA no tienen User ni Membership, por lo que no se ha
+probado el editor autenticado de horario en Preview ni se ha aprobado C2.
+Tampoco se ha desplegado la web C2 a producción ni abierto reservas públicas
+o correo. El QA frontend y la aprobación final conservan sus gates propios.

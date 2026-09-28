@@ -1,6 +1,6 @@
 # Horario y zona — D14/C2
 
-2026-09-27. **C2 IMPLEMENTADO / EN REVISIÓN LOCAL**, sobre backend aprobado `b0357af`, rama `ai/antigravity-qa`. El propietario autorizó D14-A: editor y coherencia de agenda interna, CMS, A2/H5, reportes, correo y promociones. QA funcional y visual realizado exclusivamente en un entorno local controlado. **No se ha cruzado el gate de QA frontend en producción real.** No implica aprobación de C2 ni cierre del módulo.
+2026-09-27. **C2 IMPLEMENTADO / EN REVISIÓN**, sobre backend aprobado `b0357af`, rama `ai/antigravity-qa`. El propietario autorizó D14-A: editor y coherencia de agenda interna, CMS, A2/H5, reportes, correo y promociones. El QA funcional y visual del editor se realizó en un entorno local controlado; después se publicó el checkpoint `1dafcbe` en Preview QA y Vercel lo marcó Ready. **El flujo autenticado del editor en Preview y el gate de QA frontend en producción real siguen pendientes.** No implica aprobación de C2 ni cierre del módulo.
 
 El inventario común de Dental Ross y Prueba de oro, al **2026-09-27T19:33:52.343696Z**, encontró `businessHours` SQL NULL / SQL_NULL y `America/Santo_Domingo` en ambas; cero citas de cualquier estado/fecha, bloqueos A2 activos/cancelados, promociones selladas/publicadas/retiradas e intenciones de correo totales o pendientes. Las cinco tablas C1 estaban ausentes: cierres fechados **no aplicable**, no un cero consultado. Había 26 migraciones completadas y ninguna fila de `20260927170000_business_schedule`. La consulta fue REPEATABLE READ READ ONLY, comprobó modo de lectura y terminó en ROLLBACK. Prueba de oro es un alta realizada personalmente por el propietario. Evidencia local ignorada por Git: `.tmp/d9-inventory-20260927-ambos/{inventario.md,consulta.sql,resultado.json}`. El corte no congela dependencias futuras.
 
@@ -18,7 +18,7 @@ Agenda crea/reprograma, filtra y presenta en hora del negocio aunque el navegado
 
 Se puede migrar/confirmar Dental Ross y Prueba de oro únicamente si resulta necesario para pruebas del flujo autorizado, con evidencia del resultado. No se infiere una semana elegida del fallback legacy. La estrategia inicial usa un entorno aislado con datos controlados; no necesita modificar producción.
 
-No están autorizados despliegue, nueva apertura de reserva pública ni activación de correo. **QA visual/frontend en producción real requiere aprobación expresa posterior y no se ejecuta en C2 por inferencia.** QA local/controlado conserva sus requisitos. El propietario autorizó después un commit local del checkpoint C2/QA, pero no el push ni el cierre del módulo.
+El despliegue web productivo, la nueva apertura de reserva pública y la activación de correo no están autorizados. **QA visual/frontend en producción real requiere aprobación expresa posterior y no se ejecuta en C2 por inferencia.** QA local/controlado conserva sus requisitos. El propietario autorizó después commit y push del checkpoint C2/QA a Preview; eso no cierra el módulo.
 
 ## Evidencia y continuación
 
@@ -77,7 +77,7 @@ Los primeros recorridos incluyeron errores de selectores de automatización y un
 
 ### Estado de entrega y siguiente gate
 
-Al cierre del QA local inicial, los cambios estaban sin staging, commit o push y HEAD conservaba `b0357af6b237466f7e5e17c2eff0901e2336ded1`. Después se autorizó un commit local del checkpoint conjunto C2/QA; el push sigue pendiente. Sin cambios API/Prisma/dependencias. C2 queda implementado/en revisión local, no aprobado. El próximo paso es revisión del propietario y **autorización expresa antes de cualquier QA visual/frontend en producción real**; no se inicia por esta evidencia. Despliegue, nueva apertura pública y activación de correo siguen sin autorización. Cualquier implantación posterior deberá elegir horario expresamente y reevaluar D9 bajo lock, sin usar el fallback como decisión del dueño.
+Al cierre del QA local inicial, los cambios estaban sin staging, commit o push y HEAD conservaba `b0357af6b237466f7e5e17c2eff0901e2336ded1`. Después se autorizó y publicó el checkpoint conjunto C2/QA `1dafcbe`; Vercel Preview quedó Ready en el alias QA. Sin cambios API/Prisma/dependencias. C2 queda implementado/en revisión, no aprobado: faltan cuentas/Membership de prueba si se quiere recorrer el editor autenticado en Cutover QA, que actualmente contiene solo dos organizaciones sintéticas sin dependencias por decisión expresa. **Cualquier QA visual/frontend en producción real requiere autorización expresa posterior.** Despliegue web productivo, nueva apertura pública y activación de correo siguen sin autorización. Cualquier implantación posterior deberá elegir horario expresamente y reevaluar D9 bajo lock, sin usar el fallback como decisión del dueño.
 
 Al terminar se detuvieron API, Next y el clúster PostgreSQL temporal identificado por ruta/PID; las bases y evidencia se conservaron. `git diff --check` pasó y la revisión de los 25 archivos modificados/nuevos comprobó enlaces documentales, ausencia de patrones de credenciales en contenido añadido, rama/HEAD y staging vacío. La revisión local no sustituye auditoría/aprobación del propietario.
 
