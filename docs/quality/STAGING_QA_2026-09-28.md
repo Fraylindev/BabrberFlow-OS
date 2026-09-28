@@ -1,12 +1,16 @@
 # Cutover QA y API de staging — 2026-09-28
 
-**API Y WEB PREVIEW IMPLEMENTADAS / EN REVISIÓN; QA AUTENTICADO PENDIENTE.**
+**C2 APROBADO FUNCIONALMENTE EN PREVIEW QA**, limitado a Cutover QA y datos sintéticos, por confirmación explícita del propietario el 2026-09-28. Esta aprobación no autoriza migrar ni confirmar horario en producción.
 El propietario confirmó cada escritura real de esta preparación. El alcance
 es Supabase Cutover QA `prirlabbnlcuvnzuaczp`, dos fixtures sintéticos y una
-segunda API en la VM OCI existente. El código desplegado del API es el commit
+segunda API en la VM OCI existente. El 2026-09-28 se añadieron cuatro identidades
+Clerk Development y sus accesos sintéticos para QA autenticado. El código
+desplegado del API es el commit
 publicado `b0357af6b237466f7e5e17c2eff0901e2336ded1` (C1). El frontend C2
 se publicó después en Preview mediante el checkpoint `1dafcbe`, con
-autorización expresa de push. Ningún checkpoint supone aprobación final.
+autorización expresa de push. El checkpoint por sí solo no supone aprobación
+final; la aprobación funcional C2 indicada arriba fue una decisión expresa
+posterior del propietario.
 
 ## Base aislada y fixtures
 
@@ -24,10 +28,19 @@ autorización expresa de push. Ningún checkpoint supone aprobación final.
 - Se crearon únicamente `QA Horario Norte` y `QA Horario Sur`, slugs
   `qa-horario-norte` y `qa-horario-sur`, correos `.invalid`, activos en
   `America/Santo_Domingo`, con `businessHours` SQL NULL y horario
-  `LEGACY_UNCONFIRMED`/`SQL_NULL`, revisión 0. Cero User, Membership,
-  reservas, turnos, cierres o dependencias. El trigger existente creó dos
-  borradores CMS sin publicar. No se copiaron filas ni identificadores de
+  `LEGACY_UNCONFIRMED`/`SQL_NULL`, revisión 0. Al crear los fixtures había cero
+  User, Membership, reservas, turnos, cierres o dependencias. El trigger
+  existente creó dos borradores CMS sin publicar. No se copiaron filas ni identificadores de
   Dental Ross o Prueba de oro.
+- Después, con confirmación específica, se crearon cuatro cuentas nuevas en
+  Clerk Development con correos reservados `+clerk_test@example.com`, sin
+  contraseña y con email verificado. Se enlazaron por `clerkUserId` a cuatro
+  `User` con password SQL NULL en Cutover QA, más cinco `Membership`: OWNER en
+  Norte y Sur; ADMIN, BARBER y RECEPTIONIST solo en Norte. La transacción se
+  ejecutó con `kortek_runtime.prirlabbnlcuvnzuaczp` desde el contenedor de
+  staging, tras comprobar el destino; la conexión SQL del conector carecía de
+  INSERT y su intento atómico dejó cero filas. La lectura posterior confirmó
+  4 User, 5 Membership, 0 Professional, 0 Booking y ambos businessHours NULL.
 
 ## API en OCI
 
@@ -67,12 +80,14 @@ autorización expresa de push. Ningún checkpoint supone aprobación final.
 | Red externa | 3001 y admin Caddy 2019 inaccesibles; servicio escucha en loopback |
 | Producción | `external-smoke.py` exit 0 antes y después del cambio Caddy y tras ajustar el origen QA; DNS/TLS/CORS/HTTP sin regresión |
 | Frontend local | Validación de despliegue: 17/17 pruebas, TypeScript/lint/build web exit 0 con variables staging explícitas |
+| Identidades QA | Cuatro usuarios Clerk Development nuevos, email verificado y `password_enabled=false`; cuatro User y cinco Membership verificados en Cutover QA |
 
 Los 404/401 acreditan transporte y protección de ruta, no un recorrido
-autenticado de negocio. Los fixtures no tienen Membership por decisión expresa;
-por tanto, el QA de edición de horario mediante Preview aún no está acreditado.
+autenticado de negocio. Ese recorrido se completó después con la sesión de
+OWNER del navegador integrado; los resultados y alcance aprobado se registran
+en la sección «QA autenticado C2» más abajo.
 
-## Vercel Preview y siguiente gate
+## Vercel Preview y deployment probada
 
 El proyecto Vercel `kortek-booking` ya tenía `qa.booking.kortek.cloud` asignado
 a la rama `ai/antigravity-qa`, con DNS/TLS válido y GET 200. No se creó un
@@ -94,7 +109,46 @@ protección Vercel; no equivale a un error de build. El API staging y el API
 productivo siguieron respondiendo por HTTPS con certificado válido y 404
 esperado en la raíz después del push.
 
-Los fixtures de Cutover QA no tienen User ni Membership, por lo que no se ha
-probado el editor autenticado de horario en Preview ni se ha aprobado C2.
-Tampoco se ha desplegado la web C2 a producción ni abierto reservas públicas
-o correo. El QA frontend y la aprobación final conservan sus gates propios.
+La prueba inicial sin sesión redirigió al login de protección Vercel; no se
+contó como error de autenticación. Más adelante el propietario inició sesión
+como OWNER y realizó QA autenticado en la deployment Preview.
+
+## QA autenticado C2 — 2026-09-28
+
+Entorno: Preview `qa.booking.kortek.cloud` → API
+`api.staging.booking.kortek.cloud` → Supabase Cutover QA
+`prirlabbnlcuvnzuaczp`. Actor: OWNER de QA Horario Norte. Los registros creados
+son sintéticos y permanecen en QA. El propietario confirmó consola limpia en
+OWNER durante edición de semana, creación de cierre y reprogramación de cita.
+
+| Flujo | Evidencia observada |
+| --- | --- |
+| Contexto y aislamiento | La organización Norte muestra su horario confirmado en `America/Santo_Domingo`. Al cambiar a QA Horario Sur se muestran sus datos sin confirmación (`LEGACY_UNCONFIRMED`/SQL NULL); no se guardó ningún cambio en Sur. Se regresó a Norte para las pruebas. |
+| Semana | Se cambió temporalmente el inicio del domingo de 09:00 a 09:30; la vista previa evaluó 1 cita y reportó 0 afectadas. Se guardó y después se restauró a 09:00 con la misma evaluación. El horario final de Norte quedó 09:00–19:00 para el domingo. |
+| Servicio, profesional y cliente | Se crearon `C2 QA - Servicio de prueba` (30 min, RD$500), `C2 QA - Profesional de prueba` (activo, sin contacto) y `C2 QA - Cliente de prueba` (solo nombre). |
+| Reserva y reprogramación | Se creó una reserva interna sintética para el 3 de noviembre de 2026, 09:30–10:00, sin opt-in de correo; se reprogramó a 10:30–11:00. Se verificó la hora guardada después de cerrar y volver a consultar. Sin pago ni factura. |
+| Cierre completo e historial | Se creó un cierre para el 1 de noviembre de 2026 con motivo privado `QA C2: cierre completo de prueba` y luego se canceló. No tenía citas asociadas; el registro cancelado quedó en el historial. |
+| Cierre parcial e impacto | Para el 3 de noviembre se previsualizó primero 10:00–12:00: 1 cita afectada y guardar deshabilitado; no se guardó. La propuesta 12:00–14:00 reportó 1 cita evaluada y 0 afectadas; se guardó con motivo privado `QA C2: cierre parcial de prueba`. La reserva de 10:30 quedó intacta. |
+
+Estado final de los datos sintéticos en QA Norte: 1 servicio, 1 profesional
+activo sin contacto, 1 cliente, 1 reserva pendiente de 10:30 a 11:00, 1 cierre
+parcial activo de 12:00 a 14:00 el 3 de noviembre y 1 cierre completo
+cancelado con historial. La semana quedó restaurada. No se probó pago,
+facturación, envío de correo ni reserva pública. Sur conserva su estado sin
+confirmar; no se modificó.
+
+El propietario confirmó consola limpia en OWNER durante las tres operaciones
+indicadas y aprobó explícitamente C2 **a nivel funcional, sobre las condiciones
+ya probadas (Cutover QA, datos sintéticos)**. El gate funcional de este
+checkpoint queda **CERRADO / APROBADO** con ese alcance. La confirmación no
+incluye datos o tenants productivos.
+
+## Límites y decisiones pendientes
+
+- El propietario **no autoriza todavía migración ni confirmación de horario en
+  producción**. Dental Ross y Prueba de oro permanecen bajo su estado productivo
+  previo; cualquier migración o confirmación exige una decisión separada.
+- La aprobación C2 no autoriza despliegue web productivo, apertura de reservas
+  públicas, activación de correo ni otros cambios de negocio.
+- Cutover QA contiene solo los fixtures y registros de prueba descritos aquí;
+  no se copiaron datos reales de tenants.
