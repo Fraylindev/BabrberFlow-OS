@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="glow" cx="85%" cy="15%" r="60%">
+      <stop offset="0%" stop-color="#e11d2e" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#0a0a0a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="card-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e11d2e" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#262626" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Subtle grid lines -->
+  <g stroke="#1a1a1a" stroke-width="1" opacity="0.5">
+    <line x1="0" y1="157" x2="1200" y2="157"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="472" x2="1200" y2="472"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+  </g>
+
+  <!-- Content Container -->
+  <g transform="translate(100, 120)">
+    <!-- Badge -->
+    <rect width="320" height="40" rx="20" fill="#131313" stroke="#e11d2e" stroke-width="1.5" stroke-opacity="0.5"/>
+    <circle cx="24" cy="20" r="5" fill="#e11d2e"/>
+    <text x="42" y="25" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#ffffff" letter-spacing="1.5">
+      KORTEK BOOKING OS
+    </text>
+
+    <!-- Main Title -->
+    <text x="0" y="140" font-family="'Fraunces', Georgia, serif, system-ui" font-size="76" font-weight="700" fill="#fafafa" letter-spacing="-2">
+      Tu barbería,
+    </text>
+    <text x="0" y="225" font-family="'Fraunces', Georgia, serif, system-ui" font-size="76" font-weight="700" fill="#fafafa" letter-spacing="-2">
+      organizada <tspan fill="#e11d2e">de verdad.</tspan>
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="295" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#a3a3a3">
+      El sistema operativo para barberías y salones modernos.
+    </text>
+    <text x="0" y="335" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#6b6b6b">
+      Reservas sin fricción · Panel de equipo · Control operativo
+    </text>
+  </g>
+
+  <!-- Brand Symbol in bottom right -->
+  <g transform="translate(980, 440)">
+    <rect width="120" height="120" rx="32" fill="#13161c" stroke="url(#card-border)" stroke-width="2"/>
+    <circle cx="94" cy="26" r="6" fill="#e11d2e"/>
+    <path d="M40 30V90" stroke="#fafafa" stroke-width="9" stroke-linecap="round"/>
+    <path d="M40 60L78 30" stroke="#e11d2e" stroke-width="9" stroke-linecap="round"/>
+    <path d="M53 49L82 90" stroke="#fafafa" stroke-width="9" stroke-linecap="round"/>
+  </g>
+</svg>

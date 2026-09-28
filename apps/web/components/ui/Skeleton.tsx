@@ -6,10 +6,23 @@ export function Skeleton({
   /** "dark" (por defecto) o "light" — ver nota en Card.tsx. */
   tone?: "dark" | "light";
 }) {
-  if (tone === "light") {
-    return <div className={`animate-pulse rounded-sm bg-[var(--dash-surface-raised)] ${className}`} />;
-  }
-  return <div className={`animate-pulse rounded-sm bg-[var(--color-surface-raised)] ${className}`} />;
+  const isLight = tone === "light";
+  return (
+    <div
+      aria-hidden="true"
+      className={`relative overflow-hidden rounded-md ${
+        isLight ? "bg-[var(--dash-surface-raised)]" : "bg-[var(--color-surface-raised)]"
+      } ${className}`}
+    >
+      <div
+        className={`absolute inset-0 -translate-x-full animate-[shimmer_1.8s_infinite] ${
+          isLight
+            ? "bg-gradient-to-r from-transparent via-black/[0.05] to-transparent"
+            : "bg-gradient-to-r from-transparent via-white/[0.07] to-transparent"
+        }`}
+      />
+    </div>
+  );
 }
 
 // Skeleton listo para el patrón más común de la app: una lista de filas

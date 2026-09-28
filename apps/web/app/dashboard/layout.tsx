@@ -6,15 +6,26 @@ import { useAuth } from '@/lib/auth-context';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Topbar } from '@/components/dashboard/Topbar';
 import { Button } from '@/components/ui/Button';
+import { Spinner } from '@/components/ui/Spinner';
 import { AUTH_ROUTES, resolveDashboardAccessRedirect } from '@/lib/auth-routes';
 
 function LoadingPanel() {
   return (
     <div
       role="status"
-      className="dashboard-shell flex min-h-screen items-center justify-center bg-[var(--dash-bg)] px-4 text-sm text-[var(--dash-text-muted)]"
+      className="dashboard-shell flex min-h-screen flex-col items-center justify-center gap-4 bg-[var(--dash-bg)] px-4 text-center"
     >
-      Cargando…
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-card)]">
+        <Spinner size="md" tone="accent" label="Cargando panel…" />
+      </div>
+      <div className="space-y-1">
+        <p className="font-[family-name:var(--font-display)] text-sm font-semibold text-[var(--dash-text)]">
+          Kortek Booking
+        </p>
+        <p className="text-xs text-[var(--dash-text-muted)]">
+          Preparando tu panel…
+        </p>
+      </div>
     </div>
   );
 }

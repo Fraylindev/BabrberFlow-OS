@@ -67,34 +67,34 @@ export function Modal({
 
   const isLight = tone === 'light';
 
-  const overlayBg = isLight ? 'bg-black/40' : 'bg-black/60';
+  const overlayBg = isLight ? 'bg-black/50 backdrop-blur-sm' : 'bg-black/70 backdrop-blur-sm';
   const panelBg = isLight
     ? 'border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-raised)]'
-    : 'border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-xl';
+    : 'border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-[var(--shadow-raised)]';
   const titleCls = isLight
     ? 'text-base font-semibold text-[var(--dash-text)]'
     : 'font-[family-name:var(--font-display)] text-lg text-[var(--color-paper)]';
   const closeCls = isLight
-    ? 'flex h-9 w-9 items-center justify-center rounded-md text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] cursor-pointer outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]'
-    : 'text-[var(--color-muted)] hover:text-[var(--color-paper)] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brass)]';
-  const overlayLayout = isLight ? 'p-3 backdrop-blur-[1px] sm:p-4' : 'p-4';
-  const panelLayout = isLight ? 'rounded-xl' : 'rounded-sm p-6';
+    ? 'flex h-8 w-8 items-center justify-center rounded-lg text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] cursor-pointer outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--dash-accent)]'
+    : 'flex h-8 w-8 items-center justify-center rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-paper)] cursor-pointer outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-brass)]';
+  const overlayLayout = 'p-3 sm:p-4';
+  const panelLayout = isLight ? 'rounded-2xl' : 'rounded-2xl p-6';
   const headerLayout = isLight
-    ? 'border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3.5 sm:px-5'
+    ? 'border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3.5 sm:px-5 rounded-t-2xl'
     : 'mb-5';
   const contentLayout = isLight ? 'p-4 sm:p-5' : '';
   const panelWidth = size === 'lg' ? 'max-w-2xl' : 'max-w-md';
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg} ${overlayLayout}`}
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-[var(--duration-base)] ease-[var(--ease-out)] animate-in fade-in ${overlayBg} ${overlayLayout}`}
     >
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`max-h-[calc(100dvh-1.5rem)] w-full overflow-y-auto ${panelWidth} ${panelLayout} ${panelBg}`}
+        className={`max-h-[calc(100dvh-1.5rem)] w-full overflow-y-auto transition-all duration-[var(--duration-base)] ease-[var(--ease-out)] animate-in fade-in zoom-in-95 ${panelWidth} ${panelLayout} ${panelBg}`}
       >
         <div className={`flex items-center justify-between gap-4 ${headerLayout}`}>
           <h2 id={titleId} className={titleCls}>
@@ -107,7 +107,18 @@ export function Modal({
             aria-label="Cerrar"
             className={closeCls}
           >
-            <span aria-hidden="true">✕</span>
+            <svg
+              className="h-4 w-4 stroke-current"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
         <div className={contentLayout}>{children}</div>

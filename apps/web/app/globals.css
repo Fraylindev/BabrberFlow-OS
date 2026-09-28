@@ -7,26 +7,26 @@
      (--color-brass, etc.) se conservan tal cual para no tener que tocar
      cada archivo que ya las consume (dashboard, login, register) — solo
      cambia el valor. --- */
-  --color-ink: #0a0a0a;           /* fondo principal, negro real */
-  --color-surface: #131313;       /* tarjetas, paneles */
-  --color-surface-raised: #1c1c1c; /* elementos elevados, inputs */
-  --color-border: #262626;        /* bordes sutiles */
-  --color-border-strong: #383838;
+  --color-ink: #08090a;           /* fondo principal, negro obsidian */
+  --color-surface: #0f1115;       /* tarjetas, paneles base */
+  --color-surface-raised: #15181f; /* elementos elevados, inputs, dropdowns */
+  --color-border: #1e2229;        /* bordes sutiles modernos */
+  --color-border-strong: #2c323d; /* bordes de énfasis */
 
-  --color-paper: #fafafa;         /* texto principal, blanco */
-  --color-muted: #a3a3a3;         /* texto secundario */
-  --color-faint: #6b6b6b;         /* texto terciario / placeholders */
+  --color-paper: #f4f5f6;         /* texto principal, blanco puro suave */
+  --color-muted: #949aa4;         /* texto secundario */
+  --color-faint: #525866;         /* texto terciario / placeholders */
 
-  --color-brass: #e11d2e;         /* acento principal — rojo */
-  --color-brass-hover: #ff3344;
+  --color-brass: #e11d2e;         /* acento principal — carmesí Kortek */
+  --color-brass-hover: #ff2d40;
   --color-brass-dim: #8f1420;
 
-  --color-success: #3f9a5c;       /* pagado / confirmado */
-  --color-success-bg: #10201a;
-  --color-danger: #ff5c3d;        /* cancelado / no-show — distinto del rojo de marca */
-  --color-danger-bg: #26140f;
-  --color-pending: #d4a13d;       /* pendiente */
-  --color-pending-bg: #241d10;
+  --color-success: #10b981;       /* pagado / confirmado */
+  --color-success-bg: #064e3b;
+  --color-danger: #ef4444;        /* cancelado / no-show */
+  --color-danger-bg: #450a0a;
+  --color-pending: #f59e0b;       /* pendiente */
+  --color-pending-bg: #451a03;
 
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -40,15 +40,34 @@
   --duration-slow: 600ms;
 
   /* --- Elevación: sombra neutra sobre negro real --- */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px -12px rgba(0, 0, 0, 0.7);
-  --shadow-raised: 0 4px 8px rgba(0, 0, 0, 0.55), 0 24px 48px -16px rgba(0, 0, 0, 0.75);
-  --shadow-glow: 0 0 60px -12px rgba(225, 29, 46, 0.45);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.6), 0 16px 36px -12px rgba(0, 0, 0, 0.85);
+  --shadow-raised: 0 4px 12px rgba(0, 0, 0, 0.6), 0 24px 48px -12px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 0 60px -12px rgba(225, 29, 46, 0.35);
+
+  /* --- Radios unificados: escala armónica moderna --- */
+  --radius-xs: 0.25rem;   /* 4px */
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-2xl: 1.25rem;  /* 20px */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
   background-color: var(--color-ink);
   color: var(--color-paper);
   font-family: var(--font-sans);
+  overflow-x: hidden;
 }
 
 /* Foco de teclado visible en todo momento — accesibilidad, no decoración */
@@ -75,9 +94,38 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.06;
+  opacity: 0.05;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Cuadrícula sutil de fondo para atmósfera SaaS de alta gama */
+.bg-grid-subtle {
+  background-size: 32px 32px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Puntos de precisión */
+.bg-dots-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Paneles de vidrio oscuro con microborde de luz */
+.glass-panel {
+  background: rgba(15, 17, 21, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-panel-elevated {
+  background: rgba(21, 24, 31, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
 }
 
 @keyframes fade-price {
@@ -85,9 +133,32 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.animate-fade-in {
+  animation: fade-price var(--duration-base) var(--ease-out);
+}
+
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+.marquee-pause:hover {
+  animation-play-state: paused;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float-subtle 6s ease-in-out infinite;
 }
 
 /* Barrido de brillo — usado con moderación en CTAs primarios al hacer
@@ -124,12 +195,9 @@ body {
   to { background-position: 80px 0; }
 }
 
-/* Gradación cinematográfica: toda la fotografía de la landing pasa por
-   este mismo tratamiento (blanco y negro de base + velo rojo sutil) en
-   vez de mostrarse a color crudo — así fotos de fuentes distintas se
-   sienten como una sola dirección de arte, no un collage de stock. */
+/* Gradación cinematográfica: fotografía con contraste elegante y velo neutro */
 .cinematic-grade {
-  filter: grayscale(0.55) contrast(1.15) brightness(0.85);
+  filter: grayscale(0.5) contrast(1.15) brightness(0.85);
 }
 
 /* ============================================================

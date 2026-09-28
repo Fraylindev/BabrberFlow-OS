@@ -24,8 +24,38 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: BRAND.name,
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://kortekbooking.com"),
+  title: {
+    default: `${BRAND.name} — ${BRAND.tagline}`,
+    template: `%s | ${BRAND.name}`,
+  },
   description: BRAND.description,
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
+  openGraph: {
+    title: `${BRAND.name} — ${BRAND.tagline}`,
+    description: BRAND.description,
+    siteName: BRAND.name,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: `${BRAND.name} preview`,
+      },
+    ],
+    locale: "es_DO",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: BRAND.name,
+    description: BRAND.description,
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
