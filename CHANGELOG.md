@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-29 — Horario y zona C2 cerrado en Preview QA
+
+- El propietario cerró C2 funcionalmente sobre Cutover QA `prirlabbnlcuvnzuaczp` y datos sintéticos. Aceptó D9 con dependencias persistidas, la intersección A2 del horario profesional y global, la proyección CMS y la emisión de factura con fecha de negocio 2026-09-28. La evidencia distingue el bloqueo visible D9 en Preview del `409` cubierto por integración C1; el horario CMS se confirmó, aunque la página pública no mostró una lista visual de franjas.
+- Correo/promociones se aceptan con la integración C1 de promoción sellada y las pruebas end-to-end previas de Notificaciones y Medios/Promociones; no se reactivó el worker ni se envió correo en este QA. El test de componente cubre «Confirmar región» deshabilitado por `zoneChangeAllowed=false`.
+- Quedan como pendientes separados «Gestionar perfil» en tarjeta responsive y conservar cerrados los grants `anon`/`authenticated` de Cutover QA. El ítem 4 espera que el propietario elija los horarios reales de Dental Ross y Prueba de oro. Migración y confirmación productivas no están autorizadas. [Evidencia](docs/quality/STAGING_QA_2026-09-28.md).
+
 ## 2026-09-28 — Completar reservas antes del fin programado
 
 - OWNER, ADMIN, RECEPTIONIST y BARBER pueden completar una reserva confirmada sin esperar a la hora de inicio/fin ni a la duración del servicio. Se retiró el guard temporal del backend y se actualizaron las pruebas de servicio y HTTP.

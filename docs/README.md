@@ -17,7 +17,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 ### Producto y experiencia
 
 - [`HORARIO_ZONA_C1_CONTRATO.md`](features/HORARIO_ZONA_C1_CONTRATO.md) y [`HORARIO_ZONA_C1_EVIDENCIA.md`](features/HORARIO_ZONA_C1_EVIDENCIA.md): D1–D15 A; backend C1 aprobado, commit `b0357af`. [Integración local](features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md).
-- [`HORARIO_ZONA_C2_FRONTEND.md`](features/HORARIO_ZONA_C2_FRONTEND.md): D14-A autorizado, editor y consumidores implementados/en revisión, con inventario READ ONLY de Dental Ross/Prueba de oro y QA local real de cuatro roles/dos negocios sintéticos. Checkpoint publicado en Preview QA, sin QA autenticado del horario ni aprobación C2. Producción permanece sin migrar/confirmar por C2; su QA frontend requiere autorización expresa posterior. Sin despliegue web productivo, apertura pública ni correo.
+- [`HORARIO_ZONA_C2_FRONTEND.md`](features/HORARIO_ZONA_C2_FRONTEND.md): D14-A implementado y C2 cerrado/aprobado por el propietario en Preview sobre Cutover QA y datos sintéticos. D9, A2, CMS y Facturación tienen evidencia aceptada; correo/promociones conservan la cobertura de C1 y de sus módulos. Dental Ross y Prueba de oro siguen sin migración ni confirmación de horario productivas hasta que el propietario decida sus horarios reales y lo autorice por separado.
 - [`HORARIO_ZONA_C0_AUDITORIA.md`](features/HORARIO_ZONA_C0_AUDITORIA.md): auditoría histórica; las alternativas A fueron seleccionadas posteriormente para C1.
 
 - [`MEDIOS_PROMOCIONES_C3_ACTIVACION.md`](features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md): C3 cerrado/aprobado expresamente, cuota de moderación en 0 hasta el próximo ciclo, respaldo/restauración y actualización verificada de desarrollo a 25 migraciones, con limpieza posterior de QA.
@@ -64,7 +64,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Calidad y publicación
 
-- [`STAGING_QA_2026-09-28.md`](quality/STAGING_QA_2026-09-28.md): Cutover QA limpia/migrada, dos tenants sintéticos sin dependencias, API OCI de staging en HTTPS y web Preview Ready en el alias QA. El QA autenticado del horario permanece pendiente antes de aprobarse.
+- [`STAGING_QA_2026-09-28.md`](quality/STAGING_QA_2026-09-28.md): Cutover QA limpia/migrada, dos tenants sintéticos, API OCI de staging en HTTPS y web Preview. QA autenticado de Horario y zona C2 cerrado/aprobado sobre datos sintéticos; evidencia D9, A2, CMS y Facturación, cobertura aceptada de correo/promociones, límites productivos y pendientes separados.
 - [`API_OCI_DESPLIEGUE.md`](quality/API_OCI_DESPLIEGUE.md): API desplegada en la VM Always Free de 2 OCPU/12 GB, Caddy/TLS real, CORS exacto, Supabase runtime y evidencia HTTPS externa; implementado/en revisión.
 - [`PRODUCCION_SUPABASE_LIMPIEZA_2026-09-27.md`](quality/PRODUCCION_SUPABASE_LIMPIEZA_2026-09-27.md): respaldo/restauración verificados, inventario anterior al corte y limpieza atómica completada con `Dental Ross` preservada; contiene conteos y evidencia posterior.
 - [`BASE_PREPRODUCCION_C0_AUDITORIA.md`](quality/BASE_PREPRODUCCION_C0_AUDITORIA.md): C0 documental del ítem 3, aprobado después por el propietario con D1–D13 fijadas.

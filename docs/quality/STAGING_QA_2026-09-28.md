@@ -1,6 +1,6 @@
 # Cutover QA y API de staging — 2026-09-28
 
-**C2 APROBADO FUNCIONALMENTE EN PREVIEW QA**, limitado a Cutover QA y datos sintéticos, por confirmación explícita del propietario el 2026-09-28. Esta aprobación no autoriza migrar ni confirmar horario en producción.
+**C2 CERRADO / APROBADO EN PREVIEW QA** por confirmación explícita del propietario el 2026-09-29, limitado a Cutover QA y datos sintéticos. La aprobación inicial del editor fue el 2026-09-28; el cierre incorpora D9, A2, CMS y Facturación. No autoriza migrar ni confirmar horario en producción.
 El propietario confirmó cada escritura real de esta preparación. El alcance
 es Supabase Cutover QA `prirlabbnlcuvnzuaczp`, dos fixtures sintéticos y una
 segunda API en la VM OCI existente. El 2026-09-28 se añadieron cuatro identidades
@@ -130,7 +130,7 @@ OWNER durante edición de semana, creación de cierre y reprogramación de cita.
 | Cierre completo e historial | Se creó un cierre para el 1 de noviembre de 2026 con motivo privado `QA C2: cierre completo de prueba` y luego se canceló. No tenía citas asociadas; el registro cancelado quedó en el historial. |
 | Cierre parcial e impacto | Para el 3 de noviembre se previsualizó primero 10:00–12:00: 1 cita afectada y guardar deshabilitado; no se guardó. La propuesta 12:00–14:00 reportó 1 cita evaluada y 0 afectadas; se guardó con motivo privado `QA C2: cierre parcial de prueba`. La reserva de 10:30 quedó intacta. |
 
-Estado final de los datos sintéticos en QA Norte: 1 servicio, 1 profesional
+Estado al 2026-09-28 de los datos sintéticos en QA Norte: 1 servicio, 1 profesional
 activo sin contacto, 1 cliente, 1 reserva pendiente de 10:30 a 11:00, 1 cierre
 parcial activo de 12:00 a 14:00 el 3 de noviembre y 1 cierre completo
 cancelado con historial. La semana quedó restaurada. No se probó pago,
@@ -143,11 +143,37 @@ ya probadas (Cutover QA, datos sintéticos)**. El gate funcional de este
 checkpoint queda **CERRADO / APROBADO** con ese alcance. La confirmación no
 incluye datos o tenants productivos.
 
+## Cierre de Horario y zona C2 en Preview — 2026-09-29
+
+El propietario aceptó el cierre funcional del ítem 4 sobre Cutover QA y datos
+sintéticos. Evidencia adicional a la tabla del QA inicial:
+
+| Área | Resultado y alcance comprobado |
+| --- | --- |
+| D9 con dependencias | QA Horario Norte conserva reserva y cierres persistidos. En Preview OWNER, tras elegir otra región, `zoneChangeAllowed=false` mostró el aviso de dependencias y dejó deshabilitado «Confirmar región». Se añadió una prueba de componente para ese estado. El `409` por promoción sellada está cubierto por la integración C1; esta comprobación de Preview no se presenta como un `409` HTTP nuevo. |
+| A2 por profesional | El profesional sintético de Norte recibió horario individual martes 08:00–12:00; el global abre a las 09:00 y la disponibilidad efectiva comprobada fue 09:00–12:00. La prueba no creó reservas públicas. |
+| CMS / página pública | Se comprobó el horario confirmado de Norte: domingo, lunes y miércoles a sábado 09:00–19:00; martes 09:00–24:00. En la página pública de QA se comprobó la organización y el estado de reservas no disponibles. No se observó una lista visual de franjas en esa página mientras el profesional era privado; el propietario aceptó la evidencia de horario/proyección sin repetir una captura pública. Sur permaneció sin confirmar, sin exponer datos internos. |
+| Facturación | Solo en Cutover QA, la reserva sintética se fechó al 2026-09-27 10:30–11:00 `America/Santo_Domingo` mediante `startTime`/`endTime`, sin cambiar su estado en SQL. OWNER la completó desde la interfaz y emitió la factura de prueba `14343eff-0b40-4e34-b651-f0e1c3f82abc` por RD$500, pendiente de pago. Su emisión `2026-09-29T03:39:26.181Z` corresponde al **día de negocio 2026-09-28** (23:39:26 en Santo Domingo); la fecha de la factura deriva de la emisión, no de la fecha de la cita. No se cambió la regla temporal de facturación. |
+| Correo y promociones | El propietario acepta la integración C1 que verifica `409` ante una promoción sellada como dependencia y las pruebas end-to-end previas de Notificaciones y Medios/Promociones. No se activó aquí el worker ni se envió correo o promoción en Preview. |
+
+Estado actual de los datos de Norte: semana restaurada, cierre parcial del 3 de
+noviembre activo, cierre completo del 1 de noviembre cancelado con historial,
+profesional sintético privado, reserva de prueba `COMPLETED` y factura de prueba
+emitida sin pago. El API de staging conserva `PUBLIC_BOOKING_CLOSED=true` y el
+correo apagado. QA Horario Sur y producción no recibieron estas operaciones.
+
+Pendientes independientes que no bloquean C2: investigar «Gestionar perfil» en
+la tarjeta responsive y conservar cerrados los grants efectivos de DML de
+`anon`/`authenticated` en Cutover QA. La lectura de seguridad observó cero
+tablas públicas con esos grants efectivos; el frontend no usa cliente Supabase
+con clave `anon` para datos de negocio y los consulta mediante la API NestJS.
+
 ## Límites y decisiones pendientes
 
-- El propietario **no autoriza todavía migración ni confirmación de horario en
-  producción**. Dental Ross y Prueba de oro permanecen bajo su estado productivo
-  previo; cualquier migración o confirmación exige una decisión separada.
+- El ítem 4 está listo para una decisión productiva separada: el propietario
+  debe elegir el horario real de Dental Ross y Prueba de oro. **No autoriza
+  todavía migración ni confirmación de horario en producción**. Antes de un
+  cambio futuro autorizado se reevaluarán las dependencias D9 bajo lock.
 - La aprobación C2 no autoriza despliegue web productivo, apertura de reservas
   públicas, activación de correo ni otros cambios de negocio.
 - Cutover QA contiene solo los fixtures y registros de prueba descritos aquí;

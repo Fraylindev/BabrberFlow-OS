@@ -210,6 +210,26 @@ describe('Horario D14/C2', () => {
     await screen.findByText(/Región confirmada/);
     expect(screen.getByLabelText('Hasta · Lunes 1')).toHaveValue('18:00');
   });
+  it('disables changing the region when D9 reports persisted dependencies', async () => {
+    current.management = {
+      ...current.management!,
+      zoneChangeAllowed: false,
+      dependencies: { bookings: 1, blocks: 0, closures: 2, promotions: 0, emailIntents: 0 },
+    };
+    mount();
+    await screen.findByLabelText('Hasta · Lunes 1');
+    fireEvent.change(screen.getByRole('combobox', { name: 'Región' }), {
+      target: { value: 'madrid' },
+    });
+
+    expect(screen.getByText(/Existen compromisos o historial/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirmar región' })).toBeDisabled();
+    expect(api.post).not.toHaveBeenCalledWith(
+      `${root}/zone`,
+      expect.anything(),
+      expect.anything(),
+    );
+  });
   it.each(['create', 'cancel'])(
     'preserves a separate draft week when a closure is %s',
     async (operation) => {
