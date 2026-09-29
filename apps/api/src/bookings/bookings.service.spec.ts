@@ -602,7 +602,7 @@ describe('BookingsService - BARBER status authorization', () => {
     ['BARBER', PROFESSIONAL.id],
     ['administrativo', undefined],
   ])(
-    'rechaza COMPLETED antes de endTime para rol %s',
+    'permite COMPLETED antes de endTime para rol %s',
     async (_role, professionalId) => {
       prisma.db.booking.findFirst.mockResolvedValue({
         id: 'booking-id',
@@ -610,19 +610,25 @@ describe('BookingsService - BARBER status authorization', () => {
         endTime: new Date('2099-01-01T10:30:00.000Z'),
       });
 
-      await expect(
-        service.updateStatus(
-          'booking-id',
-          ORG_ID,
-          { status: BookingStatus.COMPLETED },
-          professionalId,
-        ),
-      ).rejects.toBeInstanceOf(ConflictException);
-      expect(prisma.db.booking.update).not.toHaveBeenCalled();
+      await service.updateStatus(
+        'booking-id',
+        ORG_ID,
+        { status: BookingStatus.COMPLETED },
+        professionalId,
+      );
+      expect(prisma.db.booking.update).toHaveBeenCalledWith({
+        where: {
+          id: 'booking-id',
+          organizationId: ORG_ID,
+          ...(professionalId ? { professionalId } : {}),
+        },
+        data: { status: BookingStatus.COMPLETED },
+        select: bookingMutationResponseSelect,
+      });
     },
   );
 
-  it('rechaza repetir COMPLETED sobre una Booking futura históricamente inválida', async () => {
+  it('acepta repetir COMPLETED sobre una Booking futura sin duplicar escrituras', async () => {
     prisma.db.booking.findFirst.mockResolvedValue({
       id: 'booking-id',
       status: BookingStatus.COMPLETED,
@@ -633,7 +639,7 @@ describe('BookingsService - BARBER status authorization', () => {
       service.updateStatus('booking-id', ORG_ID, {
         status: BookingStatus.COMPLETED,
       }),
-    ).rejects.toBeInstanceOf(ConflictException);
+    ).resolves.toMatchObject({ status: BookingStatus.COMPLETED });
     expect(prisma.db.booking.update).not.toHaveBeenCalled();
   });
 

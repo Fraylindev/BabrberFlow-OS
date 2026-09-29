@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-28 — Completar reservas antes del fin programado
+
+- OWNER, ADMIN, RECEPTIONIST y BARBER pueden completar una reserva confirmada sin esperar a la hora de inicio/fin ni a la duración del servicio. Se retiró el guard temporal del backend y se actualizaron las pruebas de servicio y HTTP.
+- El correo de «gracias por tu visita» conserva la elegibilidad vinculada al fin programado: completar antes no lo envía anticipadamente. Facturación mantiene su propia validación temporal.
+- Implementado en el árbol local; unitarias API/web, tipos y lint pasaron. El flujo funcional de Preview aún no está validado; sin publicación ni cambios en producción.
+
 ## 2026-09-28 — Cutover QA y API OCI de staging
 
 - Cutover QA `prirlabbnlcuvnzuaczp` vaciada de `barberflow`, migrada a C1 y poblada inicialmente solo con dos organizaciones sintéticas sin Membership ni dependencias. Sin copiar Dental Ross o Prueba de oro.

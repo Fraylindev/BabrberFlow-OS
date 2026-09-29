@@ -1,5 +1,9 @@
 # BACKEND_CHANGES.md
 
+## 2026-09-28 — Completar reservas sin esperar al fin programado
+
+El propietario solicitó que el personal pueda marcar como `COMPLETED` una reserva `CONFIRMED` aunque `endTime` sea futuro. Se retiró únicamente el guard temporal de `PATCH /bookings/:id/status`; roles, transiciones, aislamiento tenant, auditoría y captura transaccional/deduplicación de correo permanecen vigentes. La emisión y el cobro de facturas conservan sus validaciones temporales actuales. Pruebas de servicio y HTTP se actualizaron para probar el completado anticipado; pendiente validar en Preview antes de aprobar/publicar.
+
 ## 2026-09-27 — Horario y zona del negocio C1
 
 **BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. D1–D15 A autorizadas; agregado relacional, semana/cierres/impacto/revisión y confirmación de zona, roles y lock Organization compartido por Booking/A2/correo/claims. Nuevas altas sin confirmar, legacy fiel hasta transición; tenant productivo SQL_NULL sin confirmar. Tipos/lint/build, 763 unitarias, 26 integraciones C1, 9 concurrencias, 75 HTTP y 26 productor/worker pasaron; migración 26→27, grants/integridad y restore 35/35 verificados. [Contrato](docs/features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](docs/features/HORARIO_ZONA_C1_EVIDENCIA.md). Lógica backend aprobada expresamente por el propietario y cambio integrado en su proyecto local; 763 unitarias, tipos/lint/build y Prisma vuelven a pasar allí. [Integración local](docs/features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md). El propietario autorizó expresamente commit/push C1 a origin/ai/antigravity-qa. Sin aplicar migraciones a bases, frontend o implantación. La aprobación C1 no cierra el módulo ni autoriza C2.

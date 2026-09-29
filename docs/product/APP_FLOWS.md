@@ -65,7 +65,7 @@ Medios/Promociones [C1–C3](../features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md) es
 
 ## 6. Facturación interna
 
-1. una Booking solo se completa después de `endTime` según el reloj del servidor;
+1. OWNER, ADMIN, RECEPTIONIST y BARBER completan una Booking CONFIRMED sin esperar a `endTime`; esta transición no depende de la hora de la cita ni de la duración del servicio;
 2. una Invoice interna toma el snapshot de `Service.price` y queda única por Booking;
 3. un Payment completo único registra método, `paidAt` y actor;
 4. listados y acciones se aíslan por tenant y, para BARBER, por Professional vinculado;

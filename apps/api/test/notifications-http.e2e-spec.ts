@@ -304,38 +304,50 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
     },
   );
 
-  it('rejects early COMPLETED and captures one real completion, including BARBER own', async () => {
-    const id = await create();
+  it('allows early completion without early email, then captures one completion email after endTime', async () => {
+    const earlyId = await create();
     await requestApp(app)
-      .patch(`/bookings/${id}/status`)
+      .patch(`/bookings/${earlyId}/status`)
       .set(auth('BARBER'))
       .send({ status: 'CONFIRMED' })
       .expect(200);
     await requestApp(app)
-      .patch(`/bookings/${id}/status`)
+      .patch(`/bookings/${earlyId}/status`)
       .set(auth('BARBER'))
       .send({ status: 'COMPLETED' })
-      .expect(409);
+      .expect(200);
+    await requestApp(app)
+      .patch(`/bookings/${earlyId}/status`)
+      .set(auth('BARBER'))
+      .send({ status: 'COMPLETED' })
+      .expect(200);
+    expect(
+      await prisma.db.bookingEmailEvent.count({
+        where: { bookingId: earlyId, kind: 'COMPLETED' },
+      }),
+    ).toBe(0);
+
+    const endedId = await create();
+    await requestApp(app)
+      .patch(`/bookings/${endedId}/status`)
+      .set(auth('BARBER'))
+      .send({ status: 'CONFIRMED' })
+      .expect(200);
     await prisma.db.booking.update({
-      where: { id },
+      where: { id: endedId },
       data: {
         startTime: new Date('2020-01-02T15:00:00Z'),
         endTime: new Date('2020-01-02T15:30:00Z'),
       },
     });
     await requestApp(app)
-      .patch(`/bookings/${id}/status`)
-      .set(auth('BARBER'))
-      .send({ status: 'COMPLETED' })
-      .expect(200);
-    await requestApp(app)
-      .patch(`/bookings/${id}/status`)
+      .patch(`/bookings/${endedId}/status`)
       .set(auth('BARBER'))
       .send({ status: 'COMPLETED' })
       .expect(200);
     expect(
       await prisma.db.bookingEmailEvent.count({
-        where: { bookingId: id, kind: 'COMPLETED' },
+        where: { bookingId: endedId, kind: 'COMPLETED' },
       }),
     ).toBe(1);
   });

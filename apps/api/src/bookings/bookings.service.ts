@@ -456,7 +456,6 @@ export class BookingsService {
     }
 
     if (booking.status === updateBookingStatusDto.status) {
-      this.assertServiceEndedForCompletion(booking, updateBookingStatusDto);
       return booking;
     }
 
@@ -470,8 +469,6 @@ export class BookingsService {
           : 'Transición administrativa de estado no permitida',
       );
     }
-
-    this.assertServiceEndedForCompletion(booking, updateBookingStatusDto);
 
     const reactivatesFutureSchedule =
       booking.status === BookingStatus.CANCELLED &&
@@ -516,20 +513,6 @@ export class BookingsService {
       return updated;
     } catch (error) {
       this.rethrowScheduleConflict(error);
-    }
-  }
-
-  private assertServiceEndedForCompletion(
-    booking: Pick<BookingMutationResponse, 'endTime'>,
-    updateBookingStatusDto: UpdateBookingStatusDto,
-  ): void {
-    if (
-      updateBookingStatusDto.status === BookingStatus.COMPLETED &&
-      booking.endTime.getTime() > Date.now()
-    ) {
-      throw new ConflictException(
-        'No se puede completar una reserva antes de que termine el servicio',
-      );
     }
   }
 
