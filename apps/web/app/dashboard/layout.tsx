@@ -79,12 +79,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <RestrictedPanel onLogout={() => void auth.logout()}>
         <div className="mx-auto max-w-md rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-6 text-center shadow-[var(--dash-shadow-card)]">
           <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--dash-text)]">
-            No pudimos abrir tu panel
+            {auth.isRecovering ? 'Conectando con tu espacio de trabajo…' : 'Tu acceso necesita atención'}
           </h1>
-          <p className="mt-2 text-sm text-[var(--dash-text-muted)]"><ErrorText message={auth.error} /></p>
-          <Button tone="light" className="mt-5" onClick={() => void auth.refresh()}>
-            Intentar de nuevo
-          </Button>
+          {auth.isRecovering ? (
+            <p role="status" className="mt-2 text-sm text-[var(--dash-text-muted)]">La conexión se recuperará automáticamente.</p>
+          ) : (
+            <>
+              <p className="mt-2 text-sm text-[var(--dash-text-muted)]"><ErrorText message={auth.error} /></p>
+              <Button tone="light" className="mt-5" onClick={() => void auth.logout()}>Iniciar sesión</Button>
+            </>
+          )}
         </div>
       </RestrictedPanel>
     );

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-09-30 — Correctivo F0-B validado, publicación y despliegue QA autorizados
+
+- Reservas recibe estado financiero mínimo, distingue factura emitida/pagada y sincroniza caché al emitir/cobrar. Backend aprobado explícitamente; sin migraciones ni ampliación de permisos. Menú móvil con una acción principal y tres puntos, incluyendo avisos por correo.
+- Renovación automática acotada del token tras 401, relectura de acceso, recuperación de consultas transitorias y retención de borradores. Rechazos definitivos retiran acceso; escrituras ambiguas no se repiten. Logs QA del código reportado corroboran rechazo de autenticación, sin demostrar el motivo criptográfico exacto.
+- API: tipos/lint y 764 pruebas pasan. Web: tipos limpios/lint/build y 235 pruebas pasan; Chrome controlado 320/375/390/1280 px pasa. El propietario autoriza commit/push y despliegue ordenado API QA → web QA; QA con Clerk real y aprobación final pendientes. [Informe F0-B](docs/quality/CORRECTIVO_F0B.md).
+
+## 2026-09-30 — Publicación y despliegue QA de F0-A autorizados
+
+- El propietario aprobó Gate 4 y commit/push de los 34 archivos de F0-A. Commit `6752e95e580b41670b6369adfc6bfb240f4c8509` en `origin/ai/antigravity-qa`, con SHA local/remoto iguales. Autorización posterior de QA: Preview Ready en el dominio QA y `X-Request-Id`/exposición CORS verificados. Su informe conserva el cambio documental de despliegue sin commit por instrucción expresa. Esta continuación actualiza el estado de la entrada histórica inferior; el testing del propietario dio origen a F0-B, sin cierre de QA integrado. [Informe F0-A](docs/quality/CORRECTIVO_F0A.md).
+
 ## 2026-09-30 — Correctivo F0-A local, sin publicación
 
 - Ajustados los seis puntos autorizados: contraseña pública de ocho caracteres con ayuda junto al campo, entradas móviles de 16 px, mensajes de cambio de estado según causa, UUID de petición recibido del API, fecha/hora natural del negocio y ejemplos visibles de filtros, y etiquetas del rol Profesional manteniendo `BARBER` interno.

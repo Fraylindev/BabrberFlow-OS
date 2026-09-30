@@ -1,5 +1,9 @@
 # BACKEND_CHANGES.md
 
+## 2026-09-30 — F0-B: estado financiero en Reservas (candidato)
+
+GET `/bookings` añade `invoice: null | { id, state: 'ISSUED' | 'PAID' }`. El estado se deriva de la existencia del pago, igual que Facturación. Proyección mínima sin importes, método, actor ni objeto Payment; tenant y agenda propia del Profesional conservan sus filtros y la relación financiera usa FK compuesta. Sin migraciones ni cambios de escritura, permisos o rutas públicas. **BACKEND APROBADO / PUBLICACIÓN QA AUTORIZADA / EN REVISIÓN**. Tipos/lint y 764 pruebas pasan, exit 0; el propietario aprobó backend e integración frontend. Despliegue QA autorizado por el propietario; ejecución y QA integrado pendientes. [Brief y evidencia](docs/quality/CORRECTIVO_F0B.md).
+
 ## 2026-09-28 — Completar reservas sin esperar al fin programado
 
 El propietario solicitó que el personal pueda marcar como `COMPLETED` una reserva `CONFIRMED` aunque `endTime` sea futuro. Se retiró únicamente el guard temporal de `PATCH /bookings/:id/status`; roles, transiciones, aislamiento tenant, auditoría y captura transaccional/deduplicación de correo permanecen vigentes. La emisión y el cobro de facturas conservan sus validaciones temporales actuales. Pruebas de servicio y HTTP se actualizaron para probar el completado anticipado; pendiente validar en Preview antes de aprobar/publicar.

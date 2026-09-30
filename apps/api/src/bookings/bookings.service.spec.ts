@@ -816,5 +816,44 @@ describe('BookingsService - Client security regressions', () => {
     expect(args.select).not.toHaveProperty('organizationId');
     expect(args.select).not.toHaveProperty('createdAt');
     expect(args.select).not.toHaveProperty('updatedAt');
+    expect(args.select.Invoice).toEqual({
+      select: { id: true, payment: { select: { id: true } } },
+    });
+  });
+
+  it('distinguishes no invoice, issued and paid without exposing payment records', async () => {
+    prisma.db.booking.findMany.mockResolvedValue([
+      { id: 'unbilled', status: BookingStatus.COMPLETED, Invoice: null },
+      {
+        id: 'issued',
+        status: BookingStatus.COMPLETED,
+        Invoice: { id: 'invoice-1', payment: null },
+      },
+      {
+        id: 'paid',
+        status: BookingStatus.COMPLETED,
+        Invoice: { id: 'invoice-2', payment: { id: 'payment-private' } },
+      },
+    ]);
+    const bookings = await service.findAll(ORG_ID, PROFESSIONAL.id);
+    expect(bookings).toEqual([
+      { id: 'unbilled', status: BookingStatus.COMPLETED, invoice: null },
+      {
+        id: 'issued',
+        status: BookingStatus.COMPLETED,
+        invoice: { id: 'invoice-1', state: 'ISSUED' },
+      },
+      {
+        id: 'paid',
+        status: BookingStatus.COMPLETED,
+        invoice: { id: 'invoice-2', state: 'PAID' },
+      },
+    ]);
+    expect(JSON.stringify(bookings)).not.toContain('payment-private');
+    expect(prisma.db.booking.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { organizationId: ORG_ID, professionalId: PROFESSIONAL.id },
+      }),
+    );
   });
 });

@@ -14,6 +14,8 @@ import {
   parseInvoicePagination,
 } from "@/lib/invoice-ui";
 import { queryKeys } from "./keys";
+import { refreshInvoiceQueries, synchronizeInvoiceQueries } from './invoice-cache';
+import { isTransientQueryError } from '../query-recovery';
 
 interface InvoiceFilters {
   page: number;
@@ -32,14 +34,14 @@ export function useInvoicesQuery(
     queryKey: scopeKey
       ? queryKeys.invoices.list(scopeKey, filters)
       : ["invoices", "disabled"],
-    queryFn: async (): Promise<InvoicePage> => {
+    queryFn: async ({ signal }): Promise<InvoicePage> => {
       const response = await api.getWithHeaders<Invoice[]>("/invoices", {
         page: String(filters.page),
         limit: String(filters.limit),
         ...(filters.state ? { state: filters.state } : {}),
         ...(filters.from ? { from: filters.from } : {}),
         ...(filters.to ? { to: filters.to } : {}),
-      });
+      }, { signal, cache: 'no-store' });
       return {
         items: response.data,
         pagination: parseInvoicePagination(response.headers),
@@ -76,11 +78,9 @@ export function useCreateInvoice() {
   return useMutation({
     mutationFn: ({ bookingId }: { bookingId: string; scopeKey: string }) =>
       api.post<Invoice>("/invoices", createInvoicePayload(bookingId)),
-    onSuccess: (_invoice, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.invoices.scope(variables.scopeKey),
-      });
-    },
+    onSuccess: (invoice, variables) => synchronizeInvoiceQueries(queryClient, invoice, variables.scopeKey),
+    onError: (error, variables) => isTransientQueryError(error)
+      ? refreshInvoiceQueries(queryClient, variables.scopeKey) : undefined,
   });
 }
 
@@ -99,10 +99,8 @@ export function useRecordInvoicePayment() {
         `/invoices/${invoiceId}/payments`,
         createPaymentPayload(method),
       ),
-    onSuccess: (_invoice, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.invoices.scope(variables.scopeKey),
-      });
-    },
+    onSuccess: (invoice, variables) => synchronizeInvoiceQueries(queryClient, invoice, variables.scopeKey),
+    onError: (error, variables) => isTransientQueryError(error)
+      ? refreshInvoiceQueries(queryClient, variables.scopeKey) : undefined,
   });
 }

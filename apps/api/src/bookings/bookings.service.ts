@@ -42,6 +42,7 @@ export const bookingListResponseSelect = {
   client: { select: bookingClientResponseSelect },
   professional: { select: { id: true, name: true } },
   service: { select: { id: true, name: true, duration: true } },
+  Invoice: { select: { id: true, payment: { select: { id: true } } } },
 } satisfies Prisma.BookingSelect;
 
 type BookingMutationResponse = Prisma.BookingGetPayload<{
@@ -264,7 +265,7 @@ export class BookingsService {
     to?: Date,
     status?: BookingStatus,
   ) {
-    return await this.prisma.db.booking.findMany({
+    const bookings = await this.prisma.db.booking.findMany({
       where: {
         organizationId,
         ...(professionalId ? { professionalId } : {}),
@@ -275,6 +276,15 @@ export class BookingsService {
       select: bookingListResponseSelect,
       orderBy: { startTime: 'asc' },
     });
+    return bookings.map(({ Invoice, ...booking }) => ({
+      ...booking,
+      invoice: Invoice
+        ? {
+            id: Invoice.id,
+            state: Invoice.payment ? ('PAID' as const) : ('ISSUED' as const),
+          }
+        : null,
+    }));
   }
 
   // Reutilizado por PublicBookingService para calcular disponibilidad:

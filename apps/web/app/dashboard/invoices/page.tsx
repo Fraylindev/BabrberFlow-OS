@@ -27,6 +27,8 @@ import { Modal } from "@/components/ui/Modal";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SkeletonListRows } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
+import { ErrorText } from '@/components/ui/ErrorText';
+import { isTransientQueryError } from '@/lib/query-recovery';
 
 const PAGE_SIZE = 20;
 type StateFilter = "ALL" | InvoiceState;
@@ -81,7 +83,8 @@ function ScopedInvoicesPage({
   const paymentMutation = useRecordInvoicePayment();
   const isBarber = user?.role === "BARBER";
   const isLoading = !rangeError && (invoicesQuery.isPending || timeZoneQuery.isPending);
-  const hasError = invoicesQuery.isError || timeZoneQuery.isError;
+  const hasError = (invoicesQuery.isError && (!invoicesQuery.data || !isTransientQueryError(invoicesQuery.error)))
+    || (timeZoneQuery.isError && (!timeZoneQuery.data || !isTransientQueryError(timeZoneQuery.error)));
   const hasActiveFilters = Boolean(fromDate || toDate || stateFilter !== "ALL");
   const items = invoicesQuery.data?.items ?? [];
   const pagination = invoicesQuery.data?.pagination;
@@ -119,11 +122,6 @@ function ScopedInvoicesPage({
     } catch {
       // El mensaje contextual se muestra dentro del diálogo.
     }
-  }
-
-  function retry() {
-    void invoicesQuery.refetch();
-    void timeZoneQuery.refetch();
   }
 
   const title = isBarber ? "Facturación de mis servicios" : "Facturación";
@@ -249,14 +247,11 @@ function ScopedInvoicesPage({
       ) : hasError ? (
         <Card tone="light" className="p-6 text-center">
           <p role="alert" className="text-sm font-medium text-[var(--dash-danger)]">
-            {invoiceErrorMessage(invoicesQuery.error, "list")}
+            <ErrorText message={invoiceErrorMessage(invoicesQuery.error ?? timeZoneQuery.error, "list")} />
           </p>
-          <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
-            Revisa tu conexión e inténtalo de nuevo.
-          </p>
-          <Button tone="light" variant="secondary" className="mt-4" onClick={retry}>
-            Reintentar
-          </Button>
+          {isTransientQueryError(invoicesQuery.error ?? timeZoneQuery.error) && (
+            <p className="mt-1 text-sm text-[var(--dash-text-muted)]">La consulta se actualizará automáticamente cuando el servicio esté disponible.</p>
+          )}
         </Card>
       ) : isLoading ? (
         <Card tone="light" aria-label="Cargando facturación">

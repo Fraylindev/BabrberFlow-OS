@@ -39,6 +39,7 @@ import { invoiceErrorMessage, invoiceScopeKey } from '@/lib/invoice-ui';
 import { useCreateInvoice, useOrganizationTimeZoneQuery } from '@/lib/queries/invoices';
 import { ClientAutocomplete } from '@/components/booking/ClientAutocomplete';
 import { BookingActions } from '@/components/booking/BookingActions';
+import { isTransientQueryError } from '@/lib/query-recovery';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatDateTime(iso: string, timeZone: string) { return formatBusinessInstant(iso, timeZone); }
@@ -102,7 +103,7 @@ export default function BookingsPage() {
   const scope = invoiceScopeKey(user);
   const zone = useOrganizationTimeZoneQuery(scope);
   if (!user || zone.isPending) return <Card tone="light" className="p-5"><p role="status">Cargando la hora del negocio…</p></Card>;
-  if (!zone.data || zone.isError) return <Card tone="light" className="space-y-3 p-5"><p role="alert">No pudimos conocer la hora del negocio. Reintenta antes de consultar o reservar.</p><Button tone="light" onClick={() => void zone.refetch()}>Reintentar hora del negocio</Button></Card>;
+  if (!zone.data || (zone.isError && !isTransientQueryError(zone.error))) return <Card tone="light" className="space-y-3 p-5"><p role="status">{isTransientQueryError(zone.error) ? 'Estamos recuperando la conexión con el negocio…' : 'No pudimos consultar el horario con tu acceso actual.'}</p></Card>;
   return <BookingsWorkspace key={`${scope}:${zone.data}`} timeZone={zone.data} />;
 }
 function BookingsWorkspace({ timeZone }: { timeZone: string }) {
@@ -140,7 +141,9 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
   };
 
   // ── Datos ────────────────────────────────────────────────────────────────
-  const { data: items, isLoading, isError, refetch } = useBookingsQuery(filters, `${scopeKey}:${visitId}`, !rangeError);
+  const bookingsQuery = useBookingsQuery(filters, scopeKey ?? undefined, !rangeError, visitId);
+  const { data: items, isLoading } = bookingsQuery;
+  const isError = bookingsQuery.isError && (!items || !isTransientQueryError(bookingsQuery.error));
 
   // ── Mutaciones ───────────────────────────────────────────────────────────
   const updateStatus = useUpdateBookingStatus();
@@ -314,10 +317,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
       {/* ── Error de red ─────────────────────────────────────────────────── */}
       {isError && (
         <div className="mb-4 flex items-center justify-between rounded-sm border border-[var(--dash-danger)]/30 bg-[var(--dash-danger-bg)] px-4 py-3">
-          <p className="text-sm text-[var(--dash-danger)]">No pudimos cargar las reservas.</p>
-          <Button tone="light" variant="ghost" className="text-xs" onClick={() => refetch()}>
-            Reintentar
-          </Button>
+          <p role="status" className="text-sm text-[var(--dash-danger)]">{isTransientQueryError(bookingsQuery.error) ? 'No pudimos cargar las reservas. La consulta se actualizará automáticamente.' : 'No pudimos consultar estas reservas con tu acceso actual.'}</p>
         </div>
       )}
 
@@ -431,8 +431,9 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                   onStatusChange={(status) => handleStatusChange(b.id, status)}
                   onReschedule={() => setRescheduleTarget(b)}
                   onIssueInvoice={() => handleIssueInvoice(b.id)}
+                  onViewInvoices={() => router.push('/dashboard/invoices')}
+                  onNotifications={canReadBookingEmails(user?.role) ? () => router.push(`/dashboard/bookings/${b.id}/notifications`) : undefined}
                 />
-                {canReadBookingEmails(user?.role) && <Link href={`/dashboard/bookings/${b.id}/notifications`} className="mt-3 inline-block text-sm underline focus-visible:outline-2">Avisos por correo</Link>}
               </article>
             ))}
           </div>
@@ -530,6 +531,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                         onStatusChange={(status) => handleStatusChange(b.id, status)}
                         onReschedule={() => setRescheduleTarget(b)}
                         onIssueInvoice={() => handleIssueInvoice(b.id)}
+                        onViewInvoices={() => router.push('/dashboard/invoices')}
                       />
                       {canReadBookingEmails(user?.role) && <Link href={`/dashboard/bookings/${b.id}/notifications`} className="mt-2 inline-block text-xs underline focus-visible:outline-2">Avisos por correo</Link>}
                     </td>

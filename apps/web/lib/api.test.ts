@@ -166,3 +166,73 @@ test('bounds a fetch that does not settle and aborts its signal', async (t) => {
   await rejected;
   assert.equal(signal?.aborted, true);
 });
+
+test('renews a rejected Clerk token once, preserving the captured tenant', async (t) => {
+  const renewals: boolean[] = [];
+  t.after(configureApiAuth(async (fresh = false) => {
+    renewals.push(fresh);
+    return { token: fresh ? 'new-synthetic' : 'old-synthetic', organizationId: 'tenant-A' };
+  }));
+  const tokens: string[] = [];
+  t.mock.method(globalThis, 'fetch', async (_url: unknown, options: RequestInit) => {
+    const headers = new Headers(options.headers);
+    assert.equal(headers.get('x-organization-id'), 'tenant-A');
+    tokens.push(headers.get('Authorization') ?? '');
+    return tokens.length === 1 ? Response.json({}, { status: 401 }) : Response.json({ ok: true });
+  });
+  assert.deepEqual(await api.get('/bookings'), { ok: true });
+  assert.deepEqual(renewals, [false, true]);
+  assert.deepEqual(tokens, ['Bearer old-synthetic', 'Bearer new-synthetic']);
+});
+
+test('a definitive authentication rejection can recover a write, but ambiguous failures never repeat it', async (t) => {
+  for (const status of [401, 503]) {
+    t.after(configureApiAuth(async () => ({ token: 'synthetic', organizationId: 'tenant-A' })));
+    let writes = 0;
+    let requests = 0;
+    t.mock.method(globalThis, 'fetch', async () => {
+      requests++;
+      if (requests === 1) return Response.json({}, { status });
+      writes++;
+      return Response.json({ ok: true });
+    });
+    if (status === 401) {
+      await api.post('/invoices/invoice/payments', { method: 'CASH' });
+      assert.equal(requests, 2);
+      assert.equal(writes, 1);
+    } else {
+      await assert.rejects(api.post('/invoices/invoice/payments', { method: 'CASH' }), ApiError);
+      assert.equal(requests, 1);
+      assert.equal(writes, 0);
+    }
+    t.mock.restoreAll();
+  }
+});
+
+test('a revoked session stops after one renewal and refreshes access without a retry loop', async (t) => {
+  let rejected = 0;
+  t.after(configureApiAuth(async () => ({ token: 'synthetic', organizationId: 'tenant-A' }), () => { rejected++; }));
+  const fetchMock = t.mock.method(globalThis, 'fetch', async () => Response.json({}, { status: 401 }));
+  await assert.rejects(api.get('/bookings'), (error: unknown) => error instanceof ApiError && error.status === 401);
+  assert.equal(fetchMock.mock.callCount(), 2);
+  assert.equal(rejected, 1);
+});
+
+test('changing scope during renewal cancels a late write before it is repeated', async (t) => {
+  let release!: (value: { token: string; organizationId: string }) => void;
+  const old = configureApiAuth(async (fresh) => fresh
+    ? new Promise((resolve) => { release = resolve; })
+    : { token: 'old', organizationId: 'tenant-A' });
+  const fetchMock = t.mock.method(globalThis, 'fetch', async () => Response.json({}, { status: 401 }));
+  const pending = api.post('/invoices/id/payments', { method: 'CASH' });
+  const rejection = assert.rejects(pending, { name: 'AbortError' });
+  for (let i = 0; !release && i < 20; i++) await Promise.resolve();
+  assert.ok(release);
+  t.after(configureApiAuth(async () => ({ token: 'new', organizationId: 'tenant-B' })));
+  await rejection;
+  release({ token: 'old-fresh', organizationId: 'tenant-A' });
+  old();
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(fetchMock.mock.callCount(), 1);
+});

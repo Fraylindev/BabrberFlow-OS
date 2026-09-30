@@ -11,9 +11,9 @@ import type { EmailOptIn } from '@/lib/notification-ui';
  * La query key incluye los filtros para que React Query cachee y
  * re-fetch correctamente cuando el usuario cambia el rango o estado.
  */
-export function useBookingsQuery(filters?: BookingFilters, scopeKey?: string, enabled = true) {
+export function useBookingsQuery(filters?: BookingFilters, scopeKey?: string, enabled = true, visitId = 'shared') {
   return useQuery({
-    queryKey: [...queryKeys.bookings.all, scopeKey ?? 'disabled', filters ?? {}],
+    queryKey: [...queryKeys.bookings.all, scopeKey ?? 'disabled', visitId, filters ?? {}],
     enabled: Boolean(scopeKey) && enabled,
     gcTime: 0,
     queryFn: ({ signal }) => {

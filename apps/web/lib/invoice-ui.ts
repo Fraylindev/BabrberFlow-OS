@@ -108,7 +108,7 @@ function invoiceErrorMessageText(
       }
     }
     if (error.status === 401 || error.status === 403) {
-      return "Tu acceso cambió. Actualiza la página e inténtalo de nuevo.";
+      return "No tienes acceso a esta operación con tu sesión actual.";
     }
   }
   return operation === "list"
