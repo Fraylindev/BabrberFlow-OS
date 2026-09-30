@@ -14,7 +14,7 @@ import { ChevronLeftIcon, CloseIcon } from "./NavIcons";
 const ROLE_LABELS: Record<string, string> = {
   OWNER: "Dueño",
   ADMIN: "Administrador",
-  BARBER: "Barbero",
+  BARBER: "Profesional",
   RECEPTIONIST: "Recepción",
 };
 

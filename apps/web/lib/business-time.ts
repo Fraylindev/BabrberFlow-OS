@@ -143,8 +143,8 @@ export function formatBusinessInstant(value: string, zone: string, timeOnly = fa
       : { dateStyle: 'medium' as const, timeStyle: 'short' as const }),
   }).format(new Date(value));
 }
-export function formatCalendarDate(value: string) {
-  return new Intl.DateTimeFormat('es-DO', { timeZone: 'UTC', dateStyle: 'medium' }).format(
+export function formatCalendarDate(value: string, dateStyle: 'medium' | 'long' = 'medium') {
+  return new Intl.DateTimeFormat('es-DO', { timeZone: 'UTC', dateStyle }).format(
     new Date(`${value}T12:00:00Z`),
   );
 }

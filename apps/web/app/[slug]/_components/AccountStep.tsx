@@ -42,9 +42,11 @@ export function AccountStep({
             </p>
           )}
           <PasswordField
+            id="public-account-password"
             label="Crea una contraseña"
             value={password}
-            minLength={6}
+            minLength={8}
+            error={password.length < 8 ? 'La contraseña debe tener al menos 8 caracteres.' : undefined}
             onChange={(e) => onPasswordChange(e.target.value)}
           />
         </div>
@@ -53,7 +55,7 @@ export function AccountStep({
       <NavButtons
         onBack={onBack}
         onNext={onNext}
-        nextDisabled={createAccount && (!clientEmail.trim() || password.length < 6)}
+        nextDisabled={createAccount && (!clientEmail.trim() || password.length < 8)}
       />
     </StepWrapper>
   );

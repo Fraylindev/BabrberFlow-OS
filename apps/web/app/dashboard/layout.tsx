@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Topbar } from '@/components/dashboard/Topbar';
 import { Button } from '@/components/ui/Button';
+import { ErrorText } from '@/components/ui/ErrorText';
 import { AUTH_ROUTES, resolveDashboardAccessRedirect } from '@/lib/auth-routes';
 
 function LoadingPanel() {
@@ -80,7 +81,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--dash-text)]">
             No pudimos abrir tu panel
           </h1>
-          <p className="mt-2 text-sm text-[var(--dash-text-muted)]">{auth.error}</p>
+          <p className="mt-2 text-sm text-[var(--dash-text-muted)]"><ErrorText message={auth.error} /></p>
           <Button tone="light" className="mt-5" onClick={() => void auth.refresh()}>
             Intentar de nuevo
           </Button>

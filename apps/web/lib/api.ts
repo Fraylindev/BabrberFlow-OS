@@ -17,11 +17,23 @@ export const API_REQUEST_TIMEOUT_MS = 30_000;
 export class ApiError extends Error {
   status: number;
   retryAfterSeconds: number | null;
-  constructor(status: number, message: string, retryAfterSeconds: number | null = null) {
+  readonly requestId: string | null;
+  constructor(status: number, message: string, retryAfterSeconds: number | null = null, requestId: string | null = null) {
     super(message);
     this.status = status;
     this.retryAfterSeconds = retryAfterSeconds;
+    // La telemetría existente genera UUID v4. No reflejar texto arbitrario de una cabecera.
+    this.requestId = requestId && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(requestId)
+      ? requestId : null;
     this.name = 'ApiError';
+  }
+
+  withRequestCode(
+    message: string,
+    unexpected = ![400, 403, 404, 409, 413, 422, 429].includes(this.status)
+      || this.message === 'No pudimos completar la solicitud. Vuelve a intentarlo.',
+  ): string {
+    return unexpected && this.requestId ? `${message}\nCódigo de soporte: ${this.requestId}` : message;
   }
 }
 
@@ -88,6 +100,7 @@ async function requestWithHeaders<T>(
           ...requestOptions.headers,
         },
       });
+      const requestId = res.headers.get('X-Request-Id');
 
       // 204 No Content u otras respuestas sin cuerpo
       const text = await res.text();
@@ -97,7 +110,7 @@ async function requestWithHeaders<T>(
         data = text ? JSON.parse(text) : null;
       } catch {
         if (res.ok)
-          throw new ApiError(502, 'Recibimos una respuesta incompleta. Vuelve a intentarlo.');
+          throw new ApiError(502, 'Recibimos una respuesta incompleta. Vuelve a intentarlo.', null, requestId);
       }
 
       if (!res.ok) {
@@ -122,7 +135,7 @@ async function requestWithHeaders<T>(
                   Number.isFinite(body.retryAfterSeconds)
                 ? Math.max(0, Math.ceil(body.retryAfterSeconds))
                 : null;
-        throw new ApiError(res.status, message, retryAfterSeconds);
+        throw new ApiError(res.status, message.replace(/\bBARBER\b/g, 'Profesional'), retryAfterSeconds, requestId);
       }
 
       return { data: data as T, headers: res.headers };

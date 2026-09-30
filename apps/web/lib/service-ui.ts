@@ -1,4 +1,5 @@
-import type { ApiError, AuthUser } from "./api.ts";
+import { ApiError } from './api.ts';
+import type { AuthUser } from "./api.ts";
 
 export type ServiceStatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 export type ServiceSort =
@@ -97,7 +98,12 @@ export function formatServicePrice(value: string) {
     : "Precio no disponible";
 }
 
-export function serviceErrorMessage(
+export function serviceErrorMessage(error: unknown, action: "list" | "create" | "update" | "deactivate" | "reactivate"): string {
+  const message = serviceErrorMessageText(error, action);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function serviceErrorMessageText(
   error: unknown,
   action: "list" | "create" | "update" | "deactivate" | "reactivate",
 ) {

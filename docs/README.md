@@ -64,6 +64,8 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Calidad y publicación
 
+- [`CORRECTIVO_F0A.md`](quality/CORRECTIVO_F0A.md): seis correctivos locales del QA del propietario, regresiones antes/después y navegador aislado. Validación incompleta por configuración del build web; Gate 4 abierto, sin aprobación ni publicación.
+
 - [`STAGING_QA_2026-09-28.md`](quality/STAGING_QA_2026-09-28.md): Cutover QA limpia/migrada, dos tenants sintéticos, API OCI de staging en HTTPS y web Preview. QA autenticado de Horario y zona C2 cerrado/aprobado sobre datos sintéticos; apertura pública posterior en QA y worker Resend QA independiente activo, sin envío real acreditado. Producción intacta; evidencia D9, A2, CMS y Facturación, límites productivos y pendientes separados.
 - [`API_OCI_DESPLIEGUE.md`](quality/API_OCI_DESPLIEGUE.md): API desplegada en la VM Always Free de 2 OCPU/12 GB, Caddy/TLS real, CORS exacto, Supabase runtime y evidencia HTTPS externa; implementado/en revisión.
 - [`PRODUCCION_SUPABASE_LIMPIEZA_2026-09-27.md`](quality/PRODUCCION_SUPABASE_LIMPIEZA_2026-09-27.md): respaldo/restauración verificados, inventario anterior al corte y limpieza atómica completada con `Dental Ross` preservada; contiene conteos y evidencia posterior.

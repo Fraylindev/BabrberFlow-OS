@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-09-30 — Correctivo F0-A local, sin publicación
+
+- Ajustados los seis puntos autorizados: contraseña pública de ocho caracteres con ayuda junto al campo, entradas móviles de 16 px, mensajes de cambio de estado según causa, UUID de petición recibido del API, fecha/hora natural del negocio y ejemplos visibles de filtros, y etiquetas del rol Profesional manteniendo `BARBER` interno.
+- API: tipos, lint, 763 pruebas y build con exit code 0. Web: tipos, lint y pruebas con exit code 0; comparación aislada Chrome en 320/375/390/1280 px. Build web y regeneración limpia de tipos no pasan por `DEPLOY_ENV`; no se cambiaron variables, flags, contratos ni dependencias. Gate 4 abierto, validación incompleta y aprobación pendiente. Sin commit, push, despliegue ni acceso a bases reales. [Informe F0-A](docs/quality/CORRECTIVO_F0A.md).
+
 ## 2026-09-29 — Worker de correo independiente en Cutover QA
 
 - Instalados `kortek-email-worker-staging.service` y su wrapper con `LoadCredential` de staging, guardas de proyecto/orígenes QA e imagen ARM ya desplegada. Unidad habilitada/activa, contenedor rootless de solo lectura sin capacidades efectivas ni puerto público, límites 0,25 CPU/384 MiB/64 procesos y dos heartbeats observados. La fila global `EMAIL` faltaba en Cutover QA; se creó solo allí, sin pausa, tras comprobar cero intenciones pendientes/inciertas. No se hizo envío de prueba ni se acredita entrega.

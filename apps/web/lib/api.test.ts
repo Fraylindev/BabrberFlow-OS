@@ -2,10 +2,44 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { api, ApiError, API_REQUEST_TIMEOUT_MS, configureApiAuth, publicMediaUrl } from './api.ts';
 
+test('F0-A conserva el UUID del servidor en errores JSON y de gateway', async (t) => {
+  const id = '12345678-1234-4234-8234-123456789abc';
+  for (const response of [
+    Response.json({ message: 'Revisa el campo' }, { status: 400, headers: { 'X-Request-Id': id } }),
+    new Response('<html>detalle privado</html>', { status: 503, headers: { 'X-Request-Id': id } }),
+  ]) {
+    t.mock.method(globalThis, 'fetch', async () => response);
+    await assert.rejects(api.get('/public/sintetico'), (error: unknown) => {
+      assert.ok(error instanceof ApiError);
+      assert.equal('requestId' in error ? error.requestId : null, id);
+      assert.doesNotMatch(error.message, /html|privado/);
+      return true;
+    });
+    t.mock.restoreAll();
+  }
+});
+
 test('serves only signed media locators through the same-origin image path', () => {
   assert.equal(publicMediaUrl('/public/qa-test/media/payload.signature'), '/media-proxy/qa-test/payload.signature');
   assert.equal(publicMediaUrl('https://cloudinary.example/private-image'), '');
   assert.equal(publicMediaUrl('/public/qa-test/media/../other'), '');
+});
+
+test('F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP', async (t) => {
+  const id = '12345678-1234-4234-8234-123456789abc';
+  for (const [response, unexpected] of [
+    [Response.json({ message: 'La contraseña debe tener al menos ocho caracteres' }, { status: 400, headers: { 'X-Request-Id': id } }), false],
+    [new Response('', { status: 400, headers: { 'X-Request-Id': id } }), true],
+  ] as const) {
+    t.mock.method(globalThis, 'fetch', async () => response);
+    await assert.rejects(api.post('/public/sintetico', {}), (error: unknown) => {
+      assert.ok(error instanceof ApiError);
+      assert.equal(error.withRequestCode(error.message).includes('Código de soporte'), unexpected);
+      assert.equal(error.requestId, id);
+      return true;
+    });
+    t.mock.restoreAll();
+  }
 });
 
 test('preserves non-JSON HTTP errors and real Retry-After without exposing the body', async (t) => {

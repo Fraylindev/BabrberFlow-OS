@@ -10,7 +10,7 @@ interface PasswordFieldProps
 }
 
 export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
-  ({ label, error, id, ...props }, ref) => {
+  ({ label, error, id, className, ...props }, ref) => {
     const [visible, setVisible] = useState(false);
     const fieldId = id || props.name || label;
 
@@ -21,8 +21,10 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             ref={ref}
             id={fieldId}
             type={visible ? "text" : "password"}
-            className="w-full rounded-sm border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 pr-16 text-sm text-[var(--color-paper)] placeholder:text-[var(--color-faint)] outline-none focus:border-[var(--color-brass)] transition-colors"
+            className={`${className ?? "w-full min-w-0 rounded-sm border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 pr-16 text-base sm:text-sm text-[var(--color-paper)] placeholder:text-[var(--color-faint)] outline-none focus:border-[var(--color-brass)] transition-colors"} max-sm:text-base`}
             {...props}
+            aria-invalid={error ? true : props['aria-invalid']}
+            aria-describedby={[props['aria-describedby'], error ? `${fieldId.replace(/\s+/g, '-')}-error` : null].filter(Boolean).join(' ') || undefined}
           />
           <button
             type="button"

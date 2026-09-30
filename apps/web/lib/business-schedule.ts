@@ -143,7 +143,12 @@ export function closureError(input: ClosureInput): string | null {
   if ((input.reason?.length ?? 0) > 500) return 'Usa hasta 500 caracteres para el motivo privado.';
   return null;
 }
-export function scheduleError(error: unknown) {
+export function scheduleError(error: unknown): string {
+  const message = scheduleErrorText(error);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function scheduleErrorText(error: unknown) {
   if (error instanceof ApiError) {
     if (error.status === 401 || error.status === 403)
       return 'Tu acceso cambió. Actualiza tu sesión para continuar.';

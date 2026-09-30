@@ -1,5 +1,5 @@
+import { ApiError } from './api.ts';
 import type {
-  ApiError,
   AuthUser,
   TeamDirectoryMember,
   UserRole,
@@ -10,14 +10,14 @@ export const TEAM_ROLE_OPTIONS: ReadonlyArray<{
   label: string;
 }> = [
   { value: "ADMIN", label: "Administrador" },
-  { value: "BARBER", label: "Barbero" },
+  { value: "BARBER", label: "Profesional" },
   { value: "RECEPTIONIST", label: "Recepción" },
 ];
 
 export const TEAM_ROLE_LABELS: Record<UserRole, string> = {
   OWNER: "Propietario",
   ADMIN: "Administrador",
-  BARBER: "Barbero",
+  BARBER: "Profesional",
   RECEPTIONIST: "Recepción",
 };
 
@@ -90,7 +90,12 @@ export function invitationRevocationDecision<T extends { id: string }>(
   return { nextInvitation: null, revokeId: null };
 }
 
-export function teamErrorMessage(
+export function teamErrorMessage(error: unknown, action: "members" | "invitations" | "invite" | "resend" | "revokeInvitation" | "role" | "revokeMember"): string {
+  const message = teamErrorMessageText(error, action);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function teamErrorMessageText(
   error: unknown,
   action: "members" | "invitations" | "invite" | "resend" | "revokeInvitation" | "role" | "revokeMember",
 ) {

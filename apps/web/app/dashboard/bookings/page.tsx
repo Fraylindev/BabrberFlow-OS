@@ -29,6 +29,8 @@ import { SelectField } from '@/components/ui/Field';
 import { BusinessDateTimeField } from '@/components/booking/BusinessDateTimeField';
 import { businessDayRange, businessWeek, businessLocalToIso, businessLocalInput, formatBusinessInstant } from '@/lib/business-time';
 import { scheduleError } from '@/lib/business-schedule';
+import { bookingStatusError } from '@/lib/booking-status-error';
+import { ErrorText } from '@/components/ui/ErrorText';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonListRows } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
@@ -144,21 +146,25 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
   const updateStatus = useUpdateBookingStatus();
   const createInvoice = useCreateInvoice();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const statusErrorRef = useRef<HTMLDivElement>(null);
   const [issuingId, setIssuingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (statusError) statusErrorRef.current?.focus();
+  }, [statusError]);
 
   async function handleStatusChange(id: string, status: BookingStatus) {
     const currentVisit = activeVisit.current;
     setUpdatingId(id);
+    setStatusError(null);
     try {
       await updateStatus.mutateAsync({ id, status });
       if (!currentVisit.active) return;
       toast('Estado de la reserva actualizado.', 'success');
     } catch (error) {
       if (!currentVisit.active) return;
-      toast(
-        scheduleError(error),
-        'error',
-      );
+      setStatusError(bookingStatusError(error, items?.find((booking) => booking.id === id)?.status, status));
     } finally {
       if (currentVisit.active) setUpdatingId(null);
     }
@@ -223,6 +229,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
       />
 
       <p className="mb-3 text-sm text-[var(--dash-text-muted)]">Fechas y horarios en hora del negocio.</p>
+      {statusError && <div ref={statusErrorRef} tabIndex={-1} role="alert" className="mb-3 rounded-lg border border-[var(--dash-danger)]/30 bg-[var(--dash-danger-bg)] p-4 text-sm text-[var(--dash-danger)]"><ErrorText message={statusError} /></div>}
       {rangeError && <p role="alert" className="mb-3">Revisa el rango de fechas; esa fecha no está disponible en el negocio.</p>}
       {/* ── Barra de filtros ─────────────────────────────────────────────── */}
       <Card tone="light" className="mb-5 overflow-hidden rounded-xl">
@@ -241,12 +248,14 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
             </label>
             <input
               id="filter-from"
+              aria-describedby="filter-from-help"
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
               max={toDate || undefined}
-              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
+            <p id="filter-from-help" className="text-xs text-[var(--dash-text-muted)]">Inicio del rango, incluido. Ejemplo: 30 de septiembre de 2026.</p>
           </div>
 
           <div className="flex min-w-0 flex-col gap-1.5">
@@ -258,12 +267,14 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
             </label>
             <input
               id="filter-to"
+              aria-describedby="filter-to-help"
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
               min={fromDate || undefined}
-              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
+            <p id="filter-to-help" className="text-xs text-[var(--dash-text-muted)]">Final del rango, incluido. Ejemplo: 1 de octubre de 2026.</p>
           </div>
 
           <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 lg:col-span-1">

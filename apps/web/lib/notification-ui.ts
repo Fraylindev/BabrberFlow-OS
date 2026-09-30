@@ -49,7 +49,12 @@ export function notificationScope(user: AuthUser | null): string | null {
 export const canReadBookingEmails = (role: string | undefined) =>
   role === 'OWNER' || role === 'ADMIN' || role === 'RECEPTIONIST';
 export const canManageEmails = (role: string | undefined) => role === 'OWNER' || role === 'ADMIN';
-export function notificationError(error: unknown, operation: 'read' | 'preference' | 'retry' = 'read') {
+export function notificationError(error: unknown, operation: 'read' | 'preference' | 'retry' = 'read'): string {
+  const message = notificationErrorText(error, operation);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function notificationErrorText(error: unknown, operation: 'read' | 'preference' | 'retry' = 'read') {
   if (error instanceof ApiError) {
     if (error.status === 401) return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
     if (error.status === 403) return 'No tienes permiso para realizar esta operación.';

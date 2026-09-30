@@ -47,6 +47,11 @@ function clearLegacySession() {
 }
 
 function friendlyBootstrapError(error: unknown): string {
+  const message = friendlyBootstrapErrorText(error);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function friendlyBootstrapErrorText(error: unknown): string {
   if (error instanceof ApiError && error.status === 401) {
     return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
   }

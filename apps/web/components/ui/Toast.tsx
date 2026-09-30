@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { ErrorText } from './ErrorText';
 
 type ToastType = "success" | "error" | "info";
 
@@ -60,7 +61,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 i
               </span>
             )}
-            <p className="text-sm font-medium text-gray-800 truncate">{t.text}</p>
+            <p className={`min-w-0 text-sm font-medium text-gray-800 ${t.type === 'error' ? 'break-words' : 'truncate'}`}><ErrorText message={t.text} /></p>
           </div>
         ))}
       </div>

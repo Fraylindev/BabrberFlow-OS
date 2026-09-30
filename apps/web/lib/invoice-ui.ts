@@ -84,7 +84,12 @@ export function formatBusinessDateTime(
   }).format(new Date(value));
 }
 
-export function invoiceErrorMessage(
+export function invoiceErrorMessage(error: unknown, operation: InvoiceOperation): string {
+  const message = invoiceErrorMessageText(error, operation);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function invoiceErrorMessageText(
   error: unknown,
   operation: InvoiceOperation,
 ): string {

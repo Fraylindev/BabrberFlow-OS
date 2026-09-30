@@ -21,6 +21,7 @@ import { FieldWrapper, InputField } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { ErrorText } from '@/components/ui/ErrorText';
 import { clockLabel, WEEKDAY_LABELS } from '@/lib/business-schedule';
 
 const focusClass =
@@ -43,7 +44,12 @@ function minuteLabel(minute: number) {
   return clockLabel(`${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`);
 }
 
-function friendlyError(error: unknown) {
+function friendlyError(error: unknown): string {
+  const message = friendlyErrorText(error);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function friendlyErrorText(error: unknown) {
   if (error instanceof ApiError) {
     if (error.status === 401) return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
     if (error.status === 403)
@@ -106,7 +112,7 @@ function Workspace({ scope, owner }: { scope: string; owner: boolean }) {
   if (denied(error))
     return (
       <Card tone="light" className="space-y-4 p-5">
-        <p role="alert">{friendlyError(error)}</p>
+        <p role="alert"><ErrorText message={friendlyError(error)} /></p>
         <Button tone="light" className={focusClass} onClick={() => window.location.reload()}>
           Actualizar mi acceso
         </Button>
@@ -117,7 +123,7 @@ function Workspace({ scope, owner }: { scope: string; owner: boolean }) {
       <Loading />
     ) : (
       <Card tone="light" className="space-y-4 p-5">
-        <p role="alert">{friendlyError(query.error)}</p>
+        <p role="alert"><ErrorText message={friendlyError(query.error)} /></p>
         <Button
           tone="light"
           className={focusClass}
@@ -362,7 +368,7 @@ function Editor({
       </div>
       {(failure || query.error) && (
         <p role="alert" className="text-sm text-[var(--dash-danger)]">
-          {failure || friendlyError(query.error)}
+          <ErrorText message={failure || friendlyError(query.error)} />
         </p>
       )}
       {!!query.error && (
@@ -740,7 +746,7 @@ function Preview({
         <p role="status">Cargando vista previa…</p>
       ) : query.error ? (
         <div className="space-y-4">
-          <p role="alert">{friendlyError(query.error)}</p>
+          <p role="alert"><ErrorText message={friendlyError(query.error)} /></p>
           <Button tone="light" className={focusClass} onClick={() => void query.refetch()}>
             Reintentar vista previa
           </Button>

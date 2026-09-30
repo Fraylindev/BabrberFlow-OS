@@ -8,6 +8,7 @@ import { isPublicMedia, type PublicMediaImage } from '@/lib/media-ui';
 import { Brand } from "@/components/Brand";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ErrorText } from '@/components/ui/ErrorText';
 import { BookingHeader } from "@/app/[slug]/_components/BookingHeader";
 import { ANY_PROFESSIONAL } from "@/app/[slug]/_components/ProfessionalStep";
 import { Step, StepRouter } from "@/app/[slug]/_components/StepRouter";
@@ -129,7 +130,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
       }
       setSubmitError(
         caught instanceof ApiError
-          ? caught.message
+          ? caught.withRequestCode(caught.message)
           : "No se pudo confirmar la reserva. Inténtalo de nuevo.",
       );
     }
@@ -314,10 +315,15 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 setPassword={setPassword}
                 serviceName={selectedService?.name}
                 professionalLabel={professionalLabel}
-                submitError={submitError}
+                submitError={submitError?.includes('\nCódigo de soporte: ') ? null : submitError}
                 submitting={createBooking.isPending}
                 onConfirm={handleConfirm}
               />
+            )}
+            {step === 'confirm' && submitError?.includes('\nCódigo de soporte: ') && (
+              <p role="alert" className="mt-4 text-sm text-[var(--color-danger)]">
+                <ErrorText message={submitError} tone="dark" />
+              </p>
             )}
           </Card>
         </section>
