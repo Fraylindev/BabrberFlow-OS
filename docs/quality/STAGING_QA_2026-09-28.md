@@ -178,3 +178,79 @@ con clave `anon` para datos de negocio y los consulta mediante la API NestJS.
   públicas, activación de correo ni otros cambios de negocio.
 - Cutover QA contiene solo los fixtures y registros de prueba descritos aquí;
   no se copiaron datos reales de tenants.
+
+## Apertura pública de QA — 2026-09-29, IMPLEMENTADA / EN REVISIÓN
+
+El propietario autorizó abrir `PUBLIC_BOOKING_CLOSED=false` solo en Cutover QA,
+usar sus credenciales QA separadas de Cloudinary y Resend y conservar intacta
+producción. También indicó que gestionará durante varios días los cambios de
+contenido, profesionales, promociones y reservas de QA; no se deben revertir ni
+cuestionar esos cambios por inferencia.
+
+Antes del cambio, `/etc/kortek-api-staging/runtime-env` tenía
+`PUBLIC_BOOKING_CLOSED=true`, `NOTIFICATIONS_EMAIL_ENABLED=false` y ninguna de
+las cinco variables restantes de Resend. El archivo local `.env.resend.qa` no
+era cargado directamente por systemd. El procedimiento ignorado
+`.tmp/oci-api/apply-staging-qa.ps1` comparó los hashes iniciales de staging y
+producción, instaló los valores de `.env.resend.qa` y `.env.cloudinary.qa` solo
+en la credencial root:root/0600 de staging, instaló el wrapper QA y reinició
+únicamente `kortek-api-staging`. Terminó con exit 0. No se mostraron secretos.
+
+La verificación posterior comparó por hash los diez valores locales QA con la
+credencial y con el entorno **efectivo del contenedor**: coincidencia total.
+`PUBLIC_BOOKING_CLOSED=false`, `NOTIFICATIONS_EMAIL_ENABLED=true` y
+`NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED=true` constan en ambos. La API sigue en
+Cutover QA, Clerk test, origen `https://qa.booking.kortek.cloud` y la misma
+imagen `c9501c7a`; servicio/contenedor activos. La presencia de las variables
+Resend no demuestra envío: no hay worker QA instalado. El único worker systemd
+existente sigue conectado a producción y forzado a `false`.
+
+| Comprobación HTTPS externa | Resultado |
+| --- | --- |
+| API QA, `GET /public/qa-horario-norte/booking-data` | 200, `Cache-Control: no-store` |
+| Web QA, `/qa-horario-norte` | 200 tras redirección |
+| API QA, `/professionals` sin token y `/` | 401 y 404 |
+| API productiva, mismo `booking-data`, `/professionals` y `/` | 404, 401 y 404 |
+| Preflight QA | 204; ACAO solo `https://qa.booking.kortek.cloud` |
+| Preflight productivo | 204; ACAO solo `https://booking.kortek.cloud` |
+
+Producción conservó exactamente los hashes previos de
+`/etc/kortek-api/runtime-env`, wrapper, unidad systemd y Caddyfile. También
+coincidieron PID de servicio, ID e imagen del contenedor; continuó activo, con
+`PUBLIC_BOOKING_CLOSED=true` y `NOTIFICATIONS_EMAIL_ENABLED=false` tanto en
+credencial como en runtime. No se reinició producción ni Caddy, no se modificó
+la base productiva y no se publicaron secretos. La modificación ajena previa de
+`apps/api/.gitignore` se preservó; los archivos `.env.*` siguen ignorados.
+Tras verificar ambos servicios, se retiraron las dos copias temporales de
+rollback de staging y los ayudantes transferidos a `/home/opc`.
+
+## Worker de correo QA — 2026-09-29, INSTALADO / ACTIVO
+
+El propietario autorizó instalar y arrancar un worker independiente solo para
+staging. Antes de la instalación, la API QA tenía Resend validado y la imagen
+compilada incluía `email-worker.cli.js`; había cuatro intenciones `OMITTED`,
+cero pendientes/inciertas y faltaba la fila `EmailChannelControl('EMAIL')` que
+la migración C1 define. Se creó esa fila únicamente en Cutover QA, con
+`paused=false`, tras volver a comprobar la cola vacía y la URL de base QA.
+
+[`kortek-email-worker-staging.service`](../../ops/oci-api/kortek-email-worker-staging.service)
+usa `LoadCredential=runtime-env:/etc/kortek-api-staging/runtime-env`. Su
+[`wrapper`](../../ops/oci-api/kortek-worker-staging-run.sh) exige `DEPLOY_ENV=staging`,
+rol/proyecto `kortek_runtime.prirlabbnlcuvnzuaczp`, orígenes QA y canal
+habilitado. Arranca un contenedor separado con la misma imagen inmutable C1
+`c9501c7a` de la API QA, sin puerto público, FS de solo lectura, cero
+capacidades efectivas y límites 0,25 CPU/384 MiB/64 procesos. Bash y
+`systemd-analyze verify` terminaron con exit 0 antes de habilitar la unidad.
+
+`kortek-email-worker-staging` quedó `enabled`, `active/running`, PID 382849,
+`NRestarts=0`; su contenedor está activo y registró dos
+`EMAIL_WORKER_HEARTBEAT` sin `EMAIL_WORKER_CYCLE_FAILED`. Los ocho valores de
+base/canal/Resend en su entorno efectivo coinciden con la API QA y la URL de
+base difiere de producción. La fila `EMAIL` permanece sin pausa y con cero
+intenciones debidas al verificar. Esto acredita operación continua del worker;
+no se creó una reserva ni se probó entrega Resend en esta instalación.
+
+El worker productivo conservó PID 6618, ID/imagen de contenedor, hashes de
+unidad/wrapper y `NOTIFICATIONS_EMAIL_ENABLED=false`. La API productiva conservó
+su contenedor y hash de credencial; su reserva pública siguió en 404 mientras
+QA respondió 200. No se reinició servicio productivo ni se escribió en su base.

@@ -1,0 +1,24 @@
+[Unit]
+Description=Kortek transactional email worker (Cutover QA only)
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=opc
+Group=opc
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+LoadCredential=runtime-env:/etc/kortek-api-staging/runtime-env
+ExecStart=/usr/local/libexec/kortek-worker-staging-run.sh
+ExecStop=/usr/bin/podman stop --time 30 --ignore kortek-email-worker-staging
+ExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-email-worker-staging
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=45
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

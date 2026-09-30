@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-09-29 — Worker de correo independiente en Cutover QA
+
+- Instalados `kortek-email-worker-staging.service` y su wrapper con `LoadCredential` de staging, guardas de proyecto/orígenes QA e imagen ARM ya desplegada. Unidad habilitada/activa, contenedor rootless de solo lectura sin capacidades efectivas ni puerto público, límites 0,25 CPU/384 MiB/64 procesos y dos heartbeats observados. La fila global `EMAIL` faltaba en Cutover QA; se creó solo allí, sin pausa, tras comprobar cero intenciones pendientes/inciertas. No se hizo envío de prueba ni se acredita entrega.
+- API y worker productivos conservaron contenedores/PID, configuración y correo desactivado; API pública productiva siguió devolviendo 404. [Evidencia operativa](docs/quality/STAGING_QA_2026-09-28.md).
+
+## 2026-09-29 — Reserva pública abierta solo en Cutover QA
+
+- Por autorización del propietario, `kortek-api-staging` carga `PUBLIC_BOOKING_CLOSED=false` y los valores QA separados de Resend/Cloudinary. Los diez valores coinciden entre archivos locales, credencial root:root/0600 y entorno efectivo del contenedor, sin exponerlos. `NOTIFICATIONS_EMAIL_ENABLED=true` está cargado en la API; no se instaló un worker QA ni se acredita envío.
+- HTTPS externo: `GET /public/qa-horario-norte/booking-data` en API QA 200 con `no-store`; página web QA 200; rutas privadas 401 y raíz 404. CORS solo admite el origen web QA en staging. La API productiva conserva reserva pública 404, ruta privada 401, raíz 404 y CORS exclusivo productivo. Hashes de credencial, wrapper, unidad y Caddy; PID, ID e imagen del contenedor productivo coinciden con la línea base anterior al cambio. [Evidencia](docs/quality/STAGING_QA_2026-09-28.md).
+- El propietario usará QA durante varios días y sus cambios posteriores de contenido, profesionales, promociones y reservas no deben revertirse ni cuestionarse por inferencia. Producción no recibió escrituras, reinicios ni cambios de configuración en esta operación.
+
 ## 2026-09-29 — Horario y zona C2 cerrado en Preview QA
 
 - El propietario cerró C2 funcionalmente sobre Cutover QA `prirlabbnlcuvnzuaczp` y datos sintéticos. Aceptó D9 con dependencias persistidas, la intersección A2 del horario profesional y global, la proyección CMS y la emisión de factura con fecha de negocio 2026-09-28. La evidencia distingue el bloqueo visible D9 en Preview del `409` cubierto por integración C1; el horario CMS se confirmó, aunque la página pública no mostró una lista visual de franjas.

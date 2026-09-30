@@ -18,9 +18,9 @@ set +a
 [[ ${API_PUBLIC_ORIGIN:-} == https://api.staging.booking.kortek.cloud ]]
 [[ ${CORS_ALLOWED_ORIGINS:-} == https://qa.booking.kortek.cloud ]]
 [[ ${CLERK_AUTHORIZED_PARTIES:-} == https://qa.booking.kortek.cloud ]]
-[[ ${PUBLIC_BOOKING_CLOSED:-} == true ]]
-[[ ${NOTIFICATIONS_EMAIL_ENABLED:-} == false ]]
-[[ ${NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED:-} == false ]]
+[[ ${PUBLIC_BOOKING_CLOSED:-} == false ]]
+[[ ${NOTIFICATIONS_EMAIL_ENABLED:-} == true ]]
+[[ ${NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED:-} == true ]]
 
 exec podman run --rm --replace --name kortek-api-staging \
   --network host --read-only --cap-drop ALL --security-opt no-new-privileges \
@@ -33,6 +33,8 @@ exec podman run --rm --replace --name kortek-api-staging \
   -e CLERK_INVITATION_REDIRECT_URL -e PUBLIC_BOOKING_CLOSED \
   -e REQUIRE_INTERNAL_MFA -e NOTIFICATIONS_EMAIL_ENABLED \
   -e NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED \
+  -e NOTIFICATIONS_EMAIL_FROM -e NOTIFICATIONS_EMAIL_REPLY_TO \
+  -e NOTIFICATIONS_ABUSE_SECRET -e RESEND_API_KEY -e RESEND_WEBHOOK_SECRET \
   -e CLOUDINARY_CLOUD_NAME -e CLOUDINARY_API_KEY -e CLOUDINARY_API_SECRET \
   -e NODE_OPTIONS=--max-old-space-size=768 \
   -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \
