@@ -1,10 +1,10 @@
 # CHANGELOG
 
-## 2026-09-30 — Correctivo F0-B validado, publicación y despliegue QA autorizados
+## 2026-09-30 — Correctivo F0-B publicado y desplegado en QA, en revisión
 
 - Reservas recibe estado financiero mínimo, distingue factura emitida/pagada y sincroniza caché al emitir/cobrar. Backend aprobado explícitamente; sin migraciones ni ampliación de permisos. Menú móvil con una acción principal y tres puntos, incluyendo avisos por correo.
 - Renovación automática acotada del token tras 401, relectura de acceso, recuperación de consultas transitorias y retención de borradores. Rechazos definitivos retiran acceso; escrituras ambiguas no se repiten. Logs QA del código reportado corroboran rechazo de autenticación, sin demostrar el motivo criptográfico exacto.
-- API: tipos/lint y 764 pruebas pasan. Web: tipos limpios/lint/build y 235 pruebas pasan; Chrome controlado 320/375/390/1280 px pasa. El propietario autoriza commit/push y despliegue ordenado API QA → web QA; QA con Clerk real y aprobación final pendientes. [Informe F0-B](docs/quality/CORRECTIVO_F0B.md).
+- API: tipos/lint y 764 pruebas pasan. Web: tipos limpios/lint/build y 235 pruebas pasan; Chrome controlado 320/375/390/1280 px pasa. Commit `33de07a` publicado en ai/antigravity-qa; imagen API/worker QA `24e38719c511` y Preview web Ready en QA. HTTPS/X-Request-Id/CORS pasan, producción intacta. QA con Clerk real y aprobación final pendientes. [Informe F0-B](docs/quality/CORRECTIVO_F0B.md).
 
 ## 2026-09-30 — Publicación y despliegue QA de F0-A autorizados
 

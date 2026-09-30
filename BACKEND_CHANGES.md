@@ -2,7 +2,7 @@
 
 ## 2026-09-30 — F0-B: estado financiero en Reservas (candidato)
 
-GET `/bookings` añade `invoice: null | { id, state: 'ISSUED' | 'PAID' }`. El estado se deriva de la existencia del pago, igual que Facturación. Proyección mínima sin importes, método, actor ni objeto Payment; tenant y agenda propia del Profesional conservan sus filtros y la relación financiera usa FK compuesta. Sin migraciones ni cambios de escritura, permisos o rutas públicas. **BACKEND APROBADO / PUBLICACIÓN QA AUTORIZADA / EN REVISIÓN**. Tipos/lint y 764 pruebas pasan, exit 0; el propietario aprobó backend e integración frontend. Despliegue QA autorizado por el propietario; ejecución y QA integrado pendientes. [Brief y evidencia](docs/quality/CORRECTIVO_F0B.md).
+GET `/bookings` añade `invoice: null | { id, state: 'ISSUED' | 'PAID' }`. El estado se deriva de la existencia del pago, igual que Facturación. Proyección mínima sin importes, método, actor ni objeto Payment; tenant y agenda propia del Profesional conservan sus filtros y la relación financiera usa FK compuesta. Sin migraciones ni cambios de escritura, permisos o rutas públicas. **BACKEND APROBADO / PUBLICADO EN QA / EN REVISIÓN**. Tipos/lint y 764 pruebas pasan, exit 0; el propietario aprobó backend e integración frontend. Desplegado en API QA y Preview web Ready desde `33de07a`; headers/CORS verificados. QA integrado con Clerk real/Safari y aprobación final pendientes. [Brief y evidencia](docs/quality/CORRECTIVO_F0B.md).
 
 ## 2026-09-28 — Completar reservas sin esperar al fin programado
 
