@@ -1,6 +1,6 @@
 # Correctivo F0-A — primera tanda del QA del propietario
 
-Fecha: 2026-09-30. Base y HEAD final: `389a169f97c6a95e174255bb2595c7a72c443357`, rama `ai/antigravity-qa`, árbol inicial de implementación limpio (`git status --short` sin salida). Ambas continuaciones recibieron los 34 archivos F0-A sin commit (28 modificados y seis nuevos). Estado vigente: **IMPLEMENTADO LOCALMENTE / TIPOS, BUILD COMPLETO, TESTS Y LINT VALIDADOS / NO APROBADO**. Sin staging, commit, push ni despliegue.
+Fecha: 2026-09-30. Base de implementación: `389a169f97c6a95e174255bb2595c7a72c443357`, rama `ai/antigravity-qa`, árbol inicial limpio (`git status --short` sin salida). Ambas continuaciones recibieron los 34 archivos F0-A sin commit (28 modificados y seis nuevos). Estado vigente: **GATE 4 APROBADO POR EL PROPIETARIO / PUBLICADO EN GIT / DESPLEGADO EN QA / HEADER VERIFICADO**. Commit publicado: `6752e95e580b41670b6369adfc6bfb240f4c8509`. La actualización documental del despliegue permanece local, sin staging, commit ni push hasta nueva autorización. La evidencia de implementación inferior conserva su contexto histórico; QA integrado completo y aprobación de gates posteriores mantienen su alcance separado.
 
 ## Autorización y gates
 
@@ -12,7 +12,32 @@ Gate 1 revisado: visitante público que opta por cuenta; personal que guarda, co
 
 Gate 2 revisado: DTO público exige ocho caracteres; Booking conserva su máquina de estados/roles y tenant autenticado; Organization aporta la zona; telemetría emite UUID `X-Request-Id`, expuesto por CORS. Sin persistencia, endpoint, permisos, estados, esquema o integración nueva. Amenaza breve: no mostrar cuerpos técnicos ni PII como código; aceptar solo UUID del servidor; no fabricar identificador cuando no hay respuesta; no alterar resolver de sesión, abort/caché o aislamiento. Backend existente: no se abre una implementación C1 nueva.
 
-Las validaciones técnicas de frontend (Gate 4) ya terminan con exit code 0: tipos limpios, lint y build completo. El navegador aislado aporta evidencia autorizada del correctivo y de la nueva presentación; no sustituye QA integrado ni declara cierre formal del Gate 5. La interfaz y el correctivo siguen sin aprobación explícita del propietario; publicación y gates posteriores conservan su autorización independiente.
+Las validaciones técnicas de frontend (Gate 4) terminan con exit code 0: tipos limpios, lint y build completo. El propietario aprobó explícitamente el Correctivo F0-A (Gate 4) tal como consta en este informe y autorizó su commit/push; posteriormente autorizó el despliegue a QA y la verificación del header. El navegador aislado no sustituye QA integrado ni declara cierre formal del Gate 5. Producción y gates posteriores conservan autorización independiente.
+
+## Despliegue QA y verificación de X-Request-Id — 2026-09-30
+
+Autorización expresa del propietario: «AUTORIZO DESPLIEGUE A QA. Actualiza docs/quality/CORRECTIVO_F0A.md con el resultado del despliegue y la verificación del header. Sin commit de ese cambio hasta que yo lo autorice».
+
+El push previamente autorizado de `6752e95e580b41670b6369adfc6bfb240f4c8509` activó automáticamente la integración Git de Vercel. Al revisar el proyecto existente `fraylindev/kortek-booking`, la deployment de ese SHA ya estaba **Ready** en **Preview**, creada el 2026-09-30 a las **14:36:41, America/Santo_Domingo**, con duración de build **32 s**. No fue necesario repetir el despliegue ni modificar variables o configuración. Fuente visible: rama `ai/antigravity-qa` y mensaje exacto del commit F0-A.
+
+- Deployment: [`DAs3KE5FhozHXqLAdyseufvQkbSq`](https://vercel.com/fraylindev/kortek-booking/DAs3KE5FhozHXqLAdyseufvQkbSq).
+- URL de QA asignada: [qa.booking.kortek.cloud](https://qa.booking.kortek.cloud/).
+- URL inmutable de la Preview: [kortek-booking-lgdhi5trq-fraylindev.vercel.app](https://kortek-booking-lgdhi5trq-fraylindev.vercel.app/).
+- Alias de rama también asignado: `kortek-booking-git-ai-antigravity-qa-fraylindev.vercel.app`.
+
+Chrome abrió la landing en `https://qa.booking.kortek.cloud/`, con título «Kortek Booking», navegación y contenido renderizados. La sección de cuatro roles muestra «dueño, admin, recepción, profesional», coherente con F0-A. El panel Vercel mostró Ready, Preview, dominio QA y SHA correcto en una misma vista. Esta comprobación acredita el despliegue y la carga inicial; no acredita todos los recorridos autenticados, iPhone/Safari ni el QA integrado completo. No se completó una inspección de consola: Chrome bloqueó la automatización posterior por una interfaz de otra extensión abierta; no se atribuye por ello una consola limpia.
+
+Se consultó por HTTPS exclusivamente `https://api.staging.booking.kortek.cloud`, con `Origin: https://qa.booking.kortek.cloud`. Peticiones GET/OPTIONS sin token, sin mostrar cuerpos de negocio ni ejecutar mutaciones. El primer intento en el sandbox fue bloqueado por permisos de socket; la repetición con acceso de red autorizado terminó con **exit code 0**. El API existente no se redeplegó: F0-A contiene únicamente cambios web, pruebas y documentación.
+
+| Petición real | Fecha/hora de observación (Santo Domingo) | HTTP | `X-Request-Id` |
+| --- | --- | --- | --- |
+| `GET /professionals` sin autenticación | 2026-09-30 14:46:20 | 401 | `6252ad9e-6fda-47f5-91c6-df4daefcf9f5` |
+| `GET /public/qa-horario-norte/booking-data` | 2026-09-30 14:46:21 | 200 | `f2046004-ba92-4353-ada0-9090ee225e92` |
+| `OPTIONS /professionals`, método solicitado GET y headers `authorization,x-organization-id` | Misma ejecución | 204 | No se exige UUID en preflight |
+
+Las tres respuestas incluyeron `Access-Control-Allow-Origin: https://qa.booking.kortek.cloud` y `Access-Control-Expose-Headers: X-Total-Count,X-Page,X-Limit,X-Total-Pages,X-Request-Id`. Los dos GET emitieron UUID v4 distintos y válidos. **Emisión real y exposición CORS del header en QA: verificadas**, incluida una respuesta de error 401. La prueba no provoca un 5xx ni demuestra copia del código en una sesión de producto; esa presentación conserva la evidencia aislada previa.
+
+Git inicial: `ai/antigravity-qa`, HEAD `6752e95e580b41670b6369adfc6bfb240f4c8509`, sincronizado con `origin/ai/antigravity-qa`, árbol limpio. Esta tarea actualiza únicamente este informe y lo deja sin staging, commit ni push. No se editaron código, `.env`, configuración Vercel, API, worker, base de datos ni producción. Las referencias anteriores a falta de aprobación/publicación en otros documentos conservan el contexto previo; esta sección registra las autorizaciones y resultados posteriores dentro del único archivo solicitado.
 
 ## Inventario previo de etiquetas
 
@@ -69,13 +94,13 @@ Las líneas «base» corresponden al SHA inicial. Las referencias «actual» pre
 
 ### 4. Código recibido del API
 
-- Causa raíz: `lib/api.ts:17,125` (base) conservaba status/texto/reintento pero descartaba cabecera. El código backend inspeccionado genera UUID v4 con `randomUUID()` en `apps/api/src/common/http-telemetry.ts:45` y lo asigna a `X-Request-Id` en línea 48; CORS lo expone en `apps/api/src/main.ts:47`. **Emisión del API de QA desplegado: no verificado**; comprobar su respuesta exigiría conectar con un servicio real, acción excluida. No hace falta añadir un contrato backend; cero cambios backend.
+- Causa raíz: `lib/api.ts:17,125` (base) conservaba status/texto/reintento pero descartaba cabecera. El código backend inspeccionado genera UUID v4 con `randomUUID()` en `apps/api/src/common/http-telemetry.ts:45` y lo asigna a `X-Request-Id` en línea 48; CORS lo expone en `apps/api/src/main.ts:47`. Durante la implementación no se verificó su emisión real porque conectar con servicios externos estaba excluido. La autorización posterior permitió verificar el header en QA: ver la sección de despliegue. No hace falta añadir un contrato backend; cero cambios backend.
 - Corrección vigente: `ApiError` conserva únicamente UUID v4 válido, incluso cuando decide no mostrarlo. `withRequestCode` añade «Código de soporte» solo para un error inesperado. Los textos, status y reintentos originales permanecen; ninguna modificación toca resolver de sesión, token, caché, señales de abort ni selección de organización. Ausencia de cabecera, UUID inválido, error de red o timeout sin respuesta no inventan código.
 - Errores que lo muestran, si el API emitió un UUID válido: sesión no válida (401), fallos inesperados de carga del panel/perfil y 5xx, respuesta HTTP sin causa clara, y guardado cuyo API no aporta mensaje útil y recibe el fallback neutral. En cambio de estado, un 400 que no coincide con una transición conocida conserva soporte junto al fallback. Equipo/Facturación no consideran inesperado un 400 solo porque su formateador use texto neutro: con mensaje API claro se oculta; si la respuesta carece de mensaje útil, se conserva. Red/timeout solo pueden mostrarlo si existe un código recibido; actualmente el fallo anterior a una respuesta HTTP no lo tiene.
 - Errores que no lo muestran: transición no permitida, contraseña corta y otras validaciones claras 400, falta de permiso 403, conflictos de disponibilidad/revisión 409 y recursos inexistentes 404; también validaciones claras 413/422 y espera por límite 429. El UUID puede estar presente en `ApiError` sin aparecer en pantalla. Los errores esperados mantienen explicación y acción siguiente.
 - Presentación: `ErrorText.tsx` es cliente y reutiliza la representación en sesión/perfil/estado, Clientes, CMS, onboarding, confirmación pública y toasts. Línea secundaria de 12 px, color atenuado, `white-space: nowrap`, elipsis y UUID completo en `title`. Botón nativo «Copiar», nombre accesible «Copiar código de soporte», foco visible y activación por teclado; copia el UUID completo, nunca el texto truncado. «Copiado» se anuncia con `role="status"` y vuelve a «Copiar» tras dos segundos. Si falla el portapapeles se anuncia el fallo y se permite reintentar. La instancia se reemplaza al cambiar el código para no conservar la confirmación de otro UUID.
 - Regresión: pruebas HTTP conservan UUID de validación y gateway, separan validación clara de fallback vacío; lógica cubre rechazo/transición/conflicto frente a fallos inesperados y UUID inválidos/ausentes. Componentes prueban ausencia en regla de negocio, presencia en 503 y copia exacta. Chrome verifica soporte en 401/503, ausencia en 400/403/409, elipsis de una línea, contraste calculado ≥4,5:1 sobre los fondos recorridos, foco y Enter para copiar. Portapapeles controlado en el fixture: no se lee ni sustituye el del propietario. El borrador del perfil se conserva tanto en rechazo 400 como en fallo 503.
-- Riesgo: errores sin respuesta/cabecera no serán correlacionables en pantalla. Algunos guardados usan el toast existente de tres segundos; su duración no se amplía. No se añade logging ni persistencia de producto del identificador; la copia al portapapeles exige la acción explícita del usuario. No se acredita emisión HTTP del servidor QA real.
+- Riesgo: errores sin respuesta/cabecera no serán correlacionables en pantalla. Algunos guardados usan el toast existente de tres segundos; su duración no se amplía. No se añade logging ni persistencia de producto del identificador; la copia al portapapeles exige la acción explícita del usuario. La emisión HTTP real de QA, pendiente en la implementación, quedó verificada posteriormente según la sección de despliegue.
 
 ### 5. Fecha natural y ayuda de filtros
 
@@ -122,7 +147,7 @@ El helper y la guarda están fuera del repositorio en `%TEMP%/kortek-f0a-build/`
 
 Los intentos intermedios del helper también quedaron investigados: uno terminó antes de Next por escape de la ruta de `NODE_OPTIONS`; otros builds terminaron con exit code 1 porque la guarda bloqueaba el IPC de PostCSS, y la caché de Turbopack conservaba ese resultado. Se corrigió únicamente el helper temporal, se admitió el puerto interno concreto y se limpió `apps/web/.next/cache/turbopack` tras comprobar que la ruta absoluta pertenecía a `.next`. No se alteró fuente de producto para ocultar esas causas. No se detectó otro defecto de build F0-A. No hubo conexión a API, Clerk, Supabase, una base de datos ni otro servicio real fuera de Google Fonts.
 
-## QA de navegador y límites
+## QA de navegador aislado y límites
 
 Guion reproducible: `apps/web/scripts/f0a-browser.mjs`. Chrome headless sobre Windows, altura 900 px, anchos 320/375/390/1280, zona del dispositivo Asia/Tokyo y negocio sintético America/Santo_Domingo. Componentes, estilos Tailwind, hooks, AuthProvider y cliente HTTP de producto reales; sustitutos solo en el fixture para Clerk/navigation/link y respuestas HTTP interceptadas. Todos los accesos ajenos al servidor de prueba y API interceptada se bloquean; cero solicitudes inesperadas y cero errores JavaScript en cada ancho. El guion no carga dotenv ni modifica configuración de producto. Las respuestas y la sesión de prueba son sintéticas.
 
@@ -131,14 +156,14 @@ Evidencia local no versionada: `.tmp/f0a/antes.json` conserva la comparación hi
 No verificado en esta tanda:
 
 - iPhone físico/Safari, teclado y zoom automático real; Chrome prueba el tamaño computado y el layout, no el comportamiento iOS.
-- Despliegue o arranque operativo del artefacto: el build completo y los tipos limpios sí pasan; no se ejecutó `next start` ni se conectó con un backend real. Compilar no acredita integración con Clerk/API ni operación de un despliegue.
-- Login Clerk real, recuperación de sesión móvil (excluida), llamadas a servidores/DB reales ni QA desplegado.
+- Arranque local mediante `next start` e integración completa con Clerk/API: no se verificaron. La Preview QA se desplegó y su landing cargó después, por autorización separada registrada arriba; esa comprobación no equivale a QA integrado completo.
+- Login Clerk real, recuperación de sesión móvil (excluida), acceso a DB reales y QA funcional desplegado completo. Las peticiones HTTPS de lectura a la API QA para verificar el header se registran por separado arriba.
 - Prueba integrada de cada combinación de roles/tenants y todos los formularios. Se recorrieron OWNER y BARBER sintéticos y se conservaron las pruebas existentes de scopes/permisos; eso no aprueba los módulos.
 - Envíos/entregas de correo, calendario, pagos, rediseño de confirmación o cambios a Crear cuenta; permanecen fuera de alcance.
 
-No se abrió conexión a barberflow, Cutover QA ni producción. Backend, Prisma, dependencias, lockfile, configuración y contratos C0–C3 no tienen diff. En la implementación anterior se sincronizaron este informe, `docs/README.md`, `PROJECT_MASTER.md` y `CHANGELOG.md`; `BACKEND_CHANGES.md` permanece intacto porque no cambió el contrato. Las continuaciones preservan las referencias históricas al bloqueo anterior en los otros tres documentos, por instrucción de no modificarlos; el estado vigente de la validación y la UX está registrado aquí.
+Durante la implementación aislada no se abrió conexión a barberflow, Cutover QA ni producción. Backend, Prisma, dependencias, lockfile, configuración y contratos C0–C3 no tienen diff. En la implementación anterior se sincronizaron este informe, `docs/README.md`, `PROJECT_MASTER.md` y `CHANGELOG.md`; `BACKEND_CHANGES.md` permanece intacto porque no cambió el contrato. Las continuaciones preservan las referencias históricas al bloqueo anterior en los otros tres documentos, por instrucción de no modificarlos; el estado vigente de la validación, aprobación y despliegue está registrado aquí.
 
-## Git final y continuación
+## Git al terminar la implementación — evidencia histórica
 
 `git branch --show-current`: `ai/antigravity-qa`. `git rev-parse HEAD`: `389a169f97c6a95e174255bb2595c7a72c443357`. `git diff --cached --name-only`: sin salida. 28 archivos versionados modificados y seis nuevos, todos dentro de código web, pruebas y documentación F0-A. Ningún archivo staged. `git diff --stat`: 204 inserciones y 65 eliminaciones en los 28 archivos versionados; los seis nuevos no aparecen en ese conteo. `git diff --check`: exit code 0.
 
@@ -185,4 +210,4 @@ Salida final de `git status --short`:
 ?? docs/quality/CORRECTIVO_F0A.md
 ```
 
-No se publicará este correctivo. Los bloqueos de configuración y fuentes quedaron resueltos; tipos, build completo, tests, lint y QA aislado del ajuste UX pasan. El siguiente paso es la revisión explícita del propietario; QA integrado, iPhone/Safari y una comprobación HTTP de `X-Request-Id` en QA mantienen autorización separada. No aplicar migraciones, acceder a datos reales, commitear, publicar ni desplegar por inferencia.
+Al terminar la implementación, no se había publicado el correctivo y la revisión del propietario estaba pendiente. Los bloqueos de configuración y fuentes quedaron resueltos; tipos, build completo, tests, lint y QA aislado del ajuste UX pasaron. Posteriormente el propietario aprobó Gate 4, autorizó commit/push y despliegue QA; publicación, Preview Ready y comprobación HTTP de `X-Request-Id` constan en la sección superior. Siguen pendientes el QA integrado completo e iPhone/Safari; no aplicar migraciones ni avanzar otros gates por inferencia. El cambio documental de esta tarea requiere nueva autorización antes de commit/push.
