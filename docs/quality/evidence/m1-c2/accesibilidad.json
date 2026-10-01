@@ -1,0 +1,23 @@
+{
+  "browser": "154.0.8037.58",
+  "ratios": {
+    "primary": 4.555308812522106,
+    "primaryHover": 8.790218572639017,
+    "secondary": 7.848599561952364,
+    "fieldBorder": 6.756004336223895,
+    "error": 6.4581955281085195,
+    "pending": 7.1248173287494625
+  },
+  "checkboxLabelTargets": [
+    {
+      "width": 358,
+      "height": 126
+    },
+    {
+      "width": 332,
+      "height": 44
+    }
+  ],
+  "zoomForbidden": false,
+  "physicalReaderTested": false
+}

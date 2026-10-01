@@ -1,0 +1,66 @@
+{
+  "checks": [
+    {
+      "role": "OWNER",
+      "tenant": "m1-c2-norte",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": false
+    },
+    {
+      "role": "OWNER",
+      "tenant": "m1-c2-sur",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": false
+    },
+    {
+      "role": "ADMIN",
+      "tenant": "m1-c2-norte",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": false
+    },
+    {
+      "role": "ADMIN",
+      "tenant": "m1-c2-sur",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": false
+    },
+    {
+      "role": "BARBER",
+      "tenant": "m1-c2-norte",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": true
+    },
+    {
+      "role": "BARBER",
+      "tenant": "m1-c2-sur",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": true
+    },
+    {
+      "role": "RECEPTIONIST",
+      "tenant": "m1-c2-norte",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": false
+    },
+    {
+      "role": "RECEPTIONIST",
+      "tenant": "m1-c2-sur",
+      "booking": "PENDING",
+      "tenantIsolation": true,
+      "ownScope": false
+    },
+    {
+      "role": "CUSTOMER",
+      "legacyControlled": true,
+      "status": 403
+    }
+  ],
+  "consoleErrors": []
+}

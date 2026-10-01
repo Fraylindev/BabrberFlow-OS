@@ -40,7 +40,7 @@ async function fixture(context: BrowserContext) {
       if (state.catalogGate) await state.catalogGate;
       const slug = url.pathname.split('/')[2];
       await route.fulfill({ status: state.catalogStatus, headers, json: state.catalogStatus === 200 ? {
-        minimumBookingDate: '2026-09-14',
+        minimumBookingDate: '2099-01-01',
         timeZone: 'America/Santo_Domingo',
         organization: {
           name: slug.endsWith('-b') ? 'Estudio QA Sur' : 'Estudio QA Norte', slug,
@@ -55,6 +55,8 @@ async function fixture(context: BrowserContext) {
       await route.fulfill({ headers, json: {
         hero: null, gallery: [], services: [], professionals: [], promotions: [],
       } });
+    } else if (url.pathname.endsWith('/availability-days')) {
+      await route.fulfill({ headers, json: { from: url.searchParams.get('from'), to: url.searchParams.get('to'), serviceId: 'service-qa', availableDates: ['2099-01-05'] } });
     } else if (url.pathname.endsWith('/availability')) {
       await route.fulfill({ headers, json: { date: '2099-01-05', serviceId: 'service-qa',
         slots: [{ time: '10:00', professionalId: 'professional-qa', startTime: result.booking.startTime }],
@@ -74,24 +76,27 @@ async function fixture(context: BrowserContext) {
 }
 
 async function toConfirm(root: Page | FrameLocator) {
-  await root.getByRole('button', { name: 'Reservar cita', exact: true }).click();
+  await root.getByRole('link', { name: 'Reservar cita', exact: true }).click();
   await root.getByRole('button', { name: /Corte QA/ }).click();
-  await root.getByRole('button', { name: 'Continuar', exact: true }).click();
-  await root.getByRole('button', { name: /Alex QA/ }).click();
-  await root.getByRole('button', { name: 'Continuar', exact: true }).click();
-  await root.getByLabel('Fecha', { exact: true }).fill('2099-01-05');
-  await root.getByRole('button', { name: '10:00', exact: true }).click();
-  await root.getByRole('button', { name: 'Continuar', exact: true }).click();
-  await root.getByLabel('Nombre completo').fill('Visitante QA');
+  await root.getByRole('button', { name: 'Elegir profesional', exact: true }).click();
+  await dateToContact(root);
+  await root.getByLabel('Nombre', { exact: true }).fill('Visitante QA');
   await root.getByLabel('Teléfono', { exact: true }).fill('8095554321');
   await root.getByLabel('Correo (opcional)').fill('visitante@example.test');
-  await root.getByRole('button', { name: 'Continuar', exact: true }).click();
-  await root.getByRole('button', { name: 'Continuar', exact: true }).click();
+  await root.getByRole('button', { name: 'Revisar reserva', exact: true }).click();
+}
+
+async function dateToContact(root: Page | FrameLocator) {
+  await root.getByRole('button', { name: '5 de enero de 2099', exact: true }).click();
+  await expect(root.getByLabel('Hora', { exact: true })).toBeEnabled();
+  await root.getByLabel('Hora', { exact: true }).selectOption(result.booking.startTime);
+  await root.getByRole('button', { name: 'Continuar con tus datos', exact: true }).click();
 }
 
 async function success(root: Page | FrameLocator) {
-  await root.getByRole('button', { name: 'Confirmar reserva', exact: true }).click();
-  await expect(root.getByRole('status')).toHaveText('Tu reserva quedó registrada');
+  await root.getByRole('button', { name: 'Registrar reserva', exact: true }).click();
+  await expect(root.getByRole('heading', { name: 'Tu reserva quedó registrada', exact: true })).toBeVisible();
+  await expect(root.getByText('Pendiente de confirmación', { exact: true })).toBeVisible();
 }
 
 test('C2 full flow: loading/pending, no automatic popup, native accessible link, keyboard and repeated click', async ({ page, context }, info) => {
@@ -112,10 +117,10 @@ test('C2 full flow: loading/pending, no automatic popup, native accessible link,
   await expect(page.getByRole('link', { name: linkName })).toHaveCount(0);
   releaseCatalog();
   await toConfirm(page);
-  await page.getByRole('button', { name: 'Confirmar reserva', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Confirmando…' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Registrar reserva', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Registrando tu reserva…' })).toBeDisabled();
   await expect(page.getByRole('link', { name: linkName })).toHaveCount(0);
-  await expect(page.getByRole('status')).toHaveText('Tu reserva quedó registrada');
+  await expect(page.getByRole('heading', { name: 'Tu reserva quedó registrada', exact: true })).toBeVisible();
   expect(context.pages()).toHaveLength(1);
   expect(state.destinations).toHaveLength(0);
   const link = page.getByRole('link', { name: linkName });
@@ -125,8 +130,9 @@ test('C2 full flow: loading/pending, no automatic popup, native accessible link,
   await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   expect(await link.evaluate((el) => !!el.querySelector('a, button, input, [role="button"]') ||
     !!el.parentElement?.closest('a, button, [role="button"]'))).toBe(false);
-  await page.getByRole('heading', { name: 'Reserva tu cita en Estudio QA Norte' }).focus();
+  await link.focus();
   await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
   await expect(link).toBeFocused();
   expect(await link.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe('none');
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -175,11 +181,13 @@ test('C2 booking conflict then explicit recovery; retired catalog removes succes
   state.postStatus = 409;
   await page.goto('/qa-whatsapp-a');
   await toConfirm(page);
-  await page.getByRole('button', { name: 'Confirmar reserva', exact: true }).click();
-  await expect(page.getByText('El horario ya no está disponible. Elige otro horario.')).toBeVisible();
+  await page.getByRole('button', { name: 'Registrar reserva', exact: true }).click();
+  await expect(page.getByText('Ese horario ya no está disponible. Elige otra hora.')).toBeVisible();
   await expect(page.getByRole('link', { name: linkName })).toHaveCount(0);
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Tu reserva quedó registrada', exact: true })).toHaveCount(0);
   state.postStatus = 201;
+  await dateToContact(page);
+  await page.getByRole('button', { name: 'Revisar reserva', exact: true }).click();
   await success(page);
   expect(state.posts).toBe(2);
   state.catalogStatus = 404;
@@ -218,7 +226,7 @@ test('C2 catalog error recovers explicitly; POST 404 never shows success or What
   await page.getByRole('button', { name: 'Reintentar', exact: true }).click();
   await toConfirm(page);
   state.postStatus = 404;
-  await page.getByRole('button', { name: 'Confirmar reserva', exact: true }).click();
+  await page.getByRole('button', { name: 'Registrar reserva', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Esta página no está disponible' })).toBeVisible();
   await expect(page.getByRole('link', { name: linkName })).toHaveCount(0);
   await expect(page.getByRole('status')).toHaveCount(0);
@@ -241,13 +249,13 @@ test('C2 real browser popup denial: sandbox blocks native link, success remains 
   const link = frame.getByRole('link', { name: linkName });
   await link.click();
   await expect.poll(() => blocked.length).toBe(1);
-  await expect(frame.getByRole('status')).toHaveText('Tu reserva quedó registrada');
+  await expect(frame.getByRole('heading', { name: 'Tu reserva quedó registrada', exact: true })).toBeVisible();
   await link.press('Enter');
   await expect.poll(() => blocked.length).toBe(2);
   expect(context.pages()).toHaveLength(1);
   expect(state.destinations).toHaveLength(0);
   expect(state.posts).toBe(1);
-  await frame.getByRole('status').locator('..').screenshot({ path: info.outputPath('popup-blocked.png') });
+  await frame.getByRole('heading', { name: 'Tu reserva quedó registrada', exact: true }).locator('..').screenshot({ path: info.outputPath('popup-blocked.png') });
   await info.attach('browser-popup-denial.txt', { body: blocked.join('\n'), contentType: 'text/plain' });
   // The action remains available after denial. Unrestricted opening is covered separately;
   // we do not claim to detect browser policy, app installation, sending or delivery.

@@ -16,6 +16,10 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
+Estado posterior de M1 C2: frontend cerrado/aprobado expresamente por el propietario, quien aclaró «No hay condiciones, sigue adelante». Commit/push autorizados exclusivamente a `origin/ai/antigravity-qa`, sin despliegue. [Registro de aprobación, validaciones y publicación](quality/RESERVA_PUBLICA_M1_C2_CIERRE.md). C3/QA física y producción siguen sin autorización; la entrada siguiente conserva el contexto de la entrega original.
+
+- [`RESERVA_PUBLICA_M1_C2_CIERRE.md`](quality/RESERVA_PUBLICA_M1_C2_CIERRE.md): frontend C2 autorizado posteriormente sobre C1 aprobado `d9b508f8317bf128fb409c0a22098895f24ea5fb`, implementado/en revisión. Ruta propia, cinco pasos, calendario D6-B real y éxito pendiente; pruebas, navegador responsive y cuatro roles/dos negocios sintéticos en PostgreSQL desechable. Sin commit/push/despliegue ni bases reales. C3 requiere primero desplegar el API QA y después QA física/autorización separada; producción cerrada. Las referencias C0/C1 inferiores conservan su contexto histórico.
+
 - [`RESERVA_PUBLICA_M1_C1_CIERRE.md`](quality/RESERVA_PUBLICA_M1_C1_CIERRE.md): backend C1 aprobado expresamente el 2026-10-01 con riesgos residuales aceptados y commit/push autorizados solo a `origin/ai/antigravity-qa`, sin despliegue. Días por rango, fotos existentes, aislamiento y límite compartido medido; D11 con error genérico conservando rechazo, HTTP/cuerpo y rollback probados. Único gate en curso: publicación Git del checkpoint. C2/C3 y producción no se abren. La referencia C0 inferior conserva su estado histórico previo; las decisiones quedan resueltas por las instrucciones posteriores del propietario.
 
 - [`RESERVA_PUBLICA_M1_C0.md`](quality/RESERVA_PUBLICA_M1_C0.md): C0 documental de M1 entregado/en revisión, sin implementación; decisiones previas FIJADAS y D5–D13 pendientes. Ruta de reserva separada, fotos públicas elegibles, calendario/hora compacta, éxito PENDING, privacidad y QA futura. Requiere C1 para días disponibles por rango, sin autorizar C2 ni apertura productiva.

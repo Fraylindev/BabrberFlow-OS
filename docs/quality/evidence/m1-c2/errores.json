@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "name": "fotos-elegibles-y-respaldo-sin-avatar-legacy",
+      "result": "PASS"
+    },
+    {
+      "name": "servicio-sin-hueco-mes-vacio-y-teclado-zoom",
+      "result": "PASS"
+    },
+    {
+      "name": "lectura-503-y-429-reintento-controlado",
+      "result": "PASS"
+    },
+    {
+      "name": "retiro-real-durante-revision-sin-post",
+      "result": "PASS"
+    },
+    {
+      "name": "409-real-carrera-sin-segundo-post-del-visitante",
+      "result": "PASS"
+    },
+    {
+      "name": "timeout-despues-de-booking-real-incierto-sin-reenvio",
+      "result": "PASS"
+    }
+  ],
+  "consoleErrors": []
+}

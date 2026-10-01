@@ -1,9 +1,7 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { SuccessView } from '@/app/[slug]/_components/SuccessView';
-import { PublicMiniSite } from './PublicMiniSite';
-import { api, type PublicBookingResult } from '@/lib/api';
+import { type PublicBookingResult } from '@/lib/api';
 import { businessLocalInput } from '@/lib/business-time';
 
 vi.mock('@/lib/queries/media', () => ({
@@ -57,41 +55,4 @@ it('the current year follows the business zone and updates when the zone changes
   expect(screen.getByText('3 ene 2027, 10:00 a. m.')).toBeInTheDocument();
   rerender(success('2027-01-03T14:00:00Z', 'Asia/Tokyo'));
   expect(screen.getByText('3 ene, 11:00 p. m.')).toHaveAttribute('title', '3 de enero de 2027, 11:00 p. m.');
-});
-
-it('the complete assistant uses booking-data zone for confirmation and success without changing POST', async () => {
-  vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-09-27T16:00:00Z'));
-  const startTime = '2026-09-28T01:00:00.000Z';
-  vi.spyOn(api, 'get').mockImplementation(async (path) => path.includes('/availability') ? {
-    date: '2026-09-28', serviceId: 'service', slots: [{ time: '10:00', professionalId: 'professional', startTime }],
-  } : {
-    minimumBookingDate: '2026-09-28', timeZone: 'Asia/Tokyo',
-    organization: { name: 'Negocio QA', slug: 'dates', phone: null, description: null, address: null, googleMapsUrl: null },
-    services: [{ id: 'service', name: 'Servicio QA', description: null, duration: 30, price: '500.00' }],
-    professionals: [{ id: 'professional', name: 'Profesional QA', bio: null, avatar: null }],
-  });
-  vi.spyOn(api, 'post').mockResolvedValue(result(startTime));
-  Element.prototype.scrollIntoView = vi.fn();
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  render(<QueryClientProvider client={client}><PublicMiniSite slug="dates" /></QueryClientProvider>);
-  fireEvent.click(await screen.findByRole('button', { name: 'Reservar cita' }));
-  fireEvent.click(await screen.findByRole('button', { name: /Servicio QA/ }));
-  fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-  fireEvent.click(screen.getByRole('button', { name: /Profesional QA/ }));
-  fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-  fireEvent.change(screen.getByLabelText('Fecha'), { target: { value: '2026-09-28' } });
-  fireEvent.click(await screen.findByRole('button', { name: '10:00 a. m.' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-  fireEvent.change(screen.getByLabelText('Nombre completo'), { target: { value: 'Visitante QA' } });
-  fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '8095554321' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-  expect(screen.getByText('Hoy, 10:00 a. m.')).toHaveAttribute('datetime', startTime);
-  fireEvent.click(screen.getByRole('button', { name: 'Confirmar reserva' }));
-  await screen.findByText('Tu reserva quedó registrada');
-  expect(screen.getByText('Hoy, 10:00 a. m.')).toHaveAttribute('title', '28 de septiembre de 2026, 10:00 a. m.');
-  await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1));
-  expect(api.post).toHaveBeenCalledWith('/public/dates/bookings', expect.objectContaining({ startTime }));
-  expect(vi.mocked(api.post).mock.calls[0][1]).not.toHaveProperty('timeZone');
-  expect(document.body.textContent).not.toMatch(/Asia|UTC|GMT/);
 });

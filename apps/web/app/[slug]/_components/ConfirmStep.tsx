@@ -1,59 +1,29 @@
-import { Button } from "@/components/ui/Button";
-import { StepWrapper, SummaryRow } from "./shared";
+import { Button } from '@/components/ui/Button';
 import { BusinessTime } from '@/components/ui/BusinessTime';
+import { BookingPhoto } from '@/components/public/BookingPhoto';
+import type { PublicMediaImage } from '@/lib/media-ui';
+import { formatMoney, StepWrapper } from './shared';
 
-interface ConfirmStepProps {
-  serviceName?: string;
-  professionalName?: string;
-  startTime: string;
-  timeZone: string;
-  clientName: string;
-  clientPhone: string;
-  clientEmail: string;
-  submitError: string | null;
-  submitting: boolean;
-  onBack: () => void;
-  onConfirm: () => void;
-}
-
-export function ConfirmStep({
-  serviceName,
-  professionalName,
-  startTime,
-  timeZone,
-  clientName,
-  clientPhone,
-  clientEmail,
-  submitError,
-  submitting,
-  onBack,
-  onConfirm,
-}: ConfirmStepProps) {
-  return (
-    <StepWrapper title="Confirma tu reserva">
-      <div className="flex flex-col gap-2 border border-[var(--color-border)] p-4 text-sm">
-        <SummaryRow label="Servicio" value={serviceName} />
-        <SummaryRow label="Con" value={professionalName} />
-        <SummaryRow label="Fecha y hora" value={<BusinessTime value={startTime} zone={timeZone} />} />
-        <SummaryRow label="Nombre" value={clientName} />
-        <SummaryRow label="Teléfono" value={clientPhone} />
-        {clientEmail && <SummaryRow label="Correo" value={clientEmail} />}
-      </div>
-
-      {submitError && (
-        <p className="mt-4 bg-[var(--color-danger-bg)] px-3 py-2 text-sm text-[var(--color-danger)]">
-          {submitError}
-        </p>
-      )}
-
-      <div className="mt-6 flex justify-between gap-3">
-        <Button variant="ghost" onClick={onBack} disabled={submitting}>
-          Atrás
-        </Button>
-        <Button onClick={onConfirm} disabled={submitting}>
-          {submitting ? "Confirmando…" : "Confirmar reserva"}
-        </Button>
-      </div>
-    </StepWrapper>
-  );
+export function ConfirmStep({ serviceName, professionalName, startTime, timeZone, duration, price, servicePhoto, professionalPhoto,
+  clientName, clientPhone, clientEmail, submitting, submitError, onBack, onConfirm, onEdit, waiting = false,
+}: {
+  serviceName?: string; professionalName?: string; startTime: string; timeZone: string; duration?: number; price?: string | number;
+  servicePhoto?: PublicMediaImage; professionalPhoto?: PublicMediaImage;
+  clientName: string; clientPhone: string; clientEmail: string; submitting: boolean; submitError: string | null; waiting?: boolean;
+  onBack: () => void; onConfirm: () => void; onEdit?: (step: 'service' | 'professional' | 'datetime' | 'contact') => void;
+}) {
+  const edit = (step: 'service' | 'professional' | 'datetime' | 'contact', label: string) => onEdit && <Button type="button" variant="ghost" disabled={submitting} onClick={() => onEdit(step)}>Editar {label}</Button>;
+  return <StepWrapper title="Revisa tu reserva">
+    <div className="space-y-4 border border-[var(--color-border)] p-4">
+      <div className="flex gap-3"><BookingPhoto compact image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p>
+        {duration && <p className="text-sm text-[var(--color-muted)]">Duración: {duration} min</p>}
+        {price !== undefined && <p className="text-sm">{formatMoney(price)} · precio de catálogo</p>}{edit('service', 'servicio')}</div></div>
+      <div className="flex gap-3"><BookingPhoto compact kind="professional" image={professionalPhoto} /><div className="min-w-0 flex-1"><p>Te atenderá {professionalName || 'el profesional seleccionado'}</p>{edit('professional', 'profesional')}</div></div>
+      <div><BusinessTime value={startTime} zone={timeZone} />{edit('datetime', 'fecha y hora')}</div>
+      <div className="border-t border-[var(--color-border)] pt-3"><p>{clientName}</p><p>{clientPhone}</p>{clientEmail && <p>{clientEmail}</p>}{edit('contact', 'datos')}</div>
+    </div>
+    <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">La reserva quedará pendiente de confirmación del negocio.</p>
+    {submitError && <p role="alert" className="mt-4 text-[var(--color-danger)]">{submitError}</p>}
+    <div className="booking-nav"><Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>Atrás</Button><Button type="button" className="booking-primary" onClick={onConfirm} disabled={submitting || waiting}>{submitting ? 'Registrando tu reserva…' : waiting ? 'Espera un momento' : 'Registrar reserva'}</Button></div>
+  </StepWrapper>;
 }

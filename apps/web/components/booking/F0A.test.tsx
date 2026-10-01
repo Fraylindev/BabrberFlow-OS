@@ -61,7 +61,8 @@ describe('F0-A: regresiones de comportamiento', () => {
     expect(date).toHaveAttribute('title', '5 de enero de 2099, 10:00 a. m.');
     expect(date).toHaveAttribute('datetime', new Date(result.booking.startTime).toISOString());
     expect(screen.queryByText(/2099-01-05|UTC|America\//)).not.toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent('registrada');
+    expect(screen.getByRole('heading', { name: 'Tu reserva quedó registrada' })).toBeVisible();
+    expect(screen.getByRole('status')).toHaveTextContent('Pendiente de confirmación');
   });
   it.each([BookingsPage, InvoicesPage])('conserva filtros nativos etiquetados sin ejemplos redundantes', (Page) => {
     render(<Page />);

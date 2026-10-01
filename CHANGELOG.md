@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-10-01 — Frontend M1 C2 aprobado; commit/push autorizados sin despliegue
+
+- El propietario aprueba expresamente el frontend C2 y aclara «No hay condiciones, sigue adelante». Commit/push autorizados exclusivamente a `origin/ai/antigravity-qa`, sin despliegue. Se sincroniza la aprobación en los cinco documentos de control del checkpoint; la igualdad de SHA local/remoto y el árbol final se verifican al publicar. C3/QA física y producción conservan sus gates separados.
+- Preparación: auditoría de alcance/evidencia, tipos y lint limpios; 152 pruebas de lógica y 110 de componentes aprobadas, exit `0`. Sin cambios de código, build o QA adicional. [Registro de aprobación y publicación](docs/quality/RESERVA_PUBLICA_M1_C2_CIERRE.md). La entrada siguiente describe la entrega original.
+
+## 2026-10-01 — Reserva pública M1 C2 frontend implementado / en revisión
+
+- C2 expresamente autorizado sobre C1 aprobado `d9b508f8317bf128fb409c0a22098895f24ea5fb`. CTA del mini-sitio enlaza `/{slug}/reservar`, con regreso y carga directa; cinco pasos, profesional concreto antes del POST y preselección visible si hay uno solo. Calendario reutilizable D6-B, rango inclusivo ≤31 y select nativo con slots autoritativos; sin pago ni paso obligatorio de cuenta.
+- Validación de contacto internacional junto al campo, correo opcional y contraseña ≥8 solo si opta; aviso QA exacto. D11 conserva todo el borrador. POST protegido de doble clic/reintento; 409 exige otra selección, 429 respeta espera permitiendo editar, timeout informa incertidumbre. Éxito PENDING completo con BusinessTime, fotos elegibles/respaldo, próximos pasos, Maps/WhatsApp condicionados y calendario local TENTATIVE; sin persistencia de PII ni eventos de conversión.
+- Tipos/lint/build y pruebas web; Chrome 320/375/390/1280 px y 200 %; datos/HTTP PostgreSQL desechables y sesiones Clerk reales de cuatro roles en dos negocios. Regresiones de fecha, avisos y WhatsApp migradas al nuevo consumidor. [Cierre y evidencia](docs/quality/RESERVA_PUBLICA_M1_C2_CIERRE.md). Pendientes revisión/aprobación del propietario y QA física/C3: el API QA debe desplegarse primero. Sin backend/contrato/dependencias nuevos, staging, commit, push, despliegue, .env/flags operativos ni acceso a bases reales; producción intacta.
+
 ## 2026-10-01 — Reserva pública M1 C1 backend aprobado; commit/push autorizados sin despliegue
 
 - C0 aprobado posteriormente por el propietario con D6-B y las demás recomendaciones. Solo backend C1: availability-days inclusivo ≤31 con snapshot y motor diario compartido; fotos públicas ya existentes; presupuesto PostgreSQL 30/min medido y probado entre instancias. Sin migración ni frontend.

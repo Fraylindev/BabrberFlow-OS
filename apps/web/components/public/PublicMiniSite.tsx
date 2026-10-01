@@ -1,57 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ApiError, PublicAvailabilitySlot, PublicBookingResult, publicMediaUrl } from "@/lib/api";
-import { useCreatePublicBooking, usePublicBookingData } from "@/lib/queries/public-booking";
+import Link from 'next/link';
+import { ApiError, publicMediaUrl } from '@/lib/api';
+import { usePublicBookingData } from '@/lib/queries/public-booking';
 import { usePublicMedia } from '@/lib/queries/media';
 import { isPublicMedia, type PublicMediaImage } from '@/lib/media-ui';
-import { Brand } from "@/components/Brand";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { ErrorText } from '@/components/ui/ErrorText';
-import { BookingHeader } from "@/app/[slug]/_components/BookingHeader";
-import { ANY_PROFESSIONAL } from "@/app/[slug]/_components/ProfessionalStep";
-import { Step, StepRouter } from "@/app/[slug]/_components/StepRouter";
-import { SuccessView } from "@/app/[slug]/_components/SuccessView";
-import { EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
-
-const STEP_ORDER: Step[] = ["service", "professional", "datetime", "contact", "account", "confirm"];
+import { Brand } from '@/components/Brand';
+import { Button } from '@/components/ui/Button';
 
 export function PublicMiniSite({ slug }: { slug: string }) {
   const { data, error, isLoading, isError, isFetching, refetch } = usePublicBookingData(slug);
-  const createBooking = useCreatePublicBooking(slug);
   const mediaQuery = usePublicMedia(slug, Boolean(data));
-  const bookingHeading = useRef<HTMLHeadingElement>(null);
-
-  const [bookingStarted, setBookingStarted] = useState(false);
-  const [publicUnavailable, setPublicUnavailable] = useState(false);
-  const [startError, setStartError] = useState<string | null>(null);
-  const [step, setStep] = useState<Step>("service");
-  const [serviceId, setServiceId] = useState("");
-  const [professionalId, setProfessionalId] = useState<string | null>(null);
-  const [resolvedProfessionalId, setResolvedProfessionalId] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [selectedStartTime, setSelectedStartTime] = useState("");
-  const [clientName, setClientName] = useState("");
-  const [clientPhone, setClientPhone] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
-  const [emailOptedIn, setEmailOptedIn] = useState(false);
-  const [createAccount, setCreateAccount] = useState(false);
-  const [password, setPassword] = useState("");
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [result, setResult] = useState<PublicBookingResult | null>(null);
-
-  useEffect(() => {
-    if (!bookingStarted) return;
-    const frame = window.requestAnimationFrame(() => {
-      bookingHeading.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      bookingHeading.current?.focus({ preventScroll: true });
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [bookingStarted]);
-
-  const isRetired = publicUnavailable || (isError && error instanceof ApiError && error.status === 404) || (mediaQuery.isError && mediaQuery.error instanceof ApiError && mediaQuery.error.status === 404);
+  const isRetired = (isError && error instanceof ApiError && error.status === 404) || (mediaQuery.isError && mediaQuery.error instanceof ApiError && mediaQuery.error.status === 404);
 
   if (isLoading) return <PublicLoading />;
   if (isRetired || !data) {
@@ -64,78 +24,6 @@ export function PublicMiniSite({ slug }: { slug: string }) {
 
   const canBook = data.services.length > 0 && data.professionals.length > 0;
   const media = !mediaQuery.isError && isPublicMedia(mediaQuery.data) ? mediaQuery.data : null;
-  const bookingData = media ? {
-    ...data,
-    professionals: data.professionals.map((professional) => {
-      const managed = media.professionals.find((item) => item.professionalId === professional.id);
-      return managed ? { ...professional, avatar: publicMediaUrl(managed.avatar.url) || null } : professional;
-    }),
-  } : data;
-  const selectedService = data.services.find((service) => service.id === serviceId);
-  const selectedProfessional = data.professionals.find(
-    (professional) => professional.id === resolvedProfessionalId,
-  );
-  const professionalLabel =
-    professionalId === ANY_PROFESSIONAL && !selectedProfessional
-      ? "Cualquiera disponible"
-      : selectedProfessional?.name;
-
-  async function handleStartBooking() {
-    setStartError(null);
-    const refreshed = await refetch();
-    if (refreshed.error) {
-      if (refreshed.error instanceof ApiError && refreshed.error.status === 404) {
-        setPublicUnavailable(true);
-      } else {
-        setStartError("No pudimos comprobar las reservas. Revisa tu conexión e inténtalo de nuevo.");
-      }
-      return;
-    }
-    if (!refreshed.data?.services.length || !refreshed.data.professionals.length) {
-      setStartError("Las reservas en línea no están disponibles por ahora.");
-      return;
-    }
-    setBookingStarted(true);
-  }
-
-  function handleSlotSelect(slot: PublicAvailabilitySlot) {
-    setTime(slot.time);
-    setResolvedProfessionalId(slot.professionalId);
-    setSelectedStartTime(slot.startTime);
-  }
-
-  async function handleConfirm() {
-    setSubmitError(null);
-    if (!selectedStartTime) {
-      setSubmitError("Vuelve al paso de fecha y elige un horario antes de confirmar.");
-      return;
-    }
-    try {
-      const response = await createBooking.mutateAsync({
-        serviceId,
-        professionalId: resolvedProfessionalId,
-        startTime: selectedStartTime,
-        clientName: clientName.trim(),
-        clientPhone: clientPhone.trim(),
-        clientEmail: clientEmail.trim() || undefined,
-        ...(emailOptedIn ? { emailNotifications: { optedIn: true, noticeVersion: EMAIL_NOTICE_VERSION } } : {}),
-        createAccount,
-        password: createAccount ? password : undefined,
-      });
-      setResult(response);
-    } catch (caught) {
-      if (caught instanceof ApiError && caught.status === 404) {
-        setPublicUnavailable(true);
-        return;
-      }
-      setSubmitError(
-        caught instanceof ApiError
-          ? caught.withRequestCode(caught.message)
-          : "No se pudo confirmar la reserva. Inténtalo de nuevo.",
-      );
-    }
-  }
-
   return (
     <main className="min-h-screen overflow-x-hidden bg-[var(--color-ink)]">
       <section className="film-grain border-b border-[var(--color-border)]">
@@ -162,14 +50,9 @@ export function PublicMiniSite({ slug }: { slug: string }) {
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               {canBook && (
-                <Button
-                  className="min-h-12 px-6"
-                  onClick={() => void handleStartBooking()}
-                  disabled={isFetching}
-                  aria-describedby={startError ? "public-booking-start-error" : undefined}
-                >
-                  {isFetching ? "Comprobando disponibilidad…" : "Reservar cita"}
-                </Button>
+                <Link href={`/${encodeURIComponent(slug)}/reservar`} className="inline-flex min-h-12 items-center rounded-sm bg-[var(--color-brass)] px-6 text-sm font-medium text-[var(--color-paper)]">
+                  Reservar cita
+                </Link>
               )}
               {data.organization.phone && (
                 <a
@@ -186,15 +69,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 Las reservas en línea no están disponibles por ahora.
               </p>
             )}
-            {startError && (
-              <p
-                id="public-booking-start-error"
-                className="mt-5 text-sm text-[var(--color-danger)]"
-                role="alert"
-              >
-                {startError}
-              </p>
-            )}
+
           </div>
           {media?.hero && <PublicImage image={media.hero} className="mb-8 max-h-[28rem] w-full rounded-sm object-cover" />}
         </div>
@@ -240,92 +115,6 @@ export function PublicMiniSite({ slug }: { slug: string }) {
               </a>
             )}
           </div>
-        </section>
-      )}
-
-      {bookingStarted && (
-        <section
-          id="reservar"
-          className="mx-auto flex max-w-2xl flex-col px-4 py-14 sm:px-8 sm:py-20"
-          aria-labelledby="booking-title"
-        >
-          <BookingHeader
-            headingRef={bookingHeading}
-            organizationName={data.organization.name}
-            showBrand={false}
-            showProgress={!result}
-            progressRatio={(STEP_ORDER.indexOf(step) + 1) / STEP_ORDER.length}
-          />
-
-          <Card className="p-5 sm:p-7">
-            {result ? (
-              <SuccessView
-                result={result}
-                organizationPhone={data.organization.phone}
-                serviceName={selectedService?.name}
-                professionalName={professionalLabel}
-                timeZone={data.timeZone}
-              />
-            ) : (
-              <StepRouter
-                step={step}
-                setStep={setStep}
-                slug={slug}
-                data={bookingData}
-                serviceId={serviceId}
-                setServiceId={(nextServiceId) => {
-                  if (nextServiceId === serviceId) return;
-                  setServiceId(nextServiceId);
-                  setProfessionalId(null);
-                  setResolvedProfessionalId("");
-                  setDate("");
-                  setTime("");
-                  setSelectedStartTime("");
-                }}
-                professionalId={professionalId}
-                setProfessionalId={(nextProfessionalId) => {
-                  if (nextProfessionalId === professionalId) return;
-                  setProfessionalId(nextProfessionalId);
-                  setResolvedProfessionalId("");
-                  setDate("");
-                  setTime("");
-                  setSelectedStartTime("");
-                }}
-                date={date}
-                time={time}
-                selectedStartTime={selectedStartTime}
-                onDateChange={(nextDate) => {
-                  setDate(nextDate);
-                  setTime("");
-                  setResolvedProfessionalId("");
-                  setSelectedStartTime("");
-                }}
-                onSlotSelect={handleSlotSelect}
-                clientName={clientName}
-                setClientName={setClientName}
-                clientPhone={clientPhone}
-                setClientPhone={setClientPhone}
-                clientEmail={clientEmail}
-                setClientEmail={(email) => { setClientEmail(email); setEmailOptedIn(false); }}
-                emailOptedIn={emailOptedIn}
-                setEmailOptedIn={setEmailOptedIn}
-                createAccount={createAccount}
-                setCreateAccount={setCreateAccount}
-                password={password}
-                setPassword={setPassword}
-                serviceName={selectedService?.name}
-                professionalLabel={professionalLabel}
-                submitError={submitError?.includes('\nCódigo de soporte: ') ? null : submitError}
-                submitting={createBooking.isPending}
-                onConfirm={handleConfirm}
-              />
-            )}
-            {step === 'confirm' && submitError?.includes('\nCódigo de soporte: ') && (
-              <p role="alert" className="mt-4 text-sm text-[var(--color-danger)]">
-                <ErrorText message={submitError} tone="dark" />
-              </p>
-            )}
-          </Card>
         </section>
       )}
 

@@ -1,0 +1,109 @@
+{
+  "checks": [
+    {
+      "name": "responsive-320",
+      "result": "PASS"
+    },
+    {
+      "name": "responsive-375",
+      "result": "PASS"
+    },
+    {
+      "name": "responsive-390",
+      "result": "PASS"
+    },
+    {
+      "name": "responsive-1280",
+      "result": "PASS"
+    },
+    {
+      "name": "invitado-dos-negocios-canonical-y-exito",
+      "result": "PASS"
+    },
+    {
+      "name": "D11-colision-real-preserva-borrador",
+      "result": "PASS"
+    },
+    {
+      "name": "cuenta-legacy-secundaria-exito-y-fallo-sin-repetir-booking",
+      "result": "PASS"
+    }
+  ],
+  "consoleErrors": [],
+  "pages": [
+    {
+      "width": 320,
+      "label": "calendario",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 320,
+      "label": "contacto",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 320,
+      "label": "revisión",
+      "overflow": false,
+      "minInputFont": null
+    },
+    {
+      "width": 375,
+      "label": "calendario",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 375,
+      "label": "contacto",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 375,
+      "label": "revisión",
+      "overflow": false,
+      "minInputFont": null
+    },
+    {
+      "width": 390,
+      "label": "calendario",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 390,
+      "label": "contacto",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 390,
+      "label": "revisión",
+      "overflow": false,
+      "minInputFont": null
+    },
+    {
+      "width": 1280,
+      "label": "calendario",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 1280,
+      "label": "contacto",
+      "overflow": false,
+      "minInputFont": 16
+    },
+    {
+      "width": 1280,
+      "label": "revisión",
+      "overflow": false,
+      "minInputFont": null
+    }
+  ],
+  "limitations": [],
+  "browser": "154.0.8037.58"
+}

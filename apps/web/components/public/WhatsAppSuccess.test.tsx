@@ -20,7 +20,8 @@ describe("WhatsApp C2 SuccessView", () => {
   it("uses one native accessible link, generic text and no automatic or click-driven JS popup", () => {
     const open = vi.spyOn(window, "open");
     const { rerender } = render(<SuccessView {...props} />);
-    expect(screen.getByRole("status")).toHaveTextContent("Tu reserva quedó registrada");
+    expect(screen.getByRole("heading", { name: "Tu reserva quedó registrada" })).toBeVisible();
+    expect(screen.getByRole("status")).toHaveTextContent("Pendiente de confirmación");
     const link = screen.getByRole("link", { name: "Abrir WhatsApp (se abre en una pestaña nueva)" });
     expect(screen.getAllByRole("link")).toHaveLength(1);
     expect(link).toHaveAttribute("target", "_blank");
@@ -40,7 +41,8 @@ describe("WhatsApp C2 SuccessView", () => {
 
   it.each([null, "", "8095551234", "+18095551234\n"])("omits link and explanation for %j", (phone) => {
     render(<SuccessView {...props} organizationPhone={phone} />);
-    expect(screen.getByRole("status")).toHaveTextContent("Tu reserva quedó registrada");
+    expect(screen.getByRole("heading", { name: "Tu reserva quedó registrada" })).toBeVisible();
+    expect(screen.getByRole("status")).toHaveTextContent("Pendiente de confirmación");
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.queryByText(WHATSAPP_EXPLANATION)).not.toBeInTheDocument();
   });
