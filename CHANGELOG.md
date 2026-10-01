@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-01 — Ajuste visual de filtros de Reservas y Facturación
+
+- Por capturas y autorización de cambio/commit/push del propietario: «Todos» pasa a «Todas» en Reservas. Desde/Hasta en ambas pantallas limitan ancho a la columna, mantienen 44 px de alto y ajustan el control nativo de fecha para Safari, con estilo solo en esos cuatro campos.
+- Tipos limpios, lint, 251 pruebas y build web pasan. Chrome local en 320/375/390/844/1280 px verifica márgenes, fechas vacías/pobladas, filtros/reset, foco y consola. Safari físico pendiente; sin cambio de backend, contrato, zona, permisos o datos. Implementado/en revisión, publicación QA autorizada. [Evidencia](docs/quality/CORRECTIVO_F0D.md).
+
 ## 2026-10-01 — F0-D publicado y desplegado exclusivamente en QA
 
 - Publicación autorizada expresamente por el propietario: código `92f6127` en origin/ai/antigravity-qa, API/worker QA con imagen inmutable `7eafd5c9232a`; 23 controles de arranque pasan y rollback anterior conservado. Configuración funcional, flags y secretos intactos; únicamente cambian los selectores operativos de imagen/release QA. Sin migraciones ni cambios de datos.

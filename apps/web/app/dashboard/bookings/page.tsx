@@ -88,7 +88,7 @@ function BookingFormSection({
 
 // ─── Etiquetas de filtro de estado ───────────────────────────────────────────
 const STATUS_LABELS: Record<BookingStatus | 'ALL', string> = {
-  ALL: 'Todos',
+  ALL: 'Todas',
   PENDING: 'Pendientes',
   CONFIRMED: 'Confirmadas',
   COMPLETED: 'Completadas',
@@ -254,7 +254,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
               max={toDate || undefined}
-              className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="dashboard-date-filter h-11 w-full min-w-0 max-w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
           </div>
 
@@ -271,7 +271,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
               min={fromDate || undefined}
-              className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="dashboard-date-filter h-11 w-full min-w-0 max-w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
           </div>
 

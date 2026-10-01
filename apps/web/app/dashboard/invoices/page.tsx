@@ -164,7 +164,7 @@ function ScopedInvoicesPage({
                 setFromDate(event.target.value);
                 setPage(1);
               }}
-              className="h-11 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="dashboard-date-filter h-11 w-full min-w-0 max-w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
           </div>
           <div className="flex min-w-0 flex-col gap-1.5">
@@ -182,7 +182,7 @@ function ScopedInvoicesPage({
                 setToDate(event.target.value);
                 setPage(1);
               }}
-              className="h-11 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="dashboard-date-filter h-11 w-full min-w-0 max-w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
           </div>
           <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
