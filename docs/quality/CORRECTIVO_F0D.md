@@ -2,9 +2,9 @@
 
 Trabajo iniciado: 2026-09-30; validación final: 2026-10-01 (America/Santo_Domingo). Base: `666516f2ebf56e9620a0da3bfebe9c0496b4de7f`, rama `ai/antigravity-qa`, árbol inicial limpio.
 
-Publicación posterior autorizada el 2026-10-01: el propietario pidió **«haz commit, push y despliegue. reportame y dime que validar en qa»**. Autoriza commit y push exclusivos a origin/ai/antigravity-qa y API/worker/Preview QA; producción, .env, flags, proveedores y datos existentes conservan sus límites. Las secciones previas describen las etapas sin publicación. Resultado operativo se registrará después de ejecutar y verificar el despliegue; esta autorización no lo anticipa ni aprueba el QA final.
+Publicación posterior autorizada el 2026-10-01: el propietario pidió **«haz commit, push y despliegue. reportame y dime que validar en qa»**. Ejecutada exclusivamente en origin/ai/antigravity-qa y API/worker/Preview QA desde el commit de código `92f61274dcb733e0e43f14a45851c0da346430c2`. El resultado operativo y los recorridos pendientes constan al final. Las secciones anteriores conservan la historia de las etapas sin publicación. Esta autorización no aprueba el QA final.
 
-**IMPLEMENTADO Y VALIDADO LOCALMENTE / EN REVISIÓN FINAL; BACKENDS 2A Y 1A APROBADOS, LIMITACIÓN 3A ACEPTADA.** El propietario confirmó después que el correo recibido estaba en spam. Se conserva la UI honesta sin señal automática de aceptación del mensaje. Sin commit, staging, push o despliegue. No se autoriza ni realiza activación de correo, cambios de proveedores, .env, permisos, aceptación, migraciones o datos existentes. No equivale a cierre global, aprobación de toda la interfaz o QA desplegada. La indicación del propietario sobre pruebas satisfactorias de F0-C es contexto; este informe no aprueba retrospectivamente otros gates.
+**PUBLICADO Y DESPLEGADO EN QA / EN REVISIÓN; BACKENDS 2A Y 1A APROBADOS, LIMITACIÓN 3A ACEPTADA.** El propietario confirmó después que el correo recibido estaba en spam. Se conserva la UI honesta sin señal automática de aceptación del mensaje. Producción, .env, flags, proveedores, permisos, aceptación, migraciones y datos existentes permanecen intactos. La publicación no equivale a cierre global, aprobación de toda la interfaz o QA funcional autenticada del nuevo despliegue. La indicación del propietario sobre pruebas satisfactorias de F0-C es contexto; este informe no aprueba retrospectivamente otros gates.
 
 ## Brief y criterios
 
@@ -249,4 +249,35 @@ Entrega autorizada implementada y validada localmente, con evidencias y excepcio
 
 Estado de control: backends 1A/2A aprobados y limitación 3A aceptada; implementación local **EN REVISIÓN FINAL**, sin declarar cerrado/aprobado el conjunto. Auditoría/aprobación global y QA desplegada/Safari físico quedan como etapas posteriores, sin autorización de publicación. No bloquean la terminación del trabajo local solicitado ni autorizan commit, push o despliegue. Si se autoriza otro alcance, su primer paso será revisión del candidato y sus evidencias, no reactivar el envío ni fabricar un estado de entrega.
 
-Git: `ai/antigravity-qa`, HEAD/base `666516f2ebf56e9620a0da3bfebe9c0496b4de7f`, 42 archivos rastreados modificados/seis nuevos, índice vacío; trabajo previo preservado. PROJECT_MASTER, CHANGELOG y README sincronizados; diff --check y referencias locales revisados. Producción, .env, flags, proveedores y datos reales intactos. Sin staging, commit, push o despliegue.
+Git de la etapa local: `ai/antigravity-qa`, HEAD/base `666516f2ebf56e9620a0da3bfebe9c0496b4de7f`, 42 archivos rastreados modificados/seis nuevos, índice vacío; trabajo previo preservado. PROJECT_MASTER, CHANGELOG y README sincronizados; diff --check y referencias locales revisados. Producción, .env, flags, proveedores y datos reales intactos. Sin staging, commit, push o despliegue en esa etapa.
+
+## Publicación y despliegue QA — 2026-10-01
+
+Autorización posterior exacta registrada al inicio. Commit de código `92f61274dcb733e0e43f14a45851c0da346430c2`, mensaje `fix(qa): unificar fechas del negocio y vigencia de invitaciones F0-D`, 48 rutas explícitas revisadas; push exclusivo a origin/ai/antigravity-qa con exit 0. Se verificó igualdad de SHA local/remoto de código y main permaneció en `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6`. Este informe operativo se publica después en un commit solo documental: no cambia el código desplegado ni exige reconstruir API.
+
+| Operación | Resultado comprobado | Evidencia local ignorada |
+| --- | --- | --- |
+| Contexto API mediante git archive del commit, build ARM con límites, pnpm frozen del Containerfile | exit 0, imagen inmutable `7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1` | `.tmp/f0d/api-image-build.log`, `api-context.tar.gz` |
+| Drill de arranque fail-closed sobre imagen, red deshabilitada | 23 casos negativos pasan, exit 0 | `api-image-build.log` |
+| Despliegue QA API y worker, verificación posterior | scripts exit 0, ambos activos con imagen y APP_RELEASE del commit de código | `api-deployment.log`, `api-final-check.json` |
+| Smoke HTTPS del API QA | exit 0: raíz 404, privado 401, catálogo 200 con timeZone America/Santo_Domingo, preflight 204; origen ajeno sin ACAO; UUID/exposición X-Request-Id correctos | `external-smoke.json` |
+| Vercel Git Preview de código | Ready `dpl_Erb4T1Cri2GpGjm6rxkRsoH41bux`, SHA/branch exactos, alias QA asociado automáticamente | `vercel-code-ready.json` |
+| Producción | despliegue Vercel `dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm`/main iguales; API mantiene imagen, contenedor/PID, tres servicios y hashes de archivos protegidos | `vercel-before.json`, `vercel-code-ready.json`, `api-deployment.log`, `api-final-check.json` |
+
+Solo se sustituyeron KORTEK_API_IMAGE y APP_RELEASE en la credencial operativa del servicio QA; igualdad del resto de líneas/configuración funcional verificada, incluidos flags y secretos. Ningún archivo .env local, variable Vercel, plantilla, proveedor, permiso o dato persistido se modificó. No se enviaron invitaciones/correos de prueba ni se crearon reservas durante despliegue. Reinicios exclusivos de kortek-api-staging y kortek-email-worker-staging; Caddy y servicios productivos preservados. Imagen anterior `1ef5e81d42801498e2903e423b770ed7f1d8e22e65e7f0fdf7db9a9ef8660911` retenida y respaldo operativo protegido, sin migración; rollback preparado en el script. El worker conserva la configuración previamente autorizada, sin activar ni desactivar correo.
+
+La sesión almacenada de Vercel estaba vencida y se renovó mediante su flujo OAuth oficial sin mostrar credenciales. CLI no instalado: se empleó integración Git existente y API Vercel para consultar estado/alias, sin instalar dependencias ni modificar configuración. El helper de reporte tuvo un error de precedencia Path/string al guardar snapshot; se corrigió y la consulta posterior terminó con exit 0. No fue fallo de producto o despliegue.
+
+QA visual remota automatizada: Chrome con perfil limpio intentó abrir el alias; fue redirigido al SSO existente de Vercel. No se cuenta ese intento como validación funcional remota, ni se deshabilita protección o se crea un bypass. `.tmp/f0d/remote-browser.log` registra la limitación. Conservan validez los recorridos locales de componentes reales y backend compilado ya documentados; no sustituyen QA autenticada del nuevo despliegue ni Safari físico. Riesgo operativo residual: el nuevo código requiere ese recorrido del propietario sobre sesión/datos QA; publicación no significa aprobación funcional final.
+
+### Validación del propietario en QA
+
+Abrir https://qa.booking.kortek.cloud con acceso Vercel habitual y sesión QA. Recargar para recibir el nuevo Preview.
+
+1. Fechas de reservas, facturación, equipo/invitaciones, clientes, notificaciones, disponibilidad del perfil y confirmación/éxito público: Hoy/Ayer/Mañana; dos días atrás sin semana; año solo si difiere. Ejemplos: «Hoy, 10:43 p. m.», «26 sept, 6:24 p. m.», «26 sept 2025, 6:24 p. m.». Revisar fecha completa al pasar el puntero/foco accesible y datetime del instante correcto. Campos editables civiles/nativos y plantillas aprobadas son excepciones documentadas, no regresiones.
+2. Cambiar zona del dispositivo, conservar la del negocio y repetir una fecha cerca de medianoche; la fecha/hora y Hoy/Ayer deben seguir la del negocio. Mantener la pantalla abierta y volver después de suspensión: actualiza relativo al siguiente minuto/recuperar visibilidad. No cambiar el reloj o zona del negocio persistida solo para esta prueba.
+3. Crear una invitación QA nueva sin plazo explícito: Creada y Vence el separados por siete días; a los dos minutos continúa pendiente. «La entrega del correo no está confirmada» y Reenviar, sin garantía Enviada. Revisar spam si se comprueba recepción; la UI no representa recibos automáticos.
+4. Reenviar: Vence el suma siete días desde ese reenvío, conservando fecha de creación; comprobar enlace nuevo y revocación del anterior conforme al flujo vigente. Invitaciones existentes conservan su fecha; crear equivalente tampoco renueva, y entradas explícitas 1–30 permanecen válidas. No esperar acortamiento retroactivo.
+5. Validar como OWNER/ADMIN, Profesional sin acceso a Equipo y cambio de organización A → B → A sin datos ajenos. Revisar móvil/Safari físico y escritorio: textos, botones Reenviar y fechas sin desbordamientos, y consola sin errores de producto.
+
+Estado final de producto: **DESPLEGADO EN QA / EN REVISIÓN**, backends 1A/2A aprobados y 3A aceptada; QA autenticada/aprobación global pendientes. El informe documental y sus selectores Git se verifican al terminar la publicación; API conserva el SHA del commit de código aunque el HEAD posterior incorpore únicamente documentación.

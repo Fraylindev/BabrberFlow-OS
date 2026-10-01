@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-01 — F0-D publicado y desplegado exclusivamente en QA
+
+- Publicación autorizada expresamente por el propietario: código `92f6127` en origin/ai/antigravity-qa, API/worker QA con imagen inmutable `7eafd5c9232a`; 23 controles de arranque pasan y rollback anterior conservado. Configuración funcional, flags y secretos intactos; únicamente cambian los selectores operativos de imagen/release QA. Sin migraciones ni cambios de datos.
+- Preview Ready `dpl_Erb4T1Cri2GpGjm6rxkRsoH41bux` ya asociado automáticamente a qa.booking.kortek.cloud. API HTTPS, zona del negocio pública, autenticación/CORS y producción protegida verificados. Navegador remoto sin sesión llega al SSO de Vercel, conservado; QA autenticada y aprobación final pendientes. Tipos/lint/tests/build previos pasan en ambos proyectos (251 web, 781 API/37 omitidas). [Informe operativo y checklist del propietario](docs/quality/CORRECTIVO_F0D.md).
+
 ## 2026-10-01 — F0-D local: fechas comunes y estados de invitación sin promesa de envío
 
 - Propietario confirma que el correo sí llegó y estaba en spam, y elige expresamente **3A**: acepta para QA la UI «La entrega del correo no está confirmada», con Reenviar y sin señal automática de aceptación ESP. Se resuelve la observación de no recepción de ese mensaje; no se investiga ni afirma la regla que lo clasificó como spam. SDK 3.16.5 sin get/list de recibos asociados a invitación; no se cambia código, configuración ni proveedor para esta confirmación. Entrega local validada/en revisión final, sin cierre global o publicación.

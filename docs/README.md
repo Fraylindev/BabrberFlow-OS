@@ -64,7 +64,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Calidad y publicación
 
-- [`CORRECTIVO_F0D.md`](quality/CORRECTIVO_F0D.md): implementación local validada/en revisión final. Backends 2A de zona pública y 1A de siete días aprobados; propietario confirma correo recibido en spam y acepta 3A (entrega no confirmada en UI, Reenviar, sin señal automática de correo). Evidencia, regresiones, límites y riesgos documentados; sin publicación ni cierre global.
+- [`CORRECTIVO_F0D.md`](quality/CORRECTIVO_F0D.md): publicado/desplegado exclusivamente en QA desde código `92f6127`, API/worker con imagen `7eafd5c9232a`, Preview Ready y HTTPS/CORS/zona pública verificados; producción intacta. Backends 2A/1A aprobados, correo recibido en spam y 3A aceptada. Pruebas, riesgos y checklist documentados; SSO de Vercel conservado, QA autenticada/aprobación final pendientes.
 
 - [`CORRECTIVO_F0A.md`](quality/CORRECTIVO_F0A.md): Gate 4 aprobado y publicado en `6752e95`; Preview QA y header verificados. Informe de despliegue incorporado por autorización expresa en el commit documental separado 52e43a6; QA integrado no cerrado.
 - [`CORRECTIVO_F0B.md`](quality/CORRECTIVO_F0B.md): sincronización Reserva/Factura, recuperación de acceso y menú móvil. Backend aprobado, publicado/desplegado desde `33de07a`; API/worker QA y Preview Ready, headers verificados. Testing del propietario pasa exclusivamente los recorridos indicados salvo la espera del reloj, abordada en F0-C; aprobación final pendiente.
