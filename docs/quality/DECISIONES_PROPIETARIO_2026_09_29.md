@@ -23,3 +23,4 @@ PROCESO
 13. Las opciones recomendadas por Codex en los C0 de la auditoría técnica del 29-sep se adoptan como decisión del propietario, salvo lo dicho arriba. Cada C0 nuevo las marca FIJADA y solo abre las restantes.
 14. Producción permanece cerrada e intacta. Todo se prueba en QA con negocios sintéticos.
 15. Un gate abierto a la vez: C0; C1 backend con aprobación; C2 frontend con aprobación; C3 QA real y aprobación final.
+ACTUALIZACION 2026-09-30. El propietario aprobó explícitamente implementar de inmediato, como correctivo F0-C, la parte de la decisión 11 que permite facturar y cobrar una reserva Completada sin esperar la hora de fin (ADR-002 y FACTURACION_A_CONTRATO_TECNICO actualizados). El resto de la decisión 11 y las decisiones 8, 9, 10 y 12 siguen pendientes del C0 de Pagos.

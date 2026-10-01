@@ -158,16 +158,14 @@ function ScopedInvoicesPage({
             </label>
             <input
               id="invoice-filter-from"
-              aria-describedby="invoice-filter-from-help"
               type="date"
               value={fromDate}
               onChange={(event) => {
                 setFromDate(event.target.value);
                 setPage(1);
               }}
-              className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="h-11 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
-            <p id="invoice-filter-from-help" className="text-xs text-[var(--dash-text-muted)]">Inicio del rango, incluido. Ejemplo: 30 de septiembre de 2026.</p>
           </div>
           <div className="flex min-w-0 flex-col gap-1.5">
             <label
@@ -178,16 +176,14 @@ function ScopedInvoicesPage({
             </label>
             <input
               id="invoice-filter-to"
-              aria-describedby="invoice-filter-to-help"
               type="date"
               value={toDate}
               onChange={(event) => {
                 setToDate(event.target.value);
                 setPage(1);
               }}
-              className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="h-11 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
-            <p id="invoice-filter-to-help" className="text-xs text-[var(--dash-text-muted)]">Final del rango, incluido. Ejemplo: 1 de octubre de 2026.</p>
           </div>
           <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
             <label
@@ -202,7 +198,7 @@ function ScopedInvoicesPage({
               onChange={(event) =>
                 changeFilter(event.target.value as StateFilter)
               }
-              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="h-11 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             >
               {FILTERS.map((filter) => (
                 <option key={filter.value} value={filter.value}>
@@ -216,7 +212,7 @@ function ScopedInvoicesPage({
             tone="light"
             variant="ghost"
             disabled={!hasActiveFilters}
-            className="min-h-10 w-full self-end border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 text-xs text-[var(--dash-text-muted)] shadow-sm sm:w-auto"
+            className="h-11 w-full whitespace-nowrap self-end border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 text-xs text-[var(--dash-text-muted)] shadow-sm sm:w-auto"
             onClick={clearFilters}
           >
             Limpiar filtros

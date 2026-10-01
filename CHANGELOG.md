@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-30 — F0-C: operación anticipada y controles de formularios
+
+- Se permite emitir y cobrar una reserva completada incluso antes de su horario, conservando permisos y garantías financieras. Backend validado con 764 pruebas unitarias y 25 HTTP/PostgreSQL; el propietario aprobó backend e integración frontend.
+- Campos editables del panel alcanzan 16 px en móvil/pantalla táctil, incluidas biografía, notas, descripción y correo opcional de reserva. Desde/Hasta conservan formato nativo sin ejemplos inferiores. Filtros de Facturación comparten altura y acciones desktop de Equipo no parten palabras.
+- Implementado en revisión; commit/push y despliegue QA F0-C autorizados expresamente, con verificación operativa desde el commit. El informe F0-A se incorpora en un commit documental separado. El resultado comunicado de F0-B comprende exclusivamente las validaciones ejecutadas por el propietario. [Informe F0-C](docs/quality/CORRECTIVO_F0C.md).
+
 ## 2026-09-30 — Correctivo F0-B publicado y desplegado en QA, en revisión
 
 - Reservas recibe estado financiero mínimo, distingue factura emitida/pagada y sincroniza caché al emitir/cobrar. Backend aprobado explícitamente; sin migraciones ni ampliación de permisos. Menú móvil con una acción principal y tres puntos, incluyendo avisos por correo.

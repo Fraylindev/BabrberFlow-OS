@@ -101,7 +101,7 @@ function invoiceErrorMessageText(
     }
     if (error.status === 409) {
       if (operation === "issue") {
-        return "No pudimos emitir la factura. Confirma que el servicio terminó y la reserva está completada.";
+        return "No pudimos emitir la factura. Comprueba que la reserva esté completada y que el precio del servicio sea válido.";
       }
       if (operation === "payment") {
         return "No pudimos registrar el cobro. Actualiza la factura y verifica su estado.";

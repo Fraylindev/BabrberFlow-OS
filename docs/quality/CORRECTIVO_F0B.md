@@ -4,6 +4,8 @@ Estado: **PUBLICADO Y DESPLEGADO EN QA / IMPLEMENTADO, EN REVISIÓN**. Implement
 
 ## Producto y aceptación
 
+Testing comunicado por el propietario, 2026-09-30: pasan exclusivamente las validaciones que se le indicaron, excepto el criterio de esperar al fin programado para emitir/cobrar. Aclara que ese límite no responde a su solicitud y reporta zoom en formularios y controles desktop desalineados/con texto partido. Se aborda en [F0-C](CORRECTIVO_F0C.md), implementado y con publicación/despliegue QA autorizados; no se extrapola a escenarios no ejecutados ni se declara cierre global de F0-B.
+
 Usuarios: OWNER, ADMIN, RECEPTIONIST y Profesional, con sus permisos actuales. Una reserva completada sin factura ofrece «Emitir factura»; con factura muestra «Pendiente de cobro» o «Pagada», sin volver a ofrecer emisión. El estado financiero no cambia el estado operativo COMPLETED. Emitir/cobrar actualiza ambos módulos automáticamente y volver a Reservas consulta el estado autoritativo.
 
 En móvil, cada reserva muestra como máximo una acción principal y un menú «Más acciones»: pendiente → Confirmar; confirmada → Completar; Reprogramar, Cancelar y No asistió quedan en el menú cuando el rol y estado los permiten. Objetivos táctiles de 44 px, teclado, Escape y retorno del foco. Desktop conserva su patrón actual.

@@ -514,61 +514,141 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
     ).toBe(0);
   });
 
-  it('una reserva futura no puede completarse, emitirse ni cobrarse', async () => {
-    for (const token of [barberAToken, ownerToken]) {
-      const completion = await requestApp(app)
-        .patch(`/bookings/${futureBarberA.id}/status`)
+  it.each([
+    UserRole.OWNER,
+    UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
+    UserRole.BARBER,
+  ])(
+    '%s confirma, completa, emite y cobra antes del inicio/fin programados sin duplicados',
+    async (role) => {
+      const token = {
+        OWNER: ownerToken,
+        ADMIN: adminToken,
+        RECEPTIONIST: receptionistToken,
+        BARBER: barberAToken,
+      }[role];
+      const offset = [
+        UserRole.OWNER,
+        UserRole.ADMIN,
+        UserRole.RECEPTIONIST,
+        UserRole.BARBER,
+      ].indexOf(role);
+      const startTime = new Date(Date.now() + (24 + offset) * 60 * 60_000);
+      const booking = await prisma.db.booking.create({
+        data: {
+          organizationId: tenantA.id,
+          clientId: tenantA.clientId,
+          professionalId: futureBarberA.professionalId,
+          serviceId: tenantA.serviceId,
+          startTime,
+          endTime: new Date(startTime.getTime() + 30 * 60_000),
+          status: BookingStatus.PENDING,
+        },
+      });
+      await requestApp(app)
+        .post('/invoices')
         .set('Authorization', `Bearer ${token}`)
-        .send({ status: BookingStatus.COMPLETED });
-      expect(completion.status).toBe(409);
-    }
-    expect(
-      await prisma.db.booking.findUniqueOrThrow({
-        where: { id: futureBarberA.id },
-        select: { status: true },
-      }),
-    ).toEqual({ status: BookingStatus.CONFIRMED });
-
-    const issueConfirmed = await requestApp(app)
-      .post('/invoices')
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ bookingId: futureBarberA.id });
-    expect(issueConfirmed.status).toBe(409);
-
-    await prisma.db.booking.update({
-      where: { id: futureBarberA.id },
-      data: { status: BookingStatus.COMPLETED },
-    });
-    await requestApp(app)
-      .patch(`/bookings/${futureBarberA.id}/status`)
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ status: BookingStatus.COMPLETED })
-      .expect(409);
-    const issueHistorical = await requestApp(app)
-      .post('/invoices')
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ bookingId: futureBarberA.id });
-    expect(issueHistorical.status).toBe(409);
-
-    const historicalInvoice = await prisma.db.invoice.create({
-      data: {
-        organizationId: tenantA.id,
-        bookingId: futureBarberA.id,
-        amount: '125.50',
-        currency: 'DOP',
-      },
-    });
-    const payment = await requestApp(app)
-      .post(`/invoices/${historicalInvoice.id}/payments`)
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ method: PaymentMethod.CASH });
-    expect(payment.status).toBe(409);
-    expect(
-      await prisma.db.payment.count({
-        where: { invoiceId: historicalInvoice.id },
-      }),
-    ).toBe(0);
-  });
+        .send({ bookingId: booking.id })
+        .expect(409);
+      await requestApp(app)
+        .patch(`/bookings/${booking.id}/status`)
+        .set('Authorization', `Bearer ${barberBToken}`)
+        .send({ status: BookingStatus.CONFIRMED })
+        .expect(404);
+      await requestApp(app)
+        .patch(`/bookings/${booking.id}/status`)
+        .set('Authorization', `Bearer ${customerToken}`)
+        .send({ status: BookingStatus.CONFIRMED })
+        .expect(403);
+      for (const status of [BookingStatus.CONFIRMED, BookingStatus.COMPLETED]) {
+        await requestApp(app)
+          .patch(`/bookings/${booking.id}/status`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ status })
+          .expect(200);
+      }
+      const issues = await Promise.all(
+        [0, 1].map(() =>
+          requestApp(app)
+            .post('/invoices')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ bookingId: booking.id }),
+        ),
+      );
+      expect(issues.map((result) => result.status).sort()).toEqual([200, 201]);
+      const invoiceId = String(asRecord(issues[0].body).id);
+      expect(asRecord(issues[1].body).id).toBe(invoiceId);
+      const issuedBookings = await requestApp(app)
+        .get('/bookings')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      expect(
+        asArray(issuedBookings.body as unknown)
+          .map(asRecord)
+          .find((row) => row.id === booking.id),
+      ).toMatchObject({
+        status: BookingStatus.COMPLETED,
+        invoice: { id: invoiceId, state: 'ISSUED' },
+      });
+      await requestApp(app)
+        .post(`/invoices/${invoiceId}/payments`)
+        .set('Authorization', `Bearer ${barberBToken}`)
+        .send({ method: PaymentMethod.CASH })
+        .expect(404);
+      const beforePayment = Date.now();
+      const payments = await Promise.all(
+        [0, 1].map(() =>
+          requestApp(app)
+            .post(`/invoices/${invoiceId}/payments`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ method: PaymentMethod.CASH }),
+        ),
+      );
+      expect(payments.map((result) => result.status).sort()).toEqual([
+        200, 201,
+      ]);
+      const payment = await prisma.db.payment.findUniqueOrThrow({
+        where: { invoiceId },
+      });
+      expect(payment.paidAt.getTime()).toBeGreaterThanOrEqual(beforePayment);
+      expect(payment.paidAt.getTime()).toBeLessThanOrEqual(Date.now());
+      expect(payment.paidAt.getTime()).toBeLessThan(
+        booking.startTime.getTime(),
+      );
+      expect(
+        await prisma.db.invoice.count({ where: { bookingId: booking.id } }),
+      ).toBe(1);
+      expect(await prisma.db.payment.count({ where: { invoiceId } })).toBe(1);
+      const paidBookings = await requestApp(app)
+        .get('/bookings')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      expect(
+        asArray(paidBookings.body as unknown)
+          .map(asRecord)
+          .find((row) => row.id === booking.id),
+      ).toMatchObject({
+        status: BookingStatus.COMPLETED,
+        invoice: { id: invoiceId, state: 'PAID' },
+      });
+      for (const [action, entityId] of [
+        ['ISSUE_INVOICE', invoiceId],
+        ['RECORD_INVOICE_PAYMENT', payment.id],
+      ]) {
+        expect(
+          await prisma.db.auditLog.count({
+            where: { organizationId: tenantA.id, action, entityId },
+          }),
+        ).toBe(1);
+      }
+      await requestApp(app)
+        .post(`/invoices/${invoiceId}/payments`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ method: PaymentMethod.CARD })
+        .expect(409);
+    },
+  );
 
   it('BARBER completa solo su Booking y no genera efectos financieros', async () => {
     const completed = await requestApp(app)
@@ -777,7 +857,7 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
 
   it('pagina después del ownership y devuelve una proyección mínima', async () => {
     const response = await requestApp(app)
-      .get('/invoices?page=1&limit=1&state=PAID')
+      .get('/invoices?from=2026-08-10&to=2026-08-10&page=1&limit=1&state=PAID')
       .set('Authorization', `Bearer ${barberAToken}`);
     expect(response.status).toBe(200);
     expect(response.headers['x-total-count']).toBe('1');

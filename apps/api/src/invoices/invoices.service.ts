@@ -32,13 +32,11 @@ import { RecordInvoicePaymentDto } from './dto/record-invoice-payment.dto';
 interface LockedBookingForInvoice {
   id: string;
   status: BookingStatus;
-  endTime: Date;
   servicePrice: string;
 }
 
 interface LockedInvoiceForPayment {
   id: string;
-  endTime: Date;
   paymentId: string | null;
   paymentMethod: PaymentMethod | null;
 }
@@ -216,7 +214,6 @@ export class InvoicesService {
       SELECT
         b."id",
         b."status",
-        b."endTime",
         s."price"::text AS "servicePrice"
       FROM "Booking" b
       INNER JOIN "Service" s
@@ -239,7 +236,6 @@ export class InvoicesService {
         'Solo se puede emitir una factura para una reserva completada',
       );
     }
-    this.assertServiceEnded(booking.endTime);
 
     const existing = await tx.invoice.findFirst({
       where: this.authorizedWhere(user, { bookingId }),
@@ -286,7 +282,6 @@ export class InvoicesService {
     const rows = await tx.$queryRaw<LockedInvoiceForPayment[]>(Prisma.sql`
       SELECT
         i."id",
-        b."endTime",
         pay."id" AS "paymentId",
         pay."method" AS "paymentMethod"
       FROM "Invoice" i
@@ -310,7 +305,6 @@ export class InvoicesService {
     if (!locked) {
       throw new NotFoundException(InvoicesService.NOT_FOUND_MESSAGE);
     }
-    this.assertServiceEnded(locked.endTime);
 
     if (locked.paymentId) {
       if (locked.paymentMethod !== method) {
@@ -412,14 +406,6 @@ export class InvoicesService {
       );
     }
     return amount;
-  }
-
-  private assertServiceEnded(endTime: Date): void {
-    if (endTime.getTime() > Date.now()) {
-      throw new ConflictException(
-        'No se puede operar la facturación antes de que termine el servicio',
-      );
-    }
   }
 
   private async runSerializable<T>(

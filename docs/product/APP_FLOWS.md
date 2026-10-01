@@ -66,12 +66,14 @@ Medios/Promociones [C1–C3](../features/MEDIOS_PROMOCIONES_C3_ACTIVACION.md) es
 ## 6. Facturación interna
 
 1. OWNER, ADMIN, RECEPTIONIST y BARBER completan una Booking CONFIRMED sin esperar a `endTime`; esta transición no depende de la hora de la cita ni de la duración del servicio;
-2. una Invoice interna toma el snapshot de `Service.price` y queda única por Booking;
-3. un Payment completo único registra método, `paidAt` y actor;
+2. una Invoice interna toma el snapshot de `Service.price` y queda única por Booking; F0-C aprobado para publicación QA elimina la espera hasta el fin programado, conservando COMPLETED;
+3. un Payment completo único registra método, `paidAt` y actor; F0-C permite cobrar también antes del horario, con fecha real del servidor;
 4. listados y acciones se aíslan por tenant y, para BARBER, por Professional vinculado;
 5. Analytics atribuye ingresos por `Payment.paidAt`.
 
 No es facturación fiscal y no incluye anulaciones, reembolsos, pagos parciales o comisiones.
+
+[F0-C](../quality/CORRECTIVO_F0C.md) tiene backend aprobado y autorización expresa de commit/push y despliegue QA. La operación anticipada del personal no añade un flujo público de pagos al reservar ni un estado pendiente de verificación.
 
 ## 7. Visión futura: ampliaciones del mini-sitio y elección de pago
 

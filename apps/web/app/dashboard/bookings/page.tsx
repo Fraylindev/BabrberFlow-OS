@@ -251,14 +251,12 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
             </label>
             <input
               id="filter-from"
-              aria-describedby="filter-from-help"
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
               max={toDate || undefined}
               className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
-            <p id="filter-from-help" className="text-xs text-[var(--dash-text-muted)]">Inicio del rango, incluido. Ejemplo: 30 de septiembre de 2026.</p>
           </div>
 
           <div className="flex min-w-0 flex-col gap-1.5">
@@ -270,14 +268,12 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
             </label>
             <input
               id="filter-to"
-              aria-describedby="filter-to-help"
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
               min={fromDate || undefined}
               className="min-h-10 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
-            <p id="filter-to-help" className="text-xs text-[var(--dash-text-muted)]">Final del rango, incluido. Ejemplo: 1 de octubre de 2026.</p>
           </div>
 
           <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 lg:col-span-1">

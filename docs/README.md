@@ -64,8 +64,9 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Calidad y publicación
 
-- [`CORRECTIVO_F0A.md`](quality/CORRECTIVO_F0A.md): Gate 4 aprobado y publicado en `6752e95`; Preview QA y header verificados. Informe de despliegue pendiente de commit por instrucción del propietario; QA integrado no cerrado.
-- [`CORRECTIVO_F0B.md`](quality/CORRECTIVO_F0B.md): sincronización Reserva/Factura, recuperación de acceso y menú móvil. Backend aprobado, publicado/desplegado desde `33de07a`; API/worker QA y Preview Ready, headers verificados. QA integrado con Clerk/Safari y aprobación final pendientes.
+- [`CORRECTIVO_F0A.md`](quality/CORRECTIVO_F0A.md): Gate 4 aprobado y publicado en `6752e95`; Preview QA y header verificados. Informe de despliegue incorporado por autorización expresa en el commit documental separado 52e43a6; QA integrado no cerrado.
+- [`CORRECTIVO_F0B.md`](quality/CORRECTIVO_F0B.md): sincronización Reserva/Factura, recuperación de acceso y menú móvil. Backend aprobado, publicado/desplegado desde `33de07a`; API/worker QA y Preview Ready, headers verificados. Testing del propietario pasa exclusivamente los recorridos indicados salvo la espera del reloj, abordada en F0-C; aprobación final pendiente.
+- [`CORRECTIVO_F0C.md`](quality/CORRECTIVO_F0C.md): completar/emitir/cobrar sin esperar al horario, campos del panel a 16 px en móvil/táctil, filtros alineados sin ayudas redundantes y acciones de Equipo legibles. Backend validado y aprobado; commit/push y despliegue QA autorizados expresamente. Resultado operativo pendiente de verificación desde el commit.
 
 - [`STAGING_QA_2026-09-28.md`](quality/STAGING_QA_2026-09-28.md): Cutover QA limpia/migrada, dos tenants sintéticos, API OCI de staging en HTTPS y web Preview. QA autenticado de Horario y zona C2 cerrado/aprobado sobre datos sintéticos; apertura pública posterior en QA y worker Resend QA independiente activo, sin envío real acreditado. Producción intacta; evidencia D9, A2, CMS y Facturación, límites productivos y pendientes separados.
 - [`API_OCI_DESPLIEGUE.md`](quality/API_OCI_DESPLIEGUE.md): API desplegada en la VM Always Free de 2 OCPU/12 GB, Caddy/TLS real, CORS exacto, Supabase runtime y evidencia HTTPS externa; implementado/en revisión.

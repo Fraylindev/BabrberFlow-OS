@@ -279,7 +279,7 @@ function ScopedTeamPage({
             />
           ) : (
             <>
-              <div className="hidden overflow-hidden rounded-sm border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-card)] md:block">
+              <div className="hidden overflow-hidden rounded-sm border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow-card)] xl:block">
                 <table className="w-full border-collapse text-sm">
                   <thead className="bg-[var(--dash-surface-raised)] text-left text-xs uppercase tracking-wider text-[var(--dash-text-muted)]">
                     <tr>
@@ -304,7 +304,7 @@ function ScopedTeamPage({
                 </table>
               </div>
 
-              <div className="space-y-3 md:hidden">
+              <div className="space-y-3 xl:hidden">
                 {members.data.items.map((member) => (
                   <MemberCard
                     key={member.email}
@@ -658,13 +658,14 @@ function MemberTableRow({
         <ProfessionalSummary member={member} />
       </td>
       <td className="px-4 py-4 align-top">
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           {manageable ? (
             <>
               <Button
                 tone="light"
                 variant="secondary"
                 aria-label={`Cambiar rol de ${member.name}`}
+                className="shrink-0 whitespace-nowrap"
                 onClick={() => onChangeRole(member)}
               >
                 Cambiar rol
@@ -673,6 +674,7 @@ function MemberTableRow({
                 tone="light"
                 variant="danger"
                 aria-label={`Revocar acceso de ${member.name}`}
+                className="shrink-0 whitespace-nowrap"
                 onClick={() => onRevoke(member)}
               >
                 Revocar acceso

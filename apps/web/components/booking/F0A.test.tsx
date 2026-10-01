@@ -60,10 +60,11 @@ describe('F0-A: regresiones de comportamiento', () => {
     expect(screen.queryByText(/2099-01-05|UTC|America\//)).not.toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('registrada');
   });
-  it.each([BookingsPage, InvoicesPage])('asocia ayuda visible con ejemplo a ambos filtros de fecha', (Page) => {
+  it.each([BookingsPage, InvoicesPage])('conserva filtros nativos etiquetados sin ejemplos redundantes', (Page) => {
     render(<Page />);
-    expect(screen.getByLabelText('Desde')).toHaveAccessibleDescription(/Ejemplo: 30 de septiembre de 2026/);
-    expect(screen.getByLabelText('Hasta')).toHaveAccessibleDescription(/Ejemplo: 1 de octubre de 2026/);
+    expect(screen.getByLabelText('Desde')).toHaveAttribute('type', 'date');
+    expect(screen.getByLabelText('Hasta')).toHaveAttribute('type', 'date');
+    expect(screen.queryByText(/Inicio del rango|Final del rango|Ejemplo:/)).not.toBeInTheDocument();
   });
   it('un fallo de transición se explica como transición sin código de soporte', async () => {
     // La propiedad existe en respuestas del servidor; la asignación permite ejecutar la regresión sobre la base anterior.

@@ -250,7 +250,7 @@ describe('InvoicesService', () => {
     },
   );
 
-  it('rechaza emitir una Invoice para una Booking completada antes de endTime', async () => {
+  it('emite una Invoice para una Booking completada aunque endTime siga en el futuro', async () => {
     const { service, tx, audit } = createHarness();
     tx.$queryRaw.mockResolvedValue([
       {
@@ -260,12 +260,14 @@ describe('InvoicesService', () => {
         servicePrice: '125.50',
       },
     ]);
+    tx.invoice.findFirst.mockResolvedValue(null);
+    tx.invoice.create.mockResolvedValue(invoiceRecord());
 
     await expect(
       service.create(USER, { bookingId: 'booking-id' }),
-    ).rejects.toBeInstanceOf(ConflictException);
-    expect(tx.invoice.create).not.toHaveBeenCalled();
-    expect(audit.logTransactional).not.toHaveBeenCalled();
+    ).resolves.toMatchObject({ isNew: true, invoice: { state: 'ISSUED' } });
+    expect(tx.invoice.create).toHaveBeenCalledTimes(1);
+    expect(audit.logTransactional).toHaveBeenCalledTimes(1);
   });
 
   it('registra un único cobro con fecha y actor server-side', async () => {
@@ -372,7 +374,7 @@ describe('InvoicesService', () => {
     expect(tx.payment.create).not.toHaveBeenCalled();
   });
 
-  it('rechaza cobrar una Invoice histórica vinculada a una Booking futura', async () => {
+  it('cobra una Invoice vinculada a una Booking futura con fecha real del servidor', async () => {
     const { service, tx, audit } = createHarness();
     tx.$queryRaw.mockResolvedValue([
       {
@@ -382,14 +384,26 @@ describe('InvoicesService', () => {
         paymentMethod: null,
       },
     ]);
+    tx.payment.create.mockResolvedValue({ id: 'payment-id' });
+    tx.invoice.findFirst.mockResolvedValue(
+      invoiceRecord({ method: PaymentMethod.CASH, paidAt: new Date() }),
+    );
+    const beforePayment = Date.now();
 
     await expect(
       service.recordPayment('invoice-id', USER, {
         method: PaymentMethod.CASH,
       }),
-    ).rejects.toBeInstanceOf(ConflictException);
-    expect(tx.payment.create).not.toHaveBeenCalled();
-    expect(audit.logTransactional).not.toHaveBeenCalled();
+    ).resolves.toMatchObject({ isNew: true, invoice: { state: 'PAID' } });
+    expect(tx.payment.create).toHaveBeenCalledTimes(1);
+    const paymentCalls = tx.payment.create.mock.calls as unknown as Array<
+      [{ data: { paidAt: Date } }]
+    >;
+    const paidAt = paymentCalls[0][0].data.paidAt;
+    expect(paidAt).toBeInstanceOf(Date);
+    expect(paidAt.getTime()).toBeGreaterThanOrEqual(beforePayment);
+    expect(paidAt.getTime()).toBeLessThanOrEqual(Date.now());
+    expect(audit.logTransactional).toHaveBeenCalledTimes(1);
   });
 
   it('aplica tenant y ownership antes de contar y paginar', async () => {

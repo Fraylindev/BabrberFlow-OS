@@ -22,7 +22,7 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
 
 - Reservas y Clientes están cerrados según [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 - Profesionales, Servicios, Facturación interna y Equipo están cerrados/aprobados según sus checkpoints vigentes.
-- Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados; cualquier pago anticipado, transferencia, reembolso o propina requiere contrato posterior.
+- Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados. [F0-C](../quality/CORRECTIVO_F0C.md), backend aprobado y publicación/despliegue QA autorizados, permite al personal completar/emitir/cobrar antes del horario conservando el pago completo único; el flujo público de pago anticipado, verificación de transferencias, reembolso o propina requiere contrato posterior.
 - El Resumen sigue congelado como agregador, aunque sus correctivos transversales de aislamiento y estabilidad tienen estado propio.
 - Configuración/CMS C1, C2 y C3 están cerrados/aprobados. Cualquier ampliación posterior requiere autorización modular propia.
 - WhatsApp público manual C1–C3 y Notificaciones transaccionales C1–C3 están cerrados/aprobados; el canal de correo permanece pausado y no hay activación productiva.

@@ -9,6 +9,8 @@
 
 ## Contexto
 
+Actualización F0-C, 2026-09-30 — **BACKEND APROBADO / IMPLEMENTADO, EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA**: el propietario aprobó completar, emitir y cobrar antes del horario programado. La condición histórica `endTime <= now` descrita abajo queda sustituida para el candidato F0-C; no rige su transición COMPLETED, emisión ni cobro. Se conserva COMPLETED al emitir, precio del servidor, estado derivado de Payment, factura/pago únicos, permisos y auditoría. Las fechas financieras representan el instante real de la operación. No introduce pagos públicos, parciales, comprobantes, reembolsos ni importes editables. La decisión histórica explica el checkpoint de agosto; QA sigue F0-B hasta desplegar F0-C, cuyo commit/push y despliegue QA fueron autorizados expresamente. [Contrato candidato y evidencia](../quality/CORRECTIVO_F0C.md).
+
 El modelo anterior permitía que el cliente enviara `amount`, persistía estados financieros sin un Payment autoritativo, no exigía Booking completada y atribuía ingresos a la fecha de emisión. Payment estaba relacionado directamente con Booking, tenía importe y estado propios, pero no conservaba el actor ni una fecha real de cobro explícita. Esa composición no podía garantizar aislamiento financiero, trazabilidad ni idempotencia concurrente.
 
 Facturación-A es un registro operativo interno. No es comprobante fiscal, e-CF ni integración tributaria. Los reembolsos, anulaciones, pagos parciales, comisiones y hard-delete no tienen contrato en este checkpoint.
