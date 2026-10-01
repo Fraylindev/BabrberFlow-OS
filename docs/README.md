@@ -16,6 +16,10 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
+- [`RESERVA_PUBLICA_M1_C1_CIERRE.md`](quality/RESERVA_PUBLICA_M1_C1_CIERRE.md): backend C1 aprobado expresamente el 2026-10-01 con riesgos residuales aceptados y commit/push autorizados solo a `origin/ai/antigravity-qa`, sin despliegue. Días por rango, fotos existentes, aislamiento y límite compartido medido; D11 con error genérico conservando rechazo, HTTP/cuerpo y rollback probados. Único gate en curso: publicación Git del checkpoint. C2/C3 y producción no se abren. La referencia C0 inferior conserva su estado histórico previo; las decisiones quedan resueltas por las instrucciones posteriores del propietario.
+
+- [`RESERVA_PUBLICA_M1_C0.md`](quality/RESERVA_PUBLICA_M1_C0.md): C0 documental de M1 entregado/en revisión, sin implementación; decisiones previas FIJADAS y D5–D13 pendientes. Ruta de reserva separada, fotos públicas elegibles, calendario/hora compacta, éxito PENDING, privacidad y QA futura. Requiere C1 para días disponibles por rango, sin autorizar C2 ni apertura productiva.
+
 - [`HORARIO_ZONA_C1_CONTRATO.md`](features/HORARIO_ZONA_C1_CONTRATO.md) y [`HORARIO_ZONA_C1_EVIDENCIA.md`](features/HORARIO_ZONA_C1_EVIDENCIA.md): D1–D15 A; backend C1 aprobado, commit `b0357af`. [Integración local](features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md).
 - [`HORARIO_ZONA_C2_FRONTEND.md`](features/HORARIO_ZONA_C2_FRONTEND.md): D14-A implementado y C2 cerrado/aprobado por el propietario en Preview sobre Cutover QA y datos sintéticos. D9, A2, CMS y Facturación tienen evidencia aceptada; correo/promociones conservan la cobertura de C1 y de sus módulos. Dental Ross y Prueba de oro siguen sin migración ni confirmación de horario productivas hasta que el propietario decida sus horarios reales y lo autorice por separado.
 - [`HORARIO_ZONA_C0_AUDITORIA.md`](features/HORARIO_ZONA_C0_AUDITORIA.md): auditoría histórica; las alternativas A fueron seleccionadas posteriormente para C1.

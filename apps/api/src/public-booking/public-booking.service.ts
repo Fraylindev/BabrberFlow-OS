@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   ServiceUnavailableException,
   Logger,
@@ -13,6 +12,7 @@ import { BookingsService } from '../bookings/bookings.service';
 import { AuditService } from '../audit/audit.service';
 import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
 import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
+import { GetAvailabilityDaysQueryDto } from './dto/get-availability-days-query.dto';
 import { PublicBookingResponseDto } from './dto/public-booking-response.dto';
 import { isUniqueConstraintError } from '../common/prisma-error.util';
 import {
@@ -21,12 +21,16 @@ import {
   normalizeClientPhone,
 } from '../clients/client-normalization.util';
 import { rangesOverlap } from './availability.util';
-import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import {
+  ProfessionalAvailabilityService,
+  type AvailabilityContext,
+} from '../professionals/professional-availability.service';
 import {
   getZonedDateParts,
   isValidTimeZone,
   zonedLocalDateTimeToUtc,
   legacyZonedLocalDateTimeToUtc,
+  addDaysToIsoDate,
 } from '../professionals/professional-availability.util';
 import { projectContent } from '../cms/cms.projection';
 import {
@@ -37,6 +41,9 @@ import {
 } from '../business-schedule/business-schedule.policy';
 
 type PublicClientAction = 'CREATE' | 'RESTORE' | null;
+
+const PUBLIC_CONTACT_REJECTION_MESSAGE =
+  'No pudimos registrar la reserva con esos datos. Revísalos o contacta al negocio.';
 
 @Injectable()
 export class PublicBookingService {
@@ -213,58 +220,211 @@ export class PublicBookingService {
       dayRange.start,
       dayRange.end,
     );
+    const slots = [
+      ...this.daySlots(
+        query.date,
+        dayRange.start,
+        service.duration,
+        candidateProfessionalIds,
+        availabilityContext,
+        existingBookings,
+        new Date(),
+      ),
+    ];
+    return { date: query.date, serviceId: query.serviceId, slots };
+  }
+
+  async getAvailabilityDays(slug: string, query: GetAvailabilityDaysQueryDto) {
+    // Validar también llamadas internas; no convertir 31 días civiles a horas UTC.
+    const dates: string[] = [];
+    let date: string | null = query.from;
+    if (
+      !addDaysToIsoDate(query.from, 0) ||
+      !addDaysToIsoDate(query.to, 0) ||
+      query.from > query.to
+    ) {
+      throw new BadRequestException('Revisa el rango de fechas.');
+    }
+    while (date && date <= query.to && dates.length < 32) {
+      dates.push(date);
+      date = addDaysToIsoDate(date, 1);
+    }
+    if (dates.length > 31 || !addDaysToIsoDate(query.to, 1)) {
+      throw new BadRequestException(
+        'El rango admite como máximo 31 días y necesita un fin representable.',
+      );
+    }
+    const now = new Date();
+    try {
+      return await this.prisma.db.$transaction(
+        async (tx) => {
+          const organization = await this.resolveOrganization(slug, tx);
+          if (query.from < getZonedDateParts(now, organization.timeZone).date) {
+            throw new BadRequestException(
+              'Elige fechas desde hoy en el negocio.',
+            );
+          }
+          const service = await tx.service.findFirst({
+            where: {
+              id: query.serviceId,
+              organizationId: organization.id,
+              isActive: true,
+            },
+            select: { duration: true },
+          });
+          if (!service)
+            throw new BadRequestException(
+              'Servicio no encontrado en esta barbería',
+            );
+          if (
+            !Number.isSafeInteger(service.duration) ||
+            service.duration <= 0
+          ) {
+            throw new ServiceUnavailableException(
+              'No pudimos cargar los horarios. Inténtalo de nuevo.',
+            );
+          }
+          const professionals = await tx.professional.findMany({
+            where: {
+              organizationId: organization.id,
+              status: ProfessionalStatus.ACTIVE,
+              isPublic: true,
+              ...(query.professionalId ? { id: query.professionalId } : {}),
+            },
+            select: { id: true },
+            orderBy: { name: 'asc' },
+          });
+          if (query.professionalId && !professionals.length) {
+            throw new BadRequestException(
+              'Profesional no encontrado en esta barbería',
+            );
+          }
+          const result = {
+            from: query.from,
+            to: query.to,
+            serviceId: query.serviceId,
+            availableDates: [] as string[],
+          };
+          if (!professionals.length) return result;
+          const ids = professionals.map((p) => p.id);
+          const legacy =
+            organization.businessSchedule?.state === 'LEGACY_UNCONFIRMED';
+          const dayRanges = dates.map((d) =>
+            this.availabilityService.getUtcRangeForLocalDate(
+              d,
+              organization.timeZone,
+              legacy,
+            ),
+          );
+          const start = dayRanges[0].start;
+          const end = dayRanges[dayRanges.length - 1].end;
+          const context = await this.availabilityService.getPublicContext(
+            organization.id,
+            ids,
+            start,
+            end,
+            tx,
+          );
+          const bookings = await this.bookingsService.findActiveBookingsInRange(
+            organization.id,
+            ids,
+            start,
+            end,
+            tx,
+          );
+          for (let i = 0; i < dates.length; i++) {
+            // El generador comparte el evaluador diario y se detiene en el primer hueco real.
+            if (
+              !this.daySlots(
+                dates[i],
+                dayRanges[i].start,
+                service.duration,
+                ids,
+                context,
+                bookings,
+                now,
+              ).next().done
+            ) {
+              result.availableDates.push(dates[i]);
+            }
+          }
+          return result;
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+      );
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException ||
+        error instanceof ServiceUnavailableException
+      )
+        throw error;
+      throw new ServiceUnavailableException(
+        'No pudimos cargar los horarios. Inténtalo de nuevo.',
+      );
+    }
+  }
+
+  private *daySlots(
+    date: string,
+    dayStart: Date,
+    duration: number,
+    candidateProfessionalIds: string[],
+    availabilityContext: AvailabilityContext,
+    existingBookings: Array<{
+      professionalId: string;
+      startTime: Date;
+      endTime: Date;
+    }>,
+    now: Date,
+  ) {
+    const bookingsByProfessional = new Map<string, typeof existingBookings>();
+    for (const booking of existingBookings) {
+      const entries = bookingsByProfessional.get(booking.professionalId) ?? [];
+      entries.push(booking);
+      bookingsByProfessional.set(booking.professionalId, entries);
+    }
     const candidateTimes = candidatesForPolicy(
       availabilityContext.policy,
-      query.date,
-      getZonedDateParts(dayRange.start, availabilityContext.timeZone).dayOfWeek,
-      service.duration,
+      date,
+      getZonedDateParts(dayStart, availabilityContext.timeZone).dayOfWeek,
+      duration,
     );
-
-    const now = new Date();
-    const slots: {
-      time: string;
-      professionalId: string;
-      startTime: string;
-    }[] = [];
     for (const time of candidateTimes) {
       const convert =
         availabilityContext.policy.state === 'LEGACY_UNCONFIRMED'
           ? legacyZonedLocalDateTimeToUtc
           : zonedLocalDateTimeToUtc;
-      const slotStart = convert(query.date, time, availabilityContext.timeZone);
+      const slotStart = convert(date, time, availabilityContext.timeZone);
       if (!slotStart) continue;
-      const slotEnd = new Date(slotStart.getTime() + service.duration * 60000);
+      const slotEnd = new Date(slotStart.getTime() + duration * 60000);
       if (slotStart <= now) continue;
 
       const freeProfessionalId = candidateProfessionalIds.find(
         (professionalId) =>
+          !(bookingsByProfessional.get(professionalId) ?? []).some((booking) =>
+            rangesOverlap(
+              slotStart,
+              slotEnd,
+              booking.startTime,
+              booking.endTime,
+            ),
+          ) &&
           this.availabilityService.isAvailableInContext(
             availabilityContext,
             professionalId,
             slotStart,
             slotEnd,
-          ) &&
-          !existingBookings.some(
-            (booking) =>
-              booking.professionalId === professionalId &&
-              rangesOverlap(
-                slotStart,
-                slotEnd,
-                booking.startTime,
-                booking.endTime,
-              ),
           ),
       );
       if (freeProfessionalId) {
-        slots.push({
+        yield {
           time,
           professionalId: freeProfessionalId,
           startTime: slotStart.toISOString(),
-        });
+        };
       }
     }
-
-    return { date: query.date, serviceId: query.serviceId, slots };
   }
 
   async createBooking(
@@ -278,9 +438,17 @@ export class PublicBookingService {
       );
     }
 
-    const normalizedPhone = normalizeClientPhone(dto.clientPhone);
+    let normalizedPhone: string | null;
+    try {
+      normalizedPhone = normalizeClientPhone(dto.clientPhone);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(PUBLIC_CONTACT_REJECTION_MESSAGE);
+      }
+      throw error;
+    }
     if (!normalizedPhone) {
-      throw new BadRequestException('Se necesita un teléfono válido');
+      throw new BadRequestException(PUBLIC_CONTACT_REJECTION_MESSAGE);
     }
     const normalized = {
       name: normalizeClientName(dto.clientName),
@@ -374,9 +542,7 @@ export class PublicBookingService {
       : null;
 
     if (byPhone && byEmail && byPhone.id !== byEmail.id) {
-      throw new ConflictException(
-        'El correo y el teléfono corresponden a clientes diferentes.',
-      );
+      throw new BadRequestException(PUBLIC_CONTACT_REJECTION_MESSAGE);
     }
 
     const existing = byPhone ?? byEmail;
@@ -403,9 +569,7 @@ export class PublicBookingService {
       return { id: created.id, action: 'CREATE' };
     } catch (error) {
       if (isUniqueConstraintError(error, 'email')) {
-        throw new ConflictException(
-          'Ya existe un cliente con ese correo en esta organización.',
-        );
+        throw new BadRequestException(PUBLIC_CONTACT_REJECTION_MESSAGE);
       }
       throw error;
     }

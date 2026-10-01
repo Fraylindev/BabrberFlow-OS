@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-10-01 — Reserva pública M1 C1 backend aprobado; commit/push autorizados sin despliegue
+
+- C0 aprobado posteriormente por el propietario con D6-B y las demás recomendaciones. Solo backend C1: availability-days inclusivo ≤31 con snapshot y motor diario compartido; fotos públicas ya existentes; presupuesto PostgreSQL 30/min medido y probado entre instancias. Sin migración ni frontend.
+- El propietario elige expresamente error genérico conservando rechazo D11: colisiones devuelven 400/cuerpo idéntico a rechazo sin contacto existente; rollback real, carrera de unicidad y reutilización válida probados. Alta válida conserva 201/PENDING. [Entrega y evidencia](docs/quality/RESERVA_PUBLICA_M1_C1_CIERRE.md). Identidad secundaria legacy conserva su riesgo separado.
+- Aprobación posterior expresa del propietario el 2026-10-01: backend C1 aprobado con sus riesgos residuales documentados; staging por las 15 rutas exactas y commit/push a `origin/ai/antigravity-qa` autorizados. Se sincronizan PROJECT_MASTER, este historial, BACKEND_CHANGES, README y cierre C1 en el mismo checkpoint. No autoriza C2/C3 ni despliegue; sin cambios operativos ni acceso a bases reales. Producción cerrada e intacta. Se conservan las entradas y cambios documentales previos.
+
+## 2026-10-01 — Reserva pública M1: C0 documental
+
+- [C0 de M1](docs/quality/RESERVA_PUBLICA_M1_C0.md) preparado sobre `ad90bf52890ea2e2ba309ad5a87d1dcafcdde9f7`, con árbol inicial limpio: ruta separada, fotos elegibles, calendario/hora compacta, éxito PENDING, casilla de cuenta sin promesa de continuidad inexistente, privacidad, contrato propuesto, amenazas y QA de dos negocios sintéticos/móvil físico.
+- Decisiones anteriores FIJADAS; D5–D13 propuestas para revisión. Necesita C1 para días disponibles por rango antes de C2; solo C0 de M1 abierto. Sin cambios de API/contratos aprobados, código, configuración o datos; sin staging, commit, push, despliegue ni apertura productiva. README y PROJECT_MASTER enlazan la entrega documental, no una capacidad implementada.
+
 ## 2026-10-01 — Ajuste visual de filtros de Reservas y Facturación
 
 - Por capturas y autorización de cambio/commit/push del propietario: «Todos» pasa a «Todas» en Reservas. Desde/Hasta en ambas pantallas limitan ancho a la columna, mantienen 44 px de alto y ajustan el control nativo de fecha para Safari, con estilo solo en esos cuatro campos.

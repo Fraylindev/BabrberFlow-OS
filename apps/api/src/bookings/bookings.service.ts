@@ -297,8 +297,9 @@ export class BookingsService {
     professionalIds: string[],
     rangeStart: Date,
     rangeEnd: Date,
+    transaction: Prisma.TransactionClient = this.prisma.db,
   ) {
-    return await this.prisma.db.booking.findMany({
+    return await transaction.booking.findMany({
       where: {
         organizationId,
         professionalId: { in: professionalIds },

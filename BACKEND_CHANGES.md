@@ -1,5 +1,14 @@
 # BACKEND_CHANGES.md
 
+## 2026-10-01 — Reserva pública M1 C1 implementado; D11 con error genérico y rechazo conservado
+
+Autorización del propietario: C0 aprobado, D6-B y recomendaciones restantes fijadas; solo C1 backend. D11 resuelto expresamente: «Opto por Error genérico conservando el rechazo de la colisión». **BACKEND C1 APROBADO EXPLÍCITAMENTE EL 2026-10-01, CON SUS RIESGOS RESIDUALES DOCUMENTADOS**. Commit/push autorizados exclusivamente a `origin/ai/antigravity-qa`, sin despliegue. No autoriza C2/C3 ni apertura pública. [Contrato, evidencia y riesgos](docs/quality/RESERVA_PUBLICA_M1_C1_CIERRE.md).
+
+- Nuevo `GET /public/:slug/availability-days?serviceId=UUID&from=YYYY-MM-DD&to=YYYY-MM-DD&professionalId=UUID` (profesional opcional): rango inclusivo máximo 31 días civiles desde el día actual del negocio, con extremo exclusivo representable. Devuelve `{from,to,serviceId,availableDates}`; únicas/ascendentes y `no-store`. `200` no reserva huecos; `[]` solo representa ese rango.
+- Un ahora y snapshot RepeatableRead para contexto, catálogo, horario y reservas tenant-scoped. Reutiliza el evaluador diario y corta tras el primer hueco; no cambia asignación ni contrato de slots. 400 entrada/selección inválida (ajeno=inexistente), 404 público neutro, 429/Retry-After con 30/min por IP/handler mediante PostgreSQL compartido, 503 genérico si el cálculo/dependencia falla. Duración corrupta falla cerrada.
+- Fotos ya presentes en `/public/:slug/media`, sin nueva proyección ni campos privados. Sin migración, grants, dependencias o configuración operativa nuevas. Integración solo en clúster desechable; detalles y riesgos en cierre.
+- D11: colisión entre clientes diferentes o unicidad de correo al crear devuelve 400 con el mismo cuerpo público que teléfono inválido: «No pudimos registrar la reserva con esos datos. Revísalos o contacta al negocio.» Sin datos de terceros ni detalle de constraint; transacción revertida, sin Booking ni auditoría de alta fallida. Pruebas HTTP comparan cuerpo/código entre colisión y rechazo sin contacto existente, incluida carrera real de unicidad. Reutilización y alta válida conservan 201/PENDING y estructura sin indicador de existencia del contacto. Éxito y rechazo siguen distinguibles por decisión expresa. Identidad secundaria legacy y sus indicadores de cuenta conservan su contrato y riesgo separado.
+
 ## 2026-10-01 — F0-D / decisión 1A: invitaciones con siete días por defecto y reenvío
 
 El propietario autorizó explícitamente **1A**: siete días por defecto al crear y siete desde cada reenvío, preservando entradas explícitas de 1–30 e invitaciones existentes. Después de presentar implementación, regresión y cuatro gates, respondió **«Aprobado» el 2026-10-01: BACKEND 1A APROBADO**. No aprueba el conjunto F0-D ni autoriza publicación o correo real. [Contrato, evidencia y riesgos](docs/quality/CORRECTIVO_F0D.md).

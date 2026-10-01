@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
-import { BookingStatus, ProfessionalStatus } from '@prisma/client';
+import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { PublicBookingService } from './public-booking.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -208,8 +208,57 @@ describe('PublicBookingService - secure public creation', () => {
       .mockResolvedValueOnce({ id: 'email-client', isActive: true });
 
     await expect(service.createBooking('demo', DTO)).rejects.toBeInstanceOf(
-      ConflictException,
+      BadRequestException,
     );
+    expect(dependencies.bookings.create).not.toHaveBeenCalled();
+    expect(dependencies.transaction.client.create).not.toHaveBeenCalled();
+    expect(dependencies.audit.log).not.toHaveBeenCalled();
+  });
+
+  it('returns identical safe contact rejection for ambiguous matches, unique email and invalid phone', async () => {
+    const responses: unknown[] = [];
+    const capture = async (input = DTO) => {
+      try {
+        await service.createBooking('demo', input);
+        throw new Error('Expected contact rejection');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        if (!(error instanceof BadRequestException)) throw error;
+        expect(error.getStatus()).toBe(400);
+        responses.push(error.getResponse());
+      }
+    };
+    dependencies.transaction.client.findFirst
+      .mockResolvedValueOnce({ id: 'phone-client', isActive: true })
+      .mockResolvedValueOnce({ id: 'email-client', isActive: true });
+    await capture();
+    dependencies.transaction.client.findFirst.mockResolvedValue(null);
+    dependencies.transaction.client.create.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('synthetic-private-constraint', {
+        code: 'P2002',
+        clientVersion: 'test',
+        meta: { target: ['organizationId', 'email'] },
+      }),
+    );
+    await capture();
+    await capture({ ...DTO, clientPhone: '123' });
+    expect(responses).toEqual(
+      Array(3).fill({
+        statusCode: 400,
+        error: 'Bad Request',
+        message:
+          'No pudimos registrar la reserva con esos datos. Revísalos o contacta al negocio.',
+      }),
+    );
+    expect(dependencies.bookings.create).not.toHaveBeenCalled();
+    expect(dependencies.audit.log).not.toHaveBeenCalled();
+  });
+
+  it('propagates unrelated persistence errors instead of labeling them contact rejection', async () => {
+    dependencies.transaction.client.findFirst.mockResolvedValue(null);
+    const outage = new Error('controlled outage');
+    dependencies.transaction.client.create.mockRejectedValue(outage);
+    await expect(service.createBooking('demo', DTO)).rejects.toBe(outage);
     expect(dependencies.bookings.create).not.toHaveBeenCalled();
   });
 

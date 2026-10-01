@@ -39,6 +39,21 @@ describe('Profesionales: perfil propio BARBER (e2e PostgreSQL)', () => {
           name: 'Profesionales tenant A',
           slug: `professionals-a-${suffix}`,
           email: `professionals-a-${suffix}@organization.test`,
+          // El contrato de Horario exige confirmar semana/zona antes de publicar.
+          businessSchedule: {
+            create: {
+              state: 'CONFIRMED',
+              zoneConfirmed: true,
+              days: {
+                create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                  dayOfWeek,
+                  windows: {
+                    create: [{ startMinute: 540, endMinute: 1140 }],
+                  },
+                })),
+              },
+            },
+          },
         },
       }),
       prisma.db.organization.create({

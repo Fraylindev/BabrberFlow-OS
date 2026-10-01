@@ -12,6 +12,7 @@ import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { PublicBookingService } from './public-booking.service';
 import { CreatePublicBookingDto } from './dto/create-public-booking.dto';
 import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
+import { GetAvailabilityDaysQueryDto } from './dto/get-availability-days-query.dto';
 
 // Sin JwtAuthGuard a propósito — esta es la puerta de entrada para
 // clientes anónimos. El aislamiento por organización se resuelve
@@ -23,6 +24,18 @@ import { GetAvailabilityQueryDto } from './dto/get-availability-query.dto';
 @Controller('public/:slug')
 export class PublicBookingController {
   constructor(private readonly publicBookingService: PublicBookingService) {}
+
+  // Presupuesto medido en el ensayo C1 documentado; rango de hasta 31 días
+  // y contador PostgreSQL compartido por las instancias del API.
+  @Throttle({ default: { limit: 30, ttl: 60000 } })
+  @Get('availability-days')
+  @Header('Cache-Control', 'no-store')
+  getAvailabilityDays(
+    @Param('slug') slug: string,
+    @Query() query: GetAvailabilityDaysQueryDto,
+  ) {
+    return this.publicBookingService.getAvailabilityDays(slug, query);
+  }
 
   // C1: estado editorial autoritativo por petición, también entre réplicas.
   @Header('Cache-Control', 'no-store')

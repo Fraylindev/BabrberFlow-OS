@@ -44,7 +44,7 @@ const MAX_BLOCK_QUERY_DAYS = 366;
 const AVAILABILITY_CONFLICT_MESSAGE =
   'El profesional no está disponible en ese horario';
 
-interface AvailabilityContext {
+export interface AvailabilityContext {
   timeZone: string;
   policy: BusinessPolicy;
   schedules: Map<string, AvailabilityWindow[]>;
@@ -324,7 +324,17 @@ export class ProfessionalAvailabilityService {
     professionalIds: string[],
     rangeStart: Date,
     rangeEnd: Date,
+    transaction?: Prisma.TransactionClient,
   ): Promise<AvailabilityContext> {
+    if (transaction) {
+      return this.loadContext(
+        transaction,
+        organizationId,
+        professionalIds,
+        rangeStart,
+        rangeEnd,
+      );
+    }
     return this.prisma.db.$transaction(
       (tx) =>
         this.loadContext(
@@ -344,6 +354,14 @@ export class ProfessionalAvailabilityService {
     startTime: Date,
     endTime: Date,
   ): boolean {
+    // Un bloqueo basta para descartar el intervalo; evitar conversiones de reloj
+    // repetidas cuando el rango está ocupado no cambia la disponibilidad efectiva.
+    if (
+      (context.blocks.get(professionalId) ?? []).some(
+        (block) => startTime < block.endTime && endTime > block.startTime,
+      )
+    )
+      return false;
     if (
       !insideBusinessPolicy(
         context.policy,
@@ -354,9 +372,7 @@ export class ProfessionalAvailabilityService {
     ) {
       return false;
     }
-    return !(context.blocks.get(professionalId) ?? []).some(
-      (block) => startTime < block.endTime && endTime > block.startTime,
-    );
+    return true;
   }
 
   getUtcRangeForLocalDate(
