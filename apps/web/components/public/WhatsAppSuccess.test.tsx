@@ -13,7 +13,7 @@ const result: PublicBookingResult = {
 };
 const props = {
   result, organizationPhone: "+18095551234", serviceName: "Servicio privado",
-  professionalName: "Profesional privado", date: "2099-01-05", time: "10:00",
+  professionalName: "Profesional privado", timeZone: 'America/Santo_Domingo',
 };
 
 describe("WhatsApp C2 SuccessView", () => {

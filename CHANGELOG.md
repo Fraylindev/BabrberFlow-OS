@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-10-01 — F0-D local: fechas comunes y estados de invitación sin promesa de envío
+
+- Propietario confirma que el correo sí llegó y estaba en spam, y elige expresamente **3A**: acepta para QA la UI «La entrega del correo no está confirmada», con Reenviar y sin señal automática de aceptación ESP. Se resuelve la observación de no recepción de ese mensaje; no se investiga ni afirma la regla que lo clasificó como spam. SDK 3.16.5 sin get/list de recibos asociados a invitación; no se cambia código, configuración ni proveedor para esta confirmación. Entrega local validada/en revisión final, sin cierre global o publicación.
+
+- Decisión **1A** autorizada: default/fallback de creación y reenvío pasan a siete días; rango explícito 1–30 y fechas existentes preservados. Backend mínimo aprobado expresamente por el propietario tras validar; cinco regresiones fallan antes, 25 pruebas dirigidas pasan después. Tipos/lint/build y 781 pruebas API pasan (37 omitidas). No cambia aceptación, permisos ni estado de correo; web no requiere nuevo consumidor. La aprobación no cierra F0-D ni autoriza publicación o correo real.
+- Después de aprobar 1A: comprobación Chrome local de crear/reenvío con el servicio API compilado y almacenamiento controlado, web real en 375/1280 px y dispositivo Tokio/negocio Santo Domingo. Siete días, renovación, creación original, PENDING a dos minutos y restricción BARBER pasan. Formulario deja de prometer recepción; tipos/lint/build web y 251 pruebas pasan de nuevo. Sin conexión a base ni proveedor.
+
+- Continuación autorizada **2A**, backend validado/aprobado e integración web autorizada explícitamente: timeZone técnico en raíz de booking-data, confirmación/éxito con relativos y año del negocio usando el instante autoritativo. Regresiones de medianoche, privacidad, overrides, año y A → B → A; API 767 pruebas (37 omitidas), web 251 pruebas y tipos/lint/build pasan; Chrome controlado público en 375/1280 px pasa. Esa aprobación no comprendía la decisión 1, autorizada después por separado.
+
+- Formateador único y time accesible para fechas visibles; Hoy/Ayer/Mañana y año en zona del negocio, reloj de 12 horas y actualización al cambiar de día. La primera etapa conservó valores públicos absolutos; 2A completa los relativos públicos tras aprobación explícita. Plantillas de correo y payload de creación intactos.
+- Equipo usa Creada/Vence el, mantiene Reenviar y explica la entrega no confirmada; FAILED comunica fallo de acción porque también puede venir de revocar. Lectura QA acredita Clerk Development, pending y treinta días de vigencia; no demuestra entrega ni reproduce dos minutos.
+- Primera etapa compatible implementada localmente/en revisión; siete días, señal de envío y zona pública se detuvieron por contratos aprobados. 2A y luego 1A autorizan zona pública y plazo siete; el propietario acepta la limitación de señal mediante 3A y confirma el mensaje en spam. Sin cambios de datos, .env, flags, proveedores, producción ni publicación Git. [Informe F0-D y validación](docs/quality/CORRECTIVO_F0D.md).
+
 ## 2026-09-30 — F0-C: operación anticipada y controles de formularios
 
 - Se permite emitir y cobrar una reserva completada incluso antes de su horario, conservando permisos y garantías financieras. Backend validado con 764 pruebas unitarias y 25 HTTP/PostgreSQL; el propietario aprobó backend e integración frontend.

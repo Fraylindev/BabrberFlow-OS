@@ -143,7 +143,7 @@ describe('WhatsApp C1 - existing public HTTP contract', () => {
     return request(app.getHttpServer() as Server);
   }
 
-  it('returns only the existing allowlist from the published snapshot', async () => {
+  it('returns the published allowlist with the authorized technical zone', async () => {
     const response = await http().get('/public/a/booking-data').expect(200);
     expect(response.headers['cache-control']).toBe('no-store');
     const { minimumBookingDate } = response.body as {
@@ -152,6 +152,7 @@ describe('WhatsApp C1 - existing public HTTP contract', () => {
     expect(minimumBookingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(response.body).toEqual({
       minimumBookingDate,
+      timeZone: 'America/Santo_Domingo',
       organization: {
         name: 'Publicado a',
         slug: 'a',
@@ -170,17 +171,20 @@ describe('WhatsApp C1 - existing public HTTP contract', () => {
   });
 
   it('isolates A → B → A by slug, ignoring supplied tenant, phone and message', async () => {
+    organizations.get('b')!.timeZone = 'Europe/Madrid';
     for (const slug of ['a', 'b', 'a']) {
       const response = await http()
         .get(`/public/${slug}/booking-data`)
         .set('x-organization-id', 'private-tenant-other')
         .query({
           organizationId: 'other',
+          timeZone: 'UTC',
           phone: '+19999999999',
           text: 'private',
         })
         .expect(200);
       expect(response.body).toMatchObject({
+        timeZone: organizations.get(slug)!.timeZone,
         organization: {
           slug,
           phone: organizations.get(slug)!.cmsPage.publishedSnapshot.phone,
@@ -265,6 +269,18 @@ describe('WhatsApp C1 - existing public HTTP contract', () => {
     await http().get('/public/a/booking-data').expect(200);
     organizations.get('a')!.cmsPage.isPublished = false;
     await http().get('/public/a/booking-data').expect(404);
+  });
+
+  it('returns a safe 503 without catalog or zone when the stored zone is invalid', async () => {
+    organizations.get('a')!.timeZone = 'Private/Invalid_Zone';
+    const response = await http().get('/public/a/booking-data').expect(503);
+    expect(response.body).toEqual({
+      statusCode: 503,
+      error: 'Service Unavailable',
+      message: 'No fue posible calcular la fecha del negocio.',
+    });
+    expect(findServices).not.toHaveBeenCalled();
+    expect(findProfessionals).not.toHaveBeenCalled();
   });
 
   it('returns a safe 503 for malformed published content', async () => {

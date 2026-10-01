@@ -67,7 +67,7 @@ Medios/Promociones C1–C3 están cerrados/aprobados; el backend controla custod
 - Las pantallas deben cubrir loading, empty, error/reintento, pending y success.
 - La autorización vive en API; una build limpia no sustituye QA en navegador.
 - `/{slug}` consume la proyección publicada de `booking-data`, revalida al recuperar foco y antes de montar la reserva, y presenta el mismo estado neutro para inexistente, inactivo, borrado o retirado. No recibe UUID de Organization ni correo privado.
-- Reserva pública mantiene `Organization.timeZone` solo en servidor: `booking-data` expone el día mínimo del negocio y `availability` convierte cada hora local a un `startTime` UTC autoritativo. El navegador presenta la hora local y reenvía ese instante sin convertirlo con su propia zona. Fechas públicas y filtros `from`/`to` de Facturación cruzan validación ISO calendario estricta; la utilidad compartida devuelve fallo controlado ante entradas imposibles o extremas.
+- Reserva pública: `booking-data` expone el día mínimo del negocio y, por decisión F0-D/2A, la zona IANA técnica autoritativa en la raíz (backend aprobado e integrado en web localmente/en revisión). `availability` convierte cada hora local a un `startTime` UTC autoritativo. El navegador conserva fecha/hora civil y reenvía ese instante sin convertirlo con su propia zona; confirmación/éxito usan el formateador relativo común con timeZone técnico y el instante del slot/reserva. Fechas públicas y filtros `from`/`to` de Facturación cruzan validación ISO calendario estricta; la utilidad compartida devuelve fallo controlado ante entradas imposibles o extremas.
 
 ## Persistencia administrada aprobada, no implementada
 

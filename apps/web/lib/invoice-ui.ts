@@ -1,3 +1,4 @@
+import { formatBusinessInstant } from './business-time.ts';
 import {
   ApiError,
   type AuthUser,
@@ -73,15 +74,7 @@ export function formatBusinessDateTime(
   value: string,
   timeZone: string,
 ): string {
-  return new Intl.DateTimeFormat("es-DO", {
-    timeZone,
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value));
+  return formatBusinessInstant(value, timeZone);
 }
 
 export function invoiceErrorMessage(error: unknown, operation: InvoiceOperation): string {

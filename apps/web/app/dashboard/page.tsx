@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { api, AnalyticsDashboard, DashboardOperationalSummary } from "@/lib/api";
-import { loadDashboardSummary, summaryDateLabel, summaryGreeting } from "@/lib/dashboard-summary-load";
+import { BusinessTime } from '@/components/ui/BusinessTime';
+import { loadDashboardSummary, summaryGreeting } from "@/lib/dashboard-summary-load";
 import { formatMoney } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -157,7 +158,7 @@ function DashboardHomeScope() {
       <PageHeader
         tone="light"
         title={`${operational ? summaryGreeting(operational.generatedAt, operational.timeZone) : "Hola"}, ${user?.name?.split(" ")[0] ?? ""}`}
-        description={operational ? summaryDateLabel(operational.generatedAt, operational.timeZone) : "Resumen del negocio"}
+        description={operational ? <BusinessTime value={operational.generatedAt} zone={operational.timeZone} /> : "Resumen del negocio"}
       />
 
       {(error || analyticsError) && (
@@ -343,11 +344,7 @@ function DashboardHomeScope() {
                             {b.client?.name ?? "Cliente"} · {b.service?.name ?? "Servicio"}
                           </p>
                           <p className="truncate text-xs text-[var(--dash-text-muted)]">
-                            {new Date(b.startTime).toLocaleTimeString("es-DO", {
-                              timeZone: operational?.timeZone,
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}{" "}
+                            <BusinessTime value={b.startTime} zone={operational?.timeZone} />{" "}
                             con {b.professional?.name ?? "profesional"}
                           </p>
                         </div>

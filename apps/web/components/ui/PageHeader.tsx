@@ -5,7 +5,7 @@ export function PageHeader({
   tone = 'dark',
 }: {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   action?: React.ReactNode;
   /** "dark" (por defecto) o "light" — ver nota en Card.tsx sobre por
    * qué las clases van completas y literales por tono. */

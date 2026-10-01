@@ -70,7 +70,7 @@ export function OptionButton({
   );
 }
 
-export function SummaryRow({ label, value }: { label: string; value?: string }) {
+export function SummaryRow({ label, value }: { label: string; value?: ReactNode }) {
   return (
     <div className="flex justify-between">
       <span className="text-[var(--color-muted)]">{label}</span>

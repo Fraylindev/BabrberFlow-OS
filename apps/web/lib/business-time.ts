@@ -135,16 +135,49 @@ export function businessWeek(value: Date, zone: string) {
   const from = addBusinessDays(today, weekday === 0 ? -6 : 1 - weekday)!;
   return { from, to: addBusinessDays(from, 6)! };
 }
-export function formatBusinessInstant(value: string, zone: string, timeOnly = false) {
-  return new Intl.DateTimeFormat('es-DO', {
-    timeZone: zone,
-    ...(timeOnly
-      ? { hour: 'numeric' as const, minute: '2-digit' as const }
-      : { dateStyle: 'medium' as const, timeStyle: 'short' as const }),
-  }).format(new Date(value));
+const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'];
+const FULL_MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+export function formatBusinessClock(value: string) {
+  if (value === '24:00') return 'final del día';
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) throw new RangeError('Hora no válida');
+  const hour = Number(value.slice(0, 2));
+  return `${hour % 12 || 12}:${value.slice(3)} ${hour < 12 ? 'a. m.' : 'p. m.'}`;
 }
-export function formatCalendarDate(value: string, dateStyle: 'medium' | 'long' = 'medium') {
-  return new Intl.DateTimeFormat('es-DO', { timeZone: 'UTC', dateStyle }).format(
-    new Date(`${value}T12:00:00Z`),
-  );
+
+// One presentation policy for instants and civil dates. A civil date has no
+// implicit midnight or time zone conversion; never invent an instant for it.
+export function formatBusinessTime(value: string, zone: string | undefined, {
+  kind = 'instant', now = new Date(), relative = true,
+}: { kind?: 'instant' | 'date' | 'wall'; now?: Date; relative?: boolean } = {}) {
+  if (kind === 'wall' && (!validBusinessDate(value.slice(0, 10)) || !/^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/.test(value)))
+    throw new RangeError('Fecha no válida');
+  if (kind === 'date' && !validBusinessDate(value)) throw new RangeError('Fecha no válida');
+  if (kind === 'instant' && (!zone || !/(?:Z|[+-]\d{2}:\d{2})$/.test(value)))
+    throw new RangeError('Fecha no disponible');
+  const instant = new Date(kind === 'date' ? `${value}T12:00:00Z` : kind === 'wall' ? `${value}:00Z` : value);
+  const p = parts(instant, kind === 'instant' ? zone! : 'UTC');
+  const date = kind === 'instant' ? businessDate(instant, zone!) : value.slice(0, 10);
+  const today = zone ? businessDate(now, zone) : undefined;
+  const label = relative && today
+    ? date === today ? 'Hoy' : date === addBusinessDays(today, -1) ? 'Ayer'
+      : date === addBusinessDays(today, 1) ? 'Mañana' : undefined
+    : undefined;
+  const currentYear = today ? Number(today.slice(0, 4)) : undefined;
+  const day = `${p.day} ${MONTHS[p.month - 1]}${p.year !== currentYear ? ` ${p.year}` : ''}`;
+  const clock = formatBusinessClock(`${pad(p.hour)}:${pad(p.minute)}`);
+  const fullDate = `${p.day} de ${FULL_MONTHS[p.month - 1]} de ${p.year}`;
+  return {
+    text: `${label ?? day}${kind !== 'date' ? `, ${clock}` : ''}`,
+    fullText: `${fullDate}${kind !== 'date' ? `, ${clock}` : ''}`,
+    dateTime: kind === 'instant' ? instant.toISOString() : value,
+    clock,
+  };
+}
+export function formatBusinessInstant(value: string, zone: string, timeOnly = false, now = new Date()) {
+  const formatted = formatBusinessTime(value, zone, { now });
+  return timeOnly ? formatted.clock : formatted.text;
+}
+export function formatCalendarDate(value: string) {
+  return formatBusinessTime(value, undefined, { kind: 'date', relative: false }).text;
 }

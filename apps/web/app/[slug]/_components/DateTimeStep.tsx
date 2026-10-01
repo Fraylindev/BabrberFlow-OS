@@ -72,7 +72,7 @@ export function DateTimeStep({
         )}
 
         {selectableDate && data && (
-          <TimeSlotGrid slots={data.slots} selectedTime={time || null} onSelect={onSlotSelect} />
+          <TimeSlotGrid slots={data.slots} date={selectableDate} selectedTime={time || null} onSelect={onSlotSelect} />
         )}
       </div>
       <NavButtons

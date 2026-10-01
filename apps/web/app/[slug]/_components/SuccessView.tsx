@@ -1,16 +1,14 @@
 import { useId } from "react";
 import { PublicBookingResult } from "@/lib/api";
 import { bookingWhatsAppLink, WHATSAPP_EXPLANATION } from "@/lib/whatsapp-link";
-import { formatCalendarDate } from '@/lib/business-time';
-import { clockLabel } from '@/lib/business-schedule';
+import { BusinessTime } from '@/components/ui/BusinessTime';
 
 interface SuccessViewProps {
   result: PublicBookingResult;
   organizationPhone: string | null;
   serviceName?: string;
   professionalName?: string;
-  date: string;
-  time: string;
+  timeZone: string;
 }
 
 export function SuccessView({
@@ -18,8 +16,7 @@ export function SuccessView({
   organizationPhone,
   serviceName,
   professionalName,
-  date,
-  time,
+  timeZone,
 }: SuccessViewProps) {
   const link = bookingWhatsAppLink(organizationPhone);
   const explanationId = useId();
@@ -30,7 +27,7 @@ export function SuccessView({
         Tu reserva quedó registrada
       </p>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        {serviceName} el {formatCalendarDate(date, 'long')} a las {clockLabel(time)} con {professionalName}.
+        {serviceName} · <BusinessTime value={result.booking.startTime} zone={timeZone} /> con {professionalName}.
       </p>
       {result.accountCreated && (
         <p className="mt-2 text-xs text-[var(--color-success)]">

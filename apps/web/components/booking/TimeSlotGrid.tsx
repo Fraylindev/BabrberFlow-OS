@@ -1,7 +1,9 @@
 import { PublicAvailabilitySlot } from "@/lib/api";
+import { formatBusinessClock, formatBusinessTime } from '@/lib/business-time';
 
 interface TimeSlotGridProps {
   slots: PublicAvailabilitySlot[];
+  date: string;
   selectedTime: string | null;
   onSelect: (slot: PublicAvailabilitySlot) => void;
 }
@@ -12,7 +14,7 @@ interface TimeSlotGridProps {
  * viene en `slots` (porque el backend ya lo excluyó por estar ocupado o
  * fuera de horario de negocio), simplemente no existe en la grilla.
  */
-export function TimeSlotGrid({ slots, selectedTime, onSelect }: TimeSlotGridProps) {
+export function TimeSlotGrid({ slots, date, selectedTime, onSelect }: TimeSlotGridProps) {
   if (slots.length === 0) {
     return (
       <p className="border border-[var(--color-border)] p-4 text-center text-sm text-[var(--color-muted)]">
@@ -37,7 +39,9 @@ export function TimeSlotGrid({ slots, selectedTime, onSelect }: TimeSlotGridProp
                 : "border-[var(--color-border)] text-[var(--color-paper)] hover:border-[var(--color-brass)]"
             }`}
           >
-            {slot.time}
+            <time dateTime={slot.startTime} title={formatBusinessTime(`${date}T${slot.time}`, undefined, { kind: 'wall', relative: false }).fullText}>
+              {formatBusinessClock(slot.time)}
+            </time>
           </button>
         );
       })}

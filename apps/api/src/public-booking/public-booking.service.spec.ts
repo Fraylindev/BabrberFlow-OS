@@ -296,27 +296,39 @@ describe('PublicBookingService - active public catalog', () => {
     );
   });
 
-  it('derives the minimum booking date from the business zone without exposing it', async () => {
-    jest.useFakeTimers().setSystemTime(new Date('2026-09-14T02:00:00.000Z'));
-    try {
-      const dependencies = createDependencies();
-      const service = new PublicBookingService(
-        dependencies.prisma as unknown as PrismaService,
-        dependencies.bookings as unknown as BookingsService,
-        dependencies.audit as unknown as AuditService,
-        dependencies.availability as unknown as ProfessionalAvailabilityService,
-      );
-      dependencies.prisma.db.service.findMany.mockResolvedValue([]);
-      dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+  it.each([
+    ['America/Santo_Domingo', '2026-09-13'],
+    ['Asia/Tokyo', '2026-09-14'],
+    ['America/New_York', '2026-09-13'],
+  ])(
+    'returns the authoritative zone %s with minimum date %s',
+    async (timeZone, minimumDate) => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-09-14T02:00:00.000Z'));
+      try {
+        const dependencies = createDependencies();
+        const service = new PublicBookingService(
+          dependencies.prisma as unknown as PrismaService,
+          dependencies.bookings as unknown as BookingsService,
+          dependencies.audit as unknown as AuditService,
+          dependencies.availability as unknown as ProfessionalAvailabilityService,
+        );
+        dependencies.prisma.db.service.findMany.mockResolvedValue([]);
+        dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+        dependencies.prisma.db.organization.findUnique.mockResolvedValue({
+          ...ORGANIZATION,
+          timeZone,
+        });
 
-      const result = await service.getBookingData(ORGANIZATION.slug);
+        const result = await service.getBookingData(ORGANIZATION.slug);
 
-      expect(result.minimumBookingDate).toBe('2026-09-13');
-      expect(JSON.stringify(result)).not.toContain(ORGANIZATION.timeZone);
-    } finally {
-      jest.useRealTimers();
-    }
-  });
+        expect(result.minimumBookingDate).toBe(minimumDate);
+        expect(result).toHaveProperty('timeZone', timeZone);
+        expect(result.organization).not.toHaveProperty('timeZone');
+      } finally {
+        jest.useRealTimers();
+      }
+    },
+  );
 
   it('fails availability safely when the stored business zone is invalid', async () => {
     const dependencies = createDependencies();

@@ -2,6 +2,8 @@
 
 Entrega: 2026-09-13. Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo los correctivos H5 y fechas sobre 8fd7b1f») el 2026-09-13 sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`. Configuración/CMS C1–C3 continúa cerrado/aprobado. Rama `ai/antigravity-qa`. Sin despliegue productivo.
 
+**Extensión vigente F0-D/2A (2026-10-01):** el propietario autorizó añadir `timeZone: string` IANA técnico en la raíz de booking-data, procedente del mismo negocio y validación de minimumBookingDate. Después aprobó explícitamente backend e integración frontend: integrado en web localmente/en revisión, con confirmación/éxito relativos en zona del negocio. Esta extensión sustituye solo la exclusión de zona descrita en el checkpoint H5 histórico de abajo; UUID de Organization y datos privados siguen excluidos. No cambia slots, POST, persistencia, permisos ni fecha mínima. [Contrato y evidencia F0-D](../quality/CORRECTIVO_F0D.md).
+
 ## Resultado y alcance
 
 La persona elige una fecha y una hora como valores locales del negocio. El servidor convierte ese horario con `Organization.timeZone` y devuelve el instante UTC autoritativo; el navegador lo reenvía sin reinterpretarlo según su propia zona. La fecha mínima del selector también procede del día calendario actual del negocio.

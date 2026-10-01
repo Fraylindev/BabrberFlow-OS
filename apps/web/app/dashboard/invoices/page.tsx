@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BusinessTime } from '@/components/ui/BusinessTime';
 import { useRouter } from "next/navigation";
 import type { AuthUser, Invoice, InvoiceState, PaymentMethod } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import {
-  formatBusinessDateTime,
   formatDopAmount,
   invoiceDateRangeError,
   invoiceErrorMessage,
@@ -419,10 +419,10 @@ function InvoiceRow({ invoice, timeZone, isBarber, onPayment }: {
       <td className="px-4 py-4">
         <p className="font-medium">{invoice.booking.clientName}</p>
         <p className="mt-0.5 text-xs text-[var(--dash-text-muted)]">
-          {formatBusinessDateTime(invoice.booking.startTime, timeZone)}
+          <BusinessTime value={invoice.booking.startTime} zone={timeZone} />
         </p>
       </td>
-      <td className="whitespace-nowrap px-4 py-4">{formatBusinessDateTime(invoice.issuedAt, timeZone)}</td>
+      <td className="whitespace-nowrap px-4 py-4"><BusinessTime value={invoice.issuedAt} zone={timeZone} /></td>
       <td className="px-4 py-4">{invoice.booking.serviceName}</td>
       {!isBarber && <td className="px-4 py-4">{invoice.booking.professionalName}</td>}
       <td className="whitespace-nowrap px-4 py-4 text-right font-semibold">{formatDopAmount(invoice.amount)}</td>
@@ -431,7 +431,7 @@ function InvoiceRow({ invoice, timeZone, isBarber, onPayment }: {
         {invoice.payment ? (
           <>
             <p>{PAYMENT_METHOD_LABELS[invoice.payment.method]}</p>
-            <p className="mt-0.5 text-xs text-[var(--dash-text-muted)]">{formatBusinessDateTime(invoice.payment.paidAt, timeZone)}</p>
+            <p className="mt-0.5 text-xs text-[var(--dash-text-muted)]"><BusinessTime value={invoice.payment.paidAt} zone={timeZone} /></p>
           </>
         ) : (
           <span className="text-[var(--dash-text-muted)]">Pendiente</span>
@@ -462,11 +462,11 @@ function InvoiceCard({ invoice, timeZone, isBarber, onPayment }: {
       <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <div className="col-span-2">
           <dt className="text-xs text-[var(--dash-text-muted)]">Fecha de emisión</dt>
-          <dd className="mt-0.5 text-[var(--dash-text)]">{formatBusinessDateTime(invoice.issuedAt, timeZone)}</dd>
+          <dd className="mt-0.5 text-[var(--dash-text)]"><BusinessTime value={invoice.issuedAt} zone={timeZone} /></dd>
         </div>
         <div className="col-span-2">
           <dt className="text-xs text-[var(--dash-text-muted)]">Reserva</dt>
-          <dd className="mt-0.5 text-[var(--dash-text)]">{formatBusinessDateTime(invoice.booking.startTime, timeZone)}</dd>
+          <dd className="mt-0.5 text-[var(--dash-text)]"><BusinessTime value={invoice.booking.startTime} zone={timeZone} /></dd>
         </div>
         {!isBarber && (
           <div>
@@ -482,7 +482,7 @@ function InvoiceCard({ invoice, timeZone, isBarber, onPayment }: {
           <div className="col-span-2">
             <dt className="text-xs text-[var(--dash-text-muted)]">Cobro</dt>
             <dd className="mt-0.5 text-[var(--dash-text)]">
-              {PAYMENT_METHOD_LABELS[invoice.payment.method]} · {formatBusinessDateTime(invoice.payment.paidAt, timeZone)}
+              {PAYMENT_METHOD_LABELS[invoice.payment.method]} · <BusinessTime value={invoice.payment.paidAt} zone={timeZone} />
             </dd>
           </div>
         )}

@@ -44,6 +44,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { InputField, SelectField } from "@/components/ui/Field";
 import { Modal } from "@/components/ui/Modal";
 import { SkeletonListRows } from "@/components/ui/Skeleton";
+import { BusinessTime } from '@/components/ui/BusinessTime';
+import { useOrganizationTimeZoneQuery } from '@/lib/queries/invoices';
 
 type TeamView = "MEMBERS" | "INVITATIONS";
 
@@ -55,7 +57,7 @@ const INVITATION_STATUS_LABELS: Record<TeamInvitationStatus, string> = {
   ACCEPTED: "Aceptada",
   REVOKED: "Revocada",
   EXPIRED: "Vencida",
-  FAILED: "No enviada",
+  FAILED: "No se pudo completar la acción",
 };
 
 const MANAGEABLE_INVITATION_STATUSES = new Set<TeamInvitationStatus>([
@@ -64,13 +66,6 @@ const MANAGEABLE_INVITATION_STATUSES = new Set<TeamInvitationStatus>([
   "FAILED",
   "REVOKED",
 ]);
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-DO", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
 
 export default function TeamPage() {
   const { organization, user } = useAuth();
@@ -122,6 +117,7 @@ function ScopedTeamPage({
   isCurrentScope: () => boolean;
 }) {
   const { toast } = useToast();
+  const zone = useOrganizationTimeZoneQuery(scopeKey);
   const [view, setView] = useState<TeamView>("MEMBERS");
   const [memberPage, setMemberPage] = useState(1);
   const [invitationPage, setInvitationPage] = useState(1);
@@ -155,7 +151,7 @@ function ScopedTeamPage({
     setActionError(null);
     try {
       await resendInvitation.mutateAsync({ id: invitation.id, scopeKey });
-      reportSuccess("Invitación reenviada correctamente.");
+      reportSuccess("Solicitud de reenvío procesada. Consulta el estado de la invitación.");
     } catch (error) {
       if (!isCurrentScope()) return;
       const message = teamErrorMessage(error, "resend");
@@ -388,7 +384,7 @@ function ScopedTeamPage({
               }
               description={
                 invitationStatus === "ALL"
-                  ? "Envía una invitación para dar acceso seguro a otra persona."
+                  ? "Crea una invitación para dar acceso seguro a otra persona."
                   : "Prueba otro estado o vuelve a mostrar todas las invitaciones."
               }
               action={
@@ -430,9 +426,12 @@ function ScopedTeamPage({
                           {TEAM_ROLE_LABELS[invitation.role]} ·{" "}
                           {INVITATION_STATUS_LABELS[invitation.status]}
                         </p>
+                        {invitation.status === 'PENDING' && (
+                          <p className="mt-1 text-xs text-[var(--dash-text-muted)]">La entrega del correo no está confirmada.</p>
+                        )}
                         <p className="mt-2 text-xs leading-5 text-[var(--dash-text-faint)]">
-                          Enviada {formatDate(invitation.createdAt)} · vence{" "}
-                          {formatDate(invitation.expiresAt)}
+                          Creada <BusinessTime value={invitation.createdAt} zone={zone.data} />
+                          {' · '}Vence el <BusinessTime value={invitation.expiresAt} zone={zone.data} />
                         </p>
                       </div>
                       {manageable && (
@@ -487,7 +486,7 @@ function ScopedTeamPage({
             if (!isCurrentScope()) return;
             setInviteOpen(false);
             setInvitationPage(1);
-            reportSuccess("Invitación enviada correctamente.");
+            reportSuccess("Solicitud de invitación procesada. Consulta su estado; la entrega del correo no está confirmada.");
           }}
         />
       )}
@@ -587,7 +586,7 @@ function RevokeInvitationModal({
   return (
     <Modal title="Revocar invitación" tone="light" onClose={onClose}>
       <p className="text-sm leading-6 text-[var(--dash-text-muted)]">
-        La invitación enviada a{" "}
+        La invitación para{" "}
         <strong className="break-all text-[var(--dash-text)]">
           {invitation.email}
         </strong>{" "}
@@ -852,7 +851,7 @@ function InvitationModal({
     <Modal title="Invitar persona" tone="light" onClose={onClose}>
       <form onSubmit={submit} className="space-y-4">
         <p className="text-sm leading-6 text-[var(--dash-text-muted)]">
-          La persona recibirá un enlace seguro y creará su propia cuenta.
+          La invitación permite que la persona cree su propia cuenta mediante un enlace seguro.
         </p>
         <InputField
           tone="light"

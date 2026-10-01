@@ -264,8 +264,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 organizationPhone={data.organization.phone}
                 serviceName={selectedService?.name}
                 professionalName={professionalLabel}
-                date={date}
-                time={time}
+                timeZone={data.timeZone}
               />
             ) : (
               <StepRouter
@@ -294,6 +293,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                 }}
                 date={date}
                 time={time}
+                selectedStartTime={selectedStartTime}
                 onDateChange={(nextDate) => {
                   setDate(nextDate);
                   setTime("");

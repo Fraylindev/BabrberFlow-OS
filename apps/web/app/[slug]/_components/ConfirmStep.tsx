@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/Button";
 import { StepWrapper, SummaryRow } from "./shared";
+import { BusinessTime } from '@/components/ui/BusinessTime';
 
 interface ConfirmStepProps {
   serviceName?: string;
   professionalName?: string;
-  date: string;
-  time: string;
+  startTime: string;
+  timeZone: string;
   clientName: string;
   clientPhone: string;
   clientEmail: string;
@@ -18,8 +19,8 @@ interface ConfirmStepProps {
 export function ConfirmStep({
   serviceName,
   professionalName,
-  date,
-  time,
+  startTime,
+  timeZone,
   clientName,
   clientPhone,
   clientEmail,
@@ -33,8 +34,7 @@ export function ConfirmStep({
       <div className="flex flex-col gap-2 border border-[var(--color-border)] p-4 text-sm">
         <SummaryRow label="Servicio" value={serviceName} />
         <SummaryRow label="Con" value={professionalName} />
-        <SummaryRow label="Fecha" value={date} />
-        <SummaryRow label="Hora" value={time} />
+        <SummaryRow label="Fecha y hora" value={<BusinessTime value={startTime} zone={timeZone} />} />
         <SummaryRow label="Nombre" value={clientName} />
         <SummaryRow label="Teléfono" value={clientPhone} />
         {clientEmail && <SummaryRow label="Correo" value={clientEmail} />}

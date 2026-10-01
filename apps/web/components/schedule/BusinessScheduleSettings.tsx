@@ -17,7 +17,7 @@ import {
   type ScheduleDay,
   type ScheduleImpact,
 } from '@/lib/business-schedule';
-import { formatBusinessInstant, formatCalendarDate } from '@/lib/business-time';
+import { BusinessTime } from '@/components/ui/BusinessTime';
 import {
   scheduleBase,
   useBusinessSchedule,
@@ -810,8 +810,8 @@ function Editor({
             {preview.result.conflicts.items.map((b) => (
               <li key={b.id}>
                 {impactNames[b.professionalId]} ·{' '}
-                {formatBusinessInstant(b.startTime, base.timeZone)} —{' '}
-                {formatBusinessInstant(b.endTime, base.timeZone)}
+                <BusinessTime value={b.startTime} zone={base.timeZone} /> —{' '}
+                <BusinessTime value={b.endTime} zone={base.timeZone} />
               </li>
             ))}
           </ul>
@@ -905,9 +905,9 @@ function Editor({
                   className="space-y-2 rounded-sm border border-[var(--dash-border)] p-3"
                 >
                   <p className="text-sm font-medium">
-                    {formatCalendarDate(c.startDate)}
+                    <BusinessTime value={c.startDate} kind="date" zone={base.timeZone} />
                     {c.endDate !== c.startDate
-                      ? ` al ${formatCalendarDate(c.endDate)}, ambas fechas incluidas`
+                      ? <> al <BusinessTime value={c.endDate} kind="date" zone={base.timeZone} />, ambas fechas incluidas</>
                       : ''}{' '}
                     ·{' '}
                     {c.startTime === '00:00' && c.endTime === '24:00'

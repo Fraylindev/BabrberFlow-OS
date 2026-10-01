@@ -10,6 +10,7 @@ vi.mock('@/lib/queries/media', () => ({
 
 const published: PublicBookingData = {
   minimumBookingDate: "2026-09-13",
+  timeZone: 'America/Santo_Domingo',
   organization: {
     name: "Estudio Norte",
     slug: "estudio-norte",
@@ -203,7 +204,7 @@ describe("Mini-sitio público C3", () => {
     const dateInput = screen.getByLabelText("Fecha");
     expect(dateInput).toHaveAttribute("min", published.minimumBookingDate);
     fireEvent.change(dateInput, { target: { value: "2099-01-05" } });
-    fireEvent.click(await screen.findByRole("button", { name: "10:00" }));
+    fireEvent.click(await screen.findByRole("button", { name: "10:00 a. m." }));
     fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
     fireEvent.change(screen.getByLabelText("Nombre completo"), {

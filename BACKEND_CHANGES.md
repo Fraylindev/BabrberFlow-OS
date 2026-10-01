@@ -1,5 +1,24 @@
 # BACKEND_CHANGES.md
 
+## 2026-10-01 — F0-D / decisión 1A: invitaciones con siete días por defecto y reenvío
+
+El propietario autorizó explícitamente **1A**: siete días por defecto al crear y siete desde cada reenvío, preservando entradas explícitas de 1–30 e invitaciones existentes. Después de presentar implementación, regresión y cuatro gates, respondió **«Aprobado» el 2026-10-01: BACKEND 1A APROBADO**. No aprueba el conjunto F0-D ni autoriza publicación o correo real. [Contrato, evidencia y riesgos](docs/quality/CORRECTIVO_F0D.md).
+
+- `POST /auth/clerk/invitations`: default/fallback de expiresInDays pasa de 30 a 7. Se conserva el rango 1–30 y la reutilización de una invitación equivalente sin renovar su plazo.
+- `POST /auth/clerk/invitations/:id/resend`: payload Clerk expiresInDays=7 y expiresAt siete días (604800000 ms) desde el reenvío; createdAt conserva la creación original. Fallo externo mantiene FAILED sin publicar una nueva fecha/plazo exitoso.
+- Tres valores de código modificados; sin nuevos campos, rutas, permisos, selección de tenant, cambios de aceptación, transacciones, migraciones, datos, proveedores, flags o despliegue. Los plazos existentes conservan su fecha hasta una operación de reenvío explícita; valores explícitos previos 1–30 siguen compatibles.
+- No acredita aceptación/entrega de correo ni reproduce la observación de TTL de dos minutos en QA. Regresión dirigida: cinco fallos antes y 25 aprobadas después. Tipos/lint/build API exit 0, 781 pruebas aprobadas/37 omitidas; límites y evidencia en informe F0-D. Web no cambia para consumir el plazo, usa expiresAt existente.
+
+## 2026-10-01 — F0-D / decisión 2A: zona técnica en reserva pública
+
+El propietario autorizó explícitamente **2A**: agregar la zona del negocio al contrato público para calcular fechas relativas. Después de validar el backend y preguntar por su aprobación e integración, respondió «Aprobado» el 2026-10-01. **BACKEND 2A APROBADO / INTEGRADO EN WEB LOCALMENTE, EN REVISIÓN**. [Contrato, seguridad y evidencia](docs/quality/CORRECTIVO_F0D.md).
+
+- `GET /public/:slug/booking-data` añade en la raíz `timeZone: string`, IANA válida obtenida de la organización resuelta por slug. Es la misma zona usada por `minimumBookingDate`; se conserva `Cache-Control: no-store`.
+- Query, headers o body no eligen ni editan esta zona. No se añade a organization, availability, POST de reservas ni CMS público. Las respuestas siguen excluyendo UUID de Organization, correo/contacto operativo privado, borrador y notas.
+- Zona inválida mantiene `503` genérico sin valor técnico; cierre, publicación, elegibilidad de horario y tenant mantienen validaciones y `404` neutro. No cambia persistencia, permisos, aceptación, slots ni instantes de reserva. Consumidores anteriores pueden ignorar el campo; web usa el campo aprobado en confirmación/éxito mediante el formateador común y conserva el instante del slot en POST.
+- Esta extensión sustituye exclusivamente la exclusión pública de timeZone de H5. No autoriza siete días para invitaciones, señal de envío, proveedores, flags, migraciones ni publicación.
+- Tipos/lint/build API exit 0; 767 pruebas pasan y 37 opt-in omitidas, sin contarlas como aprobadas. Dos suites dirigidas: 5 fallos por campo ausente antes, 40 aprobadas después; incluyen HTTP Nest real con persistencia controlada, A → B → A, overrides y privacidad. Sin nueva garantía PostgreSQL ni conexión a bases/proveedores. Evidencia y límites en informe F0-D.
+
 ## 2026-09-30 — F0-C: emitir y cobrar sin esperar al horario (publicación QA autorizada)
 
 **BACKEND APROBADO E INTEGRACIÓN AUTORIZADA / IMPLEMENTADO, EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA**. El propietario solicitó completar, emitir y cobrar en cualquier momento y aprobó este backend después de validarlo. POST `/invoices` conserva Booking COMPLETED, precio válido del servidor y unicidad, pero no exige `endTime <= now`; POST `/invoices/:id/payments` tampoco exige ese límite. El reloj del servidor sigue asignando emisión y `paidAt`. Se mantienen DTO/respuestas, roles/tenant/ownership, locks de Booking, SERIALIZABLE, pago completo único, conflicto por método distinto y auditoría transaccional. Sin migración, cambio de configuración ni permiso nuevo. Tipos/lint y 764 pruebas unitarias pasan; 25 pruebas HTTP sobre PostgreSQL temporal aislado pasan, incluidos cuatro roles, citas futuras, concurrencia, IDOR y rollback de auditoría. Sustituye para el candidato local la restricción temporal conservada en la entrada del 2026-09-28 y en el contrato histórico de Facturación-A. Commit/push y despliegue QA F0-C autorizados expresamente; QA ejecuta F0-B hasta sustituir la imagen con controles y reversión automática. [Evidencia](docs/quality/CORRECTIVO_F0C.md).
@@ -92,7 +111,7 @@ Estado: **C1 COMPLETADO / EN REVISIÓN DEL PROPIETARIO**, pendiente de aprobaci�
 
 Estado: **CERRADO / APROBADO** por decisión explícita del propietario («Apruebo los correctivos H5 y fechas sobre 8fd7b1f») el 2026-09-13 sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c`. [Contrato y evidencia](docs/features/RESERVA_PUBLICA_H5_FECHAS.md).
 
-- `GET /public/:slug/booking-data` añade `minimumBookingDate: YYYY-MM-DD`, calculada con la zona almacenada del negocio. No expone `timeZone` ni UUID de Organization.
+- En el checkpoint H5, `GET /public/:slug/booking-data` añadió `minimumBookingDate: YYYY-MM-DD`, calculada con la zona almacenada del negocio, sin exponer `timeZone` ni UUID de Organization. F0-D/2A autoriza después exclusivamente timeZone técnico (entrada 2026-10-01).
 - Cada slot de `GET /public/:slug/availability` añade `startTime`, instante ISO UTC autoritativo para la combinación de fecha/hora local. `time` y `professionalId` permanecen compatibles.
 - `POST /public/:slug/bookings` no cambia: la web reenvía el `startTime` del slot, sin reconstruirlo en la zona del navegador.
 - `date` de disponibilidad y `from`/`to` de `GET /invoices` requieren fecha calendario ISO real. Fechas imposibles, años fuera de cuatro dígitos y formatos malformados responden `400`; la utilidad compartida ya no lanza `RangeError`.
@@ -426,7 +445,7 @@ El propietario fijó D1–D6 y autorizó C1 completo con parada antes de C2/C3. 
 
 - **Persistencia:** nueva entidad `TeamInvitation`, aislada por `organizationId`, con actor local, rol, expiración, referencia Clerk, opción de perfil público BARBER y estados `CREATING`, `PENDING`, `RESENDING`, `REVOKING`, `ACCEPTED`, `REVOKED`, `EXPIRED` y `FAILED`. PostgreSQL prohíbe `OWNER`, limita el perfil público a `BARBER` y permite una sola invitación abierta por tenant/correo normalizado.
 - **Gestión:** `POST /auth/clerk/invitations`, `GET /auth/clerk/invitations`, `POST /auth/clerk/invitations/:id/resend` y `POST /auth/clerk/invitations/:id/revoke` requieren `ClerkAuthGuard + RolesGuard` y rol local `OWNER` o `ADMIN`. Los IDs son UUID y toda consulta autoritativa incluye la organización del contexto verificado.
-- **Creación:** acepta `email`, rol `ADMIN | BARBER | RECEPTIONIST`, `createPublicProfile` solo para BARBER y expiración de 1 a 30 días (30 por defecto). El listado admite estado, `page` y `limit` (20 por defecto, máximo 100) y devuelve una proyección explícita paginada.
+- **Creación en checkpoint A0.4:** acepta `email`, rol `ADMIN | BARBER | RECEPTIONIST`, `createPublicProfile` solo para BARBER y expiración de 1 a 30 días (30 por defecto entonces). F0-D/1A autoriza después default siete días y reenvío siete, preservando 1–30 explícito (entrada 2026-10-01). El listado admite estado, `page` y `limit` (20 por defecto, máximo 100) y devuelve una proyección explícita paginada.
 - **Aceptación:** `POST /auth/clerk/invitations/:id/accept` requiere sesión Clerk verificada y aplica rate limit local. Responde `201` en la primera aceptación y `200` en repetición idempotente; devuelve solo `organizationId`, rol y si se creó Professional.
 - **Identidad:** se reutiliza exclusivamente `User.clerkUserId`. Si no existe, se crea un User sin contraseña solo cuando no hay colisión de correo. Un User local con el mismo correo y enlace nulo o con otro `clerkUserId` produce `409` neutro, sin enlace automático ni escrituras parciales.
 - **Atomicidad:** antes de abrir la transacción se comprueban en Clerk el perfil, correo principal verificado e invitación externa aceptada. La transacción `SERIALIZABLE` bloquea la invitación local y escribe atómicamente User cuando aplica, Membership, Professional BARBER opcional, aceptación y AuditLog sin PII; reintenta de forma acotada conflictos de serialización/unicidad.

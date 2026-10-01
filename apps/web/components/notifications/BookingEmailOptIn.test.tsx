@@ -10,7 +10,7 @@ beforeEach(() => {
   vi.spyOn(api, 'get').mockImplementation(async (path) => path.includes('/availability') ? {
     date: '2099-01-05', serviceId: 'service-qa', slots: [{ time: '10:00', professionalId: 'professional-qa', startTime: '2099-01-05T14:00:00.000Z' }],
   } : {
-    minimumBookingDate: '2026-09-15', organization: { name: 'QA Avisos', slug: 'qa-avisos', phone: null, description: null, address: null, googleMapsUrl: null },
+    minimumBookingDate: '2026-09-15', timeZone: 'America/Santo_Domingo', organization: { name: 'QA Avisos', slug: 'qa-avisos', phone: null, description: null, address: null, googleMapsUrl: null },
     services: [{ id: 'service-qa', name: 'Corte QA', duration: 30, price: '500.00', description: null }],
     professionals: [{ id: 'professional-qa', name: 'Alex QA', bio: null, avatar: null }],
   });
@@ -26,7 +26,7 @@ async function contact() {
   fireEvent.click(screen.getByRole('button', { name: /Alex QA/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
   fireEvent.change(screen.getByLabelText('Fecha'), { target: { value: '2099-01-05' } });
-  fireEvent.click(await screen.findByRole('button', { name: '10:00' }));
+  fireEvent.click(await screen.findByRole('button', { name: '10:00 a. m.' }));
   fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
   fireEvent.change(screen.getByLabelText('Nombre completo'), { target: { value: 'Visitante QA' } });
   fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '8095550141' } });

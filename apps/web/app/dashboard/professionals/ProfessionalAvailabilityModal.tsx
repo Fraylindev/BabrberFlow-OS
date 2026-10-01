@@ -24,6 +24,7 @@ import { useToast } from "@/components/ui/Toast";
 import { PROFESSIONAL_BUSINESS_TIME_COPY } from "@/lib/professional-ui";
 import { businessLocalToIso as zonedLocalToIso, businessLocalInput as isoToLocalInput } from "@/lib/business-time";
 import { scheduleError } from "@/lib/business-schedule";
+import { BusinessTime } from '@/components/ui/BusinessTime';
 
 const DAYS = [
   "Domingo",
@@ -44,14 +45,6 @@ type EditableShift = WeeklyShiftInput & { key: string };
 
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof ApiError ? scheduleError(error) : fallback;
-}
-
-function formatBlockDate(value: string, timeZone: string) {
-  return new Intl.DateTimeFormat("es-DO", {
-    timeZone,
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
 }
 
 function initialShifts(shifts: ProfessionalWeeklyShift[]): EditableShift[] {
@@ -485,7 +478,7 @@ function AvailabilityEditor({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-medium text-[var(--dash-text)]">
-                        {formatBlockDate(block.startTime, availability.timeZone)}
+                        <BusinessTime value={block.startTime} zone={availability.timeZone} />
                       </p>
                       <span
                         className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
@@ -498,7 +491,7 @@ function AvailabilityEditor({
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
-                      Hasta {formatBlockDate(block.endTime, availability.timeZone)}
+                      Hasta <BusinessTime value={block.endTime} zone={availability.timeZone} />
                     </p>
                     {block.note && (
                       <p className="mt-2 break-words text-sm text-[var(--dash-text-muted)]">

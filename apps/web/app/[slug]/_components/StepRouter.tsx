@@ -19,6 +19,7 @@ interface StepRouterProps {
   setProfessionalId: (id: string) => void;
   date: string;
   time: string;
+  selectedStartTime: string;
   onDateChange: (d: string) => void;
   onSlotSelect: (slot: PublicAvailabilitySlot) => void;
   clientName: string;
@@ -110,8 +111,8 @@ export function StepRouter(props: StepRouterProps) {
         <ConfirmStep
           serviceName={props.serviceName}
           professionalName={props.professionalLabel}
-          date={props.date}
-          time={props.time}
+          startTime={props.selectedStartTime}
+          timeZone={data.timeZone}
           clientName={props.clientName}
           clientPhone={props.clientPhone}
           clientEmail={props.clientEmail}

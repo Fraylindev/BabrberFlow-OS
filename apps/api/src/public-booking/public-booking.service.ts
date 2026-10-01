@@ -127,6 +127,7 @@ export class PublicBookingService {
     return {
       minimumBookingDate: getZonedDateParts(new Date(), organization.timeZone)
         .date,
+      timeZone: organization.timeZone,
       organization: {
         name: content.publicName,
         slug: organization.slug,

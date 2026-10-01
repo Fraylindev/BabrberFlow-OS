@@ -88,11 +88,7 @@ export const WEEKDAY_LABELS = [
   'Viernes',
   'Sábado',
 ];
-export function clockLabel(value: string) {
-  if (value === '24:00') return 'final del día';
-  const hour = Number(value.slice(0, 2));
-  return `${hour % 12 || 12}:${value.slice(3)} ${hour < 12 ? 'a. m.' : 'p. m.'}`;
-}
+export { formatBusinessClock as clockLabel } from './business-time.ts';
 export function weekError(week: ScheduleDay[]): string | null {
   if (
     week.length !== 7 ||

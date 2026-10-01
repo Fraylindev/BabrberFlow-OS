@@ -54,9 +54,12 @@ describe('F0-A: regresiones de comportamiento', () => {
     expect(screen.getByRole('button', { name: 'Continuar' })).toBeEnabled();
     expect(screen.getByRole('checkbox', { name: /Crear cuenta/ })).toBeChecked();
   });
-  it('muestra fecha natural y hora local ya suministrada por disponibilidad, sin convertirla al dispositivo', () => {
-    render(<SuccessView result={result} organizationPhone={null} serviceName="Servicio" professionalName="Profesional" date="2099-01-05" time="23:00" />);
-    expect(screen.getByText(/5 de enero de 2099/)).toHaveTextContent(/11:00 p\. m\./);
+  it('muestra el instante autoritativo en la zona del negocio, sin convertirlo al dispositivo', () => {
+    render(<SuccessView result={result} organizationPhone={null} serviceName="Servicio" professionalName="Profesional" timeZone="America/Santo_Domingo" />);
+    const date = screen.getByText('5 ene 2099, 10:00 a. m.');
+    expect(date.tagName).toBe('TIME');
+    expect(date).toHaveAttribute('title', '5 de enero de 2099, 10:00 a. m.');
+    expect(date).toHaveAttribute('datetime', new Date(result.booking.startTime).toISOString());
     expect(screen.queryByText(/2099-01-05|UTC|America\//)).not.toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('registrada');
   });

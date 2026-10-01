@@ -41,6 +41,7 @@ async function fixture(context: BrowserContext) {
       const slug = url.pathname.split('/')[2];
       await route.fulfill({ status: state.catalogStatus, headers, json: state.catalogStatus === 200 ? {
         minimumBookingDate: '2026-09-14',
+        timeZone: 'America/Santo_Domingo',
         organization: {
           name: slug.endsWith('-b') ? 'Estudio QA Sur' : 'Estudio QA Norte', slug,
           phone: slug.endsWith('-b') ? '+34912345678' : state.phone,

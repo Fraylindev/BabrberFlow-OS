@@ -36,5 +36,5 @@ export class CreateTeamInvitationDto {
   @IsInt()
   @Min(1)
   @Max(30)
-  expiresInDays: number = 30;
+  expiresInDays: number = 7;
 }

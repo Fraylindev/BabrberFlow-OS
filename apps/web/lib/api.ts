@@ -441,6 +441,7 @@ export interface InvoicePage {
 
 export interface PublicBookingData {
   minimumBookingDate: string;
+  timeZone: string;
   organization: {
     name: string;
     slug: string;

@@ -15,6 +15,7 @@ it("ignores a late POST from the previous visit after slug A → B → A", async
     const slug = path.split("/")[2];
     return {
       minimumBookingDate: "2026-09-14",
+      timeZone: 'America/Santo_Domingo',
       organization: { slug, name: `Estudio ${slug}`, phone: slug === "a" ? "+18095551234" : "+34912345678",
         description: null, address: null, googleMapsUrl: null },
       services: [{ id: "service-qa", name: "Corte QA", description: null, duration: 30, price: "500.00" }],
@@ -34,7 +35,7 @@ it("ignores a late POST from the previous visit after slug A → B → A", async
   fireEvent.click(screen.getByRole("button", { name: /Alex QA/ }));
   fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
   fireEvent.change(screen.getByLabelText("Fecha"), { target: { value: "2099-01-05" } });
-  fireEvent.click(await screen.findByRole("button", { name: "10:00" }));
+  fireEvent.click(await screen.findByRole("button", { name: "10:00 a. m." }));
   fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
   fireEvent.change(screen.getByLabelText("Nombre completo"), { target: { value: "Visitante QA" } });
   fireEvent.change(screen.getByLabelText("Teléfono"), { target: { value: "8095554321" } });

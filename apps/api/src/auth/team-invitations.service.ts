@@ -371,7 +371,7 @@ export class TeamInvitationsService {
     }
 
     const email = normalizeAccountEmail(dto.email);
-    const expiresInDays = dto.expiresInDays ?? 30;
+    const expiresInDays = dto.expiresInDays ?? 7;
     const createPublicProfile =
       dto.role === UserRole.BARBER && dto.createPublicProfile === true;
     await this.expirePending(organizationId);
@@ -522,7 +522,7 @@ export class TeamInvitationsService {
       throw error;
     }
 
-    const expiresInDays = 30;
+    const expiresInDays = 7;
     let clerkInvitationId: string;
     try {
       clerkInvitationId = await this.createClerkInvitation(

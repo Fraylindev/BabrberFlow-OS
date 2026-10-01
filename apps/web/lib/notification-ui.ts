@@ -88,8 +88,4 @@ export function notificationReason(reason: string | null): string | null {
   };
   return reason ? (reasons[reason] ?? 'Consulta el estado del aviso; no cambia el estado de la reserva.') : null;
 }
-export function formatNotificationDate(value: string, timeZone: string) {
-  return new Intl.DateTimeFormat('es-DO', {
-    timeZone, day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
-  }).format(new Date(value));
-}
+export { formatBusinessInstant as formatNotificationDate } from './business-time.ts';

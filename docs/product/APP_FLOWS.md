@@ -27,7 +27,7 @@ El navegador no aporta `organizationId`, rol, correo ni identificador Clerk como
 
 ## 3. Invitaciones de Equipo
 
-1. OWNER/ADMIN crean una invitación local tenant-scoped;
+1. OWNER/ADMIN crean una invitación local tenant-scoped; F0-D/1A autoriza siete días por defecto, conservando entrada explícita 1–30, y siete días nuevos desde cada reenvío. Backend 1A aprobado expresamente por el propietario, implementación local; crear equivalente no cambia el plazo existente;
 2. NestJS coordina la invitación externa Clerk sin mantener una transacción PostgreSQL abierta;
 3. la persona acepta con una sesión Clerk y correo principal verificado;
 4. una transacción `SERIALIZABLE` crea Membership y, para BARBER cuando corresponde, Professional;
@@ -49,7 +49,7 @@ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se l
 ## 5. Reserva pública y continuidad B2C
 
 1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales; consume por separado la proyección pública de medios aprobada cuando está disponible;
-2. `/public/:slug/booking-data` entrega esa proyección, catálogo, profesionales públicos mínimos y la fecha mínima calculada en la zona del negocio, sin UUID de Organization ni la zona;
+2. `/public/:slug/booking-data` entrega esa proyección, catálogo, profesionales públicos mínimos y la fecha mínima calculada en la zona del negocio, sin UUID de Organization. F0-D/2A añade `timeZone` técnico en la raíz: backend aprobado e integrado en web localmente/en revisión; confirmación/éxito presentan el instante autoritativo con Hoy/Ayer/Mañana y año según ese negocio, sin mostrar el identificador de zona;
 3. la página revalida publicación al recuperar foco y antes de abrir el asistente; inexistente, inactivo, borrado o retirado recibe una presentación neutra;
 4. disponibilidad exige una fecha calendario ISO real, usa servicios/profesionales activos, horario efectivo y protección concurrente, y entrega por slot el instante UTC autoritativo además de la hora local visible;
 5. el navegador reenvía ese instante sin reinterpretarlo según su zona y la persona reserva como invitada con datos mínimos;

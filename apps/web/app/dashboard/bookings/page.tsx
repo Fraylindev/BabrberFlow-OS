@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState, FormEvent, type ReactNode } from 'react';
+import { BusinessTime } from '@/components/ui/BusinessTime';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { canReadBookingEmails, EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
@@ -27,7 +28,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { SelectField } from '@/components/ui/Field';
 import { BusinessDateTimeField } from '@/components/booking/BusinessDateTimeField';
-import { businessDayRange, businessWeek, businessLocalToIso, businessLocalInput, formatBusinessInstant } from '@/lib/business-time';
+import { businessDayRange, businessWeek, businessLocalToIso, businessLocalInput } from '@/lib/business-time';
 import { scheduleError } from '@/lib/business-schedule';
 import { bookingStatusError } from '@/lib/booking-status-error';
 import { ErrorText } from '@/components/ui/ErrorText';
@@ -42,8 +43,6 @@ import { BookingActions } from '@/components/booking/BookingActions';
 import { isTransientQueryError } from '@/lib/query-recovery';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-function formatDateTime(iso: string, timeZone: string) { return formatBusinessInstant(iso, timeZone); }
-function formatTimeOnly(iso: string, timeZone: string) { return formatBusinessInstant(iso, timeZone, true); }
 
 function getInitials(name?: string) {
   if (!name) return '—';
@@ -361,11 +360,11 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                 {/* Header de la card */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="font-semibold capitalize text-[var(--dash-text)]">
-                      {formatDateTime(b.startTime, timeZone)}
+                    <p className="font-semibold text-[var(--dash-text)]">
+                      <BusinessTime value={b.startTime} zone={timeZone} />
                     </p>
                     <p className="text-xs text-[var(--dash-text-muted)]">
-                      hasta {formatTimeOnly(b.endTime, timeZone)}
+                      hasta <BusinessTime value={b.endTime} zone={timeZone} />
                     </p>
                   </div>
                   <Badge status={b.status} tone="light" />
@@ -467,13 +466,12 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                   >
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
                       <p
-                        title={formatDateTime(b.startTime, timeZone)}
                         className="truncate font-medium text-[var(--dash-text)]"
                       >
-                        {formatDateTime(b.startTime, timeZone)}
+                        <BusinessTime value={b.startTime} zone={timeZone} />
                       </p>
                       <p className="truncate text-xs text-[var(--dash-text-muted)]">
-                        hasta {formatTimeOnly(b.endTime, timeZone)}
+                        hasta <BusinessTime value={b.endTime} zone={timeZone} />
                       </p>
                     </td>
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
@@ -973,8 +971,8 @@ function RescheduleBookingModal({
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
                   Reserva actual
                 </p>
-                <p className="mt-0.5 text-sm font-semibold capitalize text-[var(--dash-text)]">
-                  {formatDateTime(booking.startTime, timeZone)}
+                <p className="mt-0.5 text-sm font-semibold text-[var(--dash-text)]">
+                  <BusinessTime value={booking.startTime} zone={timeZone} />
                 </p>
               </div>
               <Badge status={booking.status} tone="light" />
