@@ -3,6 +3,8 @@ import { BusinessTime } from '@/components/ui/BusinessTime';
 import { BookingPhoto } from '@/components/public/BookingPhoto';
 import type { PublicMediaImage } from '@/lib/media-ui';
 import { formatMoney, StepWrapper } from './shared';
+import { formatServiceDuration } from '@/lib/service-ui';
+import { formatPublicPhone } from '@/lib/public-phone';
 
 export function ConfirmStep({ serviceName, professionalName, startTime, timeZone, duration, price, servicePhoto, professionalPhoto,
   clientName, clientPhone, clientEmail, address, submitting, submitError, onBack, onConfirm, onEdit, waiting = false,
@@ -13,16 +15,16 @@ export function ConfirmStep({ serviceName, professionalName, startTime, timeZone
   clientName: string; clientPhone: string; clientEmail: string; submitting: boolean; submitError: string | null; waiting?: boolean;
   onBack: () => void; onConfirm: () => void; onEdit?: (step: 'service' | 'professional' | 'datetime' | 'contact') => void;
 }) {
-  const edit = (step: 'service' | 'professional' | 'datetime' | 'contact', label: string) => onEdit && <Button type="button" variant="ghost" disabled={submitting} onClick={() => onEdit(step)}>Editar {label}</Button>;
+  const heading = (step: 'service' | 'professional' | 'datetime' | 'contact', label: string) => <div className="booking-summary-heading"><h3>{label}</h3>{onEdit && <button type="button" className="booking-text-action" disabled={submitting} aria-label={`Editar ${step === 'contact' ? 'datos' : label.toLocaleLowerCase('es')}`} onClick={() => onEdit(step)}>Editar</button>}</div>;
   return <StepWrapper title="Revisa tu reserva">
-    <div className="booking-summary space-y-5">
-      <div className="text-xl font-medium"><BusinessTime value={startTime} zone={timeZone} />{edit('datetime', 'fecha y hora')}</div>
-      <div className="flex gap-3"><BookingPhoto compact image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p>
-        {duration && <p className="text-sm text-[var(--color-muted)]">{duration} min</p>}
-        {price !== undefined && <p className="text-sm">{formatMoney(price)} · precio de catálogo</p>}{edit('service', 'servicio')}</div></div>
-      <div className="flex gap-3"><BookingPhoto compact kind="professional" image={professionalPhoto} /><div className="min-w-0 flex-1"><p>Te atenderá {professionalName || 'el profesional seleccionado'}</p>{edit('professional', 'profesional')}</div></div>
+    <div className="booking-summary">
+      <section className="booking-summary-section booking-summary-date">{heading('datetime', 'Fecha y hora')}<BusinessTime value={startTime} zone={timeZone} className="block text-2xl font-medium" /></section>
+      <section className="booking-summary-section">{heading('service', 'Servicio')}<div className="booking-summary-row"><BookingPhoto compact name={serviceName} image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p>
+        {duration && <p className="text-sm text-[var(--color-muted)]">{formatServiceDuration(duration)}</p>}</div>
+        {price !== undefined && <p className="booking-summary-price">{formatMoney(price)}</p>}</div></section>
+      <section className="booking-summary-section">{heading('professional', 'Profesional')}<div className="booking-summary-row"><BookingPhoto compact kind="professional" name={professionalName || 'Profesional'} image={professionalPhoto} /><p className="min-w-0">Te atenderá {professionalName || 'el profesional seleccionado'}</p></div></section>
       {address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
-      <div className="border-t border-[var(--color-border)] pt-3"><p>{clientName}</p><p>{clientPhone}</p>{clientEmail && <p>{clientEmail}</p>}{edit('contact', 'datos')}</div>
+      <section className="booking-summary-section">{heading('contact', 'Tus datos')}<div className="space-y-1"><p className="font-medium">{clientName}</p><p>{formatPublicPhone(clientPhone)}</p>{clientEmail && <p>{clientEmail}</p>}</div></section>
     </div>
     <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">La reserva quedará pendiente de confirmación del negocio.</p>
     {submitError && <p role="alert" className="mt-4 text-[var(--color-danger)]">{submitError}</p>}

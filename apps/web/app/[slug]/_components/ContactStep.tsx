@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { InputField } from '@/components/ui/Field';
+import { PasswordField } from '@/components/ui/PasswordField';
 import { EmailConsent } from '@/components/notifications/EmailConsent';
 import { Button } from '@/components/ui/Button';
 import { ACCOUNT_QA_NOTICE, contactErrors } from '@/lib/public-booking-ui';
@@ -19,7 +20,6 @@ export function ContactStep({ clientName, clientPhone, clientEmail, emailOptedIn
   phone?: PhoneDraft; onPhoneDraftChange?: (value: PhoneDraft) => void;
 }) {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [showPassword, setShowPassword] = useState(false);
   const phone = suppliedPhone ?? changePhoneNumber(EMPTY_PHONE, clientPhone);
   const errors = contactErrors({ clientName, clientPhone, clientEmail, emailOptedIn, createAccount, password });
   const prefixError = phonePrefixError(phone);
@@ -49,11 +49,8 @@ export function ContactStep({ clientName, clientPhone, clientEmail, emailOptedIn
             <span>Crear cuenta de prueba</span>
           </label>
           {createAccount && <div className="mt-4 space-y-2">
-            <InputField id="public-password" name="password" label="Crea una contraseña" className="booking-input" type={showPassword ? 'text' : 'password'} autoComplete="new-password" minLength={8} required
-              aria-describedby="password-help" value={password} error={error('password')} onChange={event => onPasswordChange?.(event.target.value)} onBlur={() => setTouched(value => ({ ...value, password: true }))} />
-            <div className="flex flex-wrap items-center justify-between gap-2"><p id="password-help" className="text-sm text-[var(--color-muted)]">Al menos 8 caracteres.</p>
-              <Button type="button" variant="secondary" aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}>{showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}</Button>
-            </div>
+            <PasswordField id="public-password" name="password" label="Crea una contraseña" className="booking-input" autoComplete="new-password" minLength={8} required
+              hint="Al menos 8 caracteres." value={password} error={error('password')} onChange={event => onPasswordChange?.(event.target.value)} onBlur={() => setTouched(value => ({ ...value, password: true }))} />
           </div>}
         </div>
       </div>

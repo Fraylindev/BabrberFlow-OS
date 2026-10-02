@@ -96,7 +96,7 @@ it('D11 vuelve a datos conservando todo el borrador y sin revelar existencia ni 
   fireEvent.click(screen.getByRole('button', { name: 'Registrar reserva' }));
   await screen.findByText(CONTACT_REJECTION);
   expect(screen.getByLabelText('Nombre')).toHaveValue('Visitante sintético');
-  expect(screen.getByLabelText('Teléfono')).toHaveValue('912345678');
+  expect(screen.getByLabelText('Teléfono')).toHaveValue('912-345-678');
   expect(screen.getByLabelText('Correo (opcional)')).toHaveValue('sintetico@example.test');
   expect(document.body.textContent).not.toMatch(/Prisma|EMAIL_ALREADY_EXISTS/);
 });

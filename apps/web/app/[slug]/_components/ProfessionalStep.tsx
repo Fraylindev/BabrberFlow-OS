@@ -39,7 +39,7 @@ export function ProfessionalStep({
             selected={professionalId === p.id}
             onClick={() => onSelect(p.id)}
             title={p.name}
-          ><BookingPhoto kind="professional" image={media?.professionals.find(item => item.professionalId === p.id)?.avatar} /></OptionButton>
+          ><BookingPhoto kind="professional" name={p.name} image={media?.professionals.find(item => item.professionalId === p.id)?.avatar} /></OptionButton>
           {p.bio && <details className="booking-option-details"><summary aria-label={`Ver detalles de ${p.name}`}>Ver detalles</summary><p>{p.bio}</p></details>}</div>
         ))}
       </div>

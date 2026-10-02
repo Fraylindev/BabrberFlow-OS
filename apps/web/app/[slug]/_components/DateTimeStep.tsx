@@ -25,20 +25,29 @@ export function DateTimeStep({ slug, visit, serviceId, professionalId, minimumBo
   const month = requestedMonth < minimumMonth ? minimumMonth : requestedMonth;
   const { from, to } = calendarOpen ? calendarMonth(month, minimumBookingDate) : calendarWeek(weekStart, minimumBookingDate);
   const days = useAvailabilityDays(slug, { serviceId, professionalId: professionalId || undefined, from, to }, visit);
-  const validDate = date && date >= from && date <= to ? date : '';
+  const validDate = date && date >= minimumBookingDate ? date : '';
   const daily = useAvailability(slug, { serviceId, professionalId: professionalId || undefined, date: validDate }, visit);
   const daysWait = usePublicReadWait(days.error, days.errorUpdatedAt);
   const slotsWait = usePublicReadWait(daily.error, daily.errorUpdatedAt);
-  const rangeReady = !days.isFetching && !days.isError && Boolean(days.data);
-  const slots = !daily.isError && !daily.isFetching && rangeReady ? daily.data?.slots ?? [] : [];
-  const slotValid = Boolean(validDate && days.data?.availableDates.includes(validDate) && slots.some(slot => slot.startTime === selectedStartTime && (!selectedProfessionalId || slot.professionalId === selectedProfessionalId)));
+  const rangeReady = !days.isError && Boolean(days.data);
+  const nextStart = addBusinessDays(weekStart, 7);
+  const previousStart = addBusinessDays(weekStart, -7);
+  const nextWeek = nextStart && nextStart <= '9999-12-30' ? calendarWeek(nextStart, minimumBookingDate) : null;
+  const previousWeek = weekStart > minimumBookingDate && previousStart ? calendarWeek(previousStart, minimumBookingDate) : null;
+  const nextDays = useAvailabilityDays(slug, { serviceId, professionalId: professionalId || undefined, from: nextWeek?.from ?? '', to: nextWeek?.to ?? '' }, visit, !calendarOpen && rangeReady && !daysWait && !slotsWait);
+  const previousDays = useAvailabilityDays(slug, { serviceId, professionalId: professionalId || undefined, from: previousWeek?.from ?? '', to: previousWeek?.to ?? '' }, visit, !calendarOpen && rangeReady && !daysWait && !slotsWait);
+  const nextWait = usePublicReadWait(nextDays.error, nextDays.errorUpdatedAt);
+  const previousWait = usePublicReadWait(previousDays.error, previousDays.errorUpdatedAt);
+  const slots = !daily.isError && !daily.isFetching ? daily.data?.slots ?? [] : [];
+  const dateInRange = Boolean(validDate && validDate >= from && validDate <= to);
+  const slotValid = Boolean(validDate && (!dateInRange || rangeReady && days.data?.availableDates.includes(validDate)) && slots.some(slot => slot.startTime === selectedStartTime && (!selectedProfessionalId || slot.professionalId === selectedProfessionalId)));
   useEffect(() => {
-    if ((days.error instanceof ApiError && days.error.status === 404) || (daily.error instanceof ApiError && daily.error.status === 404)) onUnavailable?.();
-  }, [days.error, daily.error, onUnavailable]);
+    if ([days.error, daily.error, nextDays.error, previousDays.error].some(error => error instanceof ApiError && error.status === 404)) onUnavailable?.();
+  }, [days.error, daily.error, nextDays.error, previousDays.error, onUnavailable]);
   useEffect(() => {
     if (date && date < minimumBookingDate) onDateChange('');
-    else if (selectedStartTime && rangeReady && !daily.isFetching && !daily.isError && daily.data && !slotValid) onClearSlot?.();
-  }, [date, minimumBookingDate, selectedStartTime, rangeReady, daily.isFetching, daily.isError, daily.data, slotValid, onDateChange, onClearSlot]);
+    else if (selectedStartTime && (!dateInRange || rangeReady) && !daily.isFetching && !daily.isError && daily.data && !slotValid) onClearSlot?.();
+  }, [date, minimumBookingDate, selectedStartTime, dateInRange, rangeReady, daily.isFetching, daily.isError, daily.data, slotValid, onDateChange, onClearSlot]);
   useEffect(() => {
     if (validDate && daily.data?.slots.length === 0 && !daily.isFetching && !daily.isError) void days.refetch();
     // Una vez por respuesta vacía, sin sondear el rango.
@@ -50,11 +59,12 @@ export function DateTimeStep({ slug, visit, serviceId, professionalId, minimumBo
   return <StepWrapper title="Elige fecha y hora">
     <AvailabilityPicker month={month} minimumDate={minimumBookingDate} date={validDate} calendarOpen={calendarOpen} weekStart={weekStart}
       onToggleCalendar={() => { if (!calendarOpen) setMonth((date || weekStart).slice(0, 7)); else if (date) setWeek(date); setCalendarOpen(value => !value); }}
-      onWeekChange={direction => { const next = addBusinessDays(weekStart, direction * 7); if (next && next <= '9999-12-30') { setWeek(next < minimumBookingDate ? minimumBookingDate : next); onDateChange(''); } }}
+      onWeekChange={direction => { const next = addBusinessDays(weekStart, direction * 7); if (next && next <= '9999-12-30') setWeek(next < minimumBookingDate ? minimumBookingDate : next); }}
+      previousWeek={previousWeek} nextWeek={nextWeek} previousAvailableDates={!previousDays.isError ? previousDays.data?.availableDates : undefined} nextAvailableDates={!nextDays.isError ? nextDays.data?.availableDates : undefined}
       availableDates={rangeReady ? days.data?.availableDates ?? [] : []} slots={slots} selectedStartTime={slotValid ? selectedStartTime : ''}
-      daysPending={days.isFetching || days.isLoading} slotsPending={daily.isFetching || daily.isLoading}
+      daysPending={days.isLoading || !days.data && days.isFetching} slotsPending={daily.isFetching || daily.isLoading}
       daysError={days.isError ? readError(days.error) : undefined} slotsError={daily.isError ? readError(daily.error) : undefined}
-      previousDisabled={calendarOpen ? month <= minimumMonth : weekStart <= minimumBookingDate} nextDisabled={calendarOpen ? !adjacentMonth(month, 1) : !addBusinessDays(weekStart, 7) || addBusinessDays(weekStart, 7)! > '9999-12-30'} waitSeconds={Math.max(daysWait, slotsWait)}
+      previousDisabled={calendarOpen ? month <= minimumMonth : weekStart <= minimumBookingDate} nextDisabled={calendarOpen ? !adjacentMonth(month, 1) : !nextWeek} waitSeconds={Math.max(daysWait, slotsWait, nextWait, previousWait)}
       onMonthChange={direction => { const next = adjacentMonth(month, direction); if (next && next >= minimumMonth) setMonth(next); }}
       onDateChange={day => { onDateChange(day); if (calendarOpen) { setWeek(day); setCalendarOpen(false); } }} onSlotSelect={onSlotSelect} onRetryDays={() => void days.refetch()} onRetrySlots={() => void daily.refetch()} />
     {slotValid && professionalName && <p className="mt-4 text-base">Te atenderá {professionalName}</p>}

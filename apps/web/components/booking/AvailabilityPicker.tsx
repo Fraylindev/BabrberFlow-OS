@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/Button';
 import { calendarMonth, calendarWeek, slotPeriod, type SlotPeriod } from '@/lib/public-booking-ui';
 import { formatBusinessClock, formatBusinessTime } from '@/lib/business-time';
 import type { PublicAvailabilitySlot } from '@/lib/api';
+import { WeekCarousel } from './WeekCarousel';
 
 export function AvailabilityPicker({ month, minimumDate, availableDates, date, slots, selectedStartTime,
   daysPending, slotsPending, daysError, slotsError, onMonthChange, onDateChange, onSlotSelect, onRetryDays, onRetrySlots,
   previousDisabled = false, nextDisabled = false, waitSeconds = 0, calendarOpen, weekStart, onToggleCalendar, onWeekChange,
+  previousWeek, nextWeek, previousAvailableDates, nextAvailableDates,
 }: {
   month: string; minimumDate: string; availableDates: string[]; date: string;
   slots: PublicAvailabilitySlot[]; selectedStartTime: string;
@@ -17,6 +19,8 @@ export function AvailabilityPicker({ month, minimumDate, availableDates, date, s
   onSlotSelect: (slot: PublicAvailabilitySlot) => void; onRetryDays: () => void; onRetrySlots: () => void;
   previousDisabled?: boolean; nextDisabled?: boolean; waitSeconds?: number;
   calendarOpen: boolean; weekStart: string; onToggleCalendar: () => void; onWeekChange: (direction: number) => void;
+  previousWeek?: ReturnType<typeof calendarWeek> | null; nextWeek?: ReturnType<typeof calendarWeek> | null;
+  previousAvailableDates?: string[]; nextAvailableDates?: string[];
 }) {
   const monthDays = calendarMonth(month, minimumDate);
   const dates = calendarOpen ? monthDays.dates : calendarWeek(weekStart, minimumDate).dates;
@@ -26,7 +30,7 @@ export function AvailabilityPicker({ month, minimumDate, availableDates, date, s
   const available = dates.filter(day => day >= minimumDate && availableDates.includes(day));
   const canPick = !daysPending && !daysError;
   const monthLabel = new Intl.DateTimeFormat('es-DO', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${month}-01T12:00:00Z`));
-  const weekLabel = dates.length ? new Intl.DateTimeFormat('es-DO', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).formatRange(new Date(`${dates[0]}T12:00:00Z`), new Date(`${dates.at(-1)}T12:00:00Z`)) : monthLabel;
+  const weekLabel = dates.length ? new Intl.DateTimeFormat('es-DO', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).formatRange(new Date(`${dates[0]}T12:00:00Z`), new Date(`${dates.at(-1)}T12:00:00Z`)) : monthLabel;
   const dateLabel = (day: string) => formatBusinessTime(day, undefined, { kind: 'date', relative: false }).fullText;
   useEffect(() => {
     pendingFocus.current = !calendarOpen ? date : '';
@@ -57,7 +61,7 @@ export function AvailabilityPicker({ month, minimumDate, availableDates, date, s
         if (target) buttons.current.get(target)?.focus();
       }}
       className={`${calendarOpen ? 'calendar-day' : 'week-day'} ${date === day && enabled ? 'calendar-day-selected' : ''}`}>
-      {!calendarOpen && <span className="text-xs capitalize">{weekday}</span>}
+      {!calendarOpen && <span className="text-xs">{weekday}</span>}
       <span>{Number(day.slice(-2))}</span>{date === day && enabled && <span className="sr-only">Seleccionado</span>}
     </button>;
   });
@@ -68,12 +72,12 @@ export function AvailabilityPicker({ month, minimumDate, availableDates, date, s
     </div>
     <div className="flex items-center justify-between gap-2 pb-2">
       <button type="button" className="min-h-11 min-w-11" aria-label={calendarOpen ? 'Mes anterior' : 'Siete días anteriores'} disabled={previousDisabled || daysPending || waitSeconds > 0} onClick={() => calendarOpen ? onMonthChange(-1) : onWeekChange(-1)}>←</button>
-      <p className="text-center text-sm capitalize" aria-live="polite">{calendarOpen ? monthLabel : weekLabel}</p>
+      <p className="text-center text-sm" aria-live="polite">{calendarOpen ? monthLabel : weekLabel}</p>
       <button type="button" className="min-h-11 min-w-11" aria-label={calendarOpen ? 'Mes siguiente' : 'Siete días siguientes'} disabled={nextDisabled || daysPending || waitSeconds > 0} onClick={() => calendarOpen ? onMonthChange(1) : onWeekChange(1)}>→</button>
     </div>
     {calendarOpen ? <div id="booking-calendar">
       <div className="calendar-grid" aria-label={`Días de ${monthLabel}`} aria-busy={daysPending}>
-        {['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'].map(day => <span key={day} className="py-2 text-center text-xs text-[var(--color-muted)]" aria-hidden="true">{day}</span>)}
+        {['do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sá'].map(day => <span key={day} className="py-2 text-center text-xs text-[var(--color-muted)]" aria-hidden="true">{day}</span>)}
         {Array.from({ length: monthDays.offset }, (_, index) => <span key={`blank-${index}`} aria-hidden="true" />)}{dayButtons}
       </div>
       <div className="calendar-list"><label htmlFor="available-day" className="mb-2 block text-sm">Día disponible</label>
@@ -81,7 +85,9 @@ export function AvailabilityPicker({ month, minimumDate, availableDates, date, s
           <option value="">Selecciona un día</option>{available.map(day => <option key={day} value={day}>{dateLabel(day)}</option>)}
         </select>
       </div>
-    </div> : <div className="week-days" aria-label="Días próximos" aria-busy={daysPending}>{dayButtons}</div>}
+    </div> : <WeekCarousel weekStart={weekStart} disabled={daysPending || waitSeconds > 0} onChange={onWeekChange}
+      previous={!previousDisabled && previousWeek ? <WeekPreview dates={previousWeek.dates} availableDates={previousAvailableDates} /> : undefined}
+      next={!nextDisabled && nextWeek ? <WeekPreview dates={nextWeek.dates} availableDates={nextAvailableDates} /> : undefined}><div className="week-days">{dayButtons}</div></WeekCarousel>}
     <div role="status" aria-live="polite" className="mt-3 text-sm text-[var(--color-muted)]">
       {daysPending ? 'Buscando días disponibles…' : !daysError && !available.length ? `No hay horarios disponibles ${calendarOpen ? 'en este mes' : 'en estos días'}. Prueba otras fechas.` : ''}
     </div>
@@ -102,10 +108,10 @@ function HourOptions({ date, slots, selectedStartTime, pending, canPick, error, 
   const effectivePeriod = showFilters && slots.some(slot => slotPeriod(slot.time) === period) ? period : 'all';
   const visible = effectivePeriod === 'all' ? slots : slots.filter(slot => slotPeriod(slot.time) === effectivePeriod);
   return <section className="mt-5" aria-labelledby="available-hour-title" aria-busy={pending}>
-    <h3 id="available-hour-title" className="mb-3 text-base font-medium">Hora</h3>
+    <h3 id="available-hour-title" className="mb-3 text-base font-medium">Hora{date && <span className="ml-2 text-sm font-normal text-[var(--color-muted)]">· {formatBusinessTime(date, undefined, { kind: 'date', relative: false }).text}</span>}</h3>
     {showFilters && canPick && !pending && !error && <div className="hour-filters" role="group" aria-label="Momento del día">
       {(Object.keys(labels) as SlotPeriod[]).filter(item => item === 'all' || slots.some(slot => slotPeriod(slot.time) === item)).map(item =>
-        <button key={item} type="button" aria-pressed={effectivePeriod === item} onClick={() => setPeriod(item)} className={effectivePeriod === item ? 'hour-filter-selected' : ''}>{labels[item]}</button>)}
+        <button key={item} type="button" aria-pressed={effectivePeriod === item} onClick={() => setPeriod(item)} className={effectivePeriod === item ? 'hour-filter-selected' : ''}>{effectivePeriod === item && <span aria-hidden="true">✓ </span>}{labels[item]}</button>)}
     </div>}
     <div role="group" aria-label="Horas disponibles" className="hour-options">
       {!pending && !error && canPick && visible.map(slot => <button key={`${slot.startTime}-${slot.professionalId}`} type="button"
@@ -114,4 +120,8 @@ function HourOptions({ date, slots, selectedStartTime, pending, canPick, error, 
     <p role="status" className="text-sm text-[var(--color-muted)]">{!date ? 'Elige un día para ver las horas.' : pending ? 'Buscando horarios disponibles…' : !error && canPick && !slots.length ? 'Ya no quedan horas para este día. Elige otro día.' : ''}</p>
     {error && <div role="alert" className="mt-3"><p>{error}</p><Button variant="secondary" onClick={onRetry} disabled={pending || waitSeconds > 0}>Reintentar horas</Button></div>}
   </section>;
+}
+
+function WeekPreview({ dates, availableDates }: { dates: string[]; availableDates?: string[] }) {
+  return <div className="week-days">{dates.map(day => <span key={day} className={`week-day ${!availableDates?.includes(day) ? 'week-day-unavailable' : ''}`}><span className="text-xs">{new Intl.DateTimeFormat('es-DO', { weekday: 'short', timeZone: 'UTC' }).format(new Date(`${day}T12:00:00Z`)).replace('.', '')}</span><span>{Number(day.slice(-2))}</span></span>)}</div>;
 }

@@ -74,7 +74,7 @@ export function useAvailability(slug: string, params: AvailabilityParams, visit?
 }
 
 export interface PublicAvailabilityDays { from: string; to: string; serviceId: string; availableDates: string[] }
-export function useAvailabilityDays(slug: string, params: Omit<AvailabilityParams, 'date'> & { from: string; to: string }, visit?: string) {
+export function useAvailabilityDays(slug: string, params: Omit<AvailabilityParams, 'date'> & { from: string; to: string }, visit?: string, enabled = true) {
   const { serviceId, professionalId, from, to } = params;
   return useQuery({
     queryKey: publicBookingKeys(slug, visit).days(serviceId, from, to, professionalId),
@@ -83,7 +83,7 @@ export function useAvailabilityDays(slug: string, params: Omit<AvailabilityParam
       if (professionalId) search.set('professionalId', professionalId);
       return api.get<PublicAvailabilityDays>(`/public/${encodeURIComponent(slug)}/availability-days?${search}`, undefined, { signal, cache: 'no-store' });
     },
-    enabled: Boolean(serviceId && from && to && from <= to), retry: false, gcTime: 0, refetchInterval: false,
+    enabled: enabled && Boolean(serviceId && from && to && from <= to), retry: false, gcTime: 0, refetchInterval: false,
     staleTime: 15_000, refetchOnWindowFocus: query => publicReadMayRefresh(query.state.error, query.state.errorUpdatedAt) ? 'always' : false,
   });
 }

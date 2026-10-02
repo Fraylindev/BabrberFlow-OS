@@ -1,0 +1,3104 @@
+{
+  "environment": "Web production build loopback 3012; API compiled loopback 3043; disposable m1_ux_test 55463; synthetic data; no operational DB",
+  "viewport": "Existing 90% zoom preserved; overrides calibrated and every innerWidth verified",
+  "measurements": [
+    {
+      "stage": "servicios",
+      "controls": [
+        {
+          "height": 144.0104217529297,
+          "label": "SNServicio extenso Norte4 hRD$ 1,000",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 95.98958587646484,
+          "label": "Corte Norte30 minRD$ 500",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 87.98611450195312,
+          "label": "BQBarba QA30 minRD$ 300✓Seleccionado",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 95.98958587646484,
+          "label": "LQLavado QA15 minRD$ 200",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Elegir profesional",
+          "width": 154.67015075683594
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 303,
+      "width": 320
+    },
+    {
+      "stage": "servicios",
+      "controls": [
+        {
+          "height": 120.00000762939452,
+          "label": "SNServicio extenso Norte4 hRD$ 1,000",
+          "width": 326.90972900390625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "Corte Norte30 minRD$ 500",
+          "width": 326.90972900390625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "BQBarba QA30 minRD$ 300✓Seleccionado",
+          "width": 326.90972900390625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "LQLavado QA15 minRD$ 200",
+          "width": 326.90972900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Elegir profesional",
+          "width": 154.67015075683594
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 358,
+      "width": 375
+    },
+    {
+      "stage": "servicios",
+      "controls": [
+        {
+          "height": 103.99305725097656,
+          "label": "SNServicio extenso Norte4 hRD$ 1,000",
+          "width": 341.35418701171875
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "Corte Norte30 minRD$ 500",
+          "width": 341.35418701171875
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "BQBarba QA30 minRD$ 300✓Seleccionado",
+          "width": 341.35418701171875
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "LQLavado QA15 minRD$ 200",
+          "width": 341.35418701171875
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Elegir profesional",
+          "width": 154.67015075683594
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 373,
+      "width": 390
+    },
+    {
+      "stage": "servicios",
+      "controls": [
+        {
+          "height": 103.99305725097656,
+          "label": "SNServicio extenso Norte4 hRD$ 1,000",
+          "width": 592.013916015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "Corte Norte30 minRD$ 500",
+          "width": 592.013916015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "BQBarba QA30 minRD$ 300✓Seleccionado",
+          "width": 592.013916015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "LQLavado QA15 minRD$ 200",
+          "width": 592.013916015625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Elegir profesional",
+          "width": 154.67015075683594
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 1280,
+      "width": 1280
+    },
+    {
+      "stage": "profesionales",
+      "controls": [
+        {
+          "height": 91.96180725097656,
+          "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+          "width": 288.0208435058594
+        },
+        {
+          "height": 87.98611450195312,
+          "label": "Alex Norte",
+          "width": 288.0208435058594
+        },
+        {
+          "height": 87.98611450195312,
+          "label": "BNBea Norte",
+          "width": 288.0208435058594
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Ver fechas y horas",
+          "width": 163.21180725097656
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 320,
+      "width": 320
+    },
+    {
+      "stage": "profesionales",
+      "controls": [
+        {
+          "height": 71.97917175292969,
+          "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+          "width": 343.576416015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "Alex Norte",
+          "width": 343.576416015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "BNBea Norte",
+          "width": 343.576416015625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Ver fechas y horas",
+          "width": 163.21180725097656
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 375,
+      "width": 375
+    },
+    {
+      "stage": "profesionales",
+      "controls": [
+        {
+          "height": 71.97917175292969,
+          "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+          "width": 358.0208435058594
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "Alex Norte",
+          "width": 358.0208435058594
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "BNBea Norte",
+          "width": 358.0208435058594
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Ver fechas y horas",
+          "width": 163.21180725097656
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 390,
+      "width": 390
+    },
+    {
+      "stage": "profesionales",
+      "controls": [
+        {
+          "height": 71.97917175292969,
+          "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+          "width": 592.013916015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "Alex Norte",
+          "width": 592.013916015625
+        },
+        {
+          "height": 103.99305725097656,
+          "label": "BNBea Norte",
+          "width": 592.013916015625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Ver fechas y horas",
+          "width": 163.21180725097656
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 1280,
+      "width": 1280
+    },
+    {
+      "stage": "mes",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Cerrar calendario",
+          "width": 115.67708587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes anterior",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes siguiente",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 47.986114501953125,
+          "label": "Selecciona un día2 de octubre de 20263 de octubre de 20264 de octubre de 20266 de octubre de 20267 de octubre de 20268 de octubre de 20269 de octubre de 202610 de octubre de 202611 de octubre de 202612 de octubre de 202613 de octubre de 202614 de octubre de 202615 de octubre de 202616 de octubre de 202617 de octubre de 202618 de octubre de 202619 de octubre de 202620 de octubre de 202621 de octubre de 202622 de octubre de 202623 de octubre de 202624 de octubre de 202625 de octubre de 202626 de octubre de 202627 de octubre de 202628 de octubre de 202629 de octubre de 202630 de octubre de 202631 de octubre de 2026",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 303,
+      "width": 320
+    },
+    {
+      "stage": "mes",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Cerrar calendario",
+          "width": 115.67708587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes anterior",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes siguiente",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "1 de octubre de 2026, sin horarios disponibles",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "2 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "3 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "4 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "5 de octubre de 2026, sin horarios disponibles",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "6 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "7 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "8 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "9 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "10 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "11 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "12 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "13 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "14 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "15 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "16 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "17 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "18 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "19 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "20 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "21 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "22 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "23 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "24 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "25 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "26 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "27 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "28 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "29 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "30 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "31 de octubre de 2026",
+          "width": 46.70138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 358,
+      "width": 375
+    },
+    {
+      "stage": "mes",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Cerrar calendario",
+          "width": 115.67708587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes anterior",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes siguiente",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "1 de octubre de 2026, sin horarios disponibles",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "2 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "3 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "4 de octubre de 2026",
+          "width": 48.750003814697266
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "5 de octubre de 2026, sin horarios disponibles",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "6 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "7 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "8 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "9 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "10 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "11 de octubre de 2026",
+          "width": 48.750003814697266
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "12 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "13 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "14 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "15 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "16 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "17 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "18 de octubre de 2026",
+          "width": 48.750003814697266
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "19 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "20 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "21 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "22 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "23 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "24 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "25 de octubre de 2026",
+          "width": 48.750003814697266
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "26 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "27 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "28 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "29 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "30 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "31 de octubre de 2026",
+          "width": 48.767364501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 a. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 a. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 373,
+      "width": 390
+    },
+    {
+      "stage": "mes",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Cerrar calendario",
+          "width": 115.67708587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes anterior",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mes siguiente",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "1 de octubre de 2026, sin horarios disponibles",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "2 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "3 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "4 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "5 de octubre de 2026, sin horarios disponibles",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "6 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "7 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "8 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "9 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "10 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "11 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "12 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "13 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "14 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "15 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "16 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "17 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "18 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "19 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "20 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "21 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "22 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "23 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "24 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "25 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "26 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "27 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "28 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "29 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "30 de octubre de 2026",
+          "width": 84.56597900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "31 de octubre de 2026",
+          "width": 84.58333587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:00 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:30 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:00 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:30 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:00 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:30 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "12:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "12:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "1:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "1:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "2:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "2:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 1263,
+      "width": 1280
+    },
+    {
+      "stage": "contacto-password",
+      "controls": [
+        {
+          "height": 50.2256965637207,
+          "label": "clientName",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "País y prefijo: República Dominicana +1",
+          "width": 80.83333587646484
+        },
+        {
+          "height": 48.003475189208984,
+          "label": "nationalPhone",
+          "width": 188.29861450195312
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "clientEmail",
+          "width": 271.35418701171875
+        },
+        {
+          "height": 20,
+          "label": null,
+          "width": 20
+        },
+        {
+          "height": 20,
+          "label": "createAccount",
+          "width": 20
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "password",
+          "width": 245.1389007568359
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mostrar contraseña",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Revisar reserva",
+          "width": 140.95486450195312
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [
+        {
+          "fontSize": "16px",
+          "type": "text"
+        },
+        {
+          "fontSize": "16px",
+          "type": "tel"
+        },
+        {
+          "fontSize": "16px",
+          "type": "email"
+        },
+        {
+          "fontSize": "14px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "password"
+        }
+      ],
+      "overflow": false,
+      "pageWidth": 303,
+      "width": 320
+    },
+    {
+      "stage": "contacto-password",
+      "controls": [
+        {
+          "height": 50.2256965637207,
+          "label": "clientName",
+          "width": 326.90972900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "País y prefijo: República Dominicana +1",
+          "width": 80.83333587646484
+        },
+        {
+          "height": 48.003475189208984,
+          "label": "nationalPhone",
+          "width": 243.8541717529297
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "clientEmail",
+          "width": 326.90972900390625
+        },
+        {
+          "height": 20,
+          "label": null,
+          "width": 20
+        },
+        {
+          "height": 20,
+          "label": "createAccount",
+          "width": 20
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "password",
+          "width": 300.6944580078125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mostrar contraseña",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Revisar reserva",
+          "width": 140.95486450195312
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [
+        {
+          "fontSize": "16px",
+          "type": "text"
+        },
+        {
+          "fontSize": "16px",
+          "type": "tel"
+        },
+        {
+          "fontSize": "16px",
+          "type": "email"
+        },
+        {
+          "fontSize": "14px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "password"
+        }
+      ],
+      "overflow": false,
+      "pageWidth": 358,
+      "width": 375
+    },
+    {
+      "stage": "contacto-password",
+      "controls": [
+        {
+          "height": 50.2256965637207,
+          "label": "clientName",
+          "width": 341.35418701171875
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "País y prefijo: República Dominicana +1",
+          "width": 80.83333587646484
+        },
+        {
+          "height": 48.003475189208984,
+          "label": "nationalPhone",
+          "width": 258.2986145019531
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "clientEmail",
+          "width": 341.35418701171875
+        },
+        {
+          "height": 20,
+          "label": null,
+          "width": 20
+        },
+        {
+          "height": 20,
+          "label": "createAccount",
+          "width": 20
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "password",
+          "width": 315.138916015625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mostrar contraseña",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Revisar reserva",
+          "width": 140.95486450195312
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [
+        {
+          "fontSize": "16px",
+          "type": "text"
+        },
+        {
+          "fontSize": "16px",
+          "type": "tel"
+        },
+        {
+          "fontSize": "16px",
+          "type": "email"
+        },
+        {
+          "fontSize": "14px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "password"
+        }
+      ],
+      "overflow": false,
+      "pageWidth": 373,
+      "width": 390
+    },
+    {
+      "stage": "contacto-password",
+      "controls": [
+        {
+          "height": 50.2256965637207,
+          "label": "clientName",
+          "width": 592.013916015625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "País y prefijo: República Dominicana +1",
+          "width": 80.83333587646484
+        },
+        {
+          "height": 48.003475189208984,
+          "label": "nationalPhone",
+          "width": 508.9583435058594
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "clientEmail",
+          "width": 592.013916015625
+        },
+        {
+          "height": 20,
+          "label": null,
+          "width": 20
+        },
+        {
+          "height": 20,
+          "label": "createAccount",
+          "width": 20
+        },
+        {
+          "height": 50.2256965637207,
+          "label": "password",
+          "width": 565.7986450195312
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mostrar contraseña",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Revisar reserva",
+          "width": 140.95486450195312
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [
+        {
+          "fontSize": "16px",
+          "type": "text"
+        },
+        {
+          "fontSize": "16px",
+          "type": "tel"
+        },
+        {
+          "fontSize": "16px",
+          "type": "email"
+        },
+        {
+          "fontSize": "14px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "checkbox"
+        },
+        {
+          "fontSize": "16px",
+          "type": "password"
+        }
+      ],
+      "overflow": false,
+      "pageWidth": 1263,
+      "width": 1280
+    },
+    {
+      "stage": "revision",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Editar fecha y hora",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar servicio",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar profesional",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar datos",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Registrar reserva",
+          "width": 152.65625
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 303,
+      "width": 320
+    },
+    {
+      "stage": "revision",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Editar fecha y hora",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar servicio",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar profesional",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar datos",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Registrar reserva",
+          "width": 152.65625
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 358,
+      "width": 375
+    },
+    {
+      "stage": "revision",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Editar fecha y hora",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar servicio",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar profesional",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar datos",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Registrar reserva",
+          "width": 152.65625
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 373,
+      "width": 390
+    },
+    {
+      "stage": "revision",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Editar fecha y hora",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar servicio",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar profesional",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Editar datos",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Registrar reserva",
+          "width": 152.65625
+        }
+      ],
+      "headingFocus": "booking-step-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 1263,
+      "width": 1280
+    },
+    {
+      "stage": "exito",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Agregar al calendario",
+          "width": 271.35418701171875
+        }
+      ],
+      "headingFocus": "booking-success-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 303,
+      "width": 320
+    },
+    {
+      "stage": "exito",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Agregar al calendario",
+          "width": 326.90972900390625
+        }
+      ],
+      "headingFocus": "booking-success-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 358,
+      "width": 375
+    },
+    {
+      "stage": "exito",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Agregar al calendario",
+          "width": 341.35418701171875
+        }
+      ],
+      "headingFocus": "booking-success-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 373,
+      "width": 390
+    },
+    {
+      "stage": "exito",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Agregar al calendario",
+          "width": 592.013916015625
+        }
+      ],
+      "headingFocus": "booking-success-title",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 1263,
+      "width": 1280
+    },
+    {
+      "stage": "fecha-hora",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Ver calendario",
+          "width": 95.78125762939452
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días anteriores",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días siguientes",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10 de octubre de 2026",
+          "width": 66.33680725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11 de octubre de 2026",
+          "width": 66.33680725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12 de octubre de 2026",
+          "width": 66.33680725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "13 de octubre de 2026",
+          "width": 66.35417175292969
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "14 de octubre de 2026",
+          "width": 66.33680725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "15 de octubre de 2026",
+          "width": 66.33680725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "16 de octubre de 2026",
+          "width": 66.33680725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 a. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 p. m.",
+          "width": 131.6840362548828
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 303,
+      "width": 320
+    },
+    {
+      "stage": "fecha-hora",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Ver calendario",
+          "width": 95.78125762939452
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días anteriores",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días siguientes",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10 de octubre de 2026",
+          "width": 44.98263931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11 de octubre de 2026",
+          "width": 44.98263931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12 de octubre de 2026",
+          "width": 45.000003814697266
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "13 de octubre de 2026",
+          "width": 44.98263931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "14 de octubre de 2026",
+          "width": 45.000003814697266
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "15 de octubre de 2026",
+          "width": 44.98263931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "16 de octubre de 2026",
+          "width": 44.98263931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 a. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 p. m.",
+          "width": 103.64583587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 358,
+      "width": 375
+    },
+    {
+      "stage": "fecha-hora",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Ver calendario",
+          "width": 95.78125762939452
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días anteriores",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días siguientes",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10 de octubre de 2026",
+          "width": 47.048614501953125
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11 de octubre de 2026",
+          "width": 47.048614501953125
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12 de octubre de 2026",
+          "width": 47.048614501953125
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "13 de octubre de 2026",
+          "width": 47.065975189208984
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "14 de octubre de 2026",
+          "width": 47.048614501953125
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "15 de octubre de 2026",
+          "width": 47.048614501953125
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "16 de octubre de 2026",
+          "width": 47.048614501953125
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 a. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 a. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 a. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "1:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "2:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10:30 p. m.",
+          "width": 108.47222900390624
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:00 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11:30 p. m.",
+          "width": 108.45486450195312
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 373,
+      "width": 390
+    },
+    {
+      "stage": "fecha-hora",
+      "controls": [
+        {
+          "height": 43.99305725097656,
+          "label": "Ver calendario",
+          "width": 95.78125762939452
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días anteriores",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Siete días siguientes",
+          "width": 43.99305725097656
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "10 de octubre de 2026",
+          "width": 82.84722900390625
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "11 de octubre de 2026",
+          "width": 82.86458587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "12 de octubre de 2026",
+          "width": 82.86458587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "13 de octubre de 2026",
+          "width": 82.86458587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "14 de octubre de 2026",
+          "width": 82.86458587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "15 de octubre de 2026",
+          "width": 82.86458587646484
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "16 de octubre de 2026",
+          "width": 82.84722900390625
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "✓ Todos",
+          "width": 81.87500762939453
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Mañana",
+          "width": 78.99305725097656
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Tarde",
+          "width": 63.87153244018555
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Noche",
+          "width": 69.60070037841797
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:00 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:30 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:00 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:30 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:00 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:30 a. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "12:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "12:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "1:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "1:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "2:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "2:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "3:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "4:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "5:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "6:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "7:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "8:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 45.98958587646485,
+          "label": "9:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "9:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "10:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:00 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 60.173614501953125,
+          "label": "11:30 p. m.",
+          "width": 92.0138931274414
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Atrás",
+          "width": 68.95833587646484
+        },
+        {
+          "height": 43.99305725097656,
+          "label": "Continuar con tus datos",
+          "width": 199.7916717529297
+        }
+      ],
+      "headingFocus": "",
+      "headingOutline": "none",
+      "inputs": [],
+      "overflow": false,
+      "pageWidth": 1263,
+      "width": 1280
+    }
+  ]
+}

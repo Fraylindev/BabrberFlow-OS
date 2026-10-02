@@ -1,5 +1,7 @@
 # Reserva pública más ligera — implementación y evidencia
 
+Actualización posterior 2026-10-02: el [correctivo de UX M1](RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md) reemplaza la presentación de foco/fotos/filtros, navegación semanal, formatos, revisión/éxito y contraseña. Está implementado/en revisión, con commit/push y despliegue solo web QA autorizados. Este informe conserva la evidencia histórica; M1 continúa sin cierre y con QA física pendiente.
+
 Fecha: 2026-10-01, America/Santo_Domingo. Estado: **DISEÑO APROBADO PARA PUBLICACIÓN QA / EN REVISIÓN; M1 SIN CIERRE, QA FÍSICA PENDIENTE**.
 
 El propietario autorizó implementar el plan «Reserva pública más ligera» sobre C1 aprobado. Cambian presentación y estado local de `/{slug}/reservar`. La autorización original no incluía publicación. Posteriormente el propietario aprobó expresamente este correctivo para commit/push en `ai/antigravity-qa` y despliegue solo de la web Cutover QA, bajo las condiciones de esta publicación. M1 no queda cerrado: falta prueba en teléfono físico.

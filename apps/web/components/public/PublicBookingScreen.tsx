@@ -205,7 +205,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
       : uncertain ? <div className="space-y-4 px-3"><h2 id="booking-uncertain-title" tabIndex={-1} className="text-2xl">No pudimos comprobar el resultado</h2><p role="alert">{message}</p><Link href={returnHref} className="inline-flex items-center border px-4">Volver a la página del negocio</Link></div>
       : result ? <div className="booking-step"><SuccessView result={result} organizationPhone={data.organization.phone} organizationName={data.organization.name}
         address={data.organization.address} mapsUrl={data.organization.googleMapsUrl} returnHref={returnHref}
-        serviceName={service?.name} professionalName={professional?.name} timeZone={data.timeZone} servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} /></div>
+        serviceName={service?.name} price={service?.price} professionalName={professional?.name} timeZone={data.timeZone} servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} /></div>
       : !data.services.length || !data.professionals.length ? <p role="status" className="px-3">{!data.services.length ? 'Este negocio no tiene servicios disponibles para reservar en línea.' : 'No hay profesionales disponibles por ahora.'}</p>
       : <>
         <nav aria-label="Progreso de la reserva" className="pb-4"><p className="text-sm text-[var(--color-muted)]">Paso {STEPS.indexOf(step) + 1} de 5 · {LABELS[STEPS.indexOf(step)]}</p>

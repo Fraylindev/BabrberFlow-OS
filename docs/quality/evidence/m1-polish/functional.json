@@ -1,0 +1,10 @@
+{
+  "environment": "loopback compiled web and existing isolated API/Postgres",
+  "syntheticOnly": true,
+  "applicationConsoleErrors": 0,
+  "booking": "one local guest PENDING, no opt-in or account creation",
+  "keyboard": "arrow navigation and focus retained",
+  "swipeEmulation": "mouse drag forward; horizontal wheel backward; vertical wheel forward; selected day/time preserved",
+  "unknownPrefix": "Japanese +81 digits preserved and grouped on review",
+  "physicalDevicePending": true
+}

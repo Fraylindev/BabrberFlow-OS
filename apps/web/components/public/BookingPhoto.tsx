@@ -4,20 +4,28 @@ import { useState } from 'react';
 import { publicMediaUrl } from '@/lib/api';
 import type { PublicMediaImage } from '@/lib/media-ui';
 
-export function BookingPhoto({ image, kind = 'service', compact = false }: { image?: PublicMediaImage; kind?: 'service' | 'professional'; compact?: boolean }) {
-  const src = image ? publicMediaUrl(image.url) : '';
-  return <Photo key={src} src={src} image={image} kind={kind} compact={compact} />;
+const COLORS = ['#80513b', '#3f657d', '#705280', '#356b61', '#79582e'];
+export function bookingPhotoFallback(name: string) {
+  const normalized = name.trim().replace(/\s+/g, ' ').normalize('NFC') || 'Servicio';
+  const words = normalized.split(' ');
+  const initials = (words.length > 1 ? words[0][0] + words.at(-1)![0] : normalized.slice(0, 2)).toLocaleUpperCase('es');
+  let hash = 0;
+  for (const character of normalized.toLocaleLowerCase('es')) hash = (Math.imul(hash, 31) + character.codePointAt(0)!) >>> 0;
+  return { initials, background: COLORS[hash % COLORS.length] };
 }
-function Photo({ src, image, kind, compact }: { src: string; image?: PublicMediaImage; kind: 'service' | 'professional'; compact: boolean }) {
+export function BookingPhoto({ image, name = 'Servicio', kind = 'service', compact = false }: { image?: PublicMediaImage; name?: string; kind?: 'service' | 'professional'; compact?: boolean }) {
+  const src = image ? publicMediaUrl(image.url) : '';
+  return <Photo key={src} src={src} image={image} name={name} kind={kind} compact={compact} />;
+}
+function Photo({ src, image, name, kind, compact }: { src: string; image?: PublicMediaImage; name: string; kind: 'service' | 'professional'; compact: boolean }) {
   const [failed, setFailed] = useState(false);
+  const fallback = bookingPhotoFallback(name);
   const shape = compact ? 'h-16 w-16 shrink-0' : 'booking-thumbnail shrink-0';
   return <div className={`${shape} flex items-center justify-center overflow-hidden ${kind === 'professional' ? 'rounded-full' : 'rounded-lg'} bg-[var(--color-surface-raised)]`}>
     {src && !failed
       // Localizadores revocables: nunca usar optimizador ni avatar legacy.
       // eslint-disable-next-line @next/next/no-img-element
       ? <img src={src} alt={image?.decorative ? '' : image?.altText || ''} width={400} height={kind === 'service' ? 300 : 400} className="h-full w-full object-cover" loading="lazy" onError={() => setFailed(true)} />
-      : <svg aria-hidden="true" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" className="text-[var(--color-muted)]">
-        {kind === 'professional' ? <><circle cx="16" cy="10" r="5" /><path d="M5 29c0-9 22-9 22 0" /></> : <><rect x="4" y="4" width="24" height="24" rx="2" /><path d="m4 24 8-8 5 5 4-4 7 7" /><circle cx="22" cy="10" r="2" /></>}
-      </svg>}
+      : <span aria-hidden="true" className="flex h-full w-full items-center justify-center text-xl font-semibold tracking-wide" style={{ backgroundColor: fallback.background, color: '#fff' }}>{fallback.initials}</span>}
   </div>;
 }

@@ -10,13 +10,17 @@ import { isCmsMapsUrl } from '@/lib/cms-ui';
 import type { PublicMediaImage } from '@/lib/media-ui';
 import type { PublicBookingResult } from '@/lib/api';
 import { bookingWhatsAppLink, WHATSAPP_EXPLANATION } from '@/lib/whatsapp-link';
+import { formatServiceDuration } from '@/lib/service-ui';
+import { formatPublicPhone } from '@/lib/public-phone';
+import { formatMoney } from './shared';
 
 export function SuccessView({ result, organizationPhone, serviceName, professionalName, timeZone,
-  organizationName, address, mapsUrl, returnHref, servicePhoto, professionalPhoto,
+  organizationName, address, mapsUrl, returnHref, servicePhoto, professionalPhoto, price,
 }: {
   result: PublicBookingResult; organizationPhone: string | null; serviceName?: string; professionalName?: string; timeZone: string;
   organizationName?: string; address?: string | null; mapsUrl?: string | null; returnHref?: string;
   servicePhoto?: PublicMediaImage; professionalPhoto?: PublicMediaImage;
+  price?: string | number;
 }) {
   const link = bookingWhatsAppLink(organizationPhone);
   const explanationId = useId();
@@ -33,13 +37,14 @@ export function SuccessView({ result, organizationPhone, serviceName, profession
   }
   return <div className="space-y-6">
     <div>
+      <div className="booking-success-mark" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m7 16 6 6 12-13" /></svg></div>
       <h2 id="booking-success-title" tabIndex={-1} className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-paper)]">Tu reserva quedó registrada</h2>
       <p role="status" className="mt-3 text-sm text-[var(--color-pending)]">{pending ? 'Pendiente de confirmación' : 'Consulta el estado con el negocio'}</p>
     </div>
     <div className="booking-summary space-y-4">
-      <BusinessTime value={result.booking.startTime} zone={timeZone} className="block text-xl font-medium" />
-      <div className="flex items-center gap-3"><BookingPhoto compact image={servicePhoto} /><div><p>{serviceName || 'Servicio seleccionado'}</p><p className="text-sm text-[var(--color-muted)]">{Math.round((Date.parse(result.booking.endTime) - Date.parse(result.booking.startTime)) / 60000)} min</p></div></div>
-      <div className="flex items-center gap-3"><BookingPhoto compact kind="professional" image={professionalPhoto} /><p>{professionalName ? `Te atenderá ${professionalName}` : 'Profesional seleccionado'}</p></div>
+      <div className="booking-summary-date"><BusinessTime value={result.booking.startTime} zone={timeZone} className="block text-2xl font-medium" /></div>
+      <div className="booking-summary-row"><BookingPhoto compact name={serviceName} image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p><p className="text-sm text-[var(--color-muted)]">{formatServiceDuration(Math.round((Date.parse(result.booking.endTime) - Date.parse(result.booking.startTime)) / 60000))}</p></div>{price !== undefined && <p className="booking-summary-price">{formatMoney(price)}</p>}</div>
+      <div className="booking-summary-row"><BookingPhoto compact kind="professional" name={professionalName || 'Profesional'} image={professionalPhoto} /><p className="min-w-0">{professionalName ? `Te atenderá ${professionalName}` : 'Profesional seleccionado'}</p></div>
       {organizationName && <span className="sr-only">{organizationName}</span>}{address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
       {safeMaps && <a href={safeMaps} target="_blank" rel="noopener noreferrer" className="inline-flex items-center underline">Cómo llegar (se abre en una pestaña nueva)</a>}
     </div>
@@ -52,6 +57,7 @@ export function SuccessView({ result, organizationPhone, serviceName, profession
       <p className="text-sm leading-6 text-[var(--color-muted)]">Guarda este resumen. Para consultar o cambiar tu cita, contacta al negocio.</p>
     </div>}
     {link && <div className="border-t border-[var(--color-border)] pt-5">
+      {organizationPhone && <p className="mb-2 text-sm">{formatPublicPhone(organizationPhone)}</p>}
       <p id={explanationId} className="text-sm leading-6 text-[var(--color-muted)]">{WHATSAPP_EXPLANATION}</p>
       <a href={link} target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp (se abre en una pestaña nueva)" aria-describedby={explanationId}
         className="mt-3 inline-flex min-h-12 items-center justify-center border border-[var(--color-muted)] px-5 text-sm font-medium text-[var(--color-paper)]">Abrir WhatsApp</a>

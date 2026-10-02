@@ -2,6 +2,7 @@ import { Service } from "@/lib/api";
 import { formatMoney, NavButtons, OptionButton, StepWrapper } from "./shared";
 import { BookingPhoto } from '@/components/public/BookingPhoto';
 import type { PublicMedia } from '@/lib/media-ui';
+import { formatServiceDuration } from '@/lib/service-ui';
 
 interface ServiceStepProps {
   services: Pick<Service, "id" | "name" | "description" | "duration" | "price">[];
@@ -21,8 +22,9 @@ export function ServiceStep({ services, serviceId, onSelect, onNext, media }: Se
             selected={serviceId === s.id}
             onClick={() => onSelect(s.id)}
             title={s.name}
-            subtitle={`${s.duration} min · ${formatMoney(s.price)}`}
-          ><BookingPhoto image={media?.services.find(item => item.serviceId === s.id)?.image} />
+            subtitle={formatServiceDuration(s.duration)}
+            trailing={formatMoney(s.price)}
+          ><BookingPhoto name={s.name} image={media?.services.find(item => item.serviceId === s.id)?.image} />
           </OptionButton>
           {s.description && <details className="booking-option-details"><summary aria-label={`Ver descripción de ${s.name}`}>Ver descripción</summary><p>{s.description}</p></details>}</div>
         ))}

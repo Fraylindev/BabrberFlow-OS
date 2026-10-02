@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-02 — Correctivo visual y navegación de reserva pública M1
+
+- Títulos sin contorno de foco visual; iniciales estables al faltar/fallar foto; filtros de hora sólidos con indicador y fechas en minúscula. Carrusel semanal nativo con precarga adyacente, flechas y conservación de fecha/hora.
+- Duración, monto y teléfono legibles; revisión en una columna, éxito con marca animada y pendiente visible; ojo accesible dentro de PasswordField y mínimo único.
+- Tipos/lint/build y 281 pruebas pasan; QA real local en cuatro anchos con 28 mediciones sin overflow y una PENDING sintética. [Evidencia y publicación](docs/quality/RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md). Publicación web QA autorizada, en preparación; pruebas físicas y aprobación final pendientes. Sin cambios backend/contratos/dependencias ni producción.
+
 ## 2026-10-01 — UX ligera publicada y desplegada solo web QA
 
 Publicación ejecutada — 2026-10-01: **UX LIGERA PUBLICADA Y DESPLEGADA SOLO WEB QA / EN REVISIÓN; M1 NO CERRADO, QA FÍSICA PENDIENTE**. Commits `dc82a4f` y `9d2eb47` en `origin/ai/antigravity-qa`, publicación al repositorio público confirmada explícitamente. Web QA READY en `9d2eb47`, API C1 existente verificada (availability-days/D11 neutro sin crear reservas). [Hashes, evidencia, límites y guía iPhone](docs/quality/RESERVA_PUBLICA_M1_UX_LIGERA.md). Producción/main `fe4b117`, imagen/PID/API, variables, flags, SSO y proveedores intactos. Banderas cargan en navegador; cabecera CSP del documento autenticado no expuesta por la herramienta, sin relajar protección. Respaldo cifrado C3 ignorado y retenido. Enmiendas 16–21 exactas, tipos/lint/build y 275 pruebas con exit `0`. Tercer commit documental registra el resultado; las entradas inferiores preservan el contexto histórico y no revocan esta publicación.

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 
 export function formatMoney(value: string | number) {
-  return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(Number(value));
+  return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(value)).replace(/^RD\$\s*/, 'RD$ ');
 }
 
 export function StepWrapper({ title, children }: { title: string; children: ReactNode }) {
@@ -48,12 +48,14 @@ export function OptionButton({
   onClick,
   title,
   subtitle,
+  trailing,
   children,
 }: {
   selected: boolean;
   onClick: () => void;
   title: string;
   subtitle?: string;
+  trailing?: ReactNode;
   children?: ReactNode;
 }) {
   return (
@@ -66,6 +68,7 @@ export function OptionButton({
       {children}
       <span className="min-w-0 flex-1"><span className="block text-base font-medium text-[var(--color-paper)]">{title}</span>
         {subtitle && <span className="mt-1 block text-sm text-[var(--color-muted)]">{subtitle}</span>}</span>
+      {trailing && <span className="booking-option-price">{trailing}</span>}
       <span className="booking-selection-mark" aria-hidden="true">{selected ? '✓' : ''}</span>
       {selected && <span className="sr-only">Seleccionado</span>}
     </button>
