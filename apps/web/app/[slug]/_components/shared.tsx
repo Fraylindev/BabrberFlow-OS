@@ -8,7 +8,7 @@ export function formatMoney(value: string | number) {
 export function StepWrapper({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h2 id="booking-step-title" tabIndex={-1} className="mb-5 scroll-mt-5 font-[family-name:var(--font-display)] text-2xl text-[var(--color-paper)]">
+      <h2 id="booking-step-title" tabIndex={-1} className="mb-4 scroll-mt-5 font-[family-name:var(--font-display)] text-2xl text-[var(--color-paper)]">
         {title}
       </h2>
       {children}
@@ -61,15 +61,13 @@ export function OptionButton({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`border px-4 py-3 text-left transition-colors ${
-        selected
-          ? "border-[var(--color-brass)] bg-[var(--color-brass)]/10"
-          : "border-[var(--color-border)] hover:border-[var(--color-border-strong)]"
-      }`}
+      className={`booking-option ${selected ? 'booking-option-selected' : ''}`}
     >
       {children}
-      <p className="text-base font-medium text-[var(--color-paper)]">{title}{selected && <span className="ml-2 text-xs">✓ Seleccionado</span>}</p>
-      {subtitle && <p className="text-xs text-[var(--color-muted)]">{subtitle}</p>}
+      <span className="min-w-0 flex-1"><span className="block text-base font-medium text-[var(--color-paper)]">{title}</span>
+        {subtitle && <span className="mt-1 block text-sm text-[var(--color-muted)]">{subtitle}</span>}</span>
+      <span className="booking-selection-mark" aria-hidden="true">{selected ? '✓' : ''}</span>
+      {selected && <span className="sr-only">Seleccionado</span>}
     </button>
   );
 }

@@ -10,8 +10,8 @@ export function BookingPhoto({ image, kind = 'service', compact = false }: { ima
 }
 function Photo({ src, image, kind, compact }: { src: string; image?: PublicMediaImage; kind: 'service' | 'professional'; compact: boolean }) {
   const [failed, setFailed] = useState(false);
-  const shape = compact ? 'h-16 w-16 shrink-0' : kind === 'professional' ? 'h-20 w-20 shrink-0' : 'aspect-[4/3] w-full';
-  return <div className={`${shape} flex items-center justify-center overflow-hidden rounded-sm bg-[var(--color-surface-raised)]`}>
+  const shape = compact ? 'h-16 w-16 shrink-0' : 'booking-thumbnail shrink-0';
+  return <div className={`${shape} flex items-center justify-center overflow-hidden ${kind === 'professional' ? 'rounded-full' : 'rounded-lg'} bg-[var(--color-surface-raised)]`}>
     {src && !failed
       // Localizadores revocables: nunca usar optimizador ni avatar legacy.
       // eslint-disable-next-line @next/next/no-img-element

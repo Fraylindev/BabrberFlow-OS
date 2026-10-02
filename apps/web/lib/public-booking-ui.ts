@@ -17,7 +17,7 @@ export function contactErrors(draft: ContactDraft) {
   const phone = draft.clientPhone.trim();
   const digits = phone.replace(/\D/g, '');
   if (!/^\+?[\d\s().-]+$/.test(phone) || digits.length < 7 || digits.length > 15 || phone.length > 30)
-    errors.clientPhone = 'Escribe un teléfono válido, con 7 a 15 dígitos. Puedes incluir el prefijo internacional.';
+    errors.clientPhone = 'Revisa el teléfono y su prefijo: debe tener entre 7 y 15 dígitos.';
   const email = draft.clientEmail.trim();
   if (draft.createAccount && !email) errors.clientEmail = 'Escribe un correo para crear la cuenta o desmarca esa opción.';
   else if (email && (email.length > 254 || !/^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email))) errors.clientEmail = 'Revisa el correo.';
@@ -51,6 +51,21 @@ export function bookingFailure(error: unknown) {
   }
   return { kind: 'uncertain' as const, message: UNCERTAIN_BOOKING };
 }
+export function calendarWeek(start: string, minimum: string) {
+  const from = start < minimum ? minimum : start;
+  if (!validBusinessDate(from)) throw new RangeError('Fecha no válida');
+  const dates: string[] = [];
+  for (let index = 0; index < 7; index++) {
+    const day = addBusinessDays(from, index);
+    if (day && day <= '9999-12-30') dates.push(day);
+  }
+  return { from, to: dates.at(-1) ?? from, dates };
+}
+export type SlotPeriod = 'all' | 'morning' | 'afternoon' | 'night';
+export function slotPeriod(time: string): Exclude<SlotPeriod, 'all'> {
+  const hour = Number(time.slice(0, 2));
+  return hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'night';
+}
 
 const escapeCalendar = (value: string) => value.replace(/\\/g, '\\\\').replace(/\r\n|\r|\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
 export function bookingCalendar(result: PublicBookingResult, serviceName: string, uid: string, now: Date) {
@@ -60,7 +75,7 @@ export function bookingCalendar(result: PublicBookingResult, serviceName: string
   const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kortek Booking//Cita pendiente//ES', 'BEGIN:VEVENT',
     `UID:${escapeCalendar(uid)}@calendario.local`, `DTSTAMP:${stamp(now)}`, `DTSTART:${stamp(new Date(startTime))}`, `DTEND:${stamp(new Date(endTime))}`,
     `SUMMARY:${escapeCalendar(`Cita pendiente · ${serviceName}`)}`, 'STATUS:TENTATIVE',
-    'DESCRIPTION:El negocio debe confirmar la cita. Este calendario no se actualiza automáticamente.', 'END:VEVENT', 'END:VCALENDAR'];
+    'DESCRIPTION:Reserva pendiente de confirmación por el negocio', 'END:VEVENT', 'END:VCALENDAR'];
   // RFC 5545: plegar por octetos UTF-8, sin partir caracteres.
   return lines.map(line => {
     let folded = '', width = 0;

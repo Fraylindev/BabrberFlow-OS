@@ -33,14 +33,13 @@ beforeEach(() => {
 });
 afterEach(() => focusManager.setFocused(undefined));
 
-async function reachContact(any = true, selectedInstant = startTime) {
+async function reachContact(any = true) {
   fireEvent.click(await screen.findByRole('button', { name: /Corte QA/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Elegir profesional' }));
-  fireEvent.click(screen.getByRole('button', { name: any ? /Cualquiera disponible/ : /Alex QA/ }));
+  fireEvent.click(screen.getByRole('button', { name: any ? /Sin preferencia/ : /Alex QA/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Ver fechas y horas' }));
   fireEvent.click(await screen.findByRole('button', { name: '5 de octubre de 2026' }));
-  await waitFor(() => expect(screen.getByLabelText('Hora')).toBeEnabled());
-  fireEvent.change(screen.getByLabelText('Hora'), { target: { value: selectedInstant } });
+  fireEvent.click(await screen.findByRole('button', { name: '10:00 a. m.' }));
   expect(screen.getByText('Te atenderá Alex QA')).toBeVisible();
   fireEvent.click(screen.getByRole('button', { name: 'Continuar con tus datos' }));
   await screen.findByRole('heading', { name: 'Tus datos' });
@@ -56,7 +55,8 @@ it('consume rango real, deshabilita días y no ofrece hora libre ni preseleccion
   mount(); await reachContact();
   fireEvent.click(screen.getByRole('button', { name: 'Atrás' }));
   expect(await screen.findByRole('button', { name: '6 de octubre de 2026, sin horarios disponibles' })).toBeDisabled();
-  expect(screen.getByLabelText('Hora').tagName).toBe('SELECT');
+  expect(screen.getByRole('group', { name: 'Horas disponibles' })).toBeVisible();
+  expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   const calls = vi.mocked(api.get).mock.calls.map(call => call[0]);
   expect(calls.some(path => path.includes('availability-days?') && path.includes('from=2026-10-01') && !path.includes('professionalId'))).toBe(true);
 });
@@ -67,7 +67,7 @@ it('invitado registra el instante/candidato, solo una vez, sin contraseña ni zo
   expect(screen.getByText('Pendiente de confirmación')).toBeVisible();
   expect(api.post).toHaveBeenCalledTimes(1);
   const payload = vi.mocked(api.post).mock.calls[0][1];
-  expect(payload).toMatchObject({ professionalId: 'alex', startTime, clientPhone: '+34 (912) 345-678', createAccount: false });
+  expect(payload).toMatchObject({ professionalId: 'alex', startTime, clientPhone: '+34912345678', createAccount: false });
   expect(payload).not.toHaveProperty('password'); expect(payload).not.toHaveProperty('timeZone');
   expect(document.body.textContent).not.toMatch(/Visitante sintético|912|PENDING|UTC/);
   await waitFor(() => expect(screen.getByRole('heading', { name: 'Tu reserva quedó registrada' })).toHaveFocus());
@@ -75,18 +75,18 @@ it('invitado registra el instante/candidato, solo una vez, sin contraseña ni zo
 it('correo/teléfono/password inválidos se explican antes de revisar; cuenta QA opcional y contraseña eliminada al desmarcar', async () => {
   mount(); await reachContact();
   expect(screen.getByText(ACCOUNT_QA_NOTICE)).toBeVisible();
-  expect(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' })).not.toBeChecked();
+  expect(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' })).not.toBeChecked();
   fillContact('invalid'); fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '123' } });
   fireEvent.click(screen.getByRole('button', { name: 'Revisar reserva' }));
   expect(screen.getByLabelText('Teléfono')).toHaveFocus();
   expect(screen.getByLabelText('Correo (opcional)')).toHaveAccessibleDescription('Revisa el correo.');
   fillContact('sintetico@example.test');
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' }));
   fireEvent.change(screen.getByLabelText('Crea una contraseña'), { target: { value: '1234567' } });
   fireEvent.click(screen.getByRole('button', { name: 'Revisar reserva' }));
   expect(screen.getByLabelText('Crea una contraseña')).toHaveAccessibleDescription(/8 caracteres/);
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' }));
   expect(screen.getByLabelText('Crea una contraseña')).toHaveValue('');
   expect(api.post).not.toHaveBeenCalled();
 });
@@ -96,9 +96,24 @@ it('D11 vuelve a datos conservando todo el borrador y sin revelar existencia ni 
   fireEvent.click(screen.getByRole('button', { name: 'Registrar reserva' }));
   await screen.findByText(CONTACT_REJECTION);
   expect(screen.getByLabelText('Nombre')).toHaveValue('Visitante sintético');
-  expect(screen.getByLabelText('Teléfono')).toHaveValue('+34 (912) 345-678');
+  expect(screen.getByLabelText('Teléfono')).toHaveValue('912345678');
   expect(screen.getByLabelText('Correo (opcional)')).toHaveValue('sintetico@example.test');
   expect(document.body.textContent).not.toMatch(/Prisma|EMAIL_ALREADY_EXISTS/);
+});
+it.each([404, 409])('rechazo %s retira la página o exige otra hora sin repetir el envío', async status => {
+  vi.mocked(api.post).mockRejectedValueOnce(new ApiError(status, 'detalle privado'));
+  mount(); await reachContact(false); fillContact(); await review();
+  fireEvent.click(screen.getByRole('button', { name: 'Registrar reserva' }));
+  if (status === 404) {
+    await screen.findByRole('heading', { name: 'Esta página no está disponible' });
+    expect(screen.queryByLabelText('Teléfono')).not.toBeInTheDocument();
+  } else {
+    await screen.findByRole('heading', { name: 'Elige fecha y hora' });
+    expect(screen.getByText('Ese horario ya no está disponible. Elige otra hora.')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Continuar con tus datos' })).toBeDisabled();
+  }
+  expect(api.post).toHaveBeenCalledTimes(1);
+  expect(document.body.textContent).not.toContain('detalle privado');
 });
 it('timeout/5xx terminal no ofrece reenvío y solo permite regreso al negocio', async () => {
   vi.mocked(api.post).mockRejectedValueOnce(new ApiError(503, 'timeout'));
@@ -141,7 +156,7 @@ it('revisión y éxito usan la zona del negocio y reenvían el mismo instante, i
     : path.includes('availability?') ? { date: '2026-10-05', serviceId: 'cut', slots: [{ ...slot, startTime: instant }] }
       : { ...data, minimumBookingDate: '2026-10-05', timeZone: 'Asia/Tokyo' });
   vi.mocked(api.post).mockResolvedValue({ ...result, booking: { ...result.booking, startTime: instant, endTime: '2026-10-05T01:30:00.000Z' } });
-  mount(); await reachContact(true, instant); fillContact(); await review();
+  mount(); await reachContact(true); fillContact(); await review();
   expect(screen.getByText('Hoy, 10:00 a. m.')).toHaveAttribute('datetime', instant);
   fireEvent.click(screen.getByRole('button', { name: 'Registrar reserva' }));
   await screen.findByText('Tu reserva quedó registrada');
@@ -170,11 +185,10 @@ it('un candidato que falta en el catálogo exige revisar profesional antes de av
     : path.includes('availability?') ? { date: '2026-10-05', serviceId: 'cut', slots: [{ ...slot, professionalId: 'nuevo' }] } : data);
   mount(); fireEvent.click(await screen.findByRole('button', { name: /Corte QA/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Elegir profesional' }));
-  fireEvent.click(screen.getByRole('button', { name: /Cualquiera disponible/ }));
+  fireEvent.click(screen.getByRole('button', { name: /Sin preferencia/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Ver fechas y horas' }));
   fireEvent.click(await screen.findByRole('button', { name: '5 de octubre de 2026' }));
-  await waitFor(() => expect(screen.getByLabelText('Hora')).toBeEnabled());
-  fireEvent.change(screen.getByLabelText('Hora'), { target: { value: startTime } });
+  fireEvent.click(await screen.findByRole('button', { name: '10:00 a. m.' }));
   expect(screen.getByRole('heading', { name: 'Elige un profesional' })).toBeVisible();
   expect(screen.getByText('Las opciones cambiaron. Vuelve a elegir profesional.')).toBeVisible();
   expect(api.post).not.toHaveBeenCalled();

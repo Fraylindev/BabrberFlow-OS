@@ -27,8 +27,7 @@ async function contact() {
   fireEvent.click(await screen.findByRole('button', { name: /Corte QA/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Elegir profesional' }));
   fireEvent.click(await screen.findByRole('button', { name: '5 de octubre de 2026' }));
-  await waitFor(() => expect(screen.getByLabelText('Hora')).toBeEnabled());
-  fireEvent.change(screen.getByLabelText('Hora'), { target: { value: '2026-10-05T14:00:00.000Z' } });
+  fireEvent.click(await screen.findByRole('button', { name: '10:00 a. m.' }));
   fireEvent.click(screen.getByRole('button', { name: 'Continuar con tus datos' }));
   fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Visitante QA' } });
   fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '8095550141' } });

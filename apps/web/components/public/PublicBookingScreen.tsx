@@ -20,6 +20,7 @@ import { ContactStep } from '@/app/[slug]/_components/ContactStep';
 import { ConfirmStep } from '@/app/[slug]/_components/ConfirmStep';
 import { SuccessView } from '@/app/[slug]/_components/SuccessView';
 import './booking.css';
+import { EMPTY_PHONE, type PhoneDraft } from '@/lib/public-phone';
 
 const STEPS = ['service', 'professional', 'datetime', 'contact', 'confirm'] as const;
 type Step = typeof STEPS[number];
@@ -50,6 +51,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
   const [date, setDate] = useState('');
   const [slot, setSlot] = useState<PublicAvailabilitySlot | null>(null);
   const [contact, setContact] = useState(emptyContact);
+  const [phone, setPhone] = useState<PhoneDraft>(EMPTY_PHONE);
   const [result, setResult] = useState<PublicBookingResult | null>(null);
   const [retired, setRetired] = useState(false);
   const [uncertain, setUncertain] = useState(false);
@@ -61,7 +63,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
   const locked = useRef(false);
   const returnHref = `/${encodeURIComponent(slug)}`;
   const unavailable = retired || [query.error, mediaQuery.error].some(error => error instanceof ApiError && error.status === 404);
-  const retire = useCallback(() => { setRetired(true); setContact(emptyContact); setSlot(null); }, []);
+  const retire = useCallback(() => { setRetired(true); setContact(emptyContact); setPhone(EMPTY_PHONE); setSlot(null); }, []);
   const clearSlot = useCallback(() => setSlot(null), []);
   const changeDate = useCallback((next: string) => { setDate(next); setSlot(null); }, []);
 
@@ -165,7 +167,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
         createAccount: contact.createAccount, ...(contact.createAccount ? { password: contact.password } : {}),
       });
       if (!live.current) return;
-      setResult(response); setContact(emptyContact); createBooking.reset();
+      setResult(response); setContact(emptyContact); setPhone(EMPTY_PHONE); createBooking.reset();
     } catch (error) {
       if (!live.current) return;
       const failure = bookingFailure(error);
@@ -175,7 +177,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
         setMessage(failure.message);
         if (failure.kind === 'contact') setStep('contact');
         if (failure.kind === 'slot') { setSlot(null); setStep('datetime'); }
-        if (failure.kind === 'uncertain') { setUncertain(true); setContact(emptyContact); }
+        if (failure.kind === 'uncertain') { setUncertain(true); setContact(emptyContact); setPhone(EMPTY_PHONE); }
       }
       if (error instanceof ApiError && error.status === 429) {
         setRetryUntil(Date.now() + Math.max(1, error.retryAfterSeconds ?? 60) * 1000); setClock(Date.now());
@@ -194,9 +196,9 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
   const updateContact = <K extends keyof ContactDraft>(key: K, value: ContactDraft[K]) => setContact(old => ({ ...old, [key]: value }));
   const remaining = Math.max(0, Math.ceil((retryUntil - clock) / 1000));
 
-  return <main className="booking-flow mx-auto max-w-[640px] px-1 pt-6 sm:px-6 sm:pt-10">
-    <Link href={returnHref} className="mx-3 inline-flex items-center text-sm text-[var(--color-muted)]">← Volver a la página del negocio</Link>
-    <header className="px-3 py-6"><p className="text-sm text-[var(--color-muted)]">Reserva en línea</p><h1 id={unavailable ? 'booking-unavailable-title' : undefined} tabIndex={unavailable ? -1 : undefined} className="mt-2 font-[family-name:var(--font-display)] text-3xl">{unavailable ? 'Esta página no está disponible' : data?.organization.name ?? 'Reserva tu cita'}</h1></header>
+  return <main className="booking-flow mx-auto max-w-[640px] px-4 pt-3 sm:px-6 sm:pt-6">
+    {!result && <Link href={returnHref} className="inline-flex items-center text-sm text-[var(--color-muted)]">← Volver al negocio</Link>}
+    <header className="pb-5 pt-2"><h1 id={unavailable ? 'booking-unavailable-title' : undefined} tabIndex={unavailable ? -1 : undefined} className="font-[family-name:var(--font-display)] text-2xl">{unavailable ? 'Esta página no está disponible' : data?.organization.name ?? 'Reserva tu cita'}</h1></header>
     {unavailable ? <div className="px-3"><p>{result ? 'Tu reserva quedó registrada. La página del negocio ya no está disponible; esto no cancela tu reserva.' : 'Revisa el enlace o comunícate directamente con el negocio.'}</p></div>
       : query.isLoading ? <div role="status" aria-busy="true" className="min-h-64 space-y-4 px-3"><p>Cargando opciones…</p><div aria-hidden="true" className="space-y-3">{[1, 2, 3].map(item => <div key={item} className="h-14 border border-[var(--color-border)] bg-[var(--color-surface)]" />)}</div></div>
       : !data ? <div className="space-y-3 px-3" role="alert"><p>No pudimos cargar esta página. Revisa tu conexión e inténtalo de nuevo.</p>{dataWait > 0 && <p>Puedes volver a consultar en {dataWait} segundos.</p>}<Button disabled={query.isFetching || dataWait > 0} onClick={() => void query.refetch()}>Reintentar</Button></div>
@@ -206,7 +208,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
         serviceName={service?.name} professionalName={professional?.name} timeZone={data.timeZone} servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} /></div>
       : !data.services.length || !data.professionals.length ? <p role="status" className="px-3">{!data.services.length ? 'Este negocio no tiene servicios disponibles para reservar en línea.' : 'No hay profesionales disponibles por ahora.'}</p>
       : <>
-        <nav aria-label="Progreso de la reserva" className="px-3 pb-5"><p className="text-sm">Paso {STEPS.indexOf(step) + 1} de 5 · {LABELS[STEPS.indexOf(step)]}</p>
+        <nav aria-label="Progreso de la reserva" className="pb-4"><p className="text-sm text-[var(--color-muted)]">Paso {STEPS.indexOf(step) + 1} de 5 · {LABELS[STEPS.indexOf(step)]}</p>
           <ol className="mt-3 flex gap-2" aria-label="Pasos">{STEPS.map((item, index) => <li key={item} aria-current={item === step ? 'step' : undefined} className={`h-1 flex-1 ${index <= STEPS.indexOf(step) ? 'bg-[var(--color-brass)]' : 'bg-[var(--color-border)]'}`}><span className="sr-only">{LABELS[index]}</span></li>)}</ol>
           {data.professionals.length === 1 && professionalId && <p className="mt-2 text-sm text-[var(--color-muted)]">Profesional seleccionado: {data.professionals[0].name}</p>}
         </nav>
@@ -224,12 +226,12 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
               } else setSlot(selected);
             }}
             onClearSlot={clearSlot} onUnavailable={retire} professionalName={professional?.name} onBack={() => setStep(data.professionals.length === 1 ? 'service' : 'professional')} onNext={() => setStep('contact')} />}
-          {step === 'contact' && <ContactStep {...contact} onNameChange={value => updateContact('clientName', value)} onPhoneChange={value => updateContact('clientPhone', value)}
+          {step === 'contact' && <ContactStep {...contact} phone={phone} onPhoneDraftChange={setPhone} onNameChange={value => updateContact('clientName', value)} onPhoneChange={value => updateContact('clientPhone', value)}
             onEmailChange={value => setContact(old => ({ ...old, clientEmail: value, emailOptedIn: false }))} onEmailOptInChange={value => updateContact('emailOptedIn', value)}
             onAccountChange={value => setContact(old => ({ ...old, createAccount: value, password: value ? old.password : '' }))} onPasswordChange={value => updateContact('password', value)}
             onBack={() => setStep('datetime')} onNext={() => { setMessage(null); setStep(slot ? 'confirm' : 'datetime'); }} />}
           {step === 'confirm' && slot && <ConfirmStep {...contact} serviceName={service?.name} professionalName={professional?.name} startTime={slot.startTime} timeZone={data.timeZone}
-            servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} duration={service?.duration} price={service?.price} submitError={null}
+            servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} duration={service?.duration} price={service?.price} address={data.organization.address} submitError={null}
             submitting={busy} waiting={remaining > 0} onBack={() => setStep('contact')} onEdit={setStep} onConfirm={() => void register()} />}
           {remaining > 0 && <p role="status" className="mt-3">Puedes continuar en {remaining} segundos.</p>}
         </div>

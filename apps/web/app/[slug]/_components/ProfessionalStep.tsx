@@ -26,21 +26,21 @@ export function ProfessionalStep({
 }: ProfessionalStepProps) {
   return (
     <StepWrapper title="Elige un profesional">
-      <div className="flex flex-col gap-2">
+      <div className="booking-options">
         <OptionButton
           selected={professionalId === ANY_PROFESSIONAL}
           onClick={() => onSelect(ANY_PROFESSIONAL)}
-          title="Cualquiera disponible"
-          subtitle="Te mostraremos horarios con un profesional disponible. Verás quién te atenderá antes de registrar la reserva."
+          title="Sin preferencia"
+          subtitle="Verás quién te atenderá antes de registrar."
         />
         {professionals.map((p) => (
-          <OptionButton
+          <div key={p.id} className="booking-option-row"><OptionButton
             key={p.id}
             selected={professionalId === p.id}
             onClick={() => onSelect(p.id)}
             title={p.name}
-            subtitle={p.bio || undefined}
           ><BookingPhoto kind="professional" image={media?.professionals.find(item => item.professionalId === p.id)?.avatar} /></OptionButton>
+          {p.bio && <details className="booking-option-details"><summary aria-label={`Ver detalles de ${p.name}`}>Ver detalles</summary><p>{p.bio}</p></details>}</div>
         ))}
       </div>
       <NavButtons onBack={onBack} onNext={onNext} nextDisabled={professionalId === null} nextLabel="Ver fechas y horas" />

@@ -33,27 +33,23 @@ export function SuccessView({ result, organizationPhone, serviceName, profession
   }
   return <div className="space-y-6">
     <div>
-      <p className="mb-3 text-sm text-[var(--color-muted)]">Solicitud registrada</p>
       <h2 id="booking-success-title" tabIndex={-1} className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-paper)]">Tu reserva quedó registrada</h2>
-      <p role="status" className="mt-4 inline-flex border border-[var(--color-pending)] bg-[var(--color-pending-bg)] px-3 py-2 text-sm text-[var(--color-pending)]">{pending ? 'Pendiente de confirmación' : 'Consulta el estado con el negocio'}</p>
+      <p role="status" className="mt-3 text-sm text-[var(--color-pending)]">{pending ? 'Pendiente de confirmación' : 'Consulta el estado con el negocio'}</p>
     </div>
-    <div className="space-y-4 border border-[var(--color-border)] p-4">
+    <div className="booking-summary space-y-4">
       <BusinessTime value={result.booking.startTime} zone={timeZone} className="block text-xl font-medium" />
       <div className="flex items-center gap-3"><BookingPhoto compact image={servicePhoto} /><div><p>{serviceName || 'Servicio seleccionado'}</p><p className="text-sm text-[var(--color-muted)]">{Math.round((Date.parse(result.booking.endTime) - Date.parse(result.booking.startTime)) / 60000)} min</p></div></div>
       <div className="flex items-center gap-3"><BookingPhoto compact kind="professional" image={professionalPhoto} /><p>{professionalName ? `Te atenderá ${professionalName}` : 'Profesional seleccionado'}</p></div>
-      {organizationName && <p>{organizationName}</p>}{address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
+      {organizationName && <span className="sr-only">{organizationName}</span>}{address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
       {safeMaps && <a href={safeMaps} target="_blank" rel="noopener noreferrer" className="inline-flex items-center underline">Cómo llegar (se abre en una pestaña nueva)</a>}
     </div>
-    <div><h3 className="mb-2 text-lg font-medium">Qué sigue</h3><p className="text-sm leading-6 text-[var(--color-muted)]">{organizationPhone
-      ? 'El negocio debe confirmar tu cita. Si necesitas consultar su estado, comunícate con el negocio.'
-      : 'La cita sigue pendiente de confirmación. Puedes volver a la página del negocio.'}</p></div>
     {result.accountCreated && <p className="text-sm leading-6">Se creó la cuenta de prueba. El acceso a tus reservas todavía no está disponible.</p>}
     {!result.accountCreated && result.accountCreationError && <p className="text-sm leading-6">Tu reserva quedó registrada. La cuenta no se creó; no necesitas repetir la reserva.</p>}
     {returnHref && <div className="space-y-3">
-      <Link href={returnHref} className="inline-flex min-h-12 items-center justify-center border border-[var(--color-muted)] px-4">Volver a la página del negocio</Link>
-      {calendarAvailable && <div><Button type="button" variant="secondary" onClick={downloadCalendar}>Agregar al calendario</Button>
-        <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">Guarda la cita como pendiente. El calendario no se actualiza automáticamente si el negocio cambia la reserva.</p></div>}
-      <p className="text-sm leading-6 text-[var(--color-muted)]">Este resumen está disponible durante esta visita. Si recargas o sales, comunícate con el negocio para consultar la reserva.</p>
+      {calendarAvailable && <Button type="button" className="booking-primary calendar-action" onClick={downloadCalendar}>
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4M17 3v4M3 11h18M9 16h6M12 13v6" /></svg>Agregar al calendario</Button>}
+      <Link href={returnHref} className="booking-return-link">← Volver al negocio</Link>
+      <p className="text-sm leading-6 text-[var(--color-muted)]">Guarda este resumen. Para consultar o cambiar tu cita, contacta al negocio.</p>
     </div>}
     {link && <div className="border-t border-[var(--color-border)] pt-5">
       <p id={explanationId} className="text-sm leading-6 text-[var(--color-muted)]">{WHATSAPP_EXPLANATION}</p>
