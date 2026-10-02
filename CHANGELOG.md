@@ -4,7 +4,7 @@
 
 - Títulos sin contorno de foco visual; iniciales estables al faltar/fallar foto; filtros de hora sólidos con indicador y fechas en minúscula. Carrusel semanal nativo con precarga adyacente, flechas y conservación de fecha/hora.
 - Duración, monto y teléfono legibles; revisión en una columna, éxito con marca animada y pendiente visible; ojo accesible dentro de PasswordField y mínimo único.
-- Tipos/lint/build y 281 pruebas pasan; QA real local en cuatro anchos con 28 mediciones sin overflow y una PENDING sintética. [Evidencia y publicación](docs/quality/RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md). Publicación web QA autorizada, en preparación; pruebas físicas y aprobación final pendientes. Sin cambios backend/contratos/dependencias ni producción.
+- Tipos/lint/build y 281 pruebas pasan; QA local en cuatro anchos con 28 mediciones y una PENDING sintética. Código `843996e` publicado a `origin/ai/antigravity-qa`, web QA READY y cuatro mediciones desplegadas sin overflow ni POST. [Hashes y evidencia](docs/quality/RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md). Backend/producción/configuración/protección intactos; timestamp del backup diario auditado como ejecución programada independiente. Pruebas físicas y aprobación final pendientes; M1 en revisión.
 
 ## 2026-10-01 — UX ligera publicada y desplegada solo web QA
 

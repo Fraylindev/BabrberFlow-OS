@@ -1,6 +1,6 @@
 # Reserva pública más ligera — implementación y evidencia
 
-Actualización posterior 2026-10-02: el [correctivo de UX M1](RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md) reemplaza la presentación de foco/fotos/filtros, navegación semanal, formatos, revisión/éxito y contraseña. Está implementado/en revisión, con commit/push y despliegue solo web QA autorizados. Este informe conserva la evidencia histórica; M1 continúa sin cierre y con QA física pendiente.
+Actualización posterior 2026-10-02: el [correctivo de UX M1](RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md) reemplaza la presentación de foco/fotos/filtros, navegación semanal, formatos, revisión/éxito y contraseña. Está publicado y desplegado solo web QA en `843996e`, en revisión. Este informe conserva la evidencia histórica; M1 continúa sin cierre y con QA física pendiente.
 
 Fecha: 2026-10-01, America/Santo_Domingo. Estado: **DISEÑO APROBADO PARA PUBLICACIÓN QA / EN REVISIÓN; M1 SIN CIERRE, QA FÍSICA PENDIENTE**.
 

@@ -1,0 +1,14 @@
+{
+  "timestampUtc": "2026-10-02T05:20:06.411662+00:00",
+  "release": "843996e374876c6869cbc398b3e3d6cbe43cc488",
+  "deployment": "dpl_A3RMoL5uUGTJnDGFWFhvdVoD8U4d",
+  "url": "https://qa.booking.kortek.cloud",
+  "ready": true,
+  "source": "Build Preview generado por integración Git del push autorizado; alias verificado/reasociado después de comprobar API C1",
+  "apiDeployed": false,
+  "flagsModified": false,
+  "variablesModified": false,
+  "protectionModified": false,
+  "productionUnchanged": true,
+  "apiPrerequisitePassed": true
+}
