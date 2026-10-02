@@ -3,7 +3,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, FormEvent, type ReactNode } from 'react';
 import { BusinessTime } from '@/components/ui/BusinessTime';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { canReadBookingEmails, EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
 import { EmailConsent } from '@/components/notifications/EmailConsent';
 import {
@@ -28,7 +27,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { SelectField } from '@/components/ui/Field';
 import { BusinessDateTimeField } from '@/components/booking/BusinessDateTimeField';
-import { businessDayRange, businessWeek, businessLocalToIso, businessLocalInput } from '@/lib/business-time';
+import { businessDayRange, businessLocalToIso, businessLocalInput } from '@/lib/business-time';
 import { scheduleError } from '@/lib/business-schedule';
 import { bookingStatusError } from '@/lib/booking-status-error';
 import { ErrorText } from '@/components/ui/ErrorText';
@@ -40,6 +39,7 @@ import { invoiceErrorMessage, invoiceScopeKey } from '@/lib/invoice-ui';
 import { useCreateInvoice, useOrganizationTimeZoneQuery } from '@/lib/queries/invoices';
 import { ClientAutocomplete } from '@/components/booking/ClientAutocomplete';
 import { BookingActions } from '@/components/booking/BookingActions';
+import { BookingName } from '@/components/booking/BookingName';
 import { isTransientQueryError } from '@/lib/query-recovery';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -87,13 +87,15 @@ function BookingFormSection({
 }
 
 // ─── Etiquetas de filtro de estado ───────────────────────────────────────────
-const STATUS_LABELS: Record<BookingStatus | 'ALL', string> = {
-  ALL: 'Todas',
+type StatusFilter = BookingStatus | 'ALL' | 'TO_ATTEND';
+const STATUS_LABELS: Record<StatusFilter, string> = {
+  TO_ATTEND: 'Por atender',
   PENDING: 'Pendientes',
   CONFIRMED: 'Confirmadas',
   COMPLETED: 'Completadas',
   CANCELLED: 'Canceladas',
   NO_SHOW: 'No asistió',
+  ALL: 'Todas',
 };
 
 // ─── Página principal ─────────────────────────────────────────────────────────
@@ -118,7 +120,6 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
   }, [scopeKey]);
 
   // ── Filtros ──────────────────────────────────────────────────────────────
-  const defaults = businessWeek(new Date(), timeZone);
   const [visitId] = useState(() => crypto.randomUUID());
   const activeVisit = useRef({ active: false });
   useLayoutEffect(() => {
@@ -126,17 +127,17 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
     activeVisit.current = current;
     return () => { current.active = false; };
   }, []);
-  const [fromDate, setFromDate] = useState(defaults.from);
-  const [toDate, setToDate] = useState(defaults.to);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const fromRange = fromDate ? businessDayRange(fromDate, timeZone) : null;
   const toRange = toDate ? businessDayRange(toDate, timeZone) : null;
   const rangeError = Boolean((fromDate && !fromRange) || (toDate && !toRange) || (fromDate && toDate && fromDate > toDate));
-  const [statusFilter, setStatusFilter] = useState<BookingStatus | 'ALL'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('TO_ATTEND');
 
   const filters: BookingFilters = {
     from: fromRange?.start,
     to: toRange?.end,
-    status: statusFilter !== 'ALL' ? statusFilter : undefined,
+    status: statusFilter !== 'ALL' && statusFilter !== 'TO_ATTEND' ? statusFilter : undefined,
   };
 
   // ── Datos ────────────────────────────────────────────────────────────────
@@ -196,18 +197,18 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
   const [rescheduleTarget, setRescheduleTarget] = useState<Booking | null>(null);
 
   // ── Agenda ordenada cronológicamente dentro del rango ────────────────────
-  const sorted = items ? [...items].sort((a, b) => a.startTime.localeCompare(b.startTime)) : [];
+  // Proyección local del contrato vigente; las alternativas de consulta D siguen pendientes.
+  const sorted = items ? items.filter(item => statusFilter !== 'TO_ATTEND' || item.status === 'PENDING' || item.status === 'CONFIRMED')
+    .sort((a, b) => a.startTime.localeCompare(b.startTime)) : [];
 
   // ── ¿Hay filtros activos distintos a los por defecto? ────────────────────
   const hasActiveFilters =
-    statusFilter !== 'ALL' ||
-    fromDate !== defaults.from ||
-    toDate !== defaults.to;
+    statusFilter !== 'TO_ATTEND' || Boolean(fromDate || toDate);
 
   function clearFilters() {
-    setFromDate(defaults.from);
-    setToDate(defaults.to);
-    setStatusFilter('ALL');
+    setFromDate('');
+    setToDate('');
+    setStatusFilter('TO_ATTEND');
   }
 
   return (
@@ -285,10 +286,10 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
             <select
               id="filter-status"
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as BookingStatus | 'ALL')}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
               className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             >
-              {(Object.keys(STATUS_LABELS) as (BookingStatus | 'ALL')[]).map((s) => (
+              {(Object.keys(STATUS_LABELS) as StatusFilter[]).map((s) => (
                 <option key={s} value={s}>
                   {STATUS_LABELS[s]}
                 </option>
@@ -327,11 +328,11 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
       {!isLoading && !isError && sorted.length === 0 && (
         <EmptyState
           tone="light"
-          title="Sin reservas en este rango"
+          title={hasActiveFilters ? 'Sin reservas con estos filtros' : 'No hay reservas por atender'}
           description={
             hasActiveFilters
-              ? 'Prueba restableciendo las fechas o el estado del filtro.'
-              : 'Crea una reserva o consulta otro rango de fechas.'
+              ? 'Limpia los filtros para ver las reservas por atender.'
+              : 'Aquí verás las reservas pendientes y confirmadas.'
           }
           action={
             hasActiveFilters ? (
@@ -437,18 +438,19 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
           <div className="hidden lg:block">
             <table className="w-full table-fixed border-collapse text-sm">
               <colgroup>
-                <col className="w-[18%]" />
-                <col className="w-[18%]" />
-                <col className="w-[14%]" />
-                <col className="w-[15%]" />
-                <col className="w-[15%]" />
                 <col className="w-[20%]" />
+                <col className="w-[14%]" />
+                <col className="w-[13%]" />
+                <col className="w-[12%]" />
+                <col className="w-[16%]" />
+                <col className="w-[25%]" />
               </colgroup>
               <thead className="border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)]">
                 <tr>
                   {['Fecha / hora', 'Cliente', 'Profesional', 'Servicio', 'Estado', 'Acciones'].map(
                     (h) => (
                       <th
+                        scope="col"
                         key={h}
                         className="px-3 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-[var(--dash-text-muted)] xl:px-4"
                       >
@@ -466,29 +468,18 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                   >
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
                       <p
-                        className="truncate font-medium text-[var(--dash-text)]"
+                        className="font-medium text-[var(--dash-text)]"
                       >
                         <BusinessTime value={b.startTime} zone={timeZone} />
                       </p>
-                      <p className="truncate text-xs text-[var(--dash-text-muted)]">
+                      <p className="text-xs text-[var(--dash-text-muted)]">
                         hasta <BusinessTime value={b.endTime} zone={timeZone} />
                       </p>
                     </td>
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <span
-                          aria-hidden="true"
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--dash-accent-soft)] text-[10px] font-bold text-[var(--dash-accent)]"
-                        >
-                          {getInitials(b.client?.name)}
-                        </span>
-                        <div className="min-w-0">
-                          <p
-                            title={b.client?.name}
-                            className="truncate font-medium text-[var(--dash-text)]"
-                          >
-                            {b.client?.name ?? '—'}
-                          </p>
+                        <div className="min-w-0 w-full font-medium">
+                          <BookingName name={b.client?.name} />
                           {b.client?.phone && (
                             <p className="truncate text-xs text-[var(--dash-text-muted)]">
                               {b.client.phone}
@@ -498,14 +489,10 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                       </div>
                     </td>
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
-                      <p title={b.professional?.name} className="truncate text-[var(--dash-text)]">
-                        {b.professional?.name ?? '—'}
-                      </p>
+                      <BookingName name={b.professional?.name} />
                     </td>
                     <td className="overflow-hidden px-3 py-3 xl:px-4">
-                      <p title={b.service?.name} className="truncate text-[var(--dash-text)]">
-                        {b.service?.name ?? '—'}
-                      </p>
+                      <BookingName name={b.service?.name} />
                       {b.service?.duration && (
                         <p className="text-xs text-[var(--dash-text-muted)]">
                           {b.service.duration} min
@@ -514,6 +501,9 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                     </td>
                     <td className="overflow-hidden px-2 py-3 xl:px-4">
                       <Badge status={b.status} tone="light" />
+                      {b.invoice && <p className="mt-1 text-xs text-[var(--dash-text-muted)]">
+                        {b.invoice.state === 'PAID' ? 'Factura pagada' : 'Pendiente de cobro'}
+                      </p>}
                     </td>
                     <td className="px-2 py-3 xl:px-4">
                       <BookingActions
@@ -526,8 +516,8 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                         onReschedule={() => setRescheduleTarget(b)}
                         onIssueInvoice={() => handleIssueInvoice(b.id)}
                         onViewInvoices={() => router.push('/dashboard/invoices')}
+                        onNotifications={canReadBookingEmails(user?.role) ? () => router.push(`/dashboard/bookings/${b.id}/notifications`) : undefined}
                       />
-                      {canReadBookingEmails(user?.role) && <Link href={`/dashboard/bookings/${b.id}/notifications`} className="mt-2 inline-block text-xs underline focus-visible:outline-2">Avisos por correo</Link>}
                     </td>
                   </tr>
                 ))}
@@ -538,7 +528,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
           {/* Contador de resultados */}
           <div className="border-t border-[var(--dash-border)] px-4 py-2.5">
             <p className="text-xs text-[var(--dash-text-muted)]">
-              {sorted.length} reserva{sorted.length !== 1 ? 's' : ''} en el rango seleccionado
+              {sorted.length} reserva{sorted.length !== 1 ? 's' : ''}{fromDate || toDate ? ' en el rango seleccionado' : ''}
             </p>
           </div>
         </div>

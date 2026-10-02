@@ -90,7 +90,7 @@ it('revisión usa duración legible, moneda, teléfono y Editar contextual sin e
   const edit = vi.fn();
   render(<ConfirmStep serviceName="Servicio QA" professionalName="Alex QA" startTime="2026-10-03T14:00:00Z" timeZone="America/Santo_Domingo" duration={90} price="500"
     clientName="QA" clientPhone="+18097297589" clientEmail="qa@example.test" submitting={false} submitError={null} onBack={vi.fn()} onConfirm={vi.fn()} onEdit={edit} />);
-  expect(screen.getByText('1 h 30 min')).toBeVisible();
+  expect(screen.getByText(/1 h 30 min · RD\$/)).toBeVisible();
   expect(screen.getByText('+1 809-729-7589')).toBeVisible();
   expect(screen.queryByText(/catálogo/)).toBeNull();
   fireEvent.click(screen.getByRole('button', { name: 'Editar datos' }));

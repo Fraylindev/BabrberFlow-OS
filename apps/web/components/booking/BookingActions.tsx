@@ -122,8 +122,11 @@ function ContextActionsMenu({
 
   useEffect(() => {
     if (!open || !position) return;
-
-    menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus({ preventScroll: true });
+    // Terminar la activación nativa de Enter antes de mover el foco al portal.
+    const frame = requestAnimationFrame(() => {
+      menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [open, position]);
 
   useEffect(() => {
@@ -220,6 +223,7 @@ function ContextActionsMenu({
               top: position?.top ?? 0,
               left: position?.left ?? 0,
               visibility: position ? 'visible' : 'hidden',
+              transition: 'none',
               backgroundColor: 'var(--dash-surface, #ffffff)',
               borderColor: 'var(--dash-border-strong, #d4d4d8)',
               boxShadow:
@@ -283,12 +287,14 @@ export function BookingActions({
       danger: action.to === 'CANCELLED',
       onSelect: () => onStatusChange(action.to),
     })),
+    ...(layout === 'table' && showFinancialState && !canIssueInvoice
+      ? [{ label: 'Ver facturación', onSelect: onViewInvoices }] : []),
     ...(onNotifications ? [{ label: 'Avisos por correo', onSelect: onNotifications }] : []),
   ];
 
   return (
     <div className={layout === 'mobile' ? 'flex flex-wrap items-center gap-2' : 'flex items-center gap-1.5 whitespace-nowrap'}>
-      {booking.invoice && (
+      {layout === 'mobile' && booking.invoice && (
         <span className="text-xs font-medium text-[var(--dash-text-muted)]">
           {booking.invoice.state === 'PAID' ? 'Factura pagada' : 'Pendiente de cobro'}
         </span>
@@ -316,7 +322,7 @@ export function BookingActions({
           {isIssuing ? 'Emitiendo…' : 'Emitir factura'}
         </Button>
       )}
-      {showFinancialState && !canIssueInvoice && (
+      {layout === 'mobile' && showFinancialState && !canIssueInvoice && (
         <Button type="button" tone="light" variant="secondary" disabled={isBusy} onClick={onViewInvoices}
           className={layout === 'mobile' ? 'min-h-11 flex-1 px-3 py-2 text-sm' : 'min-h-9 px-3 py-1.5 text-xs'}>
           Ver facturación

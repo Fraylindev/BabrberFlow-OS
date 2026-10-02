@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useId } from 'react';
 import { Button } from '@/components/ui/Button';
 import { BusinessTime } from '@/components/ui/BusinessTime';
 import { BookingPhoto } from '@/components/public/BookingPhoto';
@@ -9,9 +8,8 @@ import { bookingCalendar } from '@/lib/public-booking-ui';
 import { isCmsMapsUrl } from '@/lib/cms-ui';
 import type { PublicMediaImage } from '@/lib/media-ui';
 import type { PublicBookingResult } from '@/lib/api';
-import { bookingWhatsAppLink, WHATSAPP_EXPLANATION } from '@/lib/whatsapp-link';
+import { bookingWhatsAppLink } from '@/lib/whatsapp-link';
 import { formatServiceDuration } from '@/lib/service-ui';
-import { formatPublicPhone } from '@/lib/public-phone';
 import { formatMoney } from './shared';
 
 export function SuccessView({ result, organizationPhone, serviceName, professionalName, timeZone,
@@ -23,7 +21,6 @@ export function SuccessView({ result, organizationPhone, serviceName, profession
   price?: string | number;
 }) {
   const link = bookingWhatsAppLink(organizationPhone);
-  const explanationId = useId();
   const pending = result.booking.status === 'PENDING';
   const calendarAvailable = pending && Date.parse(result.booking.endTime) > Date.parse(result.booking.startTime);
   const safeMaps = mapsUrl && isCmsMapsUrl(mapsUrl) ? mapsUrl : null;
@@ -43,24 +40,29 @@ export function SuccessView({ result, organizationPhone, serviceName, profession
     </div>
     <div className="booking-summary space-y-4">
       <div className="booking-summary-date"><BusinessTime value={result.booking.startTime} zone={timeZone} className="block text-2xl font-medium" /></div>
-      <div className="booking-summary-row"><BookingPhoto compact name={serviceName} image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p><p className="text-sm text-[var(--color-muted)]">{formatServiceDuration(Math.round((Date.parse(result.booking.endTime) - Date.parse(result.booking.startTime)) / 60000))}</p></div>{price !== undefined && <p className="booking-summary-price">{formatMoney(price)}</p>}</div>
+      <div className="booking-summary-row"><BookingPhoto compact name={serviceName} image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p><p className="booking-service-meta">{formatServiceDuration(Math.round((Date.parse(result.booking.endTime) - Date.parse(result.booking.startTime)) / 60000))}{price !== undefined ? ` · ${formatMoney(price)}` : ''}</p></div></div>
       <div className="booking-summary-row"><BookingPhoto compact kind="professional" name={professionalName || 'Profesional'} image={professionalPhoto} /><p className="min-w-0">{professionalName ? `Te atenderá ${professionalName}` : 'Profesional seleccionado'}</p></div>
-      {organizationName && <span className="sr-only">{organizationName}</span>}{address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
-      {safeMaps && <a href={safeMaps} target="_blank" rel="noopener noreferrer" className="inline-flex items-center underline">Cómo llegar (se abre en una pestaña nueva)</a>}
+      {organizationName && <span className="sr-only">{organizationName}</span>}
     </div>
     {result.accountCreated && <p className="text-sm leading-6">Se creó la cuenta de prueba. El acceso a tus reservas todavía no está disponible.</p>}
     {!result.accountCreated && result.accountCreationError && <p className="text-sm leading-6">Tu reserva quedó registrada. La cuenta no se creó; no necesitas repetir la reserva.</p>}
-    {returnHref && <div className="space-y-3">
+    <div className="space-y-4">
       {calendarAvailable && <Button type="button" className="booking-primary calendar-action" onClick={downloadCalendar}>
         <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4M17 3v4M3 11h18M9 16h6M12 13v6" /></svg>Agregar al calendario</Button>}
-      <Link href={returnHref} className="booking-return-link">← Volver al negocio</Link>
-      <p className="text-sm leading-6 text-[var(--color-muted)]">Guarda este resumen. Para consultar o cambiar tu cita, contacta al negocio.</p>
-    </div>}
-    {link && <div className="border-t border-[var(--color-border)] pt-5">
-      {organizationPhone && <p className="mb-2 text-sm">{formatPublicPhone(organizationPhone)}</p>}
-      <p id={explanationId} className="text-sm leading-6 text-[var(--color-muted)]">{WHATSAPP_EXPLANATION}</p>
-      <a href={link} target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp (se abre en una pestaña nueva)" aria-describedby={explanationId}
-        className="mt-3 inline-flex min-h-12 items-center justify-center border border-[var(--color-muted)] px-5 text-sm font-medium text-[var(--color-paper)]">Abrir WhatsApp</a>
-    </div>}
+      {link && <a href={link} target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp (se abre en una pestaña nueva)" className="booking-secondary-action">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.04 0C5.42 0 .03 5.39 .02 12.01a11.95 11.95 0 0 0 1.6 5.99L0 24l6.14-1.61a12.03 12.03 0 0 0 5.89 1.5h.01c6.61 0 12-5.39 12.01-12.01a11.93 11.93 0 0 0-3.53-8.4ZM12.04 21.87h-.01a9.97 9.97 0 0 1-5.08-1.39l-.36-.21-3.77.99 1.01-3.67-.24-.38a9.96 9.96 0 0 1-1.52-5.2c0-5.5 4.48-9.98 9.98-9.98a9.91 9.91 0 0 1 7.06 2.93 9.92 9.92 0 0 1 2.92 7.06c0 5.5-4.48 9.85-9.99 9.85Zm5.48-7.39c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.95 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.59-.48-.51-.67-.52h-.57c-.2 0-.53.08-.81.38-.28.3-1.07 1.05-1.07 2.55s1.1 2.95 1.25 3.15c.15.2 2.17 3.31 5.26 4.64.73.31 1.3.5 1.74.64.73.23 1.39.2 1.91.12.58-.09 1.77-.73 2.02-1.43.25-.7.25-1.3.18-1.43-.08-.12-.28-.2-.58-.35Z" /></svg>
+        Contactar por WhatsApp
+      </a>}
+      {(address || safeMaps) && <div className="space-y-3 pt-2">
+        {address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
+        {safeMaps && <a href={safeMaps} target="_blank" rel="noopener noreferrer" className="booking-secondary-action" aria-label="Cómo llegar (se abre en una pestaña nueva)">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3ZM9 3v15M15 6v15" /></svg>Cómo llegar
+        </a>}
+      </div>}
+      {returnHref && <>
+        <p className="text-sm leading-6 text-[var(--color-muted)]">Guarda este resumen. Para consultar o cambiar tu cita, contacta al negocio.</p>
+        <Link href={returnHref} className="booking-return-link">Listo</Link>
+      </>}
+    </div>
   </div>;
 }

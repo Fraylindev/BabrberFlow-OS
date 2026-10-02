@@ -20,8 +20,7 @@ export function ConfirmStep({ serviceName, professionalName, startTime, timeZone
     <div className="booking-summary">
       <section className="booking-summary-section booking-summary-date">{heading('datetime', 'Fecha y hora')}<BusinessTime value={startTime} zone={timeZone} className="block text-2xl font-medium" /></section>
       <section className="booking-summary-section">{heading('service', 'Servicio')}<div className="booking-summary-row"><BookingPhoto compact name={serviceName} image={servicePhoto} /><div className="min-w-0 flex-1"><p className="font-medium">{serviceName || 'Servicio seleccionado'}</p>
-        {duration && <p className="text-sm text-[var(--color-muted)]">{formatServiceDuration(duration)}</p>}</div>
-        {price !== undefined && <p className="booking-summary-price">{formatMoney(price)}</p>}</div></section>
+        <p className="booking-service-meta">{duration ? formatServiceDuration(duration) : null}{duration && price !== undefined ? ' · ' : ''}{price !== undefined ? formatMoney(price) : null}</p></div></div></section>
       <section className="booking-summary-section">{heading('professional', 'Profesional')}<div className="booking-summary-row"><BookingPhoto compact kind="professional" name={professionalName || 'Profesional'} image={professionalPhoto} /><p className="min-w-0">Te atenderá {professionalName || 'el profesional seleccionado'}</p></div></section>
       {address && <p className="text-sm text-[var(--color-muted)]">{address}</p>}
       <section className="booking-summary-section">{heading('contact', 'Tus datos')}<div className="space-y-1"><p className="font-medium">{clientName}</p><p>{formatPublicPhone(clientPhone)}</p>{clientEmail && <p>{clientEmail}</p>}</div></section>

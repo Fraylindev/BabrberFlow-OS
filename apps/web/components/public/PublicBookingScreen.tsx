@@ -196,7 +196,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
   const updateContact = <K extends keyof ContactDraft>(key: K, value: ContactDraft[K]) => setContact(old => ({ ...old, [key]: value }));
   const remaining = Math.max(0, Math.ceil((retryUntil - clock) / 1000));
 
-  return <main className="booking-flow mx-auto max-w-[640px] px-4 pt-3 sm:px-6 sm:pt-6">
+  return <main className={`booking-flow ${result || step === 'confirm' ? 'booking-summary-page' : ''} mx-auto max-w-[640px] px-4 pt-3 sm:px-6 sm:pt-6`}>
     {!result && <Link href={returnHref} className="inline-flex items-center text-sm text-[var(--color-muted)]">← Volver al negocio</Link>}
     <header className="pb-5 pt-2"><h1 id={unavailable ? 'booking-unavailable-title' : undefined} tabIndex={unavailable ? -1 : undefined} className="font-[family-name:var(--font-display)] text-2xl">{unavailable ? 'Esta página no está disponible' : data?.organization.name ?? 'Reserva tu cita'}</h1></header>
     {unavailable ? <div className="px-3"><p>{result ? 'Tu reserva quedó registrada. La página del negocio ya no está disponible; esto no cancela tu reserva.' : 'Revisa el enlace o comunícate directamente con el negocio.'}</p></div>

@@ -110,7 +110,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Topbar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
         <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">
-          <div className="mx-auto max-w-6xl">{children}</div>
+          <div className={`mx-auto ${pathname === '/dashboard/bookings' ? 'max-w-[1440px]' : 'max-w-6xl'}`}>{children}</div>
         </main>
       </div>
     </div>

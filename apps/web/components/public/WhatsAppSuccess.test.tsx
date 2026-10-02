@@ -22,11 +22,12 @@ describe("WhatsApp C2 SuccessView", () => {
     const { rerender } = render(<SuccessView {...props} />);
     expect(screen.getByRole("heading", { name: "Tu reserva quedó registrada" })).toBeVisible();
     expect(screen.getByRole("status")).toHaveTextContent("Pendiente de confirmación");
-    const link = screen.getByRole("link", { name: "Abrir WhatsApp (se abre en una pestaña nueva)" });
+    const link = screen.getByRole("link", { name: "Contactar por WhatsApp (se abre en una pestaña nueva)" });
     expect(screen.getAllByRole("link")).toHaveLength(1);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    expect(link).toHaveAccessibleDescription(WHATSAPP_EXPLANATION);
+    expect(screen.queryByText(WHATSAPP_EXPLANATION)).not.toBeInTheDocument();
+    expect(screen.queryByText(/555-1234/)).not.toBeInTheDocument();
     expect(link.querySelector("button, a, input, [role=button]")).toBeNull();
     expect(link.parentElement?.closest("button, a, [role=button]")).toBeNull();
     const url = new URL(link.getAttribute("href")!);

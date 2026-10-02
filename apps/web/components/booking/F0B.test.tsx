@@ -16,6 +16,20 @@ function actions(overrides: Partial<Parameters<typeof BookingActions>[0]> = {}) 
 }
 
 describe('F0-B: acciones móviles y factura autoritativa', () => {
+  it.each(['ISSUED', 'PAID'] as const)('en escritorio la factura %s se consulta desde el menú sin repetir emisión', async state => {
+    const props = actions({ layout: 'table', booking: { ...booking, status: 'COMPLETED', invoice: { id: invoice.id, state } }, onNotifications: vi.fn() });
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.queryByText(/Factura pagada|Pendiente de cobro/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Más acciones de la reserva' }));
+    await waitFor(() => expect(screen.getByRole('menuitem', { name: 'Ver facturación' })).toHaveFocus());
+    fireEvent.keyDown(screen.getByRole('menu'), { key: 'End' });
+    expect(screen.getByRole('menuitem', { name: 'Avisos por correo' })).toHaveFocus();
+    fireEvent.keyDown(screen.getByRole('menu'), { key: 'Home' });
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Ver facturación' }));
+    expect(props.onViewInvoices).toHaveBeenCalledOnce();
+    expect(props.onIssueInvoice).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Más acciones de la reserva' })).toHaveFocus());
+  });
   it('deja solo Confirmar y Más acciones; reprogramación y cancelación permanecen accesibles', async () => {
     const props = actions();
     expect(screen.getAllByRole('button')).toHaveLength(2);
