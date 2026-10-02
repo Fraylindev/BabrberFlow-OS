@@ -1,0 +1,118 @@
+{
+  "commit": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "scope": "solo evidencia M1 C2 de este commit",
+  "files": [
+    {
+      "archivo": "docs/quality/evidence/m1-c2/accesibilidad.json",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "df9a01538d1ad26252d47ffbbaadcbc2ca5915cdaa02c4e40dc1588ec6344079",
+      "metodos": [
+        "analisis_recursivo_json",
+        "lectura_completa"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/calendario-1280.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "d7f5f0c0951374fa10bf8afce1afe3630b60200ef7b199cee10af966c5284c96",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/calendario-320.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "ac8fa1d62a873dac197342efce083bd91ad2b08e3cd0c56bea52d2abfb478053",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/calendario-375.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "d61d962ab4b3c49f2dcee12210a55ef9b228d418aa95c4724f542f6997723725",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/calendario-390.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "ab5028dd0abe899dfa9c60ba081ad0c938164573d42065304e847a2c94ef5ca2",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/errores.json",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "b1342acc90dff98f6071287b7c36726b765ae6d671122e93345e518cc27326ec",
+      "metodos": [
+        "analisis_recursivo_json",
+        "lectura_completa"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/exito-norte.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "bd7501e90f69b7b5f18421104b93782755b7d46973b47e2a7a45302c66d0db7f",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/exito-sur.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "d39e869c90f86fc8ed518905c5dc34f0d29bf535690c0cbdba6f0d635b25935d",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/recorrido.json",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "60b18c6a568380f1a8e7046a7a44258c3b88bed6106108b02885690cd60d2822",
+      "metodos": [
+        "analisis_recursivo_json",
+        "lectura_completa"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/roles.json",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "61ddcec5964e7a26e071ba578d1b32dd97337bde3fd1e9315e1c965908c1599b",
+      "metodos": [
+        "analisis_recursivo_json",
+        "lectura_completa"
+      ]
+    },
+    {
+      "archivo": "docs/quality/evidence/m1-c2/zoom-200.png",
+      "estado": "limpio",
+      "campos": [],
+      "sha256": "df0b7a4763760835e8b9d6f6774bf1d07c79fc278233f5a516fe2103dcb8a2a9",
+      "metodos": [
+        "inspeccion_visual_completa",
+        "solo_chunks_IHDR_IDAT_IEND"
+      ]
+    }
+  ],
+  "sensitiveValuesPrinted": false,
+  "historyRewriteRequired": false
+}

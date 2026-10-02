@@ -1,0 +1,572 @@
+{
+  "scope": "activación API QA, asociación del Preview existente y controles reales posteriores; sin filas productivas",
+  "checks": {
+    "productionApiUnchanged": true,
+    "productionWorkerUnchanged": true,
+    "productionUnitsUnchanged": true,
+    "protectedFilesUnchanged": true,
+    "qaWorkerUnchanged": true,
+    "productionWebUnchanged": true,
+    "productionWebConfigUnchanged": true,
+    "productionWebEnvMetadataUnchanged": true,
+    "qaFlagsUnchanged": true,
+    "qaApiReleaseMatches": true,
+    "mainUnchanged": true
+  },
+  "infraBefore": {
+    "containers": {
+      "kortek-api": {
+        "id": "a7ce113fa2eb8c29860c3c219aa26184ab90b8e1ac1611018b60aa3dc0bb5feb",
+        "image": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+        "pid": 151158,
+        "running": true,
+        "release": "b5615869dcbec4bd174608f2373e73ff618fae26",
+        "environment": "production",
+        "envHash": "21829184485a0d5f0db287f719a4e981ebad05aa6b305cf894436df514bbc752",
+        "qaDatabase": false,
+        "rateSecretPresent": true,
+        "publicClosed": "true",
+        "emailEnabled": "false"
+      },
+      "kortek-api-staging": {
+        "id": "72cd835b67244e0cf30a5b24346aaaaee4f737611d23cc7219b2cf7344c30262",
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "pid": 575943,
+        "running": true,
+        "release": "92f61274dcb733e0e43f14a45851c0da346430c2",
+        "environment": "staging",
+        "envHash": "17e32a9298e8c2b4c8baf105fa0993c374322f5931144f17cebae3de756f4019",
+        "qaDatabase": true,
+        "rateSecretPresent": true,
+        "publicClosed": "false",
+        "emailEnabled": "true"
+      },
+      "kortek-email-worker": {
+        "id": "e956ab642f7ff527eb1ddabcdbb20695c95f8b6aeac7add4ab99991d2bf0085f",
+        "image": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+        "pid": 6654,
+        "running": true,
+        "release": null,
+        "environment": null,
+        "envHash": "8ade438a9d2848e3f61d9c96b20c165c29b72db7954ec80bd9879cc7ce32b211",
+        "qaDatabase": false,
+        "rateSecretPresent": false,
+        "publicClosed": null,
+        "emailEnabled": "false"
+      },
+      "kortek-email-worker-staging": {
+        "id": "a3ba29825341193f0df97c27ec5fbb42aeef0e61b3bc0975a40b3d0ba6eebbae",
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "pid": 576002,
+        "running": true,
+        "release": null,
+        "environment": "staging",
+        "envHash": "25ec53023f1ea3ff6f7a3ddb66ec8e869d5567ffa8933dd05ff4b9084489e84a",
+        "qaDatabase": true,
+        "rateSecretPresent": false,
+        "publicClosed": null,
+        "emailEnabled": "true"
+      }
+    },
+    "units": {
+      "kortek-api": "MainPID=151141\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-caddy": "MainPID=172458\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-email-worker": "MainPID=6618\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-api-staging": "MainPID=575929\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-email-worker-staging": "MainPID=575989\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-backup": "MainPID=0\nResult=success\nExecMainExitTimestamp=Thu 2026-10-01 05:21:10 GMT\nExecMainStatus=0\nActiveState=inactive",
+      "kortek-restore-drill": "MainPID=0\nResult=success\nExecMainExitTimestamp=Sun 2026-09-27 06:34:00 GMT\nExecMainStatus=0\nActiveState=inactive"
+    },
+    "files": {
+      "/etc/kortek-api/runtime-env": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+      "/usr/local/libexec/kortek-api-run.sh": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+      "/etc/systemd/system/kortek-api.service": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+      "/etc/kortek-caddy/Caddyfile": "1611ee9d0c9c72d156d8313a6c824d6f9ea04c46a53771559c5636a29c809a8e",
+      "/etc/kortek-worker/runtime-env": null,
+      "/usr/local/libexec/kortek-worker-run.sh": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+      "/etc/systemd/system/kortek-email-worker.service": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+      "/etc/kortek-api-staging/runtime-env": "c8f2324ead2d1244a099edf52d50ff1f64c5a939b869ad33916b5fa8253f031d",
+      "/usr/local/libexec/kortek-api-staging-run.sh": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+      "/usr/local/libexec/kortek-worker-staging-run.sh": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+      "/etc/systemd/system/kortek-api-staging.service": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+      "/etc/systemd/system/kortek-email-worker-staging.service": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f"
+    },
+    "backupInventory": [
+      {
+        "path": "/var/lib/kortek-backup/latest-restore-counts.txt",
+        "isDir": false,
+        "mtime": 1790490840.2733016,
+        "bytes": 524
+      },
+      {
+        "path": "/home/opc/restore-drill.sh",
+        "isDir": false,
+        "mtime": 1790404151.7174163,
+        "bytes": 3736
+      },
+      {
+        "path": "/home/opc/c1-backup.sh",
+        "isDir": false,
+        "mtime": 1790406566.8050363,
+        "bytes": 3551
+      },
+      {
+        "path": "/home/opc/supabase-free-backup.yml",
+        "isDir": false,
+        "mtime": 1790406947.1914973,
+        "bytes": 4672
+      }
+    ],
+    "previousImageRetained": true
+  },
+  "infraAfter": {
+    "containers": {
+      "kortek-api": {
+        "id": "a7ce113fa2eb8c29860c3c219aa26184ab90b8e1ac1611018b60aa3dc0bb5feb",
+        "image": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+        "pid": 151158,
+        "running": true,
+        "release": "b5615869dcbec4bd174608f2373e73ff618fae26",
+        "environment": "production",
+        "envHash": "21829184485a0d5f0db287f719a4e981ebad05aa6b305cf894436df514bbc752",
+        "qaDatabase": false,
+        "rateSecretPresent": true,
+        "publicClosed": "true",
+        "emailEnabled": "false"
+      },
+      "kortek-api-staging": {
+        "id": "0724a06c81f2518a6f8e3dbb35da8b2c61cebd0f4785c2ad3b980a40b0bab635",
+        "image": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+        "pid": 673309,
+        "running": true,
+        "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+        "environment": "staging",
+        "envHash": "c0c2703f8ab31b8a28c9dd88448f3f60ed18937663541765e88c960c4ee5e2f4",
+        "qaDatabase": true,
+        "rateSecretPresent": true,
+        "publicClosed": "false",
+        "emailEnabled": "true"
+      },
+      "kortek-email-worker": {
+        "id": "e956ab642f7ff527eb1ddabcdbb20695c95f8b6aeac7add4ab99991d2bf0085f",
+        "image": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+        "pid": 6654,
+        "running": true,
+        "release": null,
+        "environment": null,
+        "envHash": "8ade438a9d2848e3f61d9c96b20c165c29b72db7954ec80bd9879cc7ce32b211",
+        "qaDatabase": false,
+        "rateSecretPresent": false,
+        "publicClosed": null,
+        "emailEnabled": "false"
+      },
+      "kortek-email-worker-staging": {
+        "id": "a3ba29825341193f0df97c27ec5fbb42aeef0e61b3bc0975a40b3d0ba6eebbae",
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "pid": 576002,
+        "running": true,
+        "release": null,
+        "environment": "staging",
+        "envHash": "25ec53023f1ea3ff6f7a3ddb66ec8e869d5567ffa8933dd05ff4b9084489e84a",
+        "qaDatabase": true,
+        "rateSecretPresent": false,
+        "publicClosed": null,
+        "emailEnabled": "true"
+      }
+    },
+    "units": {
+      "kortek-api": "MainPID=151141\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-caddy": "MainPID=172458\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-email-worker": "MainPID=6618\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-api-staging": "MainPID=673295\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-email-worker-staging": "MainPID=575989\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+      "kortek-backup": "MainPID=0\nResult=success\nExecMainExitTimestamp=Thu 2026-10-01 05:21:10 GMT\nExecMainStatus=0\nActiveState=inactive",
+      "kortek-restore-drill": "MainPID=0\nResult=success\nExecMainExitTimestamp=Sun 2026-09-27 06:34:00 GMT\nExecMainStatus=0\nActiveState=inactive"
+    },
+    "files": {
+      "/etc/kortek-api/runtime-env": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+      "/usr/local/libexec/kortek-api-run.sh": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+      "/etc/systemd/system/kortek-api.service": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+      "/etc/kortek-caddy/Caddyfile": "1611ee9d0c9c72d156d8313a6c824d6f9ea04c46a53771559c5636a29c809a8e",
+      "/etc/kortek-worker/runtime-env": null,
+      "/usr/local/libexec/kortek-worker-run.sh": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+      "/etc/systemd/system/kortek-email-worker.service": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+      "/etc/kortek-api-staging/runtime-env": "c507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4",
+      "/usr/local/libexec/kortek-api-staging-run.sh": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+      "/usr/local/libexec/kortek-worker-staging-run.sh": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+      "/etc/systemd/system/kortek-api-staging.service": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+      "/etc/systemd/system/kortek-email-worker-staging.service": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f"
+    },
+    "backupInventory": [
+      {
+        "path": "/var/lib/kortek-backup/latest-restore-counts.txt",
+        "isDir": false,
+        "mtime": 1790490840.2733016,
+        "bytes": 524
+      },
+      {
+        "path": "/home/opc/restore-drill.sh",
+        "isDir": false,
+        "mtime": 1790404151.7174163,
+        "bytes": 3736
+      },
+      {
+        "path": "/home/opc/c1-backup.sh",
+        "isDir": false,
+        "mtime": 1790406566.8050363,
+        "bytes": 3551
+      },
+      {
+        "path": "/home/opc/supabase-free-backup.yml",
+        "isDir": false,
+        "mtime": 1790406947.1914973,
+        "bytes": 4672
+      }
+    ],
+    "previousImageRetained": true
+  },
+  "vercelBefore": {
+    "timestampUtc": "2026-10-01T22:54:45Z",
+    "production": {
+      "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+      "state": "READY",
+      "target": "production",
+      "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+      "branch": "main"
+    },
+    "qa": {
+      "id": "dpl_ErRZTRYFZHeocGCrfBMvXDM3jMY9",
+      "state": "READY",
+      "target": null,
+      "sha": "791569b110f9fd59cb10e6d248546bdae3996e14",
+      "branch": "ai/antigravity-qa"
+    },
+    "productionConfigHash": "36a0601b5c029ebc6d27b926167c8384838f64605e6c06eabdc612a3ece93bab",
+    "productionEnvMetadataHash": "0f2c5033293f4cf0a88a37bdf86110bfbb830698d42487bd23028c2343359108",
+    "productionEnvCount": 5,
+    "readOnly": true
+  },
+  "vercelAfter": {
+    "timestampUtc": "2026-10-01T23:11:23Z",
+    "production": {
+      "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+      "state": "READY",
+      "target": "production",
+      "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+      "branch": "main"
+    },
+    "qa": {
+      "id": "dpl_ErRZTRYFZHeocGCrfBMvXDM3jMY9",
+      "state": "READY",
+      "target": null,
+      "sha": "791569b110f9fd59cb10e6d248546bdae3996e14",
+      "branch": "ai/antigravity-qa"
+    },
+    "productionConfigHash": "36a0601b5c029ebc6d27b926167c8384838f64605e6c06eabdc612a3ece93bab",
+    "productionEnvMetadataHash": "0f2c5033293f4cf0a88a37bdf86110bfbb830698d42487bd23028c2343359108",
+    "productionEnvCount": 5,
+    "readOnly": true
+  },
+  "mainBefore": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+  "mainAfter": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+  "qaBackupVerified": true,
+  "deploymentPerformed": true,
+  "postDeploymentControlsPerformed": true,
+  "inspectionBeforeAuthorization": {
+    "checks": {
+      "productionApiContainer": true,
+      "productionWorkerContainer": true,
+      "productionServices": true,
+      "protectedFileHashes": true,
+      "qaApiAndWorkerUnchanged": true,
+      "webProductionDeployment": true,
+      "webProductionConfiguration": true,
+      "webProductionEnvMetadata": true,
+      "webQaUnchanged": true,
+      "mainUnchanged": true
+    },
+    "scope": "comparacion durante inspeccion previa; sin despliegue, sin lectura de filas productivas",
+    "infraBefore": {
+      "containers": {
+        "kortek-api": {
+          "id": "a7ce113fa2eb8c29860c3c219aa26184ab90b8e1ac1611018b60aa3dc0bb5feb",
+          "image": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+          "pid": 151158,
+          "running": true,
+          "release": "b5615869dcbec4bd174608f2373e73ff618fae26",
+          "environment": "production",
+          "envHash": "21829184485a0d5f0db287f719a4e981ebad05aa6b305cf894436df514bbc752",
+          "qaDatabase": false,
+          "rateSecretPresent": true,
+          "publicClosed": "true",
+          "emailEnabled": "false"
+        },
+        "kortek-api-staging": {
+          "id": "72cd835b67244e0cf30a5b24346aaaaee4f737611d23cc7219b2cf7344c30262",
+          "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+          "pid": 575943,
+          "running": true,
+          "release": "92f61274dcb733e0e43f14a45851c0da346430c2",
+          "environment": "staging",
+          "envHash": "17e32a9298e8c2b4c8baf105fa0993c374322f5931144f17cebae3de756f4019",
+          "qaDatabase": true,
+          "rateSecretPresent": true,
+          "publicClosed": "false",
+          "emailEnabled": "true"
+        },
+        "kortek-email-worker": {
+          "id": "e956ab642f7ff527eb1ddabcdbb20695c95f8b6aeac7add4ab99991d2bf0085f",
+          "image": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+          "pid": 6654,
+          "running": true,
+          "release": null,
+          "environment": null,
+          "envHash": "8ade438a9d2848e3f61d9c96b20c165c29b72db7954ec80bd9879cc7ce32b211",
+          "qaDatabase": false,
+          "rateSecretPresent": false,
+          "publicClosed": null,
+          "emailEnabled": "false"
+        },
+        "kortek-email-worker-staging": {
+          "id": "a3ba29825341193f0df97c27ec5fbb42aeef0e61b3bc0975a40b3d0ba6eebbae",
+          "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+          "pid": 576002,
+          "running": true,
+          "release": null,
+          "environment": "staging",
+          "envHash": "25ec53023f1ea3ff6f7a3ddb66ec8e869d5567ffa8933dd05ff4b9084489e84a",
+          "qaDatabase": true,
+          "rateSecretPresent": false,
+          "publicClosed": null,
+          "emailEnabled": "true"
+        }
+      },
+      "units": {
+        "kortek-api": "MainPID=151141\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-caddy": "MainPID=172458\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-email-worker": "MainPID=6618\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-api-staging": "MainPID=575929\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-email-worker-staging": "MainPID=575989\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-backup": "MainPID=0\nResult=success\nExecMainExitTimestamp=Thu 2026-10-01 05:21:10 GMT\nExecMainStatus=0\nActiveState=inactive",
+        "kortek-restore-drill": "MainPID=0\nResult=success\nExecMainExitTimestamp=Sun 2026-09-27 06:34:00 GMT\nExecMainStatus=0\nActiveState=inactive"
+      },
+      "files": {
+        "/etc/kortek-api/runtime-env": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+        "/usr/local/libexec/kortek-api-run.sh": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+        "/etc/systemd/system/kortek-api.service": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+        "/etc/kortek-caddy/Caddyfile": "1611ee9d0c9c72d156d8313a6c824d6f9ea04c46a53771559c5636a29c809a8e",
+        "/etc/kortek-worker/runtime-env": null,
+        "/usr/local/libexec/kortek-worker-run.sh": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+        "/etc/systemd/system/kortek-email-worker.service": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+        "/etc/kortek-api-staging/runtime-env": "c8f2324ead2d1244a099edf52d50ff1f64c5a939b869ad33916b5fa8253f031d",
+        "/usr/local/libexec/kortek-api-staging-run.sh": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+        "/usr/local/libexec/kortek-worker-staging-run.sh": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+        "/etc/systemd/system/kortek-api-staging.service": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+        "/etc/systemd/system/kortek-email-worker-staging.service": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f"
+      },
+      "backupInventory": [
+        {
+          "path": "/var/lib/kortek-backup/latest-restore-counts.txt",
+          "isDir": false,
+          "mtime": 1790490840.2733016,
+          "bytes": 524
+        },
+        {
+          "path": "/home/opc/restore-drill.sh",
+          "isDir": false,
+          "mtime": 1790404151.7174163,
+          "bytes": 3736
+        },
+        {
+          "path": "/home/opc/c1-backup.sh",
+          "isDir": false,
+          "mtime": 1790406566.8050363,
+          "bytes": 3551
+        },
+        {
+          "path": "/home/opc/supabase-free-backup.yml",
+          "isDir": false,
+          "mtime": 1790406947.1914973,
+          "bytes": 4672
+        }
+      ],
+      "previousImageRetained": true
+    },
+    "infraAfter": {
+      "containers": {
+        "kortek-api": {
+          "id": "a7ce113fa2eb8c29860c3c219aa26184ab90b8e1ac1611018b60aa3dc0bb5feb",
+          "image": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+          "pid": 151158,
+          "running": true,
+          "release": "b5615869dcbec4bd174608f2373e73ff618fae26",
+          "environment": "production",
+          "envHash": "21829184485a0d5f0db287f719a4e981ebad05aa6b305cf894436df514bbc752",
+          "qaDatabase": false,
+          "rateSecretPresent": true,
+          "publicClosed": "true",
+          "emailEnabled": "false"
+        },
+        "kortek-api-staging": {
+          "id": "72cd835b67244e0cf30a5b24346aaaaee4f737611d23cc7219b2cf7344c30262",
+          "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+          "pid": 575943,
+          "running": true,
+          "release": "92f61274dcb733e0e43f14a45851c0da346430c2",
+          "environment": "staging",
+          "envHash": "17e32a9298e8c2b4c8baf105fa0993c374322f5931144f17cebae3de756f4019",
+          "qaDatabase": true,
+          "rateSecretPresent": true,
+          "publicClosed": "false",
+          "emailEnabled": "true"
+        },
+        "kortek-email-worker": {
+          "id": "e956ab642f7ff527eb1ddabcdbb20695c95f8b6aeac7add4ab99991d2bf0085f",
+          "image": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+          "pid": 6654,
+          "running": true,
+          "release": null,
+          "environment": null,
+          "envHash": "8ade438a9d2848e3f61d9c96b20c165c29b72db7954ec80bd9879cc7ce32b211",
+          "qaDatabase": false,
+          "rateSecretPresent": false,
+          "publicClosed": null,
+          "emailEnabled": "false"
+        },
+        "kortek-email-worker-staging": {
+          "id": "a3ba29825341193f0df97c27ec5fbb42aeef0e61b3bc0975a40b3d0ba6eebbae",
+          "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+          "pid": 576002,
+          "running": true,
+          "release": null,
+          "environment": "staging",
+          "envHash": "25ec53023f1ea3ff6f7a3ddb66ec8e869d5567ffa8933dd05ff4b9084489e84a",
+          "qaDatabase": true,
+          "rateSecretPresent": false,
+          "publicClosed": null,
+          "emailEnabled": "true"
+        }
+      },
+      "units": {
+        "kortek-api": "MainPID=151141\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-caddy": "MainPID=172458\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-email-worker": "MainPID=6618\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-api-staging": "MainPID=575929\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-email-worker-staging": "MainPID=575989\nResult=success\nExecMainExitTimestamp=\nExecMainStatus=0\nActiveState=active",
+        "kortek-backup": "MainPID=0\nResult=success\nExecMainExitTimestamp=Thu 2026-10-01 05:21:10 GMT\nExecMainStatus=0\nActiveState=inactive",
+        "kortek-restore-drill": "MainPID=0\nResult=success\nExecMainExitTimestamp=Sun 2026-09-27 06:34:00 GMT\nExecMainStatus=0\nActiveState=inactive"
+      },
+      "files": {
+        "/etc/kortek-api/runtime-env": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+        "/usr/local/libexec/kortek-api-run.sh": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+        "/etc/systemd/system/kortek-api.service": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+        "/etc/kortek-caddy/Caddyfile": "1611ee9d0c9c72d156d8313a6c824d6f9ea04c46a53771559c5636a29c809a8e",
+        "/etc/kortek-worker/runtime-env": null,
+        "/usr/local/libexec/kortek-worker-run.sh": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+        "/etc/systemd/system/kortek-email-worker.service": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+        "/etc/kortek-api-staging/runtime-env": "c8f2324ead2d1244a099edf52d50ff1f64c5a939b869ad33916b5fa8253f031d",
+        "/usr/local/libexec/kortek-api-staging-run.sh": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+        "/usr/local/libexec/kortek-worker-staging-run.sh": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+        "/etc/systemd/system/kortek-api-staging.service": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+        "/etc/systemd/system/kortek-email-worker-staging.service": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f"
+      },
+      "backupInventory": [
+        {
+          "path": "/var/lib/kortek-backup/latest-restore-counts.txt",
+          "isDir": false,
+          "mtime": 1790490840.2733016,
+          "bytes": 524
+        },
+        {
+          "path": "/home/opc/restore-drill.sh",
+          "isDir": false,
+          "mtime": 1790404151.7174163,
+          "bytes": 3736
+        },
+        {
+          "path": "/home/opc/c1-backup.sh",
+          "isDir": false,
+          "mtime": 1790406566.8050363,
+          "bytes": 3551
+        },
+        {
+          "path": "/home/opc/supabase-free-backup.yml",
+          "isDir": false,
+          "mtime": 1790406947.1914973,
+          "bytes": 4672
+        }
+      ],
+      "previousImageRetained": true
+    },
+    "vercelBefore": {
+      "timestampUtc": "2026-10-01T22:28:25Z",
+      "production": {
+        "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+        "state": "READY",
+        "target": "production",
+        "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+        "branch": "main"
+      },
+      "qa": {
+        "id": "dpl_ErRZTRYFZHeocGCrfBMvXDM3jMY9",
+        "state": "READY",
+        "target": null,
+        "sha": "791569b110f9fd59cb10e6d248546bdae3996e14",
+        "branch": "ai/antigravity-qa"
+      },
+      "productionConfigHash": "36a0601b5c029ebc6d27b926167c8384838f64605e6c06eabdc612a3ece93bab",
+      "productionEnvMetadataHash": "0f2c5033293f4cf0a88a37bdf86110bfbb830698d42487bd23028c2343359108",
+      "productionEnvCount": 5,
+      "readOnly": true
+    },
+    "vercelAfter": {
+      "timestampUtc": "2026-10-01T22:29:32Z",
+      "production": {
+        "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+        "state": "READY",
+        "target": "production",
+        "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+        "branch": "main"
+      },
+      "qa": {
+        "id": "dpl_ErRZTRYFZHeocGCrfBMvXDM3jMY9",
+        "state": "READY",
+        "target": null,
+        "sha": "791569b110f9fd59cb10e6d248546bdae3996e14",
+        "branch": "ai/antigravity-qa"
+      },
+      "productionConfigHash": "36a0601b5c029ebc6d27b926167c8384838f64605e6c06eabdc612a3ece93bab",
+      "productionEnvMetadataHash": "0f2c5033293f4cf0a88a37bdf86110bfbb830698d42487bd23028c2343359108",
+      "productionEnvCount": 5,
+      "readOnly": true,
+      "comparison": {
+        "production": true,
+        "productionConfigHash": true,
+        "productionEnvMetadataHash": true,
+        "productionEnvCount": true
+      }
+    },
+    "mainBefore": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+    "mainAfter": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+    "qaPrerequisites": {
+      "readOnly": true,
+      "tables": 36,
+      "migrations": 27,
+      "rateTableExists": true,
+      "rateRuntimeSelect": true,
+      "rateRuntimeInsert": true,
+      "rateRuntimeUpdate": true,
+      "rateRuntimeDelete": true,
+      "backupMissingSelect": [
+        "BusinessClosure",
+        "BusinessSchedule",
+        "BusinessScheduleDay",
+        "BusinessScheduleRevision",
+        "BusinessScheduleWindow"
+      ]
+    },
+    "qaBackupVerified": false,
+    "deploymentPerformed": false,
+    "postDeploymentControlsPerformed": false
+  }
+}

@@ -1,5 +1,7 @@
 # Documentación de Kortek Booking
 
+Autorización posterior — 2026-10-01: **DISEÑO UX LIGERA APROBADO PARA PUBLICACIÓN QA; M1 NO CERRADO, QA FÍSICA PENDIENTE**. El propietario autoriza dos commits separados (UX y documentación C3/controles/enmiendas), push solo `origin/ai/antigravity-qa` y despliegue **solo web** a `qa.booking.kortek.cloud` desde SHA aprobado. [Inspección, ejecución y guía](quality/RESERVA_PUBLICA_M1_UX_LIGERA.md). API C1 debe comprobarse antes; producción/main, flags, variables y proveedores intactos. Respaldo cifrado C3 ignorado y retenido. Enmiendas 16–21 registradas con texto exacto. Tipos/lint/build y 275 pruebas web pasan de nuevo con exit `0`. La aprobación del diseño para publicación no sustituye QA física ni cierre M1; las entradas inferiores conservan el contexto de sus ejecuciones anteriores.
+
 Esta es la entrada universal para cualquier agente o persona que trabaje en el repositorio. La documentación separa estado vigente, reglas permanentes, contratos e historia para evitar que una entrada antigua se interprete como una decisión actual.
 
 ## Lectura mínima obligatoria
@@ -15,6 +17,10 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 ## Mapa de fuentes
 
 ### Producto y experiencia
+
+Revisión posterior autorizada: [Reserva pública más ligera](quality/RESERVA_PUBLICA_M1_UX_LIGERA.md), **implementada localmente/en revisión; QA de cierre incompleto**. Filas compactas, semana/mes desplegable, horas visibles, teléfono por país y resumen abierto sobre C1 aprobado. Tipos/lint/build y 275 pruebas pasan; evidencia responsive y API/PostgreSQL local aislado. Físicos, zoom 200 %, importación de calendario, auditoría y aprobación pendientes. Sin publicación/despliegue; historia y trabajo C3 preservados.
+
+Estado vigente M1 C3: **ACTIVADO SOLO EN QA / EN REVISIÓN**, sin cierre ni aprobación M1. [Informe, evidencia y guía iPhone](quality/RESERVA_PUBLICA_M1_C3_CIERRE.md): respaldo local cifrado restaurado, 36/36 tablas y 27 migraciones iguales; plano/contenedor eliminados, cifrado retenido hasta aprobación M1. API `791569b` activada y Preview exacto existente reasociado después; §5 pasa con D11 opción A, limitador real y altas PENDING exclusivamente sintéticas. Recorrido web documentado y comparación productiva/main/worker QA iguales. Sin migración, grants, flags, proveedor, commit ni push. Safari/iPhone, casos no cubiertos y aprobación final pendientes; entradas inferiores conservan contexto anterior.
 
 Estado posterior de M1 C2: frontend cerrado/aprobado expresamente por el propietario, quien aclaró «No hay condiciones, sigue adelante». Commit/push autorizados exclusivamente a `origin/ai/antigravity-qa`, sin despliegue. [Registro de aprobación, validaciones y publicación](quality/RESERVA_PUBLICA_M1_C2_CIERRE.md). C3/QA física y producción siguen sin autorización; la entrada siguiente conserva el contexto de la entrega original.
 

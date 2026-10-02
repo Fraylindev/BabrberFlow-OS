@@ -1,0 +1,100 @@
+{
+  "timestampUtc": "2026-10-01T23:21:07.677993+00:00",
+  "branch": "ai/antigravity-qa",
+  "head": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "diffCheckExit": 0,
+  "indexEmpty": true,
+  "changesOnlyDocumentationAndEvidence": true,
+  "backupIgnoredByGit": true,
+  "localLinksResolved": true,
+  "jsonParseAndSensitiveScan": [
+    {
+      "file": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "cd3f79cdfdc91f26edd1895a65514881b5122e191a9073cc0d20cdec659084a4"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "e354300c6b27d3b4ff066b5b594c61d627ff74b332f29752f3e42774a36c6cc3"
+    },
+    {
+      "file": "PROJECT_MASTER.md",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "4213446c0f0ed2c1de8b7131e4893a9b51f82e138cddada91246e355dba8ba29"
+    },
+    {
+      "file": "docs/README.md",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "6e705a6f310774ea53a4a34e56075b8f9a8ead3ade082c19ce6419aaeae74f95"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/activacion-api.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "dfb9d7592c087b3fc49f1f25475da44986a2d65e1aa1ce4d844bdd6cba304c3c"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/backup-verificado.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "38341f773088e87338af5fdae2675c8b6f4651b15dd0dc83fc80a67ca2355ab8"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/controles-http.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "e68abb368f846256c3ef202cf84b4cb25bdaf8501822c1ed4a645a0bc4f4586f"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/inspeccion-previa.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "4f77138e353872a5fd63efe378909d39d2b3920185f9657d9eed26f3dd4bdeb0"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/navegador-qa.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "7ee03747beaf18a2d55e7e6b2393bbf4176629f82b906d593be04e39217d2a43"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/produccion-comparacion.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "88b240054b77988a01f3b830f1f874d9936ec2784fc0dba3b5df40e2f86c7e0e"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/verificacion-final.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "72ef32b9cfaccc629bb95ce369a2c5a817651c71e5d7c883dcd4d0d1ae30e334"
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/web-qa.json",
+      "parseAndSensitiveScan": "clean",
+      "sha256": "ee4acff9e28c865e8d408c2141cf38be5465f3b1abac5a1be2bd2cfeefa2a49e"
+    }
+  ],
+  "images": [
+    {
+      "file": "calendario-qa.jpg",
+      "width": 444,
+      "height": 1149,
+      "format": "JPEG",
+      "exifOrComment": false,
+      "visuallyReviewed": true,
+      "sensitiveContent": "none",
+      "sha256": "94c2afddce83fe22693acb234d618bd7539751783201fe806f5da03e242d3027"
+    },
+    {
+      "file": "exito-qa.jpg",
+      "width": 444,
+      "height": 1261,
+      "format": "JPEG",
+      "exifOrComment": false,
+      "visuallyReviewed": true,
+      "sensitiveContent": "none",
+      "sha256": "cb8718e90e05ecf5b00b787690e3e8311296ebdf66f8481d2d1a96c9b63cd55c"
+    }
+  ],
+  "manualContactsOnlySynthetic": true,
+  "httpChecksPassed": 27,
+  "productionComparisonsPassed": 11,
+  "commitPerformed": false,
+  "pushPerformed": false,
+  "ownerApprovalRecorded": false
+}

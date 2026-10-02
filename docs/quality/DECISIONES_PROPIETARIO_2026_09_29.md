@@ -24,3 +24,12 @@ PROCESO
 14. Producción permanece cerrada e intacta. Todo se prueba en QA con negocios sintéticos.
 15. Un gate abierto a la vez: C0; C1 backend con aprobación; C2 frontend con aprobación; C3 QA real y aprobación final.
 ACTUALIZACION 2026-09-30. El propietario aprobó explícitamente implementar de inmediato, como correctivo F0-C, la parte de la decisión 11 que permite facturar y cobrar una reserva Completada sin esperar la hora de fin (ADR-002 y FACTURACION_A_CONTRATO_TECNICO actualizados). El resto de la decisión 11 y las decisiones 8, 9, 10 y 12 siguen pendientes del C0 de Pagos.
+
+## ENMIENDAS DEL 1 DE OCTUBRE DE 2026
+
+16. Lista de servicios en la reserva pública: filas compactas con miniatura redondeada de 64 a 80 px a la izquierda y, a la derecha, nombre, duración y precio. Sin tarjeta grande de imagen. Sin foto: misma fila, alternativa limpia.
+17. Enmienda a la decisión 6: el día se elige en una semana de siete días con mes desplegable (días sin disponibilidad deshabilitados). Las horas se muestran como botones visibles; con más de doce horarios aparecen filtros Todos, Mañana, Tarde y Noche, omitiendo las franjas vacías. Se mantiene: solo horas disponibles, sin campo libre, sin cuadrícula que ocupe la pantalla.
+18. Teléfono: grupo unificado (selector de país con bandera, búsqueda y prefijo, más número con máscara), sin texto de ayuda largo.
+19. Enmienda a la decisión 7: la pantalla de éxito elimina las cajas grises, el bloque "¿Qué sigue?", las advertencias sobre lo que el sistema no hace y el disclaimer largo. Se mantiene visible, de forma discreta, el estado "Pendiente de confirmación".
+20. WhatsApp: no se implementa un enlace al profesional (decisión 10). El WhatsApp público del negocio ya existente se conserva sin cambios.
+21. Honeypot de servidor: mini-gate de backend posterior. Filtro de correos desechables: descartado por ahora.

@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-10-01 — Publicación web QA de UX ligera autorizada
+
+Autorización posterior — 2026-10-01: **DISEÑO UX LIGERA APROBADO PARA PUBLICACIÓN QA; M1 NO CERRADO, QA FÍSICA PENDIENTE**. El propietario autoriza dos commits separados (UX y documentación C3/controles/enmiendas), push solo `origin/ai/antigravity-qa` y despliegue **solo web** a `qa.booking.kortek.cloud` desde SHA aprobado. [Inspección, ejecución y guía](docs/quality/RESERVA_PUBLICA_M1_UX_LIGERA.md). API C1 debe comprobarse antes; producción/main, flags, variables y proveedores intactos. Respaldo cifrado C3 ignorado y retenido. Enmiendas 16–21 registradas con texto exacto. Tipos/lint/build y 275 pruebas web pasan de nuevo con exit `0`. La aprobación del diseño para publicación no sustituye QA física ni cierre M1; las entradas inferiores conservan el contexto de sus ejecuciones anteriores.
+
+## 2026-10-01 — Reserva pública más ligera, correctivo frontend local
+
+- Plan autorizado sobre C1 aprobado: encabezado/filas compactos, semana/mes desplegable, horas con franjas, teléfono por país/prefijo y resumen sin marco exterior. Calendario TENTATIVE con descripción breve; WhatsApp conservado.
+- Tipos/lint/build y 275 pruebas web pasan; 35 mediciones de siete vistas en cinco anchos, teclado/foco y recorrido contra PostgreSQL/API locales aislados. Tres PENDING sintéticas, una hasta medianoche; 400 recuperable y página 404 reales. [Evidencia y límites](docs/quality/RESERVA_PUBLICA_M1_UX_LIGERA.md).
+- Implementado localmente/en revisión, QA de cierre incompleto: físicos, zoom real 200 %, importación, auditoría y aprobación pendientes. Sin backend/contratos/dependencias nuevos, staging, commit, push o despliegue. Trabajo documental C3 preexistente preservado.
+
+## 2026-10-01 — M1 C3 activado exclusivamente en QA / en revisión
+
+- Autorización posterior explícita de respaldo/restore local resuelve el rechazo inicial. [Informe C3 y guía iPhone](docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md): once evidencias C2 limpias; export READ ONLY/TLS verificado, AES256, restore sin red/tmpfs y 36/36 conteos/huellas iguales, incluidas 27 migraciones. Plano y contenedores eliminados; copia cifrada retenida solo en este equipo hasta aprobación M1, con eliminación/reportado posterior pendiente. Sin modificar grants del backup rutinario, que aún carece de lectura de cinco tablas de horario.
+- Imagen API del SHA aprobado `791569b` construida, Nest/Prisma generate y 23 drills negativos pasan; API QA activada, imagen anterior retenida y solo imagen/release QA cambiados. Después se reasocia el Preview READY existente exacto al alias QA. Worker QA y producción conservan procesos, imágenes, hashes de configuración; Vercel producción/main iguales antes/después. Sin migración, dependencia, rol, grant, flag, proveedor, commit ni push.
+- Controles §5 pasan: 200/401/204, CORS/RequestId, rango 31/rechazo 32, límite compartido 30/min y 429, D11 exacto sin parcial, 201/PENDING y reutilización válida según opción A elegida. Dos tenants dedicados sintéticos, tres PENDING (dos HTTP/una UI), cero opt-in/dispatch. Navegador contra API/base reales verifica D11 con retorno/preservación y éxito/recarga. Guía iPhone entregada con enlaces operativos y límites de cobertura; QA física, otros casos indicados y aprobación global pendientes. **M1 no aprobado ni cerrado.**
+
 ## 2026-10-01 — Frontend M1 C2 aprobado; commit/push autorizados sin despliegue
 
 - El propietario aprueba expresamente el frontend C2 y aclara «No hay condiciones, sigue adelante». Commit/push autorizados exclusivamente a `origin/ai/antigravity-qa`, sin despliegue. Se sincroniza la aprobación en los cinco documentos de control del checkpoint; la igualdad de SHA local/remoto y el árbol final se verifican al publicar. C3/QA física y producción conservan sus gates separados.

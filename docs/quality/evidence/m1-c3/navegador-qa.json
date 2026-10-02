@@ -1,0 +1,52 @@
+{
+  "timestampUtc": "2026-10-01T23:13:07.663024+00:00",
+  "tool": "cua_repl, Codex In-app Browser",
+  "environment": "web QA desplegada, API real, Cutover QA",
+  "checks": {
+    "directEntry": true,
+    "returnSameMinisite": true,
+    "entryFromMinisite": true,
+    "calendarClosureDisabled": true,
+    "compactRealHourSelect": true,
+    "anyAvailableProfessionalShownBeforeSubmit": true,
+    "invalidEmailErrorInDataStep": true,
+    "accountExperimentNoticeVisible": true,
+    "D11NeutralReturnsToData": true,
+    "D11ContactFieldsRetained": true,
+    "singleGuestBookingSucceededPending": true,
+    "professionalAndNaturalDateInSuccess": true,
+    "reloadLosesVisitDetailWithoutResubmission": true,
+    "singleProfessionalAutoSelectedVisible": true,
+    "unpublishedPhotosCleanFallback": true
+  },
+  "uiBookingsCreated": 1,
+  "inputFontSizes": [
+    "16px",
+    "16px",
+    "16px"
+  ],
+  "console": {
+    "errors": 0,
+    "warnings": 1,
+    "knownClerkDevelopmentWarning": true,
+    "rawLogsPublished": false
+  },
+  "viewport": {
+    "requestedWidth": 375,
+    "observedInnerWidth": 416,
+    "observedClientWidth": 400,
+    "observedScrollWidth": 400,
+    "exact375Verified": false,
+    "overrideReset": true
+  },
+  "evidence": [
+    "calendario-qa.jpg",
+    "exito-qa.jpg"
+  ],
+  "physicalIphoneVerified": false,
+  "photosWithEligiblePublishedAssetVerified": false,
+  "authenticatedDeployedRolesVerified": false,
+  "icsImportVerified": false,
+  "ui429MessageVerified": false,
+  "password7And8Verified": false
+}
