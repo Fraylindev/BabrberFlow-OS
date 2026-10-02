@@ -33,3 +33,9 @@ ACTUALIZACION 2026-09-30. El propietario aprobó explícitamente implementar de 
 19. Enmienda a la decisión 7: la pantalla de éxito elimina las cajas grises, el bloque "¿Qué sigue?", las advertencias sobre lo que el sistema no hace y el disclaimer largo. Se mantiene visible, de forma discreta, el estado "Pendiente de confirmación".
 20. WhatsApp: no se implementa un enlace al profesional (decisión 10). El WhatsApp público del negocio ya existente se conserva sin cambios.
 21. Honeypot de servidor: mini-gate de backend posterior. Filtro de correos desechables: descartado por ahora.
+
+## ENMIENDAS DEL 2 DE OCTUBRE DE 2026
+
+22. Reservas: «Por atender» muestra pendientes y confirmadas; «Todas» y los demás estados se alcanzan con el filtro; el rango de fechas no se aplica por defecto.
+23. D1-A y D2-A aprobadas como dirección; se implementan en un C1 de backend propio, antes de la Puerta de producción.
+24. WhatsApp para clientes separado (E-A) aprobado como dirección; reemplazará las decisiones 10 y 20 solo para ese campo, en un módulo propio después de cerrar M1; hasta entonces se conserva el WhatsApp genérico del negocio.

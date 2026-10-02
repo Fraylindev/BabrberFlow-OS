@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-02 — F0-E: publicación web QA autorizada
+
+- Reservas desktop: estado de factura bajo Estado, una acción principal y menú con Facturación/avisos, nombres con tooltip accesible; límite ampliado solo en la ruta de Reservas. Tarjetas conservadas.
+- Fechas vacías y Por atender inicial, conteos según rango y limpieza al estado inicial. Proyección local sobre contrato sin límite; propuestas de estados/paginación pendientes.
+- Revisión/éxito: fotos compactas iguales, duración/precio juntos, calendario → WhatsApp → ubicación → nota → Listo y safe-area. WhatsApp de negocio/mensaje genérico conservados.
+- Tipos/lint/build y 283 pruebas pasan; 95 registros Chrome controlado en ocho anchos. Facturación tiene scroll interno menor en 1280; se reporta sin editar. [Informe, evidencia, límites y D/E](docs/quality/CORRECTIVO_F0E.md). Enmiendas 22–24 añaden las direcciones aprobadas D1-A/D2-A/E-A para módulos posteriores. Publicación solo web QA autorizada y en preparación; sin backend, bases reales, `.env`, flags funcionales ni dependencias. M1 y QA física siguen pendientes.
+
 ## 2026-10-02 — Correctivo visual y navegación de reserva pública M1
 
 - Títulos sin contorno de foco visual; iniciales estables al faltar/fallar foto; filtros de hora sólidos con indicador y fechas en minúscula. Carrusel semanal nativo con precarga adyacente, flechas y conservación de fecha/hora.
