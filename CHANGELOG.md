@@ -5,7 +5,7 @@
 - Las completadas sin factura permanecen en Por atender; Todas prioriza atención y ordena cada grupo por fecha descendente.
 - Desktop muestra reprogramación/consulta financiera junto a la acción principal y conserva restantes en menú; móvil conserva su presentación. Fotos redondeadas iguales, Listo legible y mapa/WhatsApp con estilo secundario reforzado.
 - Mini-sitio sustituye llamada por WhatsApp al número publicado, con mensaje genérico previo a reservar y validación estricta.
-- 290 pruebas, tipos/lint/build y 123 registros de navegador pasan. [Informe y publicación](docs/quality/CORRECTIVO_F0E_AJUSTE.md). Web QA autorizada; M1 y QA física en revisión. Sin cambios de backend ni producción. Resultados documentales F0-E anteriores preservados.
+- 290 pruebas, tipos/lint/build y 123 registros de navegador pasan. Código/evidencia `68fd3c0`; Preview `dpl_GbsN4Gr91MsaLsgQcQFe4J3FM1pg` Ready y alias QA comprobados. API QA GET `200/200`; infraestructura y producción sin cambios. [Informe y publicación](docs/quality/CORRECTIVO_F0E_AJUSTE.md). M1 y QA física en revisión. Resultados documentales F0-E anteriores preservados e incorporados.
 
 ## 2026-10-02 — F0-E publicado y desplegado solo web QA
 

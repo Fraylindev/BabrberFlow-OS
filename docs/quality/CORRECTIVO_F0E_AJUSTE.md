@@ -1,6 +1,6 @@
 # Reservas que aún necesitan atención y contacto público
 
-Fecha: 2026-10-02. **IMPLEMENTADO / VALIDADO LOCALMENTE / PUBLICACIÓN WEB QA EN PREPARACIÓN.** El propietario autorizó este ajuste, commit, push y despliegue web en QA.
+Fecha: 2026-10-02. **PUBLICADO Y DESPLEGADO SOLO WEB QA / EN REVISIÓN.** El propietario autorizó este ajuste, commit, push y despliegue web en QA.
 
 ## Producto y criterios de aceptación
 
@@ -28,6 +28,12 @@ Selección de profesional entre dos candidatos, revisión y éxito pasan con fot
 
 GET de catálogo público y días disponibles del API QA: `200/200`, exit `0`, sin POST ni despliegue API. Línea base productiva Vercel `dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm`, `main` en `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6`. API, workers, archivos protegidos y servicios se inventariaron por lectura antes de publicar.
 
-Chrome bloquea el panel autenticado desplegado por una interfaz de otra extensión abierta; no se modifican sesión ni protección para sortearlo. El flujo público desplegado se verificará tras publicar. No se registran reservas ni se editan contactos en bases reales. Los dos negocios sintéticos QA del C3 no tienen teléfono publicado, por lo que el enlace con número solo se prueba localmente. Safari/iPhone físico, apertura externa/importación del calendario y aprobación final siguen pendientes. **No se declara cerrado M1.**
+Commit de código, pruebas, evidencia y control: `68fd3c0ef87f770489be780234c4eda2bd2337da`. `git push origin HEAD:refs/heads/ai/antigravity-qa` terminó con exit `0`; SHA local y remoto iguales. La integración Git creó `dpl_GbsN4Gr91MsaLsgQcQFe4J3FM1pg`: **Ready**, Preview, 39 s, Source `68fd3c0`, rama `ai/antigravity-qa`, con `qa.booking.kortek.cloud` y los dominios propios de la rama asignados. No se ejecutó un despliegue manual adicional.
+
+El mini-sitio desplegado `m1-c3-norte` cargó desde el alias QA y mostró el perfil publicado y «Reservar cita». Como el catálogo publicado no contiene teléfono, WhatsApp se ocultó correctamente. No se registraron reservas ni se editaron contactos en bases reales. El estado con teléfono válido, el mensaje previo y la pantalla de éxito se validaron con transporte sintético local. Chrome bloquea la automatización de la pestaña autenticada por una interfaz de otra extensión abierta; no se modificaron sesión ni protección para sortearlo.
+
+La comparación posterior por SSH de solo lectura terminó con `containers=true`, `units=true`, `files=true`, `main=true`. API, workers, archivos protegidos y producción conservan la línea base; `main` sigue en `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6`. No se cambió backend, API, DB, migraciones, flags, variables, SSO ni proveedores.
+
+Safari/iPhone físico, apertura externa/importación del calendario y aprobación final siguen pendientes. **No se declara cerrado M1.**
 
 Los resultados documentales locales del despliegue F0-E anterior se incluyen en esta publicación autorizada. El historial original se conserva, y este documento fija las reglas posteriores.
