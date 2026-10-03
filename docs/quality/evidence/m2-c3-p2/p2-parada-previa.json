@@ -1,0 +1,106 @@
+{
+  "fecha": "2026-10-03",
+  "zonaHoraria": "America/Santo_Domingo",
+  "comprobacionFinalUtc": "2026-10-03T23:08:14Z",
+  "base": "339ae92ff142bb47708a54b7333e20da66f3f203",
+  "rama": "ai/antigravity-qa",
+  "estadoInicial": "## ai/antigravity-qa...origin/ai/antigravity-qa [ahead 3]",
+  "arbolInicialLimpio": true,
+  "estado": "P2 PAUSADO / INCOMPLETO",
+  "criterioParada": "El propietario exige detenerse ante cualquier error; se elige la interpretación conservadora ante el fallo SSH previo al congelamiento.",
+  "proyectoQa": {
+    "ref": "prirlabbnlcuvnzuaczp",
+    "nombre": "Kortek Booking Cutover QA",
+    "estado": "ACTIVE_HEALTHY",
+    "endpoint": "db.prirlabbnlcuvnzuaczp.supabase.co",
+    "versionProveedor": "17.6.1.166",
+    "igualP0": true
+  },
+  "consultasOperativas": [
+    {
+      "herramienta": "mcp__codex_apps__supabase_get_project",
+      "argumentos": { "id": "prirlabbnlcuvnzuaczp" },
+      "resultado": "Metadatos QA iguales a P0; sin SQL, claves ni filas de negocio."
+    },
+    {
+      "herramienta": "exec_command",
+      "sandbox": "use_default",
+      "comando": "ssh -i .tmp/base-preprod-c1/oci-kortek-ed25519-user -o UserKnownHostsFile=.tmp/base-preprod-c1/oci-known-hosts -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 opc@150.136.7.19 'systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format \"{{.Name}} {{.Image}} {{.State.Status}}\" kortek-api-staging kortek-email-worker-staging'",
+      "exitCode": 1,
+      "resultado": "ssh: connect to host 150.136.7.19 port 22: Permission denied",
+      "comandosRemotosEjecutados": false
+    },
+    {
+      "herramienta": "exec_command",
+      "sandbox": "require_escalated",
+      "comando": "ssh -i .tmp/base-preprod-c1/oci-kortek-ed25519-user -o UserKnownHostsFile=.tmp/base-preprod-c1/oci-known-hosts -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 opc@150.136.7.19 'systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format \"{{.Name}} {{.Image}} {{.State.Status}}\" kortek-api-staging kortek-email-worker-staging'",
+      "exitCode": 0,
+      "proposito": "Lectura final del estado seguro; no reanuda la ejecución de P2 ni muta servicios."
+    }
+  ],
+  "serviciosFinales": {
+    "api": {
+      "unidad": "kortek-api-staging.service",
+      "activeState": "active",
+      "subState": "running",
+      "mainPid": 673295,
+      "nRestarts": 0,
+      "pidIgualP0": true,
+      "imagen": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+      "imagenIgualP0": true
+    },
+    "worker": {
+      "unidad": "kortek-email-worker-staging.service",
+      "activeState": "active",
+      "subState": "running",
+      "mainPid": 575989,
+      "nRestarts": 0,
+      "pidIgualP0": true,
+      "imagen": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+      "comparacionImagenP0": "P0 no registra imagen del worker; no se afirma igualdad verificada."
+    }
+  },
+  "congelamiento": {
+    "ejecutado": false,
+    "ventanaIniciada": false,
+    "limiteAutorizadoMinutos": 90,
+    "indisponibilidadCausadaSegundos": 0,
+    "stopEjecutado": false,
+    "startOResetEjecutado": false
+  },
+  "respaldo": {
+    "creado": false,
+    "hash": null,
+    "censoSnapshot": null,
+    "custodiaConfirmada": false,
+    "rutaCustodiadaIndicadaPorPropietario": "C:\\KortekBackups\\qa-m2-c3",
+    "mecanismoIndicado": "Frase en archivo de texto bajo C:\\KortekBackups, variable Clave; nombre exacto del archivo pendiente, contenido no leído.",
+    "claveLeidaOGenerada": false,
+    "restoreEjecutado": false,
+    "rollbackEnsayado": false
+  },
+  "noVerificado": [
+    "Endpoint DB efectivo y APP_RELEASE actuales dentro del API; metadatos de proyecto no sustituyen estas lecturas.",
+    "Ledger vivo, checksums, migración 28 ausente y censo actual: los valores de P0 no se reutilizan como evidencia P2.",
+    "Sesiones, transacciones y todos los escritores activos; cola y clasificación de destinatarios.",
+    "HTTP de la reserva pública y Preview actual.",
+    "Login migrador QA, herramientas PG17 y mecanismo de cifrado listo para ejecución.",
+    "Snapshot consistente, dump cifrado, hash, restauración, igualdad de tablas/ledger/constraints/triggers/roles y ensayo de rollback.",
+    "Orden de reanudación validado; no fue necesario ejecutarlo porque los servicios no se detuvieron.",
+    "Estado productivo actual: no se accedió a producción."
+  ],
+  "limites": {
+    "produccionConsultada": false,
+    "sqlQaEjecutado": false,
+    "migracionEjecutada": false,
+    "despliegueEjecutado": false,
+    "variablesFlagsClerkModificados": false,
+    "dependenciasInstaladas": false,
+    "secretosOFilasImpresos": false,
+    "contenedoresEnsayoCreados": 0,
+    "temporalesEnsayoCreados": 0,
+    "pushEjecutado": false,
+    "p3Iniciado": false
+  },
+  "continuacion": "Tras indicación de continuar después de la parada por error, resolver el nombre exacto del archivo de frase bajo C:\\KortekBackups y comprobar custodia en C:\\KortekBackups\\qa-m2-c3; repetir todas las precondiciones P2 antes de congelar, sin reutilizar P0 como censo de respaldo ni avanzar a P3."
+}

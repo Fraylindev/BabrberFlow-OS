@@ -1,5 +1,7 @@
 # M2 C3 — Preflight de Cuenta de cliente, etapa 1
 
+**Actualización P2 — 2026-10-03:** el propietario autorizó exclusivamente P2, una ventana de indisponibilidad QA de 90 minutos desde la parada y un commit local documental/sanitizado, **sin push ni P3**. El [registro §12](#12-p2-autorizado-parada-antes-del-congelamiento--2026-10-03) documenta **P2 PAUSADO / INCOMPLETO**: el acceso SSH inicial falló antes de ejecutar comandos remotos; no se congeló QA ni comenzó la ventana. Una lectura final acotada confirmó API y worker activos, mismos PID de P0 y cero reinicios. No existe respaldo P2 ni ensayo de recuperación realizado por esta ejecución. Esta actualización prevalece sobre las referencias históricas inferiores a P2 no autorizado.
+
 **Actualización posterior — 2026-10-03:** el propietario aprobó C2 local y autorizó P0/P1 más un único commit local, **sin push ni P2**. El [registro de ejecución §11](#11-ejecución-autorizada-de-p0-y-p1--2026-10-03) prevalece sobre los límites y estados históricos de §§1–10, conservados íntegros. Las acciones futuras de P2 en adelante siguen sin autorizarse.
 
 Fecha: **2026-10-03**, America/Santo_Domingo. **PLAN DOCUMENTAL ENTREGADO / EJECUCIÓN C3 NO AUTORIZADA.**
@@ -962,3 +964,81 @@ Intentos fallidos conservados: fixture CMS inicial duplicaba el registro creado 
 Se prepara un único commit local con rutas explícitas. Las comprobaciones finales incluyen diff completo, whitespace, índice limitado al alcance, migración intacta, evidencia JSON y enlaces. Su SHA y el árbol limpio se entregan en la respuesta final; no se escribe el hash del commit dentro de su propio contenido ni se hace un commit adicional para registrarlo. Origin solo conserva su referencia local; no se hace push ni consulta productiva para cerrar este punto.
 
 El primer staging fue denegado por el sandbox al crear index.lock, sin cambios de índice; la misma lista explícita pasó con aprobación del comando. Lecturas finales usadas: `git diff --cached --check`, `git diff --cached --stat`, `git diff --cached --name-only`, diff staged completo por grupos de rutas, `git diff --exit-code`, `git status --short --branch`, `git rev-parse HEAD` y `git rev-parse origin/ai/antigravity-qa`. Se contrastaron los 27 hashes con el JSON P0 y los cinco exit codes, cleanup y censo dotenv del JSON P1; se verificaron sintaxis CJS, enlaces/fences y ausencia de contenedores propios mediante `docker --context desktop-linux ps --filter 'name=kortek-m2-c3-p1-' --format '{{.Names}} {{.Ports}}'` (exit 0, salida vacía).
+
+## 12. P2 autorizado: parada antes del congelamiento — 2026-10-03
+
+### 12.1 Autorización, base y decisión conservadora
+
+El propietario autorizó **solo P2**, incluida la parada temporal de `kortek-api-staging` y `kortek-email-worker-staging` por un máximo de **90 minutos desde la parada**, y un commit local exclusivo de este documento/evidencia sanitizada. **Sin push ni P3**, migraciones en QA, despliegues, variables, flags, Clerk, dependencias nuevas ni acceso a producción. La autorización procede directamente del mensaje del propietario, no de las plantillas históricas del documento.
+
+Base inicial confirmada: `339ae92ff142bb47708a54b7333e20da66f3f203`, rama `ai/antigravity-qa`. Árbol e índice limpios; referencia local de origin `[ahead 3]`, sin consulta remota Git. Comandos iniciales, exit `0`:
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+~~~
+
+Git emitió `warning: unable to find all commit-graph files`; las lecturas terminaron `0`. No se reparó metadata Git. El primer intento de registrar el objetivo encontró un /goal ya activo; se consultó `get_goal({})` y se mantuvo ese objetivo, sin sustituirlo ni declararlo completo.
+
+**Estado: P2 PAUSADO / INCOMPLETO.** La comprobación SSH previa al congelamiento terminó con exit `1`, `Permission denied`, sin ejecutar órdenes remotas. La instrucción del propietario dice «Si se excede o hay cualquier error, reanuda los servicios QA anteriores en el orden validado, detente y reporta». Ante la ambigüedad de incluir un fallo de acceso previo a P2, se eligió el criterio conservador: **detener la secuencia antes de congelar**, sin usar una lectura posterior satisfactoria como autorización para continuar el respaldo. No se ejecutó `stop`; la ventana de 90 minutos no comenzó y no hubo indisponibilidad causada por esta tarea. No correspondía ejecutar `start` o reiniciar unidades que continuaban activas.
+
+El propietario indicó posteriormente la custodia **`C:\KortekBackups\qa-m2-c3`** y una frase en un archivo de texto bajo `C:\KortekBackups`, variable `Clave`. No aportó el nombre exacto del archivo. No se abrió la carpeta ni el archivo, no se leyó/generó la frase y no se comprobó todavía la recuperabilidad de esa custodia. No se copió ningún secreto al repositorio, evidencia o logs.
+
+### 12.2 Comprobaciones ejecutadas y fallos intermedios
+
+[Evidencia sanitizada y comandos literales](evidence/m2-c3-p2/p2-parada-previa.json). Fecha local 2026-10-03; lectura final registrada a las **19:08:14 America/Santo_Domingo** (`23:08:14Z`).
+
+1. Lectura del proyecto mediante `mcp__codex_apps__supabase_get_project({"id":"prirlabbnlcuvnzuaczp"})`: Kortek Booking Cutover QA, `ACTIVE_HEALTHY`, endpoint `db.prirlabbnlcuvnzuaczp.supabase.co`, versión proveedor `17.6.1.166`; iguales a P0. No se consultó ninguna DB ni proyecto productivo. **Estos metadatos no acreditan el endpoint DB efectivo de los procesos.**
+2. Comprobación SSH en el sandbox por defecto, exit `1`: `ssh: connect to host 150.136.7.19 port 22: Permission denied`. No llegó a ejecutar el inventario remoto. Fue el punto de parada conservador; no se afirma que el servidor SSH o la credencial fueran inválidos.
+3. La misma lectura con `sandbox_permissions=require_escalated`, admitida y exit `0`, se limitó a comprobar el estado seguro final de las dos unidades QA. No continuó el congelamiento ni operó producción. **No hubo rechazo de revisión automática en esa lectura.**
+
+Comando exacto de los dos intentos SSH, desde la raíz del repositorio; la diferencia fue exclusivamente el permiso de ejecución local:
+
+~~~powershell
+ssh -i .tmp/base-preprod-c1/oci-kortek-ed25519-user -o UserKnownHostsFile=.tmp/base-preprod-c1/oci-known-hosts -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 opc@150.136.7.19 'systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format "{{.Name}} {{.Image}} {{.State.Status}}" kortek-api-staging kortek-email-worker-staging'
+~~~
+
+| Comprobación final | Resultado | Relación con P0 |
+| --- | --- | --- |
+| API staging | `active/running`, MainPID `673295`, NRestarts `0` | Mismo PID y contador P0. Imagen `701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031`, igual a P0. |
+| Worker staging | `active/running`, MainPID `575989`, NRestarts `0` | Mismo PID y contador P0. Imagen observada `7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1`; P0 no registra su imagen, por lo que no se afirma esa igualdad. |
+| APP_RELEASE | No releído | El release `791569b` es antecedente P0; no se presenta como validación viva P2. |
+
+Fallo local de orientación: `rg` no pudo ejecutarse por asociación del ejecutable de WinGet; se sustituyó por `Select-String`, `Get-Content` y `git ls-files`. Las lecturas locales no abrieron dotenv, credenciales ni dumps; SSH utilizó su clave solo para autenticación. Se inspeccionó código local de los helpers históricos de backup/restore y las unidades staging, **sin ejecutarlos**; esos helpers usan PG18/archivo plano y no se adoptaron como implementación de §5.2. No se creó un helper P2 ni se descargaron herramientas.
+
+### 12.3 Lo pendiente y límites de recuperación
+
+**No ejecutado/no verificado en P2:** ledger/checksums vivos y 28 ausente; endpoint/rol/release efectivos del API; escritores/sesiones/transacciones y cola; Preview/HTTP de reserva pública; login migrador; cliente/imagen PG17 y aislamiento; orden validado de reanudación; snapshot/dump/cifrado/hash/censo; restauración, cotejo de las 36 tablas/ledger/constraints/triggers/roles/ACL; upgrade desechable y ensayo de rollback. El censo P0 de 20 clientes/28 reservas es histórico y **no acredita el estado actual ni un respaldo P2**. No hay hash nuevo que pueda habilitar P3b.
+
+§5.3 sigue siendo el procedimiento previsto: antes de migrar, un fallo de backup/restore exige reanudar las unidades anteriores congeladas; fallo de migración exige conservar escritores detenidos y conciliar ledger/catálogos; fallo de API con schema 28 íntegro exige revertir solo código conservando schema/recibos/vínculos; fallo web exige volver al Preview previo; incompatibilidad Clerk corresponde al propietario; corrupción requiere copia del estado fallido y restore autorizado en destino nuevo. **Ninguna de estas reversiones fue ensayada en esta ejecución**; la inversa desechable no está autorizada en QA operativo. No se extrapolan pruebas P1 a recuperación P2.
+
+No se crearon contenedores ni archivos temporales de ensayo P2: no hay limpieza ni respaldo cifrado que conservar en esta ejecución. Los artefactos anteriores no se eliminaron. No se detuvo/reanudó API o worker, no se actualizó ni migró nada y no se hizo push. Producción no fue consultada ni operada; no se certifica su estado actual mediante lecturas prohibidas.
+
+**Siguiente paso preciso:** tras la indicación del propietario de continuar después de la parada por error, resolver el nombre exacto del archivo de frase, comprobar ruta y custodia fuera de Git y preparar herramientas/recuperación antes de detener QA. Repetir la revalidación completa de P2 frente a P0 (metadatos y destino efectivo, ledger, escritores, release), con todas las condiciones de parada vigentes. Contar 90 minutos desde el primer `stop`, disponer de reanudación API → worker previamente validada, y reanudar ambas al terminar o fallar. El respaldo y el censo deben pertenecer a la misma snapshot; al reabrir escritores, cualquier escritura posterior exige respaldo nuevo antes de P3b. **Esta continuación no autoriza P3.**
+
+### 12.4 Alcance del commit local
+
+Únicas rutas autorizadas para staging/commit:
+
+- `docs/quality/M2_C3_PREFLIGHT.md`.
+- `docs/quality/evidence/m2-c3-p2/p2-parada-previa.json`.
+
+Se verifican JSON, enlace local, fences, diff completo, `git diff --check` y el índice explícito. Sin tipos/lint/build: solo se incorporan documentación y evidencia de una parada previa, no implementación. El SHA final se entrega en la respuesta, sin insertarlo en su propio commit. La rama quedará un commit local más adelantada; no se consulta ni publica origin.
+
+Validación local observada, exit `0`: JSON parseable; base correcta y respaldo/congelamiento falsos; evidencia enlazada existente; fences pares; sin patrones de URL PostgreSQL, clave privada, claves Clerk o JWT en la sección/evidencia nuevas; `git diff --check` sin errores. Staging explícito con permiso local ampliado, exit `0`, sin rechazo previo de index.lock. Advertencias LF→CRLF de Git: no son fallo de whitespace ni cambios de contenido histórico.
+
+Comandos del checkpoint local, con revisión completa del índice antes del commit:
+
+~~~powershell
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-parada-previa.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git commit -m "docs(m2): registrar parada previa de P2 sin congelar QA"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+~~~
