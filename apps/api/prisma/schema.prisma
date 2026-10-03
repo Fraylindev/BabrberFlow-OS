@@ -201,6 +201,7 @@ model Organization {
 
   bookings Booking[]
 
+  customerOperations             CustomerOperation[]
   payments                       Payment[]
   invoices                       Invoice[]
   professionalWeeklySchedules    ProfessionalWeeklySchedule[]
@@ -389,6 +390,7 @@ model User {
 
   // Vínculo B2C explícito con registros Client. No concede Membership ni rol.
   clients Client[]
+  customerOperations CustomerOperation[]
 
   createdAt DateTime @default(now())
 
@@ -593,6 +595,15 @@ model Client {
 
   isActive Boolean @default(true)
 
+  // D4: solo un claim válido habilita; un cambio de vínculo revoca el acceso.
+  customerAccessBlocked    Boolean @default(true)
+  // Cuarentena persistente por conflicto objetivo o mezcla confirmada; el claim no la borra.
+  customerHistoryAmbiguous Boolean @default(false)
+  // Incrementada por trigger incluso para escrituras SQL; invalida páginas obsoletas.
+  customerBookingRevision  BigInt  @default(0)
+
+  customerOperations CustomerOperation[]
+
   bookings Booking[]
 
   createdAt DateTime @default(now())
@@ -663,6 +674,7 @@ model Booking {
   updatedAt       DateTime                @updatedAt
   Invoice         Invoice?
   emailPreference BookingEmailPreference?
+  customerOperations CustomerOperation[]
 
   // The 20260811180000_booking_schedule_exclusion migration also adds a
   // PostgreSQL GiST EXCLUDE constraint for concurrent overlap protection.
@@ -671,6 +683,27 @@ model Booking {
   // Acelera GET /bookings (listado filtrado por estado, ordenado por
   // fecha) y las consultas de Analytics (§3 del RFC) sobre el mismo patrón.
   @@index([organizationId, status, createdAt])
+  @@index([organizationId, clientId, startTime, id], map: "Booking_customer_page_idx")
+}
+
+model CustomerOperation {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actorUserId    String
+  actor          User         @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+  clientId       String
+  client         Client       @relation(fields: [clientId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  operation      String       @db.VarChar(30)
+  keyDigest      String       @db.VarChar(64)
+  commandDigest  String       @db.VarChar(64)
+  bookingId      String?
+  booking        Booking?     @relation(fields: [bookingId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  createdAt      DateTime     @default(now()) @db.Timestamptz(6)
+  expiresAt      DateTime     @db.Timestamptz(6)
+
+  @@unique([organizationId, actorUserId, operation, keyDigest], map: "CustomerOperation_context_key")
+  @@index([expiresAt])
 }
 
 model Payment {

@@ -1,0 +1,320 @@
+{
+  "fechaLocal": "2026-10-03",
+  "timezone": "America/Santo_Domingo",
+  "estado": "IMPLEMENTADO LOCALMENTE / EN REVISION; C1 pendiente de aprobación del propietario",
+  "baseHead": "61ec6677b448a2ebbab4c32298b9246347ec1a10",
+  "finalHead": "61ec6677b448a2ebbab4c32298b9246347ec1a10",
+  "branch": "ai/antigravity-qa",
+  "checks": [
+    {
+      "command": "pnpm --filter api type-check",
+      "exitCode": 0,
+      "sha256": "5A3973F79ED9BECD5F23C4FEFF467513814DE7EA381D75A4D2E339AA8B8EDCA9",
+      "localLog": ".tmp\\m2-c1\\type-check.log",
+      "name": "type-check"
+    },
+    {
+      "command": "pnpm --filter api lint",
+      "exitCode": 0,
+      "sha256": "353E75FA37C52623CA429526B7C8A03A25C8B40527A1420A329C4446729BF367",
+      "localLog": ".tmp\\m2-c1\\lint.log",
+      "name": "lint"
+    },
+    {
+      "sha256": "192EFAF9B4FA68C2C03C70F21345188748B4A0369E23FEE253961BD9FFAD69EC",
+      "localLog": ".tmp\\m2-c1\\unit.log",
+      "skipped": 37,
+      "exitCode": 0,
+      "passed": 807,
+      "name": "unit",
+      "command": "pnpm --filter api test --runInBand"
+    },
+    {
+      "command": "pnpm --filter api build",
+      "exitCode": 0,
+      "sha256": "C9BBB792E87E76102443F726D9D61FCEC8C7F422FB97CC739CF187013632726F",
+      "localLog": ".tmp\\m2-c1\\build.log",
+      "name": "build"
+    },
+    {
+      "command": "pnpm --filter api exec prisma validate",
+      "exitCode": 0,
+      "sha256": "776CC06A0EC7082EA6FB148AE0EAFE4510D7E7F9B41A9A7EDCC47F05D473A5E4",
+      "localLog": ".tmp\\m2-c1\\prisma-validate.log",
+      "name": "prisma-validate"
+    },
+    {
+      "command": "pnpm --filter api exec prisma generate",
+      "exitCode": 0,
+      "sha256": "35414C0CB9FC05DFD25D0D1EBDDEC03BB88EA39208CEEEE39993DA10C4EB40ED",
+      "localLog": ".tmp\\m2-c1\\prisma-generate.log",
+      "name": "prisma-generate"
+    },
+    {
+      "sha256": "05C22682B1BBD8BC1CC66E821AB2E8B7A5E03C905A6812905CEF94918039E55D",
+      "localLog": ".tmp\\m2-c1\\migrate-zero.log",
+      "exitCode": 0,
+      "migrations": 28,
+      "name": "migrate-zero",
+      "command": "pnpm --filter api exec prisma migrate deploy (DB M2 vacía)"
+    },
+    {
+      "sha256": "D5CF815607358A731BAC2BA993433F7B069A2F96C0C1228C40C8376BED8F7C37",
+      "localLog": ".tmp\\m2-c1\\migrate-baseline.log",
+      "exitCode": 0,
+      "migrations": 27,
+      "name": "migrate-baseline",
+      "command": "pnpm --filter api exec prisma migrate deploy --schema ../../.tmp/m2-c1/upgrade/prisma/schema.prisma"
+    },
+    {
+      "command": "pnpm --filter api exec prisma migrate deploy (DB M2 upgrade 27→28)",
+      "exitCode": 0,
+      "sha256": "4616D7C6169036BC16A17E5874FFD0F159C603737805435DC06109CE95374155",
+      "localLog": ".tmp\\m2-c1\\migrate-upgrade.log",
+      "name": "migrate-upgrade"
+    },
+    {
+      "command": "pnpm --filter api exec prisma migrate status",
+      "exitCode": 0,
+      "sha256": "18878C011D34833E3FFB705AA0FE51F302F6F0BC95032A09F6A5841295426F2A",
+      "localLog": ".tmp\\m2-c1\\migrate-status.log",
+      "name": "migrate-status"
+    },
+    {
+      "command": "pnpm --filter api exec prisma migrate diff --from-url <DB_M2_DESECHABLE> --to-schema-datamodel prisma/schema.prisma --exit-code",
+      "exitCode": 0,
+      "sha256": "31EAA3B7C2211E831CD8357F91AD509858BC94CE2C61CD1F5ECA207E59539E57",
+      "localLog": ".tmp\\m2-c1\\schema-diff.log",
+      "name": "schema-diff"
+    },
+    {
+      "sha256": "07A3F2647ABA973DEF4CB451DBFD95446ED7240BB80F7FEE43564CB339E6056E",
+      "localLog": ".tmp\\m2-c1\\e2e.log",
+      "skipped": 0,
+      "exitCode": 0,
+      "passed": 47,
+      "name": "m2-http",
+      "command": "pnpm --filter api test:e2e --runInBand customer.e2e-spec.ts"
+    },
+    {
+      "sha256": "115D6BB5C6D2091B8D9097104556E17208B02E20BEA69B56FCED30FF39168AEA",
+      "localLog": ".tmp\\m2-c1\\regression-e2e.log",
+      "skipped": 0,
+      "exitCode": 0,
+      "passed": 81,
+      "name": "regression-http",
+      "command": "pnpm --filter api test:e2e --runInBand clerk-customer-claims|clerk-me|clerk-bootstrap|auth.e2e|business-schedule|notifications-producer|public-booking-m1"
+    },
+    {
+      "command": "node apps/api/test/customer-query-plan.cjs",
+      "exitCode": 0,
+      "sha256": "CF74D79A1578325CC6FFAE5B7492565EA3D2AA6B2F4785A389807D5B53A02CBD",
+      "localLog": ".tmp\\m2-c1\\explain.log",
+      "name": "explain"
+    },
+    {
+      "command": "node -r ts-node/register apps/api/test/customer-code-rollback.cjs (código exacto del HEAD base)",
+      "exitCode": 0,
+      "sha256": "301ACAB42CFEF348AC3E5F8C5DBF9064522A725CB36AFDBF140278F0D74124A0",
+      "localLog": ".tmp\\m2-c1\\code-rollback.log",
+      "name": "code-rollback"
+    },
+    {
+      "command": "pnpm --filter api exec prisma migrate diff --from-url <DB_M2_UPGRADE_DESECHABLE> --to-schema-datamodel <SCHEMA_HEAD_BASE> --exit-code",
+      "exitCode": 0,
+      "sha256": "31EAA3B7C2211E831CD8357F91AD509858BC94CE2C61CD1F5ECA207E59539E57",
+      "localLog": ".tmp\\m2-c1\\inverse-diff.log",
+      "name": "inverse-diff"
+    }
+  ],
+  "fixtures": {
+    "bind": "127.0.0.1:55439",
+    "databases": [
+      "kortek_m2_test",
+      "kortek_m2_upgrade_test"
+    ],
+    "removed": true,
+    "realProvidersAccessed": false,
+    "processes": 2,
+    "container": "kortek-m2-c1-disposable",
+    "syntheticClerk": true,
+    "productionAccessed": false,
+    "postgresMajor": 16,
+    "realDataUsed": false
+  },
+  "rollback": {
+    "inverseIsDisposableOnly": true,
+    "baselineCodeExact": true,
+    "newBookingsPreserved": true,
+    "inverseSqlExitCode": 0,
+    "receiptsPreserved": true,
+    "linksPreserved": true,
+    "inverseLedgerDiscarded": true,
+    "codeExitCode": 0,
+    "additiveSchemaPreserved": true,
+    "inverseSchemaDiffExitCode": 0,
+    "inverseDropsReceipts": true
+  },
+  "D8": {
+    "timing": {
+      "samplesPerCase": 1,
+      "constantTimeProven": false,
+      "existingMs": 190,
+      "freshMs": 133
+    },
+    "bookingFailOpenProved": true,
+    "secondaryFailureRealInDisposableDb": true,
+    "publicIndicatorsEqual": true,
+    "legacyLoginProved": true,
+    "realClerkAntiEnumerationVerified": false
+  },
+  "foreignFiles": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "7D6D9B91E0AF17A633FD0C1FCC3956DBC6272715F31C3DA37B30D132BBCB2FD6"
+    },
+    {
+      "path": "PROJECT_MASTER.md",
+      "sha256": "E40B042DCB421BD7BE84971ABA6B09230856CD6660E3BFF3D2B6A1B91CB1049D"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "34293A16EC421D800AE22739F6C095EFBEF9493142A18876B80403560359295B"
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+      "sha256": "E0F35CCCA7A53BEE90AC689CFE2A21CF51509306BB5F1F164459DD1347D1B1B6"
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "sha256": "2C9C9169D9CC72C000AA378F2D6B91B998FBABB606FB58618C3F7B13287013E7"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+      "sha256": "D0971F132503B83CC294F91676DB3ADDF78B6247B382C9E854EC045DAC11A13C"
+    }
+  ],
+  "foreignUnchanged": true,
+  "indexEmpty": true,
+  "commitPerformed": false,
+  "pushPerformed": false,
+  "deployed": false,
+  "operationalConfigurationChanged": false,
+  "finalStatus": [
+    " M BACKEND_CHANGES.md",
+    " M CHANGELOG.md",
+    " M PROJECT_MASTER.md",
+    " M apps/api/prisma/schema.prisma",
+    " M apps/api/src/app.module.ts",
+    " M apps/api/src/public-booking/public-booking.service.spec.ts",
+    " M apps/api/src/public-booking/public-booking.service.ts",
+    " M apps/api/src/security/postgres-throttler.storage.ts",
+    " M docs/README.md",
+    " M docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+    " M docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+    "?? apps/api/prisma/migrations/20261003120000_customer_stage_one/",
+    "?? apps/api/prisma/rollback/",
+    "?? apps/api/src/customer/",
+    "?? apps/api/test/customer-code-rollback.cjs",
+    "?? apps/api/test/customer-db-invariants.cjs",
+    "?? apps/api/test/customer-migration-fixture.cjs",
+    "?? apps/api/test/customer-process.ts",
+    "?? apps/api/test/customer-query-plan.cjs",
+    "?? apps/api/test/customer.e2e-spec.ts",
+    "?? docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md",
+    "?? docs/quality/M2_C1_CIERRE.md",
+    "?? docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+    "?? docs/quality/evidence/m2-c1/"
+  ],
+  "testedSources": [
+    {
+      "path": "apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql",
+      "sha256": "0369FE1297D6FA1B4BF94481B3C76DC4D00F9F7E48C42502CED2E8EF0CE57B38"
+    },
+    {
+      "path": "apps/api/prisma/rollback/customer-stage-one.disposable.sql",
+      "sha256": "A5CEA168AE84C8A7F0EF78079551914025A8A7643E2BD0D6E47EA79B60372B3F"
+    },
+    {
+      "path": "apps/api/prisma/schema.prisma",
+      "sha256": "481E3E5DEAEB84DCB54EF50D5582E925605E5662F8DB5C096B44ECFD7B534433"
+    },
+    {
+      "path": "apps/api/src/app.module.ts",
+      "sha256": "4B6C053822ECCB4F97E1246F31FE543C387C0496A81FA303403F9ABA34A85BF3"
+    },
+    {
+      "path": "apps/api/src/customer/customer-budget.guard.ts",
+      "sha256": "BFEFA3391F56B27E80D9DB6F9317410C1DED99A3EF43CEF81EAD0946BDD8F439"
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.spec.ts",
+      "sha256": "228A0C3171BB1E501C71808E9B01BC13C02B04610C7FC41A303B6D2FEFB7FF01"
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.ts",
+      "sha256": "361D606226BDB68FA7C3694207C51CCE34FF2A9FE086EA0E0DBC35FF62720724"
+    },
+    {
+      "path": "apps/api/src/customer/customer.controller.ts",
+      "sha256": "F0F40713F8BE26344C642BE860BFC6C2BCA5E3BB90E9CD48DBBEC3F8E28DA8BB"
+    },
+    {
+      "path": "apps/api/src/customer/customer.dto.ts",
+      "sha256": "008AAB83C83E5A731E71E189E1FF4F2DC0AA3F222D34A9B5A49E7640764D98E9"
+    },
+    {
+      "path": "apps/api/src/customer/customer.module.ts",
+      "sha256": "FE3ACB497336FCB8B472B98522105E6A02929B74871A96AF2A241B7B599744BB"
+    },
+    {
+      "path": "apps/api/src/customer/customer.service.ts",
+      "sha256": "841859A1C74906068591D1AF99DB937A9F7A7D4FAA666E4A22F9EA24F08CB091"
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "sha256": "337FFA611CA3193E50E1226C6DD2D8AD4A405EC766549F60D327E9E30E7BC008"
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "sha256": "78DA9BE6F5787DC54DE35EC07C5F738F063E72AE700E39C4F8B5356524B4461E"
+    },
+    {
+      "path": "apps/api/src/security/postgres-throttler.storage.ts",
+      "sha256": "569CD9E1E95501268389C645CCB646A07481A111A61BC8A7E2E7E40086D53F2D"
+    },
+    {
+      "path": "apps/api/test/customer-code-rollback.cjs",
+      "sha256": "E39CF8AFDA8456FA1EF3712BE9418174CB44CF38A9074012A17240B85F30A9F6"
+    },
+    {
+      "path": "apps/api/test/customer-db-invariants.cjs",
+      "sha256": "DA419332868E14EAAC0E6BE5CC50097C4903890766F1939AF25CA6DB8BF5274B"
+    },
+    {
+      "path": "apps/api/test/customer-migration-fixture.cjs",
+      "sha256": "78D3C76B7D511572AAEF4239AF2BBE116D273FE51E85D5F707A895A4B651639D"
+    },
+    {
+      "path": "apps/api/test/customer-process.ts",
+      "sha256": "4AAA6A68C91FE02740585106FC6A7D8F545968DECAAAB7B73A3C05C348B95DA6"
+    },
+    {
+      "path": "apps/api/test/customer-query-plan.cjs",
+      "sha256": "E8B88918856783ACEF5A3A00DFDB10F48C9908EC6BC09950B7D980DF281EBF8E"
+    },
+    {
+      "path": "apps/api/test/customer.e2e-spec.ts",
+      "sha256": "80F60A337447F5B3ABC0DF2DA6520B4035B074B5186DEE413D9933745602275A"
+    }
+  ],
+  "profileReceipt": {
+    "ttlHours": 24,
+    "implemented": true,
+    "auditOnceProved": true,
+    "twoProcessesProved": true,
+    "piiStored": false,
+    "rollbackProved": true,
+    "clientTenantFk": true
+  }
+}

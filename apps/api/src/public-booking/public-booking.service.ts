@@ -495,17 +495,13 @@ export class PublicBookingService {
       result.clientResult.action,
     );
 
-    let accountCreated = false;
-    let accountCreationError: string | null = null;
     if (dto.createAccount && normalized.email && dto.password) {
-      const account = await this.tryCreateCustomerAccount(
+      await this.tryCreateCustomerAccount(
         organization.id,
         normalized.name,
         normalized.email,
         dto.password,
       );
-      accountCreated = account.created;
-      accountCreationError = account.error;
     }
 
     return {
@@ -517,8 +513,9 @@ export class PublicBookingService {
         endTime: result.booking.endTime,
         status: result.booking.status,
       },
-      accountCreated,
-      accountCreationError,
+      // D8-A: el HTTP no confirma existencia ni éxito de identidad secundaria.
+      accountCreated: false,
+      accountCreationError: null,
     };
   }
 
@@ -597,6 +594,8 @@ export class PublicBookingService {
     password: string,
   ): Promise<{ created: boolean; error: string | null }> {
     try {
+      // Mismo trabajo bcrypt también cuando el correo ya existe.
+      const hashedPassword = await bcrypt.hash(password, 10);
       const existing = await this.prisma.db.user.findFirst({
         where: { email: { equals: email, mode: 'insensitive' } },
         select: { id: true },
@@ -605,7 +604,6 @@ export class PublicBookingService {
         return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
       await this.prisma.db.$transaction(async (transaction) => {
         const user = await transaction.user.create({
           data: {

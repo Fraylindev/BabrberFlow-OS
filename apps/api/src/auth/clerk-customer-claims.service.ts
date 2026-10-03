@@ -28,6 +28,9 @@ interface LockedClient {
   organizationId: string;
   email: string | null;
   userId: string | null;
+  phone: string | null;
+  customerAccessBlocked: boolean;
+  customerHistoryAmbiguous: boolean;
 }
 
 interface ClaimResult {
@@ -114,7 +117,8 @@ export class ClerkCustomerClaimsService {
     }
 
     const clients = await tx.$queryRaw<LockedClient[]>`
-      SELECT c."id", c."organizationId", c."email", c."userId"
+      SELECT c."id", c."organizationId", c."email", c."userId", c."phone",
+        c."customerAccessBlocked", c."customerHistoryAmbiguous"
       FROM "Client" c
       WHERE c."id" = ${booking.clientId}
         AND c."organizationId" = ${booking.organizationId}
@@ -141,9 +145,22 @@ export class ClerkCustomerClaimsService {
     if (client.userId) {
       const linkedUser = await tx.user.findUnique({
         where: { id: client.userId },
-        select: { clerkUserId: true },
+        select: { clerkUserId: true, email: true },
       });
       if (linkedUser?.clerkUserId === clerkUserId) {
+        // Un replay ya habilitado conserva A0.6-A. Una revocación exige de nuevo
+        // correo primario verificado coherente con Client y User, sin inferir vínculo.
+        if (
+          client.customerAccessBlocked &&
+          (!client.email ||
+            normalizeAccountEmail(client.email) !== verifiedEmail ||
+            normalizeAccountEmail(linkedUser.email) !== verifiedEmail)
+        ) {
+          throw new ConflictException(
+            ClerkCustomerClaimsService.CONFLICT_MESSAGE,
+          );
+        }
+        await this.enableClaimedClient(tx, client, client.userId);
         return { isNew: false };
       }
       throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
@@ -197,6 +214,10 @@ export class ClerkCustomerClaimsService {
       throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
     }
 
+    // El trigger revoca al cambiar userId: habilitar en una segunda escritura
+    // dentro de la misma transacción, únicamente después del claim autorizado.
+    await this.enableClaimedClient(tx, client, user.id, true);
+
     await this.audit.logTransactional(
       {
         organizationId: booking.organizationId,
@@ -209,5 +230,37 @@ export class ClerkCustomerClaimsService {
     );
 
     return { isNew: true };
+  }
+
+  private async enableClaimedClient(
+    tx: Prisma.TransactionClient,
+    client: LockedClient,
+    userId: string,
+    newlyLinked = false,
+  ) {
+    // Señal objetiva del inventario: dos fichas con reservas en el mismo negocio
+    // comparten teléfono. No se usa para encontrar identidad ni unir historiales.
+    const sharedContact = client.phone
+      ? await tx.client.findFirst({
+          where: {
+            id: { not: client.id },
+            organizationId: client.organizationId,
+            phone: client.phone,
+            bookings: { some: { organizationId: client.organizationId } },
+          },
+          select: { id: true },
+        })
+      : null;
+    const ambiguous = client.customerHistoryAmbiguous || !!sharedContact;
+    if (!ambiguous && !client.customerAccessBlocked && !newlyLinked) return;
+    const result = await tx.client.updateMany({
+      where: { id: client.id, organizationId: client.organizationId, userId },
+      data: {
+        customerAccessBlocked: ambiguous,
+        ...(ambiguous ? { customerHistoryAmbiguous: true } : {}),
+      },
+    });
+    if (result.count !== 1)
+      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
   }
 }

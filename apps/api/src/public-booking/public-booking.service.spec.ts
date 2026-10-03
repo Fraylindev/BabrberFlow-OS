@@ -292,7 +292,7 @@ describe('PublicBookingService - secure public creation', () => {
 
       expect(result.booking.id).toBe(BOOKING.id);
       expect(result.accountCreated).toBe(false);
-      expect(result.accountCreationError).toBe('ACCOUNT_CREATION_FAILED');
+      expect(result.accountCreationError).toBeNull();
       expect(log).toHaveBeenCalledTimes(1);
       expect(log).toHaveBeenCalledWith(
         'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',

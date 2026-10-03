@@ -1,0 +1,75 @@
+{
+  "migrations": 28,
+  "constraints": [
+    {
+      "name": "Client_customer_revision_check"
+    },
+    {
+      "name": "Client_emailRevision_check"
+    },
+    {
+      "name": "Client_organizationId_fkey"
+    },
+    {
+      "name": "Client_pkey"
+    },
+    {
+      "name": "Client_userId_fkey"
+    },
+    {
+      "name": "CustomerOperation_actorUserId_fkey"
+    },
+    {
+      "name": "CustomerOperation_bookingId_organizationId_fkey"
+    },
+    {
+      "name": "CustomerOperation_clientId_organizationId_fkey"
+    },
+    {
+      "name": "CustomerOperation_organizationId_fkey"
+    },
+    {
+      "name": "CustomerOperation_pkey"
+    },
+    {
+      "name": "CustomerOperation_valid_check"
+    }
+  ],
+  "indexes": [
+    {
+      "name": "Booking_customer_page_idx"
+    },
+    {
+      "name": "Booking_id_organizationId_key"
+    },
+    {
+      "name": "Booking_organizationId_status_createdAt_idx"
+    },
+    {
+      "name": "Booking_pkey"
+    },
+    {
+      "name": "Booking_professional_schedule_excl"
+    },
+    {
+      "name": "CustomerOperation_context_key"
+    },
+    {
+      "name": "CustomerOperation_expiresAt_idx"
+    },
+    {
+      "name": "CustomerOperation_pkey"
+    }
+  ],
+  "triggers": [
+    {
+      "name": "Booking_customer_revision",
+      "enabled": "O"
+    },
+    {
+      "name": "Client_customer_access_relink",
+      "enabled": "O"
+    }
+  ],
+  "checked": true
+}

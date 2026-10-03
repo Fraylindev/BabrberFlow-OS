@@ -15,15 +15,19 @@ describe('ClerkCustomerClaimsService', () => {
     organizationId: booking.organizationId,
     email: 'customer@example.test',
     userId: null as string | null,
+    phone: '+18095550101',
+    customerAccessBlocked: true,
+    customerHistoryAmbiguous: false,
   };
   const queryRaw = jest.fn();
   const findUser = jest.fn();
   const createUser = jest.fn();
   const updateClients = jest.fn();
+  const findClient = jest.fn();
   const tx = {
     $queryRaw: queryRaw,
     user: { findUnique: findUser, create: createUser },
-    client: { updateMany: updateClients },
+    client: { updateMany: updateClients, findFirst: findClient },
   };
   const transaction = jest.fn();
   const prisma = {
@@ -59,6 +63,7 @@ describe('ClerkCustomerClaimsService', () => {
       email: 'customer@example.test',
     });
     updateClients.mockResolvedValue({ count: 1 });
+    findClient.mockResolvedValue(null);
     logTransactional.mockResolvedValue(undefined);
   });
 
@@ -99,7 +104,9 @@ describe('ClerkCustomerClaimsService', () => {
     queryRaw.mockReset();
     queryRaw
       .mockResolvedValueOnce([booking])
-      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }])
+      .mockResolvedValueOnce([
+        { ...client, userId: 'local-user', customerAccessBlocked: false },
+      ])
       .mockResolvedValueOnce([booking]);
     findUser.mockResolvedValueOnce({ clerkUserId: 'clerk_customer' });
 
@@ -122,6 +129,102 @@ describe('ClerkCustomerClaimsService', () => {
     expect(createUser).not.toHaveBeenCalled();
     expect(updateClients).not.toHaveBeenCalled();
     expect(logTransactional).not.toHaveBeenCalled();
+  });
+
+  it('habilita después del enlace aunque la fila original estuviera habilitada', async () => {
+    queryRaw.mockReset();
+    queryRaw
+      .mockResolvedValueOnce([booking])
+      .mockResolvedValueOnce([{ ...client, customerAccessBlocked: false }])
+      .mockResolvedValueOnce([booking]);
+    await service.claim('clerk_customer', dto);
+    expect(updateClients).toHaveBeenLastCalledWith({
+      where: {
+        id: client.id,
+        organizationId: client.organizationId,
+        userId: '0d2216b9-f649-4ad3-b661-87f29889eaff',
+      },
+      data: { customerAccessBlocked: false },
+    });
+  });
+
+  it('conserva la cuarentena con señal de teléfono compartido sin inferir identidad', async () => {
+    findClient.mockResolvedValue({ id: 'otra-ficha' });
+    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+      isNew: true,
+    });
+    expect(updateClients).toHaveBeenLastCalledWith({
+      where: {
+        id: client.id,
+        organizationId: client.organizationId,
+        userId: '0d2216b9-f649-4ad3-b661-87f29889eaff',
+      },
+      data: { customerAccessBlocked: true, customerHistoryAmbiguous: true },
+    });
+  });
+
+  it('un replay no libera la cuarentena persistente', async () => {
+    queryRaw.mockReset();
+    queryRaw
+      .mockResolvedValueOnce([booking])
+      .mockResolvedValueOnce([
+        { ...client, userId: 'local-user', customerHistoryAmbiguous: true },
+      ])
+      .mockResolvedValueOnce([booking]);
+    findUser.mockResolvedValueOnce({
+      clerkUserId: 'clerk_customer',
+      email: client.email,
+    });
+    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+      isNew: false,
+    });
+    expect(updateClients).toHaveBeenLastCalledWith({
+      where: {
+        id: client.id,
+        organizationId: client.organizationId,
+        userId: 'local-user',
+      },
+      data: { customerAccessBlocked: true, customerHistoryAmbiguous: true },
+    });
+  });
+
+  it('rehabilita un vínculo revocado solo con el correo primario verificado coherente', async () => {
+    queryRaw.mockReset();
+    queryRaw
+      .mockResolvedValueOnce([booking])
+      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }])
+      .mockResolvedValueOnce([booking]);
+    findUser.mockResolvedValueOnce({
+      clerkUserId: 'clerk_customer',
+      email: client.email,
+    });
+    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+      isNew: false,
+    });
+    expect(updateClients).toHaveBeenLastCalledWith({
+      where: {
+        id: client.id,
+        organizationId: client.organizationId,
+        userId: 'local-user',
+      },
+      data: { customerAccessBlocked: false },
+    });
+  });
+
+  it('correo cambiado no libera un vínculo revocado', async () => {
+    queryRaw.mockReset();
+    queryRaw
+      .mockResolvedValueOnce([booking])
+      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }])
+      .mockResolvedValueOnce([booking]);
+    findUser.mockResolvedValueOnce({
+      clerkUserId: 'clerk_customer',
+      email: 'other@example.test',
+    });
+    await expect(service.claim('clerk_customer', dto)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
+    expect(updateClients).not.toHaveBeenCalled();
   });
 
   it('oculta reservas de otro tenant con el mismo 404', async () => {

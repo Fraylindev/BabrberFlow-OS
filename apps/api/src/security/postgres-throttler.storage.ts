@@ -24,6 +24,7 @@ export class PostgresThrottlerStorage implements ThrottlerStorage {
   constructor(
     private readonly prisma: PrismaService,
     private readonly secret: string,
+    private readonly cleanupLimit?: number,
   ) {
     if (secret.length < 32) {
       throw new Error('RATE_LIMIT_SECRET must contain at least 32 characters');
@@ -74,17 +75,29 @@ export class PostgresThrottlerStorage implements ThrottlerStorage {
       const now = Date.now();
       if (now - this.lastCleanup > 3_600_000) {
         this.lastCleanup = now;
-        void this.prisma.db.securityRateBucket
-          .deleteMany({
-            where: {
-              expiresAt: { lt: new Date(now - 86_400_000) },
-              OR: [
-                { blockedUntil: null },
-                { blockedUntil: { lt: new Date(now - 86_400_000) } },
-              ],
-            },
-          })
-          .catch(() => undefined);
+        if (this.cleanupLimit !== undefined) {
+          const limit = Math.max(1, Math.trunc(this.cleanupLimit));
+          void this.prisma.db.$executeRaw`
+            DELETE FROM "SecurityRateBucket" WHERE "key" IN (
+              SELECT "key" FROM "SecurityRateBucket"
+              WHERE "expiresAt" < NOW() - INTERVAL '24 hours'
+                AND ("blockedUntil" IS NULL OR "blockedUntil" < NOW() - INTERVAL '24 hours')
+              ORDER BY "expiresAt" LIMIT ${limit}
+            )
+          `.catch(() => undefined);
+        } else {
+          void this.prisma.db.securityRateBucket
+            .deleteMany({
+              where: {
+                expiresAt: { lt: new Date(now - 86_400_000) },
+                OR: [
+                  { blockedUntil: null },
+                  { blockedUntil: { lt: new Date(now - 86_400_000) } },
+                ],
+              },
+            })
+            .catch(() => undefined);
+        }
       }
 
       const timeToExpire = Math.max(

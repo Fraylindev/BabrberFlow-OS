@@ -1,0 +1,363 @@
+{
+  "foreignFiles": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "7D6D9B91E0AF17A633FD0C1FCC3956DBC6272715F31C3DA37B30D132BBCB2FD6"
+    },
+    {
+      "path": "PROJECT_MASTER.md",
+      "sha256": "E40B042DCB421BD7BE84971ABA6B09230856CD6660E3BFF3D2B6A1B91CB1049D"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "34293A16EC421D800AE22739F6C095EFBEF9493142A18876B80403560359295B"
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+      "sha256": "E0F35CCCA7A53BEE90AC689CFE2A21CF51509306BB5F1F164459DD1347D1B1B6"
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "sha256": "2C9C9169D9CC72C000AA378F2D6B91B998FBABB606FB58618C3F7B13287013E7"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+      "sha256": "D0971F132503B83CC294F91676DB3ADDF78B6247B382C9E854EC045DAC11A13C"
+    }
+  ],
+  "soloGate": "C1",
+  "branch": "ai/antigravity-qa",
+  "foreignFilesByteIdentical": true,
+  "timezone": "America/Santo_Domingo",
+  "produccionTocada": false,
+  "fechaLocal": "2026-10-03",
+  "migration": {
+    "inversePassed": true,
+    "newBookingPreserved": true,
+    "zeroTo28": true,
+    "baselineDataPreserved": true,
+    "upgrade27To28": true,
+    "codeRollbackPassed": true
+  },
+  "query": {
+    "benchmarkProductivo": false,
+    "index": "Booking_customer_page_idx",
+    "upcomingMs": 0.248,
+    "clients": 50,
+    "historyMs": 0.283,
+    "bookings": 50000
+  },
+  "baseHead": "61ec6677b448a2ebbab4c32298b9246347ec1a10",
+  "variablesOperativasModificadas": false,
+  "frontendTocado": false,
+  "gitStatusBeforeStaging": [
+    " M BACKEND_CHANGES.md",
+    " M CHANGELOG.md",
+    " M PROJECT_MASTER.md",
+    " M apps/api/prisma/schema.prisma",
+    " M apps/api/src/app.module.ts",
+    " M apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+    " M apps/api/src/auth/clerk-customer-claims.service.ts",
+    " M apps/api/src/public-booking/public-booking.service.spec.ts",
+    " M apps/api/src/public-booking/public-booking.service.ts",
+    " M apps/api/src/security/postgres-throttler.storage.ts",
+    " M docs/README.md",
+    " M docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+    " M docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+    "?? apps/api/prisma/migrations/20261003120000_customer_stage_one/",
+    "?? apps/api/prisma/rollback/",
+    "?? apps/api/src/customer/",
+    "?? apps/api/test/customer-code-rollback.cjs",
+    "?? apps/api/test/customer-db-invariants.cjs",
+    "?? apps/api/test/customer-migration-fixture.cjs",
+    "?? apps/api/test/customer-process.ts",
+    "?? apps/api/test/customer-query-plan.cjs",
+    "?? apps/api/test/customer.e2e-spec.ts",
+    "?? docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md",
+    "?? docs/quality/M2_C1_CIERRE.md",
+    "?? docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+    "?? docs/quality/evidence/m2-c1/"
+  ],
+  "checks": [
+    {
+      "sha256": "B72442401E46380DAD3D9A3139BFA830D8121DC7ABAAFA53C9BA8D7A889CE2E4",
+      "exitCode": 0,
+      "name": "regressions",
+      "localLog": ".tmp/m2-d4/regressions.log",
+      "command": "pnpm --filter api test:e2e --runInBand --testPathPatterns=clerk-customer-claims|clerk-me|clerk-bootstrap|auth.e2e|business-schedule|notifications-producer|public-booking-m1"
+    },
+    {
+      "localLog": ".tmp/m2-d4/invariants.log",
+      "exitCode": 0,
+      "sha256": "9ED494BFD0A3C6930B858556A5B428679FFF15D03CC1F757DBD3E83AC4BF795C",
+      "name": "invariants",
+      "command": "node apps/api/test/customer-db-invariants.cjs"
+    },
+    {
+      "sha256": "B51B5333427ABE171856A04350187F458A0C19A613CFB845D2B33DEE5AB9E495",
+      "name": "after-http",
+      "exitCode": 0,
+      "localLog": ".tmp/m2-d4/after-http.log",
+      "command": "node -r ./apps/api/node_modules/ts-node/register .tmp/m2-d4/probe.cjs after"
+    },
+    {
+      "sha256": "C9BBB792E87E76102443F726D9D61FCEC8C7F422FB97CC739CF187013632726F",
+      "name": "build",
+      "localLog": ".tmp/m2-d4/build.log",
+      "exitCode": 0,
+      "command": "pnpm --filter api build"
+    },
+    {
+      "sha256": "D3541CE522FBA2AF38CF2505F575B21FD72D21542C2BB5BC232B43B2F5E9B620",
+      "name": "prisma-generate",
+      "exitCode": 0,
+      "localLog": ".tmp/m2-d4/prisma-generate.log",
+      "command": "pnpm --filter api exec prisma generate"
+    },
+    {
+      "sha256": "30A98F506E24E3077A538279D6D193CE68BADBFDF42E475310BABF54EB658D3F",
+      "localLog": ".tmp/m2-d4/unit.log",
+      "exitCode": 0,
+      "name": "unit",
+      "command": "pnpm --filter api test --runInBand"
+    },
+    {
+      "localLog": ".tmp/m2-d4/type-check.log",
+      "sha256": "5A3973F79ED9BECD5F23C4FEFF467513814DE7EA381D75A4D2E339AA8B8EDCA9",
+      "name": "type-check",
+      "exitCode": 0,
+      "command": "pnpm --filter api type-check"
+    },
+    {
+      "name": "explain",
+      "sha256": "D64DF685874F99A671D4FAF1E9A932ACADD8AF4A646EE77915AEC7A8690E00A1",
+      "localLog": ".tmp/m2-d4/explain.log",
+      "exitCode": 0,
+      "command": "node apps/api/test/customer-query-plan.cjs"
+    },
+    {
+      "name": "lint",
+      "localLog": ".tmp/m2-d4/lint.log",
+      "exitCode": 0,
+      "sha256": "353E75FA37C52623CA429526B7C8A03A25C8B40527A1420A329C4446729BF367",
+      "command": "pnpm --filter api lint"
+    },
+    {
+      "name": "migrate-zero",
+      "localLog": ".tmp/m2-d4/migrate-zero.log",
+      "exitCode": 0,
+      "sha256": "05C22682B1BBD8BC1CC66E821AB2E8B7A5E03C905A6812905CEF94918039E55D",
+      "command": "pnpm --filter api exec prisma migrate deploy (base desechable vacía)"
+    },
+    {
+      "exitCode": 0,
+      "sha256": "637D9F66036DA90512EA29C269619F520638828E4085FA0B9CEBA67C41ABEBB5",
+      "name": "customer-e2e",
+      "localLog": ".tmp/m2-d4/customer-e2e.log",
+      "command": "pnpm --filter api test:e2e --runInBand --testPathPatterns=customer.e2e-spec"
+    },
+    {
+      "exitCode": 0,
+      "name": "prisma-validate",
+      "localLog": ".tmp/m2-d4/prisma-validate.log",
+      "sha256": "776CC06A0EC7082EA6FB148AE0EAFE4510D7E7F9B41A9A7EDCC47F05D473A5E4",
+      "command": "pnpm --filter api exec prisma validate"
+    },
+    {
+      "sha256": "B1A730ABB41B7262979CE277CDC8943B77F255A7D54E659278A392C8D6E169D8",
+      "name": "inverse-verify",
+      "localLog": ".tmp/m2-d4/inverse-verify.log",
+      "command": "node apps/api/test/customer-migration-fixture.cjs verify-inverse",
+      "exitCode": 0
+    },
+    {
+      "sha256": "301ACAB42CFEF348AC3E5F8C5DBF9064522A725CB36AFDBF140278F0D74124A0",
+      "name": "code-rollback",
+      "localLog": ".tmp/m2-d4/code-rollback.log",
+      "command": "node -r ./apps/api/node_modules/ts-node/register apps/api/test/customer-code-rollback.cjs",
+      "exitCode": 0
+    },
+    {
+      "sha256": "4616D7C6169036BC16A17E5874FFD0F159C603737805435DC06109CE95374155",
+      "name": "migrate-upgrade",
+      "localLog": ".tmp/m2-d4/migrate-upgrade.log",
+      "command": "pnpm --filter api exec prisma migrate deploy (base desechable con 27 migraciones)",
+      "exitCode": 0
+    },
+    {
+      "sha256": "D5CF815607358A731BAC2BA993433F7B069A2F96C0C1228C40C8376BED8F7C37",
+      "name": "migrate-baseline",
+      "localLog": ".tmp/m2-d4/migrate-baseline.log",
+      "command": "pnpm --filter api exec prisma migrate deploy --schema ../../.tmp/m2-c1/upgrade/prisma/schema.prisma",
+      "exitCode": 0
+    },
+    {
+      "sha256": "105D36D8FA2912888A005C6B2FC96A4D9096C07F6F6DA550153F79F2ECE05B3F",
+      "name": "upgrade-prepare",
+      "localLog": ".tmp/m2-d4/upgrade-prepare.log",
+      "command": "node apps/api/test/customer-migration-fixture.cjs prepare",
+      "exitCode": 0
+    },
+    {
+      "sha256": "65892E4CCFFCAE8CC431E067189003F6C3020BA241DB6FEAE1AFFF59A639A1D6",
+      "name": "disposable-stop",
+      "localLog": ".tmp/m2-d4/disposable-stop.log",
+      "command": "docker stop kortek-m2-d4-disposable",
+      "exitCode": 0
+    },
+    {
+      "sha256": "CD811C86EFD8ABDCC4B65E1859DF0EA04316E74931C3F566C271E23D8CCF289A",
+      "name": "inverse",
+      "localLog": ".tmp/m2-d4/inverse.log",
+      "command": "customer-stage-one.disposable.sql | docker exec -i kortek-m2-d4-disposable psql -U m2_runner -d kortek_m2_upgrade_test -v ON_ERROR_STOP=1",
+      "exitCode": 0
+    },
+    {
+      "sha256": "31EAA3B7C2211E831CD8357F91AD509858BC94CE2C61CD1F5ECA207E59539E57",
+      "name": "schema-diff",
+      "localLog": ".tmp/m2-d4/schema-diff.log",
+      "command": "pnpm --filter api exec prisma migrate diff --from-url URL_desechable --to-schema-datamodel prisma/schema.prisma --exit-code",
+      "exitCode": 0
+    },
+    {
+      "sha256": "1CB76790AED65533C71B473657FF8CFE36DC07AED08D88876980F01AB6F90126",
+      "name": "upgrade-verify",
+      "localLog": ".tmp/m2-d4/upgrade-verify.log",
+      "command": "node apps/api/test/customer-migration-fixture.cjs verify-upgrade",
+      "exitCode": 0
+    },
+    {
+      "sha256": "31EAA3B7C2211E831CD8357F91AD509858BC94CE2C61CD1F5ECA207E59539E57",
+      "name": "inverse-diff",
+      "localLog": ".tmp/m2-d4/inverse-diff.log",
+      "command": "pnpm --filter api exec prisma migrate diff --from-url URL_desechable --to-schema-datamodel ../../.tmp/m2-c1/upgrade/prisma/schema.prisma --exit-code",
+      "exitCode": 0
+    }
+  ],
+  "isolation": {
+    "disposableRemoved": true,
+    "container": "kortek-m2-d4-disposable",
+    "realPostgres": true,
+    "realHttp": true,
+    "provider": "Clerk sintético controlado"
+  },
+  "tests": {
+    "regressionPassed": 81,
+    "customerHttpPassed": 53,
+    "unitPassed": 812,
+    "unitSkipped": 37
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql",
+      "sha256": "6E1D854F285F4A4A691377D6654D0A4DF80F29CA5C3AD375B352AE96894D6DEE"
+    },
+    {
+      "path": "apps/api/prisma/rollback/customer-stage-one.disposable.sql",
+      "sha256": "B00AAAD976C14B8B132FE6FF9F9F6F20A8F373D043FCA9D4C4D2D65DCFC49786"
+    },
+    {
+      "path": "apps/api/prisma/schema.prisma",
+      "sha256": "5406E5FB29A0D8AB0D24C8AF863231F25A2BF9EA5B75499E802EA3C0F6F358A0"
+    },
+    {
+      "path": "apps/api/src/app.module.ts",
+      "sha256": "4B6C053822ECCB4F97E1246F31FE543C387C0496A81FA303403F9ABA34A85BF3"
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+      "sha256": "63E5040535960BACFA30B37180E8A044E08616C421F2624C8C82AE8E956C5708"
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.service.ts",
+      "sha256": "B108E2E087E7A595C984BA91A5D419BCFB3CBDCF3A5E27E981C48E6CC58EB81D"
+    },
+    {
+      "path": "apps/api/src/customer/customer-budget.guard.ts",
+      "sha256": "BFEFA3391F56B27E80D9DB6F9317410C1DED99A3EF43CEF81EAD0946BDD8F439"
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.spec.ts",
+      "sha256": "228A0C3171BB1E501C71808E9B01BC13C02B04610C7FC41A303B6D2FEFB7FF01"
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.ts",
+      "sha256": "361D606226BDB68FA7C3694207C51CCE34FF2A9FE086EA0E0DBC35FF62720724"
+    },
+    {
+      "path": "apps/api/src/customer/customer.controller.ts",
+      "sha256": "F0F40713F8BE26344C642BE860BFC6C2BCA5E3BB90E9CD48DBBEC3F8E28DA8BB"
+    },
+    {
+      "path": "apps/api/src/customer/customer.dto.ts",
+      "sha256": "008AAB83C83E5A731E71E189E1FF4F2DC0AA3F222D34A9B5A49E7640764D98E9"
+    },
+    {
+      "path": "apps/api/src/customer/customer.module.ts",
+      "sha256": "FE3ACB497336FCB8B472B98522105E6A02929B74871A96AF2A241B7B599744BB"
+    },
+    {
+      "path": "apps/api/src/customer/customer.service.ts",
+      "sha256": "A63C57AF06C74EFDDEE94D5D20C82031B38F22723A331788C3AA6EFC632A00F5"
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "sha256": "337FFA611CA3193E50E1226C6DD2D8AD4A405EC766549F60D327E9E30E7BC008"
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "sha256": "78DA9BE6F5787DC54DE35EC07C5F738F063E72AE700E39C4F8B5356524B4461E"
+    },
+    {
+      "path": "apps/api/src/security/postgres-throttler.storage.ts",
+      "sha256": "569CD9E1E95501268389C645CCB646A07481A111A61BC8A7E2E7E40086D53F2D"
+    },
+    {
+      "path": "apps/api/test/customer-code-rollback.cjs",
+      "sha256": "E39CF8AFDA8456FA1EF3712BE9418174CB44CF38A9074012A17240B85F30A9F6"
+    },
+    {
+      "path": "apps/api/test/customer-db-invariants.cjs",
+      "sha256": "FF790E0A2C5BC6A116FE0A738B5381D4B50F57247244652B8D53046CD7A43A4C"
+    },
+    {
+      "path": "apps/api/test/customer-migration-fixture.cjs",
+      "sha256": "B22E19AA92F8AF754DF5C12ABBAE90807B90FA1F575055CE200005C1DC6FB7A2"
+    },
+    {
+      "path": "apps/api/test/customer-process.ts",
+      "sha256": "BA5C1F11734F1EDF367450A15C85D947DA8EA126F747CD742E0E168F648FC2BF"
+    },
+    {
+      "path": "apps/api/test/customer-query-plan.cjs",
+      "sha256": "4598A1F3E54D9EE740C31AD542D1030046978AC07260665B6BFD61DFB9237535"
+    },
+    {
+      "path": "apps/api/test/customer.e2e-spec.ts",
+      "sha256": "41B113920EDF84A6D198D081B097FE4E4BC51684926F2EF213E1137C07C03351"
+    },
+    {
+      "path": "BACKEND_CHANGES.md",
+      "sha256": "108E4A2EE7AEFFB899ED280BA57090111ED654B0F13A63FD3D365AADF037C6E0"
+    },
+    {
+      "path": "docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md",
+      "sha256": "F9CAE203C64E1AF47372FE78ADBE1DE51020B2137057ADA265D2D14F97EF0002"
+    },
+    {
+      "path": "docs/quality/M2_C1_CIERRE.md",
+      "sha256": "4ECC5DA19F8AE99D1E38B7A7361F3530A2A7DCB313EBBFA2E36D82F406154AFF"
+    }
+  ],
+  "estado": "C1 y correctivo D4 validados, publicación autorizada en un commit; aprobación backend pendiente",
+  "commitSha": "Se reporta tras commit/push en respuesta final; manifest previo evita autorreferencia",
+  "dependenciasNuevas": false,
+  "d8": {
+    "constantTimeProven": false,
+    "failOpenPassed": true,
+    "legacyLoginPassed": true,
+    "existingMs": 146,
+    "samplesPerCase": 1,
+    "freshMs": 122
+  }
+}
