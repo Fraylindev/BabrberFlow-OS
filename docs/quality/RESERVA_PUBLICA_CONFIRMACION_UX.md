@@ -1,6 +1,6 @@
 # Reserva pública — confirmación y pie de página
 
-Fecha: 2026-10-03. Estado: **IMPLEMENTADO / AUTORIZADO PARA WEB QA / EN REVISIÓN; VALIDACIÓN VISUAL DEL PROPIETARIO PENDIENTE**.
+Fecha: 2026-10-03. Estado: **DESPLEGADO SOLO EN WEB QA / EN REVISIÓN; VALIDACIÓN VISUAL DEL PROPIETARIO PENDIENTE**.
 
 ## Brief de producto
 
@@ -24,4 +24,5 @@ Fecha: 2026-10-03. Estado: **IMPLEMENTADO / AUTORIZADO PARA WEB QA / EN REVISIÓ
 - pnpm --filter web build con configuración estándar/Turbopack: falla al resolver el módulo interno @vercel/turbopack-next/internal/font/google/font de next/font/google. Build alternativo pnpm --filter web build -- --webpack, con DEPLOY_ENV=staging, NEXT_PUBLIC_API_URL=https://api.staging.booking.kortek.cloud y WEB_PUBLIC_ORIGIN=https://qa.booking.kortek.cloud inyectados solo al proceso: exit 0; compiló, validó TypeScript y generó las rutas. No se modificaron variables o archivos de entorno.
 - QA retomada el 2026-10-03: localhost:3000 y localhost:3001 aceptan conexiones. GET `http://localhost:3000/public/qa-horario-norte/booking-data` devuelve 404 y `/qa-horario-norte/reservar` no llega a éxito. Ese slug local no está publicado en el entorno local; el 404 neutro también corresponde a reserva pública cerrada. No inspeccioné ni cambié flags. La evidencia vigente previa del API QA sobre los slugs sintéticos publicados `m1-c3-norte` registra catálogo/días `200/200` (véanse [F0-E](CORRECTIVO_F0E.md) y [C3 QA](RESERVA_PUBLICA_M1_C3_CIERRE.md)); este ajuste no cambia ni despliega el API. La red de esta sesión impide reconsultar el host QA desde PowerShell.
 - No se envió una reserva ni se cambiaron flags/datos. Los fixtures QA documentados son persistentes y no se limpian tras pruebas. El propietario realizará la validación visual real desde el teléfono una vez listo el deployment; éxito, orden de acciones, responsivo y pie siguen pendientes de esa revisión.
+- Commit de código `62d4f934519670a80aad1029cf12a40659b144a2` empujado a `origin/ai/antigravity-qa`; la lectura remota devolvió el mismo SHA. Vercel registró el deployment como **Ready / Preview**, Source `62d4f93`, rama `ai/antigravity-qa`, URL [Preview del commit](https://kortek-booking-nkvopdi3h-fraylindev.vercel.app). Dominio QA configurado para la rama: [qa.booking.kortek.cloud](https://qa.booking.kortek.cloud). No se ejecutó build/deploy de API ni producción.
 - No constituye aprobación del propietario ni cierre de QA funcional/visual.

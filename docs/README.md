@@ -24,7 +24,7 @@ Las instrucciones específicas de área están en [`apps/api/AGENTS.md`](../apps
 
 ### Producto y experiencia
 
-Confirmación pública de reserva y pies de mini-sitio: [brief, implementación y QA pendiente](quality/RESERVA_PUBLICA_CONFIRMACION_UX.md), autorizada para web QA/en revisión, sin cambios al contrato o API; validación visual del propietario pendiente.
+Confirmación pública de reserva y pies de mini-sitio: [brief, implementación y QA pendiente](quality/RESERVA_PUBLICA_CONFIRMACION_UX.md), desplegada solo en web QA/en revisión, sin cambios al contrato o API; validación visual del propietario pendiente.
 
 Revisión posterior autorizada: [Reserva pública más ligera](quality/RESERVA_PUBLICA_M1_UX_LIGERA.md), **implementada localmente/en revisión; QA de cierre incompleto**. Filas compactas, semana/mes desplegable, horas visibles, teléfono por país y resumen abierto sobre C1 aprobado. Tipos/lint/build y 275 pruebas pasan; evidencia responsive y API/PostgreSQL local aislado. Físicos, zoom 200 %, importación de calendario, auditoría y aprobación pendientes. Sin publicación/despliegue; historia y trabajo C3 preservados.
 
