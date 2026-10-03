@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-03 — Consolidación documental local de M1 y M2 C1
+
+- Siete rutas pendientes reunidas en un único commit local sobre `d222115f7d624b5698b67a24e22486625fec22b2`, sin incorporar cambios nuevos de código o contratos. El commit C2 y `cierre-documental-20261003.json` permanecen intactos. **Sin push ni despliegue**: [alcance y motivo](PROJECT_MASTER.md).
+- Se conserva la aprobación M1 ya registrada abajo; el [ajuste UX aprobado](docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md#aprobación-posterior-del-propietario--2026-10-03) y el [antecedente de aprobación/limpieza](docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md#antecedente-de-aprobación-y-limpieza--2026-10-03) se enlazan sin repetir su detalle. La eliminación con SHA previo y la constatación posterior de ausencia corresponden a ejecuciones distintas; no se realizan borrados, restore ni QA nuevos.
+- Se incorpora la [aprobación expresa de M2 C1](docs/quality/M2_C1_CIERRE.md#aprobación-explícita-del-backend-c1-y-bloqueo-de-producción--2026-10-03) y se mantiene [D4 aceptado solo para QA, bloqueante en Paso 8](docs/quality/M2_C1_CIERRE.md#riesgo-residual-d4-aceptado-solo-para-qa-bloqueante-en-paso-8). No resuelve el riesgo ni abre producción.
+- Los textos históricos fechados y toda la evidencia se preservan. Las contradicciones de estado se explican en los controles y cierres correspondientes; las pruebas sin resultado específico, modelo/versiones y mediciones conservan sus límites. Validación exclusivamente documental y Git; sin API, bases reales, flags ni variables.
+
 ## 2026-10-03 — Cierre documental final de M1
 
 - **M1 (Reserva pública) CERRADO / APROBADO** por autorización escrita del propietario, incluida la revisión física en iPhone/Safari. Se conservan los textos históricos y sus límites; no se inventan resultados por caso, modelo ni versión de iOS.

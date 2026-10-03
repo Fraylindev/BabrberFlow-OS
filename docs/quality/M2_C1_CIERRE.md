@@ -1,5 +1,7 @@
 # M2 Cuenta de cliente — C1 etapa 1: cierre técnico
 
+**Estado vigente — 2026-10-03:** **BACKEND C1 DE M2, ETAPA 1, CERRADO / APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO** en `9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4` (`9f04dba`). La aprobación y el bloqueo D4 de producción se registran al final. Los estados anteriores se conservan como historial y no revocan esta aprobación. Producción cerrada; sin despliegue. Esta tarea no inicia C2.
+
 **Actualización vigente:** el apartado final «Correctivo D4 y publicación autorizada, 2026-10-03» sustituye la regla D4, los resultados y el estado Git del checkpoint local que sigue. Se conserva el informe anterior como historial; sus hashes/pruebas describen aquella revisión, no los archivos corregidos.
 
 2026-10-03, America/Santo_Domingo. **IMPLEMENTADO LOCALMENTE / CANDIDATO EN REVISIÓN DEL PROPIETARIO.** Único gate abierto: C1 backend. No se declara aprobado el backend ni se abre C2/C3, etapa 2 o producción. [Contrato ejecutable/documentado](../features/M2_CUENTA_CLIENTE_C1_CONTRATO.md), [C0 aprobado D1–D8 A](M2_CUENTA_CLIENTE_C0.md#15-aprobación-del-propietario-y-publicación-documental-2026-10-03) y [decisiones vinculantes](DECISIONES_PROPIETARIO_2026_09_29.md).
@@ -142,3 +144,29 @@ C2 permanece cerrado hasta aprobación explícita del backend. Al abrirse, consu
 Los procesos HTTP de ensayo terminaron al cerrar sus suites. El contenedor exclusivo se eliminó con `docker stop kortek-m2-d4-disposable` y `--rm`; sin volumen ni base desechable en ejecución.
 
 Staging únicamente por rutas propias C1/correctivo; revisión completa de diff y diff staged/check/stat antes del único commit en español. Los seis archivos M1 quedan fuera. La publicación autorizada no equivale a aprobación C1 ni despliegue. El SHA del commit, la comprobación local=remoto y el `git status` final se reportan en la respuesta de entrega para evitar autorreferencia del commit en sus propios archivos. La evidencia previa de `validation.json` sigue describiendo el checkpoint sin commit; esta sección y `d4-validation.json` describen la revisión actual.
+
+## Aprobación explícita del backend C1 y bloqueo de producción — 2026-10-03
+
+El propietario **aprueba el backend C1 de M2 Cuenta de cliente, etapa 1**, en el commit `9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4` (`9f04dba`), que comprende C1, el correctivo D4 y la enmienda separada D8-A. Queda cerrado el gate de aprobación del backend. La aprobación es posterior a los checkpoints de implementación/en revisión conservados arriba y no reescribe sus pruebas, resultados ni límites.
+
+### Riesgo residual D4 aceptado solo para QA; BLOQUEANTE en Paso 8
+
+La detección automática de cuarentena D4 solo identifica **fichas Client distintas con reservas y el mismo teléfono dentro del mismo negocio**. No detecta una **única ficha que acumula reservas de varias personas**, por ejemplo, una familia que comparte un teléfono. La posibilidad de registrar manualmente una mezcla confirmada no elimina este límite de detección. Un claim válido habilita el Client y no prueba la titularidad individual de cada reserva de esa ficha.
+
+El propietario acepta este riesgo **exclusivamente para QA**. Es **BLOQUEANTE para la Puerta de producción (Paso 8)**: antes de abrir un negocio real debe resolverse por una de estas vías, con evidencia y revisión del propietario:
+
+1. Medir el riesgo mediante **lectura segura sobre datos reales**, con alcance controlado y evidencia sin PII, antes de considerar seguro habilitar el historial por Client. No se realizó ese inventario ni se accedió a datos reales en esta tarea.
+2. Aplicar **D4-B**, con **autorización expresa del propietario**, contrato, implementación y validación propios. Esta aprobación C1 no autoriza D4-B.
+3. Pasar al **alcance por reserva**, con autorización, contrato y validación de la titularidad de cada Booking; no conceder lectura del historial completo por el solo vínculo con Client. Esta tarea no cambia el modelo de acceso.
+
+La aprobación C1 no acepta este riesgo para producción ni cierra Paso 8. **Producción permanece cerrada, sin despliegue**, sin cambios de flags, variables o bases reales. C2/C3 y etapa 2 no se implementan ni se abren por este registro documental; la aprobación del backend satisface únicamente su requisito previo.
+
+### Alcance de este registro
+
+Solo se actualizan este cierre y `PROJECT_MASTER.md` por petición expresa del propietario, mediante entradas nuevas. El contenido M1 que ya estaba pendiente en PROJECT_MASTER se preserva íntegro; los otros cinco archivos de su tarea permanecen intactos. No se consolidan ni publican cambios M1. Sin staging, commit o push nuevos, ni cambios de código; se verifica el gate documental mediante enlaces, diff y preservación del texto previo.
+
+## Aclaración de consolidación posterior — 2026-10-03
+
+Las secciones de aprobación C1 y su alcance describen un registro anterior a C2. Se conservan fechadas: «esta tarea no inicia C2», «no se consolidan cambios M1» y «sin commit nuevo» contradicen el checkpoint posterior solo si se leen como estado actual. C2 quedó implementado localmente/en revisión en `d222115f7d624b5698b67a24e22486625fec22b2`, con autorización separada, según su [informe](M2_C2_CIERRE.md); esta consolidación no modifica ese commit ni concede aprobación C2.
+
+El [alcance vigente](../../PROJECT_MASTER.md) reúne ahora las siete rutas documentales pendientes en un único commit local y prohíbe push/despliegue. C1 conserva su aprobación, su evidencia y el riesgo residual D4 de la sección anterior: aceptado solo para QA, bloqueante en Paso 8. No se ejecuta ninguna de sus vías de resolución ni se amplían contrato, implementación o autorizaciones.

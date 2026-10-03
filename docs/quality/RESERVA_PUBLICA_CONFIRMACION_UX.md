@@ -1,5 +1,7 @@
 # Reserva pública — confirmación y pie de página
 
+**Estado vigente:** ajuste aprobado expresamente por el propietario; véase la [aprobación posterior](#aprobación-posterior-del-propietario--2026-10-03). El informe fechado siguiente se conserva como historial.
+
 Fecha: 2026-10-03. Estado: **DESPLEGADO SOLO EN WEB QA / EN REVISIÓN; VALIDACIÓN VISUAL DEL PROPIETARIO PENDIENTE**.
 
 ## Brief de producto
@@ -26,3 +28,11 @@ Fecha: 2026-10-03. Estado: **DESPLEGADO SOLO EN WEB QA / EN REVISIÓN; VALIDACI�
 - No se envió una reserva ni se cambiaron flags/datos. Los fixtures QA documentados son persistentes y no se limpian tras pruebas. El propietario realizará la validación visual real desde el teléfono una vez listo el deployment; éxito, orden de acciones, responsivo y pie siguen pendientes de esa revisión.
 - Commit de código `62d4f934519670a80aad1029cf12a40659b144a2` empujado a `origin/ai/antigravity-qa`; la lectura remota devolvió el mismo SHA. Vercel registró el deployment como **Ready / Preview**, Source `62d4f93`, rama `ai/antigravity-qa`, URL [Preview del commit](https://kortek-booking-nkvopdi3h-fraylindev.vercel.app). Dominio QA configurado para la rama: [qa.booking.kortek.cloud](https://qa.booking.kortek.cloud). No se ejecutó build/deploy de API ni producción.
 - No constituye aprobación del propietario ni cierre de QA funcional/visual.
+
+## Aprobación posterior del propietario — 2026-10-03
+
+**APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO; DESPLEGADO SOLO EN WEB QA**, según el registro de despliegue existente. El propietario confirmó la aprobación de M1 y de este ajuste después de que el Preview quedó Ready; [evidencia de aprobación](evidence/m1-c3/aprobacion-cierre-20261003.json). El cierre global M1 permanece en el [informe C3](RESERVA_PUBLICA_M1_C3_CIERRE.md).
+
+**Contradicción temporal conservada:** «validación visual pendiente» y «No constituye aprobación» describen la implementación anterior a esta aprobación. No se borran ni reescriben esos textos. La aprobación posterior resuelve el estado del ajuste; no convierte en ejecutadas pruebas no registradas. No se aportaron modelo de teléfono, versión de sistema ni mediciones por caso. La implementación no envió reservas ni cambió flags/datos; los fixtures QA documentados son persistentes.
+
+La consolidación posterior conserva este registro y los límites históricos; su [alcance vigente](../../PROJECT_MASTER.md) prohíbe push/despliegue y no revalida operaciones ni pruebas físicas.
