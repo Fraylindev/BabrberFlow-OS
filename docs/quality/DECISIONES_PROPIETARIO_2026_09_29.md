@@ -43,3 +43,22 @@ ACTUALIZACION 2026-09-30. El propietario aprobó explícitamente implementar de 
 25. Corrección posterior del propietario: «Por atender» incluye también las completadas con emisión de factura pendiente. «Todas» muestra primero las que necesitan esa atención y después las restantes; cada grupo va de la fecha de cita más reciente a la más antigua. Las fechas siguen sin rango por defecto. Modifica la decisión 22.
 26. Desktop recupera acciones visibles adicionales según estado y permisos; móvil conserva una acción principal y menú. La pantalla final refuerza «Listo», WhatsApp y «Cómo llegar»; las fotos de selección, revisión y éxito usan cuadrados redondeados. El ajuste de encuadre de imágenes queda para después.
 27. El contacto junto a «Reservar cita» en el mini-sitio abre WhatsApp al teléfono publicado del negocio con mensaje genérico previo a reservar. No expone números privados ni datos del visitante. El mensaje posterior a registrar la reserva se conserva. Se autoriza commit/push en `ai/antigravity-qa` y despliegue solo web QA de este correctivo; producción y módulos D/E permanecen fuera de alcance.
+
+## ENMIENDAS DEL 3 DE OCTUBRE DE 2026
+
+28. **M2 Cuenta de cliente: C0 APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO.** El propietario adopta D1–D8, todas en A, del [C0 de M2](M2_CUENTA_CLIENTE_C0.md#15-aprobación-del-propietario-y-publicación-documental-2026-10-03). Las decisiones 2 y 13 permanecen FIJADAS; las siguientes ya no son opciones abiertas:
+
+| Decisión de M2 | Estado y alcance fijado |
+| --- | --- |
+| D1-A | **FIJADA.** Código por correo con Clerk; nombre y correo verificado, protección estricta de enumeración y compatibilidad con B2B por verificar sin cambiar su autenticación por inferencia. |
+| D2-A | **FIJADA.** Pantalla por negocio; selector solo de negocios con Client vinculado explícitamente. Sin búsqueda de identidad/reservas por correo ni Membership como sustituto. |
+| D3-A | **FIJADA.** Referencia en memoria durante la visita y recuperación asistida por el negocio si se pierde. Sin recuperación automática por contacto, nuevo recibo ni TTL impuesto al claim aprobado. |
+| D4-A | **FIJADA.** Bloquear casos ambiguos y revisarlos antes de exponer historial; sin backfill, fusión automática o identidad inferida de deduplicación. |
+| D5-A | **FIJADA.** Cancelación/reprogramación de etapa 2 desactivadas inicialmente; al habilitar, 24 h de antelación por defecto para cada acción, ajustable entre 1 y 168 h enteras. Configuración en Horarios → Política de reservas, separada de turnos/cierres. |
+| D6-A | **FIJADA.** Solo OWNER edita política; política vigente al ejecutar, revisión y advertencia de impacto sobre reservas existentes. |
+| D7-A | **FIJADA.** Nombre y teléfono del Client propio editables por negocio; correo de contacto de solo lectura. Sin propagación automática entre negocios o unión de identidades por email. |
+| D8-A | **FIJADA.** Corregir la enumeración legacy residual mediante la enmienda expresa y limitada 29, manteniendo reserva primaria y autenticación legacy. |
+
+29. **Enmienda expresa y limitada D8 de M2.** Se adopta el correctivo de la señal de existencia de identidad que devuelve la creación secundaria de cuenta legacy mediante `accountCreationError` en `POST /public/:slug/bookings`; neutralizarla solo en el copy no basta. Se preservan Client/Booking atómicos, creación PENDING, cuenta secundaria fail-open, reserva persistida ante fallo de cuenta, rechazo de colisiones y error neutro D11. No se inventa éxito de reserva, no se enlaza User por correo y no se modifican el contrato de claim A0.6-A, Memberships, roles, JWT/password ni otras rutas de autenticación. El retiro legacy continúa fuera de alcance. La aprobación fija esta dirección y permite definir su contrato de correctivo en C1, pero **no autoriza implementarlo en esta tarea documental**.
+
+La autorización del 2026-10-03 comprende registrar la aprobación y hacer commit/push del alcance documental propio de M2 solo a `origin/ai/antigravity-qa`, sin despliegue. Los seis archivos pendientes de M1 se comparan con `760131a`, se preservan y no se tocan antes de la respuesta del propietario. La aprobación C0 no abre C1/C2/C3: M2 necesita backend C1 autorizado, validado y aprobado expresamente antes de frontend. Producción permanece cerrada; no se cambian flags, variables, dependencias o bases reales.
