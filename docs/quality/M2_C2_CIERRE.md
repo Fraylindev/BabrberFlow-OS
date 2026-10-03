@@ -1,5 +1,13 @@
 # M2 Cuenta de cliente — C2 etapa 1
 
+## Aprobación del checkpoint local C2 — 2026-10-03
+
+El propietario **aprueba explícitamente C2 como checkpoint local** en `d222115f7d624b5698b67a24e22486625fec22b2`. Esta aprobación posterior prevalece sobre los estados de implementación/en revisión conservados abajo; no reescribe sus resultados ni amplía su cobertura. El SDK Clerk controlado y el reflujo emulado siguen sin acreditar proveedor, correo, dispositivos físicos, VoiceOver/TalkBack o zoom real.
+
+Se autorizan por separado P0 (lecturas vivas) y P1 (correctivo operativo local y ensayos desechables) del [preflight C3](M2_C3_PREFLIGHT.md), más un único commit local de ese alcance y de este registro. **SIN PUSH NI DESPLIEGUE.** No se autoriza P2, migración en QA, parada/reinicio de servicios, cambio de variables/flags/Clerk o producción. C2 permanece exclusivamente local; D4 y la paginación del panel mantienen el bloqueo de Paso 8.
+
+Los apartados siguientes conservan el estado histórico anterior a esta aprobación.
+
 2026-10-03, República Dominicana. **IMPLEMENTADO LOCALMENTE / EN REVISIÓN.** Único gate abierto: C2 frontend etapa 1, autorizado por el objetivo de esta tarea sobre C1 aprobado `9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4`. Implementación y ensayos locales terminados; falta aprobación explícita del propietario. C3, etapa 2 y producción no están autorizados por esta entrega.
 
 Revisión posterior del propietario — 2026-10-03: correctivo visual/teclado y **un único commit local de C2 autorizados**, sin incluir las siete rutas preexistentes. **Push y despliegue expresamente prohibidos**: la rama dispara web QA en Vercel y el API QA aún no tiene la migración 28. Las secciones originales siguientes conservan el checkpoint sin commit; el [correctivo posterior](#correctivo-de-revisión-c2--2026-10-03) registra la entrega actual.

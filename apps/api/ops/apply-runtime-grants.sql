@@ -1,5 +1,5 @@
 -- Apply after a verified backup and migrations. Run as the database administrator.
--- Explicit privilege matrix including C1 business schedule (27 migrations).
+-- Explicit privilege matrix including M2 C1 customer (28 migrations / 37 tables).
 BEGIN;
 SET LOCAL lock_timeout = '5s';
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM kortek_runtime;
@@ -30,3 +30,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE kortek_migrator IN SCHEMA public
 ALTER DEFAULT PRIVILEGES FOR ROLE kortek_migrator
   REVOKE ALL ON TABLES FROM PUBLIC, kortek_runtime;
 COMMIT;
+-- The reviewed supplement supplies CustomerOperation SID and invoker functions.
+-- Both transactions must finish and the runtime gate pass before activation.
+\ir customer-stage-one-runtime-grants.sql
