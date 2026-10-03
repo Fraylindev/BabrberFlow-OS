@@ -40,6 +40,7 @@ import { useCreateInvoice, useOrganizationTimeZoneQuery } from '@/lib/queries/in
 import { ClientAutocomplete } from '@/components/booking/ClientAutocomplete';
 import { BookingActions } from '@/components/booking/BookingActions';
 import { BookingName } from '@/components/booking/BookingName';
+import { visibleBookings } from '@/lib/booking-list';
 import { isTransientQueryError } from '@/lib/query-recovery';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -196,10 +197,9 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [rescheduleTarget, setRescheduleTarget] = useState<Booking | null>(null);
 
-  // ── Agenda ordenada cronológicamente dentro del rango ────────────────────
+  // ── Atención pendiente y orden de agenda según el filtro ────────────────
   // Proyección local del contrato vigente; las alternativas de consulta D siguen pendientes.
-  const sorted = items ? items.filter(item => statusFilter !== 'TO_ATTEND' || item.status === 'PENDING' || item.status === 'CONFIRMED')
-    .sort((a, b) => a.startTime.localeCompare(b.startTime)) : [];
+  const sorted = visibleBookings(items ?? [], statusFilter);
 
   // ── ¿Hay filtros activos distintos a los por defecto? ────────────────────
   const hasActiveFilters =
@@ -438,12 +438,12 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
           <div className="hidden lg:block">
             <table className="w-full table-fixed border-collapse text-sm">
               <colgroup>
-                <col className="w-[20%]" />
-                <col className="w-[14%]" />
+                <col className="w-[18%]" />
                 <col className="w-[13%]" />
                 <col className="w-[12%]" />
+                <col className="w-[11%]" />
                 <col className="w-[16%]" />
-                <col className="w-[25%]" />
+                <col className="w-[30%]" />
               </colgroup>
               <thead className="border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)]">
                 <tr>

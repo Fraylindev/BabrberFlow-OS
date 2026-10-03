@@ -44,8 +44,10 @@
 .booking-summary-heading .booking-text-action { color: var(--color-paper); }
 .booking-summary-row { display: flex; align-items: center; gap: 12px; }
 .booking-service-meta { white-space: nowrap; font-size: 14px; color: var(--color-muted); font-variant-numeric: tabular-nums; }
-.booking-flow .booking-secondary-action { display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--color-muted); border-radius: 12px; padding: 12px; background: transparent; color: var(--color-paper); font-size: 14px; font-weight: 500; transition: background-color 150ms ease-out; }
-.booking-secondary-action:hover { background: var(--color-surface-raised); }
+.booking-flow .booking-secondary-action { display: flex; width: 100%; min-height: 60px; align-items: center; justify-content: flex-start; gap: 14px; border: 1px solid var(--color-muted); border-radius: 12px; padding: 12px 16px; background: var(--color-surface-raised); color: var(--color-paper); font-size: 15px; font-weight: 600; transition: background-color 150ms ease-out, border-color 150ms ease-out; }
+.booking-secondary-action > svg { flex-shrink: 0; box-sizing: content-box; padding: 9px; border-radius: 10px; background: var(--color-ink); }
+.booking-flow .booking-secondary-action:hover { background: var(--color-surface); border-color: var(--color-paper); }
+.booking-secondary-action:focus-visible, .booking-return-link:focus-visible { outline: 2px solid var(--color-paper); outline-offset: 4px; }
 .booking-summary-date { border-left: 3px solid var(--color-brass); padding: 8px 0 16px 16px; }
 .booking-summary-section.booking-summary-date { border-left: 0; padding-left: 0; }
 .booking-summary-section.booking-summary-date::before { content: ''; display: block; width: 40px; height: 3px; margin-bottom: 8px; background: var(--color-brass); }
@@ -56,7 +58,8 @@
 @keyframes booking-success-enter { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
 @keyframes booking-success-check { from { stroke-dashoffset: 32; } to { stroke-dashoffset: 0; } }
 .calendar-action { width: 100%; min-height: 52px; border-radius: 12px; }
-.booking-return-link { display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-muted); }
+.booking-flow .booking-return-link { display: flex; min-height: 52px; align-items: center; justify-content: center; border: 1px solid var(--color-muted); border-radius: 12px; background: var(--color-surface-raised); font-size: 16px; font-weight: 700; color: var(--color-paper); transition: border-color 150ms ease-out, background-color 150ms ease-out; }
+.booking-return-link:hover { border-color: var(--color-paper); background: var(--color-surface); }
 .phone-field { position: relative; min-width: 0; }
 .phone-input-group { display: flex; align-items: center; min-height: 48px; border: 1px solid var(--color-muted); border-radius: 10px; background: var(--color-surface-raised); }
 .phone-input-group:focus-within { outline: 2px solid var(--color-paper); outline-offset: 2px; }

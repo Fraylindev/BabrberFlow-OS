@@ -21,7 +21,7 @@ function Photo({ src, image, name, kind, compact }: { src: string; image?: Publi
   const [failed, setFailed] = useState(false);
   const fallback = bookingPhotoFallback(name);
   const shape = compact ? 'h-16 w-16 shrink-0' : 'booking-thumbnail shrink-0';
-  return <div className={`${shape} flex items-center justify-center overflow-hidden ${kind === 'professional' && !compact ? 'rounded-full' : 'rounded-lg'} bg-[var(--color-surface-raised)]`}>
+  return <div className={`${shape} flex items-center justify-center overflow-hidden rounded-lg bg-[var(--color-surface-raised)]`}>
     {src && !failed
       // Localizadores revocables: nunca usar optimizador ni avatar legacy.
       // eslint-disable-next-line @next/next/no-img-element

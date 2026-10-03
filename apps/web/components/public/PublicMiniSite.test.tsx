@@ -68,10 +68,14 @@ describe("Mini-sitio público C3", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Estudio Norte" })).toBeVisible();
     expect(screen.getByText("Cortes cuidados y atención con cita.")).toBeVisible();
     expect(screen.getByText("Calle Principal 10")).toBeVisible();
-    expect(screen.getByRole("link", { name: "Llamar al +18095551234" })).toHaveAttribute(
-      "href",
-      "tel:+18095551234",
-    );
+    const contact = screen.getByRole('link', { name: 'Contactar por WhatsApp (se abre en una pestaña nueva)' });
+    const href = new URL(contact.getAttribute('href')!);
+    expect(href.origin).toBe('https://wa.me');
+    expect(href.pathname).toBe('/18095551234');
+    expect(href.searchParams.get('text')).toBe('Hola. Quisiera consultar sobre sus servicios y reservar una cita.');
+    expect(contact).toHaveAttribute('target', '_blank');
+    expect(contact).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.queryByText(published.organization.phone!)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Abrir en Google Maps" })).toHaveAttribute(
       "href",
       published.organization.googleMapsUrl,
@@ -142,8 +146,15 @@ describe("Mini-sitio público C3", () => {
 
     expect(await screen.findByRole("heading", { level: 1, name: "Estudio Norte" })).toBeVisible();
     expect(screen.queryByText("Nuestra ubicación")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /Llamar/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /WhatsApp/ })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Reservar cita" })).toBeVisible();
+  });
+
+  it.each(['8095551234', '+18095551234\n', 'javascript:alert(1)'])('omite WhatsApp con teléfono inválido', async phone => {
+    vi.mocked(api.get).mockResolvedValueOnce({ ...published, organization: { ...published.organization, phone } });
+    mount();
+    await screen.findByRole('link', { name: 'Reservar cita' });
+    expect(screen.queryByRole('link', { name: /WhatsApp/ })).not.toBeInTheDocument();
   });
 
 });

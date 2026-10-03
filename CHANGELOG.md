@@ -1,11 +1,18 @@
 # CHANGELOG
 
-## 2026-10-02 — F0-E: publicación web QA autorizada
+## 2026-10-02 — Atención pendiente, acciones desktop y contacto público
+
+- Las completadas sin factura permanecen en Por atender; Todas prioriza atención y ordena cada grupo por fecha descendente.
+- Desktop muestra reprogramación/consulta financiera junto a la acción principal y conserva restantes en menú; móvil conserva su presentación. Fotos redondeadas iguales, Listo legible y mapa/WhatsApp con estilo secundario reforzado.
+- Mini-sitio sustituye llamada por WhatsApp al número publicado, con mensaje genérico previo a reservar y validación estricta.
+- 290 pruebas, tipos/lint/build y 123 registros de navegador pasan. [Informe y publicación](docs/quality/CORRECTIVO_F0E_AJUSTE.md). Web QA autorizada; M1 y QA física en revisión. Sin cambios de backend ni producción. Resultados documentales F0-E anteriores preservados.
+
+## 2026-10-02 — F0-E publicado y desplegado solo web QA
 
 - Reservas desktop: estado de factura bajo Estado, una acción principal y menú con Facturación/avisos, nombres con tooltip accesible; límite ampliado solo en la ruta de Reservas. Tarjetas conservadas.
 - Fechas vacías y Por atender inicial, conteos según rango y limpieza al estado inicial. Proyección local sobre contrato sin límite; propuestas de estados/paginación pendientes.
 - Revisión/éxito: fotos compactas iguales, duración/precio juntos, calendario → WhatsApp → ubicación → nota → Listo y safe-area. WhatsApp de negocio/mensaje genérico conservados.
-- Tipos/lint/build y 283 pruebas pasan; 95 registros Chrome controlado en ocho anchos. Facturación tiene scroll interno menor en 1280; se reporta sin editar. [Informe, evidencia, límites y D/E](docs/quality/CORRECTIVO_F0E.md). Enmiendas 22–24 añaden las direcciones aprobadas D1-A/D2-A/E-A para módulos posteriores. Publicación solo web QA autorizada y en preparación; sin backend, bases reales, `.env`, flags funcionales ni dependencias. M1 y QA física siguen pendientes.
+- Tipos/lint/build y 283 pruebas pasan; 95 registros Chrome controlado en ocho anchos. Facturación tiene scroll interno menor en 1280; se reporta sin editar. [Informe, evidencia, límites y D/E](docs/quality/CORRECTIVO_F0E.md). Enmiendas 22–24 añaden las direcciones aprobadas D1-A/D2-A/E-A para módulos posteriores. Publicados `26cfc42`/`ea912d9`; web QA Ready en `dpl_G9RGGb5W9qedEGXZbNMAyUTfsHNi` y SHA exacto. API GET C1 y comparación de producción pasan; SSO preservado. Norte/Sur sin teléfono publicado, sin cambios de datos. Sin backend, bases reales, `.env`, flags ni dependencias; M1, QA física y panel autenticado desplegado pendientes. Resultados finales locales en cuatro documentos, sin tercer commit.
 
 ## 2026-10-02 — Correctivo visual y navegación de reserva pública M1
 

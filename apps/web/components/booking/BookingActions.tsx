@@ -287,13 +287,17 @@ export function BookingActions({
       danger: action.to === 'CANCELLED',
       onSelect: () => onStatusChange(action.to),
     })),
-    ...(layout === 'table' && showFinancialState && !canIssueInvoice
+    ...(layout === 'table' && showFinancialState
       ? [{ label: 'Ver facturación', onSelect: onViewInvoices }] : []),
     ...(onNotifications ? [{ label: 'Avisos por correo', onSelect: onNotifications }] : []),
   ];
+  // En desktop, reprogramación y consulta financiera quedan a un clic.
+  const directAction = layout === 'table' ? secondaryActions.find(action =>
+    action.label === 'Reprogramar' || action.label === 'Ver facturación') : undefined;
+  const menuActions = secondaryActions.filter(action => action !== directAction);
 
   return (
-    <div className={layout === 'mobile' ? 'flex flex-wrap items-center gap-2' : 'flex items-center gap-1.5 whitespace-nowrap'}>
+    <div className={layout === 'mobile' ? 'flex flex-wrap items-center gap-2' : 'flex flex-wrap items-center gap-1.5'}>
       {layout === 'mobile' && booking.invoice && (
         <span className="text-xs font-medium text-[var(--dash-text-muted)]">
           {booking.invoice.state === 'PAID' ? 'Factura pagada' : 'Pendiente de cobro'}
@@ -328,8 +332,12 @@ export function BookingActions({
           Ver facturación
         </Button>
       )}
-      {secondaryActions.length > 0 && (
-        <ContextActionsMenu actions={secondaryActions} disabled={isBusy} />
+      {directAction && <Button type="button" tone="light" variant="secondary" disabled={isBusy}
+        onClick={directAction.onSelect} className="min-h-9 px-3 py-1.5 text-xs">
+        {directAction.label}
+      </Button>}
+      {menuActions.length > 0 && (
+        <ContextActionsMenu actions={menuActions} disabled={isBusy} />
       )}
     </div>
   );

@@ -7,6 +7,8 @@ import { usePublicMedia } from '@/lib/queries/media';
 import { isPublicMedia, type PublicMediaImage } from '@/lib/media-ui';
 import { Brand } from '@/components/Brand';
 import { Button } from '@/components/ui/Button';
+import { WhatsAppIcon } from './WhatsAppIcon';
+import { businessWhatsAppLink } from '@/lib/whatsapp-link';
 
 export function PublicMiniSite({ slug }: { slug: string }) {
   const { data, error, isLoading, isError, isFetching, refetch } = usePublicBookingData(slug);
@@ -23,6 +25,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
   if (isError) return <PublicLoadError onRetry={() => void refetch()} pending={isFetching} />;
 
   const canBook = data.services.length > 0 && data.professionals.length > 0;
+  const contactLink = businessWhatsAppLink(data.organization.phone);
   const media = !mediaQuery.isError && isPublicMedia(mediaQuery.data) ? mediaQuery.data : null;
   return (
     <main className="min-h-screen overflow-x-hidden bg-[var(--color-ink)]">
@@ -54,12 +57,14 @@ export function PublicMiniSite({ slug }: { slug: string }) {
                   Reservar cita
                 </Link>
               )}
-              {data.organization.phone && (
+              {contactLink && (
                 <a
-                  className="inline-flex min-h-12 items-center border border-[var(--color-border-strong)] px-5 text-sm text-[var(--color-paper)] transition-colors hover:border-[var(--color-brass)]"
-                  href={`tel:${data.organization.phone}`}
+                  className="inline-flex min-h-12 items-center gap-2 rounded-sm border border-[var(--color-muted)] bg-[var(--color-surface-raised)] px-5 text-sm font-medium text-[var(--color-paper)] transition-colors hover:border-[var(--color-paper)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-paper)]"
+                  href={contactLink} target="_blank" rel="noopener noreferrer"
+                  aria-label="Contactar por WhatsApp (se abre en una pestaña nueva)"
                 >
-                  Llamar al {data.organization.phone}
+                  <WhatsAppIcon size={20} />
+                  Contactar por WhatsApp
                 </a>
               )}
             </div>

@@ -1,6 +1,6 @@
 # Reservas legibles y salida de la reserva pública
 
-Fecha: 2026-10-02, hora de Santo Domingo. **PUBLICACIÓN WEB QA AUTORIZADA / EN REVISIÓN; DIRECCIONES D1-A, D2-A Y E-A APROBADAS PARA MÓDULOS POSTERIORES.** Este informe reúne los dos frentes y las decisiones de backend. No aprueba F0-E ni cierra M1.
+Fecha: 2026-10-02, hora de Santo Domingo. **PUBLICADO Y DESPLEGADO SOLO WEB QA / EN REVISIÓN; DIRECCIONES D1-A, D2-A Y E-A APROBADAS PARA MÓDULOS POSTERIORES. M1 NO CERRADO; QA FÍSICA PENDIENTE.** Este informe reúne los dos frentes y las decisiones de backend. No aprueba F0-E ni cierra M1.
 
 ## Alcance y brief
 
@@ -273,7 +273,7 @@ Primer commit de código/pruebas: `26cfc42d103304481329ef5df3f9e0a8c026b030`. El
 
 Línea base: `main` y web producción en `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6`; despliegue productivo `dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm`. API productiva imagen `8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2`, PID `151158`; OCI se inventarió por SSH de solo lectura. El dominio QA está configurado para `ai/antigravity-qa`. Las credenciales CLI existentes de Vercel devuelven 403/forbidden; el navegador tiene una sesión válida y permite inspeccionar el proyecto. No se crean credenciales ni se cambia SSO.
 
-API C1, despliegue exacto, teléfono público de negocios sintéticos y comparación final: pendientes de ejecutar tras el push. No se declara desplegado ni aprobado en este checkpoint.
+El checkpoint publicado describía estas verificaciones como pendientes; se completaron posteriormente y sus resultados exactos aparecen debajo. El informe y controles finales se conservan localmente sin un tercer commit.
 
 ### Guía breve de QA del propietario
 
@@ -286,4 +286,52 @@ Abrir [Reservas QA](https://qa.booking.kortek.cloud/dashboard/bookings) con una 
 5. En revisión, comprobar cascada Fecha/hora → Servicio → Profesional → Tus datos, Editar alineado con cada título, fotos iguales y duración/precio juntos. Editar vuelve a su paso y conserva el resto. No pulsar Registrar reserva durante QA de solo lectura; el propietario puede comprobar éxito mediante una reserva sintética cuando autorice esa acción de datos.
 6. En éxito de una reserva sintética, comprobar Pendiente de confirmación → calendario → WhatsApp si existe teléfono publicado válido → ubicación → nota → Listo. WhatsApp mantiene contacto genérico del negocio; calendario/Maps/WhatsApp requieren gesto manual. Listo vuelve al mini-sitio. En Safari físico, verificar que la marca inferior permanece visible con teclado y barras, importar el calendario y comprobar gesto táctil, zoom y movimiento reducido. Las pruebas de escritorio no acreditan estos puntos físicos.
 
-El teléfono del negocio se configura por OWNER/ADMIN en Configuración del negocio, en el campo público vigente; si falta, registrar la necesidad sin modificar datos. La tabla por negocio se incorporará después de consultar el catálogo público QA en modo lectura.
+El contacto se configura en **Configuración del negocio → Información pública → Teléfono público del negocio (opcional)**. Guardar borrador no cambia el catálogo publicado: requiere Vista previa y publicación de la revisión por OWNER; ADMIN puede preparar/guardar el borrador según los permisos vigentes. Debe incluir `+` y entre 7 y 15 dígitos para habilitar WhatsApp. Esta tarea solo informa la ruta; no edita ni publica datos. El consumidor usa `CmsPage.publishedSnapshot.phone`, no el teléfono operativo ni privado.
+
+
+### Resultado exacto del despliegue y comparación final
+
+Dos commits publicados, sin reescritura:
+
+- Código y pruebas: `26cfc42d103304481329ef5df3f9e0a8c026b030`
+- Documentación, evidencia limpia y enmiendas: `ea912d996567cc9b8e8f0abf147e1c4ca52e2138`
+
+`git push origin HEAD:refs/heads/ai/antigravity-qa` terminó con exit `0`; `git rev-parse HEAD` y `git ls-remote origin refs/heads/ai/antigravity-qa` devolvieron el segundo SHA exacto. El árbol estuvo limpio al publicar. No se empujó a main ni se desplegó API.
+
+La integración Git existente construyó el Preview en 44 s y asignó automáticamente el dominio QA de esa rama. En [Deployment Details](https://vercel.com/fraylindev/kortek-booking/G9RGGb5W9qedEGXZbNMAyUTfsHNi) se verificaron **Ready**, **Preview**, Source `ea912d996567cc9b8e8f0abf147e1c4ca52e2138`, rama `ai/antigravity-qa` y dominio `qa.booking.kortek.cloud`. Deployment: `dpl_G9RGGb5W9qedEGXZbNMAyUTfsHNi`. No se necesitó crear otro deployment ni cambiar manualmente el alias. [Web QA](https://qa.booking.kortek.cloud) sirve esa asignación; el navegador integrado comprobó además el resumen F0-E desplegado.
+
+El API QA C1 pasó **antes de confirmar el resultado web**: GET `/public/m1-c3-norte/booking-data` y GET `/public/m1-c3-norte/availability-days` sobre siete días, ambos `200`, rango coherente y seis días disponibles para la consulta realizada. El probe local de solo lectura terminó con exit `0`; no envió POST, no creó reservas/cuentas y no conectó a bases directamente. No acredita por sí solo D11/colisiones ni todo el contrato de creación; el C1 previo y sus pruebas siguen siendo la referencia.
+
+Comparación por SSH de solo lectura después del despliegue: **containers=true, units=true, files=true, main=true**, exit `0`. Imágenes, PID, releases y hashes de entorno de API y workers QA/producción permanecen exactamente iguales. Main continúa en `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6`. Vercel conserva el despliegue productivo `dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm` y ese mismo SHA antes/después. La protección se leyó de nuevo: Require Log In activado, Standard Protection; Save deshabilitado. No se cambió SSO, variables, flags, autenticación, API, DB ni producción. No pudo compararse un hash de variables web mediante API Vercel por el 403; no se efectuó ninguna acción que las editara ni se revelaron valores.
+
+### Teléfono publicado por negocio sintético QA
+
+Se identificaron los dos negocios de la fixture C3 existente y se consultó su catálogo público, sin acceder a una base ni cambiar datos:
+
+| Negocio sintético | GET catálogo | Contacto publicado presente | Elegible para WhatsApp |
+| --- | --- | --- | --- |
+| `m1-c3-norte` | 200 | No | No; botón oculto |
+| `m1-c3-sur` | 200 | No | No; botón oculto |
+
+El probe terminó con exit `0`; no se imprimió ningún número completo. Se necesita que el propietario prepare y publique un contacto del negocio destinado al público para probar el botón en QA. No se rellenó por inferencia desde otro campo. El estado con/sin teléfono ya tiene evidencia local sintética, pero **el botón con teléfono de negocio no pudo probarse contra estos negocios QA actuales**, precisamente porque ambos catálogos publicados carecen del dato.
+
+### Comprobación web desplegada y límites
+
+En IAB, flujo real C3 Norte: servicio → Sin preferencia → día/hora autoritativos → contacto exclusivamente sintético → revisión. Sin Registrar reserva, sin crear cuenta ni enviar correo. El ojo cambió a «Contraseña visible» sin escribir contraseña; se desmarcó la cuenta antes de continuar. La revisión tiene Fecha/hora → Servicio → Profesional → Tus datos, Editar en cada encabezado, fotos/fallback de 64 × 64 y radio 8 px, texto «30 min · RD$ 500» y 96 px de relleno inferior. Sin foto mantiene iniciales. El servicio de 4 h con Alex no tenía horarios en esa semana y mostró el vacío esperado; se usó después el servicio corto y Sin preferencia sin alterar disponibilidad.
+
+Anchos CSS **medidos**, conservando zoom previo de 90 % mediante override compensado: `innerWidth=320/375/390/1280`, `scrollWidth=303/358/373/1263`, sin overflow. Se restauró el viewport. Consola: cero errores de aplicación; un aviso esperado Clerk Development. La primera emulación sin compensar dio anchos diferentes y no se contó como prueba de esos tamaños.
+
+No se revalidó Reservas autenticado en la web desplegada: Chrome bloqueó esa pestaña al intentar reclamarla por una interfaz de otra extensión; no se cambió protección ni sesión para sortearlo. Su matriz local controlada y regresiones permanecen válidas, y la guía del propietario cubre el panel desplegado. Vercel siguió disponible para la comparación final y el flujo público se verificó en IAB. No se registraron reservas en QA: éxito y WhatsApp con teléfono solo se prueban localmente. Safari/iPhone físico, apertura externa/importación de calendario, gesto táctil real y aprobación final del propietario siguen pendientes. No se afirma cierre de F0-E/M1.
+
+### Git final
+
+HEAD local = remoto: `ea912d996567cc9b8e8f0abf147e1c4ca52e2138`; rama `ai/antigravity-qa`. Exactamente dos commits. El informe y tres controles recibieron los resultados posteriores y quedan **modificados localmente, sin staging**, para respetar los dos commits solicitados. No hay cambios web pendientes, archivos sensibles ni temporales rastreados. `git diff --check` pasa con exit `0`.
+
+```text
+ M CHANGELOG.md
+ M PROJECT_MASTER.md
+ M docs/README.md
+ M docs/quality/CORRECTIVO_F0E.md
+```
+
+La entrega solicitada de publicación está realizada; permanecen los gates humanos de QA/aprobación y los módulos futuros de backend. No se implementa D1/D2/E en esta tarea.
