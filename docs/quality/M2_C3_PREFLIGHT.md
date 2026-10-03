@@ -1,5 +1,7 @@
 # M2 C3 — Preflight de Cuenta de cliente, etapa 1
 
+**Continuación P2 — 2026-10-03:** el propietario indicó continuar y precisó `C:\KortekBackups\Clave.txt`. El [segundo intento §13](#13-continuación-p2-revalidada-y-parada-en-preparación-local--2026-10-03) sigue **P2 PAUSADO / INCOMPLETO**: destino/release efectivos, ledger y Preview revalidados contra P0; preparación PG17 detenida por fallo de transferencia de CA al contenedor local. API/worker no se congelaron, siguen activos sin reinicios y reserva pública responde `200`. Sin backup/hash/restore/rollback, push, P3 ni acceso productivo. El registro §12 conserva el primer intento; este párrafo define el resultado posterior.
+
 **Actualización P2 — 2026-10-03:** el propietario autorizó exclusivamente P2, una ventana de indisponibilidad QA de 90 minutos desde la parada y un commit local documental/sanitizado, **sin push ni P3**. El [registro §12](#12-p2-autorizado-parada-antes-del-congelamiento--2026-10-03) documenta **P2 PAUSADO / INCOMPLETO**: el acceso SSH inicial falló antes de ejecutar comandos remotos; no se congeló QA ni comenzó la ventana. Una lectura final acotada confirmó API y worker activos, mismos PID de P0 y cero reinicios. No existe respaldo P2 ni ensayo de recuperación realizado por esta ejecución. Esta actualización prevalece sobre las referencias históricas inferiores a P2 no autorizado.
 
 **Actualización posterior — 2026-10-03:** el propietario aprobó C2 local y autorizó P0/P1 más un único commit local, **sin push ni P2**. El [registro de ejecución §11](#11-ejecución-autorizada-de-p0-y-p1--2026-10-03) prevalece sobre los límites y estados históricos de §§1–10, conservados íntegros. Las acciones futuras de P2 en adelante siguen sin autorizarse.
@@ -1038,6 +1040,92 @@ git diff --cached --name-only
 git diff --cached
 git diff --exit-code
 git commit -m "docs(m2): registrar parada previa de P2 sin congelar QA"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+~~~
+
+## 13. Continuación P2 revalidada y parada en preparación local — 2026-10-03
+
+### 13.1 Reanudación de la tarea y base
+
+El propietario indicó continuar desde la parada anterior y confirmó **`C:\KortekBackups\Clave.txt`**, con formato de variable `Clave`. Su contenido nunca se incluye aquí. La custodia sigue siendo **`C:\KortekBackups\qa-m2-c3`**. Se comprobó existencia de archivo/carpeta, no su contenido ni recuperabilidad. Continúan todos los límites de P2: 90 minutos desde `stop`, sin push/P3, producción, migraciones QA, despliegues, variables/flags/Clerk ni dependencias nuevas.
+
+Base observada al retomar: **`827e635939b23d1131f5c6e57c2066c1823a1b33`**, `ai/antigravity-qa`, árbol/índice limpios, `[ahead 4]`. Es el commit documental de §12; frente a `339ae92`, únicamente cambian el preflight y su evidencia anterior. `git diff --exit-code 339ae92ff142bb47708a54b7333e20da66f3f203 HEAD -- apps ops package.json pnpm-lock.yaml` terminó `0`. Sin cambios de implementación ni consulta a origin.
+
+Se conserva [evidencia del segundo intento](evidence/m2-c3-p2/p2-segundo-intento.json), con SQL exacto, catálogo técnico agregado, ledger, comandos Docker y resultados. Se archivan como texto, exclusivamente para auditoría del ensayo interrumpido, los helpers temporales realmente preparados: [Python](evidence/m2-c3-p2/p2-preparacion.py.txt), [flujo binario/cifrado Bash](evidence/m2-c3-p2/p2-crypto.sh.txt) y [wrapper de credencial QA](evidence/m2-c3-p2/p2-wrapper.ps1.txt). **Solo se alcanzó preparación; estos archivos no constituyen un ejecutor completo de P2 ni una recuperación validada.**
+
+### 13.2 Revalidación viva realizada antes del congelamiento
+
+| Elemento | Evidencia observada | Límite |
+| --- | --- | --- |
+| Proyecto y destino efectivo | Proyecto QA `prirlabbnlcuvnzuaczp`, ACTIVE_HEALTHY, endpoint QA, PG17.6; conexión dentro del API como runtime a postgres, sufijo QA correcto, servidor coincide con DNS AAAA QA | Comparaciones en memoria/booleanos; no se extrajo/imprimió URL de conexión. |
+| Release y servicios | Release API `791569b110f9fd59cb10e6d248546bdae3996e14`, imagen `701329f1…4031`, PID API `673295`, worker `575989`, NRestarts `0` | Coinciden release/imagen API y PID con P0. Imagen worker `7eafd5c9…6fa1` capturada como baseline de este intento; P0 no registraba esa imagen. |
+| Ledger y censo puntual | Ledger completo de 31 entradas igual a P0; 27 terminadas activas, cuatro revertidas históricas, cero activas fallidas y cero entradas 28; 36 tablas; 20 clientes, 28 reservas, cero vínculos | No es censo de un snapshot de backup: no se exportó snapshot ni dump. |
+| Escritores puntuales | Cuatro sesiones runtime idle, sin transacción; resto de sesiones proveedor idle; cero transacciones activas de clientes y cero preparadas. Sin pg_cron | No demuestra ausencia permanente de escrituras o edición futura del propietario/proveedor. Ninguna sesión fue terminada ni deshabilitada. |
+| Roles de acceso | Runtime/migrador sin atributos elevados ni membresías que los eleven. anon/authenticated/authenticator/service_role/pgbouncer con cero tablas public de escritura efectiva | Controles administradores del proveedor no se deshabilitaron. Solo se inventarió catálogo QA, sin passwords. |
+| Preview | `dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD`, READY, SHA `9f04dbaf`, alias QA y rama autorizada iguales a P0 | Sin logs de build, claves ni cambios en Vercel. |
+| Extensiones | btree_gist 1.7 reside en **public** | Requiere la alternativa TOC de §5.2; no usar la plantilla que instala btree_gist fuera de public como si reprodujera esta fuente. |
+| Herramientas | Imagen PG17 local fija `sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f`, amd64; Bash/GPG/Python existentes. Cliente nativo instalado PG18 | No se descargó/instaló nada. La preparación prevista usa herramientas PG17 del contenedor; su login/TLS todavía no se ensayó. |
+
+El helper de destino fue el mismo patrón READ ONLY de §11.3, con timeout 10 s, ampliado a comprobaciones booleanas de usuario/host QA, DNS efectivo, rol/base/versión, release P0, DEPLOY_ENV staging y reserva pública abierta. Exit `0`; no cambió entorno efectivo. Consultas Supabase READ ONLY, timeout 30 s; SQL completo y resultados sin filas de negocio en el JSON.
+
+### 13.3 Fallo local, parada y estado seguro
+
+Comandos de preparación de sintaxis, ambos exit `0`:
+
+~~~powershell
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -m py_compile .tmp/m2-c3-p2/p2.py
+& 'C:/Program Files/Git/bin/bash.exe' -n .tmp/m2-c3-p2/crypto.sh
+& ./.tmp/m2-c3-p2/run.ps1 prepare
+~~~
+
+El wrapper recibió la credencial **QA migrador** DPAPI ya existente, solo en memoria/env del proceso; se comprobó previamente su formato SecureString y se liberó el BSTR y PGPASSWORD al salir. No se leyó ninguna credencial productiva. La frase de cifrado **no llegó a leerse**, porque el fallo precedió toda invocación de Bash/GPG.
+
+El último comando terminó **exit `1`**. Secuencia interna exacta, argumentos completos en el JSON:
+
+~~~text
+docker --context desktop-linux run --detach --rm --name kortek-m2-c3-p2-client-d15070d4fd9f --network bridge --read-only --cpus 1 --memory 768m --pids-limit 128 --tmpfs /tmp:rw,size=64m --tmpfs /var/run/postgresql:rw,size=16m --entrypoint sleep sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f infinity
+docker --context desktop-linux cp C:\Users\Fraylin\Desktop\Kortek-Booking\ops\oci-free-backup\prod-ca-2021.crt kortek-m2-c3-p2-client-d15070d4fd9f:/tmp/qa-ca.crt
+docker --context desktop-linux stop --time 15 kortek-m2-c3-p2-client-d15070d4fd9f
+~~~
+
+Exit codes: **0 / 1 / 0**. La CA pública fuente existe. La copia falló en el cliente de raíz read-only; stderr crudo omitido/no persistido. No se certifica una causa detallada del daemon porque ese diagnóstico se descartó. **Punto de parada:** ningún `stop` QA ni login del cliente PG17 había ocurrido; se aplicó la regla del propietario ante cualquier error. Contenedor local propio eliminado por `stop` + `--rm`; consulta `docker --context desktop-linux ps -a --filter 'name=kortek-m2-c3-p2-' --format '{{.Names}} {{.Status}} {{.Ports}}'`, exit `0`, salida vacía. No hubo volúmenes, puertos publicados ni dump plano. Se retiraron solo los temporales propios del ensayo tras conservar las fuentes sanitizadas.
+
+Incidencias adicionales documentales: la primera extracción local del resultado Supabase tomó texto introductorio, produjo SyntaxError y no modificó evidencia; el parser se corrigió para la etiqueta efectiva, procesando el resultado ya obtenido sin repetir SQL. Un patch Delete+Add sobre la misma ruta fue rechazado sin cambios y se sustituyó por Update. No alteraron la parada operativa ni produjeron conexiones nuevas.
+
+La revisión staged detectó ocho textos con codificación alterada al reimportar stdout y un escape duplicado del regex del helper archivado. Se corrigieron antes del commit; JSON final con escapes Unicode, helper Node sintácticamente válido (`node --check`, exit `0`), sin cambios de SQL/resultados medidos ni nuevas operaciones QA.
+
+Lectura final a **19:29:48 America/Santo_Domingo** (`23:29:48Z`), SSH exit `0`: API/worker `active/running`, mismos PID P0, cero reinicios, imágenes iguales a las del inicio de este intento. Hashes iguales antes/después de runtime-env QA, ambos wrappers y ambas unidades; valores en JSON, contenido protegido no leído. No se necesitó `start`/reinicio: nunca se detuvieron. La ventana de 90 minutos **no comenzó**, indisponibilidad causada cero.
+
+HTTP final, exit `0`, GET público **`200`**, respuesta no vacía y cuerpo no impreso:
+
+~~~powershell
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -c 'import json,urllib.request; r=urllib.request.urlopen("https://api.staging.booking.kortek.cloud/public/qa-horario-norte/booking-data",timeout=20); b=r.read(); print(json.dumps({"publicBookingGetStatus":r.status,"bodyNotPrinted":True,"responseNonEmpty":bool(b)}))'
+~~~
+
+Ese GET puede consumir buckets compartidos: no se declara toda la base inmutable desde las lecturas anteriores. Esta tarea no emitió solicitudes de creación de reservas ni acciones de envío de correo. Producción permanece sin lecturas/acciones de esta tarea.
+
+### 13.4 Pendientes, continuación y commit local
+
+**P2 continúa incompleto.** No hay respaldo cifrado/hash, censo de snapshot, prueba de recuperabilidad de la frase, restore completo con cotejo de roles/ACL ni ensayo de rollback §5.3. No se importó la imagen API anterior ni se ejecutó el upgrade desechable previsto. La cola/destinatarios y el orden de reanudación no fueron ensayados. Los tipos de reversión de §5.3 conservan estado **previsto**, sin atribuirles pruebas realizadas. El censo/ledger vivo de este intento no sustituye el respaldo que P3b exige.
+
+Corrección mínima **propuesta, no ejecutada en este intento**, para la próxima preparación: sustituir `docker cp` por `docker exec -i <cliente_propio> sh -c 'cat > /tmp/qa-ca.crt'`, enviando los bytes de la CA pública por stdin binario desde Python. Así se usa el tmpfs sin relajar read-only ni montar archivos del usuario. Mantener todo secreto únicamente en memoria/env/descriptor; comprobar cifrado sintético, restore/TOC btree_gist public y artefacto anterior aislados antes de congelar. Tras indicación de continuar, repetir todas las precondiciones P2; cualquier escritura entre respaldo/reapertura y P3b exige respaldo nuevo. **Sin P3.**
+
+El nuevo commit local se limita al presente documento y los cuatro archivos de evidencia nuevos referidos arriba, por rutas explícitas. Se valida JSON, igualdad ledger completo P0, enlaces/fences, ausencia de patrones sensibles, diff completo/whitespace e índice aislado. No hay tipos/lint/build ni cambios de código de producto. El objetivo no se declara logrado por documentar esta parada; su resultado sigue pendiente.
+
+Validaciones documentales observadas, exit `0`: JSON, ledger P0 completo igual, cleanup coherente, enlaces existentes, fences pares y revisión de patrones sensibles. Temporales eliminados únicamente bajo `.tmp/m2-c3-p2`, con ruta absoluta comprobada, rechazo de reparse point y lista permitida de archivos propios; fuente sanitizada retenida en evidencia, custodia externa intacta.
+
+Comandos del checkpoint local:
+
+~~~powershell
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json docs/quality/evidence/m2-c3-p2/p2-preparacion.py.txt docs/quality/evidence/m2-c3-p2/p2-crypto.sh.txt docs/quality/evidence/m2-c3-p2/p2-wrapper.ps1.txt
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git commit -m "docs(m2): registrar revalidación P2 y fallo de preparación"
 git rev-parse HEAD
 git status --short --branch
 git show --stat --oneline HEAD
