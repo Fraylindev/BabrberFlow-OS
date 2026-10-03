@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-03 — Cierre documental final de M1
+
+- **M1 (Reserva pública) CERRADO / APROBADO** por autorización escrita del propietario, incluida la revisión física en iPhone/Safari. Se conservan los textos históricos y sus límites; no se inventan resultados por caso, modelo ni versión de iOS.
+- Respaldo de Cutover QA identificado por el informe C3: `.tmp/m1-c3/qa-before.dump.gpg`. El respaldo y su checksum ya estaban ausentes al comenzar esta comprobación; se verifica de nuevo su ausencia, sin borrar otro archivo ni leer contenido o claves. La eliminación previa consta en los cambios preexistentes; esta ejecución no puede repetir su hash previo.
+- Deuda para la **Puerta de producción (Paso 8)**: «Por atender» y «Todas» filtran y ordenan en el cliente sobre `GET /bookings` sin paginación ni tope. Con volumen real habrá que paginar o filtrar en el servidor; no se corrige ahora.
+- Cierre exclusivamente documental sobre `ddcb7aba8ab324ac3e3c03a288ac34508bc6e998`; commit/push autorizados solo a `origin/ai/antigravity-qa`. Cambios preexistentes aislados y preservados fuera del commit. Sin código nuevo, despliegues, cambios de flags/variables ni acceso a bases reales. [Estado M1](docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md) y [validación de esta ejecución](docs/quality/evidence/m1-c3/cierre-documental-20261003.json).
+
 ## 2026-10-03 — Confirmación pública de reserva y pies
 
 - Ubicación del negocio bajo el resumen de servicio y profesional; calendario y acciones de WhatsApp/Maps quedan después.
