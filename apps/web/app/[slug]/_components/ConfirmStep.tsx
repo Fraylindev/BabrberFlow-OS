@@ -27,6 +27,6 @@ export function ConfirmStep({ serviceName, professionalName, startTime, timeZone
     </div>
     <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">La reserva quedará pendiente de confirmación del negocio.</p>
     {submitError && <p role="alert" className="mt-4 text-[var(--color-danger)]">{submitError}</p>}
-    <div className="booking-nav"><Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>Atrás</Button><Button type="button" className="booking-primary" onClick={onConfirm} disabled={submitting || waiting}>{submitting ? 'Registrando tu reserva…' : waiting ? 'Espera un momento' : 'Registrar reserva'}</Button></div>
+    <div className="booking-nav"><Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>Atrás</Button><Button type="button" className="booking-primary" aria-busy={submitting} onClick={onConfirm} disabled={submitting || waiting}>{submitting ? 'Registrando tu reserva…' : waiting ? 'Espera un momento' : 'Registrar reserva'}</Button></div>
   </StepWrapper>;
 }

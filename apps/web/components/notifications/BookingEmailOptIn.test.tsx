@@ -45,7 +45,7 @@ it('public opt-in starts unchecked, is independent of account creation and prese
   fireEvent.click(screen.getByLabelText(EMAIL_NOTICE_TEXT));
   await confirm();
   expect(api.post).toHaveBeenCalledWith('/public/qa-avisos/bookings', expect.objectContaining({
-    emailNotifications: { optedIn: true, noticeVersion: 'booking-email-v1' }, createAccount: false,
+    emailNotifications: { optedIn: true, noticeVersion: 'booking-email-v1' },
     clientEmail: 'avisos@example.test', startTime: '2026-10-05T14:00:00.000Z',
   }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
   expect(screen.queryByText(/Destinatario|Omitido|Entregado/)).not.toBeInTheDocument();
@@ -68,3 +68,5 @@ it('a choice without an email does not block a valid reservation or expose omiss
   }));
   expect(screen.queryByText(/Omitido|Sin destinatario|Preferencia guardada/)).not.toBeInTheDocument();
 });
+vi.mock('@/components/customer/CustomerProvider', () => ({ useCustomer: () => ({ scope: 'public-notification-regression' }) }));
+vi.mock('@/components/customer/CustomerClaim', () => ({ CustomerClaim: () => null }));

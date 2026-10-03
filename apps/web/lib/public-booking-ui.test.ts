@@ -7,11 +7,11 @@ test('rangos civiles recortan hoy, bisiestos y extremo representable de C1', () 
   assert.equal(calendarMonth('2028-02', '2028-02-01').dates.length, 29);
   assert.equal(calendarMonth('9999-12', '9999-12-01').to, '9999-12-30');
 });
-test('datos invitados admiten correo vacío e internacionales y cuenta exige ocho', () => {
-  const draft = { clientName: 'Visitante', clientPhone: '+44 (123) 456-7890', clientEmail: '', password: '', createAccount: false, emailOptedIn: false };
+test('datos invitados admiten correo vacío; intención Clerk exige correo y ningún password', () => {
+  const draft = { clientName: 'Visitante', clientPhone: '+44 (123) 456-7890', clientEmail: '', createAccount: false, emailOptedIn: false };
   assert.deepEqual(contactErrors(draft), {});
   assert.ok(contactErrors({ ...draft, createAccount: true }).clientEmail);
-  assert.ok(contactErrors({ ...draft, createAccount: true, password: '1234567' }).password);
+  assert.deepEqual(contactErrors({ ...draft, createAccount: true, clientEmail: 'qa@test.invalid' }), {});
   assert.ok(contactErrors({ ...draft, clientPhone: '+1 1234567890123456' }).clientPhone);
 });
 test('semana cruza meses/años, respeta fecha mínima y extremo representable', () => {

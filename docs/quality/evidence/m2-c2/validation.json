@@ -1,0 +1,4732 @@
+{
+  "date": "2026-10-03",
+  "status": "IMPLEMENTADO / EN REVISIÓN; C2 no aprobado",
+  "branch": "ai/antigravity-qa",
+  "initialHead": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+  "finalHead": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+  "preserved": [
+    {
+      "sha256": "7D6D9B91E0AF17A633FD0C1FCC3956DBC6272715F31C3DA37B30D132BBCB2FD6",
+      "path": "CHANGELOG.md",
+      "currentSha256": "7d6d9b91e0af17a633fd0c1fcc3956dbc6272715f31c3da37b30d132bbcb2fd6",
+      "preserved": true
+    },
+    {
+      "sha256": "A050128FC5BA56C77B0889B2E881CCC448791EF372D76AE93D8A3E500413E1CA",
+      "path": "PROJECT_MASTER.md",
+      "currentSha256": "a050128fc5ba56c77b0889b2e881ccc448791ef372d76ae93d8a3e500413e1ca",
+      "preserved": true
+    },
+    {
+      "sha256": "34293A16EC421D800AE22739F6C095EFBEF9493142A18876B80403560359295B",
+      "path": "docs/README.md",
+      "currentSha256": "34293a16ec421d800ae22739f6c095efbef9493142a18876b80403560359295b",
+      "preserved": true
+    },
+    {
+      "sha256": "83D65C443B793C83D954F46E301D70EBD16B4B9880BC015F8F09C286210D4480",
+      "path": "docs/quality/M2_C1_CIERRE.md",
+      "currentSha256": "83d65c443b793c83d954f46e301d70ebd16b4b9880bc015f8f09c286210d4480",
+      "preserved": true
+    },
+    {
+      "sha256": "E0F35CCCA7A53BEE90AC689CFE2A21CF51509306BB5F1F164459DD1347D1B1B6",
+      "path": "docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+      "currentSha256": "e0f35ccca7a53bee90ac689cfe2a21cf51509306bb5f1f164459dd1347d1b1b6",
+      "preserved": true
+    },
+    {
+      "sha256": "2C9C9169D9CC72C000AA378F2D6B91B998FBABB606FB58618C3F7B13287013E7",
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "currentSha256": "2c9c9169d9cc72c000aa378f2d6b91b998fbabb606fb58618c3f7b13287013e7",
+      "preserved": true
+    },
+    {
+      "sha256": "D0971F132503B83CC294F91676DB3ADDF78B6247B382C9E854EC045DAC11A13C",
+      "path": "docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+      "currentSha256": "d0971f132503b83cc294f91676db3addf78b6247b382c9e854ec045dac11a13c",
+      "preserved": true
+    }
+  ],
+  "backendAndDependencyDiff": "",
+  "stagedPaths": "",
+  "commands": [
+    {
+      "exitCode": 0,
+      "log": ".tmp/m2-c2/types.log",
+      "sha256": "14C46979CE74EB269F487DF03C41D5639DA54DAF6779D42D6057A85D83C582B6",
+      "check": "types",
+      "command": "pnpm --filter web type-check:clean"
+    },
+    {
+      "exitCode": 0,
+      "check": "lint",
+      "sha256": "980630EB19AA19F12A0ADEEF8E664975E1D98BE8A1F31BA10DFD6BF8C735CABB",
+      "log": ".tmp/m2-c2/lint.log",
+      "command": "pnpm --filter web lint"
+    },
+    {
+      "check": "tests",
+      "exitCode": 0,
+      "sha256": "43E124B199DEEFCF4909BDFAF9DE9CC0D280DA04A24F26172617E7933D31FFBD",
+      "log": ".tmp/m2-c2/tests.log",
+      "command": "pnpm --filter web test"
+    },
+    {
+      "log": ".tmp/m2-c2/build.log",
+      "sha256": "52FE874DF0C7DD4773E7CB7091F7A8201F4F584335B3E7297251BC18D7EF129E",
+      "check": "build",
+      "exitCode": 0,
+      "command": "pnpm --filter web build --webpack"
+    }
+  ],
+  "tests": {
+    "node": 161,
+    "component": 147,
+    "total": 308,
+    "componentFiles": 22,
+    "c2Component": 15,
+    "c2Logic": 3
+  },
+  "browser": {
+    "main": {
+      "checks": [
+        {
+          "name": "lista real, paginación, historial y detalle en Norte/Sur",
+          "result": "PASS"
+        },
+        {
+          "name": "cinco roles internos sin vínculo no leen reservas; 404 neutro real",
+          "result": "PASS"
+        },
+        {
+          "name": "perfil real PATCH solo del negocio y correo de solo lectura",
+          "result": "PASS"
+        },
+        {
+          "name": "cursor obsoleto real descarta páginas y vuelve a leer primera página",
+          "result": "PASS"
+        },
+        {
+          "name": "cuarentena real no revela motivo ni datos de otro Client",
+          "result": "PASS"
+        },
+        {
+          "name": "identidad A → rol sin vínculo → A y logout fallido ocultan PII",
+          "result": "PASS"
+        },
+        {
+          "name": "POST autenticado con respuesta perdida recupera mismo comando/clave y una Booking real",
+          "result": "PASS"
+        },
+        {
+          "name": "PATCH con respuesta perdida recupera misma clave, incluso al volver de otra app",
+          "result": "PASS"
+        },
+        {
+          "name": "429 real PostgreSQL muestra Retry-After e impide consultas durante espera",
+          "result": "PASS"
+        },
+        {
+          "name": "responsive, teclado, resumen accesible, reflujo 200 % y reduced motion",
+          "result": "PASS"
+        }
+      ],
+      "measurements": [
+        {
+          "width": 320,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 320,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 375,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 375,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 390,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 390,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 768,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 768,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 1024,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 1024,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 1280,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 1280,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "surface": "perfil",
+          "zoom": "reflujo equivalente 200%",
+          "overflow": false
+        },
+        {
+          "width": 1440,
+          "surface": "mis-reservas",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        },
+        {
+          "width": 1440,
+          "surface": "mi-perfil",
+          "overflow": false,
+          "touchTargets": true,
+          "reducedMotion": true
+        }
+      ],
+      "consoleErrors": [
+        {
+          "name": "console",
+          "message": "Failed to load resource: net::ERR_TIMED_OUT"
+        },
+        {
+          "name": "console",
+          "message": "Failed to load resource: net::ERR_TIMED_OUT"
+        }
+      ],
+      "limitations": [
+        "SDK Clerk controlado; sin proveedor/correo real",
+        "Zoom por reflujo equivalente a 200%; gesto físico pendiente",
+        "Safari iPhone, Android físico, VoiceOver/TalkBack pendientes"
+      ]
+    },
+    "additional": {
+      "checks": [
+        {
+          "name": "invitado → cuenta Clerk controlada → claim explícito → lectura C1 autorizada",
+          "result": "PASS"
+        },
+        {
+          "name": "servicio retirado exige catálogo actual; negocio retirado conserva lectura y bloquea repetición",
+          "result": "PASS"
+        },
+        {
+          "name": "revocación real del vínculo al volver a la app oculta perfil; detalle ajeno no revela existencia",
+          "result": "PASS"
+        },
+        {
+          "name": "acceso y recuperación por código, retorno seguro, teclado y responsive de cuenta",
+          "result": "PASS"
+        }
+      ],
+      "measurements": [
+        {
+          "surface": "cuenta",
+          "width": 320,
+          "overflow": false,
+          "errorSummaryFocused": true
+        },
+        {
+          "surface": "cuenta",
+          "width": 375,
+          "overflow": false,
+          "errorSummaryFocused": true
+        },
+        {
+          "surface": "cuenta",
+          "width": 390,
+          "overflow": false,
+          "errorSummaryFocused": true
+        },
+        {
+          "surface": "cuenta",
+          "width": 768,
+          "overflow": false,
+          "errorSummaryFocused": true
+        },
+        {
+          "surface": "cuenta",
+          "width": 1024,
+          "overflow": false,
+          "errorSummaryFocused": true
+        },
+        {
+          "surface": "cuenta",
+          "width": 1280,
+          "overflow": false,
+          "errorSummaryFocused": true
+        },
+        {
+          "surface": "cuenta",
+          "width": 1440,
+          "overflow": false,
+          "errorSummaryFocused": true
+        }
+      ],
+      "consoleErrors": [],
+      "limitations": [
+        "SDK Clerk y verificador de identidad controlados; dominio C1/PostgreSQL real"
+      ]
+    },
+    "totalCases": 14,
+    "totalMeasurements": 22,
+    "expectedConsoleErrors": 2,
+    "unexpectedPageErrors": []
+  },
+  "headers": [
+    {
+      "surface": "cuenta/crear",
+      "status": 200,
+      "cacheControl": "private, no-store",
+      "robots": "noindex, nofollow"
+    },
+    {
+      "surface": "mis-reservas",
+      "status": 200,
+      "cacheControl": "private, no-store",
+      "robots": "noindex, nofollow"
+    },
+    {
+      "surface": "mi-perfil",
+      "status": 200,
+      "cacheControl": "private, no-store",
+      "robots": "noindex, nofollow"
+    }
+  ],
+  "database": {
+    "migrations": [
+      {
+        "count": 28
+      }
+    ],
+    "businesses": 2,
+    "bookings": 63,
+    "operations": [
+      {
+        "_count": 2,
+        "operation": "CREATE_BOOKING"
+      },
+      {
+        "_count": 5,
+        "operation": "UPDATE_PROFILE"
+      }
+    ]
+  },
+  "runtime": {
+    "container": "kortek-m2-c2-disposable",
+    "ephemeral": true,
+    "postgresPort": "127.0.0.1:55443",
+    "database": "m2_c2_test",
+    "runtimeRole": "m2_c2_runner",
+    "privileged": false,
+    "apiPort": "127.0.0.1:3046",
+    "webPort": "127.0.0.1:3016",
+    "identity": "SDK y ClerkSessionVerifier controlados; guards/controladores/servicios/DTO/Prisma/PostgreSQL C1 reales",
+    "mediaWorker": "desactivado solo en harness",
+    "email": "desactivado solo en proceso",
+    "production": "cerrada; sin acceso ni despliegue",
+    "cleanup": {
+      "removedContainer": true,
+      "usualContainerPreserved": true,
+      "removedAnonymousVolume": true,
+      "remainingTestListeners": [],
+      "storage": "Volumen anónimo automático de postgres:16; retirado con --rm; sin bind mount ni volumen nombrado del usuario"
+    },
+    "storage": "Volumen anónimo de la imagen postgres:16, retirado con --rm; sin bind mount ni volumen nombrado del usuario"
+  },
+  "sourceHashes": [
+    {
+      "path": "apps/web/app/[slug]/_components/ContactStep.tsx",
+      "sha256": "84e2ba207acbe5e24bf8bf20ea699b968ed2be7cd70a533e024b3c40db421983",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/app/[slug]/_components/SuccessView.tsx",
+      "sha256": "b6943df45fd316276ef4573daaf011be54354bd7d99bb9be025c52da9c125d68",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+      "sha256": "d53f2ff9baefe32fd4f5a5c79a96a96bae321f5c881feb5d1692e2d27cee6803",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/public/BookingPolish.test.tsx",
+      "sha256": "bca82e8f21170f2bfa9f5e14965e292f662261673c92434e3d45951ac2fb9d2e",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/public/M1C2.test.tsx",
+      "sha256": "e2ba58a61235f69db21f78bdcd6308285b049ff02b9b24cdf561b85298726a36",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/public/PublicBookingScreen.tsx",
+      "sha256": "af53508cb280758a80655911ebb764a8a1dad8fc116c048565479ec63f0d57ed",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/public/PublicMiniSite.test.tsx",
+      "sha256": "a994885c5905fc4166720d839ea855ddc21fcd72f3fbce089a98a1e6ebde9c04",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/public/PublicMiniSite.tsx",
+      "sha256": "67e38d827895deb88d6c239454b1f8874ffcca68ee38d1b7261285cee22a72f1",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/public-booking-ui.test.ts",
+      "sha256": "9d38f93a9775af119a8e14eb66c361db67729e782475503092d9140462b040c6",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/public-booking-ui.ts",
+      "sha256": "04f2f9887f87201eed76d43faebb1fb4ea8516ee27f00007480a2d99630ff1fe",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/queries/public-booking.ts",
+      "sha256": "3232be947237fb2fe1e817181f099a8fb130aeeab7bb9b643aae2ade86852ec3",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/next.config.ts",
+      "sha256": "ec4dcee6189892c71befea141f323e056712b01ce8d97266238705d656d3f388",
+      "qaCopyMatches": false,
+      "intentionalQaOverride": true
+    },
+    {
+      "path": "apps/web/proxy.ts",
+      "sha256": "e2c98b6e3375c757582fc995a869b9bbac2c8a4cf44a7b1984bf0c4cfd783dfb",
+      "qaCopyMatches": false,
+      "intentionalQaOverride": true
+    },
+    {
+      "path": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+      "sha256": "7a482b6505006c70509f3d406918a22a6aec74180938c2eaf4a996a2f900f7a1",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/app/[slug]/layout.tsx",
+      "sha256": "8a94827f573c71ecbea47655ad11b47ff332b6f6f972198657b43f1f430b665c",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/app/[slug]/mi-perfil/page.tsx",
+      "sha256": "f1a29b4fcdb9c0bfb701c30ee8996dcf86fd2d1d8f7b86767a011327ee8a5db3",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+      "sha256": "6c2a4929e72c3101872fb5d3798c1ada7bc50aad568fc3213afeab367c1bb27b",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+      "sha256": "79b08fdf61efc6c617f017f381b949ca86b47c2458e5d547a4a9c448e90d0603",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/page.tsx",
+      "sha256": "043f39d859b01cf6c484cf3d51f2c64cf0f3daebd74dd7b1ca44e18c7bf7c79c",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/Customer.test.tsx",
+      "sha256": "a63ed85a7e1a4b0d2c9ee2d32588708c649d35173bfbb6d2df383e970c69dffc",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerAuth.tsx",
+      "sha256": "815e081283147fdf044cf7a587c1c97011982a77a05872d5fb3e8d66a6439612",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerBookingDetail.tsx",
+      "sha256": "1c72611fc816b50b2bff286d279a07ba80c36fd4772bc803af08d44c5dd9ad2b",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerBookings.tsx",
+      "sha256": "d341b4fcf18b1338b17440e7ae3b54643da9e5c91e0bb9dff99754b95f323721",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerClaim.tsx",
+      "sha256": "5419b83e17e7c8b716d460cdbb6558889a539da0f1fb2b798868c333aed444e8",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerEntryLinks.tsx",
+      "sha256": "5823cca5c005f1905e91284729634c082048b863f6ae8e944c66ce071529a17c",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerProfile.tsx",
+      "sha256": "0e5c6a58ae005fbed070b302a13b2b68552e13ce3b09c974640223c97b58a92e",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerProvider.tsx",
+      "sha256": "80e2ff297bacb85de497171ad267805fe8e87b779095d6ee6ea6195bbf5763ec",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+      "sha256": "d3d06e92b283021dc73601d9f39bbb00320bf4c36d28af70eee614513fb9ad87",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/CustomerShell.tsx",
+      "sha256": "c80dd8e757000004a2f732cf4d73527aaf2b0a2d3b124caf6651ea87fc633ddb",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/components/customer/customer.css",
+      "sha256": "18a00f065984656f793177ae8e34c75c2d1cff040967ff3de2d0380fecd844ce",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/customer-routes.ts",
+      "sha256": "12ba0ee29ac04c04e92f009808c3a6734d2ba957810450593c8bdb841d090957",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/customer-ui.test.ts",
+      "sha256": "057077308d0edfecd21c9a0fd8a5709167d9b4ad2f1197ec3a457f7da7b3bc67",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/customer-ui.ts",
+      "sha256": "c9cc2a314a79a97aea3738e1615218f5de21900958837b24d078bdf1b60a69a4",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    },
+    {
+      "path": "apps/web/lib/queries/customer.ts",
+      "sha256": "c842b2c67e4086cf27ec67f0c157da992136a5a20159fa01114948d9da52de71",
+      "qaCopyMatches": true,
+      "intentionalQaOverride": false
+    }
+  ],
+  "qaHarnessHashes": [
+    {
+      "path": ".tmp/m2-c2/runtime.cjs",
+      "sha256": "4b0d228cf0a7e63ceb1eb7e2b70f9f47e7947983622f8ca8dd6479fdf916b644"
+    },
+    {
+      "path": ".tmp/m2-c2/clerk-sdk.tsx",
+      "sha256": "4e5a14ca04bf8e79ec6ff1096fa8434653be56cafdfcfddd98ef4a07f4c4483b"
+    },
+    {
+      "path": ".tmp/m2-c2/prepare-web.cjs",
+      "sha256": "5e658f38d731b007881422e99e0b00e10bffbf80fd2837c7fc7b63fcd9d785bd"
+    },
+    {
+      "path": ".tmp/m2-c2/browser.cjs",
+      "sha256": "fa652600c00995172429356da9760b4536ecf0392e70ec1eeeae9a239dc6275e"
+    },
+    {
+      "path": ".tmp/m2-c2/browser-extra.cjs",
+      "sha256": "d6131964834261915a1b7e81c63bf78c6161ba763139e940fc580ea174ad5bfd"
+    },
+    {
+      "path": ".tmp/m2-c2/run.ps1",
+      "sha256": "03c50ac51fb9427acd784179ed4e8ecf5b35c8ab86680a45c09e0b6ace5553bf"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "profile-390.png",
+      "sha256": "6c686265a5b9007296e2364f84f0ccfd558bbb9ad35ef4228f39a31dfd4ca667",
+      "data": "exclusivamente sintéticos"
+    },
+    {
+      "path": "repeat-success-390.png",
+      "sha256": "988dc769dad0abf6937a0f5f1db2635f5f84bd02393cc3c6a4723f4e697fcf20",
+      "data": "exclusivamente sintéticos"
+    },
+    {
+      "path": "account-errors-390.png",
+      "sha256": "1b60d954c5e2f329d1eddfbb6e34b1685eaaa71618265bc15f8a4b6935d07e39",
+      "data": "exclusivamente sintéticos"
+    },
+    {
+      "path": "claim-success-390.png",
+      "sha256": "1cbd2a3ac249731588ed4fdf9e051dda045e2b1a1833c8d68167f11b38836019",
+      "data": "exclusivamente sintéticos"
+    },
+    {
+      "path": "profile-errors-390.png",
+      "sha256": "210f502c1ca93837dfc7a82873a27af04fbf3f13b300f1c191d03f9140092fcd",
+      "data": "exclusivamente sintéticos"
+    },
+    {
+      "path": "zoom-reflow-200.png",
+      "sha256": "f9ae57b1698671286d06cf313beaf57196d3e461271b9dd9c04b08a89cbdef10",
+      "data": "exclusivamente sintéticos"
+    }
+  ],
+  "gitStatus": "M CHANGELOG.md\n M PROJECT_MASTER.md\n M apps/web/app/[slug]/_components/ContactStep.tsx\n M apps/web/app/[slug]/_components/SuccessView.tsx\n M apps/web/components/notifications/BookingEmailOptIn.test.tsx\n M apps/web/components/public/BookingPolish.test.tsx\n M apps/web/components/public/M1C2.test.tsx\n M apps/web/components/public/PublicBookingScreen.tsx\n M apps/web/components/public/PublicMiniSite.test.tsx\n M apps/web/components/public/PublicMiniSite.tsx\n M apps/web/lib/public-booking-ui.test.ts\n M apps/web/lib/public-booking-ui.ts\n M apps/web/lib/queries/public-booking.ts\n M apps/web/next.config.ts\n M apps/web/proxy.ts\n M docs/README.md\n M docs/product/APP_FLOWS.md\n M docs/quality/M2_C1_CIERRE.md\n M docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md\n M docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md\n?? apps/web/app/[slug]/cuenta/[action]/page.tsx\n?? apps/web/app/[slug]/layout.tsx\n?? apps/web/app/[slug]/mi-perfil/page.tsx\n?? apps/web/app/[slug]/mis-reservas/[id]/page.tsx\n?? apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx\n?? apps/web/app/[slug]/mis-reservas/page.tsx\n?? apps/web/components/customer/Customer.test.tsx\n?? apps/web/components/customer/CustomerAuth.tsx\n?? apps/web/components/customer/CustomerBookingDetail.tsx\n?? apps/web/components/customer/CustomerBookings.tsx\n?? apps/web/components/customer/CustomerClaim.tsx\n?? apps/web/components/customer/CustomerEntryLinks.tsx\n?? apps/web/components/customer/CustomerProfile.tsx\n?? apps/web/components/customer/CustomerProvider.tsx\n?? apps/web/components/customer/CustomerRepeatBooking.tsx\n?? apps/web/components/customer/CustomerShell.tsx\n?? apps/web/components/customer/customer.css\n?? apps/web/lib/customer-routes.ts\n?? apps/web/lib/customer-ui.test.ts\n?? apps/web/lib/customer-ui.ts\n?? apps/web/lib/queries/customer.ts\n?? docs/quality/M2_C2_CIERRE.md\n?? docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json\n?? docs/quality/evidence/m2-c2/account-errors-390.png\n?? docs/quality/evidence/m2-c2/claim-success-390.png\n?? docs/quality/evidence/m2-c2/profile-390.png\n?? docs/quality/evidence/m2-c2/profile-errors-390.png\n?? docs/quality/evidence/m2-c2/repeat-success-390.png\n?? docs/quality/evidence/m2-c2/validation.json\n?? docs/quality/evidence/m2-c2/zoom-reflow-200.png",
+  "gitDiffCheck": {
+    "command": "git diff --check",
+    "exitCode": 0
+  },
+  "documentation": [
+    {
+      "path": "docs/product/APP_FLOWS.md",
+      "sha256": "0d013fc7808d74a78ea7b9216d34a4e2c77d884e5ef56dc2052982bdcfaf5e4f"
+    },
+    {
+      "path": "docs/quality/M2_C2_CIERRE.md",
+      "sha256": "954b095b72995ecf81f42057e82edf9ea5fb7dc97af5717838b8ce76aeb5b491"
+    }
+  ],
+  "review20261003": {
+    "date": "2026-10-03",
+    "status": "CORRECTIVO IMPLEMENTADO / EN REVISIÓN; aprobación de producto y C3 pendientes",
+    "authorization": "Un único commit local C2, rutas explícitas; siete rutas excluidas; NO PUSH / NO DESPLIEGUE",
+    "branch": "ai/antigravity-qa",
+    "baseHead": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "commit": "Hash del único commit que contiene esta evidencia reportado en la entrega; no se inserta en su propio contenido",
+    "preserved": [
+      {
+        "sha256": "7D6D9B91E0AF17A633FD0C1FCC3956DBC6272715F31C3DA37B30D132BBCB2FD6",
+        "path": "CHANGELOG.md",
+        "currentSha256": "7d6d9b91e0af17a633fd0c1fcc3956dbc6272715f31c3da37b30d132bbcb2fd6",
+        "preserved": true
+      },
+      {
+        "sha256": "A050128FC5BA56C77B0889B2E881CCC448791EF372D76AE93D8A3E500413E1CA",
+        "path": "PROJECT_MASTER.md",
+        "currentSha256": "a050128fc5ba56c77b0889b2e881ccc448791ef372d76ae93d8a3e500413e1ca",
+        "preserved": true
+      },
+      {
+        "sha256": "34293A16EC421D800AE22739F6C095EFBEF9493142A18876B80403560359295B",
+        "path": "docs/README.md",
+        "currentSha256": "34293a16ec421d800ae22739f6c095efbef9493142a18876b80403560359295b",
+        "preserved": true
+      },
+      {
+        "sha256": "83D65C443B793C83D954F46E301D70EBD16B4B9880BC015F8F09C286210D4480",
+        "path": "docs/quality/M2_C1_CIERRE.md",
+        "currentSha256": "83d65c443b793c83d954f46e301d70ebd16b4b9880bc015f8f09c286210d4480",
+        "preserved": true
+      },
+      {
+        "sha256": "E0F35CCCA7A53BEE90AC689CFE2A21CF51509306BB5F1F164459DD1347D1B1B6",
+        "path": "docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+        "currentSha256": "e0f35ccca7a53bee90ac689cfe2a21cf51509306bb5f1f164459dd1347d1b1b6",
+        "preserved": true
+      },
+      {
+        "sha256": "2C9C9169D9CC72C000AA378F2D6B91B998FBABB606FB58618C3F7B13287013E7",
+        "path": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+        "currentSha256": "2c9c9169d9cc72c000aa378f2d6b91b998fbabb606fb58618c3f7b13287013e7",
+        "preserved": true
+      },
+      {
+        "sha256": "D0971F132503B83CC294F91676DB3ADDF78B6247B382C9E854EC045DAC11A13C",
+        "path": "docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+        "currentSha256": "d0971f132503b83cc294f91676db3addf78b6247b382c9e854ec045dac11a13c",
+        "preserved": true
+      }
+    ],
+    "backendAndDependencyDiff": "",
+    "commands": [
+      {
+        "log": ".tmp/m2-c2/types.log",
+        "check": "types",
+        "exitCode": 0,
+        "sha256": "14C46979CE74EB269F487DF03C41D5639DA54DAF6779D42D6057A85D83C582B6",
+        "command": "pnpm --filter web type-check:clean"
+      },
+      {
+        "log": ".tmp/m2-c2/lint.log",
+        "exitCode": 0,
+        "check": "lint",
+        "sha256": "980630EB19AA19F12A0ADEEF8E664975E1D98BE8A1F31BA10DFD6BF8C735CABB",
+        "command": "pnpm --filter web lint"
+      },
+      {
+        "log": ".tmp/m2-c2/tests.log",
+        "check": "tests",
+        "sha256": "80785D0499023730EDC2EF16382719853036C72B1600BB1FE8D26B66C670E551",
+        "exitCode": 0,
+        "command": "pnpm --filter web test"
+      },
+      {
+        "exitCode": 0,
+        "sha256": "51D40ED1BCE89A1FC63B05471B680CC70AD25768D64C1892C0DA855182CD8B4E",
+        "log": ".tmp/m2-c2/build.log",
+        "check": "build",
+        "command": "pnpm --filter web build --webpack"
+      }
+    ],
+    "tests": {
+      "node": 161,
+      "component": 149,
+      "total": 310,
+      "componentFiles": 22,
+      "c2Component": 17,
+      "c2Logic": 3
+    },
+    "browser": {
+      "functional": {
+        "checks": [
+          {
+            "name": "lista real, paginación, historial y detalle en Norte/Sur",
+            "result": "PASS"
+          },
+          {
+            "name": "cinco roles internos sin vínculo no leen reservas; 404 neutro real",
+            "result": "PASS"
+          },
+          {
+            "name": "perfil real PATCH solo del negocio y correo de solo lectura",
+            "result": "PASS"
+          },
+          {
+            "name": "cursor obsoleto real descarta páginas y vuelve a leer primera página",
+            "result": "PASS"
+          },
+          {
+            "name": "cuarentena real no revela motivo ni datos de otro Client",
+            "result": "PASS"
+          },
+          {
+            "name": "identidad A → rol sin vínculo → A y logout fallido ocultan PII",
+            "result": "PASS"
+          },
+          {
+            "name": "POST autenticado con respuesta perdida recupera mismo comando/clave y una Booking real",
+            "result": "PASS"
+          },
+          {
+            "name": "PATCH con respuesta perdida recupera misma clave, incluso al volver de otra app",
+            "result": "PASS"
+          },
+          {
+            "name": "429 real PostgreSQL muestra Retry-After e impide consultas durante espera",
+            "result": "PASS"
+          },
+          {
+            "name": "responsive, teclado, resumen accesible, reflujo 200 % y reduced motion",
+            "result": "PASS"
+          }
+        ],
+        "measurements": [
+          {
+            "width": 320,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 320,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 375,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 375,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 390,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 390,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 768,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 768,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 1024,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 1024,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 1280,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 1280,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "surface": "perfil",
+            "zoom": "reflujo equivalente 200%",
+            "overflow": false
+          },
+          {
+            "width": 1440,
+            "surface": "mis-reservas",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          },
+          {
+            "width": 1440,
+            "surface": "mi-perfil",
+            "overflow": false,
+            "touchTargets": true,
+            "reducedMotion": true
+          }
+        ],
+        "consoleErrors": [
+          {
+            "name": "console",
+            "message": "Failed to load resource: net::ERR_TIMED_OUT"
+          },
+          {
+            "name": "console",
+            "message": "Failed to load resource: net::ERR_TIMED_OUT"
+          }
+        ],
+        "limitations": [
+          "SDK Clerk controlado; sin proveedor/correo real",
+          "Zoom por reflujo equivalente a 200%; gesto físico pendiente",
+          "Safari iPhone, Android físico, VoiceOver/TalkBack pendientes"
+        ]
+      },
+      "additional": {
+        "checks": [
+          {
+            "name": "invitado → cuenta Clerk controlada → claim explícito → lectura C1 autorizada",
+            "result": "PASS"
+          },
+          {
+            "name": "servicio retirado exige catálogo actual; negocio retirado conserva lectura y bloquea repetición",
+            "result": "PASS"
+          },
+          {
+            "name": "revocación real del vínculo al volver a la app oculta perfil; detalle ajeno no revela existencia",
+            "result": "PASS"
+          },
+          {
+            "name": "acceso y recuperación por código, retorno seguro, teclado y responsive de cuenta",
+            "result": "PASS"
+          }
+        ],
+        "measurements": [
+          {
+            "surface": "cuenta",
+            "width": 320,
+            "overflow": false,
+            "errorSummaryFocused": true
+          },
+          {
+            "surface": "cuenta",
+            "width": 375,
+            "overflow": false,
+            "errorSummaryFocused": true
+          },
+          {
+            "surface": "cuenta",
+            "width": 390,
+            "overflow": false,
+            "errorSummaryFocused": true
+          },
+          {
+            "surface": "cuenta",
+            "width": 768,
+            "overflow": false,
+            "errorSummaryFocused": true
+          },
+          {
+            "surface": "cuenta",
+            "width": 1024,
+            "overflow": false,
+            "errorSummaryFocused": true
+          },
+          {
+            "surface": "cuenta",
+            "width": 1280,
+            "overflow": false,
+            "errorSummaryFocused": true
+          },
+          {
+            "surface": "cuenta",
+            "width": 1440,
+            "overflow": false,
+            "errorSummaryFocused": true
+          }
+        ],
+        "consoleErrors": [],
+        "limitations": [
+          "SDK Clerk y verificador de identidad controlados; dominio C1/PostgreSQL real"
+        ]
+      },
+      "visual": {
+        "checks": [
+          {
+            "name": "crear, entrar y recuperar: contraste seis estados, espaciado, enlaces y reflujo",
+            "result": "PASS"
+          },
+          {
+            "name": "Mi perfil: contraste, separación y estado pendiente PATCH real",
+            "result": "PASS"
+          },
+          {
+            "name": "Mis reservas: semántica y teclado de pestañas, selección visual y reflujo completo",
+            "result": "PASS"
+          },
+          {
+            "name": "botones de repetición y reserva invitada: contraste por cada paso y estado",
+            "result": "PASS"
+          },
+          {
+            "name": "claim y recuperación de lista: contraste de botones principales",
+            "result": "PASS"
+          }
+        ],
+        "contrast": [
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear con errores",
+            "button": "Crear cuenta",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/crear verificar código",
+            "button": "Verificar código",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar con errores",
+            "button": "Enviar código",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/entrar verificar código",
+            "button": "Verificar código",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar con errores",
+            "button": "Enviar código",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "cuenta/recuperar verificar código",
+            "button": "Verificar código",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil con errores",
+            "button": "Guardar datos",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "PATCH C1 pendiente real",
+            "state": "pendiente",
+            "color": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "ratio": 8.790218572639017,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/servicio",
+            "button": "Elegir profesional",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/profesional",
+            "button": "Ver fechas y horas",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/horario",
+            "button": "Continuar con tus datos",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "repetir/revisión",
+            "button": "Registrar reserva",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/servicio",
+            "button": "Elegir profesional",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/horario",
+            "button": "Continuar con tus datos",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/contacto",
+            "button": "Revisar reserva",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "invitado/revisión",
+            "button": "Registrar reserva",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(225, 29, 46)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 4.5553,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Agregar al calendario",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "claim explícito",
+            "button": "Añadir reserva",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "normal",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "hover",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(200, 23, 43)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 5.5681,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "deshabilitado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(56, 56, 56)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.2341,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "pendiente",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "hover y foco",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(143, 20, 32)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 8.7902,
+            "minimum": 4.5,
+            "pass": true
+          },
+          {
+            "surface": "lista/cursor obsoleto",
+            "button": "Actualizar lista",
+            "state": "hover y pulsado",
+            "foreground": "rgb(250, 250, 250)",
+            "background": "rgb(112, 16, 27)",
+            "opacity": "1",
+            "filter": "none",
+            "pseudoBefore": "none",
+            "ancestorOpacity": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "ratio": 11.3101,
+            "minimum": 4.5,
+            "pass": true
+          }
+        ],
+        "spacing": [
+          {
+            "surface": "crear",
+            "introToSummary": 24,
+            "summaryToLabel": 20,
+            "pass": true
+          },
+          {
+            "surface": "entrar",
+            "introToSummary": 24,
+            "summaryToLabel": 20,
+            "pass": true
+          },
+          {
+            "surface": "recuperar",
+            "introToSummary": 24,
+            "summaryToLabel": 20,
+            "pass": true
+          },
+          {
+            "surface": "mi-perfil",
+            "introToSummary": 24,
+            "summaryToLabel": 20,
+            "pass": true
+          }
+        ],
+        "reflow": [
+          {
+            "surface": "crear",
+            "emulation": true,
+            "realZoom": false,
+            "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+            "width": 640,
+            "scrollWidth": 640,
+            "scrollHeight": 1862,
+            "lastContentBottom": 1798,
+            "pngWidth": 640,
+            "pngHeight": 1862,
+            "file": "review-crear-reflow-200.png",
+            "overflow": false,
+            "clipped": false
+          },
+          {
+            "surface": "entrar",
+            "emulation": true,
+            "realZoom": false,
+            "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+            "width": 640,
+            "scrollWidth": 640,
+            "scrollHeight": 1244,
+            "lastContentBottom": 1180,
+            "pngWidth": 640,
+            "pngHeight": 1244,
+            "file": "review-entrar-reflow-200.png",
+            "overflow": false,
+            "clipped": false
+          },
+          {
+            "surface": "mi-perfil",
+            "emulation": true,
+            "realZoom": false,
+            "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+            "width": 640,
+            "scrollWidth": 640,
+            "scrollHeight": 1972,
+            "lastContentBottom": 1908,
+            "pngWidth": 640,
+            "pngHeight": 1972,
+            "file": "review-mi-perfil-reflow-200.png",
+            "overflow": false,
+            "clipped": false
+          },
+          {
+            "surface": "mis-reservas",
+            "emulation": true,
+            "realZoom": false,
+            "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+            "width": 640,
+            "scrollWidth": 640,
+            "scrollHeight": 10001,
+            "lastContentBottom": 9937,
+            "pngWidth": 640,
+            "pngHeight": 10001,
+            "file": "review-mis-reservas-reflow-200.png",
+            "overflow": false,
+            "clipped": false
+          }
+        ],
+        "pageErrors": [],
+        "method": "WCAG luminancia relativa sRGB de colores calculados por Chrome; CSS pseudoestados y atributos DOM en botones reales. Contraste mínimo 4.5:1, sin opacidad ni filtros; pendientes de PATCH comprobados en flujo real. Zoom: emulación de reflujo equivalente 200%, no zoom real."
+      },
+      "totalCases": 19,
+      "functionalMeasurements": 22,
+      "contrastMeasurements": 145,
+      "minimumContrast": 4.5553,
+      "expectedConsoleErrors": 2,
+      "commands": [
+        {
+          "command": "node .tmp/m2-c2/review-browser.cjs",
+          "exitCode": 0,
+          "report": "review-functional-report.json",
+          "reportSha256": "cec034b4adda921790ead426ceeed6de345c8e4c7b6352a1b60c3df3974f077c"
+        },
+        {
+          "command": "node .tmp/m2-c2/review-browser-extra.cjs",
+          "exitCode": 0,
+          "report": "review-extra-report.json",
+          "reportSha256": "ebf3107d9b2d7c2c6ea79fe2631ccdc5652ddc507337c4e5a1ccfa66dff6f754"
+        },
+        {
+          "command": "node .tmp/m2-c2/review-visual.cjs",
+          "exitCode": 0,
+          "report": "review-visual-report.json",
+          "reportSha256": "8d525c76fa9aec84b64aee7a64ebdfddf1603b38b13f9b0773caa176a80d9a38"
+        }
+      ]
+    },
+    "headers": [
+      {
+        "surface": "cuenta/crear",
+        "status": 200,
+        "cacheControl": "private, no-store",
+        "robots": "noindex, nofollow"
+      },
+      {
+        "surface": "mis-reservas",
+        "status": 200,
+        "cacheControl": "private, no-store",
+        "robots": "noindex, nofollow"
+      },
+      {
+        "surface": "mi-perfil",
+        "status": 200,
+        "cacheControl": "private, no-store",
+        "robots": "noindex, nofollow"
+      }
+    ],
+    "database": {
+      "migrations": [
+        {
+          "count": 28
+        }
+      ],
+      "businesses": 2,
+      "bookings": 62,
+      "operations": [
+        {
+          "_count": 2,
+          "operation": "CREATE_BOOKING"
+        },
+        {
+          "_count": 7,
+          "operation": "UPDATE_PROFILE"
+        }
+      ]
+    },
+    "runtime": {
+      "container": "kortek-m2-c2-disposable",
+      "ephemeral": true,
+      "storage": "Volumen anónimo automático de postgres:16; sin bind mount ni volumen nombrado del usuario",
+      "database": "m2_c2_test",
+      "runtimeRole": "m2_c2_runner",
+      "privileged": false,
+      "ports": "loopback 3016/3046/55443",
+      "identity": "SDK y ClerkSessionVerifier controlados solo en ensayo; Guards, DTOs, controladores, servicios, transacciones y PostgreSQL C1 reales",
+      "mediaWorker": "desactivado solo en harness",
+      "email": "desactivado solo en proceso",
+      "providerRealVerified": false,
+      "realZoomVerified": false,
+      "production": "cerrada; sin acceso ni despliegue",
+      "cleanup": {
+        "remainingTestListeners": [],
+        "removedContainer": true,
+        "removedAnonymousVolume": true,
+        "usualContainerPreserved": true,
+        "storage": "Volumen anónimo de postgres:16 retirado con --rm; sin bind mount ni volumen nombrado del usuario"
+      }
+    },
+    "sourceHashes": [
+      {
+        "path": "apps/web/app/[slug]/_components/ConfirmStep.tsx",
+        "sha256": "e46e386b75c38c6ca041b0cbcc2e4a2dcfddb4eac2679602152d1f04926c711e",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/_components/ContactStep.tsx",
+        "sha256": "84e2ba207acbe5e24bf8bf20ea699b968ed2be7cd70a533e024b3c40db421983",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/_components/SuccessView.tsx",
+        "sha256": "b6943df45fd316276ef4573daaf011be54354bd7d99bb9be025c52da9c125d68",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+        "sha256": "d53f2ff9baefe32fd4f5a5c79a96a96bae321f5c881feb5d1692e2d27cee6803",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/public/BookingPolish.test.tsx",
+        "sha256": "bca82e8f21170f2bfa9f5e14965e292f662261673c92434e3d45951ac2fb9d2e",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/public/M1C2.test.tsx",
+        "sha256": "e2ba58a61235f69db21f78bdcd6308285b049ff02b9b24cdf561b85298726a36",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/public/PublicBookingScreen.tsx",
+        "sha256": "af53508cb280758a80655911ebb764a8a1dad8fc116c048565479ec63f0d57ed",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/public/PublicMiniSite.test.tsx",
+        "sha256": "a994885c5905fc4166720d839ea855ddc21fcd72f3fbce089a98a1e6ebde9c04",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/public/PublicMiniSite.tsx",
+        "sha256": "67e38d827895deb88d6c239454b1f8874ffcca68ee38d1b7261285cee22a72f1",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/ui/Button.tsx",
+        "sha256": "e1e7ed466ccf9326adfd5a6215b64d60764257248156e407f9076c2e9dd594b4",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/public-booking-ui.test.ts",
+        "sha256": "9d38f93a9775af119a8e14eb66c361db67729e782475503092d9140462b040c6",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/public-booking-ui.ts",
+        "sha256": "04f2f9887f87201eed76d43faebb1fb4ea8516ee27f00007480a2d99630ff1fe",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/queries/public-booking.ts",
+        "sha256": "3232be947237fb2fe1e817181f099a8fb130aeeab7bb9b643aae2ade86852ec3",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/next.config.ts",
+        "sha256": "ec4dcee6189892c71befea141f323e056712b01ce8d97266238705d656d3f388",
+        "qaCopyMatches": false,
+        "intentionalQaOverride": true
+      },
+      {
+        "path": "apps/web/proxy.ts",
+        "sha256": "e2c98b6e3375c757582fc995a869b9bbac2c8a4cf44a7b1984bf0c4cfd783dfb",
+        "qaCopyMatches": false,
+        "intentionalQaOverride": true
+      },
+      {
+        "path": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+        "sha256": "7a482b6505006c70509f3d406918a22a6aec74180938c2eaf4a996a2f900f7a1",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/layout.tsx",
+        "sha256": "cdfc7af5b0cca9abc81f3df819923e191064eeaed1f74d95129e9c5b36bb9bfb",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/mi-perfil/page.tsx",
+        "sha256": "f1a29b4fcdb9c0bfb701c30ee8996dcf86fd2d1d8f7b86767a011327ee8a5db3",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+        "sha256": "6c2a4929e72c3101872fb5d3798c1ada7bc50aad568fc3213afeab367c1bb27b",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+        "sha256": "79b08fdf61efc6c617f017f381b949ca86b47c2458e5d547a4a9c448e90d0603",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/app/[slug]/mis-reservas/page.tsx",
+        "sha256": "043f39d859b01cf6c484cf3d51f2c64cf0f3daebd74dd7b1ca44e18c7bf7c79c",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/Customer.test.tsx",
+        "sha256": "c0f1f2f491675e138ea53db4586e419c3ceb09e11d410f88ccce04625bad02db",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerAuth.tsx",
+        "sha256": "1aad2ad2d29c2563ab4488b0def29aa18e90c36a1013f09bf9d1b78bdbfd99c6",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerBookingDetail.tsx",
+        "sha256": "1c72611fc816b50b2bff286d279a07ba80c36fd4772bc803af08d44c5dd9ad2b",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerBookings.tsx",
+        "sha256": "c00b0d0a99dfa940cff120a610b75a634e281d560d0bfca0b880d02a57c66292",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerClaim.tsx",
+        "sha256": "e3284eae08ad3756daea94fce95b783bc173775ce4fad71e9b11116b4df6b00e",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerEntryLinks.tsx",
+        "sha256": "5823cca5c005f1905e91284729634c082048b863f6ae8e944c66ce071529a17c",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerProfile.tsx",
+        "sha256": "dff07305ca90fac9398aa11b23df8585e7f1d495906f60e6a0685eaa2df4b1d1",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerProvider.tsx",
+        "sha256": "2705083caa7badf37f83ac4dbd89ce4d64dc1b7ed82d51748435d1bf272dae92",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+        "sha256": "6bcfd441224aabc61c789056a323524e1d42c0aefa53281f6bf672e57b249c7d",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/CustomerShell.tsx",
+        "sha256": "c80dd8e757000004a2f732cf4d73527aaf2b0a2d3b124caf6651ea87fc633ddb",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/components/customer/customer.css",
+        "sha256": "5fe6b1a86a21475183c71009e17501035a18c53fbdbe0f65c760b30031f9f5e8",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/customer-routes.ts",
+        "sha256": "12ba0ee29ac04c04e92f009808c3a6734d2ba957810450593c8bdb841d090957",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/customer-ui.test.ts",
+        "sha256": "057077308d0edfecd21c9a0fd8a5709167d9b4ad2f1197ec3a457f7da7b3bc67",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/customer-ui.ts",
+        "sha256": "c9cc2a314a79a97aea3738e1615218f5de21900958837b24d078bdf1b60a69a4",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      },
+      {
+        "path": "apps/web/lib/queries/customer.ts",
+        "sha256": "c842b2c67e4086cf27ec67f0c157da992136a5a20159fa01114948d9da52de71",
+        "qaCopyMatches": true,
+        "intentionalQaOverride": false
+      }
+    ],
+    "harnessHashes": [
+      {
+        "path": ".tmp/m2-c2/review-browser.cjs",
+        "sha256": "ec2010097c06902cd793e67cb327930bbfc8113526d1bc256954eb472111521c"
+      },
+      {
+        "path": ".tmp/m2-c2/review-browser-extra.cjs",
+        "sha256": "74ff20c957de828f1c9f1a3007967dbbef1c59b0afc665d70b14cb16aad202bb"
+      },
+      {
+        "path": ".tmp/m2-c2/review-visual.cjs",
+        "sha256": "c983cfdb1c1b2c74267f532dced7677fa8b5d860820840c8a6b4382cf08249b5"
+      },
+      {
+        "path": ".tmp/m2-c2/runtime.cjs",
+        "sha256": "4b0d228cf0a7e63ceb1eb7e2b70f9f47e7947983622f8ca8dd6479fdf916b644"
+      },
+      {
+        "path": ".tmp/m2-c2/clerk-sdk.tsx",
+        "sha256": "4e5a14ca04bf8e79ec6ff1096fa8434653be56cafdfcfddd98ef4a07f4c4483b"
+      },
+      {
+        "path": ".tmp/m2-c2/prepare-web.cjs",
+        "sha256": "5e658f38d731b007881422e99e0b00e10bffbf80fd2837c7fc7b63fcd9d785bd"
+      },
+      {
+        "path": ".tmp/m2-c2/run.ps1",
+        "sha256": "03c50ac51fb9427acd784179ed4e8ecf5b35c8ab86680a45c09e0b6ace5553bf"
+      }
+    ],
+    "screenshots": [
+      {
+        "surface": "crear",
+        "emulation": true,
+        "realZoom": false,
+        "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+        "width": 640,
+        "scrollWidth": 640,
+        "scrollHeight": 1862,
+        "lastContentBottom": 1798,
+        "pngWidth": 640,
+        "pngHeight": 1862,
+        "file": "review-crear-reflow-200.png",
+        "overflow": false,
+        "clipped": false,
+        "path": "review-crear-reflow-200.png",
+        "sha256": "d1fb439538012d1e816a71d7e0edcdb26928b17eb5171fbf4fec6074d4ff0063",
+        "data": "exclusivamente sintéticos"
+      },
+      {
+        "surface": "entrar",
+        "emulation": true,
+        "realZoom": false,
+        "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+        "width": 640,
+        "scrollWidth": 640,
+        "scrollHeight": 1244,
+        "lastContentBottom": 1180,
+        "pngWidth": 640,
+        "pngHeight": 1244,
+        "file": "review-entrar-reflow-200.png",
+        "overflow": false,
+        "clipped": false,
+        "path": "review-entrar-reflow-200.png",
+        "sha256": "abfb89790aa8a04ae33389a138451cf2cd5773a06b39f68c5e0a3af32466e91e",
+        "data": "exclusivamente sintéticos"
+      },
+      {
+        "surface": "mi-perfil",
+        "emulation": true,
+        "realZoom": false,
+        "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+        "width": 640,
+        "scrollWidth": 640,
+        "scrollHeight": 1972,
+        "lastContentBottom": 1908,
+        "pngWidth": 640,
+        "pngHeight": 1972,
+        "file": "review-mi-perfil-reflow-200.png",
+        "overflow": false,
+        "clipped": false,
+        "path": "review-mi-perfil-reflow-200.png",
+        "sha256": "b54d418476edfa9c13a3bdd75069a1ca6388b54057cab5aa61ea87ac06987d32",
+        "data": "exclusivamente sintéticos"
+      },
+      {
+        "surface": "mis-reservas",
+        "emulation": true,
+        "realZoom": false,
+        "method": "Viewport 1280 → 640 CSS px; fuente raíz 200%; captura fullPage",
+        "width": 640,
+        "scrollWidth": 640,
+        "scrollHeight": 10001,
+        "lastContentBottom": 9937,
+        "pngWidth": 640,
+        "pngHeight": 10001,
+        "file": "review-mis-reservas-reflow-200.png",
+        "overflow": false,
+        "clipped": false,
+        "path": "review-mis-reservas-reflow-200.png",
+        "sha256": "2eb99291383ad870e4eaa42838cd69e07a821fcf22272b2b5a3a6d23f7d9b1e4",
+        "data": "exclusivamente sintéticos"
+      }
+    ],
+    "historicalScreenshotsPreserved": [
+      {
+        "path": "profile-390.png",
+        "sha256": "6c686265a5b9007296e2364f84f0ccfd558bbb9ad35ef4228f39a31dfd4ca667",
+        "data": "exclusivamente sintéticos",
+        "preserved": true
+      },
+      {
+        "path": "repeat-success-390.png",
+        "sha256": "988dc769dad0abf6937a0f5f1db2635f5f84bd02393cc3c6a4723f4e697fcf20",
+        "data": "exclusivamente sintéticos",
+        "preserved": true
+      },
+      {
+        "path": "account-errors-390.png",
+        "sha256": "1b60d954c5e2f329d1eddfbb6e34b1685eaaa71618265bc15f8a4b6935d07e39",
+        "data": "exclusivamente sintéticos",
+        "preserved": true
+      },
+      {
+        "path": "claim-success-390.png",
+        "sha256": "1cbd2a3ac249731588ed4fdf9e051dda045e2b1a1833c8d68167f11b38836019",
+        "data": "exclusivamente sintéticos",
+        "preserved": true
+      },
+      {
+        "path": "profile-errors-390.png",
+        "sha256": "210f502c1ca93837dfc7a82873a27af04fbf3f13b300f1c191d03f9140092fcd",
+        "data": "exclusivamente sintéticos",
+        "preserved": true
+      },
+      {
+        "path": "zoom-reflow-200.png",
+        "sha256": "f9ae57b1698671286d06cf313beaf57196d3e461271b9dd9c04b08a89cbdef10",
+        "data": "exclusivamente sintéticos",
+        "preserved": true
+      }
+    ],
+    "approvalsPreserved": {
+      "c1": 1,
+      "m1": 1
+    },
+    "gitStatusBeforeStaging": "M CHANGELOG.md\n M PROJECT_MASTER.md\n M apps/web/app/[slug]/_components/ConfirmStep.tsx\n M apps/web/app/[slug]/_components/ContactStep.tsx\n M apps/web/app/[slug]/_components/SuccessView.tsx\n M apps/web/components/notifications/BookingEmailOptIn.test.tsx\n M apps/web/components/public/BookingPolish.test.tsx\n M apps/web/components/public/M1C2.test.tsx\n M apps/web/components/public/PublicBookingScreen.tsx\n M apps/web/components/public/PublicMiniSite.test.tsx\n M apps/web/components/public/PublicMiniSite.tsx\n M apps/web/components/ui/Button.tsx\n M apps/web/lib/public-booking-ui.test.ts\n M apps/web/lib/public-booking-ui.ts\n M apps/web/lib/queries/public-booking.ts\n M apps/web/next.config.ts\n M apps/web/proxy.ts\n M docs/README.md\n M docs/product/APP_FLOWS.md\n M docs/quality/M2_C1_CIERRE.md\n M docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md\n M docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md\n?? apps/web/app/[slug]/cuenta/[action]/page.tsx\n?? apps/web/app/[slug]/layout.tsx\n?? apps/web/app/[slug]/mi-perfil/page.tsx\n?? apps/web/app/[slug]/mis-reservas/[id]/page.tsx\n?? apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx\n?? apps/web/app/[slug]/mis-reservas/page.tsx\n?? apps/web/components/customer/Customer.test.tsx\n?? apps/web/components/customer/CustomerAuth.tsx\n?? apps/web/components/customer/CustomerBookingDetail.tsx\n?? apps/web/components/customer/CustomerBookings.tsx\n?? apps/web/components/customer/CustomerClaim.tsx\n?? apps/web/components/customer/CustomerEntryLinks.tsx\n?? apps/web/components/customer/CustomerProfile.tsx\n?? apps/web/components/customer/CustomerProvider.tsx\n?? apps/web/components/customer/CustomerRepeatBooking.tsx\n?? apps/web/components/customer/CustomerShell.tsx\n?? apps/web/components/customer/customer.css\n?? apps/web/lib/customer-routes.ts\n?? apps/web/lib/customer-ui.test.ts\n?? apps/web/lib/customer-ui.ts\n?? apps/web/lib/queries/customer.ts\n?? docs/quality/M2_C2_CIERRE.md\n?? docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json\n?? docs/quality/evidence/m2-c2/account-errors-390.png\n?? docs/quality/evidence/m2-c2/claim-success-390.png\n?? docs/quality/evidence/m2-c2/profile-390.png\n?? docs/quality/evidence/m2-c2/profile-errors-390.png\n?? docs/quality/evidence/m2-c2/repeat-success-390.png\n?? docs/quality/evidence/m2-c2/review-crear-reflow-200.png\n?? docs/quality/evidence/m2-c2/review-entrar-reflow-200.png\n?? docs/quality/evidence/m2-c2/review-mi-perfil-reflow-200.png\n?? docs/quality/evidence/m2-c2/review-mis-reservas-reflow-200.png\n?? docs/quality/evidence/m2-c2/validation.json\n?? docs/quality/evidence/m2-c2/zoom-reflow-200.png",
+    "documentation": [
+      {
+        "path": "docs/product/APP_FLOWS.md",
+        "sha256": "0d013fc7808d74a78ea7b9216d34a4e2c77d884e5ef56dc2052982bdcfaf5e4f"
+      },
+      {
+        "path": "docs/quality/M2_C2_CIERRE.md",
+        "sha256": "2e1ac046199f235d227e5eefe115275dcdcaea03182ba0b3b0b1d9c00a53601f"
+      }
+    ],
+    "gitDiffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    "explicitCommitPaths": [
+      "apps/web/app/[slug]/_components/ConfirmStep.tsx",
+      "apps/web/app/[slug]/_components/ContactStep.tsx",
+      "apps/web/app/[slug]/_components/SuccessView.tsx",
+      "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+      "apps/web/app/[slug]/layout.tsx",
+      "apps/web/app/[slug]/mi-perfil/page.tsx",
+      "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+      "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+      "apps/web/app/[slug]/mis-reservas/page.tsx",
+      "apps/web/components/customer/Customer.test.tsx",
+      "apps/web/components/customer/CustomerAuth.tsx",
+      "apps/web/components/customer/CustomerBookingDetail.tsx",
+      "apps/web/components/customer/CustomerBookings.tsx",
+      "apps/web/components/customer/CustomerClaim.tsx",
+      "apps/web/components/customer/CustomerEntryLinks.tsx",
+      "apps/web/components/customer/CustomerProfile.tsx",
+      "apps/web/components/customer/CustomerProvider.tsx",
+      "apps/web/components/customer/CustomerRepeatBooking.tsx",
+      "apps/web/components/customer/CustomerShell.tsx",
+      "apps/web/components/customer/customer.css",
+      "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+      "apps/web/components/public/BookingPolish.test.tsx",
+      "apps/web/components/public/M1C2.test.tsx",
+      "apps/web/components/public/PublicBookingScreen.tsx",
+      "apps/web/components/public/PublicMiniSite.test.tsx",
+      "apps/web/components/public/PublicMiniSite.tsx",
+      "apps/web/components/ui/Button.tsx",
+      "apps/web/lib/customer-routes.ts",
+      "apps/web/lib/customer-ui.test.ts",
+      "apps/web/lib/customer-ui.ts",
+      "apps/web/lib/public-booking-ui.test.ts",
+      "apps/web/lib/public-booking-ui.ts",
+      "apps/web/lib/queries/customer.ts",
+      "apps/web/lib/queries/public-booking.ts",
+      "apps/web/next.config.ts",
+      "apps/web/proxy.ts",
+      "docs/product/APP_FLOWS.md",
+      "docs/quality/M2_C2_CIERRE.md",
+      "docs/quality/evidence/m2-c2/account-errors-390.png",
+      "docs/quality/evidence/m2-c2/claim-success-390.png",
+      "docs/quality/evidence/m2-c2/profile-390.png",
+      "docs/quality/evidence/m2-c2/profile-errors-390.png",
+      "docs/quality/evidence/m2-c2/repeat-success-390.png",
+      "docs/quality/evidence/m2-c2/review-crear-reflow-200.png",
+      "docs/quality/evidence/m2-c2/review-entrar-reflow-200.png",
+      "docs/quality/evidence/m2-c2/review-mi-perfil-reflow-200.png",
+      "docs/quality/evidence/m2-c2/review-mis-reservas-reflow-200.png",
+      "docs/quality/evidence/m2-c2/validation.json",
+      "docs/quality/evidence/m2-c2/zoom-reflow-200.png"
+    ],
+    "commitProtocol": {
+      "localOnly": true,
+      "push": false,
+      "deploy": false,
+      "excludedPaths": [
+        "CHANGELOG.md",
+        "PROJECT_MASTER.md",
+        "docs/README.md",
+        "docs/quality/M2_C1_CIERRE.md",
+        "docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+        "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+        "docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json"
+      ],
+      "singleCommit": true,
+      "baseHead": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+      "message": "Implementar C2 de cuenta de cliente y corregir su revisión visual"
+    }
+  }
+}

@@ -96,8 +96,6 @@ export interface CreatePublicBookingInput {
   clientPhone: string;
   clientEmail?: string;
   emailNotifications?: EmailOptIn;
-  createAccount?: boolean;
-  password?: string;
 }
 
 export function useCreatePublicBooking(slug: string, signal?: AbortSignal) {

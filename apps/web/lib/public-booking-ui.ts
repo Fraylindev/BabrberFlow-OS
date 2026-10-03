@@ -1,16 +1,16 @@
 import { ApiError, type PublicBookingResult } from './api.ts';
 import { addBusinessDays, validBusinessDate } from './business-time.ts';
 
-export const ACCOUNT_QA_NOTICE = 'Esta opción está en pruebas. Todavía no puedes consultar tus reservas ni reservar más rápido con una cuenta. Puedes continuar sin crearla.';
+export const ACCOUNT_QA_NOTICE = 'Crearás tu cuenta después de registrar la reserva.';
 export const CONTACT_REJECTION = 'No pudimos registrar la reserva con esos datos. Revísalos o contacta al negocio.';
 export const UNCERTAIN_BOOKING = 'No pudimos comprobar si la reserva se registró. Contacta al negocio antes de volver a intentarlo.';
 
 export interface ContactDraft {
   clientName: string; clientPhone: string; clientEmail: string;
-  createAccount: boolean; password: string; emailOptedIn: boolean;
+  createAccount: boolean; emailOptedIn: boolean;
 }
 export function contactErrors(draft: ContactDraft) {
-  const errors: Partial<Record<'clientName' | 'clientPhone' | 'clientEmail' | 'password', string>> = {};
+  const errors: Partial<Record<'clientName' | 'clientPhone' | 'clientEmail', string>> = {};
   if (!draft.clientName.trim()) errors.clientName = 'Escribe tu nombre.';
   else if (draft.clientName.trim().length > 120) errors.clientName = 'Usa un nombre de hasta 120 caracteres.';
   // Misma sintaxis internacional y normalización que Clients; no inferir país.
@@ -21,7 +21,6 @@ export function contactErrors(draft: ContactDraft) {
   const email = draft.clientEmail.trim();
   if (draft.createAccount && !email) errors.clientEmail = 'Escribe un correo para crear la cuenta o desmarca esa opción.';
   else if (email && (email.length > 254 || !/^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email))) errors.clientEmail = 'Revisa el correo.';
-  if (draft.createAccount && draft.password.length < 8) errors.password = 'La contraseña debe tener al menos 8 caracteres.';
   return errors;
 }
 

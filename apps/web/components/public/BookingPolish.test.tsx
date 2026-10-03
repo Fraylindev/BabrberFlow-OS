@@ -66,24 +66,17 @@ it('el fallback tras imagen rota mantiene iniciales estables del nombre', () => 
   expect(bookingPhotoFallback(' Alex   Norte ')).toEqual(bookingPhotoFallback('Alex Norte'));
 });
 
-it('contraseña con ojo accesible conserva valor y muestra el mínimo una sola vez', () => {
+it('intención de cuenta Clerk conserva opción visible sin pedir contraseña', () => {
   function Contact() {
-    const [password, setPassword] = useState('corta');
-    return <ContactStep clientName="QA" clientPhone="+18095550100" clientEmail="qa@example.test" emailOptedIn={false} createAccount password={password}
-      onPasswordChange={setPassword} onNameChange={vi.fn()} onPhoneChange={vi.fn()} onEmailChange={vi.fn()} onEmailOptInChange={vi.fn()} onBack={vi.fn()} onNext={vi.fn()} />;
+    const [wanted, setWanted] = useState(false);
+    return <ContactStep clientName="QA" clientPhone="+18095550100" clientEmail="qa@example.test" emailOptedIn={false} createAccount={wanted}
+      onAccountChange={setWanted} onNameChange={vi.fn()} onPhoneChange={vi.fn()} onEmailChange={vi.fn()} onEmailOptInChange={vi.fn()} onBack={vi.fn()} onNext={vi.fn()} />;
   }
   render(<Contact />);
-  const input = screen.getByLabelText('Crea una contraseña');
-  fireEvent.click(screen.getByRole('button', { name: 'Mostrar contraseña' }));
-  expect(input).toHaveAttribute('type', 'text');
-  expect(screen.getByRole('button', { name: 'Ocultar contraseña' })).toHaveAttribute('aria-pressed', 'true');
-  expect(input).toHaveValue('corta');
-  fireEvent.blur(input);
-  expect(screen.getAllByText(/8 caracteres/)).toHaveLength(1);
-  expect(input).toHaveAccessibleDescription(/8 caracteres/);
-  fireEvent.change(input, { target: { value: 'larga-para-qa' } });
-  expect(input).not.toHaveAttribute('aria-invalid', 'true');
-  expect(screen.getAllByText(/8 caracteres/)).toHaveLength(1);
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
+  expect(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' })).toBeChecked();
+  expect(screen.queryByLabelText('Crea una contraseña')).not.toBeInTheDocument();
+  expect(screen.getByText('Crearás tu cuenta después de registrar la reserva.')).toBeVisible();
 });
 
 it('revisión usa duración legible, moneda, teléfono y Editar contextual sin etiqueta de catálogo', () => {

@@ -7,6 +7,8 @@ import { ACCOUNT_QA_NOTICE, CONTACT_REJECTION, UNCERTAIN_BOOKING } from '@/lib/p
 
 const qa = vi.hoisted(() => ({ user: { id: 'owner', role: 'OWNER' }, organization: { id: 'north' } }));
 vi.mock('@/lib/auth-context', () => ({ useAuth: () => qa }));
+vi.mock('@/components/customer/CustomerProvider', () => ({ useCustomer: () => ({ scope: 'public-regression' }) }));
+vi.mock('@/components/customer/CustomerClaim', () => ({ CustomerClaim: () => null }));
 vi.mock('@/lib/queries/media', () => ({ usePublicMedia: () => ({ data: null, isError: false, refetch: vi.fn() }) }));
 
 const startTime = '2026-10-05T14:00:00.000Z';
@@ -67,27 +69,23 @@ it('invitado registra el instante/candidato, solo una vez, sin contraseña ni zo
   expect(screen.getByText('Pendiente de confirmación')).toBeVisible();
   expect(api.post).toHaveBeenCalledTimes(1);
   const payload = vi.mocked(api.post).mock.calls[0][1];
-  expect(payload).toMatchObject({ professionalId: 'alex', startTime, clientPhone: '+34912345678', createAccount: false });
+  expect(payload).toMatchObject({ professionalId: 'alex', startTime, clientPhone: '+34912345678' });
+  expect(payload).not.toHaveProperty('createAccount');
   expect(payload).not.toHaveProperty('password'); expect(payload).not.toHaveProperty('timeZone');
   expect(document.body.textContent).not.toMatch(/Visitante sintético|912|PENDING|UTC/);
   await waitFor(() => expect(screen.getByRole('heading', { name: 'Tu reserva quedó registrada' })).toHaveFocus());
 });
-it('correo/teléfono/password inválidos se explican antes de revisar; cuenta QA opcional y contraseña eliminada al desmarcar', async () => {
+it('correo/teléfono inválidos se explican antes de revisar; cuenta Clerk opcional sin password', async () => {
   mount(); await reachContact();
   expect(screen.getByText(ACCOUNT_QA_NOTICE)).toBeVisible();
-  expect(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' })).not.toBeChecked();
+  expect(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' })).not.toBeChecked();
   fillContact('invalid'); fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '123' } });
   fireEvent.click(screen.getByRole('button', { name: 'Revisar reserva' }));
   expect(screen.getByLabelText('Teléfono')).toHaveFocus();
   expect(screen.getByLabelText('Correo (opcional)')).toHaveAccessibleDescription('Revisa el correo.');
   fillContact('sintetico@example.test');
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' }));
-  fireEvent.change(screen.getByLabelText('Crea una contraseña'), { target: { value: '1234567' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Revisar reserva' }));
-  expect(screen.getByLabelText('Crea una contraseña')).toHaveAccessibleDescription(/8 caracteres/);
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' }));
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta de prueba' }));
-  expect(screen.getByLabelText('Crea una contraseña')).toHaveValue('');
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
+  expect(screen.queryByLabelText('Crea una contraseña')).not.toBeInTheDocument();
   expect(api.post).not.toHaveBeenCalled();
 });
 it('D11 vuelve a datos conservando todo el borrador y sin revelar existencia ni constraints', async () => {

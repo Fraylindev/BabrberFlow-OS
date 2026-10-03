@@ -54,8 +54,6 @@ export function SuccessView({ result, organizationPhone, serviceName, profession
         {address && <p className="mt-1 whitespace-pre-line text-sm leading-6 text-[var(--color-paper)]">{address}</p>}
       </div>
     </section>}
-    {result.accountCreated && <p className="text-sm leading-6">Se creó la cuenta de prueba. El acceso a tus reservas todavía no está disponible.</p>}
-    {!result.accountCreated && result.accountCreationError && <p className="text-sm leading-6">Tu reserva quedó registrada. La cuenta no se creó; no necesitas repetir la reserva.</p>}
     <div className="space-y-4">
       {calendarAvailable && <Button type="button" className="booking-primary calendar-action" onClick={downloadCalendar}>
         <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4M17 3v4M3 11h18M9 16h6M12 13v6" /></svg>Agregar al calendario</Button>}

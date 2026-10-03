@@ -3,6 +3,7 @@ import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError, api, PublicBookingData } from "@/lib/api";
 import { PublicMiniSite } from "./PublicMiniSite";
+vi.mock('@clerk/nextjs', () => ({ useAuth: () => ({ isLoaded: true, isSignedIn: false }) }));
 
 vi.mock('@/lib/queries/media', () => ({
   usePublicMedia: () => ({ data: null, isError: false, error: null, isFetching: false, refetch: vi.fn() }),
