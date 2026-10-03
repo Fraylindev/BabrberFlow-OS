@@ -1130,3 +1130,88 @@ git rev-parse HEAD
 git status --short --branch
 git show --stat --oneline HEAD
 ~~~
+
+## 14. Reanudación condicionada P2: diagnóstico documental y parada — 2026-10-03
+
+### 14.1 Informe previo y auditoría de commits
+
+El propietario exige informar **antes de ejecutar nada nuevo en QA**, permite un único reintento únicamente para causas (ii), (iii) o (iv) anteriores al congelamiento y ordena detenerse para causa (v) o no clara. En esta reanudación se ejecutaron solo lecturas Git/evidencia local y este checkpoint documental: **cero comandos nuevos QA, SSH, SQL, HTTP, Docker o cifrado**. Producción no se leyó ni operó; sin push ni P3.
+
+Base al retomar: `03537c2b0647734f22c601fc25baf208df957603`, rama `ai/antigravity-qa`, árbol e índice limpios, `[ahead 5]` respecto a la referencia local de origin. La advertencia `unable to find all commit-graph files` reapareció; las comprobaciones terminaron `0`, sin reparar metadata. [Evidencia de esta revisión](evidence/m2-c3-p2/p2-diagnostico-reanudacion.json).
+
+Comandos Git exactos, desde la raíz, todos exit `0`:
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+git log --oneline 339ae92..HEAD
+git show --stat --oneline 827e635
+git show --stat --oneline 03537c2
+git diff --name-status 339ae92..HEAD
+git diff --exit-code 339ae92..HEAD -- apps ops package.json pnpm-lock.yaml
+~~~
+
+| Commit anterior | Archivos y estadística observada |
+| --- | --- |
+| `827e635 docs(m2): registrar parada previa de P2 sin congelar QA` | `docs/quality/M2_C3_PREFLIGHT.md` (+80), `docs/quality/evidence/m2-c3-p2/p2-parada-previa.json` (+106): 2 archivos, 186 inserciones. |
+| `03537c2 docs(m2): registrar revalidación P2 y fallo de preparación` | `docs/quality/M2_C3_PREFLIGHT.md` (+88), `docs/quality/evidence/m2-c3-p2/p2-crypto.sh.txt` (+42), `p2-preparacion.py.txt` (+169), `p2-segundo-intento.json` (+546), `p2-wrapper.ps1.txt` (+17), estos cuatro últimos en el mismo directorio de evidencia: 5 archivos, 862 inserciones. |
+
+La unión de rutas contiene únicamente el documento y cinco archivos de evidencia bajo `docs/quality/evidence/m2-c3-p2`. Los tres `.txt` contienen fuentes de helpers archivadas para auditoría; no son cambios de implementación de producto. Los dos commits documentan P2 y sus límites frente a P3; **ninguno modifica código de producto, grants o migración 28**. La revisión de patrones sensibles no halló valores de conexión PostgreSQL, claves privadas, claves Clerk ni JWT. La auditoría de rutas y el diff vacío de `apps`/`ops` confirman el alcance; no se ejecuta ninguna fuente archivada.
+
+### 14.2 Error conservado, paso y clasificación
+
+El comando externo fue `& ./.tmp/m2-c3-p2/run.ps1 prepare`, exit `1`. El fallo interno exacto fue:
+
+~~~text
+docker --context desktop-linux cp C:\Users\Fraylin\Desktop\Kortek-Booking\ops\oci-free-backup\prod-ca-2021.crt kortek-m2-c3-p2-client-d15070d4fd9f:/tmp/qa-ca.crt
+~~~
+
+Exit `1` en 0,219 s. Registro sanitizado realmente conservado: `{"stage":"prepare-client","errorClass":"RuntimeError","rawErrorOmitted":true}`. **El texto del error del daemon se descartó; no se puede reproducir ni certificar aquí su mensaje exacto.** Esta pérdida de diagnóstico limita la clasificación y no se sustituye por una causa supuesta. El `docker run` anterior terminó `0`; la retirada del contenedor propio mediante `docker stop --time 15` terminó `0` (§13.3).
+
+Ocurrió en la **preparación previa a completar el paso 1 de §5.2**, tras las lecturas de baseline y antes del congelamiento. No se alcanzaron el login del cliente PG17, la transacción del paso 2, snapshot, pg_dump ni cifrado. El comando fallido fue exclusivamente local; no tocó QA. **Nunca se detuvieron API/worker QA; la ventana de 90 minutos no comenzó.** No corresponde iniciar o reiniciar servicios que esta tarea no detuvo.
+
+Clasificación: **(v), fallo local al copiar una CA pública a un contenedor; causa detallada no clara**. Que el contenedor tuviera raíz read-only y `/tmp` en tmpfs no prueba el motivo del fallo. No se reclasifica como conectividad/SSH/sandbox sin diagnóstico conservado. El fallo SSH previo de §12 fue distinto, categoría (iii), y su lectura posterior sí terminó `0`.
+
+No hay evidencia de que este error sea (i) permisos de `kortek_backup`: no se llegó a conectar ese cliente ni a probar SELECT para el dump. Tampoco acredita (ii) incompatibilidad pg_dump/17.6 o (iv) cifrado/prompt. Por ello **no se consume ni se ejecuta el reintento condicionado** y no se aplica la excepción de credencial migrador ni se conceden permisos.
+
+Sobre «no se escribió nada»: se confirman cero migraciones, grants, cambios de roles/configuración y solicitudes de creación de reservas de esta tarea. **No se puede certificar cero escrituras globales durante el intento anterior**: los escritores siguieron activos y el GET final de §13.3 puede consumir buckets compartidos de límites de solicitudes. El censo previo no demuestra inmutabilidad posterior. La última comprobación histórica de servicios fue a `2026-10-03T23:29:48Z`: ambos activos, mismos PID y cero reinicios; no se presenta como una lectura actual.
+
+### 14.3 Solución pendiente, opciones y custodia vigente
+
+**P2 DETENIDO / INCOMPLETO por el punto 4 de la reanudación del propietario.** No hay solución aplicada ni nuevo intento. La alternativa de §13.4 con stdin sigue siendo una propuesta, no una corrección validada ni autorización para ejecutarla.
+
+Opciones concretas para resolver la causa antes de otra decisión P2:
+
+- Autorización expresa para un diagnóstico exclusivamente local con contenedor propio y CA pública, sin conexiones QA, credenciales ni frase; conservar mensaje sanitizado y exit code del daemon, verificar tmpfs/copia y retirar solo el contenedor propio.
+- El propietario aporta el mensaje del daemon sanitizado si lo conserva, sin secretos ni datos de negocio; contrastarlo con este comando antes de proponer una corrección.
+
+La instrucción nueva **sustituye la lectura de `Clave.txt` por una frase que el propietario introducirá en un prompt local**. No se vuelve a leer ningún archivo de credenciales o frase en esta reanudación. El wrapper histórico sí recibió un archivo DPAPI QA en §13.3; esa ejecución pasada no se reinterpreta ni se reutiliza como autorización vigente. Si un futuro diagnóstico acredita causa (i), primero debe acordarse con el propietario un canal fuera del chat sin lectura de archivos de credenciales ni exposición; solo entonces se valorará la excepción READ ONLY, snapshot consistente y statement_timeout, exclusiva del backup y nunca para API/worker.
+
+Custodia prevista intacta: `C:\KortekBackups\qa-m2-c3`. No hay respaldo nuevo, hash o censo de snapshot que conservar o comparar antes de P3b. **No verificado en esta reanudación:** destino/escritores/ledger/release vivos; estado actual de servicios o reserva pública; causa del daemon; permisos de respaldo; versión ejecutada de pg_dump; prompt/cifrado; snapshot/dump; restore PG17, igualdad de tablas/ledger/censo/constraints/triggers/roles; rollback §5.3; orden de reanudación. No se crearon contenedores ni temporales nuevos que retirar.
+
+### 14.4 Checkpoint documental local
+
+Únicas rutas de este commit: el preflight y `docs/quality/evidence/m2-c3-p2/p2-diagnostico-reanudacion.json`. Validación local: JSON parseable y referencias de evidencia existentes; comparación de los commits/rutas frente a `339ae92`; patrones sensibles sin hallazgos en el diff documental; fences pares; revisión completa del diff e índice explícito. Sin pruebas API, build o llamadas QA: no hay cambio de implementación.
+
+Incidencias documentales de esta revisión: el primer patch insertó §14 antes de §13; se corrigió el orden y el diff final conserva íntegro el texto anterior. Un patch posterior para supuestos escapes dobles fue rechazado por `Failed to find expected lines`, sin cambios: eran escapes de presentación de la salida. Se comprobó el JSON parseado contra las rutas y el comando literales, exit `0`, ambos correctos. Ninguna incidencia ejecutó operaciones QA.
+
+Comandos del checkpoint, con revisión del índice antes de commit:
+
+~~~powershell
+git diff --check
+git diff --stat
+git diff
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-diagnostico-reanudacion.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git commit -m "docs(m2): diagnosticar parada condicionada de P2"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+~~~
+
+El SHA y estado final se entregan en la respuesta; no se insertan en su propio commit. Este checkpoint conserva la parada y no cumple el objetivo operativo P2, ni autoriza P3 o push.
