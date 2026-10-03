@@ -21,6 +21,7 @@ import { ConfirmStep } from '@/app/[slug]/_components/ConfirmStep';
 import { SuccessView } from '@/app/[slug]/_components/SuccessView';
 import './booking.css';
 import { EMPTY_PHONE, type PhoneDraft } from '@/lib/public-phone';
+import { PublicBookingFooter } from './PublicBookingFooter';
 
 const STEPS = ['service', 'professional', 'datetime', 'contact', 'confirm'] as const;
 type Step = typeof STEPS[number];
@@ -236,6 +237,8 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
           {remaining > 0 && <p role="status" className="mt-3">Puedes continuar en {remaining} segundos.</p>}
         </div>
       </>}
-    <footer className="mt-10 px-3 text-sm text-[var(--color-muted)]">Reservas gestionadas con Kortek Booking</footer>
+    <div className="mt-10">
+      <PublicBookingFooter slug={slug} />
+    </div>
   </main>;
 }

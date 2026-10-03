@@ -9,6 +9,7 @@ import { Brand } from '@/components/Brand';
 import { Button } from '@/components/ui/Button';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { businessWhatsAppLink } from '@/lib/whatsapp-link';
+import { PublicBookingFooter } from './PublicBookingFooter';
 
 export function PublicMiniSite({ slug }: { slug: string }) {
   const { data, error, isLoading, isError, isFetching, refetch } = usePublicBookingData(slug);
@@ -123,9 +124,7 @@ export function PublicMiniSite({ slug }: { slug: string }) {
         </section>
       )}
 
-      <footer className="border-t border-[var(--color-border)] px-5 py-7 text-center text-xs text-[var(--color-faint)]">
-        Reservas gestionadas con Kortek Booking
-      </footer>
+      <PublicBookingFooter slug={slug} />
     </main>
   );
 }

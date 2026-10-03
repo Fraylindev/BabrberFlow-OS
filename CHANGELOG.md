@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-03 — Confirmación pública de reserva y pies
+
+- Ubicación del negocio bajo el resumen de servicio y profesional; calendario y acciones de WhatsApp/Maps quedan después.
+- Recomendación para conservar la confirmación sin tarjeta y con jerarquía tipográfica centrada.
+- Pie común y centrado en mini-sitio y flujo de reserva: «slug · Reservas gestionadas con Kortek.».
+- Implementado; el propietario autorizó commit, push y despliegue solo web QA para validar en teléfono. Sin contrato, backend, persistencia o dependencias nuevas. TypeScript/lint y build webpack pasan; build Turbopack falla por módulo interno de fuentes. El slug local probado devuelve 404 porque no está publicado localmente; el API QA conserva evidencia previa `200/200` para el slug sintético publicado. No se enviaron reservas ni se alteró configuración. QA visual del propietario sigue pendiente. [Alcance y evidencia](docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md).
+
 ## 2026-10-02 — Atención pendiente, acciones desktop y contacto público
 
 - Las completadas sin factura permanecen en Por atender; Todas prioriza atención y ordena cada grupo por fecha descendente.
