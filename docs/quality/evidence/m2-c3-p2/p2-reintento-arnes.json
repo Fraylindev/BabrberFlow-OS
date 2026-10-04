@@ -1,0 +1,28 @@
+{
+  "base": "a19fdedfca5cda1f327e7182bbd037ecaedcdd54",
+  "localOnly": true,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "cases": [],
+  "complete": false,
+  "promptLocal": {
+    "localOnly": true,
+    "sameAccepted": true,
+    "wrongRepeatRejected": true,
+    "dpapiRead": false
+  },
+  "comparator": {
+    "permutationAccepted": true,
+    "multiplicityPreserved": true,
+    "missingRejected": true,
+    "extraRejected": true,
+    "checksumRejected": true,
+    "statusRejected": true
+  },
+  "failure": {
+    "class": "TypeError",
+    "label": "detalle-omitido"
+  }
+}

@@ -1,0 +1,248 @@
+import ast, importlib.util, io, json, hashlib, os, pathlib, re, secrets, sys, threading, time, uuid
+from collections import Counter
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from types import SimpleNamespace
+
+ROOT=pathlib.Path(__file__).resolve().parents[2]
+HERE=pathlib.Path(__file__).resolve().parent
+REPORT={'base':'a19fdedfca5cda1f327e7182bbd037ecaedcdd54','localOnly':True,
+        'qaConnections':0,'productionAccess':False,'dpapiRead':False,'realPhraseUsed':False,
+        'cases':[],'complete':False}
+SOURCE=HERE/'run.py'
+ARTIFACT='791569b110f9fd59cb10e6d248546bdae3996e14'
+
+class InjectedWatchdogExit(RuntimeError): pass
+
+def save():
+    (HERE/'harness-result.json').write_text(json.dumps(REPORT,indent=2,ensure_ascii=True)+'\n',encoding='utf-8')
+
+def load_module():
+    spec=importlib.util.spec_from_file_location('p2_'+uuid.uuid4().hex,SOURCE)
+    m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+    return m
+
+def git(m,path):
+    return m.run(['git','show',ARTIFACT+':'+path],label='leer-solo-codigo-baseline-local').decode('utf-8')
+
+def old_ops(m,path):
+    value=git(m,path)
+    return re.sub(r'^\\ir ([^\r\n]+)$',
+        lambda match:old_ops(m,(pathlib.PurePosixPath(path).parent/match[1].strip()).as_posix()),
+        value,flags=re.M)
+
+def initialize(m,container):
+    names=m.run(['git','ls-tree','-r','--name-only',ARTIFACT,'apps/api/prisma/migrations'],
+                label='inventario-codigo-27-local').decode().splitlines()
+    files=sorted(p for p in names if p.endswith('/migration.sql'))
+    if len(files)!=27: raise RuntimeError('baseline-local-no-es-27')
+    metadata=[];schema='CREATE EXTENSION btree_gist WITH SCHEMA public;\n'
+    for p in files:
+        sql=git(m,p);schema+=sql+'\n'
+        metadata.append({'name':p.split('/')[-2],'checksum':hashlib.sha256(sql.encode()).hexdigest(),
+                         'finished':True,'rolledBack':False})
+    m.local_sql(container,schema)
+    m.local_sql(container,"""CREATE TABLE public._prisma_migrations (
+      id varchar(36) PRIMARY KEY,checksum varchar(64) NOT NULL,finished_at timestamptz,
+      migration_name varchar(255) NOT NULL,logs text,rolled_back_at timestamptz,
+      started_at timestamptz NOT NULL DEFAULT now(),applied_steps_count integer NOT NULL DEFAULT 0);
+      CREATE ROLE kortek_migrator LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+      CREATE ROLE kortek_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+      CREATE ROLE kortek_backup LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;""")
+    for i in [15,15,16,17]:
+        metadata.append(dict(metadata[i],finished=False,rolledBack=True))
+    values=[]
+    for row in metadata:
+        values.append('('+','.join([m.literal(str(uuid.uuid4())),m.literal(row['checksum']),
+            "'2026-01-01T00:01:00Z'" if row['finished'] else 'NULL',m.literal(row['name']),
+            "'2026-01-01T00:02:00Z'" if row['rolledBack'] else 'NULL',"'2026-01-01T00:00:00Z'",
+            '1' if row['finished'] else '0'])+')')
+    m.local_sql(container,'INSERT INTO public._prisma_migrations (id,checksum,finished_at,migration_name,rolled_back_at,started_at,applied_steps_count) VALUES '+','.join(values)+';')
+    m.local_sql(container,old_ops(m,'apps/api/ops/provision-database-roles.sql'))
+    m.local_sql(container,'GRANT USAGE ON SCHEMA public TO kortek_backup; GRANT SELECT ON ALL TABLES IN SCHEMA public TO kortek_backup;')
+    m.local_sql(container,"""INSERT INTO public."Organization" (id,slug,email,name,"updatedAt")
+      VALUES ('p2-local-org','p2-local-org','p2@synthetic.invalid','Fuente sintetica P2',now());
+      INSERT INTO public."Client" (id,"organizationId",name,"updatedAt")
+      SELECT 'p2-local-client-'||i,'p2-local-org','Cliente sintetico '||i,now() FROM generate_series(1,20) i;
+      INSERT INTO public."Service" (id,"organizationId",name,duration,price,"updatedAt")
+      VALUES ('p2-local-service','p2-local-org','Servicio sintetico',30,100,now());
+      INSERT INTO public."Professional" (id,"organizationId",name,status,"isPublic","updatedAt")
+      VALUES ('p2-local-professional','p2-local-org','Profesional sintetico','ACTIVE',true,now());
+      INSERT INTO public."Booking" (id,"organizationId","clientId","serviceId","professionalId","startTime","endTime","updatedAt")
+      SELECT 'p2-local-booking-'||i,'p2-local-org','p2-local-client-'||((i-1)%20+1),
+        'p2-local-service','p2-local-professional',
+        '2099-03-01T00:00:00Z'::timestamptz+i*interval '1 hour',
+        '2099-03-01T00:00:00Z'::timestamptz+i*interval '1 hour'+interval '30 minutes',now()
+      FROM generate_series(1,28) i;""")
+    m.BASELINE_LEDGER=metadata
+    extension=m.local_sql(container,"SELECT extnamespace='public'::regnamespace FROM pg_extension WHERE extname='btree_gist';")
+    if extension!='t': raise RuntimeError('extension-local-no-reside-public')
+    m.REPORT['syntheticSource']={'applied':27,'rolledBack':4,'entries':31,
+        'btreeGistPublic':True,'rowsBusinessNotPrinted':True,'clients':20,'bookings':28}
+
+class PublicStub(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200);self.end_headers();self.wfile.write(b'{"synthetic":true}')
+    def log_message(self,*args): pass
+
+def scenario(case):
+    m=load_module()
+    m.MODE='local';m.EXPECTED_VERSION_NUM=170011;m.LOCAL_ROLLBACK_ARTIFACT=True
+    m.WORK=HERE/('case-'+case);m.WORK.mkdir()
+    m.CUSTODY=m.WORK/'custody';m.CUSTODY.mkdir()
+    m.REPORT['mode']='local';m.REPORT['case']=case
+    calls=[];active={'kortek-api-staging':True,'kortek-email-worker-staging':True}
+    original_start=m.start
+    source_container=None
+    def start(name,server=False,ca=False):
+        nonlocal source_container
+        if ca:
+            source_container=original_start(name,server=True,ca=True)
+            initialize(m,source_container)
+            return source_container
+        return original_start(name,server=server,ca=False)
+    m.start=start
+    def services(command,**kwargs):
+        match=re.search(r'systemctl (start|stop) (kortek-(?:api|email-worker)-staging)',command)
+        if not match: raise RuntimeError('conexion-externa-prohibida-arnes')
+        verb,unit=match.groups();calls.append({'operation':verb,'unit':unit})
+        active[unit]=verb=='start'
+        if case=='fallo-ventana-primera-unidad' and verb=='start' and unit=='kortek-api-staging' and len([c for c in calls if c['operation']=='start'])==1:
+            raise RuntimeError('fallo-inyectado-respuesta-primer-start')
+        return b'active\n' if verb=='start' else b'inactive\n'
+    m.ssh=services
+    def infra():
+        if not all(active.values()): raise RuntimeError('stub-servicios-no-activos')
+        return 'STUB: API/worker activos; mismas imagenes/release; NRestarts=0'
+    m.infra=infra
+    m.effective=lambda:{'localStub':True,'releaseMatchesP0':True,'productionAccess':False}
+    original_env=m.BASE_ENV
+    m.BASE_ENV=dict(original_env)
+    # La contraseña sintética entra por el mismo stdin que la credencial de QA.
+    # Solo se reemplaza el destino de PG_ENV, nunca se lee DPAPI.
+    original_reader=m.Reader
+    def reader(container):
+        m.PG_ENV.update(PGHOST='127.0.0.1',PGUSER='kortek_migrator',PGSSLMODE='disable',
+                        PGAPPNAME='kortek-m2-c3-p2-local')
+        return original_reader(container)
+    m.Reader=reader
+    original_pre0=m.pre0
+    def pre0(container):
+        if case=='fallo-antes-congelar': raise RuntimeError('fallo-inyectado-precongelar')
+        original_pre0(container)
+    m.pre0=pre0
+    original_gate=m.before_freeze_gate
+    def gate(container):
+        (m.WORK/'before-freeze-approved.json').write_text(json.dumps(dict.fromkeys(
+            ['targetMatchesP0','writersMatchP0','ledgerMatchesP0','previewMatchesP0'],True)),encoding='utf-8')
+        return original_gate(container)
+    m.before_freeze_gate=gate
+    clock={'now':time.monotonic(),'timer':None}
+    real_time=m.time
+    m.time=SimpleNamespace(monotonic=lambda:clock['now'],sleep=real_time.sleep)
+    class Timer:
+        def __init__(self,seconds,callback):
+            self.seconds=seconds;self.callback=callback;self.started=False;self.cancelled=False;self.daemon=False
+            clock['timer']=self
+        def start(self):
+            self.started=True;clock['due']=clock['now']+self.seconds
+        def cancel(self): self.cancelled=True
+    m.threading=SimpleNamespace(Thread=threading.Thread,Lock=threading.Lock,Timer=Timer)
+    def fake_exit(code): raise InjectedWatchdogExit('watchdog-85-minutos-salida-'+str(code))
+    m.os=SimpleNamespace(_exit=fake_exit,environ=os.environ)
+    original_wait=m.wait_writer_approval
+    def writers():
+        if case=='watchdog-85-minutos':
+            timer=clock['timer']
+            if not timer.started or timer.seconds!=85*60: raise RuntimeError('watchdog-no-programado-85-minutos')
+            clock['now']=clock['due'];m.REPORT['virtualClockAdvancedSeconds']=5100
+            timer.callback()
+        if case=='fallo-ventana-primera-unidad': raise RuntimeError('fallo-inyectado-durante-ventana')
+        (m.WORK/'writers-approved.json').write_text(json.dumps({'runtimeSessions':0,'activeOthers':0,'prepared':0,'localOnly':True}),encoding='utf-8')
+        return original_wait()
+    m.wait_writer_approval=writers
+    public=ThreadingHTTPServer(('127.0.0.1',0),PublicStub)
+    threading.Thread(target=public.serve_forever,daemon=True).start()
+    def public_get():
+        import urllib.request
+        with urllib.request.urlopen('http://127.0.0.1:'+str(public.server_port)+'/',timeout=5) as reply:
+            if reply.status!=200 or reply.read()!=b'{"synthetic":true}': raise RuntimeError('HTTP-stub-invalido')
+        return {'status':200,'localStub':True,'bodyNotPrinted':True}
+    m.public_get=public_get
+    password=secrets.token_urlsafe(24)
+    phrase=secrets.token_urlsafe(32)
+    repeated=phrase+'x' if case=='frase-mal-repetida' else phrase
+    values=(password+'\n'+phrase+'\n'+repeated+'\n'+phrase+'\n').encode()
+    private_input=io.TextIOWrapper(io.BytesIO(values),encoding='utf-8')
+    before_stdin=sys.stdin
+    try:
+        sys.stdin=private_input
+        m.main()
+    finally:
+        sys.stdin=before_stdin;private_input.close()
+        password=phrase=repeated=values=None
+        public.shutdown();public.server_close()
+    result=m.REPORT
+    stop_calls=[c['unit'] for c in calls if c['operation']=='stop']
+    start_calls=[c['unit'] for c in calls if c['operation']=='start']
+    if case=='recorrido-completo':
+        if not result.get('success') or not result.get('backupAccepted'): raise RuntimeError('recorrido-local-completo-fallo')
+        restores=[c for c in result['checks'] if c['label']=='cotejo-restore-snapshot']
+        if len(restores)!=2 or not all(all(c[k] for k in ['catalog','tables','ledger','counts','roles']) for c in restores): raise RuntimeError('cotejos-completos-no-pasan')
+        if result.get('tocBootstrapEntriesExcluded',0)<1: raise RuntimeError('alternativa-TOC-no-probada')
+        if not result.get('isolatedHttpRollbackDrill',{}).get('complete'): raise RuntimeError('rollback-HTTP-local-no-pasa')
+    elif case in ['fallo-antes-congelar','frase-mal-repetida']:
+        if result.get('success') or result['qaFrozen'] or stop_calls or start_calls: raise RuntimeError('fallo-previo-detuvo-servicios')
+        expected='fallo-inyectado-precongelar' if case=='fallo-antes-congelar' else 'frases-no-coinciden-antes-congelar'
+        if result['failure']['label']!=expected: raise RuntimeError('fallo-previo-distinto-al-inyectado')
+    elif case=='fallo-ventana-primera-unidad':
+        if result.get('success') or not result.get('qaResumed') or result.get('resumeCommandFailures')!=['kortek-api-staging']:
+            raise RuntimeError('recuperacion-primer-start-fallido-no-pasa')
+    elif case=='watchdog-85-minutos':
+        if result.get('success') or not result.get('watchdogTriggered') or not result.get('qaResumed') or result.get('virtualClockAdvancedSeconds')!=5100:
+            raise RuntimeError('watchdog-no-recupero-servicios')
+    if stop_calls and stop_calls!=['kortek-email-worker-staging','kortek-api-staging']: raise RuntimeError('orden-stop-stubs-invalido')
+    if start_calls and start_calls!=['kortek-api-staging','kortek-email-worker-staging']: raise RuntimeError('orden-recuperacion-stubs-invalido')
+    if result.get('remainingOwnedContainers') or result.get('cleanupFailures') or result.get('cleanupFailure'): raise RuntimeError('limpieza-arnes-incompleta')
+    item={'case':case,'passed':True,'calls':calls,'serviceStates':active,'executorExpectedFailure':case!='recorrido-completo',
+          'reportRelative':str((m.WORK/'result.json').relative_to(ROOT)),'watchdogVirtualSeconds':result.get('virtualClockAdvancedSeconds')}
+    REPORT['cases'].append(item);save()
+    print(json.dumps({'case':case,'passed':True}),flush=True)
+
+def comparator():
+    m=load_module()
+    rows=json.loads((ROOT/'docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json').read_text(encoding='utf-8'))['precheck']['ledger']
+    assert len(rows)==31 and sum(r['rolledBack'] for r in rows)==4
+    assert m.ledger_equal(rows,list(reversed(rows)))
+    assert not m.ledger_equal(rows,rows[:-1])
+    assert not m.ledger_equal(rows,rows+[rows[0]])
+    mutated=[dict(r) for r in rows];mutated[0]['checksum']='0'*64
+    assert not m.ledger_equal(rows,mutated)
+    mutated=[dict(r) for r in rows];mutated[0]['finished']=not mutated[0]['finished']
+    assert not m.ledger_equal(rows,mutated)
+    REPORT['comparator']={'permutationAccepted':True,'multiplicityPreserved':True,'missingRejected':True,
+        'extraRejected':True,'checksumRejected':True,'statusRejected':True}
+    save()
+
+def main():
+    try:
+        ast.parse(SOURCE.read_text(encoding='utf-8'))
+        probe=load_module()
+        pwsh='C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
+        prompt=json.loads(probe.run([pwsh,'-NoProfile','-File',str(HERE/'prompt.ps1'),'-PruebaLocal'],
+                                   label='comparacion-SecureString-falsa-local').decode('utf-8-sig').strip())
+        if not prompt['sameAccepted'] or not prompt['wrongRepeatRejected'] or prompt['dpapiRead']:
+            raise RuntimeError('comparacion-prompt-local-no-pasa')
+        REPORT['promptLocal']=prompt
+        comparator()
+        for case in ['recorrido-completo','fallo-antes-congelar','fallo-ventana-primera-unidad','watchdog-85-minutos','frase-mal-repetida']:
+            scenario(case)
+        REPORT['complete']=True;save()
+        print(json.dumps({'harnessComplete':True,'qaConnections':0}),flush=True)
+    except Exception as error:
+        REPORT['complete']=False
+        REPORT['failure']={'class':type(error).__name__,'label':str(error) if isinstance(error,RuntimeError) else 'detalle-omitido'}
+        save()
+        print(json.dumps({'harnessComplete':False,'failure':REPORT['failure'],'qaConnections':0}),flush=True)
+        sys.exit(1)
+
+if __name__=='__main__': main()

@@ -1440,3 +1440,118 @@ git diff --exit-code c0d9fd5..HEAD -- apps ops package.json pnpm-lock.yaml
 ~~~
 
 SHA y estado final en la respuesta. Sin push; sin P3; sin aprobación de P2.
+
+## 16. Segundo intento condicionado: arnés local detenido — 2026-10-04 UTC
+
+### 16.1 Autorización, base y separación de pasos
+
+El propietario autorizó reintentar P2 sobre **a19fdedfca5cda1f327e7182bbd037ecaedcdd54**, únicamente si primero pasaba un arnés local completo. Rama **ai/antigravity-qa**, árbol inicialmente limpio, ahead 8 respecto de la referencia remota local. Sin consulta del remoto ni push. Se aplicó kortek-delivery y se leyeron gobierno, gates, instrucciones API, preflight y código aplicable.
+
+La orden era condicional: paso A local → paso B READ ONLY QA sin congelar → paso C P2 completo. **El paso A falló: B y C no se iniciaron.** Cero conexiones QA/productivas, lecturas DPAPI/Clave.txt, uso de frase real, comandos de servicios QA, migraciones/DDL/grants QA, despliegues o cambios de variables/flags/Clerk. El archivo de credencial seguía autorizado para B, pero no fue abierto. No se inició la ventana de 90 minutos.
+
+### 16.2 Preparación local del ejecutor y el arnés
+
+Se reconstruyó temporalmente la fuente de §15 y se aplicó la corrección del multiconjunto. Cada entrada conserva name/checksum/finished/rolledBack; orden total con COLLATE "C", multiplicidad íntegra y diferencia Counter missing/extra. El ejecutor ahora persiste, antes de decidir igualdad, ledger técnico leído, baseline y diferencia, sin columna logs ni filas de negocio. Esto se alcanzó **solo con el ledger sintético**, no con QA.
+
+Se añadieron entradas falsas duplicadas de frase al ejecutor, manteniendo la comparación SecureString del supervisor y verificando también ambas entradas en Python. Para B, el prompt quedaría antes de la revalidación y de cualquier stop. Se separó la fuente local de la QA mediante adaptadores del arnés: PG17 propio sin red externa; PGHOST loopback dentro del contenedor; PGSSLMODE disable solo para esa fuente local trust; ningún DPAPI; servicios/infra/release como stubs; HTTP de respuesta sintética loopback; artefacto anterior previsto desde Git local en A, conservando la rama de imagen QA para una eventual ejecución autorizada posterior.
+
+El código de recuperación intenta API → worker aunque falle el primer comando y verifica después ambas unidades: un error de respuesta SSH no se acepta como recuperación por inferencia. El arnés preveía probar ese caso con un fallo de respuesta después de cambiar el estado del stub, y el watchdog con reloj adelantado 5.100 segundos. **Estas ramas no fueron ejecutadas y no se certifican.**
+
+Fuentes efectivamente usadas, archivadas solo como evidencia:
+
+| Fuente | SHA256 del archivo archivado |
+| --- | --- |
+| [Ejecutor](evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt) | d60f9b7601fa6de2408540b3c9d474874ce4df71774cdb5ef531be8406635ec6 |
+| [Arnés](evidence/m2-c3-p2/p2-reintento-arnes.py.txt) | 172c37de211e3f5f38742da3925676a13e8015495402fea147c673e0bf465b0b |
+| [Supervisor](evidence/m2-c3-p2/p2-reintento-supervisor.ps1.txt) | 5fc0d28d19277b767a34746ee4da033dfa51a064084ba271008a1b93ed71fdc5 |
+
+No son ejecutores aprobados para QA. Los adaptadores sustituyen destinos/servicios para A; no prueban TLS real, infraestructura ni el artefacto desplegado.
+
+### 16.3 Comandos y resultados reales del paso A
+
+Desde la raíz, una única ejecución formal del arnés:
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+New-Item -ItemType Directory -Path '.tmp/m2-c3-p2-reintento' -Force
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt' -Destination '.tmp/m2-c3-p2-reintento/run.py'
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-real-supervisor.ps1.txt' -Destination '.tmp/m2-c3-p2-reintento/prompt.ps1'
+& 'C:\Users\Fraylin\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -u '.tmp/m2-c3-p2-reintento/harness.py'
+~~~
+
+La reconstrucción aplicó localmente el diff sin contexto de §15; después se prepararon las adaptaciones que constan en las fuentes anteriores. Copias/preparación terminaron 0. El comando del arnés terminó **1** en 9,14 s; no se cuenta como éxito. El recorrido local registró inicio **02:09:51.677074Z** y fin **02:09:58.046741Z**. [Resultado del arnés](evidence/m2-c3-p2/p2-reintento-arnes.json), [42 comandos y resultado del recorrido](evidence/m2-c3-p2/p2-reintento-recorrido-local.json), [diagnóstico estático](evidence/m2-c3-p2/p2-reintento-diagnostico-local.json).
+
+El arnés inicializó una base vacía propia a partir de las 27 definiciones SQL del commit local 791569b, con seed exclusivamente sintético. Este DDL fue preparación de la fuente desechable de A, nunca una migración de QA. El fixture previsto tenía 20 clientes/28 reservas, sin vínculos ni cola abierta; ese seed terminó 0, pero **no se alcanzó el censo de snapshot**. El ledger sintético contenía 27 terminadas y cuatro revertidas, con tres nombres repetidos. Se verificó btree_gist en public, antes de proceder. Las entradas técnicas están conservadas sin logs ni filas de negocio.
+
+| Comprobación realmente alcanzada | Resultado |
+| --- | --- |
+| Sintaxis Python | Fuente analizada y cargada por el arnés. |
+| Comparador local | Permutación aceptada; entradas faltantes/adicionales, checksum y estado alterados rechazados; multiplicidad conservada. |
+| Helper SecureString | Misma frase falsa aceptada y repetición de longitud distinta rechazada; sin DPAPI ni frase real. No acredita todavía el escenario completo de rechazo antes de stop. |
+| Fuente | Contenedor propio PG17 fijado por ID, read-only, tmpfs, network none, CA pública en bind único read-only. |
+| Cliente/CA | pg_dump PostgreSQL 17.11, SHA CA 1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a. |
+| Login local | Rol/base/READ ONLY/REPEATABLE READ/versión/SELECT: todos true. Es conexión local trust; no TLS QA. |
+| Ledger local leído | 31 entradas, 27 activas terminadas, cuatro revertidas; baseline conservado; equal=true, missing=[], extra=[]. |
+| Catálogo y recorrido posterior | JSONDecodeError en paso0 al leer agregados; recorrido completo interrumpido. |
+| Stubs de servicios | Ningún stop ni start llamado. Estado final informado por stubs, no por QA. |
+
+Los argumentos binarios/SQL exactos se reconstruyen desde las fuentes y las arrays de comandos; los valores de frases/contraseñas sintéticas se generaron solo en memoria y no se registran. No se creó archivo de dump/cifrado, fuente de restore ni imagen anterior nueva.
+
+### 16.4 Fallos y límite del diagnóstico
+
+**Primer fallo observado:** JSONDecodeError del ejecutor, fase paso0, después de guardar el ledger local idéntico al baseline. El mensaje y el payload no se persistieron; label quedó detalle-omitido. La siguiente secuencia del código era:
+
+~~~python
+catalog = SOURCE.json(CATALOG_SQL)
+roles = SOURCE.json(ROLE_SQL)
+counts = SOURCE.json(COUNTS_SQL)
+~~~
+
+Reader.json usa json.loads(self.q(sql)[0]): procesa solo la primera línea. Un resultado JSON agregado puede contener saltos de línea válidos, y entonces esa selección es insuficiente. **Hallazgo estático / causa posible; sin payload retenido no se afirma cuál de los tres agregados falló ni se reconstruye un mensaje JSON que no se guardó.** La corrección propuesta es analizar el resultado completo de una sola columna y registrar la etiqueta de la consulta fallida, sin payload ni filas.
+
+**Segundo fallo observado:** TypeError propagado al arnés al comunicar la primera excepción. El código llama emit('parada', **REPORT['failure']); failure ya contiene stage y emit tiene un parámetro stage. Hay colisión de argumentos. El mensaje reconstruible por esa firma es emit() got multiple values for argument 'stage', pero el arnés no conservó el mensaje original: se distingue de las clases registradas. La corrección propuesta es separar evento y fase del fallo, preservando ambos.
+
+Se obedeció la condición de parada: **no se corrigió ni se volvió a ejecutar el arnés después del fallo**; no se lanzaron las cuatro pruebas posteriores ni B/C. El finally sí cerró el reader, descartó las entradas falsas de memoria y retiró el contenedor local; ninguna unidad QA requirió recuperación.
+
+Otro punto estático para la próxima preparación: Reader abre streams text=True sin encoding explícito, mientras el restore local decodifica UTF-8. Debe fijarse una codificación coherente antes de cotejar definiciones no ASCII. No se atribuye a este punto el fallo observado ni se ejecutó una prueba posterior para confirmarlo.
+
+### 16.5 Limpieza y no verificado
+
+[Limpieza local](evidence/m2-c3-p2/p2-reintento-limpieza-local.json): docker rm --force --volumes del único contenedor propio exit 0; consulta por su nombre exacto exit 0, vacía. PG data era tmpfs. La raíz absoluta propia se comprobó dentro del workspace y sin reparse points antes de eliminarla. Se conservaron únicamente documento/evidencia sanitizados. Sin prune ni eliminación de objetos ajenos; custodia C:\KortekBackups\qa-m2-c3 sin acceso.
+
+~~~powershell
+docker --context desktop-linux ps -a --filter 'name=kortek-m2-c3-p2-client-real-6d7e1178b4c0' --format '{{.Names}}'
+# Solo después de comprobar ruta absoluta y ausencia de reparse points:
+Remove-Item -LiteralPath 'C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\m2-c3-p2-reintento' -Recurse -Force
+~~~
+
+**PASO A DETENIDO / INCOMPLETO; P2 INCOMPLETO.** No verificado: snapshot/dump/cifrado/descifrado de fuente local; restore en segundo contenedor y alternativa TOC public; igualdad de conteos/constraints/triggers/roles; rollback aislado completo; fallo precongelamiento como caso inyectado; recuperación API/worker ante primer start fallido; activación real del callback watchdog mediante reloj controlado; frase mal repetida como escenario completo. Las pruebas unitarias parciales no habilitan B.
+
+**QA no fue leído ni tocado en este intento.** No hay comprobación viva de destino/escritores/ledger/release/imágenes/HTTP, frase real, dump schema-only, congelamiento, respaldo AES256 nuevo, hash/censo de snapshot ni restore habilitante. Los estados anteriores de §15 son históricos y no se renuevan con stubs. Sin RTO/RPO acreditados, sin P3 ni producción.
+
+Siguiente paso solo tras nueva orden del propietario: corregir lectura JSON y colisión de eventos, mejorar retención sanitizada de errores, y repetir A completo desde cero. No solicitar DPAPI/frase real ni conectar a QA antes de un A íntegramente pasado. Si vuelve a fallar, detener; ninguna diferencia o fallo autoriza editar ledger/grants.
+
+### 16.6 Checkpoint local
+
+Commit exclusivamente del preflight y siete evidencias nuevas, por rutas explícitas. Validación documental de JSON, sintaxis de fuentes como texto, enlaces/fences, patrones sensibles, diff/índice y áreas protegidas; no ejecución adicional del arnés ni tests de producto.
+
+~~~powershell
+git diff --check
+git diff --stat
+git diff
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt docs/quality/evidence/m2-c3-p2/p2-reintento-arnes.py.txt docs/quality/evidence/m2-c3-p2/p2-reintento-supervisor.ps1.txt docs/quality/evidence/m2-c3-p2/p2-reintento-arnes.json docs/quality/evidence/m2-c3-p2/p2-reintento-recorrido-local.json docs/quality/evidence/m2-c3-p2/p2-reintento-diagnostico-local.json docs/quality/evidence/m2-c3-p2/p2-reintento-limpieza-local.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git commit -m "docs(m2): registrar parada del arnes local P2"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+git diff --exit-code a19fded..HEAD -- apps ops package.json pnpm-lock.yaml
+~~~
+
+SHA/estado final en la respuesta. Sin push, P3, QA real ni aprobación de P2.
