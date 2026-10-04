@@ -1,0 +1,106 @@
+import importlib.util, json, re, secrets, subprocess, traceback, shutil
+from pathlib import Path
+
+W=Path(__file__).resolve().parent
+ROOT=W.parents[1]
+spec=importlib.util.spec_from_file_location('cliente_local',W/'run.py')
+m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+REPORT={'base':'768d898e27685216b40b699cf5ad9e3f7c1cfd76','localOnly':True,
+        'qaAccess':False,'dpapiRead':False,'realPhraseUsed':False,'commands':[],'complete':False}
+PRIVATE=[]
+OWNED=[]
+HOMES={}
+
+def save():
+    (W/'gpg-diagnostico.json').write_text(json.dumps(REPORT,indent=2,ensure_ascii=True)+'\n',encoding='utf-8')
+
+def redact(value):
+    text=value.decode('utf-8',errors='replace') if isinstance(value,bytes) else str(value)
+    for secret in PRIVATE: text=text.replace(secret,'[privado]')
+    text=re.sub(r'(?:postgres(?:ql)?|https?|ssh)://\S+','[direccion omitida]',text,flags=re.I)
+    text=re.sub(r'"[^"\r\n]*"', '[literal omitido]',text)
+    text=re.sub(r"'[^'\r\n]*'", '[literal omitido]',text)
+    text=re.sub(r'(?i)(password|passphrase|token|secret|clave)\s*[:=]\s*[^\s,;]+',r'\1=[privado]',text)
+    encoded=text.encode('utf-8')
+    return {'text':encoded[:8192].decode('utf-8',errors='ignore'),
+            'truncated':len(encoded)>8192,'redactedBytesBeforeCap':len(encoded),'capBytes':8192}
+
+def execute(args,label,data=None,allowed=(0,)):
+    process=subprocess.run(args,input=data,cwd=ROOT,env=m.BASE_ENV,capture_output=True,timeout=35)
+    stderr=redact(process.stderr)
+    item={'commandSanitized':[redact(x)['text'] for x in args],'label':label,
+          'exitCode':process.returncode,'stderrCompleteRedacted':stderr['text'],
+          'stderrTruncated':stderr['truncated'],'stderrCapBytes':8192}
+    REPORT['commands'].append(item);save()
+    if process.returncode not in allowed:
+        raise RuntimeError(label+'; exit='+str(process.returncode)+'; '+stderr['text'])
+    return process.stdout,process.returncode
+
+def cleanup():
+    for home in reversed(OWNED):
+        execute([str(Path(m.GPG).with_name('gpgconf.exe')),'--homedir',m.msys(HOMES[home]),'--kill','gpg-agent'],
+                'cerrar-agente-propio',allowed=(0,))
+        resolved=home.resolve()
+        if ROOT not in resolved.parents or home.is_symlink(): raise RuntimeError('ruta-limpieza-no-propia')
+        # Roots were absent when created; no owner/global GPG home is touched.
+        shutil.rmtree(resolved)
+    REPORT['ownedRootsRemoved']=all(not x.exists() for x in OWNED)
+
+try:
+    prior=json.loads((ROOT/'docs/quality/evidence/m2-c3-p2/p2-sin-congelar-recorrido-local.json').read_text(encoding='utf-8'))
+    args=next(x['pipeArgs'] for x in prior['commands'] if x.get('pipeExitCode')==2)
+    long_home=Path('C:/'+args[args.index('--homedir')+1][3:])
+    old_root=ROOT/'.tmp/m2-c3-p2-sin-congelar'
+    if old_root.exists(): raise RuntimeError('raiz-diagnostico-larga-existe')
+    old_root.mkdir();OWNED.append(old_root);HOMES[old_root]=long_home
+    long_home.mkdir(parents=True)
+    output=Path('C:/'+args[args.index('--output')+1][3:]);output.parent.mkdir(parents=True)
+    key=bytearray(secrets.token_urlsafe(32).encode('utf-8'))
+    PRIVATE.append(bytes(key).decode('utf-8'))
+    REPORT['longPaths']={'homedir':m.msys(long_home),'homedirCharacters':len(m.msys(long_home)),
+        'socketCharacters':len(m.msys(long_home)+'/S.gpg-agent'),'limitHypothesis':108}
+    _,code=execute(args,'reproducir-linea-exacta-exit2',data=bytes(key)+b'\nARCHIVO TRIVIAL LOCAL\n',allowed=(2,))
+    execute([str(Path(m.GPG).with_name('gpgconf.exe')),'--homedir',m.msys(long_home),'--launch','gpg-agent'],
+            'launch-agente-home-largo',allowed=(1,2))
+    execute([str(Path(m.GPG).with_name('gpg-connect-agent.exe')),'--homedir',m.msys(long_home),'--no-autostart','/bye'],
+            'estado-agente-home-largo-sin-autostart',allowed=(1,2))
+    stderr='\n'.join(c['stderrCompleteRedacted'] for c in REPORT['commands'])
+    REPORT['socketHypothesisConfirmed']=bool(re.search(r'(too long|name.*long|path.*long)',stderr,re.I))
+    if not REPORT['socketHypothesisConfirmed']:
+        raise RuntimeError('otra-causa-o-hipotesis-socket-no-confirmada; revisar-stderr-conservado')
+    # Short own home remains within workspace; avoids editing outside authorized root.
+    short_home=ROOT/'.tmp'/('kh-'+secrets.token_hex(3))
+    if short_home.exists(): raise RuntimeError('home-corto-colision')
+    short_home.mkdir();OWNED.append(short_home);HOMES[short_home]=short_home
+    socket=m.msys(short_home)+'/S.gpg-agent'
+    if len(socket)>90: raise RuntimeError('socket-home-corto-supera90')
+    REPORT['shortPaths']={'homedir':m.msys(short_home),'socketCharacters':len(socket),'maximumAllowed':90}
+    cipher=W/'gpg-prueba-falsa.gpg'
+    corrected=list(args)
+    corrected[corrected.index('--homedir')+1]=m.msys(short_home)
+    corrected[corrected.index('--output')+1]=m.msys(cipher)
+    execute([str(Path(m.GPG).with_name('gpgconf.exe')),'--homedir',m.msys(short_home),'--launch','gpg-agent'],
+            'launch-agente-home-corto')
+    execute(corrected,'cifrado-home-corto-frase-falsa',data=bytes(key)+b'\nARCHIVO TRIVIAL LOCAL\n')
+    decode_args=corrected[:corrected.index('--symmetric')]+['--decrypt',m.msys(cipher)]
+    decoded,_=execute(decode_args,'descifrado-home-corto-frase-falsa',data=bytes(key)+b'\n')
+    if decoded!=b'ARCHIVO TRIVIAL LOCAL\n': raise RuntimeError('descifrado-trivial-no-coincide')
+    execute([str(Path(m.GPG).with_name('gpg-connect-agent.exe')),'--homedir',m.msys(short_home),'--no-autostart','/bye'],
+            'estado-agente-home-corto')
+    cipher.unlink()
+    REPORT['trivialEncryptDecryptEqual']=True;REPORT['complete']=True
+except Exception as error:
+    REPORT['complete']=False
+    REPORT['failure']={'exceptionClass':type(error).__name__,'phase':'diagnostico-GPG',
+        'messageSanitized':redact(error)['text'],
+        'tracebackSanitized':[{'file':Path(f.filename).name,'line':f.lineno,'function':f.name}
+            for f in traceback.extract_tb(error.__traceback__)]}
+finally:
+    try: cleanup()
+    except Exception as error:
+        REPORT['complete']=False
+        REPORT['cleanupFailure']={'exceptionClass':type(error).__name__,'messageSanitized':redact(error)['text']}
+    if 'key' in globals(): m.erase(key)
+    PRIVATE.clear();save()
+    print(json.dumps(REPORT,ensure_ascii=True))
+    raise SystemExit(0 if REPORT['complete'] else 1)

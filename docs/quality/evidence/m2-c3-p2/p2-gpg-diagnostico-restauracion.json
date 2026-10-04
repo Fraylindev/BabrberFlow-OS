@@ -1,0 +1,112 @@
+{
+  "base": "768d898e27685216b40b699cf5ad9e3f7c1cfd76",
+  "localOnly": true,
+  "GpgSocketHypothesisConfirmed": true,
+  "longHomedirCharacters": 99,
+  "longSocketCharacters": 111,
+  "shortSocketCharacters": 66,
+  "gpgEncryptDecryptPassed": true,
+  "diagnosticRecorderIncidentPreserved": {
+    "exceptionClass": "RuntimeError",
+    "phase": "diagnostico-GPG",
+    "messageSanitized": "estado-agente-home-largo-sin-autostart; exit=0; gpg-connect-agent: can't connect to the gpg-agent: File name too long\ngpg-connect-agent: no gpg-agent running in this session\n",
+    "tracebackSanitized": [
+      {
+        "file": "diagnosticar.py",
+        "line": 65,
+        "function": "<module>"
+      },
+      {
+        "file": "diagnosticar.py",
+        "line": 36,
+        "function": "execute"
+      }
+    ]
+  },
+  "longCommandNotRetried": true,
+  "formalARuns": 1,
+  "formalAExit": 1,
+  "AComplete": false,
+  "BStarted": false,
+  "CStarted": false,
+  "qaAccess": false,
+  "productionAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "failure": {
+    "event": "parada",
+    "phase": "restore-cotejo-rollback",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "restore-desigualdad:catalog",
+    "queryLabel": "censo-roles",
+    "tracebackSanitized": [
+      {
+        "file": "run.py",
+        "line": 780,
+        "function": "main"
+      },
+      {
+        "file": "run.py",
+        "line": 574,
+        "function": "restore_cipher"
+      }
+    ]
+  },
+  "harnessFailure": {
+    "event": "parada",
+    "phase": "arnes-A",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "recorrido-local-completo-fallo",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "harness.py",
+        "line": 277,
+        "function": "main"
+      },
+      {
+        "file": "harness.py",
+        "line": 232,
+        "function": "scenario"
+      }
+    ]
+  },
+  "restoreEquality": {
+    "catalog": false,
+    "tables": true,
+    "ledger": true,
+    "counts": true,
+    "roles": true
+  },
+  "catalogDifferenceSubkeysPersisted": false,
+  "catalogReason": "desigualdad global observada; no se atribuye una subclave o causa raiz no registrada",
+  "completeExternalStderrRetentionVerified": true,
+  "unitErrorHandlerRetentionVerified": true,
+  "fourInjectedExecutorScenariosReached": false,
+  "rollbackReached": false,
+  "correctionAfterFormalAFailure": false,
+  "retryAfterFormalAFailure": false,
+  "syntheticDumpSha256": "7477f699bda650a4b21f613f1d66d973b47479dd5be2e9535087aad01c129855",
+  "syntheticCensusSha256": "b920161f16fe7ef803c2a1b91010d57279e42b589f79ab91400df8c5f0805409",
+  "syntheticDumpValidForQA": false,
+  "snapshotCounts": {
+    "clients": 20,
+    "bookings": 28,
+    "linked": 0,
+    "outboxOpen": 0,
+    "leased": 0
+  },
+  "sourceClientsAfterSnapshot": 21,
+  "restoredClientsFromSnapshot": 20,
+  "nextStepOnlyWithNewOrder": "guardar diferencias sanitizadas de subclaves del catalogo antes del fallo; diagnosticar solo localmente; repetir A autorizado desde cero",
+  "notVerified": [
+    "catalogo-restaurado-completo",
+    "rollback-5.3",
+    "cuatro-escenarios-inyectados-ejecutor",
+    "conexion-TLS-QA",
+    "baseline-actual-QA",
+    "respaldo-QA",
+    "servicios-PID-imagen-release-QA",
+    "HTTP-publico-QA"
+  ]
+}

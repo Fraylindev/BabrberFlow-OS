@@ -1,0 +1,66 @@
+{
+  "base": "768d898e27685216b40b699cf5ad9e3f7c1cfd76",
+  "localOnly": true,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "cases": [],
+  "complete": false,
+  "serviceControlRemoved": true,
+  "promptLocal": {
+    "localOnly": true,
+    "sameAccepted": true,
+    "wrongRepeatRejected": true,
+    "dpapiRead": false
+  },
+  "units": {
+    "ledgerMultiset": true,
+    "multilineUtf8": true,
+    "errorAndHandlerPersisted": true,
+    "tracebacksRetained": true,
+    "secretRedacted": true,
+    "persistenceFallback": true,
+    "externalStderrAllFourLines": true,
+    "externalCommandExitPhaseTraceback": true,
+    "redactionBefore8192ByteCap": true
+  },
+  "executorFailure": {
+    "event": "parada",
+    "phase": "restore-cotejo-rollback",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "restore-desigualdad:catalog",
+    "queryLabel": "censo-roles",
+    "tracebackSanitized": [
+      {
+        "file": "run.py",
+        "line": 780,
+        "function": "main"
+      },
+      {
+        "file": "run.py",
+        "line": 574,
+        "function": "restore_cipher"
+      }
+    ]
+  },
+  "failure": {
+    "event": "parada",
+    "phase": "arnes-A",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "recorrido-local-completo-fallo",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "harness.py",
+        "line": 277,
+        "function": "main"
+      },
+      {
+        "file": "harness.py",
+        "line": 232,
+        "function": "scenario"
+      }
+    ]
+  }
+}

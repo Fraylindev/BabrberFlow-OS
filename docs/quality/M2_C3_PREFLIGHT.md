@@ -1688,3 +1688,166 @@ git status --short --branch
 git show --stat --oneline HEAD
 git diff --exit-code 25fbdd3..HEAD -- apps ops package.json pnpm-lock.yaml
 ~~~
+
+
+## 18. Diagnóstico GPG local y nueva ejecución de A detenida — 2026-10-04
+
+### 18.1 Autorización, base y alcance
+
+HEAD inicial **768d898e27685216b40b699cf5ad9e3f7c1cfd76**, rama **ai/antigravity-qa**, árbol limpio; ahead 10 frente a la referencia local origin, sin lectura del remoto. Se aplicó kortek-delivery y el gobierno documental pertinente. Solo diagnóstico local de GPG y una nueva ejecución completa de A; **ninguna autorización B/C**. Las secciones anteriores se conservan sin edición.
+
+Producción cerrada e intacta; QA no se leyó ni tocó. Sin DPAPI, Clave.txt, frase real, control de servicios remotos, migraciones/roles/grants/configuración QA, despliegues, dependencias nuevas, push ni P3. El helper SecureString se ejecutó únicamente con -PruebaLocal, que retorna antes de leer DPAPI; no se abrió prompt real. Todas las frases y entradas falsas se generaron solo en memoria.
+
+### 18.2 Reproducción exacta y diagnóstico del agente
+
+[Diagnóstico largo](evidence/m2-c3-p2/p2-gpg-diagnostico.json), [script ejecutado](evidence/m2-c3-p2/p2-gpg-diagnostico.py.txt). Se recreó únicamente la raíz temporal propia anterior, comprobada ausente. Misma array GPG de §17, mismos homedir/output y flags; stdin contenía una frase falsa nueva y un archivo trivial, sin datos reales. La clave no consta en argv, entorno, archivo ni evidencia.
+
+~~~text
+C:/Program Files/Git/usr/bin/gpg.exe --no-options --homedir /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home --no-symkey-cache --batch --pinentry-mode loopback --passphrase-fd 0 --symmetric --cipher-algo AES256 --output /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/custody/qa-m2-c3-p2-20261004T034618Z-9f7122e5b645.dump.gpg.partial
+~~~
+
+Exit **2** reproducido. Stderr completo, redactado, sin escoger líneas y por debajo de 8 KB:
+
+~~~text
+gpg: keybox [literal omitido] created
+gpg: error running [literal omitido]: exit status 2
+gpg: failed to start gpg-agent [literal omitido]: General error
+gpg: can't connect to the gpg-agent: General error
+gpg: problem with the agent: No agent running
+~~~
+
+Comprobaciones adicionales exactas:
+
+~~~powershell
+& 'C:/Program Files/Git/usr/bin/gpgconf.exe' --homedir /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home --launch gpg-agent
+& 'C:/Program Files/Git/usr/bin/gpg-connect-agent.exe' --homedir /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home --no-autostart /bye
+~~~
+
+Launch devolvió **1**, stderr completo:
+
+~~~text
+gpgconf: error running [literal omitido]: exit status 1
+gpgconf: error running [literal omitido]: General error
+~~~
+
+La consulta de estado devolvió **0** pero informó que no había agente, sin arrancarlo automáticamente:
+
+~~~text
+gpg-connect-agent: can't connect to the gpg-agent: File name too long
+gpg-connect-agent: no gpg-agent running in this session
+~~~
+
+**Hipótesis confirmada por la medición y el diagnóstico real:** homedir MSYS de **99** caracteres, socket S.gpg-agent de **111**, frente al límite de 108 planteado por el propietario; el agente no pudo conectarse por File name too long. La prueba con homedir corto pasó conservando GPG y sus flags de cifrado.
+
+Incidencia del registrador del diagnóstico: esperaba exit 1/2 para el estado ausente y rechazó el exit 0, por lo que su wrapper terminó **1** con RuntimeError; mensaje completo/fase/traceback conservados. **El comando de estado no se repitió.** Se interpretó su stderr real de ausencia, no el exit 0 como prueba de agente activo. Esta incidencia previa a A no se ocultó ni se reejecutó el diagnóstico largo; se completó la validación corta explícitamente autorizada con un script separado. El home largo y su raíz propia se retiraron.
+
+### 18.3 Corrección conservadora del homedir y retención externa
+
+[Validación corta](evidence/m2-c3-p2/p2-gpg-home-corto.json), [script](evidence/m2-c3-p2/p2-gpg-home-corto.py.txt): carpeta propia **.tmp/kh-7ce24c** dentro del workspace, socket de **66 caracteres**, inferior al máximo exigido de 90. Se eligió una ruta corta dentro del workspace en vez de crear C:\kgh; no se toca configuración global ni homedir del propietario.
+
+Launch, cifrado AES256, descifrado trivial idéntico y consulta no-autostart: **exit 0**. Stderr de la consulta corta vacío; conexión al agente válida. GPGconf --kill del homedir propio exit 0 y carpeta retirada. GPG no se sustituyó. El ejecutor ahora genera .tmp/kh-<seis caracteres aleatorios> por ejecución, valida longitud/collision/ruta propia y elimina solo ese homedir después de terminar su agente.
+
+La preparación modifica solo fuentes temporales. Se archiva el código exactamente ejecutado como evidencia, **sin aprobarlo para QA**:
+
+| Fuente | SHA256 |
+| --- | --- |
+| [p2-gpg-diagnostico.py.txt](evidence/m2-c3-p2/p2-gpg-diagnostico.py.txt) | 9697566530f448b081762d3264b0cc18422ef1073e290a9a4cf43fbc43895d7d |
+| [p2-gpg-home-corto.py.txt](evidence/m2-c3-p2/p2-gpg-home-corto.py.txt) | 44a6a2f34844fcdc3dce54032cbd446bc077c7ee075acd0eabec9ce2443e73dc |
+| [p2-gpg-ejecutor.py.txt](evidence/m2-c3-p2/p2-gpg-ejecutor.py.txt) | 4a431d1d8800ceecc22e9ee769093d6d8711a0c06e7e67e68b75219f74aeed31 |
+| [p2-gpg-arnes.py.txt](evidence/m2-c3-p2/p2-gpg-arnes.py.txt) | 21628159d8123480e40f64749da6890690667826a733db600d2c2b7679cadebd |
+
+Para cada comando del ejecutor se guardan args/commandSanitized, exitCode real, phase, stderrCompleteRedacted, stderrTruncated y límite **8192 bytes**. El stderr completo se drena en memoria y se redacta **antes** de recortar: valores privados conocidos, literales entre comillas, direcciones y valores de filas/keys en mensajes SQL. No se seleccionan líneas. Los comandos exitosos también conservan stderr, aunque sea vacío. Los fallidos añaden clase y frames sanitizados, sin código/argumentos/locales. Un fallo de creación de proceso registra exitCode=null (no se inventa un exit de un proceso que no arrancó).
+
+Las conexiones psql persistentes registran su exit y stderr al cerrar/matar la sesión. Pipes pg_dump/GPG/pg_restore registran cada proceso por separado incluso en finally. La espera pg_isready registra también los estados transitorios de no disponibilidad; no se cuentan como pruebas aprobadas ni se confunden con un fallo inesperado del arnés.
+
+**Prueba externa falsa pasada:** intérprete local devolvió **7**, escribiendo cuatro líneas; las cuatro quedaron conservadas, con clave falsa, literal y dirección redactados. Se verificaron comando, fase, clase y traceback. Otra prueba unitaria verificó el recorte a 8192 bytes UTF-8 después de redactar; su registro está marcado syntheticRecordOnly y no se presenta como un proceso ejecutado. ValueError interno + fallo TypeError del emisor y OSError del fallback también conservaron causas/frames. [Unidades](evidence/m2-c3-p2/p2-gpg-unidades.json), [fallback](evidence/m2-c3-p2/p2-gpg-fallback.json).
+
+### 18.4 Única nueva ejecución formal de A y parada
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+New-Item -ItemType Directory -Path '.tmp/p2-a' -Force
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt' -Destination '.tmp/p2-a/run.py'
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-sin-congelar-arnes.py.txt' -Destination '.tmp/p2-a/harness.py'
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-sin-congelar-supervisor.ps1.txt' -Destination '.tmp/p2-a/prompt.ps1'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-a/diagnosticar.py'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-a/comprobar_corto.py'
+# Tras preparar las correcciones y revisar AST, una única ejecución formal de A:
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-a/harness.py'
+~~~
+
+El último comando terminó **1**. [Arnés](evidence/m2-c3-p2/p2-gpg-arnes.json), [108 comandos del recorrido](evidence/m2-c3-p2/p2-gpg-recorrido-local.json), [comando del helper previo](evidence/m2-c3-p2/p2-gpg-preparacion-local.json), [diagnóstico de la parada](evidence/m2-c3-p2/p2-gpg-diagnostico-restauracion.json). Hora local del recorrido: **00:21:45.632570 a 00:22:10.051044, America/Santo_Domingo**, 2026-10-04. Solo fuentes/catálogos/filas sintéticas locales; no se imprimieron filas de negocio.
+
+PG17.11 fijado por ID **sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f**, contenedores sin red/puertos, read-only/tmpfs, CA pública en bind único read-only. El source desechable se inicializó con las 27 definiciones SQL de Git local 791569b y fixtures sintéticos: 20 clientes, 28 reservas, ledger de 31 entradas con cuatro revertidas y nombres repetidos. btree_gist residía en public. Ese DDL es preparación desechable, nunca migración QA.
+
+| Comprobación alcanzada | Resultado real |
+| --- | --- |
+| JSON multilínea/UTF-8, multiconjunto y doble frase falsa | Unitarios pasan, con redacción/persistencia interna y externa. |
+| Schema-only local | exit 0; permiso SELECT/RR/RO/timeout 120 s, archivo descartado. No demuestra TLS QA. |
+| Ledger source y snapshot | 31 entradas técnicas, 27 terminadas y cuatro revertidas, observado/baseline/diferencia iguales con multiplicidad; sin logs. |
+| Snapshot | Exportado desde RR/RO; dump y censo tomados del mismo corte. |
+| Concurrencia | Escritura sintética confirmada después del corte: source pasa a 21 clientes; restore reproduce los **20 del snapshot**. |
+| Dump/AES256/censo cifrado | Cada proceso exit 0; dump de 21422 bytes. |
+| Segunda introducción falsa | Se descartó la frase de cifrado y se suministró la entrada de descifrado por separado; manifest descifrado idéntico al baseline en memoria. |
+| Restore TOC | Segundo contenedor PG17 propio; btree_gist precreado en public; TOC excluyó dos entradas de bootstrap, ninguna TABLE DATA; pg_restore exit 0. |
+| Tablas / ledger / conteos / roles | Igualdad **true** en los cuatro cotejos; 36 tablas y huellas privadas iguales. |
+| Catálogo completo | Igualdad **false**: se activó la parada. No se certifican constraints/triggers completos ni una subclave específica. |
+| Servicios / QA | Cero SSH/servicios reales, mocks de infraestructura/escritores/release; no renuevan evidencia P0. |
+
+Hashes **exclusivamente sintéticos, sin validez como respaldo QA**, retirados con los temporales:
+
+- Dump AES256: **7477f699bda650a4b21f613f1d66d973b47479dd5be2e9535087aad01c129855**.
+- Censo cifrado: **b920161f16fe7ef803c2a1b91010d57279e42b589f79ab91400df8c5f0805409**.
+
+El censo agregado por las 36 tablas consta en el resultado local; los hashes privados de filas solo estuvieron en memoria/manifest cifrado y no se versionaron. Ninguno de estos artefactos habilita P3b.
+
+Fallo formal exacto preservado:
+
+~~~text
+event: parada
+phase: restore-cotejo-rollback
+exceptionClass: RuntimeError
+messageSanitized: restore-desigualdad:catalog
+tracebackSanitized: run.py:780 main -> run.py:574 restore_cipher
+~~~
+
+Es un fallo del comparador interno; pg_dump, GPG y pg_restore terminaron 0. No hubo error externo nuevo de cifrado. queryLabel=censo-roles identifica la última consulta, no una consulta SQL fallida. El error del arnés recorrido-local-completo-fallo se conservó por separado. La desigualdad global del catálogo se registró, pero **las subclaves/diferencias concretas no se persistieron**; no se inventa causa de ownership/search_path/constraints/triggers sin ese cotejo. Tampoco se declara corrupción de filas: sus huellas/conteos sí coincidieron.
+
+**Se detuvo al primer fallo inesperado de A, sin corregir ni reintentar después.** No se alcanzaron rollback §5.3 ni los cuatro escenarios inyectados del ejecutor. Los unitarios internos/externos previos sí pasaron; no sustituyen esos escenarios completos. B/C permanecen cerrados hasta otra orden del propietario, incluso si se autorizara otra A.
+
+### 18.5 Limpieza, límites y checkpoint
+
+finally cerró la transacción/reader, retiró ambos contenedores propios con --force --volumes, terminó el agente .tmp/kh-c51e8a y borró su carpeta. Todos los comandos de retirada exit 0. Las consultas posteriores por cada nombre exacto devolvieron 0 y ninguna fila. Datos/tmp PG eran tmpfs, sin puertos ni volúmenes persistentes. Se retiraron también cifrados/triviales/frases falsas y la raíz temporal propia después de archivar la evidencia; sin prune ni objetos ajenos. [Limpieza](evidence/m2-c3-p2/p2-gpg-limpieza-local.json).
+
+~~~powershell
+docker --context desktop-linux ps -a --filter 'name=kortek-m2-c3-p2-client-real-c51e8a798d6d' --format '{{.Names}}'
+docker --context desktop-linux ps -a --filter 'name=kortek-m2-c3-p2-restore-c51e8a798d6d' --format '{{.Names}}'
+# Tras validar ruta absoluta propia dentro del workspace y ausencia de reparse points:
+Remove-Item -LiteralPath 'C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\p2-a' -Recurse -Force
+~~~
+
+**GPG diagnosticado y corrección local validada; A DETENIDO / INCOMPLETO.** Pendientes: explicar la desigualdad del catálogo con diferencias sanitizadas de subclaves; catálogo completo, rollback y cuatro escenarios del ejecutor; readiness íntegra para B. Próxima acción solo con nueva orden: mejorar el registro de diferencias del catálogo antes de fallar y diagnosticar/restaurar exclusivamente en local, sin reanudar desde este restore retirado.
+
+No verificado ni ejecutado: QA, DPAPI/frase real, TLS QA, censo/hash de respaldo QA, PID/imagen/release/HTTP reales, B/C/P3, migraciones/despliegues/configuración productivos. P3b sigue requiriendo autorización propia y dump nuevo bajo congelamiento, hash, censo y restore íntegramente verificado inmediatamente antes de migrar.
+
+Commit local solo de esta sección y evidencia sanitizada, rutas explícitas; revisión AST/JSON/redacción/hashes/enlaces/alcance y diff/índice. Sin builds/pruebas de producto ni nuevas ejecuciones funcionales después de la parada. SHA/status final se entrega en la respuesta.
+
+~~~powershell
+git diff --check
+git diff --stat
+git diff
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico.py.txt docs/quality/evidence/m2-c3-p2/p2-gpg-home-corto.py.txt docs/quality/evidence/m2-c3-p2/p2-gpg-ejecutor.py.txt docs/quality/evidence/m2-c3-p2/p2-gpg-arnes.py.txt docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico.json docs/quality/evidence/m2-c3-p2/p2-gpg-home-corto.json docs/quality/evidence/m2-c3-p2/p2-gpg-preparacion-local.json docs/quality/evidence/m2-c3-p2/p2-gpg-arnes.json docs/quality/evidence/m2-c3-p2/p2-gpg-recorrido-local.json docs/quality/evidence/m2-c3-p2/p2-gpg-unidades.json docs/quality/evidence/m2-c3-p2/p2-gpg-fallback.json docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico-restauracion.json docs/quality/evidence/m2-c3-p2/p2-gpg-limpieza-local.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git diff --cached --exit-code -- apps ops package.json pnpm-lock.yaml
+git commit -m "docs(m2): registrar diagnostico GPG y parada local de A"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+git diff --exit-code 768d898..HEAD -- apps ops package.json pnpm-lock.yaml
+~~~

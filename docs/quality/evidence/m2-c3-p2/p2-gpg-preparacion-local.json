@@ -1,0 +1,38 @@
+{
+  "base": "768d898e27685216b40b699cf5ad9e3f7c1cfd76",
+  "startedUtc": "2026-10-04T04:21:43.498536+00:00",
+  "commands": [
+    {
+      "args": [
+        "C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-a\\prompt.ps1",
+        "-PruebaLocal"
+      ],
+      "commandSanitized": [
+        "C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-a\\prompt.ps1",
+        "-PruebaLocal"
+      ],
+      "exitCode": 0,
+      "label": "comparacion-SecureString-falsa-local",
+      "phase": "preparacion",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false
+}
