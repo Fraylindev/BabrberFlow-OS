@@ -1962,3 +1962,139 @@ Rutas explícitas para commit: únicamente este documento y los archivos nuevos 
 | [p2-iteracion-local-limpieza.json](evidence/m2-c3-p2/p2-iteracion-local-limpieza.json) | `084eefd4dd9eeca76f8b3165f3bbc1979fff05384015080d94489791f22ac7b4` |
 | [p2-iteracion-local-registro.json](evidence/m2-c3-p2/p2-iteracion-local-registro.json) | `9ba48aa8351114c10015597dccebb6faf52d592b86d7c7b2afa5cd0d8c46b506` |
 | [p2-iteracion-local-validacion.json](evidence/m2-c3-p2/p2-iteracion-local-validacion.json) | `0359c3f97ad1e15532c47149f59bac281cfca7a79875be3880ceb85339e3c86e` |
+
+
+## 20. P2 completado: respaldo consistente, recuperación y rollback — 2026-10-04
+
+### 20.1 Estado y criterios de cumplimiento
+
+**OBJETIVO CUMPLIDO — P2 solamente.** Autorización vigente: objetivo del propietario en `goal-objective.md`, leído antes de ejecutar; sustituye las paradas condicionadas históricas de §§14–19. Base local **5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef**, rama **ai/antigravity-qa**, árbol inicialmente limpio. Se aplicó kortek-delivery. Las secciones anteriores se conservan byte por byte; únicamente se añade esta sección y evidencia sanitizada. El cierre incluye el commit local autorizado, cuyo SHA se entrega fuera de su propio contenido. **Sin push ni P3; producción no consultada ni modificada.**
+
+| Criterio del objetivo | Resultado y evidencia autoritativa |
+| --- | --- |
+| 1. Respaldo real AES256, ruta, SHA-256 y censo del corte | Archivo real de QA de 47745 bytes, hash validado nuevamente al final; manifiesto del mismo snapshot también cifrado. [bc-first.json](evidence/m2-c3-p2/p2-goal-20261004/bc-first.json), [c-verified.json](evidence/m2-c3-p2/p2-goal-20261004/c-verified.json), [final-audit.json](evidence/m2-c3-p2/p2-goal-20261004/final-audit.json). |
+| 2. Snapshot exportado, RR/READ ONLY, migrador, TLS verify-full, QA en marcha | Login efectivo `kortek_migrator`, PG17.6, timeout 120 s; `PGSSLMODE=verify-full` y CA bind read-only con hash verificado. `pg_export_snapshot`, censo y dump dentro del mismo corte; dump binario por pipes directamente a GPG AES256. Ambos procesos exit 0. Servicios QA nunca detenidos. [bc-first.json](evidence/m2-c3-p2/p2-goal-20261004/bc-first.json), [executed-sources.json](evidence/m2-c3-p2/p2-goal-20261004/executed-sources.json). |
+| 3. Restore PG17 nuevo, TOC btree_gist public y cotejo completo | Dos restores nuevos contra el manifiesto del snapshot: 36/36 conteos y huellas, ledger multiconjunto con multiplicidad, censo, roles de interés, constraints/índices/triggers/funciones/tipos/extensiones iguales. TOC excluye únicamente bootstrap public/btree_gist/comentarios asociados; ningún TABLE DATA excluido. PG17.11 leído en el restore. [c-verified.json](evidence/m2-c3-p2/p2-goal-20261004/c-verified.json), [restore-version.json](evidence/m2-c3-p2/p2-goal-20261004/restore-version.json). |
+| 4. Segunda introducción y descifrado independiente | Propietario introdujo dos veces la frase mediante `Read-Host -AsSecureString`, antes de cualquier operación QA. Segunda entrada independiente usada por nuevos procesos GPG con `--no-symkey-cache`; manifiesto descifrado igual y dump restaurado completo. Frases únicamente en memoria/stdin anónimo; SecureString/BSTR dispuestos al terminar. [controller-final.json](evidence/m2-c3-p2/p2-goal-20261004/controller-final.json), [controller.ps1.txt](evidence/m2-c3-p2/p2-goal-20261004/controller.ps1.txt), [bc-first.json](evidence/m2-c3-p2/p2-goal-20261004/bc-first.json), [c-verified.json](evidence/m2-c3-p2/p2-goal-20261004/c-verified.json). |
+| 5. Rollback §5.3 aislado | Clon real del backup: upgrade SQL 27→28 e inversa desechable, datos/ledger preservados; fallo transaccional por constraint; corrupción de trigger detectada y recuperación en contenedor nuevo. Código exacto 791569b sobre clon real responde 200/200/201 y preserva recibos/vínculos/reservas. Además, **imagen original QA exacta** ejecutada donde ya estaba instalada sobre PostgreSQL sintético 27→28, red namespace sin exterior/puertos/mounts; mismo 200/200/201 y preservación. [c-verified.json](evidence/m2-c3-p2/p2-goal-20261004/c-verified.json), [image-rollback.json](evidence/m2-c3-p2/p2-goal-20261004/image-rollback.json), [image-drill.py.txt](evidence/m2-c3-p2/p2-goal-20261004/image-drill.py.txt). |
+| 6. Continuidad QA y HTTP real | API MainPID **673295**, worker **575989**, ambos active/running y NRestarts **0**, imágenes exactas de P0; API release **791569b110f9fd59cb10e6d248546bdae3996e14**. Hashes de runtime-env, wrappers y unidades QA iguales al baseline. GET real de `public/m1-c3-norte/booking-data`: **200**, cuerpo no vacío y no impreso. Auditoría final repetida tras el cierre documental vuelve a coincidir; su hora UTC está en el informe. [final-audit.json](evidence/m2-c3-p2/p2-goal-20261004/final-audit.json). |
+| 7. Documento, evidencia y commit local acotado | Esta sección, JSON parseables, fuentes sanitizadas, inventario SHA-256 y validación documental; staging por cada ruta explícita, revisión completa del índice y commit local. Evidencia de validación y limpieza añadida antes del commit; SHA/estado finales en el relevo. Ninguna aplicación, ops, dependencia o migración versionada modificada. |
+
+### 20.2 Trabajo realizado, comandos y resultados
+
+**A — local y sintético, sin QA:** inicialización PG17.11 con las 27 definiciones Git de 791569b, 36 tablas y ledger sintético de 31 entradas (27 terminadas y cuatro revertidas). Fuente 20 clientes/28 reservas; escritura sintética posterior elevó la fuente a 21 clientes, mientras ambos restores conservaron 20 del snapshot. Pasaron recorrido completo, fallo antes del dump, doble frase distinta, alteración de datos y persistencia integrada de error externo/manejador. Cuatro casos finales se validaron juntos; el quinto se repitió aisladamente tras corregir exclusivamente CRLF/LF en su aserción, con el ejecutor sin cambios. No se presenta la ejecución intermedia detenida como pasada: el gate agregado identifica los cinco informes. [a-gate.json](evidence/m2-c3-p2/p2-goal-20261004/a-gate.json), [a-complete.json](evidence/m2-c3-p2/p2-goal-20261004/a-complete.json), [a-before-dump.json](evidence/m2-c3-p2/p2-goal-20261004/a-before-dump.json), [a-wrong-phrase.json](evidence/m2-c3-p2/p2-goal-20261004/a-wrong-phrase.json), [a-corruption.json](evidence/m2-c3-p2/p2-goal-20261004/a-corruption.json), [a-errors.json](evidence/m2-c3-p2/p2-goal-20261004/a-errors.json), [a-targeted.json](evidence/m2-c3-p2/p2-goal-20261004/a-targeted.json).
+
+Ledger: permutación aceptada; falta, duplicado adicional y checksum cambiado rechazados. JSON multilínea/UTF-8, stderr completo redactado hasta 8192 bytes y fallos de emisor/persistencia probados. E5 aplana exclusivamente AND, preservando orden y textos de los términos: 64 combinaciones con límites/NULL en cada CHECK de horarios y 84 en EmailOutbox_budget_check, cero diferencias. Un CHECK real cambiado de `<` a `<=` fue rechazado por el comparador y produjo tres diferencias en PostgreSQL. Los SQL exactos, ambos lados y tablas de verdad están en [a-complete.json](evidence/m2-c3-p2/p2-goal-20261004/a-complete.json); el control de corrupción conserva ambas huellas en [a-corruption.json](evidence/m2-c3-p2/p2-goal-20261004/a-corruption.json).
+
+**B — revalidación QA READ ONLY:** completada después de recibir ambas frases. Destino efectivo proyecto `prirlabbnlcuvnzuaczp`, Kortek Booking Cutover QA, base postgres; runtime existente y migrador de respaldo separados. P0 vigente: release/imagen/PID/hashes iguales; ledger igual al multiconjunto histórico, 27 activas y 28 ausente; 36 tablas, 20 clientes, 28 reservas, cero vínculos/cola abierta/leases. Credencial DPAPI migrador usada exclusivamente en memoria del cliente de respaldo y con READ ONLY; no se usó para API/worker ni se abrió Clave.txt. [bc-first.json](evidence/m2-c3-p2/p2-goal-20261004/bc-first.json).
+
+**C — backup y recuperación:** dump real y manifiesto cifrados a las 16:41 UTC del 2026-10-04. El primer restore detectó el rol incorporado pg_database_owner; se corrigió únicamente la preparación aislada, se probó localmente y se continuó **con los mismos archivos cifrados y hashes**, sin tomar otro corte del origen. El segundo descifrado, todos los cotejos y rollback terminaron exit 0. [local-probes.json](evidence/m2-c3-p2/p2-goal-20261004/local-probes.json), [c-verified.json](evidence/m2-c3-p2/p2-goal-20261004/c-verified.json).
+
+La imagen original ARM64 QA no se trasladó al equipo. Se usaron las imágenes ya instaladas en el host, con `--pull=never`: PostgreSQL nuevo en tmpfs/network none y API nueva compartiendo exclusivamente ese namespace. Se alimentaron solo SQL/versionado y fixtures sintéticos, sin variables o credenciales QA; Clerk sustituido localmente y correo deshabilitado. La imagen mantuvo su ID original, ambos contenedores propios se retiraron y se verificó su ausencia. Los argv completos, exits y stderr están en [image-rollback.json](evidence/m2-c3-p2/p2-goal-20261004/image-rollback.json).
+
+Comandos de entrada efectivamente usados, desde la raíz; auxiliares temporales archivados como evidencia, no como producto desplegable:
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-goal/harness.py'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u -c "import sys;sys.path.insert(0,'.tmp/p2-goal');import harness as h;h.units();h.scenario('persistencia-error');h.REPORT['targetedOnly']=True;h.REPORT['targetedPassed']=True;h.save();print('targeted persistence scenario passed')"
+& '.tmp/p2-goal/controller.ps1' -PruebaLocal
+Start-Process -FilePath (Get-Command pwsh).Source -ArgumentList @('-NoProfile','-File','C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\p2-goal\controller.ps1') -WindowStyle Normal
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-goal/probe-owner.py'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-goal/real-image-drill.py'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/p2-goal/final-audit.py'
+~~~
+
+El controller ejecutó B/C y la continuación C sin nuevos prompts, conservando las dos entradas solo en memoria hasta éxito. Sus dos ejecuciones, ambas fuentes de datos del censo, arrays exactas de procesos, códigos de salida y stderr se conservan en bc-first/c-verified. El arnés acumulado y el ensayo de imagen originales contienen únicamente inputs sintéticos. Los JSON de comandos son la bitácora detallada; no se reemplazan por esta lista de entradas.
+
+Verificación final de Git: `git diff --check`, `git diff --stat`, `git diff`; staging por las rutas del documento y cada archivo del directorio de esta evidencia; `git diff --cached --check`, `git diff --cached --stat` y lectura completa del diff staged y sus blobs. Commit local: `git commit -m "docs(m2): completar respaldo P2 y recuperacion verificada"`. Se verificó después el árbol limpio y el alcance del commit. Los hashes del manifiesto se calculan sobre bytes LF de evidencia; las fuentes ejecutadas preservan sus bytes originales dentro de base64.
+
+### 20.3 Impedimentos, causas, soluciones y evidencia
+
+| Impedimento | Causa comprobada, corrección y prueba |
+| --- | --- |
+| rg / comando python no disponibles como se invocaron | rg.exe no pudo iniciarse por asociación Windows; python no estaba en PATH. Se usaron búsquedas PowerShell dirigidas y el Python bundled ya instalado. Sin instalación. [session-notes.json](evidence/m2-c3-p2/p2-goal-20261004/session-notes.json). |
+| Docker denegado en sandbox | Acceso a config/context metadata denegado; exit 1 conservado. Ejecución local acotada con permiso ampliado pasó. a-impediments.json. |
+| Gate runtime de clon falla | CREATE DATABASE recuperó TEMP de PUBLIC; se revocó únicamente en el clon. Gate original sin cambios pasó. a-impediments.json y a-complete.json. |
+| Aserción de dump previo / firma api_access | El detector confundía pg_dump --version con dump de datos; se limitó a --format=custom sin --schema-only. Un cambio del ejecutor mientras el arnés aún cargaba módulos dejó una firma vieja; se serializaron las siguientes modificaciones/ejecuciones. Todos los casos finales pasan. a-impediments.json. |
+| Puerto ausente en red --internal | Docker no publicó el puerto de esa red. Se cambió el clon local a red dedicada sin NAT saliente, publicación solo 127.0.0.1 y SCRAM para TCP; la sonda pasó y se retiró. local-probes.json. |
+| Motor Docker no disponible tras continuidad | Pipe dockerDesktopLinuxEngine ausente y servicio/proceso detenido. Se inició Docker Desktop instalado, oculto; servidor 29.6.1 y sonda posterior pasan. local-probes.json y registro auxiliar de sesión. |
+| ERR_REQUIRE_ESM en copia del API | Faltaba apps/api/package.json en git archive; Node heredaba el type del root. Se incluyó el package.json original del release; HTTP 200/200/201 pasa. a-impediments.json y a-complete.json. |
+| Alteración sintética después del RR de cotejo | El snapshot local ya estaba fijado; la alteración se detectó demasiado tarde en el upgrade. Se movió la inyección antes de abrir el reader local: restore-desigualdad:tables, ambos mapas completos retenidos. El fallo intermedio no conservó ambos mapas y se declara evidencia insuficiente; no se usa para probar el gate. a-impediments.json y a-corruption.json. |
+| Aserción del error externo espera LF | El proceso Windows produjo CRLF. Se normalizó solo el fin de línea para la aserción; se preservan las tres líneas crudas, exit 7, error RuntimeError y fallo TypeError del emisor. Quinto caso targeted exit 0. a-targeted.json y a-errors.json. |
+| pg_database_owner reservado en restore real | El rol ya es incorporado en PG17. Se verificó su existencia y se reutilizó únicamente en el contenedor nuevo. Sonda local y restore/cotejo completo pasan. bc-first.json, local-probes.json, c-verified.json. |
+| Imagen original ausente localmente / exportación rechazada | Inspect local exit 1: no imagen. La revisión automática rechazó exportar el payload completo por SSH por autorización de traslado insuficiente. **No se ejecutó la exportación ni se buscó otro canal de traslado.** Alternativa aprobada y ejecutada: imagen donde ya estaba instalada, dos contenedores nuevos sin exterior y datos sintéticos; prueba exacta y limpieza pasan. image-rollback.json y registro auxiliar de sesión. |
+| Archivado de fuente original no reproduce su SHA | El archivo fue corregido durante C y tenía finales de línea mixtos. Tres candidatos no coincidieron; se abandonó reconstruirlo como original. Se conservan su SHA registrado, evidencia operativa y bytes exactos del ejecutor C/otros auxiliares disponibles en executed-sources.json (base64 + SHA). Las fuentes .txt son vistas normalizadas. No se atribuye a A/B una copia reconstruida ni se relaja ningún cotejo de base. archive-map.json y registro auxiliar de sesión. |
+
+La primera validación documental confundió sus propios literales PEM con material de clave. Se corrigió la detección a cabeceras en líneas completas, sin omitir archivos ni aceptar claves. [validation-impediment.json](evidence/m2-c3-p2/p2-goal-20261004/validation-impediment.json) conserva comando, exit 1, stderr completo y ambos lados; una segunda aserción documental exigió erróneamente diff crudo vacío pese a la excepción E5 ya probada. Se corrigió para recomputar igualdad del SQL completo con únicamente los mismos términos AND y las tablas de verdad PostgreSQL; los errores y lados están conservados. Un tercer control detectó que los dos registros auxiliares nuevos usaban `class` en vez de `exceptionClass`; se añadió el campo uniforme, sin relajar el control ni modificar los registros operativos. La validación corregida pasó.
+
+Los registros externos conservan clase/fase, comando sanitizado, exit code y stderr completo redactado hasta 8 KB. Los fallos deliberados están diferenciados de impedimentos. Los errores de herramientas sin proceso tienen exit nulo; no se inventa un exit ni stderr separado cuando la herramienta solo devolvió salida combinada. El registro auxiliar recuperó los outputs originales de los 15 errores de herramientas desde la transcripción de esta misma tarea; conserva salida combinada completa hasta 8 KB, diferenciándola del stderr. La consulta final de SSH denegada por el sandbox quedó registrada en [final-audit-sandbox-failure.json](evidence/m2-c3-p2/p2-goal-20261004/final-audit-sandbox-failure.json); su repetición autorizada en solo lectura pasó. La metadata `base` heredada de algunos reportes del arnés es histórica; la base Git observada es la de 20.1 y a-gate.json.
+
+### 20.4 Datos clave y censo exacto del snapshot
+
+- Dump AES256: `C:\KortekBackups\qa-m2-c3\qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.dump.gpg`.
+- SHA-256: `17f6e1191b15f828b444ee8db593e781dd707ed3c4b80f940a02ff16d0605063`.
+- Manifiesto cifrado: `C:\KortekBackups\qa-m2-c3\qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.censo.gpg`.
+- SHA-256 del manifiesto: `10ee43953b675bcf50970256484ddcb535101e8664bcc1be39e328c0e4696084`.
+- PostgreSQL origen: **17.6** (`server_version_num=170006`); cliente pg_dump y restore local: **17.11 (Debian 17.11-1.pgdg13+2)**. Imagen local PG17 fija `sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f`.
+- Imagen API original probada: `701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031`, Linux ARM64. PG17 del ensayo remoto: imagen `97432f980da100ebd3e419711efee84e1e97a966d62c035286a07f239ddb4d9c`; versión exacta en image-rollback.json.
+- Extensión relevante: **btree_gist 1.7 en public**, iguales origen/restore. Schema public de pg_database_owner; tablas de kortek_migrator reconstruidas y cotejadas. Ledger técnico: **31 entradas**, **27 terminadas activas**, **4 revertidas históricas**, migración 28 ausente; multiplicidad conservada.
+
+| Tabla public | Filas en el corte |
+| --- | ---: |
+| `AuditLog` | 98 |
+| `Booking` | 28 |
+| `BookingEmailEvent` | 64 |
+| `BookingEmailPreference` | 28 |
+| `BusinessClosure` | 4 |
+| `BusinessSchedule` | 4 |
+| `BusinessScheduleDay` | 21 |
+| `BusinessScheduleRevision` | 14 |
+| `BusinessScheduleWindow` | 21 |
+| `Client` | 20 |
+| `CmsOperation` | 5 |
+| `CmsPage` | 4 |
+| `EmailAbuseBucket` | 0 |
+| `EmailChannelControl` | 1 |
+| `EmailOutbox` | 50 |
+| `EmailWebhookReceipt` | 12 |
+| `GalleryImage` | 0 |
+| `Invoice` | 16 |
+| `MediaAsset` | 4 |
+| `MediaGalleryOrder` | 0 |
+| `MediaOperation` | 5 |
+| `MediaPromotion` | 1 |
+| `MediaPurgeJob` | 1 |
+| `Membership` | 9 |
+| `Notification` | 0 |
+| `Organization` | 4 |
+| `Payment` | 16 |
+| `Professional` | 5 |
+| `ProfessionalAvailabilityBlock` | 1 |
+| `ProfessionalService` | 0 |
+| `ProfessionalWeeklySchedule` | 0 |
+| `SecurityRateBucket` | 10 |
+| `Service` | 5 |
+| `TeamInvitation` | 1 |
+| `User` | 8 |
+| `_prisma_migrations` | 31 |
+
+El manifiesto cifra el catálogo y las huellas completas del corte. La evidencia técnica contiene los conteos/huellas y comparaciones; no contiene filas de negocio, URL/contraseña real, frase, logs del ledger ni hashes de passwords. Ambos hashes de archivos se comprobaron otra vez al finalizar. Censo de clientes 20, reservas 28, vinculados 0, outbox abierto 0 y leases activos 0. **Este es el snapshot del backup, no un censo actual posterior.**
+
+### 20.5 Lo no verificado y riesgos restantes
+
+P2 conserva escritores activos: no garantiza RPO cero sobre escrituras posteriores al snapshot. **P3b exige un respaldo NUEVO bajo congelamiento, con hash/censo/restore verificados; este archivo P2 no lo sustituye.** No se ejecutó P3, no se aplicó la migración 28 a QA, ni se modificaron ledger, roles/grants, variables, flags, Clerk o servicios QA existentes. El DDL/migración 28/inversa de los ensayos solo existió en clones desechables.
+
+El respaldo y cotejo son del **schema public de la aplicación**, como §§5.1–5.2: no constituyen backup integral de schemas internos/globales del proveedor Supabase. E1–E4 siguen siendo exclusiones cerradas (dueños, ACL, default ACL y roles solo en origen); los roles de interés y sus privilegios seleccionados se reconstruyeron y compararon. E5 requiere textos AND idénticos y prueba SQL con límites/NULL, ambas satisfechas. Cabeceras informativas de versiones, tokens aleatorios restrict/unrestrict, CRLF/LF y espacios finales no son cambios SQL; versiones reales quedan registradas por separado. No se aceptó ningún cambio adicional de datos o lógica.
+
+Rollback §5.3: se probó recuperación de datos/schema, fallo transaccional y compatibilidad del código e imagen anteriores con schema aditivo y fixtures. No se alteraron alias web, opciones/sesiones Clerk, ni se simuló corrupción/restore operativo sobre QA real. Esas respuestas externas se conservan como procedimientos que requieren su autorización propia. El ensayo de imagen usa datos sintéticos y stub Clerk, y no sustituye QA autenticado/físico, correo ni cutover. D4 y demás bloqueos de producción continúan vigentes. La imagen anterior reintroduce el límite legacy documentado; mantener C2 retirado en una reversión. No se inventa RTO operativo ni disponibilidad futura.
+
+Límite de trazabilidad: no se conservaron bytes del ejecutor anterior a la corrección C; su SHA sí quedó sellado. Ninguna reconstrucción discordante se incluye como fuente original. Fuentes C/imagen/controller exactas están codificadas con su hash, más vistas legibles. Este límite no se usa para sustituir los restores reales ni sus cotejos independientes.
+
+Limpieza: auditoría local encontró ausentes **33 contenedores propios** y **8 redes propias** acumulados; ensayo de imagen verificó ausencia de sus dos contenedores remotos. Agentes/homes GPG propios retirados y controller terminado exit 0. Se retiró únicamente `.tmp/p2-goal`, tras archivar y validar ruta y ausencia de reparse points. [cleanup.json](evidence/m2-c3-p2/p2-goal-20261004/cleanup.json) registra la limpieza; [validation.json](evidence/m2-c3-p2/p2-goal-20261004/validation.json) y [manifest.json](evidence/m2-c3-p2/p2-goal-20261004/manifest.json) sellan la revisión documental y el inventario de evidencia. Se retienen exclusivamente el dump y manifiesto cifrados reales en custodia, documento y evidencia sanitizada.
+
+### 20.6 Acción del propietario
+
+Guardar la frase de forma segura y separada de los archivos cifrados, manteniendo su custodia. Revisar esta evidencia y decidir por separado si autoriza P3; P2 cumplido no aprueba C3 ni abre producción. Antes de migrar en P3b, generar y verificar el nuevo respaldo bajo congelamiento del corte que realmente se va a modificar. El commit de esta entrega permanece local; no autoriza push ni despliegue.

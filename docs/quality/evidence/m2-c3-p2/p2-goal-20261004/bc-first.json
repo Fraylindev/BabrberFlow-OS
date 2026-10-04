@@ -1,0 +1,2685 @@
+{
+  "base": "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef",
+  "startedUtc": "2026-10-04T16:40:40.711013+00:00",
+  "commands": [
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "--network",
+        "bridge",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "768m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw,size=1024m",
+        "--mount",
+        "type=bind,source=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt,target=/tmp/qa-ca.crt,readonly",
+        "--entrypoint",
+        "sleep",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "infinity"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "--network",
+        "bridge",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "768m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw,size=1024m",
+        "--mount",
+        "type=bind,source=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt,target=/tmp/qa-ca.crt,readonly",
+        "--entrypoint",
+        "sleep",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "infinity"
+      ],
+      "exitCode": 0,
+      "label": "crear-contenedor-propio",
+      "phase": "frase-previa-a-operaciones",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 0,
+      "label": "estado-seguro-QA",
+      "phase": "paso0",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "exitCode": 0,
+      "label": "destino-release-efectivo-RO",
+      "phase": "paso0",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--version"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--version"
+      ],
+      "exitCode": 0,
+      "label": "cliente-PG17",
+      "phase": "paso0",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "sha256sum",
+        "/tmp/qa-ca.crt"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "sha256sum",
+        "/tmp/qa-ca.crt"
+      ],
+      "exitCode": 0,
+      "label": "CA-bind-hash",
+      "phase": "paso0",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--schema=public",
+        "--format=custom",
+        "--no-owner",
+        "--no-privileges",
+        "--encoding=UTF8",
+        "--snapshot=<snapshot-en-memoria>",
+        "--schema-only"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--schema=public",
+        "--format=custom",
+        "--no-owner",
+        "--no-privileges",
+        "--encoding=UTF8",
+        "--snapshot=<snapshot-en-memoria>",
+        "--schema-only"
+      ],
+      "exitCode": 0,
+      "label": "pg-dump-schema-only-TLS-RR-RO",
+      "phase": "paso0",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1"
+      ],
+      "exitCode": 0,
+      "label": "reader-fuente-RR-RO",
+      "phase": "paso0",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 0,
+      "label": "estado-seguro-QA",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "exitCode": 0,
+      "label": "destino-release-efectivo-RO",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--schema=public",
+        "--format=custom",
+        "--no-owner",
+        "--no-privileges",
+        "--encoding=UTF8",
+        "--snapshot=<snapshot-en-memoria>",
+        "--schema-only",
+        "--format=plain"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--schema=public",
+        "--format=custom",
+        "--no-owner",
+        "--no-privileges",
+        "--encoding=UTF8",
+        "--snapshot=<snapshot-en-memoria>",
+        "--schema-only",
+        "--format=plain"
+      ],
+      "exitCode": 0,
+      "label": "schema-normalizado-mismo-snapshot",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--schema=public",
+        "--format=custom",
+        "--no-owner",
+        "--no-privileges",
+        "--encoding=UTF8",
+        "--snapshot=<snapshot-en-memoria>"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "pg_dump",
+        "--schema=public",
+        "--format=custom",
+        "--no-owner",
+        "--no-privileges",
+        "--encoding=UTF8",
+        "--snapshot=<snapshot-en-memoria>"
+      ],
+      "exitCode": 0,
+      "label": "pg-dump-snapshot",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "/c/KortekBackups/qa-m2-c3/qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.dump.gpg.partial"
+      ],
+      "commandSanitized": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "/c/KortekBackups/qa-m2-c3/qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.dump.gpg.partial"
+      ],
+      "exitCode": 0,
+      "label": "gpg-cifrar-dump",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "gpg: keybox [literal omitido] created\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "/c/KortekBackups/qa-m2-c3/qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.censo.gpg.partial"
+      ],
+      "commandSanitized": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "/c/KortekBackups/qa-m2-c3/qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.censo.gpg.partial"
+      ],
+      "exitCode": 0,
+      "label": "cifrado-AES256-stdin-anonimo",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "-e",
+        "PGCLIENTENCODING",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1"
+      ],
+      "exitCode": 0,
+      "label": "reader-fuente-RR-RO",
+      "phase": "snapshot-censo-dump-cifrado",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--decrypt",
+        "/c/KortekBackups/qa-m2-c3/qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.censo.gpg"
+      ],
+      "commandSanitized": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--decrypt",
+        "/c/KortekBackups/qa-m2-c3/qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.censo.gpg"
+      ],
+      "exitCode": 0,
+      "label": "descifrado-stdin-anonimo",
+      "phase": "descifrado-independiente",
+      "stderrCompleteRedacted": "gpg: AES256.CFB encrypted data\ngpg: encrypted with 1 passphrase\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "network",
+        "create",
+        "--driver",
+        "bridge",
+        "--opt",
+        "com.docker.network.bridge.enable_ip_masquerade=false",
+        "p2-isolated-56f10a6cd5fa"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "network",
+        "create",
+        "--driver",
+        "bridge",
+        "--opt",
+        "com.docker.network.bridge.enable_ip_masquerade=false",
+        "p2-isolated-56f10a6cd5fa"
+      ],
+      "exitCode": 0,
+      "label": "red-propia-sin-NAT-saliente",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "--network",
+        "p2-isolated-56f10a6cd5fa",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "1536m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw,size=1024m",
+        "--publish",
+        "127.0.0.1::5432",
+        "--env",
+        "POSTGRES_HOST_AUTH_METHOD=scram-sha-256",
+        "--env",
+        "POSTGRES_PASSWORD",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "postgres",
+        "-c",
+        "listen_addresses=*"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "--network",
+        "p2-isolated-56f10a6cd5fa",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "1536m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw,size=1024m",
+        "--publish",
+        "127.0.0.1::5432",
+        "--env",
+        "POSTGRES_HOST_AUTH_METHOD=scram-sha-256",
+        "--env",
+        "POSTGRES_PASSWORD",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "postgres",
+        "-c",
+        "listen_addresses=*"
+      ],
+      "exitCode": 0,
+      "label": "crear-contenedor-propio",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "exitCode": 2,
+      "label": "esperar-PG17-propio",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": "ExternalCommandExit",
+      "tracebackSanitized": [
+        {
+          "file": "run.py",
+          "line": 1047,
+          "function": "<module>"
+        },
+        {
+          "file": "run.py",
+          "line": 1010,
+          "function": "main"
+        },
+        {
+          "file": "run.py",
+          "line": 204,
+          "function": "start"
+        },
+        {
+          "file": "run.py",
+          "line": 161,
+          "function": "run"
+        }
+      ]
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "label": "esperar-PG17-propio",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "label": "sql-aislado",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "label": "sql-aislado",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "label": "sql-aislado",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 3,
+      "label": "sql-aislado",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "ERROR:  role name [literal omitido] is reserved\nDETAIL:  Role names starting with [literal omitido] are reserved.\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": "ExternalCommandExit",
+      "tracebackSanitized": [
+        {
+          "file": "run.py",
+          "line": 1047,
+          "function": "<module>"
+        },
+        {
+          "file": "run.py",
+          "line": 1011,
+          "function": "main"
+        },
+        {
+          "file": "run.py",
+          "line": 709,
+          "function": "restore_cipher"
+        },
+        {
+          "file": "run.py",
+          "line": 498,
+          "function": "roles_prepare"
+        },
+        {
+          "file": "run.py",
+          "line": 212,
+          "function": "local_sql"
+        },
+        {
+          "file": "run.py",
+          "line": 166,
+          "function": "docker"
+        },
+        {
+          "file": "run.py",
+          "line": 161,
+          "function": "run"
+        }
+      ]
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "rm",
+        "--force",
+        "--volumes",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "rm",
+        "--force",
+        "--volumes",
+        "kortek-m2-c3-p2-client-real-56f10a6cd5fa"
+      ],
+      "exitCode": 0,
+      "label": "retirar-contenedor-propio",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "rm",
+        "--force",
+        "--volumes",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "rm",
+        "--force",
+        "--volumes",
+        "kortek-m2-c3-p2-restore-56f10a6cd5fa"
+      ],
+      "exitCode": 0,
+      "label": "retirar-contenedor-propio",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "network",
+        "rm",
+        "p2-isolated-56f10a6cd5fa"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "network",
+        "rm",
+        "p2-isolated-56f10a6cd5fa"
+      ],
+      "exitCode": 0,
+      "label": "retirar-red-interna-propia",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--kill",
+        "gpg-agent"
+      ],
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-56f10a",
+        "--kill",
+        "gpg-agent"
+      ],
+      "exitCode": 0,
+      "label": "retirar-agente-GPG-propio",
+      "phase": "restore-cotejo-rollback",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    }
+  ],
+  "checks": [
+    {
+      "label": "paso0-completo-sin-congelar",
+      "loginTLSVerifyFull": true,
+      "transactionRepeatableReadReadOnly": true,
+      "statementTimeoutSeconds": 120,
+      "allPublicTablesSelect": true,
+      "scheduleTablesSelect": 5,
+      "schemaOnlyDumpExit": 0,
+      "ledgerEqualsP0": true,
+      "stage28Absent": true,
+      "counts": {
+        "clients": 20,
+        "bookings": 28,
+        "linked": 0,
+        "outboxOpen": 0,
+        "leased": 0
+      },
+      "tables": 36,
+      "sourceVersionNum": 170006,
+      "mode": "qa"
+    },
+    {
+      "label": "respaldo-cifrado-y-censo-misma-snapshot",
+      "backupBytes": 47745
+    }
+  ],
+  "ownedContainers": [
+    "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+    "kortek-m2-c3-p2-restore-56f10a6cd5fa"
+  ],
+  "removedContainers": [
+    "kortek-m2-c3-p2-client-real-56f10a6cd5fa",
+    "kortek-m2-c3-p2-restore-56f10a6cd5fa"
+  ],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "event": "terminado",
+  "initialInfra": "MainPID=673295\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=575989\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\nc507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4  /etc/kortek-api-staging/runtime-env\n118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8  /usr/local/libexec/kortek-api-staging-run.sh\n5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d  /usr/local/libexec/kortek-worker-staging-run.sh\n91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90  /etc/systemd/system/kortek-api-staging.service\na06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f  /etc/systemd/system/kortek-email-worker-staging.service\n",
+  "initialEffective": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "releaseMatchesP0": true,
+    "databaseRoleMatches": true,
+    "databaseMatches": true,
+    "postgresVersion": "17.6",
+    "qaUserMatches": true,
+    "qaEndpointMatches": true,
+    "effectiveServerMatchesQaDns": true,
+    "deployEnvironmentMatches": true,
+    "publicBookingOpen": true
+  },
+  "pgDumpVersion": "pg_dump (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2)",
+  "caHash": "1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a",
+  "writersComparisons": [
+    {
+      "baseline": {
+        "roles": [
+          {
+            "role": "kortek_migrator",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          },
+          {
+            "role": "kortek_runtime",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          }
+        ],
+        "otherRoleDml": [
+          {
+            "role": "anon",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticated",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticator",
+            "writeTables": 0
+          },
+          {
+            "role": "pgbouncer",
+            "writeTables": 0
+          },
+          {
+            "role": "service_role",
+            "writeTables": 0
+          }
+        ],
+        "membershipCount": 0,
+        "pgCronInstalled": false
+      },
+      "observed": {
+        "roles": [
+          {
+            "role": "kortek_migrator",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          },
+          {
+            "role": "kortek_runtime",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          }
+        ],
+        "otherRoleDml": [
+          {
+            "role": "anon",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticated",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticator",
+            "writeTables": 0
+          },
+          {
+            "role": "pgbouncer",
+            "writeTables": 0
+          },
+          {
+            "role": "service_role",
+            "writeTables": 0
+          }
+        ],
+        "membershipCount": 0,
+        "pgCronInstalled": false,
+        "preparedTransactions": 0,
+        "uncontrolledWriters": 0,
+        "invisibleSessions": 0,
+        "activeClientTransactions": 0
+      },
+      "equal": {
+        "roles": true,
+        "otherRoleDml": true,
+        "membershipCount": true,
+        "pgCronInstalled": true
+      }
+    },
+    {
+      "baseline": {
+        "roles": [
+          {
+            "role": "kortek_migrator",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          },
+          {
+            "role": "kortek_runtime",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          }
+        ],
+        "otherRoleDml": [
+          {
+            "role": "anon",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticated",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticator",
+            "writeTables": 0
+          },
+          {
+            "role": "pgbouncer",
+            "writeTables": 0
+          },
+          {
+            "role": "service_role",
+            "writeTables": 0
+          }
+        ],
+        "membershipCount": 0,
+        "pgCronInstalled": false
+      },
+      "observed": {
+        "roles": [
+          {
+            "role": "kortek_migrator",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          },
+          {
+            "role": "kortek_runtime",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          }
+        ],
+        "otherRoleDml": [
+          {
+            "role": "anon",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticated",
+            "writeTables": 0
+          },
+          {
+            "role": "authenticator",
+            "writeTables": 0
+          },
+          {
+            "role": "pgbouncer",
+            "writeTables": 0
+          },
+          {
+            "role": "service_role",
+            "writeTables": 0
+          }
+        ],
+        "membershipCount": 0,
+        "pgCronInstalled": false,
+        "preparedTransactions": 0,
+        "uncontrolledWriters": 0,
+        "invisibleSessions": 0,
+        "activeClientTransactions": 0
+      },
+      "equal": {
+        "roles": true,
+        "otherRoleDml": true,
+        "membershipCount": true,
+        "pgCronInstalled": true
+      }
+    }
+  ],
+  "writersValidation": {
+    "roles": [
+      {
+        "role": "kortek_migrator",
+        "login": true,
+        "super": false,
+        "inherit": false,
+        "createDb": false,
+        "bypassRls": false,
+        "createRole": false,
+        "replication": false
+      },
+      {
+        "role": "kortek_runtime",
+        "login": true,
+        "super": false,
+        "inherit": false,
+        "createDb": false,
+        "bypassRls": false,
+        "createRole": false,
+        "replication": false
+      }
+    ],
+    "otherRoleDml": [
+      {
+        "role": "anon",
+        "writeTables": 0
+      },
+      {
+        "role": "authenticated",
+        "writeTables": 0
+      },
+      {
+        "role": "authenticator",
+        "writeTables": 0
+      },
+      {
+        "role": "pgbouncer",
+        "writeTables": 0
+      },
+      {
+        "role": "service_role",
+        "writeTables": 0
+      }
+    ],
+    "membershipCount": 0,
+    "pgCronInstalled": false,
+    "preparedTransactions": 0,
+    "uncontrolledWriters": 0,
+    "invisibleSessions": 0,
+    "activeClientTransactions": 0
+  },
+  "loginValidation": {
+    "role": true,
+    "database": true,
+    "readonly": true,
+    "repeatableRead": true,
+    "version": true,
+    "allSelect": true
+  },
+  "ledgerComparisons": [
+    {
+      "phase": "paso0",
+      "observed": [
+        {
+          "name": "20260719162646_initial_schema",
+          "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260720044928_add_invoice_model",
+          "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722030552_link_professional_user",
+          "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722042926_add_customer_role",
+          "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260723212248_microsite_and_indexes",
+          "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260724023058_global_identity_membership",
+          "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260725215619_service_client_is_active",
+          "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260727010227_audit_log_user_id",
+          "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260811180000_booking_schedule_exclusion",
+          "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260812010000_professionals_backend_a1",
+          "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813193000_professional_individual_availability_a2",
+          "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813200000_professional_availability_tenant_fk",
+          "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260814190000_add_user_clerk_link_a0_1",
+          "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260815120000_password_nullable",
+          "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260820220000_audit_log_pre_tenant_security_events",
+          "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260826210000_facturacion_a_completion_service_price_guards",
+          "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260909120000_restore_invoice_integrity_checks",
+          "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260912120000_cms_editorial",
+          "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120000_booking_email_outbox",
+          "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120100_email_channel_control",
+          "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260915120000_email_template_version",
+          "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260923100000_media_promotions",
+          "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260925010000_security_rate_bucket",
+          "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260927170000_business_schedule",
+          "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+          "finished": true,
+          "rolledBack": false
+        }
+      ],
+      "baseline": [
+        {
+          "name": "20260719162646_initial_schema",
+          "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260720044928_add_invoice_model",
+          "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722030552_link_professional_user",
+          "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722042926_add_customer_role",
+          "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260723212248_microsite_and_indexes",
+          "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260724023058_global_identity_membership",
+          "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260725215619_service_client_is_active",
+          "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260727010227_audit_log_user_id",
+          "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260811180000_booking_schedule_exclusion",
+          "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260812010000_professionals_backend_a1",
+          "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813193000_professional_individual_availability_a2",
+          "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813200000_professional_availability_tenant_fk",
+          "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260814190000_add_user_clerk_link_a0_1",
+          "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260815120000_password_nullable",
+          "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260820220000_audit_log_pre_tenant_security_events",
+          "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260826210000_facturacion_a_completion_service_price_guards",
+          "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260909120000_restore_invoice_integrity_checks",
+          "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260912120000_cms_editorial",
+          "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120000_booking_email_outbox",
+          "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120100_email_channel_control",
+          "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260915120000_email_template_version",
+          "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260923100000_media_promotions",
+          "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260925010000_security_rate_bucket",
+          "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260927170000_business_schedule",
+          "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+          "finished": true,
+          "rolledBack": false
+        }
+      ],
+      "delta": {
+        "missing": [],
+        "extra": []
+      },
+      "equal": true
+    },
+    {
+      "phase": "snapshot",
+      "observed": [
+        {
+          "name": "20260719162646_initial_schema",
+          "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260720044928_add_invoice_model",
+          "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722030552_link_professional_user",
+          "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722042926_add_customer_role",
+          "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260723212248_microsite_and_indexes",
+          "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260724023058_global_identity_membership",
+          "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260725215619_service_client_is_active",
+          "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260727010227_audit_log_user_id",
+          "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260811180000_booking_schedule_exclusion",
+          "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260812010000_professionals_backend_a1",
+          "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813193000_professional_individual_availability_a2",
+          "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813200000_professional_availability_tenant_fk",
+          "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260814190000_add_user_clerk_link_a0_1",
+          "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260815120000_password_nullable",
+          "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260820220000_audit_log_pre_tenant_security_events",
+          "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260826210000_facturacion_a_completion_service_price_guards",
+          "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260909120000_restore_invoice_integrity_checks",
+          "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260912120000_cms_editorial",
+          "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120000_booking_email_outbox",
+          "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120100_email_channel_control",
+          "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260915120000_email_template_version",
+          "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260923100000_media_promotions",
+          "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260925010000_security_rate_bucket",
+          "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260927170000_business_schedule",
+          "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+          "finished": true,
+          "rolledBack": false
+        }
+      ],
+      "baseline": [
+        {
+          "name": "20260719162646_initial_schema",
+          "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260720044928_add_invoice_model",
+          "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722030552_link_professional_user",
+          "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260722042926_add_customer_role",
+          "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260723212248_microsite_and_indexes",
+          "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260724023058_global_identity_membership",
+          "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260725215619_service_client_is_active",
+          "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260727010227_audit_log_user_id",
+          "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260811180000_booking_schedule_exclusion",
+          "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260812010000_professionals_backend_a1",
+          "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813193000_professional_individual_availability_a2",
+          "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260813200000_professional_availability_tenant_fk",
+          "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260814190000_add_user_clerk_link_a0_1",
+          "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260815120000_password_nullable",
+          "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260820220000_audit_log_pre_tenant_security_events",
+          "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260821220000_team_invitations_a0_4",
+          "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260822150000_client_user_b2c_link_a0_6_a",
+          "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": false,
+          "rolledBack": true
+        },
+        {
+          "name": "20260825220000_facturacion_a_internal_invoices",
+          "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260826210000_facturacion_a_completion_service_price_guards",
+          "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260909120000_restore_invoice_integrity_checks",
+          "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260912120000_cms_editorial",
+          "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120000_booking_email_outbox",
+          "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260914120100_email_channel_control",
+          "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260915120000_email_template_version",
+          "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260923100000_media_promotions",
+          "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260925010000_security_rate_bucket",
+          "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20260927170000_business_schedule",
+          "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+          "finished": true,
+          "rolledBack": false
+        }
+      ],
+      "delta": {
+        "missing": [],
+        "extra": []
+      },
+      "equal": true
+    }
+  ],
+  "pre0": {
+    "loginTLSVerifyFull": true,
+    "transactionRepeatableReadReadOnly": true,
+    "statementTimeoutSeconds": 120,
+    "allPublicTablesSelect": true,
+    "scheduleTablesSelect": 5,
+    "schemaOnlyDumpExit": 0,
+    "ledgerEqualsP0": true,
+    "stage28Absent": true,
+    "counts": {
+      "clients": 20,
+      "bookings": 28,
+      "linked": 0,
+      "outboxOpen": 0,
+      "leased": 0
+    },
+    "tables": 36,
+    "sourceVersionNum": 170006,
+    "mode": "qa"
+  },
+  "beforeBackupInfra": "MainPID=673295\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=575989\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\nc507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4  /etc/kortek-api-staging/runtime-env\n118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8  /usr/local/libexec/kortek-api-staging-run.sh\n5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d  /usr/local/libexec/kortek-worker-staging-run.sh\n91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90  /etc/systemd/system/kortek-api-staging.service\na06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f  /etc/systemd/system/kortek-email-worker-staging.service\n",
+  "beforeBackupEffective": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "releaseMatchesP0": true,
+    "databaseRoleMatches": true,
+    "databaseMatches": true,
+    "postgresVersion": "17.6",
+    "qaUserMatches": true,
+    "qaEndpointMatches": true,
+    "effectiveServerMatchesQaDns": true,
+    "deployEnvironmentMatches": true,
+    "publicBookingOpen": true
+  },
+  "snapshotWritersValidation": {
+    "roles": [
+      {
+        "role": "kortek_migrator",
+        "login": true,
+        "super": false,
+        "inherit": false,
+        "createDb": false,
+        "bypassRls": false,
+        "createRole": false,
+        "replication": false
+      },
+      {
+        "role": "kortek_runtime",
+        "login": true,
+        "super": false,
+        "inherit": false,
+        "createDb": false,
+        "bypassRls": false,
+        "createRole": false,
+        "replication": false
+      }
+    ],
+    "otherRoleDml": [
+      {
+        "role": "anon",
+        "writeTables": 0
+      },
+      {
+        "role": "authenticated",
+        "writeTables": 0
+      },
+      {
+        "role": "authenticator",
+        "writeTables": 0
+      },
+      {
+        "role": "pgbouncer",
+        "writeTables": 0
+      },
+      {
+        "role": "service_role",
+        "writeTables": 0
+      }
+    ],
+    "membershipCount": 0,
+    "pgCronInstalled": false,
+    "preparedTransactions": 0,
+    "uncontrolledWriters": 0,
+    "invisibleSessions": 0,
+    "activeClientTransactions": 0
+  },
+  "ownGpgHome": {
+    "path": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\kh-56f10a",
+    "socketCharacters": 66
+  },
+  "backupFile": "C:\\KortekBackups\\qa-m2-c3\\qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.dump.gpg",
+  "censusEncryptedFile": "C:\\KortekBackups\\qa-m2-c3\\qa-m2-c3-p2-20261004T164109Z-56f10a6cd5fa.censo.gpg",
+  "backupSha256": "17f6e1191b15f828b444ee8db593e781dd707ed3c4b80f940a02ff16d0605063",
+  "censusEncryptedSha256": "10ee43953b675bcf50970256484ddcb535101e8664bcc1be39e328c0e4696084",
+  "backupBytes": 47745,
+  "snapshotCensus": {
+    "AuditLog": 98,
+    "Booking": 28,
+    "BookingEmailEvent": 64,
+    "BookingEmailPreference": 28,
+    "BusinessClosure": 4,
+    "BusinessSchedule": 4,
+    "BusinessScheduleDay": 21,
+    "BusinessScheduleRevision": 14,
+    "BusinessScheduleWindow": 21,
+    "Client": 20,
+    "CmsOperation": 5,
+    "CmsPage": 4,
+    "EmailAbuseBucket": 0,
+    "EmailChannelControl": 1,
+    "EmailOutbox": 50,
+    "EmailWebhookReceipt": 12,
+    "GalleryImage": 0,
+    "Invoice": 16,
+    "MediaAsset": 4,
+    "MediaGalleryOrder": 0,
+    "MediaOperation": 5,
+    "MediaPromotion": 1,
+    "MediaPurgeJob": 1,
+    "Membership": 9,
+    "Notification": 0,
+    "Organization": 4,
+    "Payment": 16,
+    "Professional": 5,
+    "ProfessionalAvailabilityBlock": 1,
+    "ProfessionalService": 0,
+    "ProfessionalWeeklySchedule": 0,
+    "SecurityRateBucket": 10,
+    "Service": 5,
+    "TeamInvitation": 1,
+    "User": 8,
+    "_prisma_migrations": 31
+  },
+  "snapshotCounts": {
+    "clients": 20,
+    "bookings": 28,
+    "linked": 0,
+    "outboxOpen": 0,
+    "leased": 0
+  },
+  "snapshotLedgerApplied": 27,
+  "secondIndependentEntryBeforeQa": true,
+  "failureCommand": {
+    "label": "sql-aislado",
+    "exitCode": 3,
+    "messageSanitized": "ERROR:  role name [literal omitido] is reserved\nDETAIL:  Role names starting with [literal omitido] are reserved.\n"
+  },
+  "success": false,
+  "errors": [
+    {
+      "event": "parada",
+      "phase": "restore-cotejo-rollback",
+      "exceptionClass": "RuntimeError",
+      "messageSanitized": "sql-aislado; exit=3; ERROR:  role name [literal omitido] is reserved\nDETAIL:  Role names starting with [literal omitido] are reserved.\n",
+      "queryLabel": "consulta-scalar",
+      "tracebackSanitized": [
+        {
+          "file": "run.py",
+          "line": 1011,
+          "function": "main"
+        },
+        {
+          "file": "run.py",
+          "line": 709,
+          "function": "restore_cipher"
+        },
+        {
+          "file": "run.py",
+          "line": 498,
+          "function": "roles_prepare"
+        },
+        {
+          "file": "run.py",
+          "line": 212,
+          "function": "local_sql"
+        },
+        {
+          "file": "run.py",
+          "line": 166,
+          "function": "docker"
+        },
+        {
+          "file": "run.py",
+          "line": 163,
+          "function": "run"
+        },
+        {
+          "file": "run.py",
+          "line": 116,
+          "function": "command_failure"
+        }
+      ]
+    }
+  ],
+  "failure": {
+    "event": "parada",
+    "phase": "restore-cotejo-rollback",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "sql-aislado; exit=3; ERROR:  role name [literal omitido] is reserved\nDETAIL:  Role names starting with [literal omitido] are reserved.\n",
+    "queryLabel": "consulta-scalar",
+    "tracebackSanitized": [
+      {
+        "file": "run.py",
+        "line": 1011,
+        "function": "main"
+      },
+      {
+        "file": "run.py",
+        "line": 709,
+        "function": "restore_cipher"
+      },
+      {
+        "file": "run.py",
+        "line": 498,
+        "function": "roles_prepare"
+      },
+      {
+        "file": "run.py",
+        "line": 212,
+        "function": "local_sql"
+      },
+      {
+        "file": "run.py",
+        "line": 166,
+        "function": "docker"
+      },
+      {
+        "file": "run.py",
+        "line": 163,
+        "function": "run"
+      },
+      {
+        "file": "run.py",
+        "line": 116,
+        "function": "command_failure"
+      }
+    ]
+  },
+  "ownGpgHomeRemoved": true,
+  "remainingOwnedContainers": [],
+  "finishedUtc": "2026-10-04T16:41:22.940463+00:00"
+}

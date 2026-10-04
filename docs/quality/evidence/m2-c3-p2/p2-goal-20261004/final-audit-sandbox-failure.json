@@ -1,0 +1,151 @@
+{
+  "base": "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef",
+  "startedUtc": "2026-10-04T21:58:14.378178+00:00",
+  "commands": [
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 255,
+      "label": "estado-seguro-QA",
+      "phase": "preparacion",
+      "stderrCompleteRedacted": "ssh: connect to host 150.136.7.19 port 22: Permission denied\r\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": "ExternalCommandExit",
+      "tracebackSanitized": [
+        {
+          "file": "final-audit.py",
+          "line": 12,
+          "function": "<module>"
+        },
+        {
+          "file": "run.py",
+          "line": 295,
+          "function": "infra"
+        },
+        {
+          "file": "run.py",
+          "line": 167,
+          "function": "ssh"
+        },
+        {
+          "file": "run.py",
+          "line": 161,
+          "function": "run"
+        }
+      ]
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "failureCommand": {
+    "label": "estado-seguro-QA",
+    "exitCode": 255,
+    "messageSanitized": "ssh: connect to host 150.136.7.19 port 22: Permission denied\r\n"
+  },
+  "success": false,
+  "errors": [
+    {
+      "event": "parada",
+      "phase": "preparacion",
+      "exceptionClass": "RuntimeError",
+      "messageSanitized": "estado-seguro-QA; exit=255; ssh: connect to host 150.136.7.19 port 22: Permission denied\r\n",
+      "queryLabel": null,
+      "tracebackSanitized": [
+        {
+          "file": "final-audit.py",
+          "line": 12,
+          "function": "<module>"
+        },
+        {
+          "file": "run.py",
+          "line": 295,
+          "function": "infra"
+        },
+        {
+          "file": "run.py",
+          "line": 167,
+          "function": "ssh"
+        },
+        {
+          "file": "run.py",
+          "line": 163,
+          "function": "run"
+        },
+        {
+          "file": "run.py",
+          "line": 116,
+          "function": "command_failure"
+        }
+      ]
+    }
+  ],
+  "failure": {
+    "event": "parada",
+    "phase": "preparacion",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "estado-seguro-QA; exit=255; ssh: connect to host 150.136.7.19 port 22: Permission denied\r\n",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "final-audit.py",
+        "line": 12,
+        "function": "<module>"
+      },
+      {
+        "file": "run.py",
+        "line": 295,
+        "function": "infra"
+      },
+      {
+        "file": "run.py",
+        "line": 167,
+        "function": "ssh"
+      },
+      {
+        "file": "run.py",
+        "line": 163,
+        "function": "run"
+      },
+      {
+        "file": "run.py",
+        "line": 116,
+        "function": "command_failure"
+      }
+    ]
+  }
+}

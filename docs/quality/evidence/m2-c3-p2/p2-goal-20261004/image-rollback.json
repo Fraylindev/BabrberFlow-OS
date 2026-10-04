@@ -1,0 +1,384 @@
+{
+  "commands": [
+    {
+      "argvSanitized": [
+        "podman",
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.072
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "97432f980da100ebd3e419711efee84e1e97a966d62c035286a07f239ddb4d9c"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.072
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "run",
+        "--detach",
+        "--rm",
+        "--pull=never",
+        "--read-only",
+        "--name",
+        "kortek-p2-image-db-b4d56bcedead",
+        "--network",
+        "none",
+        "--cpus",
+        "1",
+        "--memory",
+        "768m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw,size=512m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--tmpfs",
+        "/tmp:rw,size=32m",
+        "-e",
+        "POSTGRES_HOST_AUTH_METHOD=trust",
+        "97432f980da100ebd3e419711efee84e1e97a966d62c035286a07f239ddb4d9c",
+        "postgres",
+        "-c",
+        "listen_addresses=127.0.0.1"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.144
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "kortek-p2-image-db-b4d56bcedead",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "exitCode": 2,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": "ExternalCommandExit",
+      "elapsedSeconds": 0.224
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "kortek-p2-image-db-b4d56bcedead",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "exitCode": 2,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": "ExternalCommandExit",
+      "elapsedSeconds": 0.128
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "kortek-p2-image-db-b4d56bcedead",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.195
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-p2-image-db-b4d56bcedead",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.141
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-p2-image-db-b4d56bcedead",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "NOTICE:  extension [literal omitido] already exists, skipping\n",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.303
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-p2-image-db-b4d56bcedead",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "kortek_migrator",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.184
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-p2-image-db-b4d56bcedead",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.134
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "exec",
+        "-i",
+        "-e",
+        "PGCLIENTENCODING=UTF8",
+        "kortek-p2-image-db-b4d56bcedead",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.211
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "run",
+        "--rm",
+        "--pull=never",
+        "--read-only",
+        "--name",
+        "kortek-p2-image-api-b4d56bcedead",
+        "--network",
+        "container:kortek-p2-image-db-b4d56bcedead",
+        "--cpus",
+        "1",
+        "--memory",
+        "1024m",
+        "--pids-limit",
+        "256",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--workdir",
+        "/srv/kortek/apps/api",
+        "-i",
+        "-e",
+        "DATABASE_URL",
+        "-e",
+        "NODE_ENV",
+        "-e",
+        "DEPLOY_ENV",
+        "-e",
+        "NOTIFICATIONS_EMAIL_ENABLED",
+        "-e",
+        "PUBLIC_BOOKING_CLOSED",
+        "-e",
+        "REQUIRE_INTERNAL_MFA",
+        "-e",
+        "JWT_SECRET",
+        "-e",
+        "CLERK_SECRET_KEY",
+        "-e",
+        "CLERK_PUBLISHABLE_KEY",
+        "-e",
+        "CLERK_AUTHORIZED_PARTIES",
+        "-e",
+        "P1_FIXTURE",
+        "-e",
+        "APP_RELEASE",
+        "--entrypoint",
+        "node",
+        "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 1.718
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "rm",
+        "--force",
+        "--volumes",
+        "--ignore",
+        "kortek-p2-image-api-b4d56bcedead"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.052
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^kortek-p2-image-api-b4d56bcedead$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.066
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "rm",
+        "--force",
+        "--volumes",
+        "--ignore",
+        "kortek-p2-image-db-b4d56bcedead"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.157
+    },
+    {
+      "argvSanitized": [
+        "podman",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^kortek-p2-image-db-b4d56bcedead$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "phase": "rollback-imagen-aislada",
+      "exceptionClass": null,
+      "elapsedSeconds": 0.057
+    }
+  ],
+  "checks": [
+    "schema27-a28-exclusivamente-sintetico"
+  ],
+  "owned": [
+    "kortek-p2-image-db-b4d56bcedead",
+    "kortek-p2-image-api-b4d56bcedead"
+  ],
+  "removed": [
+    "kortek-p2-image-api-b4d56bcedead",
+    "kortek-p2-image-db-b4d56bcedead"
+  ],
+  "realDatabaseConnections": 0,
+  "imageExported": false,
+  "productionAccess": false,
+  "postgresVersion": "17.11 (Debian 17.11-1.pgdg13+2)",
+  "result": {
+    "runtime": "kortek_runtime",
+    "publicRead": 200,
+    "repeatedClaim": 200,
+    "publicBooking": 201,
+    "pendingBooking": true,
+    "receiptsPreserved": true,
+    "postUpgradeBookingPreserved": true,
+    "linkPreserved": true,
+    "oldApiDoesNotUnblock": true,
+    "m2RoutesAbsent": true
+  },
+  "apiImage": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+  "pgImage": "97432f980da100ebd3e419711efee84e1e97a966d62c035286a07f239ddb4d9c",
+  "success": true
+}

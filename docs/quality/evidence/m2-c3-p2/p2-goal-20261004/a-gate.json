@@ -1,0 +1,49 @@
+{
+  "complete": true,
+  "scope": "A synthetic only; four cases plus targeted fifth after CRLF assertion repair",
+  "baseHead": "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef",
+  "executorSha256": "b44ea1f54f940e8fe176f13e7a7ead78a1999c04f2f1f926bd2c58140b3ac476",
+  "harnessSha256": "71bd749aff91645022e9c975f3a581c24eabf2dfad42ea90ed058e9af070301c",
+  "cases": [
+    {
+      "case": "recorrido-completo",
+      "passed": true,
+      "externalCalls": [],
+      "expectedFailure": false,
+      "reportRelative": ".tmp\\p2-goal\\attempt-f3b4fcf4\\case-recorrido-completo\\result.json"
+    },
+    {
+      "case": "fallo-antes-dump",
+      "passed": true,
+      "externalCalls": [],
+      "expectedFailure": true,
+      "reportRelative": ".tmp\\p2-goal\\attempt-f3b4fcf4\\case-fallo-antes-dump\\result.json"
+    },
+    {
+      "case": "frase-mal-repetida",
+      "passed": true,
+      "externalCalls": [],
+      "expectedFailure": true,
+      "reportRelative": ".tmp\\p2-goal\\attempt-f3b4fcf4\\case-frase-mal-repetida\\result.json"
+    },
+    {
+      "case": "restore-alterado",
+      "passed": true,
+      "externalCalls": [],
+      "expectedFailure": true,
+      "reportRelative": ".tmp\\p2-goal\\attempt-f3b4fcf4\\case-restore-alterado\\result.json"
+    },
+    {
+      "case": "persistencia-error",
+      "passed": true,
+      "externalCalls": [],
+      "expectedFailure": true,
+      "reportRelative": ".tmp\\p2-goal\\attempt-9596449d\\case-persistencia-error\\result.json"
+    }
+  ],
+  "qaConnections": 0,
+  "executorUnchangedBetweenFinalFullAndTargeted": true,
+  "harnessMetadataBaseIsInheritedHistoricalLabel": true,
+  "originalExecutorSha256": "f7cd5fb44503508d70706ebf962ce1f6816c0c24aec15c7e20ceb4c5a5dbf4dc",
+  "supplementalValidation": "probe-owner: builtin owner reused on local PG17; source backup and manifest hash guards; C resume retains original snapshot"
+}

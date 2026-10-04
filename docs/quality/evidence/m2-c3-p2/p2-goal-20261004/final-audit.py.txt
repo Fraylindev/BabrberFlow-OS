@@ -1,0 +1,38 @@
+import run as m,json,hashlib
+from pathlib import Path
+base=m.WORK
+m.WORK=base/'final-audit-refreshed';m.WORK.mkdir()
+first=json.loads((base/'real-attempt-01.json').read_text())
+final=json.loads((base/'result.json').read_text())
+actual_image=json.loads((base/'real-image-drill/remote-result.json').read_text())
+try:
+    assert final['success'] and final['backupAccepted'] and actual_image['success']
+    assert set(actual_image['owned'])==set(actual_image['removed'])
+    assert actual_image['imageExported'] is False and actual_image['realDatabaseConnections']==0
+    current=m.infra();effective=m.effective();http=m.public_get()
+    assert current==first['initialInfra']==final['finalInfra']
+    assert effective['release']==m.RELEASE and http['status']==200
+    hashes={}
+    for field,expected in [('backupFile','backupSha256'),('censusEncryptedFile','censusEncryptedSha256')]:
+        path=Path(first[field]);digest=hashlib.sha256(path.read_bytes()).hexdigest()
+        assert path.parent==m.CUSTODY and digest==first[expected]
+        hashes[field]={'path':str(path),'sha256':digest,'bytes':path.stat().st_size}
+    owned=set();networks=set()
+    for path in base.rglob('result.json'):
+        obj=json.loads(path.read_text())
+        owned.update(obj.get('ownedContainers',[]))
+        for command in obj.get('commands',[]):
+            args=command.get('args',[])
+            if args[:5]==m.DOCKER+['network','create'] and command['exitCode']==0:networks.add(args[-1])
+    current_containers=set(m.docker('ps','-a','--format','{{.Names}}',label='inventario-solo-nombres-local').decode().splitlines())
+    current_networks=set(m.docker('network','ls','--format','{{.Name}}',label='inventario-solo-nombres-redes-local').decode().splitlines())
+    assert not owned & current_containers
+    assert not networks & current_networks
+    m.REPORT.update(success=True,initialHead='5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef',
+      finalInfra=current,finalEffective=effective,publicBooking=http,hashes=hashes,
+      localOwnedContainersChecked=sorted(owned),localOwnNetworksChecked=sorted(networks),
+      remainingOwnedContainers=[],remainingOwnNetworks=[],remoteImageContainersRemoved=actual_image['removed'],
+      backupRepresentsOnlyOriginalSnapshot=True,p3bRequiresNewFrozenBackup=True)
+    print(json.dumps({'auditPassed':True,'localContainersAbsent':len(owned),'networksAbsent':len(networks),'http':http['status'],'hashesUnchanged':True}))
+except Exception as error:m.retain_failure(error);raise
+finally:m.save()
