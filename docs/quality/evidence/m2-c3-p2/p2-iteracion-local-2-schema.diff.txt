@@ -1,0 +1,29 @@
+--- snapshot-schema.sql
++++ restore-schema.sql
+@@ -485,7 +485,7 @@
+     "dayOfWeek" integer NOT NULL,
+     "startMinute" integer NOT NULL,
+     "endMinute" integer NOT NULL,
+-    CONSTRAINT "BusinessScheduleWindow_minutes_check" CHECK (((("startMinute" >= 0) AND ("startMinute" <= 1439)) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))
++    CONSTRAINT "BusinessScheduleWindow_minutes_check" CHECK ((("startMinute" >= 0) AND ("startMinute" <= 1439) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))
+ );
+ 
+ 
+@@ -595,7 +595,7 @@
+     "providerId" text,
+     "providerEventAt" timestamp(3) without time zone,
+     "templateVersion" text,
+-    CONSTRAINT "EmailOutbox_budget_check" CHECK ((((attempts >= 0) AND (attempts <= 5)) AND ("expiresAt" > "createdAt") AND ("expiresAt" <= ("createdAt" + '24:00:00'::interval)))),
++    CONSTRAINT "EmailOutbox_budget_check" CHECK (((attempts >= 0) AND (attempts <= 5) AND ("expiresAt" > "createdAt") AND ("expiresAt" <= ("createdAt" + '24:00:00'::interval)))),
+     CONSTRAINT "EmailOutbox_channel_check" CHECK ((channel = 'EMAIL'::text)),
+     CONSTRAINT "EmailOutbox_status_check" CHECK ((status = ANY (ARRAY['PENDING'::text, 'PROCESSING'::text, 'RETRY'::text, 'ACCEPTED'::text, 'DELIVERED'::text, 'FAILED'::text, 'UNCERTAIN'::text, 'OMITTED'::text, 'OBSOLETE'::text])))
+ );
+@@ -896,7 +896,7 @@
+     "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+     "updatedAt" timestamp(3) without time zone NOT NULL,
+     CONSTRAINT "ProfessionalWeeklySchedule_day_check" CHECK ((("dayOfWeek" >= 0) AND ("dayOfWeek" <= 6))),
+-    CONSTRAINT "ProfessionalWeeklySchedule_minutes_check" CHECK (((("startMinute" >= 0) AND ("startMinute" <= 1439)) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))
++    CONSTRAINT "ProfessionalWeeklySchedule_minutes_check" CHECK ((("startMinute" >= 0) AND ("startMinute" <= 1439) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))
+ );
+ 
+ 

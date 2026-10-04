@@ -1,0 +1,2092 @@
+--
+-- PostgreSQL database dump
+--
+
+
+-- Dumped from database version 17.11 (Debian 17.11-1.pgdg13+2)
+-- Dumped by pg_dump version 17.11 (Debian 17.11-1.pgdg13+2)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA public;
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- Name: AvailabilityBlockStatus; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."AvailabilityBlockStatus" AS ENUM (
+    'ACTIVE',
+    'CANCELLED'
+);
+
+
+--
+-- Name: BookingStatus; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."BookingStatus" AS ENUM (
+    'PENDING',
+    'CONFIRMED',
+    'CANCELLED',
+    'COMPLETED',
+    'NO_SHOW'
+);
+
+
+--
+-- Name: BusinessScheduleState; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."BusinessScheduleState" AS ENUM (
+    'UNCONFIRMED',
+    'LEGACY_UNCONFIRMED',
+    'CONFIRMED'
+);
+
+
+--
+-- Name: MediaAssetPurpose; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."MediaAssetPurpose" AS ENUM (
+    'GALLERY',
+    'SERVICE',
+    'PROFESSIONAL_AVATAR',
+    'PROMOTION'
+);
+
+
+--
+-- Name: MediaAssetStatus; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."MediaAssetStatus" AS ENUM (
+    'STAGED',
+    'APPROVED',
+    'PUBLISHED',
+    'QUARANTINED',
+    'RETIRED',
+    'PURGED'
+);
+
+
+--
+-- Name: MediaModerationStatus; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."MediaModerationStatus" AS ENUM (
+    'PENDING',
+    'APPROVED',
+    'REJECTED'
+);
+
+
+--
+-- Name: PaymentMethod; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."PaymentMethod" AS ENUM (
+    'CASH',
+    'CARD',
+    'TRANSFER'
+);
+
+
+--
+-- Name: ProfessionalStatus; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."ProfessionalStatus" AS ENUM (
+    'ACTIVE',
+    'INACTIVE',
+    'ARCHIVED'
+);
+
+
+--
+-- Name: TeamInvitationStatus; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."TeamInvitationStatus" AS ENUM (
+    'CREATING',
+    'PENDING',
+    'RESENDING',
+    'REVOKING',
+    'ACCEPTED',
+    'REVOKED',
+    'EXPIRED',
+    'FAILED'
+);
+
+
+--
+-- Name: UserRole; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public."UserRole" AS ENUM (
+    'OWNER',
+    'ADMIN',
+    'BARBER',
+    'RECEPTIONIST',
+    'CUSTOMER'
+);
+
+
+--
+-- Name: cms_initialize_unpublished(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.cms_initialize_unpublished() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  INSERT INTO "CmsPage" ("organizationId", "draft") VALUES (
+    NEW."id", jsonb_build_object('publicName', NEW."name", 'phone', NEW."phone", 'description', NULL, 'address', NULL, 'googleMapsUrl', NULL)
+  );
+  RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: media_quarantine_professional_avatar(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.media_quarantine_professional_avatar() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE affected RECORD;
+BEGIN
+  IF TG_OP = 'DELETE' OR
+     (OLD."status" <> 'ARCHIVED' AND NEW."status" = 'ARCHIVED') OR
+     (OLD."isPublic" = true AND NEW."isPublic" = false) THEN
+    FOR affected IN
+      UPDATE "MediaAsset"
+      SET "status" = 'QUARANTINED', "targetId" = NULL,
+          "quarantinedAt" = CURRENT_TIMESTAMP, "purgeAfter" = CURRENT_TIMESTAMP,
+          "updatedAt" = CURRENT_TIMESTAMP
+      WHERE "organizationId" = OLD."organizationId"
+        AND "purpose" = 'PROFESSIONAL_AVATAR' AND "targetId" = OLD."id"
+        AND "status" IN ('STAGED', 'APPROVED', 'PUBLISHED')
+      RETURNING "id"
+    LOOP
+      INSERT INTO "MediaPurgeJob" ("assetId", "organizationId", "nextAttemptAt")
+      VALUES (affected."id", OLD."organizationId", CURRENT_TIMESTAMP)
+      ON CONFLICT ("assetId") DO UPDATE
+        SET "nextAttemptAt" = CURRENT_TIMESTAMP, "completedAt" = NULL;
+    END LOOP;
+  END IF;
+  IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
+  RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: media_quarantine_service_images(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.media_quarantine_service_images() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE affected RECORD;
+BEGIN
+  IF TG_OP = 'DELETE' OR (OLD."isActive" = true AND NEW."isActive" = false) THEN
+    FOR affected IN
+      UPDATE "MediaAsset"
+      SET "status" = 'QUARANTINED', "targetId" = NULL,
+          "quarantinedAt" = CURRENT_TIMESTAMP, "purgeAfter" = CURRENT_TIMESTAMP,
+          "updatedAt" = CURRENT_TIMESTAMP
+      WHERE "organizationId" = OLD."organizationId"
+        AND "purpose" = 'SERVICE' AND "targetId" = OLD."id"
+        AND "status" IN ('STAGED', 'APPROVED', 'PUBLISHED')
+      RETURNING "id"
+    LOOP
+      INSERT INTO "MediaPurgeJob" ("assetId", "organizationId", "nextAttemptAt")
+      VALUES (affected."id", OLD."organizationId", CURRENT_TIMESTAMP)
+      ON CONFLICT ("assetId") DO UPDATE
+        SET "nextAttemptAt" = CURRENT_TIMESTAMP, "completedAt" = NULL;
+    END LOOP;
+  END IF;
+  IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
+  RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: media_retire_inactive_organization(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.media_retire_inactive_organization() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE affected RECORD;
+BEGIN
+  IF (NEW."isActive" = false OR NEW."deletedAt" IS NOT NULL)
+     AND (OLD."isActive" = true AND OLD."deletedAt" IS NULL) THEN
+    UPDATE "MediaPromotion"
+    SET "isPublished" = false, "retiredAt" = CURRENT_TIMESTAMP,
+        "version" = "version" + 1, "updatedAt" = CURRENT_TIMESTAMP
+    WHERE "organizationId" = NEW."id" AND "retiredAt" IS NULL;
+    FOR affected IN
+      UPDATE "MediaAsset"
+      SET "status" = 'RETIRED', "retiredAt" = CURRENT_TIMESTAMP,
+          "purgeAfter" = CURRENT_TIMESTAMP, "updatedAt" = CURRENT_TIMESTAMP
+      WHERE "organizationId" = NEW."id" AND "status" <> 'PURGED'
+      RETURNING "id"
+    LOOP
+      INSERT INTO "MediaPurgeJob" ("assetId", "organizationId", "nextAttemptAt")
+      VALUES (affected."id", NEW."id", CURRENT_TIMESTAMP)
+      ON CONFLICT ("assetId") DO UPDATE
+        SET "nextAttemptAt" = CURRENT_TIMESTAMP, "completedAt" = NULL;
+    END LOOP;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: notification_client_email_invalidation(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.notification_client_email_invalidation() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  IF NEW."emailRevision" <> OLD."emailRevision" THEN
+    UPDATE "BookingEmailPreference"
+       SET "reviewedContactRevision" = NULL, "version" = "version" + 1
+     WHERE "clientId" = NEW."id" AND "organizationId" = NEW."organizationId";
+    UPDATE "EmailOutbox" o
+       SET "status" = 'OBSOLETE', "reason" = 'CONTACT_CHANGED',
+           "closedAt" = CURRENT_TIMESTAMP, "leaseToken" = NULL, "leaseExpiresAt" = NULL
+      FROM "BookingEmailPreference" p
+     WHERE p."clientId" = NEW."id" AND p."organizationId" = NEW."organizationId"
+       AND o."bookingId" = p."bookingId" AND o."organizationId" = p."organizationId"
+       AND o."status" IN ('PENDING', 'RETRY', 'PROCESSING');
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: notification_client_email_revision(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.notification_client_email_revision() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  IF lower(btrim(NEW."email")) IS DISTINCT FROM lower(btrim(OLD."email")) THEN
+    NEW."emailRevision" := OLD."emailRevision" + 1;
+  ELSE
+    NEW."emailRevision" := OLD."emailRevision";
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: validate_business_schedule(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.validate_business_schedule() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE tenant TEXT; BEGIN
+  tenant := COALESCE(NEW."organizationId", OLD."organizationId");
+  IF EXISTS (SELECT 1 FROM "BusinessScheduleWindow" WHERE "organizationId"=tenant GROUP BY "dayOfWeek" HAVING count(*)>5) THEN
+    RAISE EXCEPTION 'Too many business windows' USING ERRCODE='23514';
+  END IF;
+  IF EXISTS (SELECT 1 FROM "BusinessSchedule" WHERE "organizationId"=tenant AND "state"='CONFIRMED')
+    AND (SELECT count(*) FROM "BusinessScheduleDay" WHERE "organizationId"=tenant)<>7 THEN
+    RAISE EXCEPTION 'Incomplete confirmed business week' USING ERRCODE='23514';
+  END IF;
+  RETURN NULL;
+END $$;
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: AuditLog; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."AuditLog" (
+    id text NOT NULL,
+    "organizationId" text,
+    action text NOT NULL,
+    entity text NOT NULL,
+    "entityId" text,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "userId" text,
+    CONSTRAINT "AuditLog_pre_tenant_security_event_check" CHECK ((("organizationId" IS NOT NULL) OR ((action = 'CLERK_ONBOARDING_EMAIL_CONFLICT'::text) AND (entity = 'SecurityEvent'::text) AND ("userId" IS NULL) AND ("entityId" IS NULL))))
+);
+
+
+--
+-- Name: Booking; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Booking" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "clientId" text NOT NULL,
+    "professionalId" text NOT NULL,
+    "serviceId" text NOT NULL,
+    "startTime" timestamp(3) without time zone NOT NULL,
+    "endTime" timestamp(3) without time zone NOT NULL,
+    status public."BookingStatus" DEFAULT 'PENDING'::public."BookingStatus" NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL
+);
+
+
+--
+-- Name: BookingEmailEvent; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BookingEmailEvent" (
+    "bookingId" text NOT NULL,
+    "organizationId" text NOT NULL,
+    sequence integer NOT NULL,
+    kind text NOT NULL,
+    "bookingStatus" public."BookingStatus" NOT NULL,
+    "startTime" timestamp(3) without time zone NOT NULL,
+    "endTime" timestamp(3) without time zone NOT NULL,
+    "serviceId" text NOT NULL,
+    "professionalId" text NOT NULL,
+    "contactRevision" integer NOT NULL,
+    "preferenceVersion" integer NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT "BookingEmailEvent_kind_check" CHECK ((kind = ANY (ARRAY['CREATED'::text, 'CONFIRMED'::text, 'CANCELLED'::text, 'RESCHEDULED'::text, 'COMPLETED'::text, 'INVALIDATED'::text])))
+);
+
+
+--
+-- Name: BookingEmailPreference; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BookingEmailPreference" (
+    "bookingId" text NOT NULL,
+    "organizationId" text NOT NULL,
+    "clientId" text NOT NULL,
+    sequence integer DEFAULT 0 NOT NULL,
+    version integer DEFAULT 0 NOT NULL,
+    "optedIn" boolean DEFAULT false NOT NULL,
+    "noticeVersion" text,
+    "recordedAt" timestamp(3) without time zone,
+    source text,
+    "reviewedContactRevision" integer,
+    CONSTRAINT "BookingEmailPreference_revision_check" CHECK (((sequence >= 0) AND (version >= 0) AND (("reviewedContactRevision" IS NULL) OR ("reviewedContactRevision" >= 0)))),
+    CONSTRAINT "BookingEmailPreference_source_check" CHECK (((source IS NULL) OR (source = ANY (ARRAY['PUBLIC'::text, 'STAFF'::text]))))
+);
+
+
+--
+-- Name: BusinessClosure; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BusinessClosure" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "startDate" date NOT NULL,
+    "endDate" date NOT NULL,
+    "startMinute" integer NOT NULL,
+    "endMinute" integer NOT NULL,
+    status public."AvailabilityBlockStatus" DEFAULT 'ACTIVE'::public."AvailabilityBlockStatus" NOT NULL,
+    reason character varying(500),
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "cancelledAt" timestamp(3) without time zone,
+    CONSTRAINT "BusinessClosure_cancel_check" CHECK ((((status = 'ACTIVE'::public."AvailabilityBlockStatus") AND ("cancelledAt" IS NULL)) OR ((status = 'CANCELLED'::public."AvailabilityBlockStatus") AND ("cancelledAt" IS NOT NULL)))),
+    CONSTRAINT "BusinessClosure_range_check" CHECK ((("startDate" <= "endDate") AND (("startMinute" >= 0) AND ("startMinute" <= 1439)) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute") AND (("startDate" = "endDate") OR (("startMinute" = 0) AND ("endMinute" = 1440)))))
+);
+
+
+--
+-- Name: BusinessSchedule; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BusinessSchedule" (
+    "organizationId" text NOT NULL,
+    revision integer DEFAULT 0 NOT NULL,
+    state public."BusinessScheduleState" DEFAULT 'UNCONFIRMED'::public."BusinessScheduleState" NOT NULL,
+    "zoneConfirmed" boolean DEFAULT false NOT NULL,
+    "legacyCategory" text,
+    "legacyOriginal" jsonb,
+    "legacyPublicAllowed" boolean DEFAULT false NOT NULL,
+    CONSTRAINT "BusinessSchedule_category_check" CHECK ((("legacyCategory" IS NULL) OR ("legacyCategory" = ANY (ARRAY['SQL_NULL'::text, 'JSON_NULL'::text, 'VALID'::text, 'INVALID'::text])))),
+    CONSTRAINT "BusinessSchedule_confirmation_check" CHECK (((state <> 'CONFIRMED'::public."BusinessScheduleState") OR "zoneConfirmed")),
+    CONSTRAINT "BusinessSchedule_revision_check" CHECK ((revision >= 0))
+);
+
+
+--
+-- Name: BusinessScheduleDay; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BusinessScheduleDay" (
+    "organizationId" text NOT NULL,
+    "dayOfWeek" integer NOT NULL,
+    CONSTRAINT "BusinessScheduleDay_day_check" CHECK ((("dayOfWeek" >= 0) AND ("dayOfWeek" <= 6)))
+);
+
+
+--
+-- Name: BusinessScheduleRevision; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BusinessScheduleRevision" (
+    "organizationId" text NOT NULL,
+    revision integer NOT NULL,
+    "actorUserId" text NOT NULL,
+    operation text NOT NULL,
+    snapshot jsonb NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT "BusinessScheduleRevision_revision_check" CHECK ((revision > 0))
+);
+
+
+--
+-- Name: BusinessScheduleWindow; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BusinessScheduleWindow" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "dayOfWeek" integer NOT NULL,
+    "startMinute" integer NOT NULL,
+    "endMinute" integer NOT NULL,
+    CONSTRAINT "BusinessScheduleWindow_minutes_check" CHECK ((("startMinute" >= 0) AND ("startMinute" <= 1439) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))
+);
+
+
+--
+-- Name: Client; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Client" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    name text NOT NULL,
+    email text,
+    phone text,
+    notes text,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    "userId" text,
+    "emailRevision" integer DEFAULT 0 NOT NULL,
+    CONSTRAINT "Client_emailRevision_check" CHECK (("emailRevision" >= 0))
+);
+
+
+--
+-- Name: CmsOperation; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CmsOperation" (
+    "organizationId" text NOT NULL,
+    "actorUserId" text NOT NULL,
+    key text NOT NULL,
+    operation text NOT NULL,
+    "requestHash" text NOT NULL,
+    version integer NOT NULL,
+    "publishedRevision" integer,
+    "isPublished" boolean NOT NULL,
+    CONSTRAINT "CmsOperation_operation_check" CHECK ((operation = ANY (ARRAY['SAVE_DRAFT'::text, 'PUBLISH'::text, 'UNPUBLISH'::text])))
+);
+
+
+--
+-- Name: CmsPage; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CmsPage" (
+    "organizationId" text NOT NULL,
+    version integer DEFAULT 0 NOT NULL,
+    "draftRevision" integer DEFAULT 0 NOT NULL,
+    draft jsonb NOT NULL,
+    "publishedSnapshot" jsonb,
+    "publishedRevision" integer,
+    "isPublished" boolean DEFAULT false NOT NULL,
+    CONSTRAINT "CmsPage_content_check" CHECK (((jsonb_typeof(draft) = 'object'::text) AND (("publishedSnapshot" IS NULL) OR (jsonb_typeof("publishedSnapshot") = 'object'::text)))),
+    CONSTRAINT "CmsPage_publication_check" CHECK (((("publishedSnapshot" IS NULL) = ("publishedRevision" IS NULL)) AND ((NOT "isPublished") OR ("publishedSnapshot" IS NOT NULL)))),
+    CONSTRAINT "CmsPage_revisions_check" CHECK (((version >= 0) AND ("draftRevision" >= 0) AND ("draftRevision" <= version) AND (("publishedRevision" IS NULL) OR (("publishedRevision" >= 0) AND ("publishedRevision" <= "draftRevision")))))
+);
+
+
+--
+-- Name: EmailAbuseBucket; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EmailAbuseBucket" (
+    key text NOT NULL,
+    "windowStart" timestamp(3) without time zone NOT NULL,
+    count integer DEFAULT 0 NOT NULL,
+    CONSTRAINT "EmailAbuseBucket_count_check" CHECK ((count >= 0))
+);
+
+
+--
+-- Name: EmailChannelControl; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EmailChannelControl" (
+    id text NOT NULL,
+    paused boolean DEFAULT false NOT NULL,
+    reason text,
+    "updatedAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT "EmailChannelControl_channel_check" CHECK ((id = 'EMAIL'::text))
+);
+
+
+--
+-- Name: EmailOutbox; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EmailOutbox" (
+    id text NOT NULL,
+    "bookingId" text NOT NULL,
+    "organizationId" text NOT NULL,
+    "eventSequence" integer NOT NULL,
+    channel text DEFAULT 'EMAIL'::text NOT NULL,
+    status text DEFAULT 'PENDING'::text NOT NULL,
+    reason text,
+    attempts integer DEFAULT 0 NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "expiresAt" timestamp(3) without time zone NOT NULL,
+    "nextAttemptAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "retryAfter" timestamp(3) without time zone,
+    "leaseToken" text,
+    "leaseExpiresAt" timestamp(3) without time zone,
+    "firstDispatchedAt" timestamp(3) without time zone,
+    "closedAt" timestamp(3) without time zone,
+    recipient text,
+    "sealedPayload" jsonb,
+    "providerId" text,
+    "providerEventAt" timestamp(3) without time zone,
+    "templateVersion" text,
+    CONSTRAINT "EmailOutbox_budget_check" CHECK (((attempts >= 0) AND (attempts <= 5) AND ("expiresAt" > "createdAt") AND ("expiresAt" <= ("createdAt" + '24:00:00'::interval)))),
+    CONSTRAINT "EmailOutbox_channel_check" CHECK ((channel = 'EMAIL'::text)),
+    CONSTRAINT "EmailOutbox_status_check" CHECK ((status = ANY (ARRAY['PENDING'::text, 'PROCESSING'::text, 'RETRY'::text, 'ACCEPTED'::text, 'DELIVERED'::text, 'FAILED'::text, 'UNCERTAIN'::text, 'OMITTED'::text, 'OBSOLETE'::text])))
+);
+
+
+--
+-- Name: EmailWebhookReceipt; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EmailWebhookReceipt" (
+    id text NOT NULL,
+    "notificationId" text NOT NULL,
+    "organizationId" text NOT NULL,
+    kind text NOT NULL,
+    "occurredAt" timestamp(3) without time zone NOT NULL
+);
+
+
+--
+-- Name: GalleryImage; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."GalleryImage" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    url text NOT NULL,
+    caption text,
+    "order" integer DEFAULT 0 NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: Invoice; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Invoice" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "bookingId" text NOT NULL,
+    amount numeric(65,2) NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    currency text DEFAULT 'DOP'::text NOT NULL,
+    CONSTRAINT "Invoice_amount_positive_check" CHECK ((amount > (0)::numeric)),
+    CONSTRAINT "Invoice_currency_dop_check" CHECK ((currency = 'DOP'::text))
+);
+
+
+--
+-- Name: MediaAsset; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MediaAsset" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    purpose public."MediaAssetPurpose" NOT NULL,
+    "targetId" text,
+    "cloudAssetId" text,
+    "cloudPublicId" text,
+    "cloudVersion" integer,
+    sha256 text NOT NULL,
+    bytes integer NOT NULL,
+    width integer NOT NULL,
+    height integer NOT NULL,
+    status public."MediaAssetStatus" DEFAULT 'STAGED'::public."MediaAssetStatus" NOT NULL,
+    "moderationStatus" public."MediaModerationStatus" DEFAULT 'PENDING'::public."MediaModerationStatus" NOT NULL,
+    revision integer DEFAULT 1 NOT NULL,
+    "publishedRevision" integer,
+    "altText" text NOT NULL,
+    caption text,
+    decorative boolean DEFAULT false NOT NULL,
+    "publishedAltText" text,
+    "publishedCaption" text,
+    "publishedDecorative" boolean,
+    "uploadedByUserId" text NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "publishedAt" timestamp(3) without time zone,
+    "quarantinedAt" timestamp(3) without time zone,
+    "retiredAt" timestamp(3) without time zone,
+    "purgedAt" timestamp(3) without time zone,
+    "stagingExpiresAt" timestamp(3) without time zone NOT NULL,
+    "purgeAfter" timestamp(3) without time zone
+);
+
+
+--
+-- Name: MediaGalleryOrder; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MediaGalleryOrder" (
+    "organizationId" text NOT NULL,
+    version integer DEFAULT 0 NOT NULL,
+    "draftRevision" integer DEFAULT 0 NOT NULL,
+    "draftAssetIds" jsonb NOT NULL,
+    "draftHeroAssetId" text,
+    "publishedRevision" integer,
+    "publishedAssetIds" jsonb,
+    "publishedHeroAssetId" text,
+    "updatedAt" timestamp(3) without time zone NOT NULL
+);
+
+
+--
+-- Name: MediaOperation; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MediaOperation" (
+    "organizationId" text NOT NULL,
+    "actorUserId" text NOT NULL,
+    key text NOT NULL,
+    operation text NOT NULL,
+    "requestHash" text NOT NULL,
+    "resourceId" text NOT NULL,
+    "resultRevision" integer NOT NULL,
+    result jsonb NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: MediaPromotion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MediaPromotion" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    version integer DEFAULT 0 NOT NULL,
+    "draftRevision" integer DEFAULT 1 NOT NULL,
+    "draftTitle" text NOT NULL,
+    "draftBody" text NOT NULL,
+    "draftStartDate" text NOT NULL,
+    "draftEndDate" text NOT NULL,
+    "imageAssetId" text,
+    "publishedRevision" integer,
+    "publishedTitle" text,
+    "publishedBody" text,
+    "publishedImageAssetId" text,
+    "timeZone" text,
+    "startsAtUtc" timestamp(3) without time zone,
+    "endsAtUtc" timestamp(3) without time zone,
+    "isPublished" boolean DEFAULT false NOT NULL,
+    "retiredAt" timestamp(3) without time zone,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL
+);
+
+
+--
+-- Name: MediaPurgeJob; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MediaPurgeJob" (
+    "assetId" text NOT NULL,
+    "organizationId" text NOT NULL,
+    attempts integer DEFAULT 0 NOT NULL,
+    "nextAttemptAt" timestamp(3) without time zone NOT NULL,
+    "completedAt" timestamp(3) without time zone,
+    "lastErrorCode" text,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: Membership; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Membership" (
+    id text NOT NULL,
+    "userId" text NOT NULL,
+    "organizationId" text NOT NULL,
+    role public."UserRole" DEFAULT 'BARBER'::public."UserRole" NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL
+);
+
+
+--
+-- Name: Notification; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Notification" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "userId" text,
+    title text NOT NULL,
+    message text NOT NULL,
+    read boolean DEFAULT false NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: Organization; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Organization" (
+    id text NOT NULL,
+    name text NOT NULL,
+    slug text NOT NULL,
+    email text NOT NULL,
+    phone text,
+    "isActive" boolean DEFAULT true NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "deletedAt" timestamp(3) without time zone,
+    address text,
+    "googleMapsUrl" text,
+    "aboutUs" text,
+    "heroImageUrl" text,
+    "socialLinks" jsonb,
+    "businessHours" jsonb,
+    "timeZone" text DEFAULT 'America/Santo_Domingo'::text NOT NULL
+);
+
+
+--
+-- Name: Payment; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Payment" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    method public."PaymentMethod" NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "invoiceId" text NOT NULL,
+    "paidAt" timestamp(3) without time zone NOT NULL,
+    "recordedByUserId" text NOT NULL
+);
+
+
+--
+-- Name: Professional; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Professional" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    name text NOT NULL,
+    bio text,
+    phone text,
+    avatar text,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "userId" text,
+    specialty text,
+    "experienceYears" integer,
+    status public."ProfessionalStatus" DEFAULT 'INACTIVE'::public."ProfessionalStatus" NOT NULL,
+    "isPublic" boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- Name: ProfessionalAvailabilityBlock; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ProfessionalAvailabilityBlock" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "professionalId" text NOT NULL,
+    "startTime" timestamp(3) without time zone NOT NULL,
+    "endTime" timestamp(3) without time zone NOT NULL,
+    status public."AvailabilityBlockStatus" DEFAULT 'ACTIVE'::public."AvailabilityBlockStatus" NOT NULL,
+    note text,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    CONSTRAINT "ProfessionalAvailabilityBlock_range_check" CHECK (("startTime" < "endTime"))
+);
+
+
+--
+-- Name: ProfessionalService; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ProfessionalService" (
+    id text NOT NULL,
+    "professionalId" text NOT NULL,
+    "serviceId" text NOT NULL,
+    price numeric(65,30),
+    commission numeric(65,30),
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL
+);
+
+
+--
+-- Name: ProfessionalWeeklySchedule; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ProfessionalWeeklySchedule" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    "professionalId" text NOT NULL,
+    "dayOfWeek" integer NOT NULL,
+    "startMinute" integer NOT NULL,
+    "endMinute" integer NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    CONSTRAINT "ProfessionalWeeklySchedule_day_check" CHECK ((("dayOfWeek" >= 0) AND ("dayOfWeek" <= 6))),
+    CONSTRAINT "ProfessionalWeeklySchedule_minutes_check" CHECK ((("startMinute" >= 0) AND ("startMinute" <= 1439) AND (("endMinute" >= 1) AND ("endMinute" <= 1440)) AND ("startMinute" < "endMinute")))
+);
+
+
+--
+-- Name: SecurityRateBucket; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."SecurityRateBucket" (
+    key text NOT NULL,
+    count integer NOT NULL,
+    "expiresAt" timestamp(6) with time zone NOT NULL,
+    "blockedUntil" timestamp(6) with time zone
+);
+
+
+--
+-- Name: Service; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Service" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    name text NOT NULL,
+    description text,
+    duration integer NOT NULL,
+    price numeric(65,2) NOT NULL,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    CONSTRAINT "Service_price_dop_check" CHECK ((price > (0)::numeric))
+);
+
+
+--
+-- Name: TeamInvitation; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."TeamInvitation" (
+    id text NOT NULL,
+    "organizationId" text NOT NULL,
+    email text NOT NULL,
+    role public."UserRole" NOT NULL,
+    "createPublicProfile" boolean DEFAULT false NOT NULL,
+    status public."TeamInvitationStatus" DEFAULT 'CREATING'::public."TeamInvitationStatus" NOT NULL,
+    "clerkInvitationId" text,
+    "invitedByUserId" text NOT NULL,
+    "acceptedByUserId" text,
+    "expiresAt" timestamp(3) without time zone NOT NULL,
+    "acceptedAt" timestamp(3) without time zone,
+    "revokedAt" timestamp(3) without time zone,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    CONSTRAINT "TeamInvitation_public_profile_check" CHECK (((NOT "createPublicProfile") OR (role = 'BARBER'::public."UserRole"))),
+    CONSTRAINT "TeamInvitation_role_check" CHECK ((role = ANY (ARRAY['ADMIN'::public."UserRole", 'BARBER'::public."UserRole", 'RECEPTIONIST'::public."UserRole"])))
+);
+
+
+--
+-- Name: User; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."User" (
+    id text NOT NULL,
+    name text NOT NULL,
+    email text NOT NULL,
+    password text,
+    "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" timestamp(3) without time zone NOT NULL,
+    "lastOrganizationId" text,
+    "clerkUserId" text
+);
+
+
+--
+-- Name: _prisma_migrations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public._prisma_migrations (
+    id character varying(36) NOT NULL,
+    checksum character varying(64) NOT NULL,
+    finished_at timestamp with time zone,
+    migration_name character varying(255) NOT NULL,
+    logs text,
+    rolled_back_at timestamp with time zone,
+    started_at timestamp with time zone DEFAULT now() NOT NULL,
+    applied_steps_count integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: AuditLog AuditLog_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."AuditLog"
+    ADD CONSTRAINT "AuditLog_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: BookingEmailEvent BookingEmailEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BookingEmailEvent"
+    ADD CONSTRAINT "BookingEmailEvent_pkey" PRIMARY KEY ("bookingId", "organizationId", sequence);
+
+
+--
+-- Name: BookingEmailPreference BookingEmailPreference_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BookingEmailPreference"
+    ADD CONSTRAINT "BookingEmailPreference_pkey" PRIMARY KEY ("bookingId", "organizationId");
+
+
+--
+-- Name: Booking Booking_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Booking"
+    ADD CONSTRAINT "Booking_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Booking Booking_professional_schedule_excl; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Booking"
+    ADD CONSTRAINT "Booking_professional_schedule_excl" EXCLUDE USING gist ("professionalId" WITH =, tsrange("startTime", "endTime", '[)'::text) WITH &&) WHERE ((status <> 'CANCELLED'::public."BookingStatus"));
+
+
+--
+-- Name: BusinessClosure BusinessClosure_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessClosure"
+    ADD CONSTRAINT "BusinessClosure_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: BusinessScheduleDay BusinessScheduleDay_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleDay"
+    ADD CONSTRAINT "BusinessScheduleDay_pkey" PRIMARY KEY ("organizationId", "dayOfWeek");
+
+
+--
+-- Name: BusinessScheduleRevision BusinessScheduleRevision_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleRevision"
+    ADD CONSTRAINT "BusinessScheduleRevision_pkey" PRIMARY KEY ("organizationId", revision);
+
+
+--
+-- Name: BusinessScheduleWindow BusinessScheduleWindow_no_overlap; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleWindow"
+    ADD CONSTRAINT "BusinessScheduleWindow_no_overlap" EXCLUDE USING gist ("organizationId" WITH =, "dayOfWeek" WITH =, int4range("startMinute", "endMinute", '[)'::text) WITH &&);
+
+
+--
+-- Name: BusinessScheduleWindow BusinessScheduleWindow_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleWindow"
+    ADD CONSTRAINT "BusinessScheduleWindow_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: BusinessSchedule BusinessSchedule_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessSchedule"
+    ADD CONSTRAINT "BusinessSchedule_pkey" PRIMARY KEY ("organizationId");
+
+
+--
+-- Name: Client Client_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Client"
+    ADD CONSTRAINT "Client_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: CmsOperation CmsOperation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CmsOperation"
+    ADD CONSTRAINT "CmsOperation_pkey" PRIMARY KEY ("organizationId", "actorUserId", key);
+
+
+--
+-- Name: CmsPage CmsPage_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CmsPage"
+    ADD CONSTRAINT "CmsPage_pkey" PRIMARY KEY ("organizationId");
+
+
+--
+-- Name: EmailAbuseBucket EmailAbuseBucket_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EmailAbuseBucket"
+    ADD CONSTRAINT "EmailAbuseBucket_pkey" PRIMARY KEY (key, "windowStart");
+
+
+--
+-- Name: EmailChannelControl EmailChannelControl_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EmailChannelControl"
+    ADD CONSTRAINT "EmailChannelControl_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: EmailOutbox EmailOutbox_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EmailOutbox"
+    ADD CONSTRAINT "EmailOutbox_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: EmailWebhookReceipt EmailWebhookReceipt_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EmailWebhookReceipt"
+    ADD CONSTRAINT "EmailWebhookReceipt_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: GalleryImage GalleryImage_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."GalleryImage"
+    ADD CONSTRAINT "GalleryImage_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Invoice Invoice_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Invoice"
+    ADD CONSTRAINT "Invoice_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: MediaAsset MediaAsset_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaAsset"
+    ADD CONSTRAINT "MediaAsset_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: MediaGalleryOrder MediaGalleryOrder_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaGalleryOrder"
+    ADD CONSTRAINT "MediaGalleryOrder_pkey" PRIMARY KEY ("organizationId");
+
+
+--
+-- Name: MediaOperation MediaOperation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaOperation"
+    ADD CONSTRAINT "MediaOperation_pkey" PRIMARY KEY ("organizationId", "actorUserId", key);
+
+
+--
+-- Name: MediaPromotion MediaPromotion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaPromotion"
+    ADD CONSTRAINT "MediaPromotion_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: MediaPurgeJob MediaPurgeJob_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaPurgeJob"
+    ADD CONSTRAINT "MediaPurgeJob_pkey" PRIMARY KEY ("assetId");
+
+
+--
+-- Name: Membership Membership_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Membership"
+    ADD CONSTRAINT "Membership_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Notification Notification_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Notification"
+    ADD CONSTRAINT "Notification_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Organization Organization_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Organization"
+    ADD CONSTRAINT "Organization_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Payment Payment_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Payment"
+    ADD CONSTRAINT "Payment_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: ProfessionalAvailabilityBlock ProfessionalAvailabilityBlock_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalAvailabilityBlock"
+    ADD CONSTRAINT "ProfessionalAvailabilityBlock_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: ProfessionalService ProfessionalService_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalService"
+    ADD CONSTRAINT "ProfessionalService_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: ProfessionalWeeklySchedule ProfessionalWeeklySchedule_no_overlap; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalWeeklySchedule"
+    ADD CONSTRAINT "ProfessionalWeeklySchedule_no_overlap" EXCLUDE USING gist ("organizationId" WITH =, "professionalId" WITH =, "dayOfWeek" WITH =, int4range("startMinute", "endMinute", '[)'::text) WITH &&);
+
+
+--
+-- Name: ProfessionalWeeklySchedule ProfessionalWeeklySchedule_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalWeeklySchedule"
+    ADD CONSTRAINT "ProfessionalWeeklySchedule_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Professional Professional_id_organizationId_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Professional"
+    ADD CONSTRAINT "Professional_id_organizationId_key" UNIQUE (id, "organizationId");
+
+
+--
+-- Name: Professional Professional_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Professional"
+    ADD CONSTRAINT "Professional_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: SecurityRateBucket SecurityRateBucket_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."SecurityRateBucket"
+    ADD CONSTRAINT "SecurityRateBucket_pkey" PRIMARY KEY (key);
+
+
+--
+-- Name: Service Service_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Service"
+    ADD CONSTRAINT "Service_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: TeamInvitation TeamInvitation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."TeamInvitation"
+    ADD CONSTRAINT "TeamInvitation_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."User"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: _prisma_migrations _prisma_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public._prisma_migrations
+    ADD CONSTRAINT _prisma_migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: BookingEmailPreference_clientId_organizationId_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "BookingEmailPreference_clientId_organizationId_idx" ON public."BookingEmailPreference" USING btree ("clientId", "organizationId");
+
+
+--
+-- Name: Booking_id_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Booking_id_organizationId_key" ON public."Booking" USING btree (id, "organizationId");
+
+
+--
+-- Name: Booking_organizationId_status_createdAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "Booking_organizationId_status_createdAt_idx" ON public."Booking" USING btree ("organizationId", status, "createdAt");
+
+
+--
+-- Name: BusinessClosure_id_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "BusinessClosure_id_organizationId_key" ON public."BusinessClosure" USING btree (id, "organizationId");
+
+
+--
+-- Name: BusinessClosure_organizationId_status_startDate_endDate_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "BusinessClosure_organizationId_status_startDate_endDate_idx" ON public."BusinessClosure" USING btree ("organizationId", status, "startDate", "endDate");
+
+
+--
+-- Name: BusinessScheduleWindow_organizationId_dayOfWeek_startMinute_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "BusinessScheduleWindow_organizationId_dayOfWeek_startMinute_idx" ON public."BusinessScheduleWindow" USING btree ("organizationId", "dayOfWeek", "startMinute");
+
+
+--
+-- Name: Client_id_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Client_id_organizationId_key" ON public."Client" USING btree (id, "organizationId");
+
+
+--
+-- Name: Client_organizationId_email_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Client_organizationId_email_key" ON public."Client" USING btree ("organizationId", email);
+
+
+--
+-- Name: Client_organizationId_userId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Client_organizationId_userId_key" ON public."Client" USING btree ("organizationId", "userId");
+
+
+--
+-- Name: EmailAbuseBucket_windowStart_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "EmailAbuseBucket_windowStart_idx" ON public."EmailAbuseBucket" USING btree ("windowStart");
+
+
+--
+-- Name: EmailOutbox_bookingId_organizationId_eventSequence_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "EmailOutbox_bookingId_organizationId_eventSequence_key" ON public."EmailOutbox" USING btree ("bookingId", "organizationId", "eventSequence");
+
+
+--
+-- Name: EmailOutbox_closedAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "EmailOutbox_closedAt_idx" ON public."EmailOutbox" USING btree ("closedAt");
+
+
+--
+-- Name: EmailOutbox_id_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "EmailOutbox_id_organizationId_key" ON public."EmailOutbox" USING btree (id, "organizationId");
+
+
+--
+-- Name: EmailOutbox_organizationId_createdAt_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "EmailOutbox_organizationId_createdAt_id_idx" ON public."EmailOutbox" USING btree ("organizationId", "createdAt", id);
+
+
+--
+-- Name: EmailOutbox_providerId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "EmailOutbox_providerId_key" ON public."EmailOutbox" USING btree ("providerId");
+
+
+--
+-- Name: EmailOutbox_status_nextAttemptAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "EmailOutbox_status_nextAttemptAt_idx" ON public."EmailOutbox" USING btree (status, "nextAttemptAt");
+
+
+--
+-- Name: Invoice_bookingId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Invoice_bookingId_key" ON public."Invoice" USING btree ("bookingId");
+
+
+--
+-- Name: Invoice_bookingId_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Invoice_bookingId_organizationId_key" ON public."Invoice" USING btree ("bookingId", "organizationId");
+
+
+--
+-- Name: Invoice_id_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Invoice_id_organizationId_key" ON public."Invoice" USING btree (id, "organizationId");
+
+
+--
+-- Name: Invoice_org_createdAt_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "Invoice_org_createdAt_id_idx" ON public."Invoice" USING btree ("organizationId", "createdAt", id);
+
+
+--
+-- Name: MediaAsset_cloudAssetId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "MediaAsset_cloudAssetId_key" ON public."MediaAsset" USING btree ("cloudAssetId");
+
+
+--
+-- Name: MediaAsset_cloudPublicId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "MediaAsset_cloudPublicId_key" ON public."MediaAsset" USING btree ("cloudPublicId");
+
+
+--
+-- Name: MediaAsset_organizationId_id_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "MediaAsset_organizationId_id_key" ON public."MediaAsset" USING btree ("organizationId", id);
+
+
+--
+-- Name: MediaAsset_organizationId_stagingExpiresAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "MediaAsset_organizationId_stagingExpiresAt_idx" ON public."MediaAsset" USING btree ("organizationId", "stagingExpiresAt");
+
+
+--
+-- Name: MediaAsset_organizationId_status_purpose_targetId_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "MediaAsset_organizationId_status_purpose_targetId_idx" ON public."MediaAsset" USING btree ("organizationId", status, purpose, "targetId");
+
+
+--
+-- Name: MediaOperation_organizationId_resourceId_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "MediaOperation_organizationId_resourceId_idx" ON public."MediaOperation" USING btree ("organizationId", "resourceId");
+
+
+--
+-- Name: MediaPromotion_imageAssetId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "MediaPromotion_imageAssetId_key" ON public."MediaPromotion" USING btree ("imageAssetId");
+
+
+--
+-- Name: MediaPromotion_organizationId_imageAssetId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "MediaPromotion_organizationId_imageAssetId_key" ON public."MediaPromotion" USING btree ("organizationId", "imageAssetId");
+
+
+--
+-- Name: MediaPromotion_organizationId_isPublished_startsAtUtc_endsA_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "MediaPromotion_organizationId_isPublished_startsAtUtc_endsA_idx" ON public."MediaPromotion" USING btree ("organizationId", "isPublished", "startsAtUtc", "endsAtUtc");
+
+
+--
+-- Name: MediaPurgeJob_nextAttemptAt_completedAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "MediaPurgeJob_nextAttemptAt_completedAt_idx" ON public."MediaPurgeJob" USING btree ("nextAttemptAt", "completedAt");
+
+
+--
+-- Name: MediaPurgeJob_organizationId_assetId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "MediaPurgeJob_organizationId_assetId_key" ON public."MediaPurgeJob" USING btree ("organizationId", "assetId");
+
+
+--
+-- Name: MediaPurgeJob_organizationId_completedAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "MediaPurgeJob_organizationId_completedAt_idx" ON public."MediaPurgeJob" USING btree ("organizationId", "completedAt");
+
+
+--
+-- Name: Membership_userId_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Membership_userId_organizationId_key" ON public."Membership" USING btree ("userId", "organizationId");
+
+
+--
+-- Name: Organization_email_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Organization_email_key" ON public."Organization" USING btree (email);
+
+
+--
+-- Name: Organization_slug_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Organization_slug_key" ON public."Organization" USING btree (slug);
+
+
+--
+-- Name: Payment_id_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Payment_id_organizationId_key" ON public."Payment" USING btree (id, "organizationId");
+
+
+--
+-- Name: Payment_invoiceId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Payment_invoiceId_key" ON public."Payment" USING btree ("invoiceId");
+
+
+--
+-- Name: Payment_invoiceId_organizationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Payment_invoiceId_organizationId_key" ON public."Payment" USING btree ("invoiceId", "organizationId");
+
+
+--
+-- Name: Payment_org_paidAt_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "Payment_org_paidAt_id_idx" ON public."Payment" USING btree ("organizationId", "paidAt", id);
+
+
+--
+-- Name: ProfessionalBlock_org_prof_end_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "ProfessionalBlock_org_prof_end_idx" ON public."ProfessionalAvailabilityBlock" USING btree ("organizationId", "professionalId", "endTime");
+
+
+--
+-- Name: ProfessionalBlock_org_prof_status_start_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "ProfessionalBlock_org_prof_status_start_idx" ON public."ProfessionalAvailabilityBlock" USING btree ("organizationId", "professionalId", status, "startTime");
+
+
+--
+-- Name: ProfessionalSchedule_org_prof_day_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "ProfessionalSchedule_org_prof_day_idx" ON public."ProfessionalWeeklySchedule" USING btree ("organizationId", "professionalId", "dayOfWeek");
+
+
+--
+-- Name: ProfessionalService_professionalId_serviceId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "ProfessionalService_professionalId_serviceId_key" ON public."ProfessionalService" USING btree ("professionalId", "serviceId");
+
+
+--
+-- Name: Professional_organizationId_status_name_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "Professional_organizationId_status_name_id_idx" ON public."Professional" USING btree ("organizationId", status, name, id);
+
+
+--
+-- Name: Professional_organizationId_userId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "Professional_organizationId_userId_key" ON public."Professional" USING btree ("organizationId", "userId");
+
+
+--
+-- Name: SecurityRateBucket_expiresAt_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "SecurityRateBucket_expiresAt_idx" ON public."SecurityRateBucket" USING btree ("expiresAt");
+
+
+--
+-- Name: TeamInvitation_clerkInvitationId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "TeamInvitation_clerkInvitationId_key" ON public."TeamInvitation" USING btree ("clerkInvitationId");
+
+
+--
+-- Name: TeamInvitation_one_open_per_org_email_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "TeamInvitation_one_open_per_org_email_key" ON public."TeamInvitation" USING btree ("organizationId", email) WHERE (status = ANY (ARRAY['CREATING'::public."TeamInvitationStatus", 'PENDING'::public."TeamInvitationStatus", 'RESENDING'::public."TeamInvitationStatus", 'REVOKING'::public."TeamInvitationStatus"]));
+
+
+--
+-- Name: TeamInvitation_organizationId_email_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "TeamInvitation_organizationId_email_idx" ON public."TeamInvitation" USING btree ("organizationId", email);
+
+
+--
+-- Name: TeamInvitation_organizationId_status_createdAt_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "TeamInvitation_organizationId_status_createdAt_id_idx" ON public."TeamInvitation" USING btree ("organizationId", status, "createdAt", id);
+
+
+--
+-- Name: User_clerkUserId_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "User_clerkUserId_key" ON public."User" USING btree ("clerkUserId");
+
+
+--
+-- Name: User_email_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "User_email_key" ON public."User" USING btree (email);
+
+
+--
+-- Name: BusinessScheduleDay BusinessScheduleDay_complete_week; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE CONSTRAINT TRIGGER "BusinessScheduleDay_complete_week" AFTER INSERT OR DELETE OR UPDATE ON public."BusinessScheduleDay" DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION public.validate_business_schedule();
+
+
+--
+-- Name: BusinessScheduleWindow BusinessScheduleWindow_limit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE CONSTRAINT TRIGGER "BusinessScheduleWindow_limit" AFTER INSERT OR DELETE OR UPDATE ON public."BusinessScheduleWindow" DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION public.validate_business_schedule();
+
+
+--
+-- Name: BusinessSchedule BusinessSchedule_complete_week; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE CONSTRAINT TRIGGER "BusinessSchedule_complete_week" AFTER INSERT OR UPDATE ON public."BusinessSchedule" DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION public.validate_business_schedule();
+
+
+--
+-- Name: Organization Organization_initialize_cms; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER "Organization_initialize_cms" AFTER INSERT ON public."Organization" FOR EACH ROW EXECUTE FUNCTION public.cms_initialize_unpublished();
+
+
+--
+-- Name: Organization media_organization_offline; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER media_organization_offline AFTER UPDATE OF "isActive", "deletedAt" ON public."Organization" FOR EACH ROW EXECUTE FUNCTION public.media_retire_inactive_organization();
+
+
+--
+-- Name: Professional media_professional_offline; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER media_professional_offline AFTER DELETE OR UPDATE OF status, "isPublic" ON public."Professional" FOR EACH ROW EXECUTE FUNCTION public.media_quarantine_professional_avatar();
+
+
+--
+-- Name: Service media_service_offline; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER media_service_offline AFTER DELETE OR UPDATE OF "isActive" ON public."Service" FOR EACH ROW EXECUTE FUNCTION public.media_quarantine_service_images();
+
+
+--
+-- Name: Client notification_client_email_invalidation_after; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER notification_client_email_invalidation_after AFTER UPDATE OF email, "emailRevision" ON public."Client" FOR EACH ROW EXECUTE FUNCTION public.notification_client_email_invalidation();
+
+
+--
+-- Name: Client notification_client_email_revision_before; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER notification_client_email_revision_before BEFORE UPDATE OF email, "emailRevision" ON public."Client" FOR EACH ROW EXECUTE FUNCTION public.notification_client_email_revision();
+
+
+--
+-- Name: BookingEmailEvent BookingEmailEvent_bookingId_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BookingEmailEvent"
+    ADD CONSTRAINT "BookingEmailEvent_bookingId_organizationId_fkey" FOREIGN KEY ("bookingId", "organizationId") REFERENCES public."BookingEmailPreference"("bookingId", "organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BookingEmailPreference BookingEmailPreference_bookingId_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BookingEmailPreference"
+    ADD CONSTRAINT "BookingEmailPreference_bookingId_organizationId_fkey" FOREIGN KEY ("bookingId", "organizationId") REFERENCES public."Booking"(id, "organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BookingEmailPreference BookingEmailPreference_clientId_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BookingEmailPreference"
+    ADD CONSTRAINT "BookingEmailPreference_clientId_organizationId_fkey" FOREIGN KEY ("clientId", "organizationId") REFERENCES public."Client"(id, "organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Booking Booking_clientId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Booking"
+    ADD CONSTRAINT "Booking_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES public."Client"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Booking Booking_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Booking"
+    ADD CONSTRAINT "Booking_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Booking Booking_professionalId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Booking"
+    ADD CONSTRAINT "Booking_professionalId_fkey" FOREIGN KEY ("professionalId") REFERENCES public."Professional"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Booking Booking_serviceId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Booking"
+    ADD CONSTRAINT "Booking_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES public."Service"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BusinessClosure BusinessClosure_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessClosure"
+    ADD CONSTRAINT "BusinessClosure_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."BusinessSchedule"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BusinessScheduleDay BusinessScheduleDay_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleDay"
+    ADD CONSTRAINT "BusinessScheduleDay_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."BusinessSchedule"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BusinessScheduleRevision BusinessScheduleRevision_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleRevision"
+    ADD CONSTRAINT "BusinessScheduleRevision_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."BusinessSchedule"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BusinessScheduleWindow BusinessScheduleWindow_day_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessScheduleWindow"
+    ADD CONSTRAINT "BusinessScheduleWindow_day_fkey" FOREIGN KEY ("organizationId", "dayOfWeek") REFERENCES public."BusinessScheduleDay"("organizationId", "dayOfWeek") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: BusinessSchedule BusinessSchedule_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."BusinessSchedule"
+    ADD CONSTRAINT "BusinessSchedule_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Client Client_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Client"
+    ADD CONSTRAINT "Client_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Client Client_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Client"
+    ADD CONSTRAINT "Client_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: CmsOperation CmsOperation_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CmsOperation"
+    ADD CONSTRAINT "CmsOperation_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."CmsPage"("organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: CmsPage CmsPage_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CmsPage"
+    ADD CONSTRAINT "CmsPage_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: EmailOutbox EmailOutbox_bookingId_organizationId_eventSequence_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EmailOutbox"
+    ADD CONSTRAINT "EmailOutbox_bookingId_organizationId_eventSequence_fkey" FOREIGN KEY ("bookingId", "organizationId", "eventSequence") REFERENCES public."BookingEmailEvent"("bookingId", "organizationId", sequence) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: EmailWebhookReceipt EmailWebhookReceipt_notificationId_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EmailWebhookReceipt"
+    ADD CONSTRAINT "EmailWebhookReceipt_notificationId_organizationId_fkey" FOREIGN KEY ("notificationId", "organizationId") REFERENCES public."EmailOutbox"(id, "organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: GalleryImage GalleryImage_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."GalleryImage"
+    ADD CONSTRAINT "GalleryImage_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Invoice Invoice_bookingId_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Invoice"
+    ADD CONSTRAINT "Invoice_bookingId_organizationId_fkey" FOREIGN KEY ("bookingId", "organizationId") REFERENCES public."Booking"(id, "organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Invoice Invoice_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Invoice"
+    ADD CONSTRAINT "Invoice_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaAsset MediaAsset_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaAsset"
+    ADD CONSTRAINT "MediaAsset_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaGalleryOrder MediaGalleryOrder_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaGalleryOrder"
+    ADD CONSTRAINT "MediaGalleryOrder_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaOperation MediaOperation_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaOperation"
+    ADD CONSTRAINT "MediaOperation_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaPromotion MediaPromotion_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaPromotion"
+    ADD CONSTRAINT "MediaPromotion_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaPromotion MediaPromotion_organizationId_imageAssetId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaPromotion"
+    ADD CONSTRAINT "MediaPromotion_organizationId_imageAssetId_fkey" FOREIGN KEY ("organizationId", "imageAssetId") REFERENCES public."MediaAsset"("organizationId", id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaPurgeJob MediaPurgeJob_organizationId_assetId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaPurgeJob"
+    ADD CONSTRAINT "MediaPurgeJob_organizationId_assetId_fkey" FOREIGN KEY ("organizationId", "assetId") REFERENCES public."MediaAsset"("organizationId", id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: MediaPurgeJob MediaPurgeJob_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MediaPurgeJob"
+    ADD CONSTRAINT "MediaPurgeJob_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Membership Membership_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Membership"
+    ADD CONSTRAINT "Membership_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Membership Membership_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Membership"
+    ADD CONSTRAINT "Membership_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Payment Payment_invoiceId_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Payment"
+    ADD CONSTRAINT "Payment_invoiceId_organizationId_fkey" FOREIGN KEY ("invoiceId", "organizationId") REFERENCES public."Invoice"(id, "organizationId") ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Payment Payment_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Payment"
+    ADD CONSTRAINT "Payment_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: ProfessionalAvailabilityBlock ProfessionalAvailabilityBlock_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalAvailabilityBlock"
+    ADD CONSTRAINT "ProfessionalAvailabilityBlock_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ProfessionalAvailabilityBlock ProfessionalAvailabilityBlock_professionalId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalAvailabilityBlock"
+    ADD CONSTRAINT "ProfessionalAvailabilityBlock_professionalId_fkey" FOREIGN KEY ("professionalId", "organizationId") REFERENCES public."Professional"(id, "organizationId") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ProfessionalService ProfessionalService_professionalId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalService"
+    ADD CONSTRAINT "ProfessionalService_professionalId_fkey" FOREIGN KEY ("professionalId") REFERENCES public."Professional"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: ProfessionalService ProfessionalService_serviceId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalService"
+    ADD CONSTRAINT "ProfessionalService_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES public."Service"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: ProfessionalWeeklySchedule ProfessionalWeeklySchedule_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalWeeklySchedule"
+    ADD CONSTRAINT "ProfessionalWeeklySchedule_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ProfessionalWeeklySchedule ProfessionalWeeklySchedule_professionalId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProfessionalWeeklySchedule"
+    ADD CONSTRAINT "ProfessionalWeeklySchedule_professionalId_fkey" FOREIGN KEY ("professionalId", "organizationId") REFERENCES public."Professional"(id, "organizationId") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Professional Professional_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Professional"
+    ADD CONSTRAINT "Professional_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: Professional Professional_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Professional"
+    ADD CONSTRAINT "Professional_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: Service Service_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Service"
+    ADD CONSTRAINT "Service_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: TeamInvitation TeamInvitation_acceptedByUserId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."TeamInvitation"
+    ADD CONSTRAINT "TeamInvitation_acceptedByUserId_fkey" FOREIGN KEY ("acceptedByUserId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: TeamInvitation TeamInvitation_invitedByUserId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."TeamInvitation"
+    ADD CONSTRAINT "TeamInvitation_invitedByUserId_fkey" FOREIGN KEY ("invitedByUserId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: TeamInvitation TeamInvitation_organizationId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."TeamInvitation"
+    ADD CONSTRAINT "TeamInvitation_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES public."Organization"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+

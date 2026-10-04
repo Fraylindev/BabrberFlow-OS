@@ -1,0 +1,155 @@
+{
+  "firstFailure": "attnum fisico con huecos de columnas eliminadas; identico orden relativo y restantes atributos",
+  "positionChanges": [
+    {
+      "table": "Invoice",
+      "column": "createdAt",
+      "snapshotPosition": 6,
+      "restorePosition": 5
+    },
+    {
+      "table": "Invoice",
+      "column": "updatedAt",
+      "snapshotPosition": 7,
+      "restorePosition": 6
+    },
+    {
+      "table": "Invoice",
+      "column": "currency",
+      "snapshotPosition": 8,
+      "restorePosition": 7
+    },
+    {
+      "table": "Payment",
+      "column": "method",
+      "snapshotPosition": 5,
+      "restorePosition": 3
+    },
+    {
+      "table": "Payment",
+      "column": "createdAt",
+      "snapshotPosition": 7,
+      "restorePosition": 4
+    },
+    {
+      "table": "Payment",
+      "column": "invoiceId",
+      "snapshotPosition": 8,
+      "restorePosition": 5
+    },
+    {
+      "table": "Payment",
+      "column": "paidAt",
+      "snapshotPosition": 9,
+      "restorePosition": 6
+    },
+    {
+      "table": "Payment",
+      "column": "recordedByUserId",
+      "snapshotPosition": 10,
+      "restorePosition": 7
+    },
+    {
+      "table": "Professional",
+      "column": "createdAt",
+      "snapshotPosition": 8,
+      "restorePosition": 7
+    },
+    {
+      "table": "Professional",
+      "column": "updatedAt",
+      "snapshotPosition": 9,
+      "restorePosition": 8
+    },
+    {
+      "table": "Professional",
+      "column": "userId",
+      "snapshotPosition": 10,
+      "restorePosition": 9
+    },
+    {
+      "table": "Professional",
+      "column": "specialty",
+      "snapshotPosition": 11,
+      "restorePosition": 10
+    },
+    {
+      "table": "Professional",
+      "column": "experienceYears",
+      "snapshotPosition": 12,
+      "restorePosition": 11
+    },
+    {
+      "table": "Professional",
+      "column": "status",
+      "snapshotPosition": 13,
+      "restorePosition": 12
+    },
+    {
+      "table": "Professional",
+      "column": "isPublic",
+      "snapshotPosition": 14,
+      "restorePosition": 13
+    },
+    {
+      "table": "User",
+      "column": "name",
+      "snapshotPosition": 3,
+      "restorePosition": 2
+    },
+    {
+      "table": "User",
+      "column": "email",
+      "snapshotPosition": 4,
+      "restorePosition": 3
+    },
+    {
+      "table": "User",
+      "column": "password",
+      "snapshotPosition": 5,
+      "restorePosition": 4
+    },
+    {
+      "table": "User",
+      "column": "createdAt",
+      "snapshotPosition": 7,
+      "restorePosition": 5
+    },
+    {
+      "table": "User",
+      "column": "updatedAt",
+      "snapshotPosition": 8,
+      "restorePosition": 6
+    },
+    {
+      "table": "User",
+      "column": "lastOrganizationId",
+      "snapshotPosition": 9,
+      "restorePosition": 7
+    },
+    {
+      "table": "User",
+      "column": "clerkUserId",
+      "snapshotPosition": 10,
+      "restorePosition": 8
+    }
+  ],
+  "secondFailure": "diff textual de tres CHECK inline dentro de CREATE TABLE; no se permite normalizarlo bajo las excepciones actuales",
+  "checksDifferent": [
+    "BusinessScheduleWindow_minutes_check",
+    "EmailOutbox_budget_check",
+    "ProfessionalWeeklySchedule_minutes_check"
+  ],
+  "fullDumpComparisonEqual": false,
+  "inlineChecksLocatedInTableBlocks": true,
+  "semanticEquivalenceNotIndependentlyProven": true,
+  "schemaVersionSame": "pg_dump (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2)",
+  "sourceSnapshotClients": 20,
+  "sourceAfterSnapshotClients": 21,
+  "restoredDataFingerprintsEqual": true,
+  "pending": [
+    "rollback \u00a75.3",
+    "cuatro escenarios completos",
+    "B y C no autorizados"
+  ]
+}

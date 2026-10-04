@@ -1851,3 +1851,114 @@ git status --short --branch
 git show --stat --oneline HEAD
 git diff --exit-code 768d898..HEAD -- apps ops package.json pnpm-lock.yaml
 ~~~
+
+
+## 19. Iteración local acotada de A: diagnóstico de catálogo y parada por CHECK — 2026-10-04
+
+**PAUSADO / INCOMPLETO.** Autorización exclusiva para diagnóstico/arnés local, máximo seis iteraciones. Se realizaron **dos**: reproducción original y comparación nueva mediante volcados de esquema. No se agotó el cupo: se detuvo al encontrar diferencias fuera de las excepciones expresamente permitidas; no se normalizaron ni aceptaron por inferencia. **B, C, P2 real, QA, producción, DPAPI, frase del propietario, push y P3 no se ejecutaron.** No se instalaron dependencias ni se alteraron configuración global de GPG, roles/grants, variables, flags, Clerk ni servicios reales. Los roles/grants y SQL de inicialización pertenecen únicamente a fuentes/clones sintéticos desechables.
+
+### Base, alcance y trazabilidad
+
+Inicio comprobado:
+
+```powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+git diff -- docs/quality/M2_C3_PREFLIGHT.md
+git hash-object --path=docs/quality/M2_C3_PREFLIGHT.md docs/quality/M2_C3_PREFLIGHT.md
+git rev-parse HEAD:docs/quality/M2_C3_PREFLIGHT.md
+```
+
+Rama `ai/antigravity-qa`; HEAD `3a154df5bc606ea0a31f4a47e92b7eb8fbf50aff`; referencia local origin: ahead 11, sin consulta remota. Git marcó `M2_C3_PREFLIGHT.md` como modificado, pero el diff de contenido/numstat estaba vacío y ambos blobs filtrados eran `68e32f8eeaf1921f5685eab41b37830d99c075b1`; se preservó su contenido versionado y solo se añadió esta sección. No había otros cambios iniciales. Skill `kortek-delivery` y fuentes documentales aplicables leídas; ninguna capacidad de producto se abre.
+
+Registro único: [p2-iteracion-local-registro.json](evidence/m2-c3-p2/p2-iteracion-local-registro.json). Cada fallo quedó persistido en `.tmp/p2-iteraciones.json` **antes** de preparar cambios para la siguiente iteración. El registro conserva clase, fase, mensaje/traceback sanitizados, comandos y stderr completo redactado hasta 8192 bytes, ambos catálogos, diff por subclave, ambos esquemas normalizados, diff completo, categorías, conteos/huellas de ambos lados y resultado de limpieza. No contiene filas, logs del ledger, passwords ni frases. Los comandos de dump ocultan únicamente el identificador efímero del snapshot en memoria. La falta de exit de un comando asociado a una desigualdad interna no se inventa: los comandos externos reales tienen sus propios exit codes; la desigualdad es `RuntimeError` y el arnés termina con exit `1`.
+
+Preparación: copia de los ejecutores/arneses de §18 a `.tmp/p2-it1` y `.tmp/p2-it2`. Los archivos `.py.txt` inferiores son las fuentes exactas ejecutadas archivadas como evidencia, sin modificar ejecutores QA. Se agregó protección `MODE != 'local'` antes de cualquier operación del ejecutor local. El arnés sustituye login/infra/HTTP/escritores por mecanismos locales; SSH queda prohibido. La etiqueta heredada `solicitar-credencial-DPAPI-QA` de iteración 1 es solo un evento: recibió una cadena aleatoria sintética de memoria, nunca DPAPI; en iteración 2 se renombró `entrada-credencial-sintetica-local` para evitar ambigüedad.
+
+Comandos de entrada exactos (ejecutados una vez cada uno):
+
+```powershell
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u .tmp/p2-it1/harness.py
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u .tmp/p2-it2/harness.py
+```
+
+Ambos terminaron con exit `1`, cuya causa se conserva. Los 109 y 111 comandos externos de cada recorrido están completos en el registro; los exits transitorios `2` de `pg_isready` pertenecen a la espera normal de arranque local, no a reintentos de un dump/restore fallido. En el punto de parada, dump, cifrado, descifrado, TOC y restore habían terminado con exit `0`.
+
+### Iteración 1: comparación original sin cambios
+
+Fuente PG17.11 sintética inicializada desde 27 SQL del commit **local** `791569b110f9fd59cb10e6d248546bdae3996e14`, sin consultar despliegues. Imagen fijada por ID `sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f`; contenedores nuevos sin red ni puertos, read-only, datos/tmp en tmpfs. CA pública montada como único archivo read-only; hash validado `1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a`. Ledger sintético: 31 entradas, 27 terminadas y cuatro revertidas, con multiplicidad. `btree_gist` reside en `public`. No se abrieron archivos de credenciales ni `Clave.txt`.
+
+Snapshot exportado dentro de transacción `REPEATABLE READ READ ONLY`, `statement_timeout=120s`, censo en la misma sesión/snapshot. La fuente recibe después una escritura sintética independiente: 21 clientes vivos frente a 20 en el snapshot; el restore coteja contra **20**, nunca contra el origen posterior. Hay 28 reservas en el corte. GPG usa homedir propio `.tmp/kh-3e09e8`, socket de 66 caracteres, AES256, frase falsa por stdin anónimo, doble confirmación inicial y segunda introducción independiente al descifrar. Restauración en segundo contenedor con alternativa TOC, excluyendo solo entradas bootstrap de public/btree_gist, ninguna TABLE DATA.
+
+Fallo: clase `RuntimeError`, fase `restore-cotejo-rollback`, mensaje `restore-desigualdad:catalog`; traceback `run.py:783 main -> run.py:576 restore_cipher`. El arnés conserva además `RuntimeError: recorrido-local-completo-fallo`, fase `arnes-A-reproduccion`, `harness.py:265 main -> harness.py:232 scenario`. Todos los lados y el diff original se conservaron antes de cambiar el ejecutor.
+
+**Causa demostrada del fallo original: criterio del comparador.** Solo difiere `columns.position` (22 columnas en Invoice, Payment, Professional y User). `position` se obtenía de `pg_attribute.attnum`: el origen conserva huecos internos después de DROP COLUMN; el dump/restore recrea las columnas vivas y compacta esos números físicos. El orden relativo, nombres, tipos, defaults, nullabilidad, identity/generated y restantes atributos son iguales. Las otras ocho subclaves del catálogo son iguales. El diagnóstico enumera las 22 posiciones de ambos lados. No hay diferencia de datos: 36/36 conteos y huellas, ledger multiconjunto, censo y roles de interés coincidieron.
+
+### Iteración 2: reemplazo por esquema normalizado y diferencia nueva
+
+Misma imagen/versión en fuente y restore: `pg_dump (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2)`. Snapshot/censo nuevos; fuente sintética y restore nuevos desde cero; homedir propio `.tmp/kh-4bc495`, socket de 66 caracteres, retirado al salir. Se mantiene doble confirmación y reintroducción independiente de frase falsa. El manifest cifrado se descifró y coincidió con el censo original.
+
+Se reemplazó la aceptación global de `CATALOG_SQL` por **igualdad textual completa de volcados de esquema normalizados**, conservando el catálogo anterior solo como diagnóstico. El volcado fuente se realizó con `--snapshot` importando exactamente el snapshot exportado para el censo/dump de datos, mientras la transacción exportadora permanecía abierta. Restore aislado sin escritores. No se usó un volcado de la fuente posterior.
+
+Comandos precisos con valores efímeros documentados en `commands` del registro:
+
+```text
+docker --context desktop-linux exec -e PGPASSWORD -e PGHOST -e PGPORT -e PGUSER -e PGDATABASE -e PGSSLMODE -e PGSSLROOTCERT -e PGOPTIONS -e PGAPPNAME -e PGCLIENTENCODING kortek-m2-c3-p2-client-real-4bc495d4bdd9 pg_dump --schema=public --format=custom --no-owner --no-privileges --encoding=UTF8 --snapshot=<snapshot-en-memoria> --schema-only --format=plain
+docker --context desktop-linux exec -e PGCLIENTENCODING=UTF8 kortek-m2-c3-p2-restore-4bc495d4bdd9 pg_dump -U postgres -d postgres --schema=public --schema-only --no-owner --no-privileges --encoding=UTF8 --format=plain
+```
+
+La última opción `--format=plain` determina el formato de ambos volcados. La normalización solo convierte CRLF a LF, retira espacios finales y los comandos de encuadre `\restrict`/`\unrestrict` con nonce aleatorio de pg_dump. No elimina objetos, SQL, defaults, CHECK, comentarios SQL de objetos, configuración de funciones, tipos, secuencias ni extensiones. Los tokens de encuadre no pertenecen al schema ni constituyen una excepción estructural.
+
+Se conservaron [snapshot completo](evidence/m2-c3-p2/p2-iteracion-local-2-snapshot.sql.txt), [restore completo](evidence/m2-c3-p2/p2-iteracion-local-2-restore.sql.txt) y [diff completo](evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt). El registro conserva adicionalmente ambos lados de cada categoría: tablas/columnas, constraints, índices, triggers, funciones y configuración, secuencias, extensiones, tipos y contenido restante. La consulta local de inicialización comprobó `btree_gist` en public y el restore lo creó explícitamente allí. **Límite adicional del dump parcial:** `--schema=public` omite el DDL de extensiones; la categoría extensions de ambos volcados está vacía, por lo que su igualdad no prueba DDL/schema de la extensión mediante dump. Esta cobertura exigida sigue pendiente y no se cambió el ejecutor tras la parada. **Límite del agrupador auxiliar:** clasifica por tipo de bloque del dump; los CHECK inline aparecen dentro de bloques TABLE, no en los bloques CONSTRAINT separados. El cotejo autoritativo usa el dump entero y detectó los tres; no se debe interpretar `constraints.equal=true` del agrupador como igualdad de los CHECK inline. No se ocultó ni corrigió ese límite después de la parada.
+
+**Fallo nuevo real del cotejo textual:** tres diferencias de agrupación de paréntesis en CHECK inline:
+
+- `BusinessScheduleWindow_minutes_check`;
+- `EmailOutbox_budget_check`;
+- `ProfessionalWeeklySchedule_minutes_check`.
+
+El origen contiene agrupación AND anidada y el volcado del restore muestra parte de esa agrupación aplanada. El catálogo previo con `pg_get_constraintdef(..., true)` no distinguía esos paréntesis; el dump sí los distingue. No se ha probado de forma independiente la equivalencia semántica y **no se admite como excepción**. No se eliminaron paréntesis ni se reescribieron constraints, ni se cambió el criterio para aceptar el restore. El diff de los tres bloques es completo, sin seleccionar o borrar diferencias.
+
+Resultado: catálogo/esquema **false**; tablas/datos (36 conteos y huellas), ledger, censo y roles **true**. Clase `RuntimeError`, fase `restore-cotejo-rollback`, mensaje `restore-desigualdad:catalog`; traceback `run.py:836 main -> run.py:624 restore_cipher`. Fallo envolvente: `RuntimeError: recorrido-local-completo-fallo`, fase `arnes-A`, `harness.py:271 main -> harness.py:232 scenario`. Detención en iteración **2/6**, sin tercera ejecución ni reparación posterior. Aceptar esta diferencia requeriría ampliar la normalización/criterios autorizados; no se hace por inferencia.
+
+### Excepciones permitidas: lista cerrada
+
+1. **Dueños:** `--no-owner`; la identidad del propietario no forma parte de este cotejo estructural autorizado.
+2. **ACL:** `--no-privileges`; el dump sin ACL no prueba recuperación general de permisos QA.
+3. **Default ACL:** la misma exclusión expresa; no prueba recuperación general de privilegios por defecto QA.
+4. **Roles que existan solo en el origen:** roles globales adicionales no incluidos por pg_dump. No autoriza diferencias en atributos/membresías/privilegios de roles de interés, que en ambos recorridos sí coincidieron tras reconstrucción exclusivamente local.
+
+No se admiten diferencias en tablas, columnas/tipos/defaults, constraints, índices, triggers, funciones/configuración, secuencias, extensiones/schema ni datos. Esta lista no permite aceptar los tres CHECK distintos. Los roles/dueños de interés fueron reconstruidos e iguales; no hubo que aplicar una excepción adicional para aceptar una desigualdad.
+
+### Pruebas completadas y lo no verificado
+
+La iteración 2 pasó las unidades del ledger multiconjunto (orden y multiplicidad/checksum), lectura JSON multilinea UTF-8, persistencia de error interno y fallo del manejador, fallback ante fallo de persistencia, redacción de valores privados, comando falso exit `7` con sus **cuatro líneas completas** de stderr y recorte a 8192 bytes después de redactar. Cada comando externo conserva exit, argv sanitizado, stderr redactado completo hasta ese límite, clase/fase/traceback para los fallos. UTF-8 en lector y restore se mantiene. El registro sintético de recorte se distingue explícitamente de un comando realmente ejecutado.
+
+**Incidente en validación documental posterior:** el script offline salió `1` con `AssertionError` (`stdin:31`) al exigir DDL de extensión que el dump parcial no contiene; el wrapper PowerShell devolvió `0` porque después ejecutó Git. No se cuenta como una tercera iteración del arnés ni como validación pasada. Se conservan comando, ambos exits y stderr completo redactado en [p2-iteracion-local-validacion.json](evidence/m2-c3-p2/p2-iteracion-local-validacion.json). La revisión offline siguiente reconoce y deja pendiente esa cobertura, sin cambiar el ejecutor, schema o criterios.
+
+**Pendientes:** DDL de extensiones mediante el cotejo nuevo; el recorrido completo no pasó, por tanto no se alcanzaron los cuatro escenarios completos (fallo antes de dump sin residuo; frase repetida mal antes de cualquier dump; alteración de datos del restore; persistencia integrada de errores internos/externos) ni `rollback_drills` de §5.3. Las unidades parciales no sustituyen esos escenarios. No se ejecutó SQL de la migración 28/inversa en estos dos recorridos porque el gate de restore falló antes. Tampoco se probó rollback de imagen/HTTP real de API, web ni Clerk; el HTTP del arnés es un stub local y no equivale a reserva pública QA. Ninguna prueba de TLS/DPAPI/credenciales/servicios/release de QA se ejecutó. Los backups y hashes fueron únicamente sintéticos/locales y **no sirven para QA ni P3b**.
+
+### Limpieza, evidencia y commit local
+
+Los cuatro contenedores propios se retiraron con `docker --context desktop-linux rm --force --volumes <nombre-propio>` en finally (exit `0`). Agentes GPG propios: `gpgconf --homedir <home-propio-MSYS> --kill gpg-agent` (exit `0`), homes retirados. Verificación posterior individual con `docker --context desktop-linux ps -a --filter name=^/<nombre-propio>$ --format {{.Names}}`: exit `0`, salida vacía para los cuatro. Ningún inspect completo, prune, contenedor/volumen ajeno ni servicio QA se tocó.
+
+Tras archivar evidencia se verificaron rutas absolutas y ausencia de symlinks/reparse points, y se eliminaron exclusivamente `.tmp/p2-it1`, `.tmp/p2-it2` y `.tmp/p2-iteraciones.json`, mediante `Remove-Item -LiteralPath` de esas rutas explícitas. Se retiraron cifrados/manifests falsos, caches y temporales; los datos PostgreSQL estaban en tmpfs. [Registro de limpieza](evidence/m2-c3-p2/p2-iteracion-local-limpieza.json). Nunca se accedió a `C:\KortekBackups\qa-m2-c3`.
+
+Rutas explícitas para commit: únicamente este documento y los archivos nuevos de la tabla. Fuentes `.py.txt` incluidas solo como evidencia exacta del arnés/ejecutor **local**, no código desplegable ni cambios a aplicaciones/ops. Incidente Git: `git diff --cached --check` devolvió `2` por líneas vacías finales de ambos volcados y los espacios de prefijo del diff completo; salida conservada en el registro de validación. No se recortó ni alteró la evidencia. El chequeo estándar se aplica a documento/fuentes/JSON y, solo para esos tres artefactos exactos, se usa por invocación `git -c core.whitespace=-blank-at-eof,-blank-at-eol diff --cached --check`, sin tocar configuración global ni criterios del cotejo. Validación local de JSON/AST, hashes, prefijo documental sin reescritura, comandos y límites de redacción; `git diff --check`, revisión del diff y staged por estas rutas. **Sin push, B/C ni P3.** El SHA final del commit y estado Git se informan en el relevo; no se edita esta sección para incluir su propio hash.
+
+| Evidencia sanitizada | SHA-256 |
+| --- | --- |
+| [p2-iteracion-local-1-arnes.py.txt](evidence/m2-c3-p2/p2-iteracion-local-1-arnes.py.txt) | `9d7fb4607738356833fc51becc6e22ab196a56934402a335fc4fb29c2bafec84` |
+| [p2-iteracion-local-1-ejecutor.py.txt](evidence/m2-c3-p2/p2-iteracion-local-1-ejecutor.py.txt) | `c8de8cb965fce18e788a21d02ef42a5fa89c866c452fc298abd991e867baba40` |
+| [p2-iteracion-local-2-arnes.py.txt](evidence/m2-c3-p2/p2-iteracion-local-2-arnes.py.txt) | `ea399d0915e810c6b7994a9fc65544b78d8fdb30ffe7069a8026b7dc4398964c` |
+| [p2-iteracion-local-2-ejecutor.py.txt](evidence/m2-c3-p2/p2-iteracion-local-2-ejecutor.py.txt) | `55d263550cfabf901b7d948110af60bf70864a13cdc19ded373b272458b3948c` |
+| [p2-iteracion-local-2-fallback.json](evidence/m2-c3-p2/p2-iteracion-local-2-fallback.json) | `74a3dcdf3cafdb745248c9a02ad4f2d9b818c52a0fa22361ac11f96f7b5d269f` |
+| [p2-iteracion-local-2-restore.sql.txt](evidence/m2-c3-p2/p2-iteracion-local-2-restore.sql.txt) | `60430158df9e2591f2fc438e8be5b015c702270d4dfb5f837056f9add62f13be` |
+| [p2-iteracion-local-2-schema.diff.txt](evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt) | `bd4e257edb10863e156955539c45a5b557c40f02e3048427a3e0cf21e80095c8` |
+| [p2-iteracion-local-2-snapshot.sql.txt](evidence/m2-c3-p2/p2-iteracion-local-2-snapshot.sql.txt) | `6ed4d4694e04ffb412fc9179704342dc1f510bbcc0c210c5874864493d10de69` |
+| [p2-iteracion-local-2-unidades.json](evidence/m2-c3-p2/p2-iteracion-local-2-unidades.json) | `9957c857432324710e22641ccff903f658161f873654048b06763874d4995c60` |
+| [p2-iteracion-local-diagnostico.json](evidence/m2-c3-p2/p2-iteracion-local-diagnostico.json) | `adfcd15d96969008256a5772e3920ed80016c487d315fa70f11dc7ca2572d16c` |
+| [p2-iteracion-local-limpieza.json](evidence/m2-c3-p2/p2-iteracion-local-limpieza.json) | `084eefd4dd9eeca76f8b3165f3bbc1979fff05384015080d94489791f22ac7b4` |
+| [p2-iteracion-local-registro.json](evidence/m2-c3-p2/p2-iteracion-local-registro.json) | `9ba48aa8351114c10015597dccebb6faf52d592b86d7c7b2afa5cd0d8c46b506` |
+| [p2-iteracion-local-validacion.json](evidence/m2-c3-p2/p2-iteracion-local-validacion.json) | `0359c3f97ad1e15532c47149f59bac281cfca7a79875be3880ceb85339e3c86e` |
