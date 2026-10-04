@@ -1,0 +1,17 @@
+{
+  "basis": "canonical LF evidence bytes",
+  "files": {
+    "post-commit-audit.json": {
+      "sha256": "6db2aea254e76ae5fe945284ab61a53039350c52592a9ac1bc5833e122c4d685",
+      "bytes": 8877
+    },
+    "post-commit-audit.py.txt": {
+      "sha256": "5b5554b008548b0cec6a9f5ba3da8a82e20996e2716fe87ebb2a3cef1b31d6f1",
+      "bytes": 3817
+    },
+    "validation.json": {
+      "sha256": "92e9bf4020cbf71cb0ceede293e272119aae422d836188ffae452c13fe0d3463",
+      "bytes": 523
+    }
+  }
+}

@@ -2098,3 +2098,30 @@ Limpieza: auditoría local encontró ausentes **33 contenedores propios** y **8 
 ### 20.6 Acción del propietario
 
 Guardar la frase de forma segura y separada de los archivos cifrados, manteniendo su custodia. Revisar esta evidencia y decidir por separado si autoriza P3; P2 cumplido no aprueba C3 ni abre producción. Antes de migrar en P3b, generar y verificar el nuevo respaldo bajo congelamiento del corte que realmente se va a modificar. El commit de esta entrega permanece local; no autoriza push ni despliegue.
+
+
+## 21. Confirmación adicional de continuidad QA tras el commit P2 — 2026-10-04
+
+### 21.1 Estado
+
+**OBJETIVO CUMPLIDO — P2.** Los siete criterios y sus cotejos de §20 siguen vigentes. El primer commit local fue **0dd4ba7c0e42ac18617029a7e0f3f990cf38995c**. Este anexo conserva todas las secciones anteriores y registra una comprobación adicional; no reescribe ese commit. [post-commit-audit.json](evidence/m2-c3-p2/p2-goal-20261004-postcommit/post-commit-audit.json).
+
+### 21.2 Trabajo y resultado
+
+Consulta de metadata QA en solo lectura, sin conexión a la base: `systemctl show`, `podman inspect` y `sha256sum` con los argumentos originales de la función infra archivada. Fuente exacta y argv en [post-commit-audit.py.txt](evidence/m2-c3-p2/p2-goal-20261004-postcommit/post-commit-audit.py.txt). Comando de entrada: `bundled-python docs/quality/evidence/m2-c3-p2/p2-goal-20261004-postcommit/post-commit-audit.py.txt`; **exit 0** a las **22:14:24 UTC**. HTTP público real **200**, cuerpo no vacío ni impreso. Se verifican prefijo documental preservado, alcance Git y manifiesto del anexo en [validation.json](evidence/m2-c3-p2/p2-goal-20261004-postcommit/validation.json) y [manifest.json](evidence/m2-c3-p2/p2-goal-20261004-postcommit/manifest.json).
+
+### 21.3 Impedimento y corrección
+
+La primera sonda adicional reutilizó argv sanitizados: el formato Go de podman estaba sustituido por marcadores y la igualdad de salida falló. **No hubo un cambio de imágenes ni un reinicio.** PID y hashes ya coincidían. Se extrajo solo la constante original por AST de la fuente conservada, sin importar ni ejecutar el resto del ejecutor. El JSON conserva clase/fase, comando sanitizado, exit 1, stderr completo y ambos lados; la consulta corregida devuelve metadata idéntica y HTTP 200. No se modificaron QA ni los comparadores del restore.
+
+### 21.4 Datos clave
+
+API PID **673295**, worker **575989**, active/running, NRestarts **0**; mismas imágenes y hashes protegidos del baseline y §20. El respaldo cifrado, su SHA-256 y censo siguen siendo los de §20.4. El anexo contiene solo metadata técnica sanitizada; el SHA del commit final se entrega en el relevo.
+
+### 21.5 Límites
+
+No es un nuevo snapshot ni un respaldo bajo congelamiento. Se mantienen todos los límites de §20.5 y la necesidad del respaldo nuevo de P3b. Sin push, sin P3 y sin acceso a producción. La carpeta temporal propia ya retirada no se recreó; el anexo se escribió directamente como evidencia documental.
+
+### 21.6 Propietario
+
+Conservar la frase separada del respaldo; revisar la evidencia y decidir P3 por separado, como §20.6. Ambos commits permanecen locales y no aprueban C3 ni producción.
