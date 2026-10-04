@@ -1215,3 +1215,101 @@ git show --stat --oneline HEAD
 ~~~
 
 El SHA y estado final se entregan en la respuesta; no se insertan en su propio commit. Este checkpoint conserva la parada y no cumple el objetivo operativo P2, ni autoriza P3 o push.
+
+### 14.5 Autorización posterior: diagnóstico solo local
+
+El propietario autorizó reproducir Docker local, probar el bind mount de **solo la CA pública**, comprobar preparación/prompt con frase falsa, corregir el wrapper y hacer un commit local. **Detenerse al terminar:** no ejecutar P2 real ni congelar QA hasta «Autorizo ejecutar P2 ahora». No se abrió ningún archivo de credenciales/frase, conexión QA/productiva, SQL, SSH, HTTP ni servicio remoto; sin variables/flags/Clerk, migraciones, instalaciones o push.
+
+Base inicial: **1690a1eae692064c4058358bca2f38aa541c9bba**, ai/antigravity-qa, árbol/índice limpios, ahead 6 respecto a origin local. Los comandos branch/rev-parse/status habituales terminaron 0; misma advertencia de commit-graph, sin reparación. Se aplicó kortek-delivery; la autorización vigente limita el trabajo a este diagnóstico.
+
+El contenedor fallido original ya no existía. La [reproducción](evidence/m2-c3-p2/p2-docker-reproduccion.json) creó uno propio con **la misma configuración** anterior: imagen fija sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f, usuario por defecto, bridge, read-only, CPU 1, 768 MiB, pids 128, tmpfs /tmp:rw,size=64m y /var/run/postgresql:rw,size=16m, entrypoint sleep infinity, --rm, sin puertos publicados ni mounts del usuario. La imagen hereda un volumen anónimo en /var/lib/postgresql/data; no arrancó PostgreSQL y se verificó su retirada.
+
+Comando exacto reproducido, exit **1 esperado**, conservado:
+
+~~~text
+docker --context desktop-linux cp C:\Users\Fraylin\Desktop\Kortek-Booking\ops\oci-free-backup\prod-ca-2021.crt kortek-m2-c3-p2-diag-b90cf13ef341:/tmp/qa-ca.crt
+~~~
+
+Mensaje real: **Error response from daemon: container rootfs is marked read-only**. El contenedor estaba running, uid=0(root) gid=0(root) groups=0(root). La escritura de una sonda por docker exec en /tmp pasó, exit 0; la CA no apareció tras cp. **Causa acreditada: el daemon rechaza docker cp por rootfs read-only aun cuando el proceso puede escribir en tmpfs.** Categoría (v), ahora diagnosticada; esta autorización local no abre P2 real.
+
+CA: 1390 bytes, legible e igual al archivo de HEAD tras normalizar CRLF/LF. SHA-256 de los bytes reales **1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a**, igual dentro del cliente corregido y al finalizar. La ruta Windows y desktop-linux funcionaron con bind mount: no explican el rechazo read-only de cp.
+
+Solo inspect --format de running, ReadonlyRootfs, Tmpfs, NetworkMode, User y Mounts; imagen únicamente Id/User/Os/Architecture. Nunca inspect completo, Config.Env ni Environment. Los JSON conservan todos los argumentos literales y exit codes.
+
+### 14.6 Corrección acotada de preparación y wrapper
+
+Se preserva sin editar la evidencia histórica de §13. El [wrapper corregido](evidence/m2-c3-p2/p2-wrapper-corregido.ps1) y su [helper local](evidence/m2-c3-p2/p2-cliente-local.py.txt) sustituyen la preparación anterior para este ensayo: no cargan DPAPI/credenciales PG, no conectan a QA y no retienen cliente al finalizar. Solo admiten diagnostico y ensayo-local; **no son un ejecutor completo de P2 real**. La captura de stderr Docker se limita al cp de la CA pública.
+
+Corrección ensayada: declarar al crear el cliente un único bind de archivo:
+
+~~~text
+--mount type=bind,source=C:\Users\Fraylin\Desktop\Kortek-Booking\ops\oci-free-backup\prod-ca-2021.crt,target=/tmp/qa-ca.crt,readonly
+~~~
+
+Imagen, usuario, read-only, límites y tmpfs se mantienen; el ensayo usa **network none**, pues no necesita QA. Un solo bind, CA RW=false, legible y no escribible; sin mounts de directorios, dotenv, claves o frases. El volumen anónimo heredado se eliminó con --rm, comprobado por nombre exacto.
+
+Read-Host -AsSecureString recibe **solo frase falsa**. El wrapper la pasa al helper por stdin anónimo, y este a GPG mediante --passphrase-fd 0. No se guarda en argv, environment, archivos o informes; BSTR liberado y SecureString dispuesto al salir. No se leyó Clave.txt ni se pidió/usó la frase del propietario.
+
+### 14.7 Ensayo en seco completo e incidencias
+
+Comandos reales desde la raíz; exit externos **0 / 1 / 1 / 0**:
+
+~~~powershell
+& docs/quality/evidence/m2-c3-p2/p2-wrapper-corregido.ps1 -Modo diagnostico -Informe docs/quality/evidence/m2-c3-p2/p2-docker-reproduccion.json
+& docs/quality/evidence/m2-c3-p2/p2-wrapper-corregido.ps1 -Modo ensayo-local -Informe docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local.json
+Move-Item -LiteralPath docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local.json -Destination docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo1.json
+& docs/quality/evidence/m2-c3-p2/p2-wrapper-corregido.ps1 -Modo ensayo-local -Informe docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo2.json
+& docs/quality/evidence/m2-c3-p2/p2-wrapper-corregido.ps1 -Modo ensayo-local -Informe docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local.json
+~~~
+
+Move-Item adicional terminó 0 y preservó el primer fallo antes de reutilizar la ruta. Incidencias locales, ninguna QA:
+
+- Sandbox por defecto: Docker nativo exit 1, acceso a metadatos del contexto/config local denegado, Access is denied. El bloque PowerShell terminó 0 por comandos posteriores: **no se cuenta como éxito Docker**. Lectura local con permiso ampliado pasó; sin rechazo automático ni lectura explícita de archivos de credenciales.
+- Primera consulta de imagen con {{json .Config.User}}: exit 1, template parsing error: template: :1:27: executing "" at <.Config.User>: map has no entry for key "User". Se corrigió a {{json (index .Config "User")}}; imagen null, contenedor vacío, efectivo root.
+- [Primer fallo de cifrado](evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo1.json): GPG exit 2, stderr no retenido. Se añadió captura sanitizada exclusivamente para GPG local y se [repitió](evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo2.json): gpg: error running '/usr/bin/gpg-agent': exit status 2; failed to start gpg-agent ... General error; No agent running. Bind, PG17, hash, custodia y prompt ya pasaban; contenedores/temporales retirados.
+- Normalizar argumentos GPG de rutas Windows con backslash a **/c/...** (homedir, plano, cifrado, descifrado y gpgconf) resolvió el arranque del agente y el round trip. GPG de Git usa MSYS; no se cambió configuración global ni homedir del propietario.
+- Un intento de patch documental sufrió SyntaxError: missing ) after argument list antes de invocar apply_patch; sin cambios. Se corrigió el delimitado del texto, sin ejecutar comandos operativos.
+
+[Ensayo definitivo](evidence/m2-c3-p2/p2-cliente-ensayo-local.json), exit **0**:
+
+| Comprobación | Resultado real |
+| --- | --- |
+| Cliente | Linux amd64, imagen fijada; pg_dump (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2), sin login SQL. |
+| CA | Hash igual, bind único read-only, test -r y test ! -w pasan. |
+| Custodia | C:\KortekBackups\qa-m2-c3 existente; sonda propia con modo xb creada, releída y retirada. No se inspeccionaron otros backups. |
+| Prompt | Terminal local real: Read-Host -AsSecureString mostró solo asteriscos; entrada sintética desechable, no se reproduce en documentación. |
+| Cifrado | GnuPG 2.4.5, AES256, archivo trivial sin datos de negocio; encrypt/decrypt exit 0 y bytes idénticos. Frase por stdin, sin argv/env/archivo. |
+| Limpieza | gpgconf --homedir <homedir-propio-MSYS> --kill gpg-agent exit 0, solo agente propio; plano/cifrado/descifrado/homedir temporal retirados. |
+
+El cifrado trivial **no es un respaldo P2 ni aporta hash/censo habilitante de P3b**.
+
+### 14.8 Limpieza y límites de entrega
+
+[Limpieza final](evidence/m2-c3-p2/p2-limpieza-local.json): cuatro contenedores y cuatro volúmenes anónimos propios ausentes. Consultas con sus nombres exactos mediante docker --context desktop-linux ps -a --filter name=<nombre-propio> --format '{{.Names}}' y docker --context desktop-linux volume ls --filter name=<volumen-propio> --format '{{.Name}}': exit 0, salida vacía. Sin prune ni objetos ajenos retirados. Temporales y sondas propias eliminados; CA original intacta. Se conservan solo fuentes corregidas y evidencia sanitizada.
+
+**DIAGNÓSTICO LOCAL COMPLETADO / EN REVISIÓN; P2 REAL DETENIDO / INCOMPLETO.** No verificado: destino/DNS/TLS/login QA, permisos SELECT, escritores, ledger 27/28, release/servicios/Preview, reserva pública, snapshot/backup/hash/censo, restore real/roles/ACL, rollback §5.3 y orden de reanudación. PG17.11 local no demuestra restore de Supabase 17.6. Ningún servicio QA detenido/reiniciado, ventana de 90 minutos no iniciada; estado actual no certificado mediante lecturas prohibidas.
+
+Esperar **«Autorizo ejecutar P2 ahora»**. Después, repetir desde §5.2 paso 1 las precondiciones frente a P0 e integrar la preparación local validada sin cargar credenciales por inferencia. La frase en prompt del propietario y los 90 minutos deben estar disponibles antes del congelamiento. No continuar P2 ni abrir P3 desde esta entrega.
+
+### 14.9 Checkpoint local
+
+Rutas: preflight, wrapper corregido, helper local como evidencia y cinco JSON nuevos. Validación local de JSON, sintaxis Python/PowerShell, enlaces/fences, patrones sensibles, diff/índice completo y áreas protegidas intactas. Sin tipos/lint/build de producto.
+
+~~~powershell
+git diff --check
+git diff --stat
+git diff
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-wrapper-corregido.ps1 docs/quality/evidence/m2-c3-p2/p2-cliente-local.py.txt docs/quality/evidence/m2-c3-p2/p2-docker-reproduccion.json docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo1.json docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo2.json docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local.json docs/quality/evidence/m2-c3-p2/p2-limpieza-local.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git commit -m "docs(m2): corregir preparación local Docker de P2"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+git diff --exit-code 1690a1e..HEAD -- apps ops package.json pnpm-lock.yaml
+~~~
+
+SHA/estado final en la respuesta, sin escribir el SHA del commit dentro de sí mismo. Sin push ni ejecución P2 real.

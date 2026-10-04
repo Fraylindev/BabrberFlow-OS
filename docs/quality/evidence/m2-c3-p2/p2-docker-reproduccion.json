@@ -1,0 +1,197 @@
+{
+  "timestampUtc": "2026-10-04T00:18:18.325991+00:00",
+  "image": "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+  "commands": [
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=kortek-m2-c3-p2-client-d15070d4fd9f",
+        "--format",
+        "{{.Names}} {{.State}}"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "image",
+        "inspect",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "--format",
+        "{\"id\":{{json .Id}},\"user\":{{json (index .Config \"User\")}},\"os\":{{json .Os}},\"architecture\":{{json .Architecture}}}"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "git",
+        "show",
+        "HEAD:ops/oci-free-backup/prod-ca-2021.crt"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-diag-b90cf13ef341",
+        "--network",
+        "bridge",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "768m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--entrypoint",
+        "sleep",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "infinity"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "inspect",
+        "--format",
+        "{\"running\":{{json .State.Running}},\"readonly\":{{json .HostConfig.ReadonlyRootfs}},\"tmpfs\":{{json .HostConfig.Tmpfs}},\"network\":{{json .HostConfig.NetworkMode}},\"user\":{{json (index .Config \"User\")}},\"mounts\":{{json .Mounts}}}",
+        "kortek-m2-c3-p2-diag-b90cf13ef341"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-diag-b90cf13ef341",
+        "id"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-diag-b90cf13ef341",
+        "sh",
+        "-c",
+        "test -w /tmp && : > /tmp/p2-write-probe && rm /tmp/p2-write-probe"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "cp",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt",
+        "kortek-m2-c3-p2-diag-b90cf13ef341:/tmp/qa-ca.crt"
+      ],
+      "exitCode": 1
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-diag-b90cf13ef341",
+        "test",
+        "-f",
+        "/tmp/qa-ca.crt"
+      ],
+      "exitCode": 1
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "stop",
+        "--time",
+        "1",
+        "kortek-m2-c3-p2-diag-b90cf13ef341"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "createdContainers": [
+    "kortek-m2-c3-p2-diag-b90cf13ef341"
+  ],
+  "removedContainers": [
+    "kortek-m2-c3-p2-diag-b90cf13ef341"
+  ],
+  "qaConnections": false,
+  "credentialFilesRead": false,
+  "realPhraseUsed": false,
+  "previousContainerPresent": false,
+  "imageMetadata": {
+    "id": "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+    "user": null,
+    "os": "linux",
+    "architecture": "amd64"
+  },
+  "ca": {
+    "path": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt",
+    "bytes": 1390,
+    "sha256": "1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a",
+    "matchesTrackedHEADAfterLineEndingNormalization": true,
+    "readable": true
+  },
+  "reproductionConfiguration": {
+    "running": true,
+    "readonly": true,
+    "tmpfs": {
+      "/tmp": "rw,size=64m",
+      "/var/run/postgresql": "rw,size=16m"
+    },
+    "network": "bridge",
+    "user": "",
+    "mounts": [
+      {
+        "Destination": "/var/lib/postgresql/data",
+        "Driver": "local",
+        "Mode": "",
+        "Name": "d195c5347da9ca8e0cc892ed8f314f91e7e5be2a79a43e9b5a6dff8f30a7be9d",
+        "Propagation": "",
+        "RW": true,
+        "Source": "/var/lib/docker/volumes/d195c5347da9ca8e0cc892ed8f314f91e7e5be2a79a43e9b5a6dff8f30a7be9d/_data",
+        "Type": "volume"
+      }
+    ]
+  },
+  "effectiveUser": "uid=0(root) gid=0(root) groups=0(root)",
+  "tmpWritableByContainerUser": true,
+  "dockerCp": {
+    "exitCode": 1,
+    "stderrSanitized": "Error response from daemon: container rootfs is marked read-only"
+  },
+  "caPresentAfterCp": false,
+  "success": true,
+  "remainingOwnedContainers": []
+}
