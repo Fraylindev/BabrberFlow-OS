@@ -1313,3 +1313,130 @@ git diff --exit-code 1690a1e..HEAD -- apps ops package.json pnpm-lock.yaml
 ~~~
 
 SHA/estado final en la respuesta, sin escribir el SHA del commit dentro de sí mismo. Sin push ni ejecución P2 real.
+
+## 15. P2 autorizado: parada en paso 0, antes de congelar — 2026-10-04 UTC
+
+### 15.1 Base y alcance
+
+Autorización del propietario: «Autorizo ejecutar P2 ahora», sobre HEAD local **c0d9fd5d30a4acd984c4a92b0d198ce23de55822**, rama **ai/antigravity-qa**. Estado inicial limpio, ahead 7 respecto de la referencia remota local; no se consultó el remoto ni se hizo push. Se aplicó kortek-delivery y se leyeron las fuentes de gobierno. Producción cerrada e intacta; únicamente metadatos/lecturas QA y preparación local de P2. Ninguna migración, despliegue, modificación de roles/grants, variables, flags o Clerk.
+
+La excepción acotada permitió usar el DPAPI existente del migrador QA en memoria, solo para sesiones de respaldo READ ONLY. El supervisor convirtió el valor protegido a SecureString y lo transmitió por stdin anónimo; liberó BSTR/SecureString. El hijo mantuvo la credencial únicamente en su entorno de procesos de cliente PG y la eliminó al salir; no se pasó a servicios API/worker, argumentos, informes ni archivos nuevos. No se leyó Clave.txt ni una credencial productiva. **No llegó a solicitarse ni recibirse la frase del propietario.**
+
+Fuentes sanitizadas del intento: [ejecutor real, versión ejecutada](evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt), SHA256 269f624aac7f08d757af98352b280085f8834241ee3ebc138e56c0f8fd7d8e21, y [supervisor de prompt](evidence/m2-c3-p2/p2-real-supervisor.ps1.txt), SHA256 c0bf2d9b504ba55dd52fdb01cee9a1955add9d42275f9955e34cff88d6217213. Son evidencia, no una orden de ejecución futura. Las ramas de congelamiento, restore y rollback del ejecutor **no fueron ejecutadas ni se declaran validadas**.
+
+### 15.2 Preparación y comandos realmente ejecutados
+
+Se preparó el ejecutor temporal con: CA pública en bind único read-only, PG17 por ID, rutas GPG MSYS, stdin anónimo, doble confirmación de frase para cifrar y una entrada independiente para descifrar; revalidación antes de stop; parada worker → API; recuperación API → worker en finally y watchdog a 85 minutos. La ventana máxima autorizada seguía siendo 90 minutos. Se corrigió localmente que la recuperación intentase ambas unidades aunque fallase la primera y que un fallo previo al congelamiento no hiciera GET público. Nada de esto acredita ejecución de las ramas posteriores.
+
+Validación local: sintaxis Python y AST PowerShell, exit 0. Una prueba trivial con frase aleatoria desechable cifró AES256 y descifró bytes idénticos, mediante stdin de GPG, exit 0; sin datos de negocio y sin la frase del propietario. Se retiró el cifrado trivial. Test-Path confirmó las rutas de custodia y DPAPI; no enumeró ni leyó otros respaldos.
+
+Comandos de lanzamiento, desde la raíz; Start-Process terminó 0, que **no es el resultado de P2**:
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+$p2Errors = $null; $p2Tokens = $null
+[void][Management.Automation.Language.Parser]::ParseFile((Join-Path (Get-Location) '.tmp/m2-c3-p2-real/prompt.ps1'), [ref]$p2Tokens, [ref]$p2Errors)
+& 'C:\Users\Fraylin\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -c "import ast,pathlib; ast.parse(pathlib.Path('.tmp/m2-c3-p2-real/run.py').read_text()); print('Ejecutor completo: sintaxis valida')"
+$p2Window = Start-Process -FilePath 'C:\Users\Fraylin\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe' -ArgumentList @('-NoProfile','-File','C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\m2-c3-p2-real\prompt.ps1') -WindowStyle Normal -PassThru
+~~~
+
+El wrapper obtuvo la credencial QA del archivo DPAPI autorizado, sin mostrarla. El proceso P2 inició a **2026-10-04T01:27:25.451614Z** y terminó a **01:27:33.708459Z**; resultado false, salida del ejecutor **1**. Las consultas y argumentos exactos observados están en [parada paso 0](evidence/m2-c3-p2/p2-real-parada-paso0.json) y [lecturas de proveedores previas](evidence/m2-c3-p2/p2-real-paso0-proveedores.json). Los campos de entorno en los argumentos Docker son **nombres**, sin valores de credenciales. El SQL del intento está íntegro en la fuente sanitizada.
+
+Sesión fuente, psql por stdin dentro del cliente propio:
+
+~~~sql
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;
+SET LOCAL statement_timeout='120s';
+SELECT json_build_object('role',current_user='kortek_migrator','database',current_database()='postgres',
+  'readonly',current_setting('transaction_read_only')='on','repeatableRead',current_setting('transaction_isolation')='repeatable read',
+  'version',current_setting('server_version')='17.6',
+  'allSelect',NOT EXISTS(SELECT 1 FROM pg_tables WHERE schemaname='public'
+    AND NOT has_table_privilege(current_user,format('%I.%I',schemaname,tablename),'SELECT')));
+SELECT json_agg(json_build_object('name',migration_name,'checksum',checksum,
+  'finished',finished_at IS NOT NULL,'rolledBack',rolled_back_at IS NOT NULL) ORDER BY migration_name)
+FROM public._prisma_migrations;
+COMMIT;
+~~~
+
+El login y todos esos booleanos pasaron según la secuencia del ejecutor, que solo alcanzaba la comparación del ledger si todos eran true. Ese resultado intermedio no fue persistido por separado: se distingue de los resultados JSON retenidos. TLS verify-full y CA esperada fueron efectivos en el cliente; PGOPTIONS también exigió default_transaction_read_only y timeout. **No se ejecutó pg_dump --schema-only**, porque el ledger se comparó antes.
+
+### 15.3 Resultado y error exacto
+
+| Comprobación | Resultado y límite |
+| --- | --- |
+| Proyecto QA | Kortek Booking Cutover QA, ref prirlabbnlcuvnzuaczp, ACTIVE_HEALTHY; versión proveedor 17.6.1.166. Solo el proyecto QA. |
+| Destino efectivo API | Rol/base/usuario QA/endpoint/DNS/release/deploy staging/reserva abierta: booleanos true, iguales al comienzo y al cierre. No URL de conexión registrada. |
+| Servicios | API PID 673295, worker PID 575989, ambos active/running y NRestarts 0 al inicio y final; mismos PID e imágenes. |
+| Release e imágenes | API release 791569b110f9fd59cb10e6d248546bdae3996e14 e imagen 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031; worker imagen 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1. APP_RELEASE interno del worker no se consultó por separado. |
+| Archivos protegidos QA | Hashes de runtime-env, dos wrappers y dos unidades iguales al baseline del segundo intento y al finalizar; sin contenido impreso. |
+| Escritores previos | Runtime 4 idle, authenticator 1 idle, pgbouncer 2 idle, supabase_admin 2 idle; cero transacciones observadas, prepared 0, pg_cron ausente. Lectura puntual, sin congelamiento. |
+| Cola | Abiertas 0, destinatarios abiertos no sintéticos 0, leases activos 0. Solo conteos. |
+| Ledger agregado proveedor | 27 terminadas activas, 0 sin terminar activas, 28 ausente, 36 tablas. No demuestra igualdad de todos los checksums. |
+| Migrador | Verificación de permisos SELECT sobre todas las tablas public, incluidas las cinco de horarios, y login READ ONLY con verify-full pasaron. Sin GRANT ni cambios de roles. El dump de prueba efectivo quedó pendiente. |
+| Preview | dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD, READY, SHA 9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4, aliases QA y rama iguales a P0. Sin cambios Vercel. |
+| Cliente/CA | pg_dump PostgreSQL 17.11, imagen d74eeac9…46f fija; CA hash 1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a. |
+
+**Error real del ejecutor:** RuntimeError, mensaje **ledger-difiere-P0**, en paso 0 antes de congelar, al ejecutar:
+
+~~~python
+ledger = SOURCE.json(LEDGER_SQL)
+if ledger != prior['precheck']['ledger']:
+    raise RuntimeError('ledger-difiere-P0')
+~~~
+
+No fue un mensaje de PostgreSQL, Docker o GPG: fue la condición local de comparación. Clasificación **(v), comparación del ledger / posible diferencia real sin resolver**. No se atribuye a permisos, cliente PG17, conectividad/TLS ni cifrado. La comparación de arrays fue demasiado sensible al orden; el ledger técnico leído no se retuvo, así que **no es posible confirmar retrospectivamente si la causa fue solo el orden o una diferencia real**. No hubo otro fallo externo en este intento.
+
+Se obedeció la parada: **ningún stop, start, restart o escritura de negocio/DDL/grants QA fue ejecutado**. La transacción READ ONLY se cerró y el proceso liberó la credencial. No se exportó snapshot ni respaldo; la ventana de 90 minutos no comenzó. No se solicitó la frase. No se reintentó P2.
+
+### 15.4 Diagnóstico y corrección exclusivamente locales
+
+El baseline contiene 31 entradas técnicas: 27 terminadas activas y cuatro revertidas históricas. Tres nombres tienen varias entradas: team_invitations_a0_4 (3), client_user_b2c_link_a0_6_a (2) y facturacion_a_internal_invoices (2). ORDER BY migration_name no resuelve esos empates. Comparar listas así puede rechazar un ledger idéntico con distinto orden histórico.
+
+Se ensayó una corrección local, conservando el multiconjunto completo de tuplas name/checksum/finished/rolledBack y su multiplicidad, sin omitir entradas revertidas ni desactivar controles. SQL con orden total y COLLATE "C"; guardar metadatos del ledger y booleanos de login antes de comparar. [Patch posterior al intento](evidence/m2-c3-p2/p2-real-correccion-ledger.diff.txt) y [pruebas locales](evidence/m2-c3-p2/p2-real-prueba-comparador-local.json).
+
+Resultados, exit 0: una permutación del mismo ledger se acepta; checksum cambiado, entrada ausente, duplicado adicional y estado cambiado se rechazan. Sintaxis válida. **No se volvió a conectar a QA para probar esa corrección ni se confirmó la causa real.** Los metadatos son solamente del baseline guardado; no una nueva lectura del ledger.
+
+### 15.5 Limpieza, límites y próximo punto de parada
+
+[Limpieza](evidence/m2-c3-p2/p2-real-limpieza-paso0.json): docker rm --force --volumes del único cliente propio terminó 0; consulta posterior por su nombre exacto terminó 0 y vacía. PG data era tmpfs, sin volumen anónimo nuevo. Agente GPG de homedir propio retirado con gpgconf; fuentes/resultados sanitizados conservados como evidencia y temporales bajo la ruta absoluta .tmp/m2-c3-p2-real retirados después de comprobar destino y ausencia de reparse points. No prune ni eliminación de objetos ajenos. El supervisor ya había salido en la comprobación local de limpieza.
+
+~~~powershell
+docker --context desktop-linux ps -a --filter 'name=kortek-m2-c3-p2-client-real-429cba5c86ee' --format '{{.Names}}'
+# Destino absoluto previamente validado dentro del workspace, sin reparse points:
+Remove-Item -LiteralPath 'C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\m2-c3-p2-real' -Recurse -Force
+~~~
+
+**P2 DETENIDO / INCOMPLETO.** Pendiente/no verificado: igualdad completa del ledger vivo; dump schema-only efectivo; censo vivo de clientes/reservas (20/28 es antecedente P0, no resultado de este intento); revalidación inmediatamente anterior al stop; desaparición de escritores congelados; snapshot/dump/cifrado con la frase del propietario; hash/censo de respaldo; restore PG17/TOC public-btree_gist; igualdad de datos, constraints, triggers, roles/ACL; recuperación y ensayos de §5.3; medición de RTO; HTTP de reserva pública. Reserva abierta por flag no demuestra HTTP 200. No se necesitó reanudar servicios porque nunca se detuvieron; la recuperación prevista no quedó ensayada en vivo.
+
+**No hay respaldo P2 nuevo, hash habilitante ni censo de snapshot que permita comprobar P3b.** La custodia C:\KortekBackups\qa-m2-c3 permaneció intacta y no se inspeccionaron otros archivos. La regla sigue siendo: cualquier escritura posterior al futuro respaldo exige uno nuevo antes de P3b. Producción intacta; P3 cerrado.
+
+Siguiente acción tras nueva orden del propietario: revisar/aplicar la corrección local del comparador y repetir desde paso 0. Capturar solamente ledger técnico y diferencias sanitizadas antes de decidir si coincide realmente con P0. Ante cualquier diferencia, parar; no editar ledger ni conceder permisos. Esta entrega **no ejecuta un segundo intento**.
+
+### 15.6 Checkpoint local
+
+Solo este documento y siete archivos nuevos de evidencia sanitizada; fuentes del intento archivadas como texto, sin código de producto modificado. Validaciones: JSON/sintaxis, patch local, enlaces/fences, ausencia de patrones sensibles, diff e índice explícitos, áreas apps/ops/dependencias sin cambios.
+
+Incidencia documental local después de la parada: primer validador exit 1, UnicodeDecodeError de cp1252 al leer documentación UTF-8; el patch ya había sido reconstruido y validado solo en memoria. Se repitió exclusivamente esa validación local con encoding utf-8 explícito, exit 0. No ejecutó el cliente, credenciales, red ni SQL. Sin fallos intermedios adicionales QA.
+
+La revisión automática rechazó un staging posterior que añadía host DB e ID del proyecto en campos nuevos, por considerarlos metadatos de conexión. No modificó el índice ni ejecutó QA. Se retiraron esos campos nuevos: el identificador de las consultas de proveedor se representa como referencia QA de P0 y el destino como booleano de igualdad. Se conserva el SQL exacto; no se interpreta el rechazo como permiso para ampliar acceso ni repetir P2.
+
+~~~powershell
+git diff --check
+git diff --stat
+git diff
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-real-paso0-proveedores.json docs/quality/evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt docs/quality/evidence/m2-c3-p2/p2-real-supervisor.ps1.txt docs/quality/evidence/m2-c3-p2/p2-real-parada-paso0.json docs/quality/evidence/m2-c3-p2/p2-real-correccion-ledger.diff.txt docs/quality/evidence/m2-c3-p2/p2-real-prueba-comparador-local.json docs/quality/evidence/m2-c3-p2/p2-real-limpieza-paso0.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git commit -m "docs(m2): registrar parada P2 antes de congelar QA"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+git diff --exit-code c0d9fd5..HEAD -- apps ops package.json pnpm-lock.yaml
+~~~
+
+SHA y estado final en la respuesta. Sin push; sin P3; sin aprobación de P2.

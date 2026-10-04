@@ -1,0 +1,105 @@
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+$taskRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
+$pythonExe = 'C:\Users\Fraylin\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+$secureCredential = $null
+$taskProcess = $null
+$pointer = [IntPtr]::Zero
+function Send-PrivateLine([Security.SecureString] $secret, [IO.StreamWriter] $writer) {
+    $localPointer = [IntPtr]::Zero
+    $temporaryValue = $null
+    try {
+        $localPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secret)
+        $temporaryValue = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($localPointer)
+        $writer.WriteLine($temporaryValue)
+        $writer.Flush()
+    } finally {
+        $temporaryValue = $null
+        if ($localPointer -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($localPointer) }
+    }
+}
+function Compare-Private([Security.SecureString] $first, [Security.SecureString] $second) {
+    if ($first.Length -ne $second.Length -or $first.Length -eq 0) { return $false }
+    $firstPtr = [IntPtr]::Zero
+    $secondPtr = [IntPtr]::Zero
+    try {
+        $firstPtr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($first)
+        $secondPtr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($second)
+        $difference = 0
+        for ($i = 0; $i -lt $first.Length; $i++) {
+            $difference = $difference -bor ([Runtime.InteropServices.Marshal]::ReadInt16($firstPtr, 2 * $i) -bxor [Runtime.InteropServices.Marshal]::ReadInt16($secondPtr, 2 * $i))
+        }
+        return $difference -eq 0
+    } finally {
+        if ($firstPtr -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($firstPtr) }
+        if ($secondPtr -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($secondPtr) }
+    }
+}
+try {
+    Write-Host 'P2 QA autorizado. Produccion cerrada. Paso 0 sin congelar.'
+    $secureCredential = Get-Content -LiteralPath (Join-Path $taskRoot '.tmp/base-preprod-c1/supabase-qa-migrator.dpapi') -Raw | ConvertTo-SecureString
+    $processInfo = [Diagnostics.ProcessStartInfo]::new()
+    $processInfo.FileName = $pythonExe
+    $processInfo.ArgumentList.Add('-u')
+    $processInfo.ArgumentList.Add((Join-Path $PSScriptRoot 'run.py'))
+    $processInfo.WorkingDirectory = $taskRoot
+    $processInfo.UseShellExecute = $false
+    $processInfo.RedirectStandardInput = $true
+    $processInfo.RedirectStandardOutput = $true
+    $processInfo.RedirectStandardError = $true
+    $processInfo.StandardInputEncoding = [Text.UTF8Encoding]::new($false)
+    foreach ($key in @($processInfo.Environment.Keys)) {
+        if ($key -match 'DATABASE|POSTGRES|^PG|CLERK|JWT|CLOUDINARY|RESEND|NOTIFICATION|EMAIL|E2E|TOKEN|SECRET|PASSWORD') {
+            [void] $processInfo.Environment.Remove($key)
+        }
+    }
+    $taskProcess = [Diagnostics.Process]::new()
+    $taskProcess.StartInfo = $processInfo
+    [void] $taskProcess.Start()
+    $discardedError = $taskProcess.StandardError.ReadToEndAsync()
+    Send-PrivateLine $secureCredential $taskProcess.StandardInput
+    $secureCredential.Dispose(); $secureCredential = $null
+    while (($line = $taskProcess.StandardOutput.ReadLine()) -ne $null) {
+        $event = $line | ConvertFrom-Json
+        if ($event.stage -eq 'prompt-frase') {
+            $firstPhrase = $null; $secondPhrase = $null
+            try {
+                if ($event.kind -eq 'cifrar-doble-confirmacion') {
+                    Write-Host 'Paso 0 completo. Todavia NO se detuvieron servicios. Escribe la frase DOS veces.'
+                    $firstPhrase = Read-Host 'Frase para cifrar (sin eco)' -AsSecureString
+                    $secondPhrase = Read-Host 'Repite exactamente la frase' -AsSecureString
+                    if (-not (Compare-Private $firstPhrase $secondPhrase)) {
+                        Write-Host 'Las frases no coinciden: parada sin congelar.'
+                        $taskProcess.StandardInput.Close()
+                        continue
+                    }
+                } else {
+                    Write-Host 'Respaldo cifrado. Reintroduce la frase para comprobar recuperacion.'
+                    $firstPhrase = Read-Host 'Frase para descifrar (sin eco)' -AsSecureString
+                }
+                Send-PrivateLine $firstPhrase $taskProcess.StandardInput
+            } finally {
+                if ($firstPhrase) { $firstPhrase.Dispose() }
+                if ($secondPhrase) { $secondPhrase.Dispose() }
+                $firstPhrase = $null; $secondPhrase = $null
+                [GC]::Collect()
+            }
+        } else {
+            Write-Host $line
+        }
+    }
+    $taskProcess.WaitForExit()
+    Write-Host ('Ejecutor terminado. Exit code: ' + $taskProcess.ExitCode)
+} catch {
+    Write-Host ('Parada del supervisor: ' + $_.Exception.GetType().Name + '. No se imprime detalle privado.')
+    if ($taskProcess -and -not $taskProcess.HasExited) {
+        try { $taskProcess.StandardInput.Close() } catch { }
+        # No matar el hijo: su finally/watchdog reanuda QA si ya se congelo.
+        $taskProcess.WaitForExit()
+    }
+} finally {
+    if ($secureCredential) { $secureCredential.Dispose() }
+    if ($taskProcess) { $taskProcess.Dispose() }
+    [GC]::Collect()
+}
+[void] (Read-Host 'P2 detenido o terminado. Pulsa Enter para cerrar')

@@ -1,0 +1,25 @@
+--- a/p2-real-ejecutor-intento.py.txt
++++ b/p2-real-ejecutor-corregido.py
+@@ -300 +300,2 @@
+- 'finished',finished_at IS NOT NULL,'rolledBack',rolled_back_at IS NOT NULL) ORDER BY migration_name)
++ 'finished',finished_at IS NOT NULL,'rolledBack',rolled_back_at IS NOT NULL)
++ ORDER BY migration_name COLLATE "C",checksum COLLATE "C",finished_at IS NOT NULL,rolled_back_at IS NOT NULL)
+@@ -305,0 +307,7 @@
++
++def canonical_ledger(rows):
++    # Multiconjunto técnico: conserva cada entrada, checksum y estado histórico.
++    return sorted((r['name'],r['checksum'],r['finished'],r['rolledBack']) for r in rows)
++
++def ledger_equal(left, right):
++    return canonical_ledger(left)==canonical_ledger(right)
+@@ -623 +631,3 @@
+-    if ledger!=prior['precheck']['ledger']: raise RuntimeError('ledger-difiere-P0')
++    REPORT['observedLedgerMetadata']=ledger
++    REPORT['loginValidation']=login
++    if not ledger_equal(ledger,prior['precheck']['ledger']): raise RuntimeError('ledger-difiere-P0')
+@@ -675 +685 @@
+-    if SOURCE.json(LEDGER_SQL)!=prior['precheck']['ledger']: raise RuntimeError('ledger-precongelar-difiere')
++    if not ledger_equal(SOURCE.json(LEDGER_SQL),prior['precheck']['ledger']): raise RuntimeError('ledger-precongelar-difiere')
+@@ -727 +737 @@
+-        if baseline['ledger']!=prior['precheck']['ledger']: raise RuntimeError('ledger-snapshot-difiere')
++        if not ledger_equal(baseline['ledger'],prior['precheck']['ledger']): raise RuntimeError('ledger-snapshot-difiere')

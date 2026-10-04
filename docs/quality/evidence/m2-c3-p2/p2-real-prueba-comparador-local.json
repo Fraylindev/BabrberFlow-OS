@@ -1,0 +1,17 @@
+{
+  "localOnly": true,
+  "qaConnections": 0,
+  "entries": 31,
+  "activeFinished": 27,
+  "historicallyRolledBack": 4,
+  "checks": {
+    "orderPermutationAccepted": true,
+    "checksumMutationRejected": true,
+    "missingEntryRejected": true,
+    "extraDuplicateRejected": true,
+    "statusMutationRejected": true,
+    "syntaxPassed": true
+  },
+  "causeOfLiveFailureConfirmed": false,
+  "realExecutorRetried": false
+}

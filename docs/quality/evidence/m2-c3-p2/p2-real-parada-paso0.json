@@ -1,0 +1,250 @@
+{
+  "base": "c0d9fd5d30a4acd984c4a92b0d198ce23de55822",
+  "startedUtc": "2026-10-04T01:27:25.451614+00:00",
+  "commands": [
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-client-real-429cba5c86ee",
+        "--network",
+        "bridge",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "768m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw,size=1024m",
+        "--mount",
+        "type=bind,source=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt,target=/tmp/qa-ca.crt,readonly",
+        "--entrypoint",
+        "sleep",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "infinity"
+      ],
+      "exitCode": 0,
+      "label": "crear-contenedor-propio"
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format \"{{.Name}} {{.Image}} {{.State.Status}}\" kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 0,
+      "label": "estado-seguro-QA"
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "exitCode": 0,
+      "label": "destino-release-efectivo-RO"
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-client-real-429cba5c86ee",
+        "pg_dump",
+        "--version"
+      ],
+      "exitCode": 0,
+      "label": "cliente-PG17"
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-client-real-429cba5c86ee",
+        "sha256sum",
+        "/tmp/qa-ca.crt"
+      ],
+      "exitCode": 0,
+      "label": "CA-bind-hash"
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "-i",
+        "-e",
+        "PGPASSWORD",
+        "-e",
+        "PGHOST",
+        "-e",
+        "PGPORT",
+        "-e",
+        "PGUSER",
+        "-e",
+        "PGDATABASE",
+        "-e",
+        "PGSSLMODE",
+        "-e",
+        "PGSSLROOTCERT",
+        "-e",
+        "PGOPTIONS",
+        "-e",
+        "PGAPPNAME",
+        "kortek-m2-c3-p2-client-real-429cba5c86ee",
+        "psql",
+        "-X",
+        "-qAt",
+        "-v",
+        "ON_ERROR_STOP=1"
+      ],
+      "label": "reader-QA-RR-RO"
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format \"{{.Name}} {{.Image}} {{.State.Status}}\" kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 0,
+      "label": "estado-seguro-QA"
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "exitCode": 0,
+      "label": "destino-release-efectivo-RO"
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "rm",
+        "--force",
+        "--volumes",
+        "kortek-m2-c3-p2-client-real-429cba5c86ee"
+      ],
+      "exitCode": 0,
+      "label": "retirar-contenedor-propio"
+    },
+    {
+      "args": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-real/gpg-home",
+        "--kill",
+        "gpg-agent"
+      ],
+      "exitCode": 0,
+      "label": "retirar-agente-GPG-propio"
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [
+    "kortek-m2-c3-p2-client-real-429cba5c86ee"
+  ],
+  "removedContainers": [
+    "kortek-m2-c3-p2-client-real-429cba5c86ee"
+  ],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "initialInfra": "MainPID=673295\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=575989\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\nc507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4  /etc/kortek-api-staging/runtime-env\n118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8  /usr/local/libexec/kortek-api-staging-run.sh\n5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d  /usr/local/libexec/kortek-worker-staging-run.sh\n91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90  /etc/systemd/system/kortek-api-staging.service\na06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f  /etc/systemd/system/kortek-email-worker-staging.service\n",
+  "initialEffective": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "releaseMatchesP0": true,
+    "databaseRoleMatches": true,
+    "databaseMatches": true,
+    "postgresVersion": "17.6",
+    "qaUserMatches": true,
+    "qaEndpointMatches": true,
+    "effectiveServerMatchesQaDns": true,
+    "deployEnvironmentMatches": true,
+    "publicBookingOpen": true
+  },
+  "pgDumpVersion": "pg_dump (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2)",
+  "caHash": "1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a",
+  "success": false,
+  "failure": {
+    "stage": "paso0",
+    "errorClass": "RuntimeError",
+    "label": "ledger-difiere-P0"
+  },
+  "finalInfra": "MainPID=673295\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=575989\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\nc507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4  /etc/kortek-api-staging/runtime-env\n118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8  /usr/local/libexec/kortek-api-staging-run.sh\n5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d  /usr/local/libexec/kortek-worker-staging-run.sh\n91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90  /etc/systemd/system/kortek-api-staging.service\na06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f  /etc/systemd/system/kortek-email-worker-staging.service\n",
+  "finalEffective": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "releaseMatchesP0": true,
+    "databaseRoleMatches": true,
+    "databaseMatches": true,
+    "postgresVersion": "17.6",
+    "qaUserMatches": true,
+    "qaEndpointMatches": true,
+    "effectiveServerMatchesQaDns": true,
+    "deployEnvironmentMatches": true,
+    "publicBookingOpen": true
+  },
+  "remainingOwnedContainers": [],
+  "finishedUtc": "2026-10-04T01:27:33.708459+00:00",
+  "stage": "terminado"
+}
