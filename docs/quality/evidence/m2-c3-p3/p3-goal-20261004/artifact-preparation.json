@@ -1,0 +1,26 @@
+{
+  "base": "bc1d559e42928ca0deb60319b33cf98b3cd69291",
+  "archivePaths": [
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "apps/api/package.json",
+    "apps/api/prisma",
+    "apps/api/src",
+    "apps/api/tsconfig.json",
+    "apps/api/tsconfig.build.json",
+    "apps/api/nest-cli.json",
+    "ops/oci-api/api.Containerfile",
+    "apps/api/ops/production-startup-drill.cjs"
+  ],
+  "archiveSha256": "be6a256d4ed08e1dfbef3bf20bc11b95f9e735164b31a061e792bc5371aa89d3",
+  "versionedContainerfileSha256": "1f7b57a4a1856b41098cf252d2e522ac58889948fa5baa0e1ebcec92e51389fe",
+  "derivedContainerfileSha256": "4f164ad203f92045d4ff3d709061002371b6ef167d49e6ea8cd7ac2be9093e5f",
+  "derivation": "original Containerfile plus APP_RELEASE ENV and immutable revision label only",
+  "APP_RELEASE": "bc1d559e42928ca0deb60319b33cf98b3cd69291",
+  "localTag": "kortek-api-p3:bc1d559e42928ca0deb60319b33cf98b3cd69291",
+  "platform": "linux/arm64",
+  "codeChanges": false,
+  "checkoutDependencyInstallation": false,
+  "qaActivation": false
+}

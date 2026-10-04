@@ -1,0 +1,10 @@
+{
+  "base": "bc1d559e42928ca0deb60319b33cf98b3cd69291",
+  "branch": "ai/antigravity-qa",
+  "initialStatus": "clean",
+  "objective": "P3 API/DB QA; stop before freeze",
+  "productionAccess": false,
+  "push": false,
+  "qaFrozen": false,
+  "dpapiMigratorOnly": true
+}

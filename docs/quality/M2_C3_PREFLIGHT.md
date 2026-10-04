@@ -2125,3 +2125,118 @@ No es un nuevo snapshot ni un respaldo bajo congelamiento. Se mantienen todos lo
 ### 21.6 Propietario
 
 Conservar la frase separada del respaldo; revisar la evidencia y decidir P3 por separado, como §20.6. Ambos commits permanecen locales y no aprueban C3 ni producción.
+
+
+## 22. P3 ejecutado con parada obligatoria y rollback de código — 2026-10-04
+
+### 22.1 Estado y criterios
+
+**OBJETIVO NO CUMPLIDO / PAUSADO POR PUNTO DE PARADA 2.** El propietario autorizó P3 sobre `ai/antigravity-qa`, base **bc1d559e42928ca0deb60319b33cf98b3cd69291**, árbol inicial limpio, sin push. Después del ensayo real, catálogo e imagen, confirmó el congelamiento con dos entradas iguales en un prompt local sin eco. La autorización y las dos aclaraciones previas están en [authorization.json](evidence/m2-c3-p3/p3-goal-20261004/authorization.json).
+
+Los tres pasos SQL y el registro soportado de Prisma terminaron con **exit 0**. QA quedó en **28 migraciones terminadas activas, 0 fallidas y 37 tablas**. El gate runtime real falló **antes de abrir la conexión DB** por CRLF en el script Bash. Conforme al punto de parada 2, no se reintentó el gate ni se activó el API nuevo: se reanudaron las imágenes anteriores sobre el schema aditivo. No se restauró la base ni se aplicó la inversa. La corrección posterior es exclusivamente local.
+
+| Criterio | Estado | Evidencia |
+| --- | --- | --- |
+| 1. Ensayo sobre respaldo REAL P2, owners, SQL/grants, runtime restringido y API nuevo/anterior | CUMPLIDO | [rehearsal-attempt-2.json](evidence/m2-c3-p3/p3-goal-20261004/rehearsal-attempt-2.json): restore/cotejo completo; todos los dueños public de relaciones, tipos y funciones reproducidos; login SCRAM; 37 tablas; ledger 28; booking-data real del clon y fixtures 200, reservas sintéticas 201/PENDING, seis rutas customer 401; código 791569b sobre schema 28 con M1 y claim 200, customer 404. Sin red exterior ni ensayos en el host QA. |
+| 2. Catálogo QA READ ONLY antes de congelar | CUMPLIDO | [catalog-result.json](evidence/m2-c3-p3/p3-goal-20261004/catalog-result.json) y relectura previa al freeze en [freeze--result.json](evidence/m2-c3-p3/p3-goal-20261004/freeze--result.json): TLS verify-full, RR/RO, sin filas de negocio; Migrator dueño de objetos tocados, BusinessScheduleState, Client y Booking, CREATE public; inventario completo de privilegios y defaults. |
+| 3. Artefacto ARM64 del SHA base, APP_RELEASE exacto y rollback disponible | CUMPLIDO | [artifact-build-result.json](evidence/m2-c3-p3/p3-goal-20261004/artifact-build-result.json), [startup-verification.json](evidence/m2-c3-p3/p3-goal-20261004/startup-verification.json), [image-stage-verified--result.json](evidence/m2-c3-p3/p3-goal-20261004/image-stage-verified--result.json): 23 casos de arranque, ID/config y 19 capas cotejados, imagen nueva cargada inactiva, anteriores disponibles. |
+| 4. Respaldo NUEVO congelado, AES256, snapshot y restore antes de migrar | CUMPLIDO | [freeze--result.json](evidence/m2-c3-p3/p3-goal-20261004/freeze--result.json): dump/censo del mismo snapshot exportado RR/RO; descifrado con segunda entrada; TOC btree_gist/public, censo/huellas/ledger con multiplicidad/catálogos/roles/extensions completos, E1–E5 cerradas; restore antes del primer SQL real. |
+| 5. Migración/grants separados, login/gate runtime real y revocaciones nuevas | PARCIAL / NO CUMPLIDO | SQL 28, matriz sin `\ir` y suplemento: tres `psql -v ON_ERROR_STOP=1`, cada uno exit 0 y verificación entre pasos; revocaciones solo sobre objetos nuevos; ledger 28 y ACL 36 previas iguales. El gate real termina **exit 2 antes del login**. |
+| 6. API nuevo y worker con imagen actual, unidades/orden QA | NO CUMPLIDO | API nuevo no activado. Rollback verificado: API 701329f1…, release 791569b; worker 7eafd5c9…; referencia fija del worker explícitamente autorizada. [rollback-final--result.json](evidence/m2-c3-p3/p3-goal-20261004/rollback-final--result.json). |
+| 7. Validación completa posterior del API nuevo, runtime, datos y catálogo | PARCIAL / NO CUMPLIDO | Ledger 28/0 fallidas, 37 tablas, defaults bloqueados, CustomerOperation vacío, funciones invoker/search_path, externos/PUBLIC sin grants nuevos, ACL semántica 36 tablas y huellas preexistentes verificadas antes del gate. Falta gate real y API nuevo/customer 401 en QA. HTTP 200 y servicios anteriores sí verificados tras rollback. |
+| 8. Nueva sección y commit local solo documental/sanitizado | DOCUMENTADO / EN REVISIÓN | Esta sección y [manifest.json](evidence/m2-c3-p3/p3-goal-20261004/manifest.json); commit local por rutas explícitas, SHA entregado en el relevo. No es aprobación ni cierre de P3. |
+
+### 22.2 Trabajo realizado, comandos y resultados
+
+Fuentes exactas y SHA de ejecutores, incluidas las versiones Bash que fallaron y las corregidas localmente: [executed-and-corrected-sources.json](evidence/m2-c3-p3/p3-goal-20261004/executed-and-corrected-sources.json). Cada reporte conserva argv sanitizados, exit y stderr redactado hasta 8 KB. Los supervisores usaron el Python ya instalado y SecureString/BSTR privado por stdin: frase/credencial nunca en argv, entorno de frase, archivos, logs ni chat. La DPAPI QA del migrador se usó solo en memoria de procesos separados, nunca en servicios API/worker. No se adquirió otra credencial; el gate previsto usa el contexto runtime existente vía LoadCredential.
+
+1. `git branch --show-current`, `git status --short`, `git archive --format=tar` del SHA base con contexto mínimo §6.2; build local `docker --context desktop-linux buildx build --platform linux/arm64 --load --tag kortek-api-p3:<SHA> --file release.Containerfile --progress plain <contexto>`, **exit 0**. Se añadió solo APP_RELEASE/revision al Containerfile temporal; código del checkout intacto, instalación congelada exclusivamente dentro de imagen con lockfile existente.
+2. Catálogo: supervisor DPAPI → cliente PG17 local → `psql -X -qAt -v ON_ERROR_STOP=1`, TLS verify-full y transacción RR READ ONLY. 36 tablas propiedad Migrator, 10 enums incluido BusinessScheduleState; sin secuencias public; ningún permiso de tabla efectivo para anon/authenticated/service_role. Se conservaron PUBLIC EXECUTE histórico de siete funciones trigger **SECURITY INVOKER**, USAGE de tipos y defaults de postgres/supabase_admin. Son defaults ya presentes en el baseline, no nuevos grants ni permisos de tabla; no se revocaron objetos anteriores. La creación por Migrator no hereda los defaults de postgres/supabase_admin.
+3. Prompt previo autorizado solo para ensayo: restore REAL P2 SHA `17f6e119…`, owners completos reproducidos, SQL separado y API nuevo/old ejecutados únicamente en clones locales. El ensayo demostró que un GET público modifica SecurityRateBucket (10→2 por incremento/limpieza); el propietario autorizó cotejo completo antes de activar y diferencias técnicas explícitas después del HTTP.
+4. `docker save` exportó **solo la imagen nueva local**, compresión gzip existente, SCP y `podman load` en directorio propio QA. No se exportó ninguna imagen QA/producción ni se ensayaron contenedores en ese host. ID/config y las 19 capas se verificaron; no se activó la imagen. Dos entradas iguales en prompt de congelamiento confirmadas a las **23:13:56 UTC**; la ventana no empezó hasta la parada efectiva prevista.
+5. Vigilancia prevista de 120 minutos con unidad temporal propia; `sudo -n systemctl stop kortek-api-staging`, luego `sudo -n systemctl stop kortek-email-worker-staging`, **exit 0** ambos. Estado inactive/dead, PID 0. Migrator RR/RO verificó cero escritores no controlados/invisibles, prepared transactions y otras transacciones activas; snapshot nuevo, stream `pg_dump`→GPG AES256, censo cifrado y restore local aislado completo, **exit 0** antes de migrar.
+6. Tres comandos `docker exec -i … psql -X -qAt -v ON_ERROR_STOP=1` con migrador QA/TLS; por stdin, separados: `20261003120000_customer_stage_one/migration.sql`, `apply-runtime-grants.sql` retirando únicamente su `\ir` para evitar repetir el suplemento, `customer-stage-one-runtime-grants.sql`. Cada paso **exit 0** y catálogo verificado antes del siguiente. Una transacción posterior revocó tabla CustomerOperation y EXECUTE de las dos funciones nuevas de anon/authenticated/service_role/PUBLIC, **exit 0**, sin añadir grants sobre objetos antiguos.
+7. Después de todo SQL exitoso: `node node_modules/prisma/build/index.js migrate resolve --applied 20261003120000_customer_stage_one` desde herramienta local aislada de migración con credencial Migrator en memoria, **exit 0**. Es el registro soportado del SQL ya aplicado, no un resolve de migración fallida ni una edición manual del ledger. Checksum registrado **af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c**, bytes CRLF del SQL versionado en la imagen; SQL working tree LF SHA **6e1d854f…**. Ambos contenidos son idénticos normalizando solo CRLF, evidencia explícita. Ledger anterior conserva todas sus filas y huellas; únicamente se añade la entrada 28.
+8. Gate real previsto mediante `sudo -n systemd-run --unit=kortek-p3-runtime-gate-bc1d559 --wait --pipe --collect … runtime-gate.sh`, **exit 2**, por `set: pipefail\r: invalid option name`. **No alcanzó source del contexto runtime, podman ni conexión DB**. Parada obligatoria: gestor protegido `qa-manager.py rollback`; restableció archivo runtime original y fijó únicamente el argumento de imagen del worker autorizado; start API anterior y después worker anterior, **exit 0**. Release/DB QA booleana correctos, HTTP público **200**, active/running, NRestarts 0.
+9. Verificación de retiro: timer **LoadState=not-found, ActiveState=inactive, SubState=dead**. Contenedores PG/restore/CLI locales y agente GPG retirados. Temporales remotos de código/archivo y copia protegida de rollback eliminados; las imágenes necesarias quedan disponibles. Corrección Bash LF y comprobación `bash -n`/ejecución real de `set -Eeuo pipefail` en contenedor local sin red, **exit 0**; no se repitió el gate QA ni se cambió su estado tras rollback.
+
+### 22.3 Impedimentos, causa, solución y límites de captura
+
+- Tres rutas locales inicialmente supuestas incorrectas (Containerfile, controlador público y wrapper) y ruta de storage: discovery por `git ls-files`/lectura exacta resolvió las rutas. No hubo cambios de producto. Registro original y limitación de capturas en [impediments.json](evidence/m2-c3-p3/p3-goal-20261004/impediments.json); las salidas completas restantes permanecen en la conversación de herramientas.
+- Primer supervisor previo terminó sin ejecutar Python; su catch inicial omitió la excepción subyacente, por lo que **no se afirma conservar ese stderr ni conocer su causa**. Se conservó estado/exit 1, se añadió captura redactada y el siguiente prompt/ensayo completó con exit 0.
+- Primer cotejo de owners del ensayo falló: objetos btree_gist quedaron postgres frente a supabase_admin en QA. Se conservan ambos lados en attempt-1. Se reprodujo el dueño de todos los tipos/funciones de extensión en el clon, sin copiar credenciales/atributos elevados del rol fuente. Comparación completa posterior idéntica, attempt-2 **exit 0**; no se amplió E1–E5.
+- Drill de arranque ARM64: 20 casos pasaron; el caso socket-override agotó 15 s bajo emulación/CPU concurrente y devolvió null. Tres casos restantes pasaron con el mismo código/verificaciones y timeout 90 s. La imagen no cambió. El core de la excepción está archivado y el stderr completo inicial en la conversación; no se presenta la captura parcial del artefacto como completa.
+- Generación del ejecutor de traslado: SyntaxError por comilla final omitida y referencia inicial a helper inexistente, detectados/corregidos antes de ejecutar; AST válido. Sin freeze durante esta preparación.
+- `podman load` terminó de cargar el artefacto, pero la inspección siguiente falló exit 125 al usar el ID de manifest de Docker 29 como ID de configuración Podman. Se conservó stderr completo y archivo exacto; se calculó el digest del config transferido y se cotejaron configuración/revision/ARM64 y las 19 capas, sin reconstruir ni cambiar bytes.
+- **Fallo decisivo real:** CRLF del script Bash introducido por escritura Windows. Gate **exit 2**, sin conexión runtime. Se ejecutó rollback y se detuvo P3. El script de vigilancia compartía esos saltos: no se ejerció su ejecución al vencimiento y **no se afirma que hubiese funcionado**. El rollback inmediato se ejecutó por Python y fue verificado. La versión LF se corrigió y probó únicamente localmente; [crlf-correction-local-only.json](evidence/m2-c3-p3/p3-goal-20261004/crlf-correction-local-only.json).
+- El retiro conjunto de timer/service devolvió **exit 5** porque el service ya no estaba cargado, aunque el timer sí se retiró. Lectura final independiente confirmó timer not-found/inactive/dead, sin rollback futuro armado. No se escondió ese exit 5.
+- La primera comprobación local Bash omitió `docker run -i` y recibió stdin vacío; exit 0 **rechazado como prueba**, archivado. Con `-i` y exigencia de ambos marcadores de ejecución, comprobación **exit 0 válida**. Las esperas iniciales pg_isready con exit 2 son readiness transitoria conservada; los contenedores posteriores sí respondieron y fueron retirados.
+
+### 22.4 Datos clave, custodia y estado final
+
+- Respaldo **NUEVO bajo congelamiento, antes de migrar**: `C:\KortekBackups\qa-m2-c3\qa-m2-c3-p3-frozen-20261004T232627Z-efe04b28cc60.dump.gpg`; **47380 bytes**, SHA-256 **76866b817efecb0bf2a2025fe89197ad4aaa8ec4938166af3e65abe8f64dc430**.
+- Censo cifrado: `C:\KortekBackups\qa-m2-c3\qa-m2-c3-p3-frozen-20261004T232627Z-efe04b28cc60.censo.gpg`; SHA-256 **815921b4ad04ffd6fea16748bf6e6d09b82df9d39cee0aec28c60b3bce3395ce**. Frase conservada exclusivamente por el propietario; memoria de procesos y agente GPG liberados. No se versionan dump, censo cifrado ni secretos.
+- Fuente PostgreSQL **17.6**; restore/cliente **17.11**, imagen local PG `d74eeac9…`. Snapshot con **36 tablas**, ledger **27 terminadas activas + 4 revertidas = 31 filas**. Comparación posterior conserva esas 31 filas y agrega una: ledger **28 activas + 4 revertidas = 32**, 0 fallidas. CustomerOperation vacío; 20 Clients bloqueados, no ambiguos y revisión 0 tras DDL.
+- Imagen nueva, **INACTIVA**: Podman config **807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261**; manifest Docker local **bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14**; `APP_RELEASE=bc1d559e42928ca0deb60319b33cf98b3cd69291`. Artefacto de transferencia SHA en el reporte de traslado, config/19 capas cotejados en [image-identity.json](evidence/m2-c3-p3/p3-goal-20261004/image-identity.json).
+- Parada/ventana: **2026-10-04T23:26:11.241419+00:00**; rollback confirmado y fin de ventana de esta ejecución **2026-10-04T23:27:37.126269+00:00**: **85.885 segundos**, inferior a 120 minutos. El segundo timestamp es fin de verificación del rollback, no medición exacta al milisegundo de indisponibilidad HTTP.
+- API final: release **791569b110f9fd59cb10e6d248546bdae3996e14**, imagen **701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031**, PID **1084550**. Worker: imagen **7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1**, PID **1084553**. Ambos active/running, NRestarts **0**; los PID cambiaron por la parada/reanudación autorizada, no se confunden con PID P0.
+- Archivo runtime final idéntico al original SHA **c507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4**; APP_RELEASE/image del API no cambiaron finalmente. Único cambio persistente fuera de DB: argumento de imagen del worker en `/usr/local/libexec/kortek-worker-staging-run.sh`, SHA final **919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6**, autorizado y verificado como sustitución de una referencia. No se modificaron flags, credenciales ni unidades QA existentes.
+
+Censo exacto del snapshot congelado (conteos, no filas):
+
+| Tabla | Filas |
+| --- | ---: |
+| AuditLog | 98 |
+| Booking | 28 |
+| BookingEmailEvent | 64 |
+| BookingEmailPreference | 28 |
+| BusinessClosure | 4 |
+| BusinessSchedule | 4 |
+| BusinessScheduleDay | 21 |
+| BusinessScheduleRevision | 14 |
+| BusinessScheduleWindow | 21 |
+| Client | 20 |
+| CmsOperation | 5 |
+| CmsPage | 4 |
+| EmailAbuseBucket | 0 |
+| EmailChannelControl | 1 |
+| EmailOutbox | 50 |
+| EmailWebhookReceipt | 12 |
+| GalleryImage | 0 |
+| Invoice | 16 |
+| MediaAsset | 4 |
+| MediaGalleryOrder | 0 |
+| MediaOperation | 5 |
+| MediaPromotion | 1 |
+| MediaPurgeJob | 1 |
+| Membership | 9 |
+| Notification | 0 |
+| Organization | 4 |
+| Payment | 16 |
+| Professional | 5 |
+| ProfessionalAvailabilityBlock | 1 |
+| ProfessionalService | 0 |
+| ProfessionalWeeklySchedule | 0 |
+| SecurityRateBucket | 2 |
+| Service | 5 |
+| TeamInvitation | 1 |
+| User | 8 |
+| _prisma_migrations | 31 |
+
+### 22.5 Lo no verificado y riesgos pendientes
+
+**No pasó el gate mediante login runtime real de QA**: falló antes de conectarse. El SQL sí está aplicado y registrado, pero eso no aprueba runtime ni API nuevo. No hubo activación nueva, customer 401 en QA ni validación posterior completa del nuevo release. La preservación completa de campos anteriores se verificó **antes del gate/activación**; después del rollback/HTTP público pueden cambiar contadores técnicos, y no se afirma un nuevo cotejo completo posterior al rollback. No se crearon reservas ni otras escrituras de negocio en QA por el agente. El worker y API previos volvieron a su funcionamiento normal.
+
+El rollback conserva schema 28; **no es un rollback de datos/schema**. El código anterior conserva los límites legacy D8 y C2/web permanece sin desplegar. El ensayo de código anterior usó sus fuentes Git exactas con dependencias de la imagen nueva; no se exportó ni ejecutó su imagen QA en un host de ensayo. El rollback real sí verificó la imagen antigua con lectura pública sobre schema 28, sin probar mutaciones de negocio QA. El vencimiento de vigilancia no se ensayó y su versión original CRLF no se declara funcional.
+
+Sin Clerk, web, proveedor de identidades/correo ni QA física nuevos. Producción permanece fuera de toda operación de esta tarea; no se consultó su estado ni se infiere una auditoría productiva. Sin push, main, force-push ni reescritura. No hay aprobación/terminación de P3 ni de C3.
+
+### 22.6 Decisión necesaria del propietario
+
+Guardar la frase del respaldo nuevo separada de los cifrados y revisar el resultado **NO CUMPLIDO**. QA está estable con imágenes anteriores y schema 28. **No volver a ejecutar el SQL 28, no resolver otra vez su ledger ni restaurar sobre QA por inferencia.**
+
+Para continuar hace falta autorización explícita posterior a esta parada: revalidar schema/ledger/grants en solo lectura; corregir y validar en aislamiento el gate y vigilancia LF; preparar un nuevo corte/respaldo verificado que refleje el estado reabierto; confirmar un nuevo congelamiento en prompt local; ejecutar el gate runtime real sin repetir migración/grants; solo si pasa, cambiar APP_RELEASE/referencia del API, mantener el worker fijado a su imagen y completar criterio 7 con la regla de cotejo autorizada. Si falla cualquier verificación, conservar el punto de parada y rollback. El respaldo pre-28 de esta sección sigue siendo custodia del corte original, no se reemplaza ni se restaura sobre QA automáticamente.
+
+La configuración Git anuncia conversión LF→CRLF en archivos de texto. Para una continuación, **no copiar directamente los `.sh.txt` como ejecutables**: materializar los bytes LF desde `base64ExactBytes` de las entradas corregidas `runtime-gate.sh` y `qa-rollback.sh`, verificar sus SHA y ausencia de `\r`, y repetir la prueba local de Bash. Los textos `.sh.txt` son solo para revisión.
+
+El commit de esta entrega contiene exclusivamente esta nueva sección y evidencia sanitizada. Los apartados anteriores se conservan byte por byte. No autoriza por sí mismo una continuación ni publicación.

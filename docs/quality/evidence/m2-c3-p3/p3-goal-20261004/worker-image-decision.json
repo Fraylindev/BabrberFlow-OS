@@ -1,0 +1,10 @@
+{
+  "reason": "API and worker source the same protected runtime-env and both currently resolve KORTEK_API_IMAGE at startup; existing running worker predates API image update",
+  "observedApiImage": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+  "observedWorkerImage": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+  "proposedPath": "/usr/local/libexec/kortek-worker-staging-run.sh",
+  "proposedChange": "Replace only image argument with immutable current worker image; no other wrapper/unit/config changes",
+  "ownerAuthorization": "pending",
+  "notApplied": true,
+  "diff": "--- /usr/local/libexec/kortek-worker-staging-run.sh (actual)\n+++ /usr/local/libexec/kortek-worker-staging-run.sh (propuesta)\n@@ -29,5 +29,5 @@\n   -e NODE_OPTIONS=--max-old-space-size=256 \\\n   -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \\\n   --entrypoint node \\\n-  \"${KORTEK_API_IMAGE:?immutable staging image required}\" \\\n+  \"sha256:7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1\" \\\n   dist/notifications/email-worker.cli.js\n"
+}

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+exec /usr/bin/python3 /home/opc/kortek-api-staging/p3-bc1d559/qa-manager.py rollback

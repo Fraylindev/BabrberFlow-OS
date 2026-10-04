@@ -1,0 +1,21 @@
+{
+  "failure": "Bash gate failed on CRLF before database login; mandatory rollback executed; QA gate not retried",
+  "correctedFiles": [
+    {
+      "file": "runtime-gate.sh",
+      "beforeCRLF": 9,
+      "afterCRLF": 0,
+      "correctedSha256": "13d628eda974c6518313f547ff6e5ab1ba64a71db4988f2ec0a23e559afae027"
+    },
+    {
+      "file": "qa-rollback.sh",
+      "beforeCRLF": 1,
+      "afterCRLF": 0,
+      "correctedSha256": "7c437ba44e45f81a086b12c66fbf64d21a3b71102a2ee7912041207cf8fa48ce"
+    }
+  ],
+  "appliedToQa": false,
+  "qaMigrationReattempted": false,
+  "watchdogScriptSharedSameEncodingIssue": "Deadline execution was not exercised; timer cancellation must be separately confirmed",
+  "proof": "LF byte checks plus local isolated Bash checks; no new QA execution"
+}

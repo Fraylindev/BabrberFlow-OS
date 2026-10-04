@@ -1,0 +1,286 @@
+{
+  "base": "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef",
+  "startedUtc": "2026-10-04T23:14:55.840118+00:00",
+  "commands": [
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 0,
+      "label": "estado-seguro-QA",
+      "phase": "criterion3-stage-only-new-local-image",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "save",
+        "sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "save",
+        "sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14"
+      ],
+      "exitCode": 0,
+      "label": "export-only-new-locally-built-image",
+      "phase": "criterion3-stage-only-new-local-image",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "set -eu\nmkdir -p /home/opc/kortek-api-staging/p3-bc1d559\nchmod 700 /home/opc/kortek-api-staging/p3-bc1d559"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "set -eu\nmkdir -p /home/opc/kortek-api-staging/p3-bc1d559\nchmod 700 /home/opc/kortek-api-staging/p3-bc1d559"
+      ],
+      "exitCode": 0,
+      "label": "own-QA-artifact-dir-only",
+      "phase": "criterion3-stage-only-new-local-image",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "scp",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p3-goal\\new-api-image.tar.gz",
+        "opc@150.136.7.19:/home/opc/kortek-api-staging/p3-bc1d559/new-api-image.tar.gz"
+      ],
+      "commandSanitized": [
+        "scp",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p3-goal\\new-api-image.tar.gz",
+        "opc@150.136.7.19:/home/opc/kortek-api-staging/p3-bc1d559/new-api-image.tar.gz"
+      ],
+      "exitCode": 0,
+      "label": "transfer-only-new-built-code-image",
+      "phase": "criterion3-stage-only-new-local-image",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "set -eu\ncd /home/opc/kortek-api-staging/p3-bc1d559\ntest [literal omitido] = 7b1d40573d3769f04e8e74c6d7c0bdd2fa334ef391286dd7130de829df5711f8\nnice -n 19 sh -c [literal omitido]\nXDG_RUNTIME_DIR=/run/user/1000 podman image inspect --format [literal omitido] sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "set -eu\ncd /home/opc/kortek-api-staging/p3-bc1d559\ntest [literal omitido] = 7b1d40573d3769f04e8e74c6d7c0bdd2fa334ef391286dd7130de829df5711f8\nnice -n 19 sh -c [literal omitido]\nXDG_RUNTIME_DIR=/run/user/1000 podman image inspect --format [literal omitido] sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1"
+      ],
+      "exitCode": 125,
+      "label": "load-inactive-new-ARM64-artifact-preserve-old-images",
+      "phase": "criterion3-stage-only-new-local-image",
+      "stderrCompleteRedacted": "Getting image source signatures\nCopying blob sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9\nCopying blob sha256:443f150fdaaf3900597eb42593ffd9da89872a7ddf30e2bf9d29116973a8e2f7\nCopying blob sha256:7f33852fe56d4b3372c04540761702d58a08c946f7b28022b6b11abffba903c7\nCopying blob sha256:7a718d416e6a5f2e01d91a59faca4813e603709ecfb0b64ca0df2319ce19bc37\nCopying blob sha256:e036486ceb4f744447e52d2b06825d6dd848d2e26affe04ef5a1c5b17a7e2626\nCopying blob sha256:0cdaac943654d3c8f37873729719c38286bf248fb47d871d4be648d6fbaabbae\nCopying blob sha256:6fda163e40c8f2e6506e1c4df805729d5e1975d767e087b01f85306182641b2b\nCopying blob sha256:de492bf4724f3f64e737a0a3714d85129845c498db8e7105fe2a0366410200dc\nCopying blob sha256:edd61a7d7ef87b40294ab55857278f0ba86ba0597154a5168f8435ed152fdb35\nCopying blob sha256:92f4f56cb2b27effa761922735eb1c0c127cf7dcf5233ffd6f9db1991546e1fe\nCopying blob sha256:14c1dccf66319f070094b0e3e20b487264b72bb1dd640bdd1c11503fd4371e81\nCopying blob sha256:0d8f9421406a5f30f97d375f201d62270a6db4c57ad66e50da40183daa4b808a\nCopying blob sha256:a5edbaee260a533b358e3ffe241adfce8c6b4d8ca08d4381164f78aac7b20fa7\nCopying blob sha256:f7174b5fce1bcb084e7467f2eb490c85e856c73d00f1bfaff9112d636e618d38\nCopying blob sha256:cf9e7d0ea4987e5c45c3d42e4ee8db25d3064b8e894c279b625dafe57dd416c3\nCopying blob sha256:d524676060dd0d43abd2747a4370a41f88eae773a222557f58b57ebc34f13e98\nCopying blob sha256:ae538292d92a419be7e09e4307b328a06fa5bd86944c6998d183908c6916a5ad\nCopying blob sha256:a5e4698aae7a78b410469580cf3890ba4f6582d0799b292725adfee90662e435\nCopying blob sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1\nCopying config sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261\nWriting manifest to image destination\nError: sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14: image not known\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": "ExternalCommandExit",
+      "tracebackSanitized": [
+        {
+          "file": "stage-image.py",
+          "line": 21,
+          "function": "<module>"
+        },
+        {
+          "file": "p2helpers.py",
+          "line": 167,
+          "function": "ssh"
+        },
+        {
+          "file": "p2helpers.py",
+          "line": 161,
+          "function": "run"
+        }
+      ]
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "qaBefore": "MainPID=673295\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=575989\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\nc507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4  /etc/kortek-api-staging/runtime-env\n118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8  /usr/local/libexec/kortek-api-staging-run.sh\n5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d  /usr/local/libexec/kortek-worker-staging-run.sh\n91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90  /etc/systemd/system/kortek-api-staging.service\na06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f  /etc/systemd/system/kortek-email-worker-staging.service\n",
+  "sourceImage": "sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14",
+  "qaImagesExported": false,
+  "trialContainersOnQa": false,
+  "archive": {
+    "sha256": "7b1d40573d3769f04e8e74c6d7c0bdd2fa334ef391286dd7130de829df5711f8",
+    "bytes": 437660697,
+    "path": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p3-goal\\new-api-image.tar.gz"
+  },
+  "event": "new-image-local-archive-ready",
+  "failureCommand": {
+    "label": "load-inactive-new-ARM64-artifact-preserve-old-images",
+    "exitCode": 125,
+    "messageSanitized": "Getting image source signatures\nCopying blob sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9\nCopying blob sha256:443f150fdaaf3900597eb42593ffd9da89872a7ddf30e2bf9d29116973a8e2f7\nCopying blob sha256:7f33852fe56d4b3372c04540761702d58a08c946f7b28022b6b11abffba903c7\nCopying blob sha256:7a718d416e6a5f2e01d91a59faca4813e603709ecfb0b64ca0df2319ce19bc37\nCopying blob sha256:e036486ceb4f744447e52d2b06825d6dd848d2e26affe04ef5a1c5b17a7e2626\nCopying blob sha256:0cdaac943654d3c8f37873729719c38286bf248fb47d871d4be648d6fbaabbae\nCopying blob sha256:6fda163e40c8f2e6506e1c4df805729d5e1975d767e087b01f85306182641b2b\nCopying blob sha256:de492bf4724f3f64e737a0a3714d85129845c498db8e7105fe2a0366410200dc\nCopying blob sha256:edd61a7d7ef87b40294ab55857278f0ba86ba0597154a5168f8435ed152fdb35\nCopying blob sha256:92f4f56cb2b27effa761922735eb1c0c127cf7dcf5233ffd6f9db1991546e1fe\nCopying blob sha256:14c1dccf66319f070094b0e3e20b487264b72bb1dd640bdd1c11503fd4371e81\nCopying blob sha256:0d8f9421406a5f30f97d375f201d62270a6db4c57ad66e50da40183daa4b808a\nCopying blob sha256:a5edbaee260a533b358e3ffe241adfce8c6b4d8ca08d4381164f78aac7b20fa7\nCopying blob sha256:f7174b5fce1bcb084e7467f2eb490c85e856c73d00f1bfaff9112d636e618d38\nCopying blob sha256:cf9e7d0ea4987e5c45c3d42e4ee8db25d3064b8e894c279b625dafe57dd416c3\nCopying blob sha256:d524676060dd0d43abd2747a4370a41f88eae773a222557f58b57ebc34f13e98\nCopying blob sha256:ae538292d92a419be7e09e4307b328a06fa5bd86944c6998d183908c6916a5ad\nCopying blob sha256:a5e4698aae7a78b410469580cf3890ba4f6582d0799b292725adfee90662e435\nCopying blob sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1\nCopying config sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261\nWriting manifest to image destination\nError: sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14: image not known\n"
+  },
+  "success": false,
+  "errors": [
+    {
+      "event": "parada",
+      "phase": "criterion3-stage-only-new-local-image",
+      "exceptionClass": "RuntimeError",
+      "messageSanitized": "load-inactive-new-ARM64-artifact-preserve-old-images; exit=125; Getting image source signatures\nCopying blob sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9\nCopying blob sha256:443f150fdaaf3900597eb42593ffd9da89872a7ddf30e2bf9d29116973a8e2f7\nCopying blob sha256:7f33852fe56d4b3372c04540761702d58a08c946f7b28022b6b11abffba903c7\nCopying blob sha256:7a718d416e6a5f2e01d91a59faca4813e603709ecfb0b64ca0df2319ce19bc37\nCopying blob sha256:e036486ceb4f744447e52d2b06825d6dd848d2e26affe04ef5a1c5b17a7e2626\nCopying blob sha256:0cdaac943654d3c8f37873729719c38286bf248fb47d871d4be648d6fbaabbae\nCopying blob sha256:6fda163e40c8f2e6506e1c4df805729d5e1975d767e087b01f85306182641b2b\nCopying blob sha256:de492bf4724f3f64e737a0a3714d85129845c498db8e7105fe2a0366410200dc\nCopying blob sha256:edd61a7d7ef87b40294ab55857278f0ba86ba0597154a5168f8435ed152fdb35\nCopying blob sha256:92f4f56cb2b27effa761922735eb1c0c127cf7dcf5233ffd6f9db1991546e1fe\nCopying blob sha256:14c1dccf66319f070094b0e3e20b487264b72bb1dd640bdd1c11503fd4371e81\nCopying blob sha256:0d8f9421406a5f30f97d375f201d62270a6db4c57ad66e50da40183daa4b808a\nCopying blob sha256:a5edbaee260a533b358e3ffe241adfce8c6b4d8ca08d4381164f78aac7b20fa7\nCopying blob sha256:f7174b5fce1bcb084e7467f2eb490c85e856c73d00f1bfaff9112d636e618d38\nCopying blob sha256:cf9e7d0ea4987e5c45c3d42e4ee8db25d3064b8e894c279b625dafe57dd416c3\nCopying blob sha256:d524676060dd0d43abd2747a4370a41f88eae773a222557f58b57ebc34f13e98\nCopying blob sha256:ae538292d92a419be7e09e4307b328a06fa5bd86944c6998d183908c6916a5ad\nCopying blob sha256:a5e4698aae7a78b410469580cf3890ba4f6582d0799b292725adfee90662e435\nCopying blob sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1\nCopying config sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261\nWriting manifest to image destination\nError: sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14: image not known\n",
+      "queryLabel": null,
+      "tracebackSanitized": [
+        {
+          "file": "stage-image.py",
+          "line": 21,
+          "function": "<module>"
+        },
+        {
+          "file": "p2helpers.py",
+          "line": 167,
+          "function": "ssh"
+        },
+        {
+          "file": "p2helpers.py",
+          "line": 163,
+          "function": "run"
+        },
+        {
+          "file": "p2helpers.py",
+          "line": 116,
+          "function": "command_failure"
+        }
+      ]
+    }
+  ],
+  "failure": {
+    "event": "parada",
+    "phase": "criterion3-stage-only-new-local-image",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "load-inactive-new-ARM64-artifact-preserve-old-images; exit=125; Getting image source signatures\nCopying blob sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9\nCopying blob sha256:443f150fdaaf3900597eb42593ffd9da89872a7ddf30e2bf9d29116973a8e2f7\nCopying blob sha256:7f33852fe56d4b3372c04540761702d58a08c946f7b28022b6b11abffba903c7\nCopying blob sha256:7a718d416e6a5f2e01d91a59faca4813e603709ecfb0b64ca0df2319ce19bc37\nCopying blob sha256:e036486ceb4f744447e52d2b06825d6dd848d2e26affe04ef5a1c5b17a7e2626\nCopying blob sha256:0cdaac943654d3c8f37873729719c38286bf248fb47d871d4be648d6fbaabbae\nCopying blob sha256:6fda163e40c8f2e6506e1c4df805729d5e1975d767e087b01f85306182641b2b\nCopying blob sha256:de492bf4724f3f64e737a0a3714d85129845c498db8e7105fe2a0366410200dc\nCopying blob sha256:edd61a7d7ef87b40294ab55857278f0ba86ba0597154a5168f8435ed152fdb35\nCopying blob sha256:92f4f56cb2b27effa761922735eb1c0c127cf7dcf5233ffd6f9db1991546e1fe\nCopying blob sha256:14c1dccf66319f070094b0e3e20b487264b72bb1dd640bdd1c11503fd4371e81\nCopying blob sha256:0d8f9421406a5f30f97d375f201d62270a6db4c57ad66e50da40183daa4b808a\nCopying blob sha256:a5edbaee260a533b358e3ffe241adfce8c6b4d8ca08d4381164f78aac7b20fa7\nCopying blob sha256:f7174b5fce1bcb084e7467f2eb490c85e856c73d00f1bfaff9112d636e618d38\nCopying blob sha256:cf9e7d0ea4987e5c45c3d42e4ee8db25d3064b8e894c279b625dafe57dd416c3\nCopying blob sha256:d524676060dd0d43abd2747a4370a41f88eae773a222557f58b57ebc34f13e98\nCopying blob sha256:ae538292d92a419be7e09e4307b328a06fa5bd86944c6998d183908c6916a5ad\nCopying blob sha256:a5e4698aae7a78b410469580cf3890ba4f6582d0799b292725adfee90662e435\nCopying blob sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1\nCopying config sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261\nWriting manifest to image destination\nError: sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14: image not known\n",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "stage-image.py",
+        "line": 21,
+        "function": "<module>"
+      },
+      {
+        "file": "p2helpers.py",
+        "line": 167,
+        "function": "ssh"
+      },
+      {
+        "file": "p2helpers.py",
+        "line": 163,
+        "function": "run"
+      },
+      {
+        "file": "p2helpers.py",
+        "line": 116,
+        "function": "command_failure"
+      }
+    ]
+  }
+}

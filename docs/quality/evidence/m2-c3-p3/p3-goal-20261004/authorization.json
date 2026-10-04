@@ -1,0 +1,11 @@
+{
+  "goalObjectiveSha256": "2c8b4dfb438cec5a20a2a680644551869043f9bfd7ab45416e2c775c06ea3cf3",
+  "goalObjective": "P3 M2 C3 with mandatory stop after postmigration failure",
+  "preliminaryPhrasePrompt": "Owner: S\u00ed, prompt previo solo para ensayo",
+  "technicalCounterComparison": "Owner: S\u00ed, cotejo completo antes de activar y diferencias t\u00e9cnicas expl\u00edcitas despu\u00e9s",
+  "workerImagePin": "Owner: S\u00ed, fijar solo la imagen actual del worker",
+  "freezeDoubleInputConfirmedUtc": "2026-10-04T23:13:56.2429931Z",
+  "phraseValuesStored": false,
+  "localDocumentAndEvidenceCommitAuthorized": true,
+  "pushAuthorized": false
+}

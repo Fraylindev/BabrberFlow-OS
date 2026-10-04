@@ -1,0 +1,6 @@
+{
+  "preliminaryPhrasePrompt": "Owner authorized only local P2 rehearsal, not freeze",
+  "preservationOrder": "Owner authorized full comparison before activation, business-table comparison and explicit technical changes after HTTP",
+  "freezeAuthorized": false,
+  "workerImagePin": "Owner explicitly authorized one image argument pin to current 7eafd5c9 worker image"
+}

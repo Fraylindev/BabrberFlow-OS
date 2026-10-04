@@ -1,0 +1,7 @@
+{
+  "sourceSha256": "971840d215d6c376a86e09bfbbe108ec591bf10975e3b989fb6cab7e3ac833dc",
+  "sameDoBody": true,
+  "adaptation": "Single unchanged DO block in Prisma interactive transaction with SET TRANSACTION READ ONLY; existing systemd LoadCredential runtime context; no other credential acquired",
+  "readOnly": true,
+  "actualDeploymentGateNotRehearsal": true
+}
