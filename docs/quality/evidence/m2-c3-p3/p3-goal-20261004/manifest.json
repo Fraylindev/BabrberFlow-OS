@@ -157,9 +157,17 @@
     },
     {
       "file": "worker-image-proposal.diff",
-      "sha256": "026b2efd06794649d459a2357515b54379075eaa2898bc1a0ef1ecf06f24a2b2",
-      "bytes": 505
+      "sha256": "78a8fd21505d6f967331825e83a87d4b2709f13469d0bf525f8cb779645b528b",
+      "bytes": 496,
+      "workingCopyOriginalSha256": "026b2efd06794649d459a2357515b54379075eaa2898bc1a0ef1ecf06f24a2b2",
+      "workingCopyOriginalBytes": 505
+    },
+    {
+      "file": "postcommit-manifest-audit.json",
+      "sha256": "34465943393668e6328f0b3afba3d8560eac581f3b6c46b6a9d89acebe19ab62",
+      "bytes": 1337
     }
   ],
-  "containsNoBackupOrCredentials": true
+  "containsNoBackupOrCredentials": true,
+  "hashBasis": "Committed canonical Git blob bytes; exact executed script bytes separately preserved as base64ExactBytes"
 }
