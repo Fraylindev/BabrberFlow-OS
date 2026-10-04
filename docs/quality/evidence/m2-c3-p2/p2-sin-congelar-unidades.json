@@ -1,0 +1,63 @@
+{
+  "base": "25fbdd3241b926925a3af435d8ecb5c4ddd99fad",
+  "startedUtc": "2026-10-04T03:46:09.838191+00:00",
+  "commands": [],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "success": false,
+  "errors": [
+    {
+      "event": "parada",
+      "phase": "unidad-persistencia",
+      "exceptionClass": "ValueError",
+      "messageSanitized": "fallo-inyectado-regla-nueva: [privado]",
+      "queryLabel": "unidad-multilinea-utf8",
+      "tracebackSanitized": [
+        {
+          "file": "harness.py",
+          "line": 105,
+          "function": "units"
+        }
+      ]
+    },
+    {
+      "event": "fallo-manejador",
+      "phase": "manejador-error",
+      "exceptionClass": "TypeError",
+      "messageSanitized": "fallo-inyectado-del-manejador",
+      "queryLabel": "unidad-multilinea-utf8",
+      "tracebackSanitized": [
+        {
+          "file": "run.py",
+          "line": 87,
+          "function": "report_failure"
+        },
+        {
+          "file": "harness.py",
+          "line": 100,
+          "function": "broken_emit"
+        }
+      ]
+    }
+  ],
+  "failure": {
+    "event": "parada",
+    "phase": "unidad-persistencia",
+    "exceptionClass": "ValueError",
+    "messageSanitized": "fallo-inyectado-regla-nueva: [privado]",
+    "queryLabel": "unidad-multilinea-utf8",
+    "tracebackSanitized": [
+      {
+        "file": "harness.py",
+        "line": 105,
+        "function": "units"
+      }
+    ]
+  }
+}

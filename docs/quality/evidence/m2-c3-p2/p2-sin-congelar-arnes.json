@@ -1,0 +1,73 @@
+{
+  "base": "25fbdd3241b926925a3af435d8ecb5c4ddd99fad",
+  "localOnly": true,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "cases": [],
+  "complete": false,
+  "serviceControlRemoved": true,
+  "promptLocal": {
+    "localOnly": true,
+    "sameAccepted": true,
+    "wrongRepeatRejected": true,
+    "dpapiRead": false
+  },
+  "units": {
+    "ledgerMultiset": true,
+    "multilineUtf8": true,
+    "errorAndHandlerPersisted": true,
+    "tracebacksRetained": true,
+    "secretRedacted": true,
+    "persistenceFallback": true
+  },
+  "executorFailure": {
+    "event": "parada",
+    "phase": "snapshot-censo-dump-cifrado",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "gpg-cifrar-dump; exit=2; gpg: keybox [literal omitido] created",
+    "queryLabel": "censo-roles",
+    "tracebackSanitized": [
+      {
+        "file": "run.py",
+        "line": 698,
+        "function": "main"
+      },
+      {
+        "file": "harness.py",
+        "line": 167,
+        "function": "stream_encrypt"
+      },
+      {
+        "file": "run.py",
+        "line": 464,
+        "function": "stream_encrypt"
+      },
+      {
+        "file": "run.py",
+        "line": 99,
+        "function": "command_failure"
+      }
+    ]
+  },
+  "failure": {
+    "event": "parada",
+    "phase": "arnes-A",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "recorrido-local-completo-fallo",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "harness.py",
+        "line": 253,
+        "function": "main"
+      },
+      {
+        "file": "harness.py",
+        "line": 212,
+        "function": "scenario"
+      }
+    ]
+  }
+}

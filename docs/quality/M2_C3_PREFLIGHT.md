@@ -197,6 +197,8 @@ QA histórica es PG17. Cliente/destino PG17 de imagen oficial **fijada por diges
 
 ### 5.2 Secuencia de respaldo prevista
 
+**Regla vigente posterior para P2:** la autorizacion del propietario registrada en §17 reemplaza exclusivamente el congelamiento de P2. P2 usa snapshot REPEATABLE READ READ ONLY con servicios en marcha, sin stop/start/restart ni watchdog ni ventana de 90 minutos. El corte bajo congelamiento, con dump nuevo, hash, censo y restore verificado, es requisito obligatorio de P3b inmediatamente antes de migrar; requiere su autorizacion separada. Las secuencias originales y los intentos anteriores se conservan como historia, no como permiso para detener servicios en P2.
+
 1. Ventana del propietario sin edición de QA. Capturar imagen/configuración API anterior e ID de Preview actual. Congelar escritores QA: API y worker staging; ninguna unidad productiva ni Caddy. Inventariar sesiones y transacciones con salida agregada, sin query/cuerpos; no matar sesiones automáticamente.
 2. Migrador QA con TLS verify-full/CA y transacción **REPEATABLE READ READ ONLY** abierta exporta `pg_export_snapshot()`. Mantenerla viva durante el dump y el censo completo. Tokens de snapshot y archivos internos no se versionan.
 3. Misma snapshot para pg_dump y comparación; no comparar un origen cambiante con un snapshot diferente como si fuera el del backup. Ensayo previo acota duración, memoria y espacio; no ignorar tablas ni errores.
@@ -267,6 +269,8 @@ Si entre P2 y P3 se reanudan escritores QA, el backup anterior deja de represent
 RPO propuesto: cero respecto al corte previo si se conservan congeladas escrituras; tras reabrir, no hay RPO cero garantizado sin conciliación. RTO se medirá en ensayo; no inventar minutos. La revisión local C1 de inversa no prueba rollback del contenedor realmente desplegado ni restore operativo de permisos.
 
 ## 6. Orden de operación y autorizaciones separadas
+
+**Regla vigente posterior para P2:** la autorizacion del propietario registrada en §17 reemplaza exclusivamente el congelamiento de P2. P2 usa snapshot REPEATABLE READ READ ONLY con servicios en marcha, sin stop/start/restart ni watchdog ni ventana de 90 minutos. El corte bajo congelamiento, con dump nuevo, hash, censo y restore verificado, es requisito obligatorio de P3b inmediatamente antes de migrar; requiere su autorizacion separada. Las secuencias originales y los intentos anteriores se conservan como historia, no como permiso para detener servicios en P2.
 
 **Todos los comandos de esta sección son previstos, no usados en el preflight.** Las autorizaciones son unitarias: completar y presentar la evidencia de un punto no autoriza el siguiente. No ejecutar una secuencia completa por aprobar el documento. Si un placeholder no está resuelto/verificado, el comando está detenido.
 
@@ -1555,3 +1559,132 @@ git diff --exit-code a19fded..HEAD -- apps ops package.json pnpm-lock.yaml
 ~~~
 
 SHA/estado final en la respuesta. Sin push, P3, QA real ni aprobación de P2.
+
+## 17. Correcciones y P2 sin congelamiento: arnés local detenido — 2026-10-03
+
+### 17.1 Base, autorización y regla operativa vigente
+
+Base inicial **25fbdd3241b926925a3af435d8ecb5c4ddd99fad**, rama **ai/antigravity-qa**, árbol limpio, ahead 9 respecto de la referencia local origin. No se consultó el remoto. El propietario autorizó correcciones y simplificación, con A local completo como condición indispensable para B READ ONLY QA y C. **A falló; B y C no se iniciaron.**
+
+P2 queda **sin congelamiento**: servicios QA en marcha, ningún stop/start/restart, recuperación ni watchdog; sin ventana de 90 minutos. Snapshot exportado en transacción REPEATABLE READ READ ONLY del migrador con statement_timeout; dump y censo del mismo corte aunque el origen siga recibiendo escrituras. No comparar el restore con un origen posterior como si fuera el snapshot.
+
+**P3b exige siempre un respaldo nuevo bajo congelamiento inmediatamente antes de migrar: dump, hash, censo del corte y restore verificado.** El eventual respaldo de P2 no sustituye ese corte, aunque parezca no haber nuevas escrituras. No se autorizó ni ejecutó P3. El control de servicios y watchdog anteriores se conservan únicamente como material histórico para revisar antes de P3b: [ejecutor de §16](evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt); no se incluyeron sus funciones en el ejecutor nuevo ni se llamaron.
+
+Producción cerrada e intacta. Sin conexiones QA/productivas, lectura DPAPI/Clave.txt, frase real, servicios remotos, migraciones/roles/grants/configuración QA, despliegues, dependencias nuevas o push. La credencial y frase reales siguen reservadas para B/C: ningún prompt real se abrió en A. La ruta custodiada C:\KortekBackups\qa-m2-c3 no se leyó ni escribió.
+
+### 17.2 Correcciones preparadas antes de A
+
+- Reader.json analiza todas las líneas de una sola columna JSON mediante json.loads('\n'.join(...)); cada consulta se etiqueta (login, ledger, catálogo, roles, conteos y censo por tabla). El error JSON no incluye el payload.
+- Se separaron event y phase. La excepción conserva exceptionClass, messageSanitized, queryLabel y tracebackSanitized; los frames guardan archivo/línea/función, nunca código, argumentos o locales. El error original y el del emisor se guardan por separado, sin colisión de stage.
+- UTF-8 explícito en streams text de psql, codecs de SQL/JSON y supervisor; PGCLIENTENCODING=UTF8 y pg_dump --encoding=UTF8. Dump/restore y GPG permanecen binarios para no transformar el respaldo.
+- Escritura atómica result.json.tmp → result.json; fallback de persistencia separado. Se redactan valores privados conocidos, literales entre comillas y direcciones. Stderr externo se drena en memoria para evitar bloqueos; **su selección de diagnóstico resultó insuficiente para GPG**, según §17.4.
+- Doble frase antes de operaciones y de leer DPAPI en la rama real; segunda introducción independiente para descifrar. Supervisor y ejecutor reciben frase por stdin anónimo, sin argv, entorno ni archivo. Estas ramas reales no se ejecutaron. Solo se probaron frases sintéticas generadas en memoria.
+- Se retiró de P2 todo control de servicios, gates de congelamiento, recuperación y watchdog. El arnés prohíbe SSH; sustituye infraestructura/escritores/release por stubs y HTTP por loopback sintético. La fuente y destinos locales son PG17 fijado por ID, sin red, read-only/tmpfs; CA pública en bind único read-only.
+
+Las fuentes ejecutadas se archivan como evidencia; **no se declaran listas para QA**:
+
+| Fuente | SHA256 |
+| --- | --- |
+| [p2-sin-congelar-ejecutor.py.txt](evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt) | 4ab88dacbb9adf3d939951a438d157a244dc59a40c5a1640ab65b400e4480eb0 |
+| [p2-sin-congelar-arnes.py.txt](evidence/m2-c3-p2/p2-sin-congelar-arnes.py.txt) | 79554f6143d31c52557e8202d57c47a199fb9ee628b36520e8a4705748ef1a94 |
+| [p2-sin-congelar-supervisor.ps1.txt](evidence/m2-c3-p2/p2-sin-congelar-supervisor.ps1.txt) | a2f44ce1814a0c13fb4ba3d2db86bdad174976aa8a2e212970f27083bf069cf0 |
+
+No se modificó código de producto ni SQL operativo versionado. El DDL/roles/grants/seed de A construyen únicamente una fuente nueva sintética desechable con las 27 definiciones de Git local 791569b; no son migraciones de QA. El ensayo de rollback previsto reutiliza SQL desechable existente solo en clones; **no se alcanzó**.
+
+### 17.3 Comandos y resultados reales
+
+~~~powershell
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+New-Item -ItemType Directory -Path '.tmp/m2-c3-p2-sin-congelar' -Force
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt' -Destination '.tmp/m2-c3-p2-sin-congelar/run.py'
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-reintento-supervisor.ps1.txt' -Destination '.tmp/m2-c3-p2-sin-congelar/prompt.ps1'
+Copy-Item -LiteralPath 'docs/quality/evidence/m2-c3-p2/p2-reintento-arnes.py.txt' -Destination '.tmp/m2-c3-p2-sin-congelar/harness.py'
+# Preparación y revisión estática; no ejecutan el arnés ni QA:
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' '.tmp/m2-c3-p2-sin-congelar/preparar.py'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' '.tmp/m2-c3-p2-sin-congelar/preparar_arnes.py'
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' '.tmp/m2-c3-p2-sin-congelar/preparar_supervisor.py'
+# Una única ejecución formal de A:
+& 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -u '.tmp/m2-c3-p2-sin-congelar/harness.py'
+~~~
+
+Preparación inicial: exit 1 por SyntaxError en el generador, comillas de un patrón regex; corrigió el generador antes de escribir/ejecutar el ejecutor preparado. Segunda preparación y AST Python/PowerShell: exit 0. Fue una incidencia estática previa a A, conservada en [diagnóstico](evidence/m2-c3-p2/p2-sin-congelar-diagnostico-local.json); no un reintento del arnés. No hubo preparación posterior al fallo formal.
+
+**Arnés formal: exit 1.** [Resultado del arnés](evidence/m2-c3-p2/p2-sin-congelar-arnes.json); [49 comandos y recorrido local](evidence/m2-c3-p2/p2-sin-congelar-recorrido-local.json). Las arrays conservan argumentos exactos, con token de snapshot sustituido por marcador; SQL/entrada binaria se reconstruyen de las fuentes, sin claves. El emisor solicitar-credencial-DPAPI-QA se alcanzó como evento del ejecutor adaptado, pero el arnés alimentó una contraseña falsa y destino loopback; **no ejecutó el lector DPAPI del supervisor**.
+
+| Comprobación alcanzada | Resultado real |
+| --- | --- |
+| SecureString local | Misma frase falsa aceptada y otra repetición rechazada; sin DPAPI. |
+| Comparador | Permutación aceptada; falta, duplicado adicional y checksum alterado rechazados; multiplicidad preservada. |
+| JSON multilínea / UTF-8 | Agregado de una columna con saltos de línea y áéíóú analizado completo. |
+| Regla nueva: error y manejador inyectados | ValueError original y TypeError del emisor persistidos con fase/evento/mensaje/traceback; valor falso redactado. |
+| Fallo inyectado de save | Fallback conservó también OSError de persistencia. Es prueba unitaria con save sustituido, no un disco realmente inaccesible. |
+| Fuente | PG17.11; imagen sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f; btree_gist en public. |
+| CA | Bind read-only, hash 1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a. |
+| Login local | RR/READ ONLY, timeout 120 s, SELECT de todas las tablas incluidas horarios; conexión trust local, no TLS QA. |
+| Ledger local | 31 entradas: 27 terminadas y cuatro revertidas, nombres repetidos; observado/baseline/diferencia conservados en paso0 y snapshot; igualdad, sin logs. |
+| Censo previo / schema-only | 36 tablas, 20 clientes, 28 reservas, cero vinculados/cola/leases; schema-only exit 0 y archivo tmpfs descartado. |
+| Snapshot y concurrencia local | Transacción RR/RO abierta y snapshot exportado; escritura sintética posterior confirmada elevó fuente a 21 clientes; dump usó el snapshot y terminó 0. Restore no alcanzado: aislamiento extremo a extremo no acreditado. |
+| Cifrado del dump | GPG exit 2; archivo .partial retirado, custodia local vacía; ningún respaldo aceptado ni hash/censo cifrado disponible. |
+| Servicios / red | Cero llamadas SSH/control de servicios; solo stubs y contenedor local sin red. |
+
+[Errores unitarios](evidence/m2-c3-p2/p2-sin-congelar-unidades.json) y [fallback](evidence/m2-c3-p2/p2-sin-congelar-fallback.json) acreditan la conservación de ambas causas y los frames sanitizados.
+
+### 17.4 Fallo formal, causa conservada y límite
+
+Fase **snapshot-censo-dump-cifrado**, evento **parada**, clase **RuntimeError**, mensaje sanitizado realmente guardado:
+
+~~~text
+gpg-cifrar-dump; exit=2; gpg: keybox [literal omitido] created
+~~~
+
+Cadena de frames: run.py:698 main → harness.py:167 stream_encrypt → run.py:464 stream_encrypt → run.py:99 command_failure. El arnés guardó además su RuntimeError de recorrido-local-completo-fallo. No hubo colisión secundaria, JSONDecodeError ni parada sin clase/fase/traceback.
+
+queryLabel=censo-roles identifica la última consulta procesada; no atribuye el fallo de GPG a una consulta SQL. No se registró un fallo JSON en este recorrido.
+
+Comando exacto que devolvió 2 (rutas MSYS normalizadas; la frase no figura en argv):
+
+~~~text
+C:/Program Files/Git/usr/bin/gpg.exe --no-options --homedir /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home --no-symkey-cache --batch --pinentry-mode loopback --passphrase-fd 0 --symmetric --cipher-algo AES256 --output /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/custody/qa-m2-c3-p2-20261004T034618Z-9f7122e5b645.dump.gpg.partial
+~~~
+
+**Causa específica de GPG no determinada.** safe_stderr eligió la primera línea que contiene gpg:, que era información de creación del keybox, y no conservó el resto del stderr causal. El proceso ya terminó y no se reconstruye un mensaje inexistente en la evidencia. La clase, exit code, evento, fase y traceback sí están conservados; la regla nueva **no se acredita completamente para fallos externos**, porque este selector aún puede perder su explicación causal. No atribuir a frase, TLS, permisos QA, ruta o sockets sin diagnóstico real. No hubo lectura de datos reales que pudiera justificar ocultar por completo la causa.
+
+**Se detuvo al primer fallo formal; no se corrigió ni reintentó después, no se ejecutó B/C.** Próxima preparación solo tras nueva orden: conservar los diagnósticos causales GPG sanitizados, priorizando errores frente a información; diagnosticar localmente el cifrado sin QA/frase real; comprobar la persistencia de errores externos además de excepciones Python y repetir A completo. No se infiere autorización para continuar desde este documento.
+
+### 17.5 Limpieza, límites y checkpoint
+
+finally cerró el reader/transacción, descartó claves falsas del ejecutor, eliminó el .partial, retiró el único contenedor propio con sus volúmenes y terminó el agente GPG de su homedir propio. Ambos comandos de limpieza exit 0. PG data/tmp eran tmpfs, sin puertos ni volumen de datos persistente. La consulta posterior por el nombre exacto del contenedor terminó 0 y vacía. [Limpieza](evidence/m2-c3-p2/p2-sin-congelar-limpieza-local.json).
+
+~~~powershell
+docker --context desktop-linux rm --force --volumes kortek-m2-c3-p2-client-real-9f7122e5b645
+& 'C:/Program Files/Git/usr/bin/gpgconf.exe' --homedir /c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home --kill gpg-agent
+docker --context desktop-linux ps -a --filter 'name=kortek-m2-c3-p2-client-real-9f7122e5b645' --format '{{.Names}}'
+# Tras archivar y comprobar ruta absoluta propia y ausencia de reparse points:
+Remove-Item -LiteralPath 'C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\m2-c3-p2-sin-congelar' -Recurse -Force
+~~~
+
+**A DETENIDO / INCOMPLETO; P2 INCOMPLETO.** No verificado: descifrado independiente; segundo contenedor y alternativa TOC; igualdad completa restaurada de tablas/conteos/constraints/triggers/roles; rollback §5.3; cuatro escenarios de fallo del ejecutor (los unitarios de persistencia sí pasaron, sin sustituir esos escenarios). No se creó hash o censo de respaldo aceptado. Causa GPG pendiente, sin retry.
+
+**QA no leído ni tocado:** sin revalidación viva de destino/escritores/ledger/release, TLS verify-full, permisos reales, imagen/PID/reinicios API/worker ni HTTP real de reserva pública. Los stubs y resultados locales no renuevan P0. Sin preparación/migración/despliegue productivos, sin P3 ni push.
+
+Commit local limitado a este documento y evidencia sanitizada, por rutas explícitas. Validaciones documentales/AST/JSON/alcance, revisión completa del índice y patrones sensibles. No builds ni pruebas de producto ni nuevas ejecuciones funcionales tras la parada. SHA y git status finales en el relevo.
+
+~~~powershell
+git diff --check
+git diff --stat
+git diff
+git add -- docs/quality/M2_C3_PREFLIGHT.md docs/quality/evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt docs/quality/evidence/m2-c3-p2/p2-sin-congelar-arnes.py.txt docs/quality/evidence/m2-c3-p2/p2-sin-congelar-supervisor.ps1.txt docs/quality/evidence/m2-c3-p2/p2-sin-congelar-arnes.json docs/quality/evidence/m2-c3-p2/p2-sin-congelar-recorrido-local.json docs/quality/evidence/m2-c3-p2/p2-sin-congelar-unidades.json docs/quality/evidence/m2-c3-p2/p2-sin-congelar-fallback.json docs/quality/evidence/m2-c3-p2/p2-sin-congelar-diagnostico-local.json docs/quality/evidence/m2-c3-p2/p2-sin-congelar-limpieza-local.json
+git diff --cached --check
+git diff --cached --stat
+git diff --cached --name-only
+git diff --cached
+git diff --exit-code
+git diff --cached --exit-code -- apps ops package.json pnpm-lock.yaml
+git commit -m "docs(m2): documentar arnes P2 sin congelamiento detenido"
+git rev-parse HEAD
+git status --short --branch
+git show --stat --oneline HEAD
+git diff --exit-code 25fbdd3..HEAD -- apps ops package.json pnpm-lock.yaml
+~~~
