@@ -1,0 +1,63 @@
+{
+  "state": "OBJETIVO NO CUMPLIDO",
+  "base": "75955bb44eb2ba86da7d2c5f30ec947373e5099e",
+  "R1": "NO CUMPLIDO: matrix SQL CR bytes, ledger checksum mismatch, historical upgraded definition capture missing",
+  "R2": "NO EJECUTADO; mandatory R1 stop",
+  "R3": "CUMPLIDO by read-only catalog captured together with R1; no correction",
+  "R4": "NO EJECUTADO; mandatory R1 stop",
+  "R5": "NOT NEEDED; no activation or service stop",
+  "R6": "DOCUMENTADO; local commit pending final verification",
+  "sqlProof": [
+    {
+      "file": "apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql",
+      "rawWorkingCRCount": 0,
+      "rawGitCRCount": 0,
+      "workingEqualsGitAfterCRLFtoLF": true,
+      "sentSQLCRCount": 0,
+      "sentSQLSHA256": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "normalizedSentSQLSHA256": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "strictHistoricalLFRequirementPassed": true,
+      "binaryReconstructionUsesUnchangedHistoricalSource": true
+    },
+    {
+      "file": "apps/api/ops/apply-runtime-grants.sql",
+      "rawWorkingCRCount": 30,
+      "rawGitCRCount": 0,
+      "workingEqualsGitAfterCRLFtoLF": true,
+      "sentSQLCRCount": 30,
+      "sentSQLSHA256": "1bd1a0a02bccadba93a581838fe44bbeaa34f26f9041b380b80c2896cf20ee76",
+      "normalizedSentSQLSHA256": "effd5017cd326b30c9575cec86f1ad9f20928a0c47d37400b17d55df1652fa4f",
+      "strictHistoricalLFRequirementPassed": false,
+      "binaryReconstructionUsesUnchangedHistoricalSource": true
+    },
+    {
+      "file": "apps/api/ops/customer-stage-one-runtime-grants.sql",
+      "rawWorkingCRCount": 0,
+      "rawGitCRCount": 0,
+      "workingEqualsGitAfterCRLFtoLF": true,
+      "sentSQLCRCount": 0,
+      "sentSQLSHA256": "293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc",
+      "normalizedSentSQLSHA256": "293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc",
+      "strictHistoricalLFRequirementPassed": true,
+      "binaryReconstructionUsesUnchangedHistoricalSource": true
+    }
+  ],
+  "R3checks": {
+    "threeExternalRolesNoReceiptPrivileges": true,
+    "PUBLICNoReceiptPrivileges": true,
+    "externalRolesAndPUBLICNoNewFunctionEXECUTE": true,
+    "old36TableACLUnchanged": true,
+    "bothNewFunctionsInvokerFixedSearchPath": true,
+    "bothNewTriggersPresentEnabledO": true
+  },
+  "noBusinessWrites": true,
+  "noNewBackup": true,
+  "noPhrase": true,
+  "noQARebootOrRestore": true,
+  "noQAServiceStopOrRestart": true,
+  "noManualLedgerChange": true,
+  "noRuntimeCredentialsExtracted": true,
+  "catalogCRScanEmpty": true,
+  "historicalDefinitionComparisonUnverified": true,
+  "QAmetadataReadUtc": "2026-10-05T00:02:20.898039+00:00"
+}

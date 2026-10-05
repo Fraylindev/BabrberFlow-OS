@@ -2242,3 +2242,102 @@ La configuración Git anuncia conversión LF→CRLF en archivos de texto. Para u
 El commit de esta entrega contiene exclusivamente esta nueva sección y evidencia sanitizada. Los apartados anteriores se conservan byte por byte. No autoriza por sí mismo una continuación ni publicación.
 
 Auditoría posterior al commit local `8fd74477f027fba4c2c3c28d8a73eb9dcffaec3f`: el manifiesto esperaba los bytes CRLF del diff de propuesta del worker, mientras Git conserva su representación LF. Se corrigió solo esa entrada al SHA del blob versionado, reteniendo ambos lados y el hash original; las fuentes ejecutadas exactas siguen en base64 sin cambios. El [registro de auditoría](evidence/m2-c3-p3/p3-goal-20261004/postcommit-manifest-audit.json) conserva exit 1, stderr y causa. Corrección en commit local adicional, sin reescribir el anterior, sin QA ni push. Temporales propios retirados.
+
+## 23. Corrección del gate runtime: ensayo local posterior al rollback — 2026-10-04
+
+### 23.1 Estado y criterios
+
+**OBJETIVO NO CUMPLIDO.** Base local `75955bb44eb2ba86da7d2c5f30ec947373e5099e`, rama `ai/antigravity-qa`, árbol inicialmente limpio. Este ensayo añade evidencia local tras la parada de §22; no autoriza ni ejecuta una continuación en QA. Las autorizaciones anteriores para ensayo, cotejo de contadores y fijación de imagen del worker ya están incorporadas en §22 y no sustituyen una decisión posterior al fallo.
+
+| Criterio P3 | Estado vigente | Evidencia / límite |
+| --- | --- | --- |
+| 1. Ensayo sobre respaldo REAL P2 | CUMPLIDO previamente | §22.1; el nuevo ensayo usa exclusivamente una base local sintética, sin sustituir el ensayo REAL. |
+| 2. Catálogo QA antes del primer congelamiento | CUMPLIDO previamente | §22.1; no se releyó QA en este checkpoint. |
+| 3. Artefacto ARM64 | CUMPLIDO previamente | §22.1; se utiliza la misma imagen, sin reconstrucción. |
+| 4. Respaldo nuevo congelado y restore | CUMPLIDO previamente | §22.4; este checkpoint no lee ni crea un respaldo real. |
+| 5. Gate con login runtime REAL QA | PARCIAL / NO CUMPLIDO | Gate local restringido positivo y negativos verificados; login QA pendiente. |
+| 6. Activación del API nuevo | NO CUMPLIDO | Ninguna operación QA posterior al rollback en esta sección. |
+| 7. Validación completa del API nuevo en QA | PARCIAL / NO CUMPLIDO | El ensayo local no demuestra servicios, HTTP ni catálogo actuales de QA. |
+| 8. Documentación y commit local sanitizado | DOCUMENTADO / EN REVISIÓN | Esta sección y evidencia nueva; commit local por rutas explícitas, sin push. |
+
+### 23.2 Trabajo realizado, comandos y resultados
+
+[Reporte completo](evidence/m2-c3-p3/local-gate-correction-20261004/result.json), [bytes exactos de fuentes](evidence/m2-c3-p3/local-gate-correction-20261004/executed-sources.json) y [manifiesto](evidence/m2-c3-p3/local-gate-correction-20261004/manifest.json). El supervisor `.tmp/p3-local-gate/local-gate-drill.py` terminó **exit 0**, a las **2026-10-04T23:50:08.533265+00:00**. Los argv exactos sanitizados, exit y stderr de sus 28 comandos están en el reporte.
+
+PostgreSQL 17.11 local en tmpfs, `docker --context desktop-linux run --network none`, sin puertos publicados; herramientas ARM64 comparten solo su namespace mediante `--network container:<PG propio>`. Roles Migrator y runtime sintéticos, contraseñas aleatorias privadas, TCP loopback con SCRAM. No SSH, DPAPI, frase real, filas del respaldo ni conexión QA/producción. El rol postgres de inicialización es exclusivamente local/sintético, sin adquirir otra credencial real.
+
+Desde la imagen ya construida: `node node_modules/prisma/build/index.js migrate deploy` aplicó las 28 migraciones exclusivamente a esa base nueva, **exit 0**, ledger 28 activas / 0 fallidas. Matriz y suplemento, por separado con `psql -X -qAt -v ON_ERROR_STOP=1`, **exit 0**; se retiró solo `\ir` de la matriz para evitar doble ejecución. Gate SQL existente mediante login runtime restringido: **exit 0**.
+
+El mismo `runtime-gate.cjs` SHA **957676d3dbb296623899c56e300c21c5be917bd974de6459183c8351796737c0**, sin alterar las verificaciones, ejecutó SQL real mediante Prisma en transacción READ ONLY:
+
+| Caso local | Resultado exigido y observado |
+| --- | --- |
+| Login SCRAM runtime restringido | exit 0; `runtimeGate37=true`, `tables=37`, `readonly=on`, rol `kortek_runtime`. |
+| UPDATE extra sobre CustomerOperation, solo base sintética | exit 1, rechazo del gate. |
+| Retirada del permiso extra, solo base sintética | exit 0 y mismo resultado positivo. |
+| Contraseña runtime incorrecta, solo base sintética | exit 1, rechazo de autenticación. |
+
+La versión LF exacta de `qa-rollback.sh`, SHA **7c437ba44e45f81a086b12c66fbf64d21a3b71102a2ee7912041207cf8fa48ce**, se ejecutó por Bash en contenedor local `--network none`. Un comando sustituto sintético verificó ruta del gestor y argumento `rollback`; marcador `SYNTHETIC_MANAGER_RECEIVED_ROLLBACK`, **exit 0**. Esto prueba el despacho del script LF, **no el vencimiento systemd ni un rollback real QA**. Los cuatro contenedores persistentes propios se retiraron con exit 0; el de despacho usó `--rm`. Los temporales propios se retiran al finalizar el checkpoint, después de archivar fuentes/reportes.
+
+### 23.3 Impedimentos y evidencia
+
+[Registro](evidence/m2-c3-p3/local-gate-correction-20261004/impediments.json): primera readiness de PG exit 2, seguida de exit 0; ruta de test supuesta inexistente resuelta mediante discovery del archivo real, con límite explícito de captura del stderr original; lectura de reporte a consola cp1252 falló con UnicodeEncodeError exit 1, resuelta usando `ensure_ascii=True`, exit 0, sin alterar el reporte. Los dos exit 1 del gate son negativos esperados que satisfacen sus aserciones, no resultados positivos ni fallos ocultos.
+
+### 23.4 Datos clave
+
+No cambian las identidades de §22.4: imagen local ARM64 **bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14**, APP_RELEASE **bc1d559e42928ca0deb60319b33cf98b3cd69291**; respaldo original congelado `C:\KortekBackups\qa-m2-c3\qa-m2-c3-p3-frozen-20261004T232627Z-efe04b28cc60.dump.gpg`, SHA **76866b817efecb0bf2a2025fe89197ad4aaa8ec4938166af3e65abe8f64dc430**. Ledger QA 28 y servicios anteriores son el último estado verificado en §22, no una revalidación actual. No hubo nueva ventana de congelamiento. El ledger local 28 de este ensayo no es evidencia adicional del ledger QA.
+
+### 23.5 Lo no verificado y riesgos pendientes
+
+Pendientes el gate runtime REAL QA, activación y validación posterior completa. No se ejerció deadline systemd; el gestor del watchdog fue sintético. No se afirma probar de extremo a extremo LoadCredential, wrapper Podman ni unidades QA con este ensayo Node/local. Las fuentes ejecutables deben materializarse desde base64 exacto y verificarse como LF; Git puede convertir los textos para revisión. La prueba corrige la incertidumbre local del gate, sin revocar la parada obligatoria después de migrar.
+
+### 23.6 Acción del propietario
+
+Sigue pendiente la autorización de continuación de §22.6 ya solicitada. Si se autoriza, revalidar en READ ONLY el estado 28, preparar nuevo corte/respaldo verificado y obtener nueva confirmación local de congelamiento antes del gate real y eventual activación. **No repetir migración, grants ni registro del ledger por inferencia.** Producción, Clerk y web fuera de alcance; sin push ni cierre/aprobación de P3.
+
+## 24. Continuación P3 autorizada desde 75955bb: parada obligatoria en R1 — 2026-10-05 UTC
+
+### 24.1 Estado y tabla de criterios
+
+**OBJETIVO NO CUMPLIDO / CONTINUACIÓN DETENIDA EN R1.** El propietario autorizó R1–R6 desde `75955bb44eb2ba86da7d2c5f30ec947373e5099e`, sin repetir migración, restaurar QA ni tomar respaldo nuevo. Esta autorización posterior sustituye la espera de §22.6/§23.6, pero exige detenerse ante cualquier CR o diferencia de R1. Al empezar: rama `ai/antigravity-qa`; HEAD exacto anterior; cambios propios sin commit de §23/evidencia local, aislables. Sin push.
+
+| Requisito | Resultado | Evidencia / límite |
+| --- | --- | --- |
+| R1. SQL LF idéntico, catálogo y checksum repo | **NO CUMPLIDO** | Migración/suplemento enviados LF y hashes iguales; matriz enviada con **30 CR**, blob Git distinto; checksum ledger **af7d783…**, repo LF **6e1d854…**. Sin CR en prosrc/constraints/defaults actuales. Comparación directa con definiciones post-upgrade históricas del ensayo no verificable por falta de captura. |
+| R2. Gate real dentro del API actual | **NO EJECUTADO** | Parada R1. Guard LF corregido y probado localmente; no se extraen credenciales runtime ni se ejecuta gate QA. |
+| R3. Catálogo adicional | **CUMPLIDO por lectura READ ONLY** | Ningún privilegio externo/PUBLIC sobre CustomerOperation ni EXECUTE nuevo; ACL 36 anteriores idénticas, ambas funciones invoker/search_path fijado, ambos triggers presentes y enabled O. |
+| R4. Activar API nuevo y validar | **NO EJECUTADO** | R1 impide activar. API y worker anteriores active/running, NRestarts 0, mismos PID al iniciar/finalizar lecturas. Ninguna ventana de parada. |
+
+R5 no se requiere: no se detuvo ni activó ningún servicio; no se restauró QA. R6: nueva sección, evidencia sanitizada y commit local documental por rutas explícitas; no aprueba P3. [Resultado completo](evidence/m2-c3-p3/r1-continuation-stop-20261005/result.json), [evaluación](evidence/m2-c3-p3/r1-continuation-stop-20261005/assessment.json), [manifiesto](evidence/m2-c3-p3/r1-continuation-stop-20261005/manifest.json).
+
+### 24.2 Trabajo, comandos y resultados
+
+`git rev-parse HEAD`, `git status --short`; comparación `git show HEAD:<SQL>` con archivos de trabajo y hashes/ejecutor históricos de §22. SHA migración LF working/Git/enviado **6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee**, 3392 bytes, CR 0. Suplemento working/Git/enviado **293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc**, CR 0.
+
+Matriz: Git LF **8916ca378c88b4ed1d1d8c357f0e1a117a17df792d229c11a6a412f9a24037ea**; working histórico **52453d4c0939ea9449f0cb4d318a62a781e788f69f0248a48cee88b5598ea614**; enviado tras retirar solo la línea `\ir` **1bd1a0a02bccadba93a581838fe44bbeaa34f26f9041b380b80c2896cf20ee76**, **30 CR**. La reconstrucción coincide exactamente con el hash de transmisión registrado y con el ejecutor de stdin binario. Los contenidos working/Git coinciden al normalizar CRLF, pero **eso no satisface el requisito literal de bytes LF enviados**. No se amplía la excepción ni se vuelve a ejecutar el SQL.
+
+Supervisor local `catalog-supervisor.ps1` → Python `catalog.py`, DPAPI Migrator privada en memoria/BSTR/stdin, sin frase. Cliente PostgreSQL 17.11 local con CA existente verificada; `docker --context desktop-linux exec -i … psql -X -qAt -v ON_ERROR_STOP=1`. Conexión QA TLS **verify-full**, `PGOPTIONS default_transaction_read_only=on`; **BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY**. SELECT de pg_catalog y ledger técnico únicamente, sin filas de negocio. Payload UTF-8 enviado por stdin **binario**, CRLF normalizados a LF, bare CR rechazado antes de envío, SHA **f21cdd13a993a98a5e7c958b235003505c7b5698297a5e664ab15416275dc133**, 7319 bytes, CR 0; guard positivo/negativo probado localmente antes de ejecución. Lectura final **exit 0 significa lectura completa, no R1 aprobado**.
+
+Se conservaron pg_get_functiondef/prosrc de customer_access_relink y customer_booking_revision, pg_get_constraintdef de ambos CHECK nuevos, los tres índices CustomerOperation, triggers y ACL. Scan de CR en todo prosrc public, constraints public y defaults public: **tres listas vacías**. R3 se evaluó offline sobre ese mismo catálogo, sin consulta/operación adicional tras el hallazgo.
+
+Estado QA: **28 activas / 0 fallidas / 37 tablas**. Fila 28 finished=true, rolledBack=false, applied_steps_count=0, checksum **af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c**, **distinto del SHA LF del repositorio**. Se registró anteriormente con **Prisma migrate resolve --applied 20261003120000_customer_stage_one** tras tres SQL exitosos, usando la migración CRLF de la imagen ARM64; ese checksum coincide con el artefacto. Nunca se editó el ledger a mano, y no se modifica ahora.
+
+`systemctl show` y `podman inspect` exclusivamente de las dos unidades QA, antes/después: imágenes anteriores/PID iguales, servicios activos, cero reinicios. Release y destino se comprobaron por booleanos dentro del API existente, sin leer env files ni imprimir/extractar secretos. No se ejecutó HTTP nuevo en esta continuación; el 200 de §22 es histórico. Cliente local propio retirado **exit 0**; temporales propios archivados y retirados al concluir.
+
+### 24.3 Impedimentos, causa y solución
+
+[Intento local fallido](evidence/m2-c3-p3/r1-continuation-stop-20261005/attempt-1.json), [registro de impedimentos](evidence/m2-c3-p3/r1-continuation-stop-20261005/impediments.json), [fuentes ejecutadas](evidence/m2-c3-p3/r1-continuation-stop-20261005/executed-sources.json). Regex generado para retirar include produjo `bad escape \i`, exit 1, antes del acceso DB; se sustituyó por comparación binaria exacta del prefijo de línea. La prueba local posterior rechazó correctamente CR en la matriz (AssertionError, stderr completo conservado); se registró como hallazgo R1, sin modificar el archivo. El segundo ejecutor completó lecturas exit 0 y marcó expresamente R1=false/mandatoryStop=true.
+
+Fallo material 1: matriz histórica enviada con CR; no es evidencia de CR persistente en prosrc, y el scan actual es negativo, pero incumple R1(a). Fallo material 2: checksum ledger de la imagen CRLF difiere del archivo LF, incumple R1(c). **Solución aplicada: parada obligatoria, sin reparación ni activación.** La documentación anterior reconoce checksum del artefacto; esa explicación no convierte la diferencia en aceptación del propietario.
+
+### 24.4 Datos clave
+
+Lectura QA final: timestamp en `result.json.finishedUtc`, PostgreSQL origen **17.6**, cliente **17.11**. API actual imagen **701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031**, release **791569b110f9fd59cb10e6d248546bdae3996e14**, PID **1084550**. Worker **7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1**, PID **1084553**. Imagen nueva no activa. No hay nueva ventana de 30 min ni nuevo respaldo; el respaldo congelado/SHA de §22.4 permanece como referencia histórica, sin descifrar ni restaurar en esta continuación.
+
+### 24.5 Lo no verificado
+
+No pasó R1 ni se ejecutó el gate runtime REAL R2. No hay activación/HTTP nuevo/customer 401 ni cotejo de conteos actuales con el respaldo en esta continuación. El ensayo general histórico conservó owners, conteos y resultados, pero **no sus pg_get_functiondef/constraintdef/index completos posteriores al upgrade**: no puede afirmarse un cotejo directo retrospectivo con esa captura inexistente. Se conserva íntegro el catálogo actual; no se sustituye por una comparación inferida. El camino de escritura con triggers en QA real **no se probó** y queda para fixtures de **P5**; no se crearon reservas ni escrituras de negocio.
+
+### 24.6 Decisión del propietario
+
+Revisar las dos diferencias de bytes/checksum y el límite de captura del ensayo. La autorización de continuación exigía parar ante cualquiera de ellas, por lo que **R2–R4 requieren una decisión explícita nueva** sobre estos hallazgos. No alterar ledger, reejecutar migración/matriz ni restaurar QA por inferencia. Una eventual aceptación de diferencias debe ser expresa y conservar sus hashes/causas; esta entrega no la presume. Producción, Clerk y web intactos dentro del alcance de esta tarea, sin consultas de producción ni push.

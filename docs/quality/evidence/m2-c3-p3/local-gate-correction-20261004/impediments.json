@@ -1,0 +1,57 @@
+{
+  "records": [
+    {
+      "class": "ExternalCommandExit",
+      "phase": "own-local-PG-readiness",
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-p3-local-synthetic-db-36d266d53cf4",
+        "pg_isready",
+        "-U",
+        "postgres"
+      ],
+      "exitCode": 2,
+      "stderrCompleteRedacted": "",
+      "cause": "PG initialization not ready on first poll",
+      "resolution": "Next readiness call exit 0; same owned container",
+      "evidence": "result.json commands"
+    },
+    {
+      "class": "PathNotFound",
+      "phase": "local-source-discovery",
+      "commandSanitized": "Get-Content apps/api/test/customer-runtime-sid.cjs",
+      "exitCode": 1,
+      "stderrCompleteRedacted": null,
+      "captureLimit": "Original full stderr is not available in this checkpoint; do not infer it. Missing assumed path documented in prior turn summary.",
+      "cause": "Assumed file name did not exist",
+      "resolution": "Discovered and read actual customer-runtime-grants-drill.cjs; no product change"
+    },
+    {
+      "class": "UnicodeEncodeError",
+      "phase": "read-report-to-Windows-console",
+      "commandSanitized": "Python stdin: print(json.dumps(report_without_commands, ensure_ascii=False, indent=2))",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\n  File \"<stdin>\", line 4, in <module>\n  File \"C:\\Users\\Fraylin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode characters in position 2821-2822: character maps to <undefined>\n",
+      "cause": "cp1252 console cannot render Prisma tree glyphs",
+      "resolution": "Read with ensure_ascii=True, exit 0. Report bytes unchanged."
+    },
+    {
+      "class": "AssertionError",
+      "phase": "local-evidence-URL-scan",
+      "commandSanitized": "Python stdin assert no PostgreSQL URL regex matches any evidence JSON, including reviewed source templates",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\n  File \"<stdin>\", line 11, in <module>\nAssertionError\n",
+      "cause": "Broad regex matched template PostgreSQL URL in reviewed code; no instantiated secret connection was present",
+      "comparison": {
+        "left": "code template with variable role, password and database",
+        "right": "broad URL pattern"
+      },
+      "resolution": "Validate secret-free report separately; preserve reviewable synthetic URL template in source. Audit exit 0."
+    }
+  ],
+  "expectedNegativeGateExitsArePassingAssertions": true,
+  "expectedNegativeStderrReference": "result.json commands; complete output redacted by existing helper, 8192-byte cap"
+}
