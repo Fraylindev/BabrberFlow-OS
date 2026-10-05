@@ -1,0 +1,72 @@
+{
+  "base": "adb36cb02330e9f00c84ecce7d0e2d119af9731a",
+  "phase": "R2-real-runtime-gate-current-existing-unit",
+  "commands": [
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node -"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node -"
+      ],
+      "exitCode": 0,
+      "label": "R2-runtime-existing-API-container-complete-37-table-gate-LF",
+      "phase": "R2-real-runtime-gate-current-existing-unit",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaAccess": true,
+  "productionAccess": false,
+  "credentialsExtracted": false,
+  "envFilesRead": false,
+  "qaBusinessWrites": false,
+  "qaSchemaOrGrantWrites": false,
+  "payloadSha256": "bdded0b6954a3226314818124996adc2489bbf769d57ad6d9b9ccd557f50afa7",
+  "SQLSourceIdentity": {
+    "source": "git HEAD:apps/api/ops/verify-runtime-role.sql",
+    "fullSQLSha256": "2f0b87a2147ce1f0fe4f25c7fd4b4c08b6ec97c061814fe1b5fad61c37f5456d",
+    "DOsha256": "eebe1b9730e85c618ce8b73f038a343f0085581cf4335df7ac11bc135b19bcfc",
+    "allVerificationDOBytesIdenticalToLocalPositiveAndNegativeDrill": true,
+    "sourceCRcount": 0,
+    "runtimeWrapperFullSQLStructure": "Prisma transaction READ ONLY contains exact verification DO; Prisma supplies transaction begin/commit"
+  },
+  "output": {
+    "runtimeGate37": true,
+    "role": "kortek_runtime",
+    "tables": 37,
+    "readonly": "on"
+  },
+  "success": true,
+  "finishedUtc": "2026-10-05T00:23:33.600494+00:00"
+}

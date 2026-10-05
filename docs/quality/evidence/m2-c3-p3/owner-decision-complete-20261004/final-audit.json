@@ -1,0 +1,571 @@
+{
+  "phase": "P3-completion-independent-metadata-audit",
+  "commands": [
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts\nXDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts\nXDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging"
+      ],
+      "exitCode": 0,
+      "label": "completion-current-QA-services-image-PID-metadata",
+      "phase": "P3-completion-independent-metadata-audit",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-p3-r4-watchdog-adb36cb.timer --property=LoadState,ActiveState,SubState"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-p3-r4-watchdog-adb36cb.timer --property=LoadState,ActiveState,SubState"
+      ],
+      "exitCode": 0,
+      "label": "completion-watchdog-not-armed",
+      "phase": "P3-completion-independent-metadata-audit",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman image inspect --format [literal omitido] sha256:701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman image inspect --format [literal omitido] sha256:701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261"
+      ],
+      "exitCode": 0,
+      "label": "completion-new-and-old-rollback-images-available",
+      "phase": "P3-completion-independent-metadata-audit",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service"
+      ],
+      "exitCode": 0,
+      "label": "completion-allowlisted-protected-hashes-only",
+      "phase": "P3-completion-independent-metadata-audit",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "productionAccess": false,
+  "qaWrites": false,
+  "push": false,
+  "liveInfra": "MainPID=1092730\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=1084553\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\n",
+  "timer": "LoadState=not-found\nActiveState=inactive\nSubState=dead\n",
+  "retainedImages": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031\n807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261\n",
+  "protectedFileHashes": "7e3be5817487b26dafda23cb27d1a412a4f582dcd10bed4beda7b23b3cd1195b  /etc/kortek-api-staging/runtime-env\n118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8  /usr/local/libexec/kortek-api-staging-run.sh\n919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6  /usr/local/libexec/kortek-worker-staging-run.sh\n91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90  /etc/systemd/system/kortek-api-staging.service\na06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f  /etc/systemd/system/kortek-email-worker-staging.service\n",
+  "frozenBackupCipherCustodyRechecked": [
+    {
+      "path": "C:\\KortekBackups\\qa-m2-c3\\qa-m2-c3-p3-frozen-20261004T232627Z-efe04b28cc60.dump.gpg",
+      "sha256": "76866b817efecb0bf2a2025fe89197ad4aaa8ec4938166af3e65abe8f64dc430",
+      "bytes": 47380,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\KortekBackups\\qa-m2-c3\\qa-m2-c3-p3-frozen-20261004T232627Z-efe04b28cc60.censo.gpg",
+      "sha256": "815921b4ad04ffd6fea16748bf6e6d09b82df9d39cee0aec28c60b3bce3395ce",
+      "bytes": 28939,
+      "unchanged": true
+    }
+  ],
+  "prior31LedgerMultisetUnchanged": {
+    "baselineP0": [
+      {
+        "name": "20260719162646_initial_schema",
+        "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260720044928_add_invoice_model",
+        "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260722030552_link_professional_user",
+        "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260722042926_add_customer_role",
+        "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260723212248_microsite_and_indexes",
+        "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260724023058_global_identity_membership",
+        "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260725215619_service_client_is_active",
+        "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260727010227_audit_log_user_id",
+        "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260811180000_booking_schedule_exclusion",
+        "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260812010000_professionals_backend_a1",
+        "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260813193000_professional_individual_availability_a2",
+        "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260813200000_professional_availability_tenant_fk",
+        "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260814190000_add_user_clerk_link_a0_1",
+        "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260815120000_password_nullable",
+        "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260820220000_audit_log_pre_tenant_security_events",
+        "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260822150000_client_user_b2c_link_a0_6_a",
+        "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260822150000_client_user_b2c_link_a0_6_a",
+        "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260825220000_facturacion_a_internal_invoices",
+        "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260825220000_facturacion_a_internal_invoices",
+        "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260826210000_facturacion_a_completion_service_price_guards",
+        "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260909120000_restore_invoice_integrity_checks",
+        "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260912120000_cms_editorial",
+        "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260914120000_booking_email_outbox",
+        "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260914120100_email_channel_control",
+        "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260915120000_email_template_version",
+        "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260923100000_media_promotions",
+        "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260925010000_security_rate_bucket",
+        "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260927170000_business_schedule",
+        "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+        "finished": true,
+        "rolledBack": false
+      }
+    ],
+    "currentWithout28": [
+      {
+        "name": "20260719162646_initial_schema",
+        "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260720044928_add_invoice_model",
+        "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260722030552_link_professional_user",
+        "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260722042926_add_customer_role",
+        "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260723212248_microsite_and_indexes",
+        "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260724023058_global_identity_membership",
+        "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260725215619_service_client_is_active",
+        "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260727010227_audit_log_user_id",
+        "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260811180000_booking_schedule_exclusion",
+        "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260812010000_professionals_backend_a1",
+        "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260813193000_professional_individual_availability_a2",
+        "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260813200000_professional_availability_tenant_fk",
+        "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260814190000_add_user_clerk_link_a0_1",
+        "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260815120000_password_nullable",
+        "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260820220000_audit_log_pre_tenant_security_events",
+        "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260822150000_client_user_b2c_link_a0_6_a",
+        "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260822150000_client_user_b2c_link_a0_6_a",
+        "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260825220000_facturacion_a_internal_invoices",
+        "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260825220000_facturacion_a_internal_invoices",
+        "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260826210000_facturacion_a_completion_service_price_guards",
+        "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260909120000_restore_invoice_integrity_checks",
+        "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260912120000_cms_editorial",
+        "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260914120000_booking_email_outbox",
+        "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260914120100_email_channel_control",
+        "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260915120000_email_template_version",
+        "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260923100000_media_promotions",
+        "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260925010000_security_rate_bucket",
+        "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260927170000_business_schedule",
+        "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+        "finished": true,
+        "rolledBack": false
+      }
+    ],
+    "equal": true,
+    "multiplicityRetained": true
+  },
+  "success": true,
+  "finishedUtc": "2026-10-05T00:37:37.311595+00:00"
+}

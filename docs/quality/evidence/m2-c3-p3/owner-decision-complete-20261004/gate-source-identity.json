@@ -1,0 +1,8 @@
+{
+  "source": "git HEAD:apps/api/ops/verify-runtime-role.sql",
+  "fullSQLSha256": "2f0b87a2147ce1f0fe4f25c7fd4b4c08b6ec97c061814fe1b5fad61c37f5456d",
+  "DOsha256": "eebe1b9730e85c618ce8b73f038a343f0085581cf4335df7ac11bc135b19bcfc",
+  "allVerificationDOBytesIdenticalToLocalPositiveAndNegativeDrill": true,
+  "sourceCRcount": 0,
+  "runtimeWrapperFullSQLStructure": "Prisma transaction READ ONLY contains exact verification DO; Prisma supplies transaction begin/commit"
+}

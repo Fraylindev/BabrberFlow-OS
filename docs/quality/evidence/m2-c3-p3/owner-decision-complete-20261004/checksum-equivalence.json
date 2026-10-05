@@ -1,0 +1,19 @@
+{
+  "base": "adb36cb02330e9f00c84ecce7d0e2d119af9731a",
+  "versionedLfSha256": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+  "CRLFVariantSha256": "af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c",
+  "versionedCRcount": 0,
+  "CRLFVariantCRcount": 60,
+  "recordedQaChecksum": "af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c",
+  "matchesCRLFVariant": true,
+  "normalizedByteEquivalent": true,
+  "liveLedgerRevalidationPending": true,
+  "ownerAcceptedDeviation": true,
+  "P0Precedent": {
+    "document": "docs/quality/M2_C3_PREFLIGHT.md",
+    "section": "11.2",
+    "line": 868,
+    "text": "| Ledger | 27 terminadas activas, 0 activas fallidas, 4 rolled_back hist\u00f3ricas; migraci\u00f3n 28 ausente; 36 tablas public | 27/27 nombres/checksums coinciden con archivo original o variante LF. Los intentos revertidos tienen checksum de su entrada terminada. No se repara el ledger; no sustituye un diff completo del schema. |",
+    "evidence": "docs/quality/evidence/m2-c3-p1/p0-read-only.json"
+  }
+}

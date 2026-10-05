@@ -2341,3 +2341,87 @@ No pasó R1 ni se ejecutó el gate runtime REAL R2. No hay activación/HTTP nuev
 ### 24.6 Decisión del propietario
 
 Revisar las dos diferencias de bytes/checksum y el límite de captura del ensayo. La autorización de continuación exigía parar ante cualquiera de ellas, por lo que **R2–R4 requieren una decisión explícita nueva** sobre estos hallazgos. No alterar ledger, reejecutar migración/matriz ni restaurar QA por inferencia. Una eventual aceptación de diferencias debe ser expresa y conservar sus hashes/causas; esta entrega no la presume. Producción, Clerk y web intactos dentro del alcance de esta tarea, sin consultas de producción ni push.
+
+## 25. P3 completado tras decisión del propietario sobre R1 — 2026-10-04 America/Santo_Domingo
+
+### 25.1 Estado, autorización y criterios
+
+**OBJETIVO P3 CUMPLIDO / QA EN REVISIÓN**, bajo las dos desviaciones benignas de bytes aceptadas explícitamente por el propietario. No significa aprobación de C3 completo ni autorización de Clerk/web/producción. Base **adb36cb02330e9f00c84ecce7d0e2d119af9731a**, rama `ai/antigravity-qa`, `git status --short` inicial vacío, **SIN PUSH**. La decisión posterior acepta checksum CRLF y matriz con 30 CR, mantiene el ledger intacto y exige un nuevo cotejo REAL P2 como referencia antes de R2–R4. El prompt de frase adicional fue autorizado expresamente solo para descifrar P2 localmente, sin congelamiento QA.
+
+| Criterio original P3 | Evidencia de cumplimiento |
+| --- | --- |
+| 1. Ensayo general REAL P2, migración/grants, runtime y API nuevo/old | §22: ensayo completo con reserva sintética PENDING y compatibilidad 791569b. Nuevo [clon REAL de referencia](evidence/m2-c3-p3/owner-decision-complete-20261004/r1-real-p2-reference.json), owners reproducidos, SQL Git LF, siete categorías iguales. |
+| 2. Catálogo READ ONLY antes del primer congelamiento | §22 y catálogo original; [relectura actual](evidence/m2-c3-p3/owner-decision-complete-20261004/r1-live-readonly.json): Migrator, RR/RO, TLS verify-full, sin filas de negocio. |
+| 3. Imagen ARM64 del SHA construido, APP_RELEASE exacto, rollback retenido | Imagen de §22, release `bc1d559…`; identidad exacta y dos imágenes disponibles en [activación](evidence/m2-c3-p3/owner-decision-complete-20261004/r4-activation.json) y [auditoría final](evidence/m2-c3-p3/owner-decision-complete-20261004/final-audit.json). |
+| 4. Respaldo congelado AES256 y restore anterior al SQL | §22, respaldo original conservado; hash dump/censo revalidado en auditoría final. Esta continuación no toma otro respaldo ni congela DB. |
+| 5. Tres SQL reales separados y gate runtime real | §22 conserva SQL separados exit 0. Checksum/matriz aceptados; [R2 completo](evidence/m2-c3-p3/owner-decision-complete-20261004/r2-runtime-gate.json) desde API actual con login runtime, 37 tablas, READ ONLY, exit 0; gate posterior también pasa. Sin nuevos grants ni registro del ledger. |
+| 6. Activación API nuevo, worker imagen actual | API nuevo active/running, PID 1092730, NRestarts 0. Worker imagen/PID 1084553 intactos, NRestarts 0; mismas unidades QA, sin detenerlo/reiniciarlo. |
+| 7. Validación posterior, datos y catálogo | 28 activas/0 fallidas, 37 tablas; 200 booking-data; seis customer 401; negocio íntegro; ACL anteriores iguales, externos/PUBLIC bloqueados, triggers/search_path correctos. R3, activación y auditoría final. |
+| 8. Nueva sección, evidencia sanitizada, commit local explícito | Esta sección y [manifiesto](evidence/m2-c3-p3/owner-decision-complete-20261004/manifest.json); commit documental por rutas explícitas, SHA entregado en el relevo. |
+
+| Continuación | Resultado |
+| --- | --- |
+| R1 | **CERRADO**: equivalencia LF/CRLF recalculada, precedente P0 confirmado, clon REAL restaurado y definiciones iguales. Ninguna excepción E1–E5 necesaria en el cotejo de referencia. |
+| R2 | **CUMPLIDO**: verificación completa dentro del API anterior, conexión ya configurada; sin extraer credenciales ni leer env files. |
+| R3 | **CUMPLIDO**: catálogo externo/PUBLIC, ACL 36, invoker/search_path y triggers comprobados antes y después. |
+| R4 | **CUMPLIDO**: nueva imagen/release y HTTP/gate/datos/servicios verificados en ventana inferior a 30 min. |
+| R5 | Rollback automático preparado; **no fue necesario ejecutarlo** en esta continuación. La imagen antigua sigue disponible. |
+| R6 | Documentación/evidencia y commit local; tarea eol=lf posterior en un commit separado. |
+
+### 25.2 Trabajo realizado, comandos y resultados
+
+**Equivalencia y precedente.** `git show HEAD:apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql`: 3392 bytes, CR 0, SHA **6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee**. Variante que reemplaza cada LF por CRLF: **60 CR**, SHA **af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c**, idéntico a la fila 28 revalidada READ ONLY. Normalizar esa variante devuelve exactamente los bytes versionados. [Cálculo](evidence/m2-c3-p3/owner-decision-complete-20261004/checksum-equivalence.json). La fila permanece intacta; su registro anterior por Prisma resolve soportado se explica en §§22/24.
+
+P0 §11.2, línea 868, y p0-read-only.json documentan **27/27** filas activas iguales al archivo original o variante LF. [Recomprobación independiente](evidence/m2-c3-p3/owner-decision-complete-20261004/p0-checksum-precedent.json): 26 coinciden con LF; add_invoice_model coincide con el original working CRLF, hash 3c1f4f53…, mientras Git LF tiene 39f52217…. No es una nueva excepción inventada: está comprendido en «original o variante LF» de P0. Las 31 filas anteriores, incluidas cuatro revertidas y multiplicidad, siguen iguales a P0, dejando aparte solo la entrada 28.
+
+**CR de SQL realmente transmitido.** Los hashes originales de §22 y su fuente ejecutada binaria permiten reconstruir exactamente los bytes enviados; no se afirma capturar paquetes de red.
+
+| SQL / fase | CR transmitidos | Resultado |
+| --- | ---: | --- |
+| Migración 28 real original | 0 | SHA enviado igual a Git LF 6e1d854f…; exit 0. |
+| Matriz real original, retirando solo include | **30** | SHA 1bd1a0a0…; aceptada como benigna por el propietario. Su efecto pasa R2/R3. |
+| Suplemento real original | 0 | SHA 293e7341…; exit 0. |
+| Gate original fallido de §22 | **No se transmitió SQL** | Bash falló antes del login; no atribuir CR al SQL no enviado. |
+| Gate real R2 y posterior R4 | 0 | DO exacto del archivo versionado, sin omitir verificaciones, en transacción Prisma READ ONLY. |
+| Tres SQL del nuevo clon de referencia | 0 en cada uno | Archivo Git LF; include retirado solo de matriz para pasos separados; todos exit 0. |
+
+**Referencia REAL.** Dos entradas protegidas de frase P2, exclusivamente locales, liberadas al terminar. Dump cifrado REAL P2 SHA **17f6e1191b15f828b444ee8db593e781dd707ed3c4b80f940a02ff16d0605063**, censo cifrado cotejado, restore PG17.11/TOC btree_gist public íntegro contra su snapshot, owners reproducidos. `psql -X -qAt -v ON_ERROR_STOP=1`, rol Migrator sintético, tres pasos LF separados solo en el clon. Comparación con lectura QA Migrator RR/RO/TLS verify-full: pg_get_functiondef con config, todos los constraints CHECK/UNIQUE/FK de CustomerOperation y constraints de Client/Booking, pg_get_indexdef de sus índices, ambos pg_get_triggerdef, columnas/tipos/defaults y tipos/secuencias public. **Funciones, constraints, índices, triggers, columnas/defaults, tipos y secuencias iguales**, sin retirar texto/config ni ampliar E1–E5. Secuencias public vacías en ambos lados. Todos los contenedores del clon retirados.
+
+**Gate real.** El DO del `verify-runtime-role.sql` versionado es byte por byte el mismo del adaptador previamente probado con positivos/negativos locales. [Identidad](evidence/m2-c3-p3/owner-decision-complete-20261004/gate-source-identity.json): SQL completo SHA **2f0b87a2147ce1f0fe4f25c7fd4b4c08b6ec97c061814fe1b5fad61c37f5456d**, DO SHA **eebe1b9730e85c618ce8b73f038a343f0085581cf4335df7ac11bc135b19bcfc**. `XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node -`, cliente Prisma de la propia imagen y conexión existente. Prisma aporta BEGIN/COMMIT READ ONLY, y ejecuta íntegro el DO; guard rechaza cualquier CR antes de enviarlo. **Exit 0**, `{runtimeGate37:true,role:kortek_runtime,tables:37,readonly:on}`. No se repararon grants ni se extrajo URL/contraseña. Se repitió sobre el API nuevo dentro de la validación posterior, también exit 0.
+
+**Activación y controles.** Transferencia exacta LF de gestor/watchdog propios, SHA cotejados; comprobación de despacho Bash en contenedor local sin red con gestor sintético, exit 0. No se ensayó un contenedor en QA. Gestor protegido creó copia temporal 0600 del runtime-env existente, conservada solo para rollback. Detuvo **solo** kortek-api-staging; timer de 30 min armado y observado activo. Sustituyó exclusivamente `APP_RELEASE=bc1d559e42928ca0deb60319b33cf98b3cd69291` y `KORTEK_API_IMAGE=sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261`. El hash de todas las otras líneas fue idéntico antes/después. No cambió flags, credenciales, wrappers ni unidades; worker ya fijado a 7eafd5c9… continuó con el mismo proceso.
+
+Tras start y readiness loopback 3001: API/worker active/running, cero reinicios. GET público **200**. Las seis rutas customer (cuatro GET, PATCH perfil y POST reservas) sin Authorization devolvieron **401**; los dos métodos de escritura recibieron solo `{}` y no causaron escrituras ni recibos. API anterior tenía GET customer/businesses **404** antes del cambio. Ledger 28 activas, 0 fallidas, 37 tablas, CustomerOperation **0**; Client/Booking y todas las demás tablas de negocio conservan conteos y huellas de columnas previas del corte. No se crean fixtures/reservas QA.
+
+**Diferencias explícitas posteriores.** Todas las tablas preexistentes tienen el mismo conteo, excepto ledger **31→32**, por la entrada 28. SecurityRateBucket sigue en **2 filas**, pero su huella cambia por incremento/limpieza legítimos del limitador público tras HTTP. Ninguna diferencia de negocio ni otra diferencia de huellas; Client se coteja por sus columnas preexistentes, no confundiendo defaults aditivos con mutaciones anteriores. Ambos lados completos en R3/R4. La autorización anterior para contadores técnicos se conserva; no se desactiva el limitador ni se oculta la diferencia.
+
+### 25.3 Impedimentos, causa, solución y evidencia
+
+[Registro](evidence/m2-c3-p3/owner-decision-complete-20261004/impediments.json), fuentes exactas/base64 y SHA en [executed-sources.json](evidence/m2-c3-p3/owner-decision-complete-20261004/executed-sources.json), argv/exit/stderr redactado hasta 8 KB en cada reporte.
+
+- Ruta umbrella de evidencia supuesta inexistente: discovery encontró m2-c3-p1/p0-read-only.json; sin acción QA por ese error.
+- Primer audit local de P0 confundió «original» con blob Git y aceptó solo LF: AssertionError, 26/27. Se conservaron ambos lados; al incluir el original working CRLF, como documenta P0, las 27 coincidieron. No se cambió ledger ni ningún SQL.
+- Frase P2 ya no estaba en memoria: el propietario autorizó el prompt local exclusivamente de descifrado, sin congelamiento. Restore/cotejo nuevo exit 0; frase, BSTR y agente GPG liberados, no guardados en argv, entorno, archivos ni logs.
+- Cancelar el service propio del watchdog devolvió **exit 5** porque nunca se disparó y ya estaba unloaded. El timer sí se detuvo **exit 0**; lectura independiente confirmó **not-found/inactive/dead**, también en auditoría final. Se registra el exit 5; no se interpreta como un fallo de activación ni se deja un rollback futuro armado.
+
+### 25.4 Datos clave y estado final
+
+- Imagen API activa/config Podman: **807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261**; manifest Docker local **bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14**. Release **bc1d559e42928ca0deb60319b33cf98b3cd69291**, el SHA con el que se construyó, no el SHA documental posterior. API PID **1092730**, NRestarts **0**.
+- Worker imagen **7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1**, PID **1084553**, NRestarts **0**; sin parada/reinicio en esta continuación.
+- API anterior **701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031**, release 791569b, disponible para rollback sobre schema 28. Sin restore QA ni inversa de schema.
+- Inicio comando stop: **2026-10-05T00:33:12.804294Z** (**2026-10-04 20:33:12 America/Santo_Domingo**); stop confirmado **00:33:13.081921Z**; validación completa fin **00:33:33.511048Z**. Ventana desde inicio del comando **20.707 s**, conservadora respecto del límite de 30 min. No es una medición exacta de indisponibilidad HTTP. Timer programado para **01:03:12 UTC**, cancelado antes de vencer.
+- DB **28 terminadas activas + 4 revertidas = 32 filas**, 0 fallidas; **37 tablas**, origen PG **17.6**, restore/cliente **17.11**.
+- Respaldo congelado original de §22: `C:\KortekBackups\qa-m2-c3\qa-m2-c3-p3-frozen-20261004T232627Z-efe04b28cc60.dump.gpg`, **47380 bytes**, SHA **76866b817efecb0bf2a2025fe89197ad4aaa8ec4938166af3e65abe8f64dc430**. Censo cifrado SHA **815921b4ad04ffd6fea16748bf6e6d09b82df9d39cee0aec28c60b3bce3395ce**, **28939 bytes**. Ambos hashes revalidados, sin descifrar ni sobrescribir en esta continuación.
+- Copia protegida temporal de rollback y fuentes remotas propias retiradas. Imágenes nueva/anterior retenidas. Contenedores/agent GPG locales propios retirados; fuentes/reportes sanitizados archivados. Temporales locales propios se retiran al concluir ambos commits.
+
+### 25.5 Lo no verificado y límites
+
+El camino autenticado de escritura con triggers **sobre QA real sigue sin probarse**; queda para fixtures de **P5**, con su autorización específica. Las pruebas de escritura anteriores son locales/aisladas y los 401 QA solo prueban protección sin sesión. No hubo alta/edición de negocio real, fixture nuevo ni envío de correo inducido. El worker existente siguió su funcionamiento habitual.
+
+El vencimiento real del watchdog y un nuevo rollback operativo **no se ejercieron**, porque R4 pasó en ~21 s; se verificaron LF/dispatch local, armado real y cancelación final. El rollback preferido real de §22 sigue como antecedente. No se repitió un backup congelado ni se presenta el cotejo actual como otro snapshot congelado. SecurityRateBucket puede cambiar después del reporte por tráfico legítimo, sin invalidar el corte de la evidencia.
+
+Sin Clerk Development/Production, web QA, publicación Git ni producción. Producción no se leyó ni se certifica su estado actual. No hay aprobación del propietario del conjunto C3 ni apertura de etapas posteriores por el commit.
+
+### 25.6 Acción del propietario
+
+Conservar por separado las frases de P2 y del respaldo congelado; revisar el checkpoint técnico P3 cumplido y decidir por separado las etapas restantes de C3 y los fixtures P5. Ninguna acción adicional de Clerk/web/producción está autorizada. El ajuste preventivo eol=lf pedido se entrega después en **otro commit local**, con comprobación de que no cambia ningún SHA SQL versionado.

@@ -1,0 +1,37 @@
+{
+  "records": [
+    {
+      "class": "PathNotFound",
+      "phase": "local-P0-evidence-discovery",
+      "commandSanitized": "Get-ChildItem -LiteralPath docs/quality/evidence/m2-c3 -Name",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Get-ChildItem:\nLine |\n  12 |  Get-ChildItem -LiteralPath 'docs\\quality\\evidence\\m2-c3' -Name\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Cannot find path 'C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3' because it does not exist.\n",
+      "cause": "Assumed umbrella evidence directory missing; actual evidence directory is m2-c3-p1",
+      "resolution": "Discovery located p0-read-only.json and verified \u00a711.2 precedent; no QA action from failed command"
+    },
+    {
+      "class": "AssertionError",
+      "phase": "local-P0-hash-precedent",
+      "commandSanitized": "Python assert every historical checksum equals Git blob or LF",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\n  File \"<stdin>\", line 6, in <module>\nAssertionError\n",
+      "cause": "Misread P0 original as Git blob; P0 original includes working CRLF form. One historical active row matches CRLF original.",
+      "resolution": "Compare actual original working bytes and LF, preserve all variants and both sides."
+    },
+    {
+      "class": "ExternalCommandExit",
+      "phase": "optional-own-watchdog-service-stop",
+      "commandSanitized": [
+        "systemctl",
+        "stop",
+        "kortek-p3-r4-watchdog-adb36cb.service"
+      ],
+      "exitCode": 5,
+      "stderrCompleteRedacted": "Failed to stop kortek-p3-r4-watchdog-adb36cb.service: Unit kortek-p3-r4-watchdog-adb36cb.service not loaded.\n",
+      "cause": "Oneshot service never fired and is already unloaded; timer stop succeeds",
+      "resolution": "Independent timer metadata not-found/inactive/dead after cancellation and final audit; not an activation verification failure"
+    }
+  ],
+  "expectedReadinessOrNegativeEvidenceWithinSourceReports": true,
+  "capBytes": 8192
+}
