@@ -1,0 +1,561 @@
+{
+  "P3Commit": "3507117d52f2abf4e8ac138e7ad0d63a9b80f861",
+  "branch": "ai/antigravity-qa",
+  "push": false,
+  "rulesAdded": [
+    "apps/api/prisma/migrations/**/migration.sql text eol=lf",
+    "apps/api/ops/*.sql text eol=lf"
+  ],
+  "commands": [
+    "git add -- .gitattributes",
+    "git add --renormalize -- apps/api/prisma/migrations/**/migration.sql apps/api/ops/*.sql",
+    "git diff --cached --name-only -- <selected SQL paths>",
+    "git diff --name-only -- <selected SQL paths>",
+    "git check-attr text eol -- <each selected SQL path>",
+    "git ls-files --eol -- <selected SQL paths>"
+  ],
+  "selectedSQLFiles": 44,
+  "allVersionedSQLHashesUnchanged": true,
+  "SQLStagedDiffEmpty": true,
+  "SQLWorkingDiffEmpty": true,
+  "SQLWorkingCRCount": 0,
+  "workingEOLOnlyNormalization": true,
+  "paths": [
+    {
+      "path": "apps/api/ops/apply-runtime-grants.sql",
+      "GitSHA256": "8916ca378c88b4ed1d1d8c357f0e1a117a17df792d229c11a6a412f9a24037ea",
+      "GitObjectId": "0e6bbe0c3a07c325dff85edbe9039cbd573c1ae0",
+      "workingBeforeCR": 30,
+      "stagedSHA256After": "8916ca378c88b4ed1d1d8c357f0e1a117a17df792d229c11a6a412f9a24037ea",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/business-schedule-backfill.sql",
+      "GitSHA256": "e4991b2c481d4cb7ab9fef02f43b86190af5953d18c710debd7f2152f9e017ff",
+      "GitObjectId": "6caab3f57e09349309dbee80e5e8c42c46f47928",
+      "workingBeforeCR": 12,
+      "stagedSHA256After": "e4991b2c481d4cb7ab9fef02f43b86190af5953d18c710debd7f2152f9e017ff",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/count-public-rows.sql",
+      "GitSHA256": "0ff80011de74af7509d077493a7bf17b92df298f5d6caa90f335e2a6eef3a45b",
+      "GitObjectId": "da93011da39a09bfa6467101951abba7e7d02506",
+      "workingBeforeCR": 6,
+      "stagedSHA256After": "0ff80011de74af7509d077493a7bf17b92df298f5d6caa90f335e2a6eef3a45b",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/customer-stage-one-runtime-grants.sql",
+      "GitSHA256": "293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc",
+      "GitObjectId": "4e5e6f2147ca912ab48ca6dbeafdabeb7d990ccf",
+      "workingBeforeCR": 0,
+      "stagedSHA256After": "293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/finish-supabase-grants.sql",
+      "GitSHA256": "5a8ec8b3b9f1521c58c4d8b10a02b8cde4261afad3f6fb13b2dded9e8aaa37f9",
+      "GitObjectId": "8de2e0f5b322304a03cd911e3965b1ecf41fcff0",
+      "workingBeforeCR": 12,
+      "stagedSHA256After": "5a8ec8b3b9f1521c58c4d8b10a02b8cde4261afad3f6fb13b2dded9e8aaa37f9",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/grant-supabase-backup.sql",
+      "GitSHA256": "ae8ccf5cee28eeb4918aef1ba71ce7879c5b3a979497a7e3609585617c18080b",
+      "GitObjectId": "182a63c6d3e11cb8e9818ae8136a3afbb1b07838",
+      "workingBeforeCR": 6,
+      "stagedSHA256After": "ae8ccf5cee28eeb4918aef1ba71ce7879c5b3a979497a7e3609585617c18080b",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/inspect-rollback-drill.sql",
+      "GitSHA256": "f64206679c98ad8fb33f2f58bcce4205da2fd9232a300ad9f3a9069cd720094c",
+      "GitObjectId": "a108b37ca98ec37ff735f04f155db812c8b38ffa",
+      "workingBeforeCR": 22,
+      "stagedSHA256After": "f64206679c98ad8fb33f2f58bcce4205da2fd9232a300ad9f3a9069cd720094c",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/inventory-identity-cutover.sql",
+      "GitSHA256": "6ff416185248150d87993a6d9297aeda4b0ae27c01b626134e957b75d78d7a0a",
+      "GitObjectId": "64630c3f9bfdb83dc5a2c60c43d6985c396d68ff",
+      "workingBeforeCR": 21,
+      "stagedSHA256After": "6ff416185248150d87993a6d9297aeda4b0ae27c01b626134e957b75d78d7a0a",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/inventory-legacy-role.sql",
+      "GitSHA256": "68186877cfaa6cb5e0ba964af579ebd6fc661785991e8785ccc607cbecba8f5d",
+      "GitObjectId": "af069979f3871e19c83b5ad8e4f7e547df15d8dc",
+      "workingBeforeCR": 103,
+      "stagedSHA256After": "68186877cfaa6cb5e0ba964af579ebd6fc661785991e8785ccc607cbecba8f5d",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/lock-legacy-role.sql",
+      "GitSHA256": "d633b7700a1fe3822bab2931ed210f697c8649b6fec0d8dc5793c8c0c00c95a2",
+      "GitObjectId": "cf46488b9056640ac172d321d9b79624ac33e62b",
+      "workingBeforeCR": 33,
+      "stagedSHA256After": "d633b7700a1fe3822bab2931ed210f697c8649b6fec0d8dc5793c8c0c00c95a2",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/provision-database-roles.sql",
+      "GitSHA256": "d90b743d9d1da57bffbf387654b711c0ebec80beea35f2dc680a0475d5d8bde0",
+      "GitObjectId": "aedc1e5b6081eb5ceb3771b9f35101df0564c63c",
+      "workingBeforeCR": 62,
+      "stagedSHA256After": "d90b743d9d1da57bffbf387654b711c0ebec80beea35f2dc680a0475d5d8bde0",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/provision-supabase-backup.sql",
+      "GitSHA256": "84dcbbd3890568cd00d698c6da99cd59c2ac3aee261b1c51133014877a220c67",
+      "GitObjectId": "cb1f5179e5f0326d0427fd724b8fe8cb126f54d1",
+      "workingBeforeCR": 14,
+      "stagedSHA256After": "84dcbbd3890568cd00d698c6da99cd59c2ac3aee261b1c51133014877a220c67",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/provision-supabase-roles.sql",
+      "GitSHA256": "5716083ed69d7c2c1d1978bbebc63890659a6a43c27fa9b6a1f4a093a7c98730",
+      "GitObjectId": "5645ca2fa854bfc496012c2658c8edb56fe2d7b6",
+      "workingBeforeCR": 27,
+      "stagedSHA256After": "5716083ed69d7c2c1d1978bbebc63890659a6a43c27fa9b6a1f4a093a7c98730",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/rollback-drill-fixture.sql",
+      "GitSHA256": "446f3938f1dd0c97275fbd32a9f6171d65c53a09ed55944f6e6ffc2ea2b8b94f",
+      "GitObjectId": "e68fabeb44f6f3a49a0b2a2c520a68f2ebf659d6",
+      "workingBeforeCR": 88,
+      "stagedSHA256After": "446f3938f1dd0c97275fbd32a9f6171d65c53a09ed55944f6e6ffc2ea2b8b94f",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/verify-backup-snapshot.sql",
+      "GitSHA256": "586f4fa6c3383a885047773f7d03ac92b3674087c1b10109e8406799db2ca16c",
+      "GitObjectId": "dc654e9ef858c279804b761791e70056d16bf42d",
+      "workingBeforeCR": 14,
+      "stagedSHA256After": "586f4fa6c3383a885047773f7d03ac92b3674087c1b10109e8406799db2ca16c",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/ops/verify-runtime-role.sql",
+      "GitSHA256": "2f0b87a2147ce1f0fe4f25c7fd4b4c08b6ec97c061814fe1b5fad61c37f5456d",
+      "GitObjectId": "d4ec5ca0636a7d1a8203b9daa82fd3b1d2ba4fc3",
+      "workingBeforeCR": 118,
+      "stagedSHA256After": "2f0b87a2147ce1f0fe4f25c7fd4b4c08b6ec97c061814fe1b5fad61c37f5456d",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260719162646_initial_schema/migration.sql",
+      "GitSHA256": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+      "GitObjectId": "5b57a987d5a12200e5e5c485108f725cbc99c920",
+      "workingBeforeCR": 0,
+      "stagedSHA256After": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260720044928_add_invoice_model/migration.sql",
+      "GitSHA256": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+      "GitObjectId": "0b2300d1a2f892efc100e9a35e1938c8c2af1dfd",
+      "workingBeforeCR": 24,
+      "stagedSHA256After": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260722030552_link_professional_user/migration.sql",
+      "GitSHA256": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+      "GitObjectId": "3805f564d87ed5ae4a1ddf3a2100eef7e9206431",
+      "workingBeforeCR": 8,
+      "stagedSHA256After": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260722042926_add_customer_role/migration.sql",
+      "GitSHA256": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+      "GitObjectId": "e5af6e61468ccb3d4f1f3d3efbe56470c7e1924b",
+      "workingBeforeCR": 2,
+      "stagedSHA256After": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260723212248_microsite_and_indexes/migration.sql",
+      "GitSHA256": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+      "GitObjectId": "0052150fa48a88ff43473dffe7be3f11c409f6b7",
+      "workingBeforeCR": 32,
+      "stagedSHA256After": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260724023058_global_identity_membership/migration.sql",
+      "GitSHA256": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+      "GitObjectId": "0e6e3781a5825e36a84824a40595e576099a17e4",
+      "workingBeforeCR": 46,
+      "stagedSHA256After": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260725215619_service_client_is_active/migration.sql",
+      "GitSHA256": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+      "GitObjectId": "4239252f62b036d08e4b3229b3204cfcde0f3edf",
+      "workingBeforeCR": 5,
+      "stagedSHA256After": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260727010227_audit_log_user_id/migration.sql",
+      "GitSHA256": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+      "GitObjectId": "21f271d0d20b0e9792b221db63fc99adf18d704e",
+      "workingBeforeCR": 4,
+      "stagedSHA256After": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260811180000_booking_schedule_exclusion/migration.sql",
+      "GitSHA256": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+      "GitObjectId": "6b4b038c5226155c727fe8213f35e9b4d75b1b76",
+      "workingBeforeCR": 12,
+      "stagedSHA256After": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260812010000_professionals_backend_a1/migration.sql",
+      "GitSHA256": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+      "GitObjectId": "dde1d7f8e358c0a4b0ab2d2a65d2c8a90d7c124b",
+      "workingBeforeCR": 24,
+      "stagedSHA256After": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260813193000_professional_individual_availability_a2/migration.sql",
+      "GitSHA256": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+      "GitObjectId": "c9fb99ad3719c9810e9f5445ecacdf9008766c68",
+      "workingBeforeCR": 77,
+      "stagedSHA256After": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260813200000_professional_availability_tenant_fk/migration.sql",
+      "GitSHA256": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+      "GitObjectId": "0ad7c53c7f570ae051ff66152e109d8be18001aa",
+      "workingBeforeCR": 19,
+      "stagedSHA256After": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260814190000_add_user_clerk_link_a0_1/migration.sql",
+      "GitSHA256": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+      "GitObjectId": "d4751f1294569852e04947991802a64810efee85",
+      "workingBeforeCR": 6,
+      "stagedSHA256After": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260815120000_password_nullable/migration.sql",
+      "GitSHA256": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+      "GitObjectId": "542cdcbb3b22d69c1d94879ee94ec136ee1b6360",
+      "workingBeforeCR": 1,
+      "stagedSHA256After": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260820220000_audit_log_pre_tenant_security_events/migration.sql",
+      "GitSHA256": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+      "GitObjectId": "62633e00aa5eebc42e20e35d267b4e0d9f9606a5",
+      "workingBeforeCR": 18,
+      "stagedSHA256After": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260821220000_team_invitations_a0_4/migration.sql",
+      "GitSHA256": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "GitObjectId": "2ae9355ca95f55d812e052368a77021e10727349",
+      "workingBeforeCR": 67,
+      "stagedSHA256After": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260822150000_client_user_b2c_link_a0_6_a/migration.sql",
+      "GitSHA256": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "GitObjectId": "926348801c35ea384cc4dcd6556c0f2fe6fa14c1",
+      "workingBeforeCR": 13,
+      "stagedSHA256After": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260825220000_facturacion_a_internal_invoices/migration.sql",
+      "GitSHA256": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "GitObjectId": "c40b3c824b1c9330c629ccb7b5bb6756308fd444",
+      "workingBeforeCR": 107,
+      "stagedSHA256After": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260826210000_facturacion_a_completion_service_price_guards/migration.sql",
+      "GitSHA256": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+      "GitObjectId": "3b2d2c9fd643ee2f9e54fb82e5a7704d73bba761",
+      "workingBeforeCR": 34,
+      "stagedSHA256After": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260909120000_restore_invoice_integrity_checks/migration.sql",
+      "GitSHA256": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+      "GitObjectId": "a2c0e7cd1176d4edd3576aee0fcc0cc8a6ec629d",
+      "workingBeforeCR": 46,
+      "stagedSHA256After": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260912120000_cms_editorial/migration.sql",
+      "GitSHA256": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+      "GitObjectId": "885ac15ab7f33fca0510bb72aa410762ac5ad201",
+      "workingBeforeCR": 56,
+      "stagedSHA256After": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260914120000_booking_email_outbox/migration.sql",
+      "GitSHA256": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+      "GitObjectId": "6e7ec9c5c5bf6badb7bc475c067ed007075c84a9",
+      "workingBeforeCR": 176,
+      "stagedSHA256After": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260914120100_email_channel_control/migration.sql",
+      "GitSHA256": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+      "GitObjectId": "d56d3c2365dc8dfdea51ff338753d7d9fb158157",
+      "workingBeforeCR": 9,
+      "stagedSHA256After": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260915120000_email_template_version/migration.sql",
+      "GitSHA256": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+      "GitObjectId": "514cfc268b299c4ad42507019a76315f96ad0e49",
+      "workingBeforeCR": 3,
+      "stagedSHA256After": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260923100000_media_promotions/migration.sql",
+      "GitSHA256": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+      "GitObjectId": "33819d5824a0c00c300cdc3ac845f817ef72b5a7",
+      "workingBeforeCR": 275,
+      "stagedSHA256After": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260925010000_security_rate_bucket/migration.sql",
+      "GitSHA256": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+      "GitObjectId": "c53f9b6593f79222f82b49612a3257726b1fda2b",
+      "workingBeforeCR": 16,
+      "stagedSHA256After": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260927170000_business_schedule/migration.sql",
+      "GitSHA256": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+      "GitObjectId": "305b8773752a1fef9dbd29830356a7cf0fc9178f",
+      "workingBeforeCR": 94,
+      "stagedSHA256After": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    },
+    {
+      "path": "apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql",
+      "GitSHA256": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "GitObjectId": "a6c6f761dc0594afe385d3919a931c596eb6334a",
+      "workingBeforeCR": 0,
+      "stagedSHA256After": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "workingCRAfter": 0,
+      "attributesAfter": {
+        "text": "set",
+        "eol": "lf"
+      }
+    }
+  ],
+  "lsFilesEolOutput": "i/lf    w/lf    attr/text eol=lf      \tapps/api/ops/apply-runtime-grants.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/business-schedule-backfill.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/count-public-rows.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/customer-stage-one-runtime-grants.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/finish-supabase-grants.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/grant-supabase-backup.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/inspect-rollback-drill.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/inventory-identity-cutover.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/inventory-legacy-role.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/lock-legacy-role.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/provision-database-roles.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/provision-supabase-backup.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/provision-supabase-roles.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/rollback-drill-fixture.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/verify-backup-snapshot.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/ops/verify-runtime-role.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260719162646_initial_schema/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260720044928_add_invoice_model/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260722030552_link_professional_user/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260722042926_add_customer_role/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260723212248_microsite_and_indexes/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260724023058_global_identity_membership/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260725215619_service_client_is_active/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260727010227_audit_log_user_id/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260811180000_booking_schedule_exclusion/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260812010000_professionals_backend_a1/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260813193000_professional_individual_availability_a2/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260813200000_professional_availability_tenant_fk/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260814190000_add_user_clerk_link_a0_1/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260815120000_password_nullable/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260820220000_audit_log_pre_tenant_security_events/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260821220000_team_invitations_a0_4/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260822150000_client_user_b2c_link_a0_6_a/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260825220000_facturacion_a_internal_invoices/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260826210000_facturacion_a_completion_service_price_guards/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260909120000_restore_invoice_integrity_checks/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260912120000_cms_editorial/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260914120000_booking_email_outbox/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260914120100_email_channel_control/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260915120000_email_template_version/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260923100000_media_promotions/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260925010000_security_rate_bucket/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20260927170000_business_schedule/migration.sql\ni/lf    w/lf    attr/text eol=lf      \tapps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql\n",
+  "qaActionsInThisSeparateTask": false,
+  "sandboxIndexWriteRetry": {
+    "initialExitCode": 1,
+    "reason": "index.lock Permission denied under default sandbox",
+    "resolution": "authorized explicit-path local Git write with require_escalated succeeded",
+    "automaticReviewRejection": false
+  }
+}

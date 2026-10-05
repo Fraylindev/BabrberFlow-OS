@@ -2425,3 +2425,20 @@ Sin Clerk Development/Production, web QA, publicación Git ni producción. Produ
 ### 25.6 Acción del propietario
 
 Conservar por separado las frases de P2 y del respaldo congelado; revisar el checkpoint técnico P3 cumplido y decidir por separado las etapas restantes de C3 y los fixtures P5. Ninguna acción adicional de Clerk/web/producción está autorizada. El ajuste preventivo eol=lf pedido se entrega después en **otro commit local**, con comprobación de que no cambia ningún SHA SQL versionado.
+
+## 26. Prevención CRLF en SQL — tarea separada tras P3, 2026-10-04
+
+P3 quedó documentado primero en el commit local **3507117d52f2abf4e8ac138e7ad0d63a9b80f861**. Esta tarea posterior y separada añade únicamente dos reglas a `.gitattributes`, preservando las cuatro reglas existentes:
+
+```gitattributes
+apps/api/prisma/migrations/**/migration.sql text eol=lf
+apps/api/ops/*.sql text eol=lf
+```
+
+Se inventariaron **44 archivos SQL versionados** por esas dos rutas mediante `git ls-files`. Todos los blobs previos tenían CR 0. Antes de normalizar la copia de trabajo se comprobó, archivo por archivo, que reemplazar CRLF por LF producía exactamente el blob original; no había cambios SQL ajenos. Se normalizaron únicamente los finales de línea de esas copias. Luego se ejecutó `git add -- .gitattributes` y `git add --renormalize -- 'apps/api/prisma/migrations/**/migration.sql' 'apps/api/ops/*.sql'`, exclusivamente sobre las rutas solicitadas, exit 0.
+
+**Diff SQL staged y working vacío; todos los SHA-256 y object IDs SQL idénticos antes/después.** `git check-attr text eol` confirma text=set/eol=lf para cada archivo; `git ls-files --eol` confirma i/lf, w/lf y las reglas aplicadas. No se incluye ningún archivo SQL en el commit; su contenido versionado permanece idéntico. [Verificación completa por archivo](evidence/m2-c3-p3/sql-eol-lf-20261004/verification.json) y [manifiesto](evidence/m2-c3-p3/sql-eol-lf-20261004/manifest.json).
+
+El primer staging documental P3 falló con `index.lock: Permission denied` bajo el sandbox, exit 1; el reintento de escritura Git por rutas explícitas con la escalación revisada terminó exit 0. No fue rechazo de aprobación automática ni impedimento de QA. Se conserva este registro sin editar las secciones previas.
+
+Validación final del alcance: `.gitattributes`, esta sección nueva y dos JSON sanitizados; `git diff --check`, diff staged y hashes verificados. Commit local separado, **SIN PUSH**. No se ejecutó SQL ni se tocó QA, ledger, imágenes, flags, dependencias o código en esta tarea. Siguen los límites de §25: escritura con triggers sobre QA real pendiente de P5; Clerk/web/producción cerrados. Los temporales locales propios se retiran después de ambos commits y se comprueba Git limpio en el relevo.
