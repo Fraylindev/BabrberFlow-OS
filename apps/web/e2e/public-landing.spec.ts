@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures/public-browser';
 
 test('la portada pública carga su navegación y CTA sin desbordamiento', async ({ page }) => {
   const pageErrors: string[] = [];

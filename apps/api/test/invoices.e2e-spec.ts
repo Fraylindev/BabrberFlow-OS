@@ -560,7 +560,8 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
         .patch(`/bookings/${booking.id}/status`)
         .set('Authorization', `Bearer ${customerToken}`)
         .send({ status: BookingStatus.CONFIRMED })
-        .expect(403);
+        // C1 reserva invitada: Membership CUSTOMER invalida el JWT antes de RolesGuard.
+        .expect(401);
       for (const status of [BookingStatus.CONFIRMED, BookingStatus.COMPLETED]) {
         await requestApp(app)
           .patch(`/bookings/${booking.id}/status`)

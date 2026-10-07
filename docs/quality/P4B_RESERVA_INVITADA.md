@@ -1,5 +1,7 @@
 # P4b — Reserva invitada, historia completa y cierre local
 
+Actualización documental 2026-10-07: las cinco cabeceras pendientes de §5 fueron incorporadas en el commit `2aa57e0`, sin alterar texto histórico. La [continuación de suites y suplemento P4b](DIAGNOSTICO_SUITES_RESERVA_INVITADA.md) conserva los resultados inferiores como checkpoints anteriores y precisa los cortes de objetos; no acredita cierre funcional ni publicación.
+
 Fecha: 2026-10-07. Informe real de la auditoría local autorizada, que sustituye el informe de parada. **P4b ejecutado sobre el rango completo; sin filtración de secretos confirmada en la revisión. Candidato IMPLEMENTADO / EN REVISIÓN, cierre funcional INCOMPLETO por resultados de suites. SIN PUSH y sin aprobación final del propietario.** Auditorías anteriores intactas.
 
 ## 1. Base, enmienda, manifiesto y Git
@@ -14,9 +16,11 @@ Fecha: 2026-10-07. Informe real de la auditoría local autorizada, que sustituye
 
 ## 2. Cobertura y metodología P4b
 
-Se inventariaron **624 objetos**: 21 commits, 177 árboles, **426 blobs** (394 rutas únicas, incluidas versiones intermedias), 20 binarios PNG. Se usaron git rev-list --reverse <rango>, git rev-list --objects <rango>, git cat-file --batch y git cat-file blob <OID>; no solo diff neto. Los mensajes de todos los commits y todos los blobs de texto entraron al barrido; los árboles aportaron el censo de rutas/modos. Los snapshots y blobs intermedios permanecen incluidos aunque no representen el producto final.
+Primera pasada, hasta el commit 1: **624 objetos**: 21 commits, 177 árboles, **426 blobs** (394 rutas únicas, incluidas versiones intermedias), 20 binarios PNG. Se usaron git rev-list --reverse <rango>, git rev-list --objects <rango>, git cat-file --batch y git cat-file blob <OID>; no solo diff neto. Los mensajes de todos los commits y todos los blobs de texto entraron al barrido; los árboles aportaron el censo de rutas/modos. Los snapshots y blobs intermedios permanecen incluidos aunque no representen el producto final.
 
 Revisión de contenido sin ejecutar ejecutores históricos: patrones de claves privadas y proveedor, JWT, URL con credencial, dumps/archivos comprimidos/privados, cadenas largas aleatorias y asignaciones test key/secret/password/phrase/token/clave/key; incluyó hexadecimales largos además de base64. Se revisaron manualmente contextos de candidatos, su uso en código y su procedencia, registros P2/P3, código retirado archivado, documentación y capturas. No se imprimieron valores de credenciales candidatas; se emitieron rutas/líneas/tamaño y clasificación. Los resultados completos de herramientas auxiliares quedan ignorados en .tmp/guest-p4b-*.json; no se convierten en auditoría aprobada por sí solos.
+
+Conciliación posterior: al incluir el commit 2 `e15b687`, el rango remoto..HEAD contiene **633 objetos: 22 commits, 183 árboles y 428 blobs**, con los mismos 20 PNG. El incremento es un commit, seis árboles y dos blobs (B1 e informe); son dos cortes distintos, no un cambio de metodología. El suplemento de los commits 3/4 se registra en [DIAGNOSTICO_SUITES_RESERVA_INVITADA.md](DIAGNOSTICO_SUITES_RESERVA_INVITADA.md).
 
 ### Resultados
 
@@ -74,7 +78,7 @@ Los fixtures/HTTP requeridos por las suites se limitan a sus dobles o filas sint
 | b48710014e2c427da4ca060990f3cd7a | 18.1 | no ejecutado | no ejecutado | no ejecutado | 1 | detenido y eliminado |
 
 - Comando solicitado exacto: **pnpm --filter api test:e2e -- --runInBand**, exit 1. Con pnpm 11.18.0, Jest recibe el separador literal y trata --runInBand como patrón: cero tests ejecutados. No se maquilló con passWithNoTests.
-- Comando suplementario semánticamente equivalente: **pnpm --filter api test:e2e --runInBand**, exit 1: **15 suites pasan, 4 fallan, 1 omitida; 223 pruebas pasan, 41 fallan, 1 omitida (265 total)**. Fallos en invoices (CUSTOMER 401 frente a 403), public-booking-m1 (media 404 frente a 200), notifications-http (conflictos de disponibilidad y rutas públicas 404), services (preparación con revisión de horario obsoleta: 409 frente a 200). No se atribuyen todos al retiro sin investigación; no se cambian otros módulos/tests fuera de B1.
+- Comando suplementario semánticamente equivalente: **pnpm --filter api test:e2e --runInBand**, exit 1: **15 suites pasan, 4 fallan, 1 omitida; 223 pruebas pasan, 41 fallan, 1 omitida (265 total)**. Fallos en invoices (CUSTOMER 401 frente a 403), public-booking-m1 (media 404 frente a 200), notifications-http (conflictos de disponibilidad y rutas públicas 404), services (409 frente a 200 al publicar; causa precisada posteriormente: fixture sin horario confirmado, documentada en el diagnóstico de suites). No se atribuyen todos al retiro sin investigación; no se cambian otros módulos/tests fuera de B1.
 - **pnpm --filter web test:browser**: intento literal exit 1 antes de pruebas por BUILD_ENVIRONMENT; artefacto anterior no corresponde al entorno sintético. Intento posterior de config temporal falló por __dirname en ESM; se corrigió únicamente el wrapper ignorado y se conserva el fallo.
 - Build posterior: **pnpm --filter web build --webpack**, exit 0, dotenv bloqueado, configuración pública sintética/loopback y fuentes offline mediante soporte de mocks de Next; tipografía de fallback, no prueba del render con fuentes finales. No se instala nada. No se publica el build.
 - Repetición browser: **pnpm --filter web test:browser --config <.tmp/guest-playwright.config.ts>**, mismas tres suites y proyectos desktop-chrome/mobile-chrome del config original, dos workers, cero retries y sin reutilizar un servidor ajeno. Node bloquea conexiones no loopback; Chrome resuelve destinos externos a loopback para impedir contacto de proveedor. Las intercepciones HTTP propias de los tests siguen activas. La configuración de aislamiento no amplía autenticación de producto ni representa Clerk real.

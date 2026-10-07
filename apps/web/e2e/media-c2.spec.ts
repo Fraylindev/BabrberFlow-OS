@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures/public-browser';
 
 const image = { id: 'image-1', url: '/public/qa-media/media/token.signature', altText: 'Interior iluminado del salón', caption: 'Nuestro espacio', decorative: false };
 const media = {

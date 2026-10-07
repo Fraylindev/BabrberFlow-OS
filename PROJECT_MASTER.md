@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Diagnóstico y correctivo local de suites — 2026-10-07
+
+Gate único autorizado de diagnóstico/corrección. Línea base `c4625ef` ejecutada en worktree temporal externo, luego eliminado; 37 de las 41 fallas API eran preexistentes y permanecen intactas. Cuatro expectativas JWT CUSTOMER se alinean con C1 (401); SDK/UI Clerk y banderas se sirven como fixtures locales en browser, sin filtrar consola. Antes del commit correctivo: API 227/37/1; browser 21/0/1. Un intento API adicional registró 226/38/1 por Retry-After 61 frente a <=60, conservado como intermitencia pendiente. [Tabla de las 43 fallas, evidencia, CI, límites y continuación](docs/quality/DIAGNOSTICO_SUITES_RESERVA_INVITADA.md). **IMPLEMENTADO / EN REVISIÓN; cierre funcional INCOMPLETO**. La repetición postcommit se entrega con evidencia posterior; no se presume verde. Cinco documentos históricos reciben cabecera de enmienda/cancelación sin borrar texto. Producción cerrada; sin push, proveedores, contratos modificados, dependencias nuevas o bases reales.
+
 ## Enmienda y cierre local autorizado — 2026-10-07
 
 [Enmienda vinculante](docs/quality/DECISIONES_PROPIETARIO_2026_09_29.md): cuenta B2C fuera del MVP y Piloto 1; reserva solo de invitado. **M2 C3/P4/P5 CANCELADOS** por retirada de la cuenta de cliente; se preservan los registros históricos. Auth interna Clerk/legacy y roles internos intactos. Único gate abierto: cierre local del candidato, dos commits SIN PUSH, auditoría del rango y suites aisladas; no aprobación final ni activación QA.

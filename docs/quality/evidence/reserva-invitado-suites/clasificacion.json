@@ -1,0 +1,474 @@
+{
+  "date": "2026-10-07",
+  "base": "e15b687741434d7c49f4d023f743136b060c8256",
+  "baseline": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac",
+  "baselineApi": {
+    "passed": 285,
+    "failed": 37,
+    "pending": 1,
+    "total": 323
+  },
+  "beforeApi": {
+    "passed": 223,
+    "failed": 41,
+    "pending": 1,
+    "total": 265
+  },
+  "beforeBrowser": {
+    "passed": 19,
+    "failed": 2,
+    "pending": 1
+  },
+  "precommitApi": {
+    "passed": 227,
+    "failed": 37,
+    "pending": 1,
+    "total": 265
+  },
+  "precommitBrowser": {
+    "startTime": "2026-10-07T20:30:38.669Z",
+    "duration": 40236.686,
+    "expected": 21,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "classificationCounts": {
+    "a": 37,
+    "b": 4,
+    "c": 2
+  },
+  "rows": [
+    {
+      "id": 1,
+      "test": "Facturación-A Backend (e2e PostgreSQL) › OWNER confirma, completa, emite y cobra antes del inicio/fin programados sin duplicados",
+      "classification": "b",
+      "baseline": "passed",
+      "currentBefore": "failed",
+      "after": "passed",
+      "root": "JWT CUSTOMER rechazado antes de RolesGuard: 401; expectativa 403 obsoleta. C1 conserva el rechazo.",
+      "evidence": "invoices.e2e-spec.ts:563; contrato C1 §§Rutas conservadas y Pruebas C1"
+    },
+    {
+      "id": 2,
+      "test": "Facturación-A Backend (e2e PostgreSQL) › ADMIN confirma, completa, emite y cobra antes del inicio/fin programados sin duplicados",
+      "classification": "b",
+      "baseline": "passed",
+      "currentBefore": "failed",
+      "after": "passed",
+      "root": "JWT CUSTOMER rechazado antes de RolesGuard: 401; expectativa 403 obsoleta. C1 conserva el rechazo.",
+      "evidence": "invoices.e2e-spec.ts:563; contrato C1 §§Rutas conservadas y Pruebas C1"
+    },
+    {
+      "id": 3,
+      "test": "Facturación-A Backend (e2e PostgreSQL) › RECEPTIONIST confirma, completa, emite y cobra antes del inicio/fin programados sin duplicados",
+      "classification": "b",
+      "baseline": "passed",
+      "currentBefore": "failed",
+      "after": "passed",
+      "root": "JWT CUSTOMER rechazado antes de RolesGuard: 401; expectativa 403 obsoleta. C1 conserva el rechazo.",
+      "evidence": "invoices.e2e-spec.ts:563; contrato C1 §§Rutas conservadas y Pruebas C1"
+    },
+    {
+      "id": 4,
+      "test": "Facturación-A Backend (e2e PostgreSQL) › BARBER confirma, completa, emite y cobra antes del inicio/fin programados sin duplicados",
+      "classification": "b",
+      "baseline": "passed",
+      "currentBefore": "failed",
+      "after": "passed",
+      "root": "JWT CUSTOMER rechazado antes de RolesGuard: 401; expectativa 403 obsoleta. C1 conserva el rechazo.",
+      "evidence": "invoices.e2e-spec.ts:563; contrato C1 §§Rutas conservadas y Pruebas C1"
+    },
+    {
+      "id": 5,
+      "test": "M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso › fotos existentes: solo publicadas/elegibles, metadata pública, revocación y tenant en entrega",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Falta secreto sintético de firma de medios en el arnés sin credenciales. El mock Cloudinary no sustituye MediaPublicService.signingKey: proyección 404.",
+      "evidence": "public-booking-m1.e2e-spec.ts:547; media-public.service.ts:35-38; baseline mismo 404"
+    },
+    {
+      "id": 6,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › captures creation, confirmation, rescheduling and cancellation once through HTTP",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 7,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › reprograms PENDING once and emits no email for only changing the professional",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 8,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › captures reactivation and suppresses the pending message on NO_SHOW without a new email",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 9,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › BARBER with missing professional link cannot mutate or inspect the booking notifications",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 10,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › BARBER with foreign professional link cannot mutate or inspect the booking notifications",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 11,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › allows early completion without early email, then captures one completion email after endTime",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 12,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › OWNER reads only authorized reservation summaries without PII",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 13,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › ADMIN reads only authorized reservation summaries without PII",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 14,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › RECEPTIONIST reads only authorized reservation summaries without PII",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 15,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › BARBER cannot read or modify notifications even for an own booking",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 16,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › CUSTOMER cannot read or modify notifications even for an own booking",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 17,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › rejects arbitrary tenant selection, revoked membership and foreign resource IDs",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 18,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › withdraws preference, rejects a stale update and never revives the omitted event",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 19,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public reused client corroboration matches=true without exposing historic email",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture de Organization sin CMS publicado ni horario confirmado; la reserva pública rechaza el slug con 404 antes de escribir.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121; public-booking.service.ts:77; baseline mismo 404"
+    },
+    {
+      "id": 20,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public reused client corroboration matches=false without exposing historic email",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture de Organization sin CMS publicado ni horario confirmado; la reserva pública rechaza el slug con 404 antes de escribir.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121; public-booking.service.ts:77; baseline mismo 404"
+    },
+    {
+      "id": 21,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › paginates, retries only the same eligible intent and masks storage errors",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 22,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public new preserves consent/contact rules",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture de Organization sin CMS publicado ni horario confirmado; la reserva pública rechaza el slug con 404 antes de escribir.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121; public-booking.service.ts:77; baseline mismo 404"
+    },
+    {
+      "id": 23,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public reactivated preserves consent/contact rules",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture de Organization sin CMS publicado ni horario confirmado; la reserva pública rechaza el slug con 404 antes de escribir.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121; public-booking.service.ts:77; baseline mismo 404"
+    },
+    {
+      "id": 24,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public omitted-email preserves consent/contact rules",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture de Organization sin CMS publicado ni horario confirmado; la reserva pública rechaza el slug con 404 antes de escribir.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121; public-booking.service.ts:77; baseline mismo 404"
+    },
+    {
+      "id": 25,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public no-opt-in preserves consent/contact rules",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture de Organization sin CMS publicado ni horario confirmado; la reserva pública rechaza el slug con 404 antes de escribir.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121; public-booking.service.ts:77; baseline mismo 404"
+    },
+    {
+      "id": 26,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › authenticates webhook bytes, deduplicates delivery and asks for retry on unknown correlation",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "Fixture con businessHours legado, sin semana BusinessSchedule CONFIRMED; UNCONFIRMED produce ventanas vacías y disponibilidad 409.",
+      "evidence": "notifications-http.e2e-spec.ts:61-121,133; business-schedule.policy.ts; baseline mismo 409"
+    },
+    {
+      "id": 27,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › crea con textos normalizados, proyección mínima y AuditLog sin PII",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 28,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 0",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 29,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 1",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 30,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 2",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 31,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 3",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 32,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 4",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 33,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 5",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 34,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › lista todos por defecto y filtra estado antes de responder",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 35,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › ordena por reservas no canceladas sin exponer el conteo ni otro tenant",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 36,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › obtiene por UUID dentro del tenant y oculta recursos ajenos",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 37,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › reserva las mutaciones a OWNER/ADMIN y excluye CUSTOMER del catálogo B2B",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 38,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › edita con ADMIN, audita y rechaza modificar estado por PATCH general",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 39,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › desactiva sin borrar ni romper Booking, Invoice o el catálogo público",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 40,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › hace la baja idempotente y permite reactivar explícitamente",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 41,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › protege desactivación y reactivación frente a IDOR",
+      "classification": "a",
+      "baseline": "failed",
+      "currentBefore": "failed",
+      "after": "failed",
+      "root": "beforeAll publica CMS sin BusinessSchedule CONFIRMED; CmsService rechaza con 409 antes de los cuerpos de los 15 casos. No es deriva de versión.",
+      "evidence": "services.e2e-spec.ts:103-108; cms.service.ts:195-203; baseline mismo 409"
+    },
+    {
+      "id": 42,
+      "test": "C2 full flow: loading/pending, no automatic popup, native accessible link, keyboard and repeated click / desktop-chrome",
+      "classification": "c",
+      "baseline": "failed antes del flujo final por selector Hora obsoleto; SDK bloqueado visible en otro caso baseline",
+      "currentBefore": "failed",
+      "after": "passed",
+      "root": "Red externa bloqueada: Clerk JS/UI y banderas FlagCDN sin fixtures. RootLayout monta ClerkProvider en todas las rutas; no se requiere sesión para reservar, pero el contexto participa en el reinicio por identidad.",
+      "evidence": "whatsapp-c2.spec.ts:161-164 en e15b687; browser.json previo; public-browser.ts; browser final 21/0/1"
+    },
+    {
+      "id": 43,
+      "test": "C2 full flow: loading/pending, no automatic popup, native accessible link, keyboard and repeated click / mobile-chrome",
+      "classification": "c",
+      "baseline": "failed antes del flujo final por selector Hora obsoleto; SDK bloqueado visible en otro caso baseline",
+      "currentBefore": "failed",
+      "after": "passed",
+      "root": "Red externa bloqueada: Clerk JS/UI y banderas FlagCDN sin fixtures. RootLayout monta ClerkProvider en todas las rutas; no se requiere sesión para reservar, pero el contexto participa en el reinicio por identidad.",
+      "evidence": "whatsapp-c2.spec.ts:161-164 en e15b687; browser.json previo; public-browser.ts; browser final 21/0/1"
+    }
+  ],
+  "finalBeforeRun": "22b2b0201d6c4b84aa5acf8ec84871c7"
+}

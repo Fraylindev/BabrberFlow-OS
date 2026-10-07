@@ -1,4 +1,5 @@
-import { expect, test, type BrowserContext, type FrameLocator, type Page } from '@playwright/test';
+import type { BrowserContext, FrameLocator, Page } from '@playwright/test';
+import { expect, test } from './fixtures/public-browser';
 
 const message = 'Hola. Acabo de registrar una reserva en su página y quisiera consultar con ustedes.';
 const retiredExplanation = 'Abrirás WhatsApp. Revisa y envía el mensaje allí; abrirlo no confirma tu reserva.';
@@ -160,7 +161,7 @@ test('C2 full flow: loading/pending, no automatic popup, native accessible link,
   expect(result.booking.status).toBe('PENDING');
   expect(errors).toEqual([]);
   await info.attach('console.json', { body: JSON.stringify(consoleIssues, null, 2), contentType: 'application/json' });
-  expect(consoleIssues.filter((entry) => !entry.startsWith('Clerk:'))).toEqual([]);
+  expect(consoleIssues).toEqual([]);
 });
 
 for (const phone of [null, '8095551234', '+18095551234\n']) {
