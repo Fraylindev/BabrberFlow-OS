@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { PublicBookingService } from './public-booking.service';
@@ -276,30 +276,28 @@ describe('PublicBookingService - secure public creation', () => {
     expect(dependencies.audit.log).not.toHaveBeenCalled();
   });
 
-  it('keeps booking success when secondary CUSTOMER account creation fails', async () => {
-    const log = jest.spyOn(Logger.prototype, 'error').mockImplementation();
+  it('creates only an operational contact and booking, never an identity', async () => {
     dependencies.transaction.client.findFirst.mockResolvedValue(null);
     dependencies.transaction.client.create.mockResolvedValue({ id: CLIENT_ID });
-    dependencies.prisma.db.user.findFirst.mockRejectedValue(
-      new Error('ana@example.com: private database detail'),
-    );
-    try {
-      const result = await service.createBooking('demo', {
-        ...DTO,
-        createAccount: true,
-        password: 'ValidPassword123!',
-      });
-
-      expect(result.booking.id).toBe(BOOKING.id);
-      expect(result.accountCreated).toBe(false);
-      expect(result.accountCreationError).toBeNull();
-      expect(log).toHaveBeenCalledTimes(1);
-      expect(log).toHaveBeenCalledWith(
-        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
-      );
-    } finally {
-      log.mockRestore();
-    }
+    const result = await service.createBooking('demo', DTO);
+    expect(result.booking.status).toBe(BookingStatus.PENDING);
+    expect(result).not.toHaveProperty('accountCreated');
+    expect(result).not.toHaveProperty('accountCreationError');
+    expect(dependencies.prisma.db.user.findFirst).not.toHaveBeenCalled();
+    expect(dependencies.transaction.user.create).not.toHaveBeenCalled();
+    expect(dependencies.transaction.membership.create).not.toHaveBeenCalled();
+    expect(dependencies.prisma.db.$transaction).toHaveBeenCalledTimes(1);
+    expect(dependencies.transaction.client.create.mock.calls[0]).toEqual([
+      {
+        data: {
+          organizationId: ORGANIZATION.id,
+          name: 'Ana Pérez',
+          phone: '+18095551234',
+          email: 'ana@example.com',
+        },
+        select: { id: true },
+      },
+    ]);
   });
 });
 

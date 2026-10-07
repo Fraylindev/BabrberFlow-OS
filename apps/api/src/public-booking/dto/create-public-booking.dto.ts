@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsEmail,
   IsISO8601,
   IsNotEmpty,
@@ -8,16 +7,10 @@ import {
   IsUUID,
   Matches,
   MaxLength,
-  MinLength,
-  ValidateIf,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN } from '../../professionals/professional-availability.util';
 import { PublicEmailPreferenceInput } from '../../notifications/email-preference.dto';
-import {
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MIN_LENGTH_MESSAGE,
-} from '../../auth/auth.constants';
 import {
   CLIENT_EMAIL_MAX_LENGTH,
   CLIENT_NAME_MAX_LENGTH,
@@ -61,13 +54,4 @@ export class CreatePublicBookingDto extends PublicEmailPreferenceInput {
   @IsEmail()
   @MaxLength(CLIENT_EMAIL_MAX_LENGTH)
   clientEmail?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  createAccount?: boolean;
-
-  @ValidateIf((dto: CreatePublicBookingDto) => dto.createAccount === true)
-  @IsString()
-  @MinLength(PASSWORD_MIN_LENGTH, { message: PASSWORD_MIN_LENGTH_MESSAGE })
-  password?: string;
 }

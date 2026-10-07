@@ -1,5 +1,41 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Enmienda y cierre local autorizado — 2026-10-07
+
+[Enmienda vinculante](docs/quality/DECISIONES_PROPIETARIO_2026_09_29.md): cuenta B2C fuera del MVP y Piloto 1; reserva solo de invitado. **M2 C3/P4/P5 CANCELADOS** por retirada de la cuenta de cliente; se preservan los registros históricos. Auth interna Clerk/legacy y roles internos intactos. Único gate abierto: cierre local del candidato, dos commits SIN PUSH, auditoría del rango y suites aisladas; no aprobación final ni activación QA.
+
+
+## Preparación del candidato QA — sólo plan, 2026-10-07
+
+Revisión preparatoria local y plan de commit/P4b/push/pareja API-web/rollback/fixtures entregados. Referencia remota sólo local `9f04dba`: 20 commits previos no publicados requieren auditoría del rango completo antes de push. Sin staging, commit, fetch, proveedores, POST, despliegue ni cambios QA/producción/Clerk/variables/servicios/DB. C3 permanece incompleto; ninguna autorización de ejecución inferida. [Plan, inventario y matriz de autorizaciones](docs/features/RESERVA_INVITADO_PREPARACION_QA.md).
+
+
+## C3 QA autorizado — preflight detenido, 2026-10-07
+
+C3 permite validar QA sin publicación. Preflight vivo: API `bc1d559`, web `9f04dba`, ambos anteriores al candidato C0/C1/C2 no commiteado. API aún registra CustomerModule/alta secundaria/flags y GET `/customer/businesses` da 401. Se detienen pruebas funcionales y cualquier POST: activar el candidato exige despliegue, prohibido en esta autorización. Sólo documentación/evidencia local; ningún dato sintético creado, ningún cambio QA/Clerk/schema/flags/variables/producción/P4b. C3 INCOMPLETO; no se infiere aprobación. [Causa, comandos, versiones, límites y propuesta separada](docs/features/RESERVA_INVITADO_C3_PREFLIGHT.md).
+
+
+## C2 reserva invitada — validado localmente / en revisión, 2026-10-07
+
+Autorización posterior de C2 local: retirado el portal B2C exclusivo, navegación, proveedor, hooks, páginas y paso de cuenta. `POST /public/:slug/bookings` responde sólo `{booking}` después de migrar los consumidores ejecutables conocidos de `accountCreated`/`accountCreationError`; quedan únicamente assertions negativas e historia. Client operativo y roles internos/Clerk preservados. 871 pruebas API (0 omitidas), 37 integraciones anteriores + 4 HTTP PostgreSQL y 288 pruebas web aprobadas; tipos/lint/build de ambas apps pasan. Nueve escenarios locales Chrome de flujo, foco/teclado/campos/overflow/consola aprobados, con transporte y Clerk controlados; no equivalen a QA/proveedor/dispositivo físico. C2 implementado y validado localmente, en revisión del propietario; **C3 NO EJECUTADO**. Sin commit/push/PR/despliegue, cambios de QA/producción, Prisma/migraciones ni P4b. Los checkpoints inferiores conservan sus estados fechados; las menciones C2 pendiente y campos deprecated quedaron superadas por este registro.
+
+[Informe C2, inventario, contrato, resultados, diff y rollback](docs/features/RESERVA_INVITADO_C2_LOCAL.md).
+
+
+## Validación PostgreSQL posterior — 2026-10-07
+
+[Informe de cierre técnico C1](docs/features/RESERVA_INVITADO_C1_CIERRE_TECNICO.md): PostgreSQL 18.1 desechable, 28 migraciones intactas y gate runtime aprobados; **37/37 integraciones + 2/2 HTTP claim, 0 omitidas, exit 0**. Se corrigió una expectativa H5 obsoleta según F0-D/2A aprobado, conservando su fallo inicial. C0 aprobado; C1 validado localmente, candidato a cierre técnico/en revisión, **sin aprobación de cierre ni commit**; C2/C3 pendientes y detenidos. Sin commit/push/despliegue ni QA; Clerk, datos reales y P4b intactos. Los resultados inferiores conservan sus checkpoints fechados y no implican una repetición nueva.
+
+## Decisión vigente — reserva de invitado y retiro B2C, 2026-10-07
+
+La cuenta del cliente final queda fuera del producto y del MVP actual por decisión explícita del propietario. **La reserva de invitado es el flujo oficial.** `Client` permanece como ficha operativa tenant-scoped, sin equivaler a una cuenta autenticada. [Alcance C0/C1, contrato, evidencia y límites](docs/features/RESERVA_INVITADO_C0_C1.md).
+
+Solo C0 documental y C1 backend/seguridad autorizados: C0 aprobado; C1 implementado y validado parcialmente en local, en revisión; C2 pendiente; C3 pendiente, sin commit/push/despliegue ni cambios en QA. C2 frontend y C3 QA no iniciados; la UI B2C local permanece hasta su entrega separada. No se modifica Clerk ni el comportamiento de autenticación de OWNER/ADMIN/RECEPTIONIST/BARBER; se retira exclusivamente la capacidad CUSTOMER y se conserva el acceso interno de identidades mixtas. Datos, Prisma, migraciones, grants y estructuras de compatibilidad intactos. P4b y su auditoría excluidos.
+
+[Checkpoint de consistencia corregido](docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md): correctivo de pruebas/helpers autorizado e implementado; dos positivos de claim retirados, históricos segregados como .txt y helper rate-limit ahora exige 404. Web: 308 pruebas, tipos/lint/build aprobados; HTTP API: 22/22. Las 37 integraciones PostgreSQL pasaron después; véase el informe de cierre técnico superior. UI B2C intacta hasta C2; no commit/push/despliegue ni QA. Auditoría P4b intacta.
+
+M2 y A0.6-B/C/D ya no son siguientes entregas del producto; las aprobaciones anteriores de cuentas y claims se conservan como antecedentes, no autorizan activación. El roadmap funcional continúa con calendario operativo día/semana y C0 financiero de transferencias/comprobantes privados para invitados; Analytics/Resumen después. Ninguna etapa futura se autoriza aquí. Retirar historial B2C elimina esa vía de exposición D4, pero no acredita resolver contactos mezclados ni deuda de paginación del panel. Producción continúa cerrada.
+
 **Resultado local P0/P1 de M2 C3 — 2026-10-03:** [informe posterior](docs/quality/M2_C3_PREFLIGHT.md#11-ejecución-autorizada-de-p0-y-p1--2026-10-03). P0 READ ONLY confirma API QA `791569b`, runtime `kortek_runtime`, destino del proyecto QA, 27 migraciones y Preview `9f04dba`; producción se contrasta exclusivamente con metadatos históricos aportados, sin consulta viva. P1 corrige localmente grants SID de CustomerOperation y matriz/gate de 37 tablas, conserva la migración 28 intacta y pasa upgrade 27→28, negativos, triggers y compatibilidad del API anterior con login restringido en desechable PG17; type-check, lint, 812 pruebas API, build y Prisma validate exit 0. Ensayo final sin dotenv y contenedor propio retirado. **IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISIÓN; único commit local autorizado, SIN PUSH.** P2 y activación no iniciados; no se infiere aprobación de P1/C3. D4 y paginación del panel siguen bloqueando Paso 8.
 
 **M2 C2 y preflight C3 — 2026-10-03:** el propietario **aprueba C2 como checkpoint local** en `d222115f7d624b5698b67a24e22486625fec22b2`, sin publicación ni despliegue. [Registro posterior y límites](docs/quality/M2_C2_CIERRE.md#aprobación-del-checkpoint-local-c2--2026-10-03). Se autorizan P0 (lecturas vivas previstas) y P1 (grants mínimos, matriz/gate y ensayos únicamente desechables) del [preflight](docs/quality/M2_C3_PREFLIGHT.md), junto con un único commit local de ese alcance y el registro de aprobación. **NO PUSH; NO P2.** No se aplican migraciones en QA, no se despliega ni se detiene/reinicia ningún servicio existente, no se cambian variables/flags/Clerk ni dependencias. Producción permanece cerrada e intacta. D4 (mezcla en una ficha) y la paginación del panel continúan bloqueando Paso 8. Las cabeceras inferiores conservan sus autorizaciones y estados históricos.

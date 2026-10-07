@@ -1,0 +1,6 @@
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        6.126 s
+Ran all test suites within paths "src/public-booking/guest-claim-retirement.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\reserva-invitado-c1\postgres\e6f8eed515574078ae501d662ba742f0\guest-claim-retirement.json

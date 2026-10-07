@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/Button';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { businessWhatsAppLink } from '@/lib/whatsapp-link';
 import { PublicBookingFooter } from './PublicBookingFooter';
-import { CustomerEntryLinks } from '@/components/customer/CustomerEntryLinks';
 
 export function PublicMiniSite({ slug }: { slug: string }) {
   const { data, error, isLoading, isError, isFetching, refetch } = usePublicBookingData(slug);
@@ -71,7 +70,6 @@ export function PublicMiniSite({ slug }: { slug: string }) {
               )}
             </div>
 
-            <CustomerEntryLinks slug={slug} />
 
             {!canBook && (
               <p className="mt-5 text-sm text-[var(--color-muted)]" role="status">

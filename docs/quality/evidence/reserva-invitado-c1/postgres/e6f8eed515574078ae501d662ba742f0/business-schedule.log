@@ -1,0 +1,11 @@
+  console.info
+    C1 controlled load: 8 concurrent writes, 519ms total
+
+      at Object.<anonymous> (business-schedule/business-schedule.integration.spec.ts:842:13)
+
+Test Suites: 1 passed, 1 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        9.702 s
+Ran all test suites within paths "src/business-schedule/business-schedule.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\reserva-invitado-c1\postgres\e6f8eed515574078ae501d662ba742f0\business-schedule.json

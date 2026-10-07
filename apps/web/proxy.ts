@@ -36,8 +36,5 @@ export const config = {
     '/register/:path*',
     '/accept-invitation/:path*',
     '/invitation-login/:path*',
-    '/:slug/cuenta/:path*',
-    '/:slug/mis-reservas/:path*',
-    '/:slug/mi-perfil',
   ],
 };

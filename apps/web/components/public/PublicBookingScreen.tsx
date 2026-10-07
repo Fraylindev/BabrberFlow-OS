@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useAuth as useClerkAuth } from '@clerk/nextjs';
 import { api, ApiError, type PublicAvailabilityResponse, type PublicAvailabilitySlot, type PublicBookingResult } from '@/lib/api';
 import { useCreatePublicBooking, usePublicBookingData } from '@/lib/queries/public-booking';
 import { usePublicMedia } from '@/lib/queries/media';
@@ -22,18 +23,16 @@ import { SuccessView } from '@/app/[slug]/_components/SuccessView';
 import './booking.css';
 import { EMPTY_PHONE, type PhoneDraft } from '@/lib/public-phone';
 import { PublicBookingFooter } from './PublicBookingFooter';
-import { CustomerClaim } from '@/components/customer/CustomerClaim';
-import { useCustomer } from '@/components/customer/CustomerProvider';
 
 const STEPS = ['service', 'professional', 'datetime', 'contact', 'confirm'] as const;
 type Step = typeof STEPS[number];
 const LABELS = ['Servicio', 'Profesional', 'Fecha y hora', 'Tus datos', 'Revisar'];
-const emptyContact: ContactDraft = { clientName: '', clientPhone: '', clientEmail: '', createAccount: false, emailOptedIn: false };
+const emptyContact: ContactDraft = { clientName: '', clientPhone: '', clientEmail: '', emailOptedIn: false };
 
 export function PublicBookingScreen({ slug }: { slug: string }) {
   const { user, organization } = useAuth();
-  const customer = useCustomer();
-  const scope = JSON.stringify([slug, customer.scope, user?.id, user?.role, organization?.id]);
+  const { userId, sessionId } = useClerkAuth();
+  const scope = JSON.stringify([slug, userId, sessionId, user?.id, user?.role, organization?.id]);
   return <PublicBookingFlow key={scope} slug={slug} />;
 }
 
@@ -57,7 +56,6 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
   const [contact, setContact] = useState(emptyContact);
   const [phone, setPhone] = useState<PhoneDraft>(EMPTY_PHONE);
   const [result, setResult] = useState<PublicBookingResult | null>(null);
-  const [accountWanted, setAccountWanted] = useState(false);
   const [retired, setRetired] = useState(false);
   const [uncertain, setUncertain] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -171,7 +169,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
         ...(contact.emailOptedIn ? { emailNotifications: { optedIn: true, noticeVersion: EMAIL_NOTICE_VERSION } } : {}),
       });
       if (!live.current) return;
-      setAccountWanted(contact.createAccount); setResult(response); setContact(emptyContact); setPhone(EMPTY_PHONE); createBooking.reset();
+      setResult(response); setContact(emptyContact); setPhone(EMPTY_PHONE); createBooking.reset();
     } catch (error) {
       if (!live.current) return;
       const failure = bookingFailure(error);
@@ -209,7 +207,7 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
       : uncertain ? <div className="space-y-4 px-3"><h2 id="booking-uncertain-title" tabIndex={-1} className="text-2xl">No pudimos comprobar el resultado</h2><p role="alert">{message}</p><Link href={returnHref} className="inline-flex items-center border px-4">Volver a la página del negocio</Link></div>
       : result ? <div className="booking-step"><SuccessView result={result} organizationPhone={data.organization.phone} organizationName={data.organization.name}
         address={data.organization.address} mapsUrl={data.organization.googleMapsUrl} returnHref={returnHref}
-        serviceName={service?.name} price={service?.price} professionalName={professional?.name} timeZone={data.timeZone} servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} /><div className="mt-6"><CustomerClaim bookingId={result.booking.id} accountWanted={accountWanted} /></div></div>
+        serviceName={service?.name} price={service?.price} professionalName={professional?.name} timeZone={data.timeZone} servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} /></div>
       : !data.services.length || !data.professionals.length ? <p role="status" className="px-3">{!data.services.length ? 'Este negocio no tiene servicios disponibles para reservar en línea.' : 'No hay profesionales disponibles por ahora.'}</p>
       : <>
         <nav aria-label="Progreso de la reserva" className="pb-4"><p className="text-sm text-[var(--color-muted)]">Paso {STEPS.indexOf(step) + 1} de 5 · {LABELS[STEPS.indexOf(step)]}</p>
@@ -232,7 +230,6 @@ export function PublicBookingFlow({ slug }: { slug: string }) {
             onClearSlot={clearSlot} onUnavailable={retire} professionalName={professional?.name} onBack={() => setStep(data.professionals.length === 1 ? 'service' : 'professional')} onNext={() => setStep('contact')} />}
           {step === 'contact' && <ContactStep {...contact} phone={phone} onPhoneDraftChange={setPhone} onNameChange={value => updateContact('clientName', value)} onPhoneChange={value => updateContact('clientPhone', value)}
             onEmailChange={value => setContact(old => ({ ...old, clientEmail: value, emailOptedIn: false }))} onEmailOptInChange={value => updateContact('emailOptedIn', value)}
-            onAccountChange={value => updateContact('createAccount', value)}
             onBack={() => setStep('datetime')} onNext={() => { setMessage(null); setStep(slot ? 'confirm' : 'datetime'); }} />}
           {step === 'confirm' && slot && <ConfirmStep {...contact} serviceName={service?.name} professionalName={professional?.name} startTime={slot.startTime} timeZone={data.timeZone}
             servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} duration={service?.duration} price={service?.price} address={data.organization.address} submitError={null}

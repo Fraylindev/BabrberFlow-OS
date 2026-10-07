@@ -1,5 +1,11 @@
 # Modelo de datos — mapa vigente
 
+C2 posterior, 2026-10-07: web local exclusivamente de invitado, portal B2C retirado y respuesta pública sólo `{booking}`; campos de cuenta eliminados coordinadamente de API/web. Validado localmente/en revisión; C3 no ejecutado. [Contrato, evidencia y límites](../features/RESERVA_INVITADO_C2_LOCAL.md). Los checkpoints anteriores se conservan como historia.
+
+## Decisión vigente — 2026-10-07
+
+`Client` es la ficha de contacto operativa por negocio; no es una cuenta autenticada. Reserva pública de invitado sin alta de `User`/`Membership`. `Client.userId`, rol CUSTOMER, campos `customer*`, `CustomerOperation`, relaciones, índices y triggers permanecen por compatibilidad histórica; no conceden acceso B2C tras C1. Sin eliminación de datos ni cambios Prisma/migraciones. [Retiro funcional C0/C1](../features/RESERVA_INVITADO_C0_C1.md).
+
 ## C1 aprobado e integrado localmente — Horario y zona
 
 **BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. BusinessSchedule/Day/Window/Closure/Revision forman el agregado operativo por tenant; Organization conserva la zona autoritativa. Revisión esperada y lock Organization antes de Client/Booking/Professional protegen comandos globales y dependencias. Estado legacy no confirmado conserva diagnóstico/lectura; confirmado usa solo el agregado y falla cerrado ante corrupción. Revisión durable, motivos privados y cierres cancelados preservan historia. [Contrato](../features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](../features/HORARIO_ZONA_C1_EVIDENCIA.md). Estas relaciones están integradas en el código del proyecto local; el archivo de migración sigue pendiente de aplicación autorizada. No afirman migración productiva ni autorización C2.

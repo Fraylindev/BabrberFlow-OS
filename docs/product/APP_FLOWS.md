@@ -1,5 +1,7 @@
 # Flujos de aplicación — Kortek Booking
 
+C2 posterior, 2026-10-07: web local exclusivamente de invitado, portal B2C retirado y respuesta pública sólo `{booking}`; campos de cuenta eliminados coordinadamente de API/web. Validado localmente/en revisión; C3 no ejecutado. [Contrato, evidencia y límites](../features/RESERVA_INVITADO_C2_LOCAL.md). Los checkpoints anteriores se conservan como historia.
+
 Este mapa describe los recorridos ejecutados por el código vigente. Los contratos detallados viven en [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) y el estado de cada módulo en [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 
 ## 1. Identidad y acceso interno
@@ -46,7 +48,13 @@ El Resumen obtiene agenda/carga paginadas desde `GET /analytics/summary` y métr
 
 Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se leen en sus entradas vigentes; este mapa no concede permisos nuevos.
 
-## 5. Reserva pública y continuidad B2C
+## 5. Reserva pública de invitado — decisión 2026-10-07
+
+Flujo oficial: mini-sitio → reservar → servicio → profesional → fecha/hora → nombre/teléfono/correo opcional → revisión → resultado PENDING. No se crea ni autentica cuenta. Client conserva contacto y vínculo con reservas del negocio. Cambios/cancelaciones se solicitan al negocio con sus contactos existentes. Correo/opt-in es independiente de identidad y no acredita entrega; WhatsApp es manual. Sin enlaces privados nuevos ni consulta pública de historial.
+
+C0/C1 retira backend B2C; C2 no iniciado deja todavía componentes y rutas web del alcance anterior. No desplegar esta combinación como candidato final. [Contrato y límites](../features/RESERVA_INVITADO_C0_C1.md).
+
+**Antecedentes M1/M2:** el recorrido numerado y párrafos siguientes conservan contexto previo; las menciones de crear cuenta, claims y autoservicio quedan revocadas por esta decisión.
 
 1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales; consume por separado la proyección pública de medios aprobada cuando está disponible;
 2. `/public/:slug/booking-data` entrega esa proyección, catálogo, profesionales públicos mínimos y la fecha mínima calculada en la zona del negocio, sin UUID de Organization. F0-D/2A añade `timeZone` técnico en la raíz: backend aprobado e integrado en web localmente/en revisión; confirmación/éxito presentan el instante autoritativo con Hoy/Ayer/Mañana y año según ese negocio, sin mostrar el identificador de zona;
@@ -93,3 +101,7 @@ La relación entre reserva, retención de horario, comprobante, verificación, p
 ## 8. Flujo de entrega
 
 Cada capacidad pasa por definición de producto/UX, arquitectura/seguridad, backend, aprobación, frontend, QA, checkpoint y auditoría. Consultar [`DELIVERY_GATES.md`](../quality/DELIVERY_GATES.md). Una etapa incompleta no autoriza la siguiente.
+
+## Enmienda 2026-10-07
+
+El recorrido M2 anterior queda como antecedente revocado: reserva solo de invitado, sin cuenta ni contraseña. M2 C3/P4/P5 cancelados. [Enmienda vinculante](../quality/DECISIONES_PROPIETARIO_2026_09_29.md); autenticación interna intacta.

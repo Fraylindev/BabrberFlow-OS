@@ -66,17 +66,13 @@ it('el fallback tras imagen rota mantiene iniciales estables del nombre', () => 
   expect(bookingPhotoFallback(' Alex   Norte ')).toEqual(bookingPhotoFallback('Alex Norte'));
 });
 
-it('intención de cuenta Clerk conserva opción visible sin pedir contraseña', () => {
-  function Contact() {
-    const [wanted, setWanted] = useState(false);
-    return <ContactStep clientName="QA" clientPhone="+18095550100" clientEmail="qa@example.test" emailOptedIn={false} createAccount={wanted}
-      onAccountChange={setWanted} onNameChange={vi.fn()} onPhoneChange={vi.fn()} onEmailChange={vi.fn()} onEmailOptInChange={vi.fn()} onBack={vi.fn()} onNext={vi.fn()} />;
-  }
-  render(<Contact />);
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
-  expect(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' })).toBeChecked();
-  expect(screen.queryByLabelText('Crea una contraseña')).not.toBeInTheDocument();
-  expect(screen.getByText('Crearás tu cuenta después de registrar la reserva.')).toBeVisible();
+it('datos de invitado admiten correo opcional sin cuenta, contraseña ni código', () => {
+  render(<ContactStep clientName="QA" clientPhone="+18095550100" clientEmail="" emailOptedIn={false}
+    onNameChange={vi.fn()} onPhoneChange={vi.fn()} onEmailChange={vi.fn()} onEmailOptInChange={vi.fn()} onBack={vi.fn()} onNext={vi.fn()} />);
+  expect(screen.getByLabelText('Correo (opcional)')).not.toBeRequired();
+  expect(screen.queryByRole('checkbox', { name: /Crear cuenta/ })).not.toBeInTheDocument();
+  expect(document.querySelector('input[type="password"]')).toBeNull();
+  expect(screen.queryByLabelText(/Código/)).not.toBeInTheDocument();
 });
 
 it('revisión usa duración legible, moneda, teléfono y Editar contextual sin etiqueta de catálogo', () => {

@@ -1,0 +1,9 @@
+{
+  "cleanup": true,
+  "migrationsApplied": 0,
+  "exitCode": 1,
+  "ownProcessesStopped": true,
+  "testsPending": "not collected",
+  "testsExecuted": 0,
+  "reason": "Sandbox process/network isolation and captured pg_ctl startup prevented runner completion; interrupted own verified processes"
+}

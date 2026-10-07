@@ -12,8 +12,7 @@ afterEach(() => vi.useRealTimers());
 function result(startTime: string): PublicBookingResult {
   return {
     booking: { id: 'booking', serviceId: 'service', professionalId: 'professional', startTime,
-      endTime: new Date(Date.parse(startTime) + 1800000).toISOString(), status: 'PENDING' },
-    accountCreated: false, accountCreationError: null,
+      endTime: new Date(Date.parse(startTime) + 1800000).toISOString(), status: 'PENDING' }
   };
 }
 const success = (startTime: string, timeZone = 'America/Santo_Domingo') => {

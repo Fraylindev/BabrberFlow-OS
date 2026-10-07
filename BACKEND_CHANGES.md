@@ -1,5 +1,30 @@
 # BACKEND_CHANGES.md
 
+## C2 reserva invitada — validado localmente / en revisión, 2026-10-07
+
+Autorización posterior de C2 local: retirado el portal B2C exclusivo, navegación, proveedor, hooks, páginas y paso de cuenta. `POST /public/:slug/bookings` responde sólo `{booking}` después de migrar los consumidores ejecutables conocidos de `accountCreated`/`accountCreationError`; quedan únicamente assertions negativas e historia. Client operativo y roles internos/Clerk preservados. 871 pruebas API (0 omitidas), 37 integraciones anteriores + 4 HTTP PostgreSQL y 288 pruebas web aprobadas; tipos/lint/build de ambas apps pasan. Nueve escenarios locales Chrome de flujo, foco/teclado/campos/overflow/consola aprobados, con transporte y Clerk controlados; no equivalen a QA/proveedor/dispositivo físico. C2 implementado y validado localmente, en revisión del propietario; **C3 NO EJECUTADO**. Sin commit/push/PR/despliegue, cambios de QA/producción, Prisma/migraciones ni P4b. Los checkpoints inferiores conservan sus estados fechados; las menciones C2 pendiente y campos deprecated quedaron superadas por este registro.
+
+[Informe C2, inventario, contrato, resultados, diff y rollback](docs/features/RESERVA_INVITADO_C2_LOCAL.md).
+
+
+## C1 reserva invitada — cierre técnico local en revisión, 2026-10-07
+
+PostgreSQL 18.1 en clúster nuevo: 28 migraciones intactas, roles separados y gate runtime exit 0; 37/37 integraciones y 2/2 pruebas HTTP claim con/sin bearer, sin cambios User/Membership/Client/AuditLog; 0 omitidas. Una assertion H5 obsoleta se alinea al contrato aprobado F0-D/2A, exigiendo timeZone exacta en raíz y ausencia de America/ en toda otra proyección; fallo inicial conservado. No cambia API ni contrato. Clúster propio detenido/eliminado. C1 validado localmente/candidato a cierre técnico en revisión del propietario, no declarado cerrado/aprobado ni autorizado para commit. C2/C3 detenidos; sin commit/push/despliegue, QA, Clerk, Prisma ni auditoría P4b modificados. [Informe, casos, comandos exactos y límites](docs/features/RESERVA_INVITADO_C1_CIERRE_TECNICO.md).
+
+## Correctivo de consistencia B2C — 2026-10-07
+
+Autorizado tras el checkpoint documental: retirados dos positivos de claim de tests web; orquestador P1 y helpers de compatibilidad/rollback/probe conservados como .txt históricos no ejecutables; rate-limit drill exige 404 de la ruta retirada, sin ejecutar QA. Datos, migraciones, SQL y Clerk intactos; UI B2C pendiente de C2. 308 pruebas web, tipos/lint/build y 22 HTTP API pasan; 37 integraciones PostgreSQL pendientes. C0 aprobado; C1 parcialmente validado local/en revisión; C2/C3 pendientes; sin commit/push/despliegue. [Informe actualizado](docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md).
+
+## 2026-10-07 — Reserva de invitado, retiro B2C C1 local
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISIÓN.** Solo C0/C1 autorizado. [Contrato, inventario de exclusividad, pruebas y rollback](docs/features/RESERVA_INVITADO_C0_C1.md).
+
+- `POST /public/:slug/bookings` conserva ruta, campos de servicio/profesional/instante y contacto, consentimiento, transacción, PENDING y aislamiento. `createAccount` y `password` dejan de pertenecer al DTO: 400 por whitelist antes de persistir, también con `createAccount:false`.
+- Se retiran GET `/customer/businesses`, GET/POST `/customer/:slug/bookings`, GET `/customer/:slug/bookings/:id`, GET/PATCH `/customer/:slug/profile` y POST `/auth/clerk/customer/claims`: 404 con/sin bearer; no proveedor ni escritura.
+- `accountCreated:false` y `accountCreationError:null` quedan **deprecated**, sin lógica de cuenta. Existen consumidores tipados/fixtures web; C2 retirará primero esas dependencias y, en checkpoint coordinado posterior, los campos del API tras repetir búsqueda global. No se implementa C2 aquí.
+- Login/JWT legacy excluye CUSTOMER; un actor con membresía interna válida conserva ese acceso. Guards compartidos y Clerk se conservan. Sin nuevos roles ni cambios de MFA, TTL, proveedor o rutas internas.
+- Prisma, migraciones, datos, grants, scripts de compatibilidad e historiales intactos. Sin publicación/QA/producción/P4b.
+
 ## 2026-10-03 — M2 C1: correctivo D4 autorizado y publicación de un único commit
 
 Refinamiento explícito del propietario: claim A0.6-A exitoso habilita lectura del Client sin operador. Sustituye solo la regla D4 de la entrada C1 anterior, conservada como historial. **IMPLEMENTADO / EN REVISIÓN**, único gate C1; commit/push de todo C1 autorizados solo a `origin/ai/antigravity-qa`. Sin despliegue, C2 ni producción. [Contrato actualizado](docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md), [cierre/evidencia](docs/quality/M2_C1_CIERRE.md#correctivo-d4-y-publicación-autorizada-2026-10-03).

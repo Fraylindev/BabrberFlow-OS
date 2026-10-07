@@ -18,7 +18,7 @@ it('calendario genera una descarga TENTATIVE con instantes del servidor y sin da
   Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: create });
   Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: revoke });
   try {
-    render(<SuccessView result={{ booking: { id: 'private-id', serviceId: 'service', professionalId: 'alex', startTime: '2026-10-03T03:30:00Z', endTime: '2026-10-03T04:00:00Z', status: 'PENDING' }, accountCreated: false, accountCreationError: null }} organizationPhone={null} timeZone="America/Santo_Domingo" serviceName="Corte QA" returnHref="/north" />);
+    render(<SuccessView result={{ booking: { id: 'private-id', serviceId: 'service', professionalId: 'alex', startTime: '2026-10-03T03:30:00Z', endTime: '2026-10-03T04:00:00Z', status: 'PENDING' } }} organizationPhone={null} timeZone="America/Santo_Domingo" serviceName="Corte QA" returnHref="/north" />);
     vi.useFakeTimers();
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al calendario' }));
     expect(click).toHaveBeenCalledOnce();

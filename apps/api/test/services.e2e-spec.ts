@@ -466,7 +466,7 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
     await requestApp(app)
       .get('/services')
       .set('Authorization', `Bearer ${customerToken}`)
-      .expect(403);
+      .expect(401);
   });
 
   it('edita con ADMIN, audita y rechaza modificar estado por PATCH general', async () => {

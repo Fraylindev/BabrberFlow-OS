@@ -856,8 +856,6 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
           endTime: string;
           status: string;
         };
-        accountCreated: boolean;
-        accountCreationError: string | null;
       };
       expect(JSON.stringify(body)).not.toMatch(
         /m1-return|18095550006|clientId|organizationId|clientCreated|clientExists/,
@@ -866,8 +864,6 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
         keys: Object.keys(result).sort(),
         bookingKeys: Object.keys(result.booking).sort(),
         status: result.booking.status,
-        accountCreated: result.accountCreated,
-        accountCreationError: result.accountCreationError,
       };
     };
     expect(shape(first.body)).toEqual(shape(returned.body));

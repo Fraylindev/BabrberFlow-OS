@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { AccountStep } from '@/app/[slug]/_components/AccountStep';
 import { SuccessView } from '@/app/[slug]/_components/SuccessView';
 import { ApiError, type PublicBookingResult } from '@/lib/api';
 import { TEAM_ROLE_LABELS, TEAM_ROLE_OPTIONS } from '@/lib/team-ui';
@@ -32,27 +31,13 @@ vi.mock('@/lib/queries/invoices', () => ({
 }));
 
 const result: PublicBookingResult = {
-  booking: { id: 'qa', serviceId: 'qa', professionalId: 'qa', startTime: '2099-01-05T14:00:00Z', endTime: '2099-01-05T14:30:00Z', status: 'PENDING' },
-  accountCreated: false, accountCreationError: null,
+  booking: { id: 'qa', serviceId: 'qa', professionalId: 'qa', startTime: '2099-01-05T14:00:00Z', endTime: '2099-01-05T14:30:00Z', status: 'PENDING' }
 };
 
 describe('F0-A: regresiones de comportamiento', () => {
   it('asocia el error cuando el campo deriva su identificador de una etiqueta con espacios', () => {
     render(<PasswordField label="Contraseña de cuenta" error="Usa al menos ocho caracteres." />);
     expect(screen.getByLabelText('Contraseña de cuenta')).toHaveAccessibleDescription('Usa al menos ocho caracteres.');
-  });
-  it.each(['123456', '1234567'])('no avanza con %s y explica el mínimo junto al campo', (password) => {
-    const next = vi.fn();
-    render(<AccountStep clientEmail="sintetico@example.test" createAccount password={password} onToggle={vi.fn()} onPasswordChange={vi.fn()} onBack={vi.fn()} onNext={next} />);
-    expect(screen.getByRole('button', { name: 'Continuar' })).toBeDisabled();
-    expect(screen.getByLabelText('Crea una contraseña')).toHaveAccessibleDescription(/8 caracteres/);
-    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
-    expect(next).not.toHaveBeenCalled();
-  });
-  it('permite ocho caracteres y conserva visible la opción de cuenta', () => {
-    render(<AccountStep clientEmail="sintetico@example.test" createAccount password="12345678" onToggle={vi.fn()} onPasswordChange={vi.fn()} onBack={vi.fn()} onNext={vi.fn()} />);
-    expect(screen.getByRole('button', { name: 'Continuar' })).toBeEnabled();
-    expect(screen.getByRole('checkbox', { name: /Crear cuenta/ })).toBeChecked();
   });
   it('muestra el instante autoritativo en la zona del negocio, sin convertirlo al dispositivo', () => {
     render(<SuccessView result={result} organizationPhone={null} serviceName="Servicio" professionalName="Profesional" timeZone="America/Santo_Domingo" />);

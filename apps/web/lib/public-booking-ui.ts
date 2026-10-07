@@ -1,13 +1,12 @@
 import { ApiError, type PublicBookingResult } from './api.ts';
 import { addBusinessDays, validBusinessDate } from './business-time.ts';
 
-export const ACCOUNT_QA_NOTICE = 'Crearás tu cuenta después de registrar la reserva.';
 export const CONTACT_REJECTION = 'No pudimos registrar la reserva con esos datos. Revísalos o contacta al negocio.';
 export const UNCERTAIN_BOOKING = 'No pudimos comprobar si la reserva se registró. Contacta al negocio antes de volver a intentarlo.';
 
 export interface ContactDraft {
   clientName: string; clientPhone: string; clientEmail: string;
-  createAccount: boolean; emailOptedIn: boolean;
+  emailOptedIn: boolean;
 }
 export function contactErrors(draft: ContactDraft) {
   const errors: Partial<Record<'clientName' | 'clientPhone' | 'clientEmail', string>> = {};
@@ -19,8 +18,7 @@ export function contactErrors(draft: ContactDraft) {
   if (!/^\+?[\d\s().-]+$/.test(phone) || digits.length < 7 || digits.length > 15 || phone.length > 30)
     errors.clientPhone = 'Revisa el teléfono y su prefijo: debe tener entre 7 y 15 dígitos.';
   const email = draft.clientEmail.trim();
-  if (draft.createAccount && !email) errors.clientEmail = 'Escribe un correo para crear la cuenta o desmarca esa opción.';
-  else if (email && (email.length > 254 || !/^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email))) errors.clientEmail = 'Revisa el correo.';
+  if (email && (email.length > 254 || !/^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email))) errors.clientEmail = 'Revisa el correo.';
   return errors;
 }
 

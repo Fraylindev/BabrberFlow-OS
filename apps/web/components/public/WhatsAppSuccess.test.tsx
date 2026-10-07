@@ -8,8 +8,7 @@ const result: PublicBookingResult = {
   booking: {
     id: "booking-private-id", serviceId: "service-1", professionalId: "professional-1",
     startTime: "2099-01-05T14:00:00.000Z", endTime: "2099-01-05T14:30:00.000Z", status: "PENDING",
-  },
-  accountCreated: false, accountCreationError: null,
+  }
 };
 const props = {
   result, organizationPhone: "+18095551234", serviceName: "Servicio privado",

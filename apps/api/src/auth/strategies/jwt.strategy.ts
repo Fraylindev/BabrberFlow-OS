@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { RequestUser } from '../types/authenticated-request';
+import { UserRole } from '@prisma/client';
 
 // Definimos la estructura exacta del payload que creamos en el login
 export interface JwtPayload {
@@ -37,7 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       include: { user: true },
     });
 
-    if (!membership) {
+    if (!membership || membership.role === UserRole.CUSTOMER) {
       throw new UnauthorizedException(
         'Sesión no válida para esta organización',
       );

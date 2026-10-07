@@ -463,8 +463,6 @@ export interface PublicBookingResult {
     endTime: string;
     status: BookingStatus;
   };
-  accountCreated: boolean;
-  accountCreationError: 'EMAIL_ALREADY_EXISTS' | 'ACCOUNT_CREATION_FAILED' | null;
 }
 
 export interface PublicAvailabilitySlot {

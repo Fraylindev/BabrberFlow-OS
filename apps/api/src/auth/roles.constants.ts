@@ -6,15 +6,13 @@ import { UserRole } from '@prisma/client';
  *
  * - B2B_ROLES: personal interno de la barbería/salón. Tienen acceso al
  *   panel de gestión (/dashboard/*). Son OWNER, ADMIN, BARBER, RECEPTIONIST.
- * - B2C: clientes finales que reservan servicios. Un solo rol, CUSTOMER.
- *   Se crean exclusivamente desde el flujo público de reservas
- *   (POST /public/:slug/bookings), nunca desde /auth/invite ni /auth/register.
+ * - CUSTOMER: valor histórico conservado por compatibilidad de persistencia.
+ *   El flujo público es de invitado y no crea identidades ni membresías.
  *   No tienen ni deben tener acceso a ningún endpoint del panel interno.
  *
- * Todo endpoint que hoy protegemos solo con JwtAuthGuard (sin @Roles)
- * queda, sin querer, abierto a CUALQUIER usuario autenticado — incluido
- * un CUSTOMER. Por eso cada endpoint de uso interno debe declarar
- * explícitamente @Roles(...B2B_ROLES) además de RolesGuard.
+ * Los guards JWT rechazan Membership CUSTOMER histórica. Cada endpoint
+ * interno sigue declarando los roles permitidos además de RolesGuard;
+ * autenticarse no sustituye la autorización de la tarea.
  */
 export const B2B_ROLES: UserRole[] = [
   UserRole.OWNER,

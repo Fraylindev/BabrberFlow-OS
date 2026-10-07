@@ -1,0 +1,39 @@
+[
+  {
+    "argv": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "exitCode": 0,
+    "stdout": "ai/antigravity-qa\n"
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exitCode": 0,
+    "stdout": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac\n"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "exitCode": 0,
+    "stdout": " M BACKEND_CHANGES.md\n M CHANGELOG.md\n M PROJECT_MASTER.md\n M apps/api/ops/README.md\n M apps/api/ops/rate-limit-http-drill.cjs\n M apps/api/src/app.module.ts\n M apps/api/src/auth/auth.module.ts\n M apps/api/src/auth/auth.service.spec.ts\n M apps/api/src/auth/auth.service.ts\n D apps/api/src/auth/clerk-customer-claims.controller.spec.ts\n D apps/api/src/auth/clerk-customer-claims.controller.ts\n D apps/api/src/auth/clerk-customer-claims.service.spec.ts\n D apps/api/src/auth/clerk-customer-claims.service.ts\n D apps/api/src/auth/dto/clerk-customer-claim.dto.ts\n M apps/api/src/auth/guards/b2b-auth.guard.spec.ts\n M apps/api/src/auth/guards/b2b-auth.guard.ts\n M apps/api/src/auth/roles.constants.ts\n M apps/api/src/auth/strategies/jwt.strategy.ts\n M apps/api/src/business-schedule/business-schedule.integration.spec.ts\n D apps/api/src/customer/customer-budget.guard.ts\n D apps/api/src/customer/customer-crypto.spec.ts\n D apps/api/src/customer/customer-crypto.ts\n D apps/api/src/customer/customer.controller.ts\n D apps/api/src/customer/customer.dto.ts\n D apps/api/src/customer/customer.module.ts\n D apps/api/src/customer/customer.service.ts\n M apps/api/src/public-booking/dto/create-public-booking.dto.ts\n M apps/api/src/public-booking/dto/public-booking-response.dto.ts\n M apps/api/src/public-booking/public-booking.service.spec.ts\n M apps/api/src/public-booking/public-booking.service.ts\n M apps/api/src/public-booking/whatsapp-contract.spec.ts\n D apps/api/test/clerk-customer-claims.e2e-spec.ts\n D apps/api/test/customer-code-rollback.cjs\n D apps/api/test/customer-runtime-compat.cjs\n D apps/api/test/customer-runtime-grants-drill.cjs\n D apps/api/test/customer.e2e-spec.ts\n M apps/api/test/dashboard-summary.e2e-spec.ts\n M apps/api/test/invoices.e2e-spec.ts\n M apps/api/test/public-booking-m1.e2e-spec.ts\n M apps/api/test/services.e2e-spec.ts\n D apps/web/app/[slug]/_components/AccountStep.tsx\n M apps/web/app/[slug]/_components/ContactStep.tsx\n D apps/web/app/[slug]/_components/StepRouter.tsx\n D apps/web/app/[slug]/cuenta/[action]/page.tsx\n D apps/web/app/[slug]/layout.tsx\n D apps/web/app/[slug]/mi-perfil/page.tsx\n D apps/web/app/[slug]/mis-reservas/[id]/page.tsx\n D apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx\n D apps/web/app/[slug]/mis-reservas/page.tsx\n M apps/web/components/booking/F0A.test.tsx\n D apps/web/components/customer/Customer.test.tsx\n D apps/web/components/customer/CustomerAuth.tsx\n D apps/web/components/customer/CustomerBookingDetail.tsx\n D apps/web/components/customer/CustomerBookings.tsx\n D apps/web/components/customer/CustomerClaim.tsx\n D apps/web/components/customer/CustomerEntryLinks.tsx\n D apps/web/components/customer/CustomerProfile.tsx\n D apps/web/components/customer/CustomerProvider.tsx\n D apps/web/components/customer/CustomerRepeatBooking.tsx\n D apps/web/components/customer/CustomerShell.tsx\n D apps/web/components/customer/customer.css\n M apps/web/components/notifications/BookingEmailOptIn.test.tsx\n M apps/web/components/public/BookingLight.test.tsx\n M apps/web/components/public/BookingPolish.test.tsx\n M apps/web/components/public/M1C2.test.tsx\n M apps/web/components/public/PublicBookingScreen.tsx\n M apps/web/components/public/PublicDates.test.tsx\n M apps/web/components/public/PublicMiniSite.tsx\n M apps/web/components/public/WhatsAppSuccess.test.tsx\n M apps/web/e2e/whatsapp-c2.spec.ts\n M apps/web/lib/api.ts\n D apps/web/lib/customer-routes.ts\n D apps/web/lib/customer-ui.test.ts\n D apps/web/lib/customer-ui.ts\n M apps/web/lib/public-booking-ui.test.ts\n M apps/web/lib/public-booking-ui.ts\n D apps/web/lib/queries/customer.ts\n M apps/web/next.config.ts\n M apps/web/proxy.ts\n D apps/web/scripts/f0a-browser.mjs\n M apps/web/scripts/f0e-ajuste-browser.mjs\n M apps/web/scripts/f0e-browser.mjs\n M docs/README.md\n M docs/architecture/DATA_MODEL.md\n M docs/architecture/TRD.md\n M docs/product/APP_FLOWS.md\n M docs/product/PRD.md\n?? apps/api/src/auth/strategies/jwt.strategy.spec.ts\n?? apps/api/src/public-booking/guest-claim-retirement.integration.spec.ts\n?? apps/api/src/public-booking/guest-retirement.spec.ts\n?? apps/api/test/guest-postgres-no-dotenv.cjs\n?? apps/api/test/guest-postgres-run.cjs\n?? apps/api/test/guest-retirement-run.cjs\n?? apps/web/scripts/guest-c2-browser.mjs\n?? docs/features/RESERVA_INVITADO_C0_C1.md\n?? docs/features/RESERVA_INVITADO_C1_CIERRE_TECNICO.md\n?? docs/features/RESERVA_INVITADO_C2_LOCAL.md\n?? docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md\n?? docs/history/reserva-invitado/\n?? docs/quality/evidence/reserva-invitado-c1/\n?? docs/quality/evidence/reserva-invitado-c2/\n"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--name-only"
+    ],
+    "exitCode": 0,
+    "stdout": ""
+  }
+]

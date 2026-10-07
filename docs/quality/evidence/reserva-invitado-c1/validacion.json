@@ -1,0 +1,308 @@
+{
+  "date": "2026-10-07",
+  "branch": "ai/antigravity-qa",
+  "base_head": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac",
+  "status": "IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISION",
+  "authorized_stages": [
+    "C0",
+    "C1"
+  ],
+  "not_executed": [
+    "C2",
+    "C3",
+    "commit",
+    "push",
+    "deploy",
+    "QA changes",
+    "Clerk changes",
+    "DB changes",
+    "Prisma/migrations",
+    "P4b"
+  ],
+  "initial_worktree": "clean",
+  "index_unchanged": true,
+  "files": [
+    {
+      "status": " M",
+      "path": "BACKEND_CHANGES.md",
+      "sha256": "499c4c6e75a8f3cddc2a4ee571b3d91e4bceec656db8d13f16fb64884737abe2"
+    },
+    {
+      "status": " M",
+      "path": "CHANGELOG.md",
+      "sha256": "3939e5791277554c0976721cf6c70161db9c325ae920bc6e1856fea37a28021c"
+    },
+    {
+      "status": " M",
+      "path": "PROJECT_MASTER.md",
+      "sha256": "e59c901934efb7cd7b09fae17bd6a5113ce47688d9da21a87146a4d1febf0924"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/app.module.ts",
+      "sha256": "62d24aee42a4ed5c656f21782c0390110c642e66e8087a9805b000b269edc493"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/auth.module.ts",
+      "sha256": "aaa27cc53ec003105fcd26b5c8ebd746c5cacf6abe1d66d5f90a498b3fba5f63"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/auth.service.spec.ts",
+      "sha256": "e64060ffb8ed701a83609683e18f3a87abb1385736305595aa7823f977db608f"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/auth.service.ts",
+      "sha256": "ab514d3ada7ea662fdf7d8270a7cfc75fa472b004fbea6a7de1132445c806d5b"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.spec.ts",
+      "base_sha256": "2a0ff946069562829cb1dabf2f0edb6fc1a1f213f7dda7112380b581030c2004"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.ts",
+      "base_sha256": "1727b0282b6dff10daf0162a94d7ce365c7ebb4d834b7480cfe43f22ec457ffe"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+      "base_sha256": "63e5040535960bacfa30b37180e8a044e08616c421f2624c8c82ae8e956c5708"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/auth/clerk-customer-claims.service.ts",
+      "base_sha256": "b108e2e087e7a595c984ba91a5d419bcfb3cbdcf3a5e27e981c48e6cc58eb81d"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/auth/dto/clerk-customer-claim.dto.ts",
+      "base_sha256": "c0cea232c99eb03aca68bf3f687facf52318f0d58a5cec8ac1d810dc75cebc56"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.spec.ts",
+      "sha256": "7e064652836a1999f51a18c403e0ff9c9409213c1b130d5f8477b7dcccb035a9"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.ts",
+      "sha256": "122c7edd6168ea8b9c3b6118e57b1bc00204a1bf378e9e042dafae75d9558dc9"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/roles.constants.ts",
+      "sha256": "41836f55f39b894b6c638b7f75dae9921d4287fd9915daeef01bbca46f8c5bd1"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/auth/strategies/jwt.strategy.ts",
+      "sha256": "a56a9fa7fac4c6ed5266a28c9a1d217c27fda936857df49bd9ad37453033e1bc"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer-budget.guard.ts",
+      "base_sha256": "bfefa3391f56b27e80d9db6f9317410c1ded99a3ef43cef81ead0946bdd8f439"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer-crypto.spec.ts",
+      "base_sha256": "228a0c3171bb1e501c71808e9b01bc13c02b04610c7fc41a303b6d2fefb7ff01"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer-crypto.ts",
+      "base_sha256": "361d606226bdb68fa7c3694207c51cce34ff2a9fe086ea0e0dbc35ff62720724"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer.controller.ts",
+      "base_sha256": "f0f40713f8be26344c642be860bfc6c2bca5e3bb90e9cd48dbbec3f8e28da8bb"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer.dto.ts",
+      "base_sha256": "008aab83c83e5a731e71e189e1ff4f2dc0aa3f222d34a9b5a49e7640764d98e9"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer.module.ts",
+      "base_sha256": "fe3acb497336fcb8b472b98522105e6a02929b74871a96af2a241b7b599744bb"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/src/customer/customer.service.ts",
+      "base_sha256": "a63c57af06c74efddee94d5d20c82031b38f22723a331788c3aa6efc632a00f5"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/public-booking/dto/create-public-booking.dto.ts",
+      "sha256": "7831ba86d4148354b4fa937130d5497b59fd01c7c8abddf76a39be8a24fef347"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+      "sha256": "d58f37c1fc161f986a69299a078bfb281c8bdd4f32c02f22d2500484295483ef"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "sha256": "2d34cbb9537fcff8cf94492aafffe457ddf1d6e1673df2874b30b89fd459a7f2"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "sha256": "168503bd23764a12df31ff5e5c5dae568b9e4922ec1181f3ef6e2509065d7726"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/test/clerk-customer-claims.e2e-spec.ts",
+      "base_sha256": "39c73a484e51b35388a153dfb415b339c666a59110773c823056524f9c9754a3"
+    },
+    {
+      "status": " D",
+      "path": "apps/api/test/customer.e2e-spec.ts",
+      "base_sha256": "41b113920edf84a6d198d081b097fe4e4bc51684926f2ef213e1137c07c03351"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/test/dashboard-summary.e2e-spec.ts",
+      "sha256": "e4fc69dac7b5d50588e55faee301180efae3e209dd3349bf790717b968600cf3"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/test/invoices.e2e-spec.ts",
+      "sha256": "a9648af0d17e7ead4a8293e32daa9136a3280eb640ec1f3693a0c7c8aae9a998"
+    },
+    {
+      "status": " M",
+      "path": "apps/api/test/services.e2e-spec.ts",
+      "sha256": "3c18a1062313c0adb964a0847de00222b3a9bb3a4c945b2c9c1b6b88c17ddff8"
+    },
+    {
+      "status": " M",
+      "path": "docs/README.md",
+      "sha256": "b7e947b5a71a3c9baf9f01e5d79759c7f77152ae40ec70e6945beebcb7e8e61f"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/DATA_MODEL.md",
+      "sha256": "4a495c89f7497b1daf3930b103418d3668e1a1fa4a1cee5a139b0039229655b3"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/TRD.md",
+      "sha256": "aa84e1560cef252f44cd7769b609fd02728622e506d40c38e5c70a79350b0238"
+    },
+    {
+      "status": " M",
+      "path": "docs/product/APP_FLOWS.md",
+      "sha256": "f10ae5507e5b3079e434ed0edd94fd8b5bd85ba29a0e33d4e2042e5d2797216e"
+    },
+    {
+      "status": " M",
+      "path": "docs/product/PRD.md",
+      "sha256": "d6fdc3b3a6b33f932b0332d63ac62813128dc49982f49836b44efe4f7245ca79"
+    },
+    {
+      "status": "??",
+      "path": "apps/api/src/auth/strategies/jwt.strategy.spec.ts",
+      "sha256": "92410db0b017626b9a8601a0fdf5a22d638579093d2b26de4886e9fa5497077d"
+    },
+    {
+      "status": "??",
+      "path": "apps/api/src/public-booking/guest-retirement.spec.ts",
+      "sha256": "856fc851a2b2bbd73fd091eb93fc799298b13b2a09124176e6c34e2621d2164e"
+    },
+    {
+      "status": "??",
+      "path": "apps/api/test/guest-retirement-run.cjs",
+      "sha256": "941ed49dca53e9bf7bbbb60fb7a213300d6274df7d50da6b039b3f909c2dfee3"
+    },
+    {
+      "status": "??",
+      "path": "docs/features/RESERVA_INVITADO_C0_C1.md",
+      "sha256": "612d41f605a19f7964ea6a352202d4e52afba309d2568e13aca9c422ccf7242c"
+    }
+  ],
+  "evidence_files": [
+    "docs/quality/evidence/reserva-invitado-c1/c0-c1.patch",
+    "docs/quality/evidence/reserva-invitado-c1/validacion.json"
+  ],
+  "patch_sha256": "d9bbdd43d25d3a222893ddb5417bddf1d29d77b74b85e763673a3019a5d19ce2",
+  "patch_reverse_check_exit": 0,
+  "protected_tracked_paths_unchanged": [
+    "apps/web",
+    "apps/api/prisma",
+    "apps/api/ops",
+    ".github",
+    "pnpm-lock.yaml",
+    "package.json",
+    "apps/api/package.json",
+    "docs/quality"
+  ],
+  "tests": {
+    "tsc": {
+      "command": "pnpm --filter api exec node test/guest-retirement-run.cjs tsc --noEmit",
+      "exit": 0
+    },
+    "lint": {
+      "command": "pnpm --filter api exec node test/guest-retirement-run.cjs eslint \"{src,apps,libs,test}/**/*.ts\"",
+      "exit": 0
+    },
+    "unit_and_http": {
+      "command": "pnpm --filter api exec node test/guest-retirement-run.cjs jest --runInBand",
+      "exit": 0,
+      "passed_suites": 61,
+      "skipped_suites": 3,
+      "passed_tests": 830,
+      "skipped_tests": 37,
+      "seconds": 28.718
+    },
+    "build": {
+      "command": "pnpm --filter api exec node test/guest-retirement-run.cjs build build",
+      "exit": 0
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  },
+  "limits": [
+    "HTTP AppModule real with controlled persistence/provider",
+    "ThrottlerGuard and BookingsService are test doubles in new HTTP suite",
+    "No PostgreSQL e2e: Docker daemon unavailable",
+    "No browser/provider/physical QA",
+    "Three preserved PostgreSQL suites have 4 JWT CUSTOMER assertions updated to 401; not executed against PostgreSQL; equivalent endpoints covered by local HTTP tests"
+  ],
+  "failed_attempts": [
+    "pnpm sandbox: unable to open database file",
+    "Node eval without test summary: not counted",
+    "First harness preload Windows escape: exit 1, corrected",
+    "First focused suite: 72 passed and 2 failed, HTTP fixture corrected; later full suite passed"
+  ],
+  "migrations": {
+    "proposed": 0,
+    "executed": 0,
+    "schema_unchanged": true,
+    "ledger_preserved": true
+  },
+  "removed_routes": [
+    "GET /customer/businesses",
+    "GET /customer/:slug/bookings",
+    "POST /customer/:slug/bookings",
+    "GET /customer/:slug/bookings/:id",
+    "GET /customer/:slug/profile",
+    "PATCH /customer/:slug/profile",
+    "POST /auth/clerk/customer/claims"
+  ],
+  "deprecated_response": {
+    "accountCreated": false,
+    "accountCreationError": null,
+    "reason": "active web type and fixture consumers; removal after C2 coordinated backend checkpoint"
+  },
+  "rollback": "Restore only reviewed C0/C1 paths against base HEAD, preserve foreign changes; no DB/provider rollback. Restoring former code reopens B2C."
+}

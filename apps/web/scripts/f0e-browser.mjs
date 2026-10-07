@@ -114,7 +114,7 @@ try {
       else if(url.pathname==='/public/f0e-synthetic/media') json={hero:null,gallery:[],services:params.get('photos')==='none'?[]:[{serviceId:'cut',image:photo('service')}],professionals:params.get('photos')==='none'?[]:[{professionalId:'alex',avatar:photo('professional')}],promotions:[]};
       else if(url.pathname.endsWith('/availability-days')) json={from:url.searchParams.get('from'),to:url.searchParams.get('to'),serviceId:'cut',availableDates:['2026-10-05'].filter(day=>day>=url.searchParams.get('from')&&day<=url.searchParams.get('to'))};
       else if(url.pathname.endsWith('/availability')) json={date:'2026-10-05',serviceId:'cut',slots:[{time:'10:00',startTime:start,professionalId:'alex'}]};
-      else if(url.pathname==='/public/f0e-synthetic/bookings') json={booking:{id:'synthetic-created',status:'PENDING',serviceId:'cut',professionalId:'alex',startTime:start,endTime:'2026-10-05T16:00:00Z'},accountCreated:false,accountCreationError:null};
+      else if(url.pathname==='/public/f0e-synthetic/bookings') json={booking:{id:'synthetic-created',status:'PENDING',serviceId:'cut',professionalId:'alex',startTime:start,endTime:'2026-10-05T16:00:00Z'}};
       else {unexpected.push(url.pathname);return route.abort();}
       return route.fulfill({status,headers,json});
     });

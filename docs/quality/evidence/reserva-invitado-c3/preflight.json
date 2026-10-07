@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-10-07 15:46:47 UTC",
+  "stage": "C3 QA preflight; functional validation stopped",
+  "web": {
+    "id": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+    "url": "kortek-booking-1854z0hvp-fraylindev.vercel.app",
+    "readyState": "READY",
+    "state": "READY",
+    "meta": {
+      "githubCommitRef": "ai/antigravity-qa",
+      "githubCommitSha": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4"
+    }
+  },
+  "API": {
+    "release": "bc1d559e42928ca0deb60319b33cf98b3cd69291",
+    "deployEnv": "staging",
+    "accountCreatedInService": true,
+    "accountCreationErrorInService": true,
+    "secondaryAccountCreation": true,
+    "customerModuleRegistered": true,
+    "image": "807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261"
+  },
+  "HTTP": [
+    {
+      "method": "GET",
+      "url": "https://api.staging.booking.kortek.cloud/customer/businesses",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "url": "https://qa.booking.kortek.cloud/",
+      "status": 200
+    }
+  ],
+  "sshReadOnlyExit": 0,
+  "qaFinal": {
+    "chunk_id": "b12dfc",
+    "wall_time_seconds": 1.3060837,
+    "exit_code": 0,
+    "original_token_count": 150,
+    "output": "MainPID=1092730\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=1084553\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261 sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261 2026-10-05 00:33:16.413234697 +0000 UTC\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 sha256:7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 2026-10-04 23:27:29.590750599 +0000 UTC\n"
+  },
+  "syntheticIds": [],
+  "businessWritesIssued": false,
+  "dbQueried": false,
+  "qaChanged": false,
+  "productionAccessed": false,
+  "candidateCommitExists": false,
+  "completed": false,
+  "blocker": "QA runs pre-C0/C1/C2 releases; deploying candidate prohibited; persistent fixture scope also requires clarification"
+}

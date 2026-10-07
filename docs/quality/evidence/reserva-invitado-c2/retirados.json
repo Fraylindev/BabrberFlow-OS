@@ -1,0 +1,122 @@
+[
+  {
+    "source": "apps/web/components/customer/customer.css",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__customer.css.txt",
+    "sha256": "5fe6b1a86a21475183c71009e17501035a18c53fbdbe0f65c760b30031f9f5e8"
+  },
+  {
+    "source": "apps/web/components/customer/Customer.test.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__Customer.test.tsx.txt",
+    "sha256": "6f4bd84031b997631b0c6a4b16bd607017f1b89a9bf3ec02ed7eabb12e124ba8"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerAuth.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerAuth.tsx.txt",
+    "sha256": "1aad2ad2d29c2563ab4488b0def29aa18e90c36a1013f09bf9d1b78bdbfd99c6"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerBookingDetail.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerBookingDetail.tsx.txt",
+    "sha256": "1c72611fc816b50b2bff286d279a07ba80c36fd4772bc803af08d44c5dd9ad2b"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerBookings.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerBookings.tsx.txt",
+    "sha256": "c00b0d0a99dfa940cff120a610b75a634e281d560d0bfca0b880d02a57c66292"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerClaim.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerClaim.tsx.txt",
+    "sha256": "e3284eae08ad3756daea94fce95b783bc173775ce4fad71e9b11116b4df6b00e"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerEntryLinks.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerEntryLinks.tsx.txt",
+    "sha256": "5823cca5c005f1905e91284729634c082048b863f6ae8e944c66ce071529a17c"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerProfile.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerProfile.tsx.txt",
+    "sha256": "dff07305ca90fac9398aa11b23df8585e7f1d495906f60e6a0685eaa2df4b1d1"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerProvider.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerProvider.tsx.txt",
+    "sha256": "2705083caa7badf37f83ac4dbd89ce4d64dc1b7ed82d51748435d1bf272dae92"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerRepeatBooking.tsx.txt",
+    "sha256": "6bcfd441224aabc61c789056a323524e1d42c0aefa53281f6bf672e57b249c7d"
+  },
+  {
+    "source": "apps/web/components/customer/CustomerShell.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerShell.tsx.txt",
+    "sha256": "c80dd8e757000004a2f732cf4d73527aaf2b0a2d3b124caf6651ea87fc633ddb"
+  },
+  {
+    "source": "apps/web/lib/customer-routes.ts",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__lib__customer-routes.ts.txt",
+    "sha256": "12ba0ee29ac04c04e92f009808c3a6734d2ba957810450593c8bdb841d090957"
+  },
+  {
+    "source": "apps/web/lib/customer-ui.ts",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__lib__customer-ui.ts.txt",
+    "sha256": "c9cc2a314a79a97aea3738e1615218f5de21900958837b24d078bdf1b60a69a4"
+  },
+  {
+    "source": "apps/web/lib/customer-ui.test.ts",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__lib__customer-ui.test.ts.txt",
+    "sha256": "057077308d0edfecd21c9a0fd8a5709167d9b4ad2f1197ec3a457f7da7b3bc67"
+  },
+  {
+    "source": "apps/web/lib/queries/customer.ts",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__lib__queries__customer.ts.txt",
+    "sha256": "c842b2c67e4086cf27ec67f0c157da992136a5a20159fa01114948d9da52de71"
+  },
+  {
+    "source": "apps/web/app/[slug]/layout.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__layout.tsx.txt",
+    "sha256": "cdfc7af5b0cca9abc81f3df819923e191064eeaed1f74d95129e9c5b36bb9bfb"
+  },
+  {
+    "source": "apps/web/app/[slug]/_components/AccountStep.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]___components__AccountStep.tsx.txt",
+    "sha256": "0e9bf47223c011bd28cc29c1d1862f81ebee292d8706d41ec23472d4d39778b6"
+  },
+  {
+    "source": "apps/web/app/[slug]/_components/StepRouter.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]___components__StepRouter.tsx.txt",
+    "sha256": "bbd0feac2798d43ec9b6d490eca2b6e63cfc73f6bcac21488a88aabfd5e7fbfe"
+  },
+  {
+    "source": "apps/web/scripts/f0a-browser.mjs",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__scripts__f0a-browser.mjs.txt",
+    "sha256": "1e0dbf6c61cd0cb6f4731928136452cf3a867b3000dbd3a0d1a115ab73eeb045"
+  },
+  {
+    "source": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__cuenta__[action]__page.tsx.txt",
+    "sha256": "7a482b6505006c70509f3d406918a22a6aec74180938c2eaf4a996a2f900f7a1"
+  },
+  {
+    "source": "apps/web/app/[slug]/mis-reservas/page.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__page.tsx.txt",
+    "sha256": "043f39d859b01cf6c484cf3d51f2c64cf0f3daebd74dd7b1ca44e18c7bf7c79c"
+  },
+  {
+    "source": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__[id]__page.tsx.txt",
+    "sha256": "6c2a4929e72c3101872fb5d3798c1ada7bc50aad568fc3213afeab367c1bb27b"
+  },
+  {
+    "source": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__[id]__repetir__page.tsx.txt",
+    "sha256": "79b08fdf61efc6c617f017f381b949ca86b47c2458e5d547a4a9c448e90d0603"
+  },
+  {
+    "source": "apps/web/app/[slug]/mi-perfil/page.tsx",
+    "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mi-perfil__page.tsx.txt",
+    "sha256": "f1a29b4fcdb9c0bfb701c30ee8996dcf86fd2d1d8f7b86767a011327ee8a5db3"
+  }
+]

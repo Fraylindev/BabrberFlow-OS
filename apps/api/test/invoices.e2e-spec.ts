@@ -914,11 +914,11 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
     await requestApp(app)
       .get('/invoices')
       .set('Authorization', `Bearer ${customerToken}`)
-      .expect(403);
+      .expect(401);
     await requestApp(app)
       .get('/analytics/dashboard')
       .set('Authorization', `Bearer ${customerToken}`)
-      .expect(403);
+      .expect(401);
   });
 
   it('serializa ráfagas de emisión y cobro en un solo agregado y AuditLog', async () => {

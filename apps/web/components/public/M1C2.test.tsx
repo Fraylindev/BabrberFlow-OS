@@ -3,12 +3,11 @@ import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { api, ApiError, type PublicBookingData, type PublicBookingResult } from '@/lib/api';
 import { PublicBookingFlow, PublicBookingScreen } from './PublicBookingScreen';
-import { ACCOUNT_QA_NOTICE, CONTACT_REJECTION, UNCERTAIN_BOOKING } from '@/lib/public-booking-ui';
+import { CONTACT_REJECTION, UNCERTAIN_BOOKING } from '@/lib/public-booking-ui';
 
-const qa = vi.hoisted(() => ({ user: { id: 'owner', role: 'OWNER' }, organization: { id: 'north' } }));
+const qa = vi.hoisted(() => ({ user: { id: 'owner', role: 'OWNER' }, organization: { id: 'north' }, sessionId: 'internal-session' }));
 vi.mock('@/lib/auth-context', () => ({ useAuth: () => qa }));
-vi.mock('@/components/customer/CustomerProvider', () => ({ useCustomer: () => ({ scope: 'public-regression' }) }));
-vi.mock('@/components/customer/CustomerClaim', () => ({ CustomerClaim: () => null }));
+vi.mock('@clerk/nextjs', () => ({ useAuth: () => ({ userId: qa.user.id, sessionId: qa.sessionId }) }));
 vi.mock('@/lib/queries/media', () => ({ usePublicMedia: () => ({ data: null, isError: false, refetch: vi.fn() }) }));
 
 const startTime = '2026-10-05T14:00:00.000Z';
@@ -19,7 +18,7 @@ const data: PublicBookingData = {
   services: [{ id: 'cut', name: 'Corte QA', description: null, duration: 30, price: '500.00' }, { id: 'long', name: 'Servicio largo QA', description: null, duration: 120, price: '1000.00' }],
   professionals: [{ id: 'alex', name: 'Alex QA', bio: null, avatar: null }, { id: 'other', name: 'Otro QA', bio: null, avatar: null }],
 };
-const result: PublicBookingResult = { booking: { id: 'private', serviceId: 'cut', professionalId: 'alex', startTime, endTime: '2026-10-05T14:30:00.000Z', status: 'PENDING' }, accountCreated: false, accountCreationError: null };
+const result: PublicBookingResult = { booking: { id: 'private', serviceId: 'cut', professionalId: 'alex', startTime, endTime: '2026-10-05T14:30:00.000Z', status: 'PENDING' } };
 function mount(scoped = false) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   const view = (slug: string) => <QueryClientProvider client={client}>{scoped ? <PublicBookingScreen slug={slug} /> : <PublicBookingFlow key={slug} slug={slug} />}</QueryClientProvider>;
@@ -27,7 +26,7 @@ function mount(scoped = false) {
 }
 beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn();
-  qa.user = { id: 'owner', role: 'OWNER' }; qa.organization = { id: 'north' };
+  qa.user = { id: 'owner', role: 'OWNER' }; qa.organization = { id: 'north' }; qa.sessionId = 'internal-session';
   vi.spyOn(api, 'get').mockImplementation(async path => path.includes('availability-days')
     ? { from: '2026-10-01', to: '2026-10-31', serviceId: 'cut', availableDates: ['2026-10-05'] }
     : path.includes('availability?') ? { date: '2026-10-05', serviceId: 'cut', slots: [slot] } : data);
@@ -75,16 +74,14 @@ it('invitado registra el instante/candidato, solo una vez, sin contraseña ni zo
   expect(document.body.textContent).not.toMatch(/Visitante sintético|912|PENDING|UTC/);
   await waitFor(() => expect(screen.getByRole('heading', { name: 'Tu reserva quedó registrada' })).toHaveFocus());
 });
-it('correo/teléfono inválidos se explican antes de revisar; cuenta Clerk opcional sin password', async () => {
+it('correo/teléfono inválidos se explican; no existe un paso de cuenta', async () => {
   mount(); await reachContact();
-  expect(screen.getByText(ACCOUNT_QA_NOTICE)).toBeVisible();
-  expect(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' })).not.toBeChecked();
+  expect(screen.queryByRole('checkbox', { name: /Crear cuenta/ })).not.toBeInTheDocument();
   fillContact('invalid'); fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '123' } });
   fireEvent.click(screen.getByRole('button', { name: 'Revisar reserva' }));
   expect(screen.getByLabelText('Teléfono')).toHaveFocus();
   expect(screen.getByLabelText('Correo (opcional)')).toHaveAccessibleDescription('Revisa el correo.');
   fillContact('sintetico@example.test');
-  fireEvent.click(screen.getByRole('checkbox', { name: 'Crear cuenta para reservar más rápido' }));
   expect(screen.queryByLabelText('Crea una contraseña')).not.toBeInTheDocument();
   expect(api.post).not.toHaveBeenCalled();
 });
@@ -189,5 +186,13 @@ it('un candidato que falta en el catálogo exige revisar profesional antes de av
   fireEvent.click(await screen.findByRole('button', { name: '10:00 a. m.' }));
   expect(screen.getByRole('heading', { name: 'Elige un profesional' })).toBeVisible();
   expect(screen.getByText('Las opciones cambiaron. Vuelve a elegir profesional.')).toBeVisible();
+  expect(api.post).not.toHaveBeenCalled();
+});
+
+it('renovar identidad de sesión descarta datos aunque usuario y tenant coincidan', async () => {
+  const { rerender, view } = mount(true); await reachContact(); fillContact();
+  qa.sessionId = 'another-session'; rerender(view('north'));
+  await screen.findByRole('heading', { name: 'Selecciona el servicio' });
+  await reachContact(); expect(screen.getByLabelText('Nombre')).toHaveValue('');
   expect(api.post).not.toHaveBeenCalled();
 });

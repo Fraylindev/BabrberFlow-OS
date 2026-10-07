@@ -1,0 +1,5 @@
+{
+  "cleanup": true,
+  "stoppedByPgCtlExit": 0,
+  "noPostmasterPid": true
+}

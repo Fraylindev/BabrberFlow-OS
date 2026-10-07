@@ -1,0 +1,2311 @@
+{
+  "scope": "Fresh Git current tree census after authorized correctivo; txt archives excluded from executable selection; prior inventory retained as history",
+  "positive_claim_success_in_apps": [],
+  "archived_sources_verified": 5,
+  "findings": [
+    {
+      "path": "BACKEND_CHANGES.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 8,
+          "text": "- Se retiran GET `/customer/businesses`, GET/POST `/customer/:slug/bookings`, GET `/customer/:slug/bookings/:id`, GET/PATCH `/customer/:slug/profile` y POST `/auth/clerk/customer/claims`: 404 con/sin bearer; no proveedor ni escritura."
+        },
+        {
+          "line": 9,
+          "text": "- `accountCreated:false` y `accountCreationError:null` quedan **deprecated**, sin lógica de cuenta. Existen consumidores tipados/fixtures web; C2 retirará primero esas dependencias y, en checkpoint coordinado posterior, los campos del API tras repetir búsqueda global. No se implementa C2 aquí."
+        },
+        {
+          "line": 13,
+          "text": "## 2026-10-03 — M2 C1: correctivo D4 autorizado y publicación de un único commit"
+        },
+        {
+          "line": 15,
+          "text": "Refinamiento explícito del propietario: claim A0.6-A exitoso habilita lectura del Client sin operador. Sustituye solo la regla D4 de la entrada C1 anterior, conservada como historial. **IMPLEMENTADO / EN REVISIÓN**, único gate C1; commit/push de todo C1 autorizados solo a `origin/ai/antigravity-qa`. Sin despliegue, C2 ni producción. [Contrato actualizado](docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md), [cierre/evidencia](docs/quality/M2_C1_CIERRE.md#correctivo-d4-y-publicación-autorizada-2026-10-03)."
+        },
+        {
+          "line": 27,
+          "text": "- Seis rutas `/customer`: negocios vinculados, lista Próximas/Historial paginada 20/máximo 50, detalle propio, perfil GET/PATCH y alta PENDING autenticada. Sesión Clerk vigente + vínculo Client explícito, independiente del rol B2B; sin provisioning por lectura ni unión por contacto. Ajeno/inexistente/sin vínculo/bloqueado/inactivo: mismo `404`; `private,no-store` incluso en errores."
+        },
+        {
+          "line": 28,
+          "text": "- Migración aditiva 28: CustomerOperation, índice tenant/Client/fecha/id, bloqueo D4 por defecto hasta revisión asistida y triggers para invalidar cursor tras escrituras Booking y volver a bloquear ante cambio de identidad. No altera contrato de claim ni habilita Clients reales. Cursor cifrado/autenticado, ligado al contexto y asOf fijo, TTL 15 min; revisión cambiada devuelve `409` y exige refrescar. EXPLAIN con 50.000 reservas sintéticas usa el índice en ambas vistas."
+        },
+        {
+          "line": 30,
+          "text": "- **D8-A, enmienda separada:** POST público mantiene reserva primaria, DTO, status, colisiones D11, alta secundaria fail-open y autenticación legacy. Todos los resultados secundarios entregan `accountCreated:false,accountCreationError:null` (identidad no divulgada), incluso si el alta realmente ocurrió; no equivalen a inexistencia. Se ejecuta bcrypt también para correo existente. Comparación HTTP, fallo real secundario y login legacy pasan; no se afirma resistencia estadística de tiempos ni protección integral de otras rutas."
+        },
+        {
+          "line": 447,
+          "text": "- **Nuevo contrato:** `POST /auth/clerk/customer/claims`, protegido por `ClerkOnboardingGuard` y rate limit, acepta exclusivamente `{ bookingId: UUID, organizationSlug: string }`. El navegador no aporta User, correo, tenant ID, rol ni autoridad."
+        },
+        {
+          "line": 751,
+          "text": "\"accountCreated\": false,"
+        },
+        {
+          "line": 752,
+          "text": "\"accountCreationError\": null"
+        },
+        {
+          "line": 874,
+          "text": "- `POST /public/:slug/bookings` — si falla la creación de cuenta `CUSTOMER` por correo duplicado, **la reserva NO se aborta**: se confirma igual, y la respuesta indica `accountCreated: false, accountCreationError: \"EMAIL_ALREADY_EXISTS\"`. Decisión deliberada, no un descuido: la reserva es la acción principal de esa solicitud, la cuenta es secundaria — abortar una reserva exitosa por un conflicto no relacionado sería peor UX que informar el motivo."
+        }
+      ]
+    },
+    {
+      "path": "CHANGELOG.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 6,
+          "text": "- C1 retira rutas/customer y claims, alta secundaria legacy y campos de entrada de cuenta. Bloquea JWT CUSTOMER sin cambiar los roles internos ni Clerk. Campos de salida de cuenta deprecated hasta retirar tipos web en C2."
+        },
+        {
+          "line": 13,
+          "text": "- Se incorpora la [aprobación expresa de M2 C1](docs/quality/M2_C1_CIERRE.md#aprobación-explícita-del-backend-c1-y-bloqueo-de-producción--2026-10-03) y se mantiene [D4 aceptado solo para QA, bloqueante en Paso 8](docs/quality/M2_C1_CIERRE.md#riesgo-residual-d4-aceptado-solo-para-qa-bloqueante-en-paso-8). No resuelve el riesgo ni abre producción."
+        },
+        {
+          "line": 207,
+          "text": "- D4 CI añade gate SQL con clon aislado y contraseña efímera. Ensayo desde 26 migraciones en PostgreSQL 16 pasó, incluyendo rechazo de DELETE en Invoice y conservación del runner; contenedor retirado. YAML/Bash validados localmente. Clerk confirma nombre completo y dos sesiones propias; comprobador ajustado, API raíz 404/UUID probada. Riesgos gratuitos OCI documentados; caché horaria del inventario pendiente para ampliar margen de solicitudes."
+        }
+      ]
+    },
+    {
+      "path": "PROJECT_MASTER.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 11,
+          "text": "M2 y A0.6-B/C/D ya no son siguientes entregas del producto; las aprobaciones anteriores de cuentas y claims se conservan como antecedentes, no autorizan activación. El roadmap funcional continúa con calendario operativo día/semana y C0 financiero de transferencias/comprobantes privados para invitados; Analytics/Resumen después. Ninguna etapa futura se autoriza aquí. Retirar historial B2C elimina esa vía de exposición D4, pero no acredita resolver contactos mezclados ni deuda de paginación del panel. Producción continúa cerrada."
+        },
+        {
+          "line": 13,
+          "text": "**Resultado local P0/P1 de M2 C3 — 2026-10-03:** [informe posterior](docs/quality/M2_C3_PREFLIGHT.md#11-ejecución-autorizada-de-p0-y-p1--2026-10-03). P0 READ ONLY confirma API QA `791569b`, runtime `kortek_runtime`, destino del proyecto QA, 27 migraciones y Preview `9f04dba`; producción se contrasta exclusivamente con metadatos históricos aportados, sin consulta viva. P1 corrige localmente grants SID de CustomerOperation y matriz/gate de 37 tablas, conserva la migración 28 intacta y pasa upgrade 27→28, negativos, triggers y compatibilidad del API anterior con login restringido en desechable PG17; type-check, lint, 812 pruebas API, build y Prisma validate exit 0. Ensayo final sin dotenv y contenedor propio retirado. **IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISIÓN; único commit local autorizado, SIN PUSH.** P2 y activación no iniciados; no se infiere aprobación de P1/C3. D4 y paginación del panel siguen bloqueando Paso 8."
+        },
+        {
+          "line": 15,
+          "text": "**M2 C2 y preflight C3 — 2026-10-03:** el propietario **aprueba C2 como checkpoint local** en `d222115f7d624b5698b67a24e22486625fec22b2`, sin publicación ni despliegue. [Registro posterior y límites](docs/quality/M2_C2_CIERRE.md#aprobación-del-checkpoint-local-c2--2026-10-03). Se autorizan P0 (lecturas vivas previstas) y P1 (grants mínimos, matriz/gate y ensayos únicamente desechables) del [preflight](docs/quality/M2_C3_PREFLIGHT.md), junto con un único commit local de ese alcance y el registro de aprobación. **NO PUSH; NO P2.** No se aplican migraciones en QA, no se despliega ni se detiene/reinicia ningún servicio existente, no se cambian variables/flags/Clerk ni dependencias. Producción permanece cerrada e intacta. D4 (mezcla en una ficha) y la paginación del panel continúan bloqueando Paso 8. Las cabeceras inferiores conservan sus autorizaciones y estados históricos."
+        },
+        {
+          "line": 19,
+          "text": "M2 Cuenta de cliente, etapa 1 — 2026-10-03: **BACKEND C1 CERRADO / APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO** en `9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4` (`9f04dba`), incluidos el correctivo D4 y la enmienda separada D8-A. [Registro único de aprobación, evidencia y límites](docs/quality/M2_C1_CIERRE.md#aprobación-explícita-del-backend-c1-y-bloqueo-de-producción--2026-10-03). **D4 aceptado solo para QA y BLOQUEANTE en Paso 8**: el límite de detección y las tres vías de resolución permanecen en el [registro del riesgo](docs/quality/M2_C1_CIERRE.md#riesgo-residual-d4-aceptado-solo-para-qa-bloqueante-en-paso-8), sin ejecución nueva. Producción cerrada."
+        },
+        {
+          "line": 83,
+          "text": "D4 CI incorpora gate de privilegios sobre clon separado de la base migrada: ensayo PostgreSQL 16 desde cero pasó 26 migraciones/31 tablas, login runtime, rechazo de DELETE financiero y preservación del runner. YAML/Bash validados localmente, sin job remoto ejecutado. Riesgo gratuito OCI documentado: reclamación por inactividad y límite de solicitudes a Object Storage. Caché horaria agregada implementada/probada en el VM: edad por minuto, unas 744 llamadas de inventario por página/mes en vez de 44640; backup conserva capacidad fresca antes de subir."
+        },
+        {
+          "line": 300,
+          "text": "Security A0.6-A — Base backend B2C posterior a reserva: **CERRADO / APROBADO** por decisión explícita del propietario sobre `cbd7b8762b24ddc6802051e98ebb128d53f5f99e`. `Client.userId` es nullable y enlaza explícitamente una identidad global sin crear `Membership CUSTOMER`; una restricción única `[organizationId, userId]` permite como máximo un Client por identidad y tenant sin alterar los registros existentes. `POST /auth/clerk/customer/claims` exige sesión Clerk válida y solo acepta `bookingId` y `organizationSlug` como localizadores. La reserva y el Client se resuelven y bloquean con aislamiento tenant-scoped dentro de una transacción PostgreSQL `SERIALIZABLE`; la primera reclamación devuelve `201`, la repetición de la misma identidad `200`, y colisiones o identidades distintas reciben `409` genérico sin escrituras parciales. El correo verificado solo comprueba que la persona reclama su registro: nunca enlaza un User local preexistente por coincidencia, incluidos CUSTOMER legacy. El alta opcional crea un User Clerk sin password ni Membership y registra `LINK Client` atómicamente sin PII. El contrato público legacy, el password y el flujo actual de reserva permanecen sin cambios. La evidencia aprobada incluye Prisma validate/generate, API TypeScript/lint/build, 286 unitarias y 5 E2E PostgreSQL aisladas sobre idempotencia, concurrencia, colisión legacy, privacidad tenant y ausencia de Membership, todas con exit `0`. El clúster temporal se eliminó al terminar. A0.6-B/C/D no están implementados."
+        }
+      ]
+    },
+    {
+      "path": "apps/api/ops/rate-limit-http-drill.cjs",
+      "category": "fixture/helper activo",
+      "hits": [
+        {
+          "line": 90,
+          "text": "assert.equal(await request(3321, '/auth/clerk/customer/claims', 'POST', '127.0.0.1', 0), 404);"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260925010000_security_rate_bucket/migration.sql",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 10,
+          "text": "-- D4: the migrator grants each new table explicitly; no inherited DML."
+        }
+      ]
+    },
+    {
+      "path": "apps/api/prisma/schema.prisma",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 598,
+          "text": "// D4: solo un claim válido habilita; un cambio de vínculo revoca el acceso."
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/professionals/professional-availability.util.ts",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 249,
+          "text": "/** Frozen pre-C1 converter, used only during faithful D4-A legacy transition. */"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 15,
+          "text": "accountCreated!: false;"
+        },
+        {
+          "line": 17,
+          "text": "accountCreationError!: null;"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/guest-retirement.spec.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 101,
+          "text": "['get', '/customer/businesses'],"
+        },
+        {
+          "line": 102,
+          "text": "['get', '/customer/demo/bookings'],"
+        },
+        {
+          "line": 103,
+          "text": "['get', `/customer/demo/bookings/${id}`],"
+        },
+        {
+          "line": 104,
+          "text": "['get', '/customer/demo/profile'],"
+        },
+        {
+          "line": 105,
+          "text": "['patch', '/customer/demo/profile'],"
+        },
+        {
+          "line": 106,
+          "text": "['post', '/customer/demo/bookings'],"
+        },
+        {
+          "line": 107,
+          "text": "['post', '/auth/clerk/customer/claims'],"
+        },
+        {
+          "line": 153,
+          "text": "accountCreated: false,"
+        },
+        {
+          "line": 154,
+          "text": "accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 284,
+          "text": "expect(result.accountCreated).toBe(false);"
+        },
+        {
+          "line": 285,
+          "text": "expect(result.accountCreationError).toBeNull();"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 498,
+          "text": "accountCreated: false,"
+        },
+        {
+          "line": 499,
+          "text": "accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/whatsapp-contract.spec.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 313,
+          "text": "accountCreated: false,"
+        },
+        {
+          "line": 314,
+          "text": "accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/cms.e2e-spec.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 732,
+          "text": "// Existing published legacy tenant: preserve the frozen D4 reader."
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/customer-migration-fixture.cjs",
+      "category": "fixture/helper activo",
+      "hits": [
+        {
+          "line": 40,
+          "text": "if (!client.customerAccessBlocked || client.customerHistoryAmbiguous || client.customerBookingRevision !== 0n) throw new Error('Defaults D4/cursor incorrectos');"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/public-booking-m1.e2e-spec.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 859,
+          "text": "accountCreated: boolean;"
+        },
+        {
+          "line": 860,
+          "text": "accountCreationError: string | null;"
+        },
+        {
+          "line": 869,
+          "text": "accountCreated: result.accountCreated,"
+        },
+        {
+          "line": 870,
+          "text": "accountCreationError: result.accountCreationError,"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 2,
+          "text": "import { CustomerAuth } from '@/components/customer/CustomerAuth';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/layout.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 1,
+          "text": "import { CustomerProvider } from '@/components/customer/CustomerProvider';"
+        },
+        {
+          "line": 2,
+          "text": "import '@/components/customer/customer.css';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mi-perfil/page.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 1,
+          "text": "import { CustomerProfile } from '@/components/customer/CustomerProfile';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 1,
+          "text": "import { CustomerBookingDetail } from '@/components/customer/CustomerBookingDetail';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 1,
+          "text": "import { CustomerRepeatBooking } from '@/components/customer/CustomerRepeatBooking';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/page.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 1,
+          "text": "import { CustomerBookings } from '@/components/customer/CustomerBookings';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/booking/F0A.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 36,
+          "text": "accountCreated: false, accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/Customer.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 24,
+          "text": "vi.spyOn(api, 'get').mockImplementation(async path => path === '/customer/businesses' ? { businesses: [{ slug: 'norte', name: 'Negocio Norte', canBook: true }] } : path.endsWith('/profile') ? { name: 'Cliente A sintético', phone: '+18095550111', email: 'cliente@test.invalid', canEditContact: true } : page);"
+        },
+        {
+          "line": 44,
+          "text": "expect(vi.mocked(api.get).mock.calls.every(call => call[0] === '/customer/businesses')).toBe(true);"
+        },
+        {
+          "line": 132,
+          "text": "if (path === '/customer/businesses') return { businesses: [{ slug: 'norte', name: 'Negocio Norte', canBook: true }] };"
+        },
+        {
+          "line": 146,
+          "text": "if (path === '/customer/businesses') return { businesses: [{ slug: 'norte', name: 'Negocio Norte', canBook: true }] };"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerAuth.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 9,
+          "text": "import { customerReturn, customerRoutes } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 10,
+          "text": "import { CUSTOMER_ASSISTANCE } from '@/lib/customer-ui';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerBookingDetail.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 4,
+          "text": "import { useCustomerRead, useCustomerRevalidation, type CustomerBusiness, type CustomerDetail } from '@/lib/queries/customer';"
+        },
+        {
+          "line": 5,
+          "text": "import { customerRoutes, validBookingId } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 6,
+          "text": "import { customerError, customerStatus, CUSTOMER_UNAVAILABLE } from '@/lib/customer-ui';"
+        },
+        {
+          "line": 20,
+          "text": "const query = useCustomerRead<CustomerDetail>(`/customer/${encodeURIComponent(session.slug)}/bookings/${encodeURIComponent(id)}`, undefined, valid);"
+        },
+        {
+          "line": 21,
+          "text": "const businesses = useCustomerRead<{ businesses: CustomerBusiness[] }>('/customer/businesses', undefined, valid);"
+        },
+        {
+          "line": 38,
+          "text": "<Link href={routes.bookings}>Volver a Mis reservas</Link>"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerBookings.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 7,
+          "text": "import { customerRoutes } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 8,
+          "text": "import { CUSTOMER_ASSISTANCE, customerError, customerStatus } from '@/lib/customer-ui';"
+        },
+        {
+          "line": 9,
+          "text": "import { useCustomerRead, useCustomerRevalidation, type CustomerBusiness, type CustomerPage } from '@/lib/queries/customer';"
+        },
+        {
+          "line": 15,
+          "text": "import { CustomerClaim } from './CustomerClaim';"
+        },
+        {
+          "line": 18,
+          "text": "return <CustomerShell title=\"Mis reservas\"><BookingsContent key={view} view={view} /></CustomerShell>;"
+        },
+        {
+          "line": 31,
+          "text": "const businesses = useCustomerRead<{ businesses: CustomerBusiness[] }>('/customer/businesses');"
+        },
+        {
+          "line": 35,
+          "text": "queryFn: ({ signal, pageParam }) => api.get<CustomerPage>(`/customer/${encodeURIComponent(session.slug)}/bookings`, { view, limit: '20', ...(pageParam ? { cursor: pageParam } : {}) }, session.options(signal)),"
+        },
+        {
+          "line": 74,
+          "text": "<CustomerClaim />"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerClaim.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 6,
+          "text": "import { customerRoutes } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 7,
+          "text": "import { CUSTOMER_ASSISTANCE, customerError } from '@/lib/customer-ui';"
+        },
+        {
+          "line": 8,
+          "text": "import type { CustomerDetail } from '@/lib/queries/customer';"
+        },
+        {
+          "line": 13,
+          "text": "export function CustomerClaim({ bookingId, accountWanted = false }: { bookingId?: string; accountWanted?: boolean }) {"
+        },
+        {
+          "line": 30,
+          "text": "await api.post('/auth/clerk/customer/claims', { bookingId: id, organizationSlug: session.slug }, session.options());"
+        },
+        {
+          "line": 33,
+          "text": "await api.get<CustomerDetail>(`/customer/${encodeURIComponent(session.slug)}/bookings/${encodeURIComponent(id)}`, undefined, session.options());"
+        },
+        {
+          "line": 35,
+          "text": "setVisible(true); remember(null); setMessage('La reserva ya aparece en Mis reservas.');"
+        },
+        {
+          "line": 40,
+          "text": "setMessage('Tu reserva sigue registrada. No pudimos mostrarla en Mis reservas para esta cuenta. Contacta al negocio para que revise tu caso.');"
+        },
+        {
+          "line": 51,
+          "text": "<Button variant=\"secondary\" onClick={() => { if (id) remember({ bookingId: id, slug: session.slug }); setConfirming(true); }}>Añadir esta reserva a Mis reservas</Button>"
+        },
+        {
+          "line": 58,
+          "text": "{visible && bookingId && <Link href={routes.bookings}>Ver Mis reservas</Link>}"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerEntryLinks.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 4,
+          "text": "import { customerRoutes } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 9,
+          "text": "return <nav aria-label=\"Tu cuenta\" className=\"mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm\">{isSignedIn ? <><Link className=\"inline-flex min-h-11 items-center underline underline-offset-4\" href={routes.bookings}>Mis reservas</Link><Link className=\"inline-flex min-h-11 items-center underline underline-offset-4\" href={routes.profile}>Mi perfil</Link></> : <><Link className=\"inline-flex min-h-11 items-center underline underline-offset-4\" href={routes.create}>Crear cuenta</Link><Link className=\"inline-flex min-h-11 items-center underline underline-offset-4\" href={routes.login}>Iniciar sesión</Link></>}</nav>;"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerProfile.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 4,
+          "text": "import { commandCanRetry, customerError, profileErrors, uncertainCustomerWrite, type CustomerCommand } from '@/lib/customer-ui';"
+        },
+        {
+          "line": 5,
+          "text": "import { useCustomerRead, useCustomerRevalidation, type CustomerProfile as Profile } from '@/lib/queries/customer';"
+        },
+        {
+          "line": 14,
+          "text": "const path = `/customer/${encodeURIComponent(session.slug)}/profile`;"
+        },
+        {
+          "line": 57,
+          "text": "const response = await api.patch<Profile>(`/customer/${encodeURIComponent(session.slug)}/profile`, command.current.body, { ...session.options(), headers: { 'Idempotency-Key': command.current.key } });"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 5,
+          "text": "import { customerRoutes, validBookingId } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 6,
+          "text": "import { commandCanRetry, customerError, customerStatus, uncertainCustomerWrite, type CustomerCommand } from '@/lib/customer-ui';"
+        },
+        {
+          "line": 7,
+          "text": "import { useCustomerRead, useCustomerRevalidation, type CustomerBusiness, type CustomerDetail, type CustomerProfile } from '@/lib/queries/customer';"
+        },
+        {
+          "line": 28,
+          "text": "const detail = useCustomerRead<CustomerDetail>(`/customer/${encodeURIComponent(session.slug)}/bookings/${encodeURIComponent(id)}`, undefined, validBookingId(id));"
+        },
+        {
+          "line": 29,
+          "text": "const profile = useCustomerRead<CustomerProfile>(`/customer/${encodeURIComponent(session.slug)}/profile`);"
+        },
+        {
+          "line": 30,
+          "text": "const businesses = useCustomerRead<{ businesses: CustomerBusiness[] }>('/customer/businesses');"
+        },
+        {
+          "line": 76,
+          "text": "if (!commandCanRetry(command.current)) { setExpired(true); setMessage('El plazo para comprobar este envío terminó. Revisa Mis reservas o contacta al negocio antes de registrar otra cita.'); return; }"
+        },
+        {
+          "line": 79,
+          "text": "const response = await api.post<{ booking: CustomerDetail }>(`/customer/${encodeURIComponent(session.slug)}/bookings`, command.current.body, { ...session.options(), headers: { 'Idempotency-Key': command.current.key } });"
+        },
+        {
+          "line": 91,
+          "text": "if (!validBookingId(id)) return <><p>Esta reserva no está disponible para tu cuenta.</p><Link href={routes.bookings}>Volver a Mis reservas</Link></>;"
+        },
+        {
+          "line": 92,
+          "text": "if (result) return <><h2>Tu reserva quedó registrada</h2><p role=\"status\">{customerStatus[result.status]}</p><BusinessTime value={result.startTime} zone={result.business.timeZone} /><p>{result.service.name} · {result.professional.name}</p><Link href={`${routes.bookings}/${result.id}`}>Ver reserva</Link><Link href={routes.bookings}>Volver a Mis reservas</Link></>;"
+        },
+        {
+          "line": 95,
+          "text": "if (unavailable || !canBook || !profile.data?.canEditContact || !catalog.data || !detail.data) return <><p>Este negocio no acepta otra reserva desde tu cuenta ahora. Contacta al negocio para continuar.</p><Link href={routes.bookings}>Volver a Mis reservas</Link></>;"
+        },
+        {
+          "line": 103,
+          "text": "{uncertain || expired ? <div className=\"customer-stack\"><p>Conservamos este envío durante la visita para comprobar su resultado.</p>{!expired && <Button aria-busy={busy} disabled={busy || wait > 0} onClick={() => void register()}>{busy ? 'Comprobando tu reserva…' : 'Reintentar el mismo envío'}</Button>}<Link href={routes.bookings}>Revisar Mis reservas</Link><Link href={routes.root}>Contactar al negocio</Link></div> : <>"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerShell.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 7,
+          "text": "import { customerRoutes } from '@/lib/customer-routes';"
+        },
+        {
+          "line": 8,
+          "text": "import { CUSTOMER_ASSISTANCE, CUSTOMER_UNAVAILABLE } from '@/lib/customer-ui';"
+        },
+        {
+          "line": 9,
+          "text": "import './customer.css';"
+        },
+        {
+          "line": 27,
+          "text": "<nav aria-label=\"Cuenta de cliente\"><Link href={routes.root}>← Volver al negocio</Link>{session.signedIn && <><Link href={routes.bookings}>Mis reservas</Link><Link href={routes.profile}>Mi perfil</Link><Button variant=\"ghost\" disabled={signingOut} onClick={() => void leave()}>{signingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}</Button></>}</nav>"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 22,
+          "text": "startTime: '2026-10-05T14:00:00.000Z', endTime: '2026-10-05T14:30:00.000Z' }, accountCreated: false, accountCreationError: null });"
+        },
+        {
+          "line": 71,
+          "text": "vi.mock('@/components/customer/CustomerProvider', () => ({ useCustomer: () => ({ scope: 'public-notification-regression' }) }));"
+        },
+        {
+          "line": 72,
+          "text": "vi.mock('@/components/customer/CustomerClaim', () => ({ CustomerClaim: () => null }));"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/BookingLight.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 21,
+          "text": "render(<SuccessView result={{ booking: { id: 'private-id', serviceId: 'service', professionalId: 'alex', startTime: '2026-10-03T03:30:00Z', endTime: '2026-10-03T04:00:00Z', status: 'PENDING' }, accountCreated: false, accountCreationError: null }} organizationPhone={null} timeZone=\"America/Santo_Domingo\" serviceName=\"Corte QA\" returnHref=\"/north\" />);"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/M1C2.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 10,
+          "text": "vi.mock('@/components/customer/CustomerProvider', () => ({ useCustomer: () => ({ scope: 'public-regression' }) }));"
+        },
+        {
+          "line": 11,
+          "text": "vi.mock('@/components/customer/CustomerClaim', () => ({ CustomerClaim: () => null }));"
+        },
+        {
+          "line": 22,
+          "text": "const result: PublicBookingResult = { booking: { id: 'private', serviceId: 'cut', professionalId: 'alex', startTime, endTime: '2026-10-05T14:30:00.000Z', status: 'PENDING' }, accountCreated: false, accountCreationError: null };"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/PublicBookingScreen.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 25,
+          "text": "import { CustomerClaim } from '@/components/customer/CustomerClaim';"
+        },
+        {
+          "line": 26,
+          "text": "import { useCustomer } from '@/components/customer/CustomerProvider';"
+        },
+        {
+          "line": 212,
+          "text": "serviceName={service?.name} price={service?.price} professionalName={professional?.name} timeZone={data.timeZone} servicePhoto={servicePhoto} professionalPhoto={professionalPhoto} /><div className=\"mt-6\"><CustomerClaim bookingId={result.booking.id} accountWanted={accountWanted} /></div></div>"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/PublicDates.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 16,
+          "text": "accountCreated: false, accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/PublicMiniSite.tsx",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 13,
+          "text": "import { CustomerEntryLinks } from '@/components/customer/CustomerEntryLinks';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/WhatsAppSuccess.test.tsx",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 12,
+          "text": "accountCreated: false, accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/e2e/whatsapp-c2.spec.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 11,
+          "text": "accountCreated: false, accountCreationError: null,"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/api.ts",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 466,
+          "text": "accountCreated: boolean;"
+        },
+        {
+          "line": 467,
+          "text": "accountCreationError: 'EMAIL_ALREADY_EXISTS' | 'ACCOUNT_CREATION_FAILED' | null;"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/customer-ui.test.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 3,
+          "text": "import { customerReturn, customerRoutes, validBookingId } from './customer-routes.ts';"
+        },
+        {
+          "line": 4,
+          "text": "import { commandCanRetry, CUSTOMER_OPERATION_TTL, customerError, profileErrors, customerStatus } from './customer-ui.ts';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/customer-ui.ts",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 12,
+          "text": "if (operation === 'booking' && error.status === 409) return 'No pudimos registrar otra reserva con esta selección. Revisa Mis reservas antes de elegir otro horario.';"
+        },
+        {
+          "line": 15,
+          "text": "return operation === 'profile' ? 'No pudimos guardar tus datos. Revísalos e inténtalo de nuevo.' : operation === 'claim' ? 'No pudimos añadir la reserva a Mis reservas. La reserva sigue registrada.' : operation === 'booking' ? 'No pudimos comprobar si la reserva se registró. Reintenta este mismo envío para comprobarlo o revisa Mis reservas.' : 'No pudimos mostrar tus reservas. Inténtalo de nuevo.';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/public-booking-ui.test.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 29,
+          "text": "const text = bookingCalendar({ booking: { id: 'private-booking', serviceId: 'private-service', professionalId: 'private-professional', startTime: '2026-10-05T14:00:00Z', endTime: '2026-10-05T14:30:00Z', status: 'PENDING' }, accountCreated: false, accountCreationError: null }, 'Corte\\r\\nATTENDEE:privado@example.test;á'.repeat(4), 'local-random', new Date('2026-10-01T00:00:00Z'))!;"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/queries/customer.ts",
+      "category": "codigo productivo actual",
+      "hits": [
+        {
+          "line": 4,
+          "text": "import { useCustomer } from '@/components/customer/CustomerProvider';"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/whatsapp-link.test.ts",
+      "category": "prueba activa actual",
+      "hits": [
+        {
+          "line": 42,
+          "text": "test(\"D4 is the exact generic message, without interpolation\", () => {"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/scripts/f0a-browser.mjs",
+      "category": "fixture/helper activo",
+      "hits": [
+        {
+          "line": 50,
+          "text": "if (view === 'success') return <main className=\"mx-auto max-w-xl p-4\"><SuccessView result={{booking:{status:'PENDING'},accountCreated:false}} organizationPhone={null} serviceName=\"Servicio sintético\" professionalName=\"Profesional sintético\" date=\"2099-01-05\" time=\"23:00\" /></main>;"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/scripts/f0e-ajuste-browser.mjs",
+      "category": "fixture/helper activo",
+      "hits": [
+        {
+          "line": 123,
+          "text": "else if(url.pathname==='/public/f0e-synthetic/bookings') json={booking:{id:'synthetic-created',status:'PENDING',serviceId:'cut',professionalId:'alex',startTime:start,endTime:'2026-10-05T16:00:00Z'},accountCreated:false,accountCreationError:null};"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/scripts/f0e-browser.mjs",
+      "category": "fixture/helper activo",
+      "hits": [
+        {
+          "line": 117,
+          "text": "else if(url.pathname==='/public/f0e-synthetic/bookings') json={booking:{id:'synthetic-created',status:'PENDING',serviceId:'cut',professionalId:'alex',startTime:start,endTime:'2026-10-05T16:00:00Z'},accountCreated:false,accountCreationError:null};"
+        }
+      ]
+    },
+    {
+      "path": "docs/README.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 9,
+          "text": "Consolidación documental local — 2026-10-03, posterior a C2 `d222115`: [alcance vigente y contradicciones históricas](../PROJECT_MASTER.md). **Un commit local autorizado; sin push ni despliegue** por la migración 28 pendiente en el API QA. M2 C1 está [cerrado/aprobado](quality/M2_C1_CIERRE.md#aprobación-explícita-del-backend-c1-y-bloqueo-de-producción--2026-10-03); [D4](quality/M2_C1_CIERRE.md#riesgo-residual-d4-aceptado-solo-para-qa-bloqueante-en-paso-8) se acepta solo para QA y bloquea Paso 8. C2 mantiene su [estado local/en revisión](quality/M2_C2_CIERRE.md)."
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/TRD.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 5,
+          "text": "La reserva pública es de invitado y obtiene el tenant del slug publicado. C0/C1 retira el runtime exclusivo de `/customer/*`, claims y creación secundaria; `Client` sigue siendo contacto operativo, separado de `User`/`Membership`. Los campos/tabla/triggers/índices B2C permanecen solo por compatibilidad del ledger, sin nuevo contrato de autoservicio. No se cambia schema, migraciones, grants ni Clerk. [Contrato y límites de C1](../features/RESERVA_INVITADO_C0_C1.md). Las referencias posteriores a vínculo B2C son antecedentes de persistencia, no capacidades vigentes."
+        }
+      ]
+    },
+    {
+      "path": "docs/decisions/ADR-001-authentication-strategy.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 157,
+          "text": "- matriz OWNER/ADMIN/RECEPTIONIST/BARBER/CUSTOMER y recursos ajenos con respuesta no enumerable;"
+        },
+        {
+          "line": 257,
+          "text": "- Validación automatizada: API TypeScript, lint y build en exit `0`; 262 unitarias aprobadas y 11 integraciones opt-in omitidas; 36/36 E2E pasaron en una base `_test` propiedad de una credencial no privilegiada dentro de un clúster PostgreSQL temporal separado. La suite incluye dos líneas físicas idénticas de `x-organization-id`, matriz B2B/CUSTOMER, tenant ajeno, enlace/Membership, cambio/baja local, sesión revocada y paridad exacta con JWT legacy. Los clústeres temporales fueron eliminados al finalizar."
+        },
+        {
+          "line": 318,
+          "text": "- `POST /auth/clerk/customer/claims` usa la sesión Clerk verificada existente y acepta solo el UUID de Booking y el slug normalizado como localizadores. El backend obtiene el perfil y correo principal verificado desde Clerk; no confía en identidad, correo, rol o tenant enviados por el navegador."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/CONFIGURACION_CMS_C0_AUDITORIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 63,
+          "text": "| Slug | [organization-slug.ts](../../apps/api/src/auth/organization-slug.ts), [claims B2C](../../apps/api/src/auth/clerk-customer-claims.service.ts) | Normalización trim/minúsculas, 3–50 caracteres, letras/números y guiones intermedios. No hay lista de palabras reservadas en el normalizador. Claims usa slug + bookingId como localizadores |"
+        },
+        {
+          "line": 86,
+          "text": "| `POST /public/:slug/bookings` | [respuesta mínima](../../apps/api/src/public-booking/dto/public-booking-response.dto.ts): booking con id, serviceId, professionalId, startTime, endTime, status; accountCreated/accountCreationError. Límite 5/min/IP. Client/Booking transaccionales; cuenta CUSTOMER legacy secundaria |"
+        },
+        {
+          "line": 262,
+          "text": "| D4 | Mantener slug, horario global y zona sin edición en C1–C3 | Si se requieren, aprobar primero alcance transversal, colisiones/alias y garantías de agenda/finanzas; no agruparlos como campos simples |"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/FACTURACION_A_CONTRATO_TECNICO.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 30,
+          "text": "Lenguaje futuro para BARBER: **“Facturación de mis servicios”** o **“Cobros de mis reservas”**. No usar “ganancias”, “ingresos netos”, “comisiones”, “comprobante fiscal” ni “e-CF”."
+        },
+        {
+          "line": 418,
+          "text": "- confirmar que BARBER solo ve “Facturación de mis servicios”/“Cobros de mis reservas” y nunca Analytics global."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C0_AUDITORIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 78,
+          "text": "### D4 — Compatibilidad legacy y alta de negocios"
+        },
+        {
+          "line": 171,
+          "text": "**Recomendación: A.** El permiso nuevo de lectura global no concede lectura de bloqueos o notas de profesionales. Visitantes/CUSTOMER no leen configuración privada ni lista de conflictos; reciben solo disponibilidad y, si D14 lo aprueba, horario público mínimo. Todos los IDs/lecturas/escrituras deben quedar tenant-scoped; tenant y actor derivados del contexto. Notas privadas fuera de AuditLog, errores, métricas y cachés públicas. Auditoría con acción/revisión/IDs, siguiendo fail-open vigente sin confundirla con almacenamiento de versión del agregado."
+        },
+        {
+          "line": 202,
+          "text": "**Recomendación: A**, dependiente de D4-A. No supone una feature flag existente ni autoriza crearla ahora. Cerrar antes de ofrecer reserva pública a negocios con horarios distintos: confirmación de semana/zona, cero conflictos sin resolver, conversión y consumidores verificados, backend aprobado, editor con QA real y aprobación final del propietario. La reserva pública y EMAIL conservan sus interruptores actuales; aprobar este C0 no los activa. Una transición solo se considera final tras retirar ambigüedades del legacy con evidencia; no eternizar el fallback como configuración normal."
+        },
+        {
+          "line": 224,
+          "text": "| Seguridad/UX | Matriz OWNER/ADMIN/RECEPTIONIST/BARBER/CUSTOMER, tenant A/B, mismas respuestas seguras para ajeno/inexistente, cero motivos privados públicos/logs, revisión obsoleta recuperable, cambio A → B → A y salida con petición pendiente, teclado/lector/móvil. |"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C1_CONTRATO.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 11,
+          "text": "El único tenant productivo, según lectura directa comunicada por el propietario del **27-09-2026 16:02:54 UTC**, tiene SQL NULL en `businessHours`, zona `America/Santo_Domingo` y cero citas futuras/en curso. Su clasificación D4-A es **SIN CONFIRMAR / SQL_NULL**. 09:00–19:00 siete días es solamente el resultado técnico legacy y la propuesta de equivalencia. No prueba la elección del propietario ni habilita una apertura. No se han consultado ni escrito sus filas en C1. Cero citas futuras no demuestra ausencia de historia, bloqueos, promociones o intenciones; D9 las vuelve a comprobar al cambiar zona."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C1_EVIDENCIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 16,
+          "text": "Inventario productivo comunicado por lectura directa del propietario, 27-09-2026 16:02:54 UTC: un tenant, businessHours SQL NULL, America/Santo_Domingo, cero reservas futuras/en curso. D4-A: **SIN CONFIRMAR / SQL_NULL**, propuesta técnica legacy 09:00–19:00 repetida siete días, nunca confirmación tácita. C1 no vuelve a consultar ni modifica producción. D9 necesita un inventario de todas las dependencias al cambiar zona; el conteo comunicado no demuestra ausencia de historia."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 3,
+          "text": "2026-09-27. **BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. El propietario revisó favorablemente y aprobó la lógica C1, incluidos D6 con endTime, D4 y pruebas; pidió que el cambio estuviera en su proyecto local antes de cualquier avance."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 3,
+          "text": "**Vigencia D4:** la enmienda del propietario añadida al final de este documento sustituye exclusivamente el bloqueo general y la revisión obligatoria descritos en «D4: revisión de historial y perfil». Ese texto se conserva como historial del checkpoint anterior."
+        },
+        {
+          "line": 11,
+          "text": "Visitante/JWT legacy: `401`; dependencia de identidad no disponible: `503` cerrado. Identidad Clerk sin vínculo o sin revisión D4: negocios vacíos/`404` privado. OWNER, ADMIN, RECEPTIONIST, BARBER y CUSTOMER no adquieren privilegios B2C por su rol. El personal que también tenga Client propio habilitado usa exactamente ese vínculo, sin acceso a otros clientes. La autorización se implementa mediante Guards de sesión/presupuesto y consultas de ownership; `@Roles` B2B no sustituye el vínculo B2C. No se amplían permisos del panel."
+        },
+        {
+          "line": 13,
+          "text": "El slug es un selector no confiable. Se convierte en tenant autoritativo únicamente al resolver `Client.user.clerkUserId` y organización activa/no borrada. Consultas finales de Booking incluyen tenant, Client y User vinculado. Ajeno, inexistente, inactivo, sin vínculo y bloqueado D4 devuelven el mismo cuerpo `404`: `{\"message\":\"Información no disponible.\",\"error\":\"Not Found\",\"statusCode\":404}`."
+        },
+        {
+          "line": 19,
+          "text": "| `GET /customer/businesses` | Sesión; sin selectores de identidad | `{businesses:[{slug,name,canBook}]}`; vínculos propios habilitados y negocios activos, orden por slug |"
+        },
+        {
+          "line": 20,
+          "text": "| `GET /customer/:slug/bookings` | `view=upcoming\\|history` default upcoming; `limit` entero 1–50, default 20; `cursor` opcional ≤2048 caracteres | `{business:{slug,name,timeZone},items,nextCursor,asOf}` |"
+        },
+        {
+          "line": 21,
+          "text": "| `GET /customer/:slug/bookings/:id` | UUID válido | Detalle propio mínimo |"
+        },
+        {
+          "line": 22,
+          "text": "| `GET /customer/:slug/profile` | Sesión y vínculo habilitado | `{name,phone,email,canEditContact}` |"
+        },
+        {
+          "line": 23,
+          "text": "| `PATCH /customer/:slug/profile` | Uno o ambos de `{name?:string,phone?:string\\|null}`; `Idempotency-Key` UUID v4 opaco | Perfil propio; `200` primera mutación y replay autorizado |"
+        },
+        {
+          "line": 24,
+          "text": "| `POST /customer/:slug/bookings` | `{serviceId:UUID,professionalId:UUID,startTime:ISO_con_zona,emailNotifications?:{optedIn:boolean,noticeVersion:string}}`; `Idempotency-Key` UUID v4 opaco | `{booking:detalle}`; `201` primera alta; `200` mismo comando recuperado |"
+        },
+        {
+          "line": 40,
+          "text": "## D4: revisión de historial y perfil"
+        },
+        {
+          "line": 60,
+          "text": "El comando canónico contiene IDs de recursos, instante normalizado y consentimiento aprobado u omisión. Misma clave/contexto y comando: relee detalle con ownership actual y `200`, incluso para conocer una reserva ya creada después de retirar catálogo; no ejecuta una nueva alta. Distinto comando: `409` neutro. Perdido vínculo, bloqueado D4 o negocio inactivo: `404` antes de leer recibo. Otros actores/tenants tienen espacio de claves independiente."
+        },
+        {
+          "line": 76,
+          "text": "Todos los resultados secundarios —correo nuevo, existente, colisión de unicidad y fallo interno— devuelven `accountCreated:false,accountCreationError:null`. Estos campos ahora representan **resultado de identidad no divulgado**, no prueba de ausencia de cuenta ni confirmación de Clerk. Neutralizar solo `EMAIL_ALREADY_EXISTS` dejando true/false distinguibles habría conservado la enumeración. Bcrypt se ejecuta también antes de comprobar existencia para retirar la diferencia inmediata de coste; no se afirma indistinguibilidad estadística de tiempos o protección integral de todas las rutas legacy."
+        },
+        {
+          "line": 86,
+          "text": "La [inversa SQL](../../apps/api/prisma/rollback/customer-stage-one.disposable.sql) se ensayó únicamente en DB desechable: conserva User/Client/Booking pero elimina recibos, bloqueo/revisión, triggers e índice; diff contra schema anterior vacío. No es recomendación de operación real ni autorización de rollback destructivo. Su ledger de migraciones se desecha con el clúster; no debe aplicarse en una base operativa ni marcar migraciones a mano. [Evidencia y límites](../quality/M2_C1_CIERRE.md)."
+        },
+        {
+          "line": 87,
+          "text": "## 2026-10-03 — Correctivo D4 autorizado: claim habilita lectura"
+        },
+        {
+          "line": 89,
+          "text": "La decisión posterior del propietario refina D4-A: un claim explícito válido habilita el Client sin operador. Prevalece esta sección sobre el bloqueo general anterior; conserva íntegros los demás contratos C1 y D8. Publicación del código autorizada exclusivamente en `ai/antigravity-qa`; C1 sigue en revisión, C2 y producción cerradas."
+        },
+        {
+          "line": 101,
+          "text": "La migración 28 todavía no publicada añade `customerHistoryAmbiguous` y amplía el trigger; la inversa desechable retira también esa columna. Se repitieron 0→28, 27→28 y reversa con preservación de filas. [HTTP antes/después](../quality/evidence/m2-c1/d4-http-antes-despues.json), [validaciones actuales](../quality/evidence/m2-c1/d4-validation.json) y [cierre actualizado](../quality/M2_C1_CIERRE.md#correctivo-d4-y-publicación-autorizada-2026-10-03)."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/MEDIOS_PROMOCIONES_C0_AUDITORIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 76,
+          "text": "### D4 — Borrador, preview y publicación de medios"
+        },
+        {
+          "line": 110,
+          "text": "**Recomendación: A**. Un actor sin permiso no recibe URL de staging ni firma. BARBER conserva exclusivamente la edición de su perfil propia A1; esa ruta no autoriza editar o cargar galería, promoción, hero o foto de servicio. RECEPTIONIST/CUSTOMER no entran al editor. Público anónimo solo ve la proyección publicada/vigente sin `organizationId`, actor, estado de moderación ni URLs de staging. Un recurso ajeno y uno inexistente no revelan diferencias sensibles."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/MEDIOS_PROMOCIONES_C1_CONTRATO.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 12,
+          "text": "| D4 | Revisión/publicación independiente por imagen, únicamente después de moderación aprobada. El orden visible de la galería tiene revisión y publicación separadas. |"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/NOTIFICACIONES_C0_AUDITORIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 90,
+          "text": "### D4 — Proveedor y remitente de correo"
+        },
+        {
+          "line": 94,
+          "text": "El propietario aportará la dirección `From` y el dominio reales antes de activar el canal en C3. No se verificó ninguna cuenta, dominio ni dirección autorizada; queda también concretar el buzón `Reply-To` del remitente central, sin inventar direcciones. Esta información pendiente es un gate de activación C3, no motivo para volver a solicitarla ahora ni para reabrir D4. Sin verificación no se activa el canal. `Organization.email` no prueba titularidad ni autorización de envío y `Client.email` nunca es remitente. Sin CC/BCC por defecto ni credenciales en CMS/frontend."
+        },
+        {
+          "line": 224,
+          "text": "Selección explícita registrada: **D1-A; D2-A + reprogramación + COMPLETED; D3-A en las cuatro filas solo para segunda entrega; D4-A; D5-A en las tres filas con cinco textos; D6-A en fuente/ausencia; D7-A; D8-A en las cinco filas; D9-A en arquitectura/plazo; D10-A en vigencia/retención.** NO_SHOW sin notificación al cliente. La política de recordatorios de §4.3 queda para su futura entrega; la invalidación sigue siendo requisito documentado."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/NOTIFICACIONES_C1_CONTRATO.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 58,
+          "text": "BARBER no tiene historial, reintento ni edición de preferencia, aunque la reserva sea propia y tenga perfil válido. No se ofrece preparación WhatsApp, endpoint de configuración de remitente, preview ni editor de plantillas; por D4/D5/D8 son inexistentes en C1 para todos los roles. La operación técnica de plataforma queda fuera del dashboard."
+        },
+        {
+          "line": 116,
+          "text": "| §5.2 | Dos tenants; OWNER/ADMIN/RECEPTIONIST/BARBER/CUSTOMER; propio/ajeno/vínculo ausente; Membership revocada; historial/configuración/reintento/preferencia; rutas excluidas inexistentes | HTTP con guards reales y BD |"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/NOTIFICACIONES_C2_FRONTEND.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 45,
+          "text": "`NotificationsView.test.tsx`: denegación BARBER/CUSTOMER sin consultas, Recepción por reserva sin reintento, payload de preferencia con versión y sin autoridad cliente, retirada sin correo, conflicto seguro/recuperación sin repetir escritura, confirmación y doble clic de reintento, paginación real de consulta, ocultación de filas ante error, aborto de mutación A → B → A y cambio de rol/usuario. El test de error se corrigió para esperar la actualización asíncrona de React Query antes de afirmar el resultado."
+        },
+        {
+          "line": 87,
+          "text": "| D4/D5: remitente central y textos fijos | Sin configuración de remitente/editor; C2 consume únicamente proyección C1, no crea mensajes |"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_C0_C1.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 27,
+          "text": "Búsqueda previa global: `rg -n 'accountCreated|accountCreationError' apps .github`. Consumidor tipado vigente: `apps/web/lib/api.ts`, PublicBookingResult, usado por el POST público y éxito/calendario. Fixtures: tests públicos, notificaciones, WhatsApp y scripts f0a/f0e. No se encontró una lectura funcional de ambos campos en componentes productivos; hay dependencia de forma/tipo y expectativas de tests. La evidencia es del repositorio, no un inventario de consumidores externos."
+        },
+        {
+          "line": 29,
+          "text": "Por compatibilidad durante C1 sin C2, PublicBookingResponseDto conserva **deprecated** `accountCreated:false` y `accountCreationError:null`, tipados como constantes, sin intento de creación ni lógica asociada. No reflejan el estado de identidades históricas."
+        },
+        {
+          "line": 37,
+          "text": "| GET | `/customer/businesses` |"
+        },
+        {
+          "line": 38,
+          "text": "| GET | `/customer/:slug/bookings` |"
+        },
+        {
+          "line": 39,
+          "text": "| POST | `/customer/:slug/bookings` |"
+        },
+        {
+          "line": 40,
+          "text": "| GET | `/customer/:slug/bookings/:id` |"
+        },
+        {
+          "line": 41,
+          "text": "| GET | `/customer/:slug/profile` |"
+        },
+        {
+          "line": 42,
+          "text": "| PATCH | `/customer/:slug/profile` |"
+        },
+        {
+          "line": 43,
+          "text": "| POST | `/auth/clerk/customer/claims` |"
+        },
+        {
+          "line": 56,
+          "text": "- CustomerModule solo se registraba en AppModule. Su controller/session guard/budget guard/service/DTO/crypto no tenían consumidores internos fuera del módulo y tests propios; retirados."
+        },
+        {
+          "line": 57,
+          "text": "- ClerkCustomerClaimsController/Service solo se registraban en AuthModule, con DTO/tests exclusivos; retirados."
+        },
+        {
+          "line": 69,
+          "text": "Retirar el historial público corta la vía de exposición D4; no demuestra que Client históricos estén libres de mezcla. Esa integridad y la paginación de GET /bookings conservan revisión independiente antes de producción."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 9,
+          "text": "**NO PASA:** no es verdad que ninguna prueba activa espere un claim exitoso. `apps/web/components/customer/Customer.test.tsx:92` y `:101` siguen activos en Vitest; ambos usan `api.post` mockResolvedValue `{ claimed:true }`. El primero exige que la reserva aparezca en Mis reservas después del claim; el segundo presupone claim exitoso seguido de cuarentena/404. `vitest.config.ts` incluye componentes/**/*.test.tsx; `pnpm --filter web test` los selecciona y quality.yml ejecuta ese comando. No se ejecutó Vitest en esta auditoría: la actividad/expectativa se demuestra por código y configuración actuales, no por un resultado supuesto."
+        },
+        {
+          "line": 11,
+          "text": "**C2 es bloqueante para integración:** CustomerClaim, registro/login/recuperación, CustomerProvider, enlaces, perfil, Mis reservas y repetición siguen en la web actual y consumen APIs retiradas. Un mock positivo puede pasar sin que el backend exista. No declarar integrado, candidato publicable ni listo para QA."
+        },
+        {
+          "line": 17,
+          "text": "Se censaron **845 archivos de texto existentes** del índice Git y no ignorados, incluidos archivos nuevos; la búsqueda inicial encontró 111 archivos y la ampliación dirigida de dependencias web llega a 116. Son coincidencias textuales, no 116 componentes B2C: D4 también identifica decisiones de otros módulos. Se separaron archivos eliminados mediante existencia física, no mediante contenido de patch. Se inspeccionaron además helpers/copias ignorados en .tmp. Se excluyeron dependencias, .git, .next y mapas/archivos binarios; no se leen secretos/env. Los build artefacts no se usan como verdad de fuente."
+        },
+        {
+          "line": 23,
+          "text": "| Código productivo actual | Backend: únicamente campos deprecated constantes y persistencia de compatibilidad. Frontend: portal B2C y CustomerClaim **todavía activos**; provider del layout del slug, rutas cuenta/mis-reservas/mi-perfil, API /customer y post claims. No se trata como historia. |"
+        },
+        {
+          "line": 27,
+          "text": "| Evidencia histórica | JSON D4 antes/después, ejecutores .py.txt y JSON de P2/P3, patch del checkpoint anterior y snapshots .tmp: conservan reclamaciones antiguas. Código dentro de evidencia/diff no es código productivo actual. |"
+        },
+        {
+          "line": 35,
+          "text": "| `apps/web/components/customer/Customer.test.tsx:92,101` | Vitest vigente; mocks del cliente HTTP actual | **Pruebas activas positivas**. Retirar/reemplazar antes de C2; no ocultarlas mediante skip. |"
+        },
+        {
+          "line": 36,
+          "text": "| `apps/web/components/customer/CustomerClaim.tsx:29` | UI productiva; POST claims seguido de GET detalle /customer | **Código productivo actual** pendiente de C2. No hay backend que atienda el contrato. |"
+        },
+        {
+          "line": 38,
+          "text": "| `apps/api/test/customer-runtime-compat.cjs:123` | Carga P1_PREVIOUS_API; caller fija snapshot 791569b110f9fd59cb10e6d248546bdae3996e14 | **Helper ejecutable de compatibilidad histórica**, no positivo del AppModule actual ni suite Jest activa. Segregar/rotular como regresión del baseline histórico antes de C2; conservar prueba de compatibilidad de datos. |"
+        },
+        {
+          "line": 39,
+          "text": "| `apps/api/test/customer-code-rollback.cjs:30` | Carga .tmp/m2-c1/baseline/apps/api; baseline 61ec6677b448a2ebbab4c32298b9246347ec1a10 | **Helper ejecutable de rollback histórico**, no positivo actual. No borrarlo como supuesto endpoint vigente; segregarlo como histórico en correctivo autorizado. |"
+        },
+        {
+          "line": 40,
+          "text": "| `.tmp/m2-d4/probe.cjs:28` | Probe manual ignorado que importa fuentes root actuales, llama claim y registra statuses | **Helper manual conservado**, no seleccionado por CI/Jest; no tiene assertion de claim 200, pero no representa un caso funcional vigente. No ejecutado ni modificado. Marcar/segregar como probe histórico antes de C2. |"
+        },
+        {
+          "line": 43,
+          "text": "No se localizaron los nombres literales claimnorth/claimf en fuentes raíz, evidencia preexistente ni búsqueda adicional .tmp. Sí hay otros helpers de claim arriba; la ausencia de esos dos nombres no acredita ausencia de claims. Las menciones nuevas de los nombres en este informe/patrón de búsqueda son metadatos de auditoría."
+        },
+        {
+          "line": 45,
+          "text": "### D4 y falsos positivos"
+        },
+        {
+          "line": 47,
+          "text": "D4 no aparece exclusivamente en el patch: permanece en comentarios del schema conservado, documentación/evidencia y el caso activo de cuarentena de Customer.test, aunque ese test no use el literal D4. En .tmp también existe el probe. No se declara todo histórico. En cambio, las implementaciones eliminadas y sus expectativas recuperadas desde líneas '-' del patch son **referencias eliminadas/historia**, no pruebas activas."
+        },
+        {
+          "line": 49,
+          "text": "Las claims de sesión JWT en ClerkSessionVerifierService son verificación interna compartida; claimed de workers es adquisición de trabajo y MIME claim es validación de medios. No son reclamaciones B2C. D4 en professional-availability/security-rate es otra decisión. El comentario auth.service.ts sobre CUSTOMER cambiando password quedó obsoleto frente al rechazo JwtStrategy: se registra para corregir después, sin alterar código ahora."
+        },
+        {
+          "line": 53,
+          "text": "AppModule no importa ni registra CustomerModule. AuthModule no importa/registra ClerkCustomerClaimsController/Service y conserva onboarding, bootstrap, me, invitaciones y guards compartidos. Búsqueda de registros/clases retiradas en src productivo sin tests: cero coincidencias relevantes. La comprobación HTTP actual prueba GET businesses, GET/POST bookings, GET detalle, GET/PATCH profile y POST claims con 404; no usa una API histórica."
+        },
+        {
+          "line": 55,
+          "text": "La web actual monta CustomerProvider en apps/web/app/[slug]/layout.tsx, CustomerEntryLinks en PublicMiniSite, CustomerClaim al éxito en PublicBookingScreen y usa /customer desde CustomerBookings, CustomerProfile, CustomerBookingDetail y CustomerRepeatBooking. CustomerAuth usa registro/entrada Clerk desde el portal. proxy.ts mantiene matchers de cuenta/mis-reservas/mi-perfil. Ninguno se elimina en esta tarea."
+        },
+        {
+          "line": 59,
+          "text": "accountCreated=false y accountCreationError=null permanecen solo como contrato deprecated, sin lógica de alta. PublicBookingResult sigue exigiendo ambos campos y existen fixtures/assertions actuales. No son indicadores de existencia/creación de identidad."
+        },
+        {
+          "line": 124,
+          "text": "- Búsqueda principal `rg -n -i 'claimnorth|claimf|customer.?claims|customer.?account|customer.?login|Mis reservas|/customer|accountCreated|accountCreationError|portal B2C|ClerkCustomerClaims|CustomerModule' apps .github` más inventario Git/Python: coincidencias clasificadas en JSON, archivos eliminados separados por existencia."
+        },
+        {
+          "line": 127,
+          "text": "- `rg -n 'CustomerModule|ClerkCustomerClaims' apps/api/src/app.module.ts apps/api/src/auth/auth.module.ts` y búsqueda de controllers/clases retiradas en src: sin registro, exit 1 normal de rg. Relectura completa de arrays imports/controllers/providers efectuada."
+        },
+        {
+          "line": 128,
+          "text": "- `rg --no-ignore --hidden ... .tmp` excluyendo node_modules/env/mapas: copias históricas y probe manual arriba; no se ejecutan. Literal claimnorth/claimf sin hallazgos preexistentes; no confundir un exit 1 de ausencia con fallo de auditoría."
+        },
+        {
+          "line": 138,
+          "text": "2. Segregar explícitamente los dos helpers de rollback/compatibilidad y el probe D4 como historial ejecutable para no usarlos como aprobación del MVP actual; requieren autorización porque cambiar archivos ejecutables está prohibido en esta tarea."
+        },
+        {
+          "line": 141,
+          "text": "5. D4 histórico no acredita limpieza de fichas Client mezcladas; esa integridad y la paginación del panel mantienen revisión propia."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/WHATSAPP_C0_AUDITORIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 72,
+          "text": "### D4. Dirección y contenido del mensaje"
+        },
+        {
+          "line": 105,
+          "text": "La combinación recomendada es **D1-A, D2-A, D3-A, D4-A, D5-A, D6-A**. El contrato siguiente describe esa combinación; no afirma aprobación ni cubre automáticamente las alternativas B."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/WHATSAPP_C1_CONTRATO.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 22,
+          "text": "| D4-A | «Hola. Acabo de registrar una reserva en su página y quisiera consultar con ustedes.» | Constante C2, sin interpolación de datos |"
+        },
+        {
+          "line": 67,
+          "text": "accountCreated: boolean,"
+        },
+        {
+          "line": 68,
+          "text": "accountCreationError: string | null"
+        },
+        {
+          "line": 98,
+          "text": "4. Retirar únicamente el `+` del resultado validado. Construir `https://wa.me/<dígitos>?text=<encodeURIComponent(texto fijo D4)>`. Solo un parámetro `text`, sin fragmento, IDs, nombre del negocio/cliente, teléfono del cliente, servicio, fecha, hora, correo, notas ni secretos. El número público del negocio es la única información de contacto que aparece en la URL."
+        }
+      ]
+    },
+    {
+      "path": "docs/features/WHATSAPP_C2_FRONTEND.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 22,
+          "text": "| D4 | Mensaje exacto C1 constante, codificado una vez; único parámetro `text`, sin fragmento ni datos interpolados |"
+        }
+      ]
+    },
+    {
+      "path": "docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 481,
+          "text": "Decisión particular sobre la reserva pública: si falla la creación de cuenta `CUSTOMER` por correo duplicado, la reserva **no se aborta** — se confirma igual y se reporta `accountCreated: false, accountCreationError: \"EMAIL_ALREADY_EXISTS\"`. Un 409 ahí habría tumbado una reserva exitosa por un conflicto en una funcionalidad secundaria del mismo request."
+        }
+      ]
+    },
+    {
+      "path": "docs/history/reserva-invitado/Customer.test.tsx.txt",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 7,
+          "text": "import { CustomerClaim } from './CustomerClaim';"
+        },
+        {
+          "line": 25,
+          "text": "vi.spyOn(api, 'get').mockImplementation(async path => path === '/customer/businesses' ? { businesses: [{ slug: 'norte', name: 'Negocio Norte', canBook: true }] } : path.endsWith('/profile') ? { name: 'Cliente A sintético', phone: '+18095550111', email: 'cliente@test.invalid', canEditContact: true } : page);"
+        },
+        {
+          "line": 45,
+          "text": "expect(vi.mocked(api.get).mock.calls.every(call => call[0] === '/customer/businesses')).toBe(true);"
+        },
+        {
+          "line": 94,
+          "text": "mount(<CustomerClaim bookingId={id} />); expect(api.post).not.toHaveBeenCalled();"
+        },
+        {
+          "line": 95,
+          "text": "fireEvent.click(screen.getByRole('button', { name: 'Añadir esta reserva a Mis reservas' }));"
+        },
+        {
+          "line": 98,
+          "text": "await screen.findByText('La reserva ya aparece en Mis reservas.');"
+        },
+        {
+          "line": 99,
+          "text": "expect(api.post).toHaveBeenCalledWith('/auth/clerk/customer/claims', { bookingId: id, organizationSlug: 'norte' }, expect.objectContaining({ cache: 'no-store' }));"
+        },
+        {
+          "line": 103,
+          "text": "mount(<CustomerClaim bookingId={id} />); fireEvent.click(screen.getByRole('button', { name: 'Añadir esta reserva a Mis reservas' })); fireEvent.click(screen.getByRole('button', { name: 'Añadir reserva' }));"
+        },
+        {
+          "line": 104,
+          "text": "await screen.findByText('Tu reserva sigue registrada. No pudimos mostrarla en Mis reservas para esta cuenta. Contacta al negocio para que revise tu caso.');"
+        },
+        {
+          "line": 105,
+          "text": "expect(screen.queryByText('La reserva ya aparece en Mis reservas.')).toBeNull(); expect(document.body.textContent).not.toMatch(/cuarentena|private/);"
+        },
+        {
+          "line": 148,
+          "text": "if (path === '/customer/businesses') return { businesses: [{ slug: 'norte', name: 'Negocio Norte', canBook: true }] };"
+        },
+        {
+          "line": 162,
+          "text": "if (path === '/customer/businesses') return { businesses: [{ slug: 'norte', name: 'Negocio Norte', canBook: true }] };"
+        }
+      ]
+    },
+    {
+      "path": "docs/history/reserva-invitado/README.md",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 6,
+          "text": "- `helpers/customer-runtime-grants-drill.cjs.txt`: orquestador P1 histórico; se archiva junto con su helper dependiente para evitar un comando roto."
+        },
+        {
+          "line": 7,
+          "text": "- `helpers/customer-runtime-compat.cjs.txt`: API histórica 791569b sobre schema aditivo."
+        },
+        {
+          "line": 8,
+          "text": "- `helpers/customer-code-rollback.cjs.txt`: baseline histórico 61ec6677; conserva verificaciones de datos/compatibilidad."
+        },
+        {
+          "line": 9,
+          "text": "- `helpers/m2-d4-probe.cjs.txt`: probe manual antes ignorado en .tmp; ya no queda como ejecutor raíz conservado."
+        }
+      ]
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/customer-code-rollback.cjs.txt",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 30,
+          "text": "await request(app.getHttpServer()).post('/auth/clerk/customer/claims').auth('synthetic-rollback', { type: 'bearer' }).send({ bookingId: ids.booking, organizationSlug: ids.organization }).expect(200, { claimed: true });"
+        },
+        {
+          "line": 36,
+          "text": "await request(app.getHttpServer()).get('/customer/businesses').expect(404);"
+        }
+      ]
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/customer-runtime-compat.cjs.txt",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 123,
+          "text": ".post('/auth/clerk/customer/claims')"
+        },
+        {
+          "line": 153,
+          "text": "await request(app.getHttpServer()).get('/customer/businesses').expect(404);"
+        }
+      ]
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/customer-runtime-grants-drill.cjs.txt",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 101,
+          "text": "'apps/api/ops/customer-stage-one-runtime-grants.sql',"
+        },
+        {
+          "line": 102,
+          "text": "'apps/api/test/customer-runtime-grants-drill.cjs',"
+        },
+        {
+          "line": 103,
+          "text": "'apps/api/test/customer-runtime-compat.cjs',"
+        },
+        {
+          "line": 104,
+          "text": "'apps/api/test/customer-no-dotenv.cjs',"
+        },
+        {
+          "line": 186,
+          "text": "NODE_OPTIONS: `--require ${path.join(root, 'apps/api/test/customer-no-dotenv.cjs')}`,"
+        },
+        {
+          "line": 341,
+          "text": "path.join(current, 'apps/api/ops/customer-stage-one-runtime-grants.sql'),"
+        },
+        {
+          "line": 348,
+          "text": "path.join(current, 'apps/api/ops/customer-stage-one-runtime-grants.sql'),"
+        },
+        {
+          "line": 578,
+          "text": "path.join(current, 'apps/api/test/customer-runtime-compat.cjs'),"
+        }
+      ]
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/m2-d4-probe.cjs.txt",
+      "category": "evidencia historica no ejecutable",
+      "hits": [
+        {
+          "line": 17,
+          "text": "await db.organization.create({data:{id,name:'Ensayo D4',slug:id,email,businessSchedule:{create:{state:'CONFIRMED',zoneConfirmed:true,days:{create:Array.from({length:7},(_,dayOfWeek)=>({dayOfWeek,windows:{create:{startMinute:540,endMinute:1080}}}))}}}}});"
+        },
+        {
+          "line": 18,
+          "text": "await db.cmsPage.update({where:{organizationId:id},data:{isPublished:true,publishedRevision:0,publishedSnapshot:{publicName:'Ensayo D4',description:null,phone:null,address:null,googleMapsUrl:null}}});"
+        },
+        {
+          "line": 27,
+          "text": "const claim = await request(server).post('/auth/clerk/customer/claims').auth(actor,{type:'bearer'}).send({bookingId:guest.body.booking.id,organizationSlug:id});"
+        },
+        {
+          "line": 28,
+          "text": "const list = await request(server).get(`/customer/${id}/bookings`).auth(actor,{type:'bearer'});"
+        },
+        {
+          "line": 31,
+          "text": "writeFileSync(`.tmp/m2-d4/${result.phase}-http.json`,JSON.stringify(result,null,2)+'\\n');"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/AUDITORIA_DISENO_UX_MARKETING_2026_09_29.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 49,
+          "text": "| **Cuenta de cliente y “Mis reservas”** | La casilla “Crear cuenta para reservar más rápido” existe ([AccountStep](../../apps/web/app/[slug]/_components/AccountStep.tsx)), pero el éxito actual no ofrece acceso continuo. La cuenta **se mantiene** por decisión del dueño: necesita entrada visible, recuperación, lista de reservas, detalle y acciones futuras según política aprobada, sin prometer autoservicio todavía inexistente. No convertir la casilla en venta de una función que aún no funciona. | **Vacío inicial:** “Aún no tienes reservas en este negocio” + “Reservar”. **Reserva no vinculada:** explicación segura y vía autorizada de recuperación, sin revelar existencia por correo. **Carga/error:** lista estable y reintento. **Éxito:** acceso claro después de crear cuenta; si crear cuenta falla tras reservar, distinguir ambos resultados. Formularios con contraseña accesible a gestores, pegado y autocorrección apropiados; no exigir memoria artificial. En móvil, lista por fecha/estado y acciones distinguibles. |"
+        },
+        {
+          "line": 84,
+          "text": "| H22 | Cuenta visible y útil, con entrada, recuperación y “Mis reservas”; promesa honesta. |"
+        },
+        {
+          "line": 99,
+          "text": "| Cuenta | “Crea una cuenta para volver a tus reservas” **cuando** “Mis reservas” funcione · “Crear cuenta” como opción visible; “Continuar sin cuenta” solo si el contrato permite reserva invitada. | “La contraseña debe tener al menos 8 caracteres.”; para políticas de identidad más estrictas, mostrar la regla vigente. Cuenta no creada tras reserva: “Tu reserva quedó registrada, pero no pudimos crear la cuenta. Puedes intentarlo desde Acceder.” Solo cuando exista esa ruta y recuperación aprobada. |"
+        },
+        {
+          "line": 102,
+          "text": "| Éxito público `PENDING` | “Tu reserva quedó registrada” · “El negocio debe revisarla. Te mostraremos su estado en Mis reservas cuando tu cuenta esté disponible.” La segunda oración solo tras B2C aprobado; antes, explicar únicamente el canal real de seguimiento. CTA: “Ver página del negocio” o “Ver mis reservas” si existe acceso. | “El comprobante está pendiente de revisión” si aplica. No afirmar que el negocio confirmó, cobró, envió correo o recibió WhatsApp sin resultado real. |"
+        },
+        {
+          "line": 120,
+          "text": "Definir un embudo por `tenant` y sesión seudónima: visita de página pública → inicio de reserva → servicio elegido → fecha consultada → slot elegido → revisión → envío → reserva creada; medir abandono por paso, error de disponibilidad y reintento. Añadir proporción de reservas con cuenta optada, creación de cuenta exitosa, primer acceso a “Mis reservas” y segunda reserva, distinguiendo opt-in de capacidad completada. Para transferencia, medir selección, carga completada, revisión y tiempo a decisión; **carga ≠ cobro**. Medir tarea operativa: tiempo y errores para hallar una reserva, reagendar y completar, además de recuperación de sesión. Segmentar por móvil/escritorio, navegador, negocio y rol cuando haya volumen y base legal; publicar solo agregados, sin correo, teléfono, nombre, archivo, notas ni texto libre en eventos. Fijar línea base y consentimiento/retención antes de establecer metas numéricas. No se midieron tasas reales en esta auditoría."
+        },
+        {
+          "line": 158,
+          "text": "| **F1** | Tratar confirmación como pantalla completa y cuenta B2C como recorrido de retorno, no solo como copy o formulario de alta. Su salida requiere que una persona elija fecha/hora en un calendario con hora compacta, registre la reserva `PENDING`, entienda qué sigue, acceda a “Mis reservas” y recupere acceso. |"
+        },
+        {
+          "line": 186,
+          "text": "| Cuenta obligatoria para promesa comercial frente a continuidad B2C incompleta | Se conserva el control visible; el beneficio de “Mis reservas” solo se publica cuando A0.6-B/C/D y su QA lo hagan real. No se une una cuenta por coincidencia de correo. |"
+        },
+        {
+          "line": 199,
+          "text": "| Cuenta como beneficio público | Mantenerla visible y completar acceso/recuperación/“Mis reservas” antes de publicitar ese beneficio; mientras tanto, describir únicamente el resultado real de crear cuenta. | Prometer solo “reservar más rápido” con el flujo actual deja la promesa sin continuidad comprobable y agrava H22. |"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/AUDITORIA_HALLAZGOS_ROADMAP_MVP_2026_09_29.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 20,
+          "text": "- [Security A0.6-A](../../PROJECT_MASTER.md): existe el vínculo `Client.userId` y `POST /auth/clerk/customer/claims`; A0.6-B/C/D de entrada pública, historial y autoservicio no están hechos. Nunca se enlaza identidad global por coincidencia de correo. La cuenta con contraseña legacy aún existe como rollback; retirarla corresponde a A0.7, luego de continuidad B2C."
+        },
+        {
+          "line": 49,
+          "text": "| H22 cuenta prometida sin continuidad, login/registro públicos (§4, l. 1627–1629 y requisito adicional) | [API pública](../../apps/api/src/public-booking/public-booking.service.ts) crea Booking y luego intenta cuenta legacy; devuelve `accountCreated/accountCreationError`. [SuccessView](../../apps/web/app/[slug]/_components/SuccessView.tsx) solo informa éxito de cuenta y no ofrece ruta de acceso; [A0.6-A](../../apps/api/src/auth/clerk-customer-claims.controller.ts) solo reclama una reserva con Clerk. No hay “Mis reservas” B2C ni acceso público en mini-sitio. | Incumplimiento de promesa UX **A**. La cuenta se **mantiene**, como exige el dueño. A0.6-B/C/D debe enlazar identidad sin unión por email y definir una cuenta útil; no ocultar checkbox ni anunciar autoservicio inexistente. El error `accountCreationError` no se presenta en éxito, riesgo adicional de cuenta fallida después de reserva exitosa. |"
+        },
+        {
+          "line": 62,
+          "text": "| Cuenta B2C (H20, H22) | A0.6-A `Client.userId` y claims Clerk. Definir registro/entrada, reclamación, historial por tenant, reprogramación/cancelación con política de tiempo y acceso a reservas previas; reconciliar legacy. | Clerk, `User` global, `Client` por tenant, Bookings, correo verificado, revocación, enumeración, PII. Login por email sin prueba de posesión permitiría secuestrar reservas; “Mis reservas” necesita filtro de identidad/tenant y autorización backend. Alta de cuenta fallida no debe dejar falsa promesa ni perder la reserva. |"
+        },
+        {
+          "line": 75,
+          "text": "| **F1 — reserva y cuenta útiles** | Reserva en ruta propia con regreso claro al mini-sitio, fotos elegibles y fecha/slot fáciles; pantalla completa de confirmación/éxito; cuenta mantenida y entrada Clerk con reclamación segura, “Mis reservas”, detalle y políticas de cancelar/reprogramar o explicación de lo no permitido. | Depende de A0.6-A y de F0; A0.6-B/C/D requieren contrato, backend aprobado, web y QA. No usar la cuenta legacy como promesa de autoservicio sin continuidad. |"
+        },
+        {
+          "line": 84,
+          "text": "**Entra:** F0 completo; negocio/usuarios y permisos actuales; servicios/profesionales, semana/cierres confirmados y reservas públicas/internas; calendario operativo día/semana accesible; flujo público separado con fotos aprobadas, fechas claras y pantalla de confirmación rediseñada; cuenta B2C funcional (login, recuperación, “Mis reservas”, repetir reserva y gestionar las futuras según política autorizada); métodos de pago con etiquetas configurables, efectivo y transferencia como semánticas iniciales si el negocio las habilita; comprobante dentro del flujo y revisión privada tenant-scoped; factura/cobro interno fiel, propina separada si el C0 financiero demuestra compatibilidad; dirección/enlace “Cómo llegar”; un camino simple para publicar/actualizar datos y fotos; historial/reintento de correos en el lugar donde se opera; respaldo, restore ensayado, monitoreo, cuota de medios, privacidad/roles/QA de teléfono real y recuperación de errores."
+        },
+        {
+          "line": 99,
+          "text": "| D2 alcance de “Mis reservas” | **A** solo Client explícitamente vinculado por tenant: seguro y verificable, exige ruta de claim para registros viejos. **B** buscar por email: fácil, permite exposición/secuestrar historial. | **A**. Definir si lista multinegocio separada por tenant y cómo cambia de negocio sin Membership. |"
+        },
+        {
+          "line": 101,
+          "text": "| D4 sesión/borrador al volver al móvil | **A** recuperación segura de token y borrador temporal de la visita, sin guardar PII persistente; más lógica de estado. **B** recarga obligatoria; pierde trabajo. | **A**, con revalidación backend y pruebas de revocación/cambio de tenant; diagnosticar H03–H05 antes de elegir mecanismo concreto. |"
+        },
+        {
+          "line": 118,
+          "text": "| D4 quién ve comprobantes | **A** cuatro roles B2B ven todas las reservas del tenant: amplía visibilidad del profesional y exposición financiera. **B** OWNER/ADMIN/RECEPTIONIST según alcance tenant vigente; `BARBER` interno, mostrado como **Profesional**, solo comprobantes de reservas propias. | **B, dirección elegida expresamente por el propietario.** Ni CUSTOMER ni público ven comprobantes. Formalizar permisos y pruebas de ownership en el C0/C1 correspondiente. |"
+        },
+        {
+          "line": 131,
+          "text": "| D4 zona/horario | **A** sugerir zona al alta y requerir confirmación humana; fiable y compatible con C1. **B** inferir siempre por IP/mapa y ocultar campo; menos trabajo inicial, errores de zona y exposición. | **A**; horario semanal y cierres siguen editables en “Horarios”. |"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/AUDITORIA_INTEGRAL_2026_09_24.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 17,
+          "text": "- El backend A0.6-A de reclamación B2C existe en [`POST /auth/clerk/customer/claims`](../../apps/api/src/auth/clerk-customer-claims.controller.ts); la web aún no lo consume. La autenticación JWT/password legacy sigue disponible en API para rollback, no en la sesión web vigente."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/BASE_PREPRODUCCION_C0_AUDITORIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 55,
+          "text": "### D4 — ACL predeterminada de tablas futuras"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 32,
+          "text": "| D4 | Default ACL de tablas futuras revocada para migrador; tabla creada en QA no entregó S/I/U/D a runtime. Migración 26 declara grant explícito. El SQL preparado revoca ALL por defecto para runtime/PUBLIC, global/esquema; gate detecta ambos. | Cada migración futura debe actualizar matriz y gate. |"
+        },
+        {
+          "line": 125,
+          "text": "Gate D4 de CI: se detectó que quality.yml no ejecutaba la matriz SQL. Preparar un clon separado `kortek_ci_grants_test` de la base vacía migrada del runner, aplicar provisión/matriz solo allí y conectar realmente como runtime con contraseña aleatoria efímera para verificar. La base/ownership del runner E2E se preserva. No usar datos de producción ni instalar dependencias; validar desde las 26 migraciones en PostgreSQL 16 aislado y documentar resultado antes de contar este gate como probado."
+        },
+        {
+          "line": 131,
+          "text": "Prueba del correctivo D4: se concedió ALL por defecto a PUBLIC/runtime, global y esquema, dentro de una transacción QA. Se ejecutó el SQL actualizado de matriz/revocación y después el gate como runtime; pasó. ROLLBACK retiró el ensayo y el baseline volvió a pasar. `DEFAULT_TABLE_ACL_REVOCATION_OK`, exit `0`. No se reaplicó a producción porque su gate READ ONLY ya acredita ausencia de esos defaults."
+        },
+        {
+          "line": 182,
+          "text": "### D4 CI y auditoría de límites gratuitos"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/CORRECTIVO_F0E.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 152,
+          "text": "- A: Profesional edita solo su campo propio, OWNER/ADMIN gestionan el campo del perfil de su negocio con finalidad clara; RECEPTIONIST/CUSTOMER no editan. Registrar actor/cambio sin número en AuditLog. Si se exige consentimiento personal, OWNER/ADMIN pueden proponer o retirar el contacto, y el profesional habilita la exposición"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/DECISIONES_PROPIETARIO_2026_09_29.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 6,
+          "text": "2. Cuenta de cliente. La opción \"Crear cuenta para reservar más rápido\" no se oculta. La cuenta de cliente es requisito de Piloto 1: crear cuenta, iniciar y cerrar sesión, Mis reservas, reservar otra vez, perfil; cancelar y reprogramar por etapas."
+        },
+        {
+          "line": 56,
+          "text": "| D4-A | **FIJADA.** Bloquear casos ambiguos y revisarlos antes de exponer historial; sin backfill, fusión automática o identidad inferida de deduplicación. |"
+        },
+        {
+          "line": 62,
+          "text": "29. **Enmienda expresa y limitada D8 de M2.** Se adopta el correctivo de la señal de existencia de identidad que devuelve la creación secundaria de cuenta legacy mediante `accountCreationError` en `POST /public/:slug/bookings`; neutralizarla solo en el copy no basta. Se preservan Client/Booking atómicos, creación PENDING, cuenta secundaria fail-open, reserva persistida ante fallo de cuenta, rechazo de colisiones y error neutro D11. No se inventa éxito de reserva, no se enlaza User por correo y no se modifican el contrato de claim A0.6-A, Memberships, roles, JWT/password ni otras rutas de autenticación. El retiro legacy continúa fuera de alcance. La aprobación fija esta dirección y permite definir su contrato de correctivo en C1, pero **no autoriza implementarlo en esta tarea documental**."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C1_CIERRE.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 3,
+          "text": "**Estado vigente — 2026-10-03:** **BACKEND C1 DE M2, ETAPA 1, CERRADO / APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO** en `9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4` (`9f04dba`). La aprobación y el bloqueo D4 de producción se registran al final. Los estados anteriores se conservan como historial y no revocan esta aprobación. Producción cerrada; sin despliegue. Esta tarea no inicia C2."
+        },
+        {
+          "line": 5,
+          "text": "**Actualización vigente:** el apartado final «Correctivo D4 y publicación autorizada, 2026-10-03» sustituye la regla D4, los resultados y el estado Git del checkpoint local que sigue. Se conserva el informe anterior como historial; sus hashes/pruebas describen aquella revisión, no los archivos corregidos."
+        },
+        {
+          "line": 23,
+          "text": "| §9.2 backend | Seis endpoints `/customer` de negocios, listado, detalle, perfil GET/PATCH y POST Booking; rutas existentes de claim y reserva preservadas salvo D8 expresamente autorizado |"
+        },
+        {
+          "line": 27,
+          "text": "| D4 | Bloqueo autoritativo true por defecto, sin inferencia de identidad ni backfill; revisión asistida explícita habilita solo fixtures y cambio de userId vuelve a bloquear. Claim exitoso conserva contrato, no libera historial automáticamente |"
+        },
+        {
+          "line": 35,
+          "text": "Archivos: módulo nuevo `apps/api/src/customer`, registro AppModule, schema/migración/SQL inversa, opción de limpieza acotada del contador compartido solo usada por M2, pruebas/scripts `customer*`, contrato, BACKEND_CHANGES y este informe/evidencia. Ningún archivo web o contrato de etapa 2 cambió. Los controles ajenos permanecen intactos; estado M2 centralizado en este cierre y BACKEND_CHANGES."
+        },
+        {
+          "line": 39,
+          "text": "Se eliminó la señal HTTP de existencia de User de la creación secundaria legacy. Tanto correo existente como nuevo, colisión de unicidad y fallo interno secundario entregan `accountCreated:false,accountCreationError:null`, con el mismo esquema de Booking y PENDING. `false/null` significa resultado de identidad no divulgado; no se puede inferir ausencia ni éxito de cuenta. Mantener true/false distintos habría conservado la enumeración aun retirando `EMAIL_ALREADY_EXISTS`."
+        },
+        {
+          "line": 63,
+          "text": "| E2E filtro `clerk-customer-claims\\|clerk-me\\|clerk-bootstrap\\|auth.e2e\\|business-schedule\\|notifications-producer\\|public-booking-m1` | exit 0; **81 aprobadas**, 7 suites; proveedor SDK/medios/correo controlados |"
+        },
+        {
+          "line": 64,
+          "text": "| `node apps/api/test/customer-query-plan.cjs` | exit 0; 50.000 reservas/50 Clients, 21 filas solicitadas, índice paginado en ambas vistas; **0,230 ms próximas / 0,234 ms historial** en este ensayo, no benchmark productivo |"
+        },
+        {
+          "line": 65,
+          "text": "| `node apps/api/test/customer-db-invariants.cjs` | exit 0; unicidad/FKs/CHECKs/índice y ambos triggers habilitados |"
+        },
+        {
+          "line": 66,
+          "text": "| `node -r …/ts-node/register apps/api/test/customer-code-rollback.cjs` | exit 0; código exacto HEAD base sobre schema aditivo: GET público 200, claim repetido 200, alta pública 201; preserva recibos/vínculos/reserva posterior |"
+        },
+        {
+          "line": 79,
+          "text": "- **D4 revisión operativa:** toda historia sin revisión explícita queda bloqueada, también Clients nuevos. No hay endpoint administrativo nuevo para liberar: hace falta procedimiento autorizado por operador, evidencia de no mezcla y auditoría antes de activación. Tests habilitan solo fixtures. No se prometen historial completo o recuperación automática por contacto."
+        },
+        {
+          "line": 87,
+          "text": "Requiere **aprobación explícita del backend C1** antes de iniciar. Integrar exclusivamente el contrato aprobado: rutas B2C, Clerk código por correo con nombre/verificación, retorno permitido, negocios vinculados, claim explícito/recuperación asistida D3, perfil D7, Próximas/Historial y nueva reserva con clave opaca. Claims/D4: presentar bloqueo útil y no afirmar que un claim libera automáticamente el historial. Rechazo de cursor obsoleto descarta páginas; 429 respeta Retry-After; timeout de alta recupera mismo comando/clave dentro del TTL sin duplicar."
+        },
+        {
+          "line": 96,
+          "text": "## Correctivo D4 y publicación autorizada, 2026-10-03"
+        },
+        {
+          "line": 98,
+          "text": "**IMPLEMENTADO / EN REVISIÓN DEL PROPIETARIO.** La nueva orden autoriza corregir D4 y publicar todos los cambios propios C1 en un único commit/push a `origin/ai/antigravity-qa`. No aprueba el backend ni abre C2, etapa 2 o producción. Base sigue siendo `61ec6677b448a2ebbab4c32298b9246347ec1a10`; los seis archivos ajenos M1 se preservan por ruta y SHA-256 y quedan excluidos del staging. La decisión del propietario refina D4-A y revoca exclusivamente el requisito anterior de operador para todos los claims."
+        },
+        {
+          "line": 102,
+          "text": "Antes de editar código se aplicó el C1 previo en una nueva base desechable y se ejecutó por HTTP reserva invitada → claim A0.6-A → listado: **201 → 201 → 404**, vínculo persistido pero `customerAccessBlocked=true`. Después del correctivo el mismo recorrido sintético, en servidor/DB reales, devuelve **201 → 201 → 200**, contiene la reserva y deja el bloqueo false. No se intervino la ficha entre reserva, claim y lectura. [Evidencia comparativa sanitizada](evidence/m2-c1/d4-http-antes-despues.json)."
+        },
+        {
+          "line": 106,
+          "text": "El bloqueo default continúa para Clients sin claim válido; ahora queda separado de `customerHistoryAmbiguous=false` por defecto. La señal automática de cuarentena es **otra ficha distinta con reservas en el mismo tenant y el mismo teléfono almacenado**, detectada al validar el claim. También puede registrarse una mezcla confirmada mediante revisión asistida documentada. La cuarentena es persistente: quitar el síntoma o repetir un claim no la borra. El trigger y las consultas M2 impiden lectura incluso si se intenta liberar solo el bloqueo. No hay nuevo endpoint administrativo, propagación, backfill, consulta de identidad por contacto ni modificación de la deduplicación pública. El [contrato actualizado](../features/M2_CUENTA_CLIENTE_C1_CONTRATO.md#2026-10-03--correctivo-d4-autorizado-claim-habilita-lectura) define el criterio y la resolución asistida limitada a los casos ambiguos."
+        },
+        {
+          "line": 112,
+          "text": "Ensayos solo en `kortek-m2-d4-disposable`, PostgreSQL 16, `--rm`, sin volumen, bind `127.0.0.1:55439`; bases nuevas `kortek_m2_test` y `kortek_m2_upgrade_test`, role `m2_runner` restringido y base primaria ficticia sin CONNECT. Se recreó únicamente la base desechable del probe antes del ensayo final 0→28. Sin acceso a base real, correo, Clerk vivo ni proveedor de medios. Variables sintéticas solo en procesos de ensayo; ningún `.env` o configuración operativa cambió."
+        },
+        {
+          "line": 125,
+          "text": "| E2E filtro `clerk-customer-claims\\|clerk-me\\|clerk-bootstrap\\|auth.e2e\\|business-schedule\\|notifications-producer\\|public-booking-m1` | exit 0; **81 aprobadas**, 7 suites |"
+        },
+        {
+          "line": 130,
+          "text": "[Manifest y comandos con hashes de logs](evidence/m2-c1/d4-validation.json). Los logs sintéticos locales quedan en `.tmp/m2-d4`; no se versionan cuerpos, sesiones, claves ni contactos. Los scripts de migración y rollback quedan reproducibles en `apps/api/test/customer*`. El ledger inverso conserva la migración 28 solo para ese ensayo; la base se desecha, nunca se reutiliza ni se modifica el ledger a mano. Rollback recomendado: código anterior conservando schema aditivo."
+        },
+        {
+          "line": 140,
+          "text": "C2 permanece cerrado hasta aprobación explícita del backend. Al abrirse, consumir el contrato corregido: después de claim exitoso normal, refrescar «Mis reservas» y mostrar la reserva; si hay cuarentena/404, orientar a asistencia sin exponer historial ni contactos ajenos. Mantener claves idempotentes, descarte de cursor obsoleto, límites/no-store y separación Booking/cuenta/claim; no interpretar indicadores D8 como fracaso de cuenta. Las demás tareas C2/C3 del checkpoint anterior siguen pendientes."
+        },
+        {
+          "line": 144,
+          "text": "Los procesos HTTP de ensayo terminaron al cerrar sus suites. El contenedor exclusivo se eliminó con `docker stop kortek-m2-d4-disposable` y `--rm`; sin volumen ni base desechable en ejecución."
+        },
+        {
+          "line": 146,
+          "text": "Staging únicamente por rutas propias C1/correctivo; revisión completa de diff y diff staged/check/stat antes del único commit en español. Los seis archivos M1 quedan fuera. La publicación autorizada no equivale a aprobación C1 ni despliegue. El SHA del commit, la comprobación local=remoto y el `git status` final se reportan en la respuesta de entrega para evitar autorreferencia del commit en sus propios archivos. La evidencia previa de `validation.json` sigue describiendo el checkpoint sin commit; esta sección y `d4-validation.json` describen la revisión actual."
+        },
+        {
+          "line": 150,
+          "text": "El propietario **aprueba el backend C1 de M2 Cuenta de cliente, etapa 1**, en el commit `9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4` (`9f04dba`), que comprende C1, el correctivo D4 y la enmienda separada D8-A. Queda cerrado el gate de aprobación del backend. La aprobación es posterior a los checkpoints de implementación/en revisión conservados arriba y no reescribe sus pruebas, resultados ni límites."
+        },
+        {
+          "line": 152,
+          "text": "### Riesgo residual D4 aceptado solo para QA; BLOQUEANTE en Paso 8"
+        },
+        {
+          "line": 154,
+          "text": "La detección automática de cuarentena D4 solo identifica **fichas Client distintas con reservas y el mismo teléfono dentro del mismo negocio**. No detecta una **única ficha que acumula reservas de varias personas**, por ejemplo, una familia que comparte un teléfono. La posibilidad de registrar manualmente una mezcla confirmada no elimina este límite de detección. Un claim válido habilita el Client y no prueba la titularidad individual de cada reserva de esa ficha."
+        },
+        {
+          "line": 159,
+          "text": "2. Aplicar **D4-B**, con **autorización expresa del propietario**, contrato, implementación y validación propios. Esta aprobación C1 no autoriza D4-B."
+        },
+        {
+          "line": 172,
+          "text": "El [alcance vigente](../../PROJECT_MASTER.md) reúne ahora las siete rutas documentales pendientes en un único commit local y prohíbe push/despliegue. C1 conserva su aprobación, su evidencia y el riesgo residual D4 de la sección anterior: aceptado solo para QA, bloqueante en Paso 8. No se ejecuta ninguna de sus vías de resolución ni se amplían contrato, implementación o autorizaciones."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C2_CIERRE.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 7,
+          "text": "Se autorizan por separado P0 (lecturas vivas) y P1 (correctivo operativo local y ensayos desechables) del [preflight C3](M2_C3_PREFLIGHT.md), más un único commit local de ese alcance y de este registro. **SIN PUSH NI DESPLIEGUE.** No se autoriza P2, migración en QA, parada/reinicio de servicios, cambio de variables/flags/Clerk o producción. C2 permanece exclusivamente local; D4 y la paginación del panel mantienen el bloqueo de Paso 8."
+        },
+        {
+          "line": 23,
+          "text": "PII solo en memoria de la visita, sin persistencia, queries privadas `no-store`, limpieza/abortado y descarte de efectos tardíos al cambiar identidad, sesión, negocio o rol, A → B → A, salir o perder permisos. Retornos relativos permitidos, sin contactos ni referencias de claim en parámetros de URL; el detalle usa su UUID técnico según contrato C1. Riesgos: retorno malicioso, caché de otra identidad, reenvío tras resultado incierto y deduplicación D4. Se mitigarán con allowlist, instancia por visita, ownership backend y mismo comando/clave dentro de 24 h; después de ese plazo se exige revisar el resultado."
+        },
+        {
+          "line": 39,
+          "text": "| `POST /auth/clerk/customer/claims` `{bookingId,organizationSlug}` | Acción explícita; GET autorizado del detalle antes de anunciar visibilidad. Claim exitoso seguido de 404 conserva la reserva y ofrece asistencia, sin revelar cuarentena. |"
+        },
+        {
+          "line": 40,
+          "text": "| `GET /customer/businesses` `{businesses:[{slug,name,canBook}]}` | Negocios vinculados propios, selector mínimo; el rol interno por sí solo no concede acceso. |"
+        },
+        {
+          "line": 41,
+          "text": "| `GET /customer/:slug/bookings` | Próximas/Historial, límite 20, cursor opaco, estado mínimo, fecha del negocio. 400/409 de cursor descarta páginas y reinicia sin cursor. |"
+        },
+        {
+          "line": 42,
+          "text": "| `GET /customer/:slug/bookings/:id` | Detalle propio, contactos públicos permitidos y `canBookAgain`; sin precio histórico inventado ni acciones de etapa 2. |"
+        },
+        {
+          "line": 43,
+          "text": "| `GET/PATCH /customer/:slug/profile` | Nombre/teléfono del Client propio del negocio, correo de solo lectura, `canEditContact`. PATCH usa `Idempotency-Key` UUID opaco. |"
+        },
+        {
+          "line": 44,
+          "text": "| `POST /customer/:slug/bookings` | Nueva selección sobre catálogo/disponibilidad vigentes, sin contactos/identidad/tenant enviados en el body; `Idempotency-Key` UUID opaco. |"
+        },
+        {
+          "line": 56,
+          "text": "Archivos nuevos: layout de slug, cinco páginas de cuenta/reservas/perfil/repetición, `components/customer/`, `lib/customer-routes.ts`, `lib/customer-ui.ts`, `lib/queries/customer.ts` y pruebas C2. Integraciones: mini-sitio, ContactStep, SuccessView, PublicBookingScreen, tipos/validación del POST invitado, matcher Clerk y cabeceras Next. Pruebas M1 adaptadas a la intención de cuenta sin contraseña. [APP_FLOWS §5](../product/APP_FLOWS.md#5-reserva-pública-y-continuidad-b2c) se reconcilia dentro de M2. No se modificaron backend, Prisma, contratos, dependencias, `.env` ni las siete rutas iniciales protegidas."
+        },
+        {
+          "line": 83,
+          "text": "- D4 detecta únicamente ambigüedad entre Clients distintos con igual teléfono; fue aceptado para QA con alcance explícito. Sigue **bloqueando Paso 8/producción** conforme a [C1 aprobado](M2_C1_CIERRE.md). Este frontend conserva el 404 neutro y no realiza backfill, rehabilitación ni deduplicación."
+        },
+        {
+          "line": 84,
+          "text": "- Recarga/cierre pierde el comando incierto y la referencia técnica por diseño de privacidad. Revisar Mis reservas/perfil o solicitar asistencia antes de repetir una operación cuyo resultado se desconoce; no prometer recuperación automática."
+        },
+        {
+          "line": 110,
+          "text": "Próximas/Historial usan `tablist`, `tab`, `tabpanel`, `aria-selected` y asociación por IDs. La selección tiene subrayado de 3 px y peso 700. Flechas/Home/End mueven el foco sin activar; Enter/Espacio activan y conservan el foco en la pestaña nueva al navegar. Se mantiene el cursor independiente de cada vista. Se retiraron los enlaces a la pantalla de acceso actual y «Ver Mis reservas» del aviso dentro de esa lista, conservando los destinos útiles y el enlace desde el éxito público. La separación introductorio → resumen de errores es 24 px y resumen → primera etiqueta 20 px en crear, entrar, recuperar y perfil."
+        },
+        {
+          "line": 112,
+          "text": "Cuatro capturas **de página completa**, con documento de 640 px y sin scroll horizontal ni contenido recortado: [crear cuenta, 640 × 1862](evidence/m2-c2/review-crear-reflow-200.png), [entrar, 640 × 1244](evidence/m2-c2/review-entrar-reflow-200.png), [Mis reservas, 640 × 10001](evidence/m2-c2/review-mis-reservas-reflow-200.png) y [Mi perfil, 640 × 1972](evidence/m2-c2/review-mi-perfil-reflow-200.png). Se esperó a fuentes/layout estables y se comparó la altura PNG con el último contenido visible. **Emulación de reflujo equivalente a 200 %**: viewport 1280 → 640 CSS px y fuente raíz al 200 %. **No acredita zoom real**, QA física ni auditoría WCAG completa. Capturas inspeccionadas; datos exclusivamente sintéticos."
+        },
+        {
+          "line": 127,
+          "text": "2. **Primero API QA:** desplegar el backend C1 aprobado, aplicar la **migración 28** existente en QA mediante su rol migrador y validar ledger/constraints, runtime no privilegiado, D4/D8, rutas C1, permisos y datos propios. Verificar compatibilidad con la web QA anterior antes de continuar."
+        },
+        {
+          "line": 143,
+          "text": "`M2_C1_CIERRE.md` forma parte de esa consolidación: contiene la aprobación C1 sobre `9f04dba` y el riesgo D4 aceptado únicamente para QA, **bloqueante para Paso 8/producción**. `PROJECT_MASTER.md` ya contiene una entrada fechada de aprobación M1 y una de C1; se conservan ambas, sin duplicarlas ni revocar sus alcances. Registrar el estado C2/C3 en los controles durante la consolidación autorizada, mediante entradas nuevas; no reescribir checkpoints históricos ni atribuir al commit frontend cambios documentales excluidos."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C3_P4_CLERK_CHECKLIST.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 18,
+          "text": "- [C0, D1-A fijada](M2_CUENTA_CLIENTE_C0.md), [backend C1 y D4](M2_C1_CIERRE.md), [contrato y enmienda D4](../features/M2_CUENTA_CLIENTE_C1_CONTRATO.md), [C2 y aprobación local posterior](M2_C2_CIERRE.md), [flujos](../product/APP_FLOWS.md), [CHANGELOG](../../CHANGELOG.md) y [BACKEND_CHANGES](../../BACKEND_CHANGES.md)."
+        },
+        {
+          "line": 20,
+          "text": "- [Staging y cuatro identidades internas](STAGING_QA_2026-09-28.md), [CustomerAuth](../../apps/web/components/customer/CustomerAuth.tsx), [CustomerProvider](../../apps/web/components/customer/CustomerProvider.tsx), [CustomerClaim](../../apps/web/components/customer/CustomerClaim.tsx), [configuración Clerk API](../../apps/api/src/auth/clerk/clerk-auth.config.ts), [verificador de sesión](../../apps/api/src/auth/clerk/clerk-session-verifier.service.ts), [claim backend](../../apps/api/src/auth/clerk-customer-claims.service.ts), [CORS API](../../apps/api/src/main.ts), [wrapper QA](../../ops/oci-api/api-staging-run.sh), [gate web](../../apps/web/lib/web-deployment-config.ts), [Next config](../../apps/web/next.config.ts), [proxy Clerk](../../apps/web/proxy.ts) y [script dev](../../apps/web/package.json)."
+        },
+        {
+          "line": 125,
+          "text": "| Claim explícito | Reserva invitada propia + correo igual al primario verificado + consentimiento. `POST /auth/clerk/customer/claims` envía `{bookingId,organizationSlug}`; 201 nuevo/200 repetición conforme contrato; luego GET del detalle propio válido. No anunciar visibilidad solo por `{claimed:true}`. | Escritura P5 en fixture propio. C2 debe conservar referencia en la misma visita; recargar/cerrar puede perderla. |"
+        },
+        {
+          "line": 126,
+          "text": "| Mis reservas y privacidad | `GET /customer/businesses`, lista Próximas/Historial y detalle propios; PENDING honesto, paginación, `private,no-store`, sin PII de otros. Identidad sin vínculo no recibe historial; ajeno/inexistente/bloqueado devuelve 404 neutro. | Lecturas del fixture y, para negativos entre tenants/usuarios, segunda identidad/fixture autorizados. |"
+        },
+        {
+          "line": 159,
+          "text": "No utilizar ni vaciar `qa-horario-norte`, `qa-horario-sur`, `m1-c3-norte`, `m1-c3-sur` ni sus Clients/Bookings para improvisar P5. Sus datos contienen trabajo previo y D4 no garantiza ausencia de mezcla dentro de una ficha. **Preferencia: negocio/fixture nuevo dedicado M2 en Cutover QA**, con nombre visible inequívoco de prueba, slug propuesto `m2-c3-p5-dedicado` (comprobar disponibilidad, sin sobreescribir si existe), contacto exclusivamente controlado y sin identidad B2B nueva."
+        },
+        {
+          "line": 176,
+          "text": "4. **Autorización P5:** crear reserva invitada, alta/entrada real, consentimiento y claim dentro de la misma visita; comprobar lectura autorizada antes de éxito. En Client nuevo el default bloqueado permanece hasta que el claim legítimo lo habilite según enmienda D4. No usar SQL para poner `customerAccessBlocked=false`; si aparece ambigüedad, conservar bloqueo y detener ese caso."
+        },
+        {
+          "line": 180,
+          "text": "D4 y la paginación pendiente del panel continúan bloqueando Paso 8/producción; este fixture no resuelve históricos ni amplía la etapa 1 a cancelación/reprogramación."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C3_PREFLIGHT.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 27,
+          "text": "Fuentes vigentes: [entrada documental](../README.md), [PROJECT_MASTER](../../PROJECT_MASTER.md), [decisiones 28–29 de M2](DECISIONES_PROPIETARIO_2026_09_29.md), [C1 y riesgo residual D4](M2_C1_CIERRE.md), [C2 y orden seguro](M2_C2_CIERRE.md), [contrato C1](../features/M2_CUENTA_CLIENTE_C1_CONTRATO.md), [gates](DELIVERY_GATES.md) y [seguridad](SECURITY_STANDARD.md). Se aplicó la skill [kortek-delivery](../../.agents/skills/kortek-delivery/SKILL.md) y el seguimiento del objetivo /goal."
+        },
+        {
+          "line": 71,
+          "text": "[CustomerService](../../apps/api/src/customer/customer.service.ts) lee, inserta y elimina recibos vencidos; no actualiza recibos. **Propuesta mínima, pendiente de autorización/revisión:** SELECT, INSERT, DELETE en CustomerOperation; sin UPDATE, TRUNCATE, REFERENCES, TRIGGER, ownership ni default DML. Revisar igualmente privilegios de funciones/triggers y su UPDATE en Client."
+        },
+        {
+          "line": 79,
+          "text": "[CustomerAuth](../../apps/web/components/customer/CustomerAuth.tsx) usa `@clerk/nextjs/legacy`:"
+        },
+        {
+          "line": 117,
+          "text": "## 4. Datos afectados y comprobación D4"
+        },
+        {
+          "line": 165,
+          "text": "No salen nombres, contactos, UUID, slugs privados ni filas. Agrupa por teléfono exacto almacenado como la señal D4; no introduce normalización ni convierte un grupo en una identidad. Antes/después se cotejarán **privadamente** huellas de todos los campos anteriores de User/Client/Booking y relaciones A0.6-A. Para Client después de migrar, excluir solo las tres columnas nuevas del JSON canónico; antes no existían. Orden por id COLLATE \"C\", nombres de columnas ordenados y digest en memoria protegida. Evidencia versionada: conteos, igualdad booleana y hash de artefacto cifrado; no huellas de contactos, filas o claves de vínculo."
+        },
+        {
+          "line": 169,
+          "text": "### 4.3 Matriz D4 prevista, sobre fixtures nuevos autorizados"
+        },
+        {
+          "line": 184,
+          "text": "| Una ficha con reservas de varias personas, sin señal registrada | **Limitación reproducida:** el detector no puede distinguirlas. Caso demuestra el bloqueo de Paso 8, no aprobación de D4 integral. |"
+        },
+        {
+          "line": 186,
+          "text": "Fail injection de auditoría/transacción y cambios de vínculos se ensayan en clon desechable; no instalar triggers de fallo ni modificar fichas existentes en QA. No ejecutar los harness locales contra Supabase: [customer-db-invariants.cjs](../../apps/api/test/customer-db-invariants.cjs) exige loopback/rol/base desechables y escribe evidencia previa; extraer consultas de catálogo revisadas a un procedimiento nuevo autorizado, sin sobreescribir evidencia C1."
+        },
+        {
+          "line": 207,
+          "text": "6. Ensayar 27→28, permisos, D4 y rollback de código en ese clon, conservando baseline. El backup restaurado es fuente protegida de recuperación; **QA funcional usa únicamente fixtures sintéticos**."
+        },
+        {
+          "line": 265,
+          "text": "La [inversa desechable](../../apps/api/prisma/rollback/customer-stage-one.disposable.sql) elimina recibos, columnas y controles. **No usarla en QA operativo**; el ledger quedaría incompatible. Rollback preferido es de código. Volver al backend anterior reintroduce límites/posible señal legacy D8: mantener C2 retirado y limitar exposición durante la incidencia; no declarar esa reversión equivalente a la seguridad nueva."
+        },
+        {
+          "line": 286,
+          "text": "| P5 | Sesiones/códigos reales y pruebas API C1/D4/D8 con datos exclusivamente sintéticos dedicados | Requests §6.3 y matriz §4.3; SDK real desde superficie de prueba aislada autorizada | Sesión/issuer/azp/revocación reales; ownership, 404, cuarentena y operaciones atómicas. **Parar** por exposición, duplicación, enumeración o regresión interna | Conservar reservas de resultados inciertos, no repetir POST; retirar solo procesos de ensayo, imagen API anterior si corresponde; limpieza de fixtures separada. |"
+        },
+        {
+          "line": 412,
+          "text": "| GET `/customer/businesses` sin sesión; token inválido/issuer ajeno/revocado | 401; indisponibilidad proveedor/DB 503 recuperable. No retirar azp/issuer para lograr éxito. |"
+        },
+        {
+          "line": 413,
+          "text": "| GET `/customer/businesses`, `/customer/<slug>/bookings?view=upcoming&limit=20`, history, detalle y profile | Solo vínculo explícito habilitado; lista por defecto 20/máximo 50, cursor opaco; perfil sin notas/identidad/finanzas; Cache-Control private,no-store. |"
+        },
+        {
+          "line": 414,
+          "text": "| Claim `POST /auth/clerk/customer/claims` con bookingId y organizationSlug en memoria | Matriz D4 §4.3 y A0.6-A; vínculo no otorga Membership. |"
+        },
+        {
+          "line": 417,
+          "text": "| PATCH `/customer/<slug>/profile`, Idempotency-Key UUID | Nombre/teléfono propios, correo solo lectura; mismo comando/key 200 sin otra auditoría, distinta entrada 409; rollback íntegro si falla recibo/auditoría en clon. |"
+        },
+        {
+          "line": 418,
+          "text": "| POST `/customer/<slug>/bookings`, body DTO real serviceId/professionalId/startTime, key opaca | PENDING, catálogo/agenda/precios vigentes; no aceptar User/Client/organizationId libres, estado ni precio. Misma key concurrente una Booking/recibo/evento, replay 200; conflicto de slot 409 sin parcial. |"
+        },
+        {
+          "line": 420,
+          "text": "| D8 legacy secundario, nuevo/existente/fallo | accountCreated=false y accountCreationError=null con reserva persistida; comparar esquema/status sin cuerpos. Alta invitada C2 omite password/createAccount. No registrar contraseñas sintéticas. |"
+        },
+        {
+          "line": 468,
+          "text": "| Privacidad/cuarentena | Dos identidades/dos negocios A→B→A, respuestas tardías, cambio rol/organización, pérdida vínculo y sesión, D4 ambiguo | Sin flashes/caché/contactos ajenos; 404 neutro y asistencia; claim exitoso no anuncia historial antes del GET autorizado. |"
+        },
+        {
+          "line": 481,
+          "text": "1. **D4: mezcla dentro de una misma ficha.** Un claim acredita Client/vínculo según contrato, no titularidad de cada Booking del historial. El detector cubre otra ficha con teléfono igual, no familias/personas acumuladas en un solo Client. Riesgo aceptado **solo para QA**, bloqueante para producción incluso si todos los casos C3 pasan. Vías autorizables según [C1](M2_C1_CIERRE.md): medición segura del riesgo real sin PII con revisión del propietario, D4-B con contrato/implementación propios, o acceso por Booking con prueba de titularidad individual. Ninguna se ejecuta aquí; no hay backfill/reparación masiva autorizada."
+        },
+        {
+          "line": 482,
+          "text": "2. **Paginación del panel en el cliente.** [GET /bookings](../../apps/api/src/bookings/bookings.service.ts) → [query web](../../apps/web/lib/queries/bookings.ts) descarga sin take/skip/tope; [Por atender/Todas](../../apps/web/lib/booking-list.ts) filtran/ordenan localmente. Confirmado en el código actual. Antes de volumen real requiere contrato de filtrado/paginación servidor, estados/orden/prioridades, aislamiento por rol/tenant y pruebas de carga/estabilidad con volumen sintético. **No confundir con Mis reservas de M2**, que sí pagina mediante cursor/20–50 e índice. Aprobar su QA no salda la deuda del panel."
+        },
+        {
+          "line": 529,
+          "text": "rg -n -C 3 'M2|C0|Clerk|A0.6|D4|migraci|QA' 'C:/Users/Fraylin/.codex/memories/MEMORY.md'"
+        },
+        {
+          "line": 541,
+          "text": "Select-String -LiteralPath 'C:/Users/Fraylin/.codex/memories/MEMORY.md' -Pattern 'M2|C0|Clerk|A0.6|D4|migraci|QA' -Context 2,2"
+        },
+        {
+          "line": 595,
+          "text": "Select-String -LiteralPath 'docs/quality/STAGING_QA_2026-09-28.md','docs/quality/API_OCI_DESPLIEGUE.md','docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md','docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md','CHANGELOG.md','BACKEND_CHANGES.md' -Pattern '^#|prirl|proyecto|migraci|kortek_migrator|kortek_runtime|Cliente|Client|D4|cuarentena' | Select-Object -First 150"
+        },
+        {
+          "line": 613,
+          "text": "Get-Content -LiteralPath 'apps/api/src/auth/clerk-customer-claims.service.ts'; Get-Content -LiteralPath 'apps/api/src/auth/clerk/clerk-auth.config.ts'; Get-Content -LiteralPath 'apps/web/components/customer/CustomerAuthScreen.tsx' -ErrorAction SilentlyContinue"
+        },
+        {
+          "line": 619,
+          "text": "git ls-files 'apps/web/components/customer/*' 'apps/api/src/customer/*' 'apps/api/prisma/rollback/*' 'docs/quality/evidence/m2*' 'docs/quality/evidence/m1-c3/*'; Get-Content -LiteralPath 'apps/api/package.json'; Get-Content -LiteralPath 'apps/api/ops/apply-runtime-grants.sql'; Select-String -LiteralPath 'apps/api/ops/verify-runtime-role.sql' -Pattern 'Customer|31|VALUES|Schedule|Booking|Client' -Context 2,2"
+        },
+        {
+          "line": 625,
+          "text": "Get-Content -LiteralPath 'apps/api/ops/verify-runtime-role.sql'; Get-Content -LiteralPath 'apps/api/src/customer/customer.service.ts' | Select-String -Pattern 'customerOperation|deleteMany|findMany|customerHistoryAmbiguous|customerAccessBlocked' -Context 3,5; Get-Content -LiteralPath 'apps/web/components/customer/CustomerAuth.tsx' | Select-String -Pattern 'signUp|signIn|email_code|firstName|password|captcha|missing_requirements' -Context 4,6"
+        },
+        {
+          "line": 649,
+          "text": "Select-String -LiteralPath 'apps/api/src/bookings/bookings.service.ts' -Pattern 'async findAll' -Context 0,45; Get-Content -LiteralPath 'apps/web/lib/queries/bookings.ts' -TotalCount 75; Get-Content -LiteralPath 'apps/web/lib/booking-list.ts' -TotalCount 130; Get-Content -LiteralPath 'apps/api/test/customer-db-invariants.cjs' -TotalCount 110; Get-Content -LiteralPath 'apps/api/ops/verify-backup-snapshot.sql'"
+        },
+        {
+          "line": 661,
+          "text": "Get-Content -LiteralPath 'docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md' | Select-Object -Skip 14 -First 100; Get-Content -LiteralPath 'docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md' | Select-Object -Skip 40 -First 13; Get-Content -LiteralPath 'apps/api/src/customer/customer.controller.ts'; Get-Content -LiteralPath 'apps/api/src/customer/customer.dto.ts'"
+        },
+        {
+          "line": 667,
+          "text": "Get-Content -LiteralPath 'BACKEND_CHANGES.md' -TotalCount 75; Get-Content -LiteralPath 'CHANGELOG.md' -TotalCount 50; Get-Content -LiteralPath 'apps/api/src/customer/customer.service.ts' | Select-Object -Skip 105 -First 82; Get-Content -LiteralPath 'docs/README.md' | Select-Object -Skip 140 -First 170"
+        },
+        {
+          "line": 673,
+          "text": "git ls-files 'docs/quality/AGENTS.md' 'docs/AGENTS.md'; Get-Content -LiteralPath 'apps/web/package.json' -TotalCount 42; Select-String -LiteralPath 'apps/api/src/customer/customer.dto.ts' -Pattern 'view|limit|startTime|serviceId|professionalId|emailNotifications' -Context 1,3; Get-Content -LiteralPath 'apps/api/prisma/schema.prisma' | Select-String -Pattern '^model Client|^model Booking|^model User|customerAccessBlocked|customerHistoryAmbiguous|customerBookingRevision' -Context 0,32"
+        },
+        {
+          "line": 924,
+          "text": "El [suplemento](../../apps/api/ops/customer-stage-one-runtime-grants.sql) no cambia la migración aprobada. CustomerOperation recibe **SELECT, INSERT, DELETE**, sin UPDATE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN, ownership ni default DML. Revoca ACL previas de PUBLIC/runtime. Mantiene Client UPDATE para los triggers **SECURITY INVOKER**; sin ese permiso, una escritura Booking debe fallar y revertirse entera."
+        },
+        {
+          "line": 930,
+          "text": "El [drill reproducible](../../apps/api/test/customer-runtime-grants-drill.cjs) usa copias sin dotenv y dependencias instaladas, credenciales sintéticas en memoria, contenedor aleatorio propio, tmpfs, loopback 55447 y SCRAM. No usa volúmenes/servicios existentes. El [preload](../../apps/api/test/customer-no-dotenv.cjs) bloquea dotenv en los procesos Node hijos, incluida la ruta original del Prisma generado compartido. No instala dependencias ni genera Prisma."
+        },
+        {
+          "line": 937,
+          "text": "node apps/api/test/customer-runtime-grants-drill.cjs"
+        },
+        {
+          "line": 959,
+          "text": "| API anterior | Código exacto `791569b`, [hijo de compatibilidad](../../apps/api/test/customer-runtime-compat.cjs), SDK controlado y worker de medios sustituido: GET público 200, claim repetido 200, reserva pública 201/PENDING; recibos, vínculo y Booking posterior al upgrade conservados; ruta M2 ausente 404; código anterior no desbloquea Client. |"
+        },
+        {
+          "line": 968,
+          "text": "**P0 documentado y P1 IMPLEMENTADO / VALIDADO LOCALMENTE; en revisión del propietario.** La aprobación registrada es la de C2; los resultados de P1 no aprueban C3 ni activación. P2 no iniciado/autorizado. Sin backup nuevo, restore de QA, migración/despliegue real, cambios Clerk ni publicación web. La compatibilidad usa SDK controlado: sesiones/códigos reales, iPhone/Safari, Android, VoiceOver/TalkBack y zoom real siguen pendientes. **D4 dentro de una ficha y paginación del panel siguen bloqueando Paso 8.**"
+        },
+        {
+          "line": 2092,
+          "text": "Rollback §5.3: se probó recuperación de datos/schema, fallo transaccional y compatibilidad del código e imagen anteriores con schema aditivo y fixtures. No se alteraron alias web, opciones/sesiones Clerk, ni se simuló corrupción/restore operativo sobre QA real. Esas respuestas externas se conservan como procedimientos que requieren su autorización propia. El ensayo de imagen usa datos sintéticos y stub Clerk, y no sustituye QA autenticado/físico, correo ni cutover. D4 y demás bloqueos de producción continúan vigentes. La imagen anterior reintroduce el límite legacy documentado; mantener C2 retirado en una reversión. No se inventa RTO operativo ni disponibilidad futura."
+        },
+        {
+          "line": 2146,
+          "text": "| 7. Validación completa posterior del API nuevo, runtime, datos y catálogo | PARCIAL / NO CUMPLIDO | Ledger 28/0 fallidas, 37 tablas, defaults bloqueados, CustomerOperation vacío, funciones invoker/search_path, externos/PUBLIC sin grants nuevos, ACL semántica 36 tablas y huellas preexistentes verificadas antes del gate. Falta gate real y API nuevo/customer 401 en QA. HTTP 200 y servicios anteriores sí verificados tras rollback. |"
+        },
+        {
+          "line": 2339,
+          "text": "No pasó R1 ni se ejecutó el gate runtime REAL R2. No hay activación/HTTP nuevo/customer 401 ni cotejo de conteos actuales con el respaldo en esta continuación. El ensayo general histórico conservó owners, conteos y resultados, pero **no sus pg_get_functiondef/constraintdef/index completos posteriores al upgrade**: no puede afirmarse un cotejo directo retrospectivo con esa captura inexistente. Se conserva íntegro el catálogo actual; no se sustituye por una comparación inferida. El camino de escritura con triggers en QA real **no se probó** y queda para fixtures de **P5**; no se crearon reservas ni escrituras de negocio."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_CUENTA_CLIENTE_C0.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 48,
+          "text": "| Propietario **2**, cuenta de cliente | **FIJADA.** La opción «Crear cuenta para reservar más rápido» permanece visible. Piloto 1 requiere alta, entrada/salida, Mis reservas, repetir y perfil; cancelar/reprogramar se entregan por etapas. Cuenta requerida como capacidad del producto no significa cuenta obligatoria para reservar. |"
+        },
+        {
+          "line": 49,
+          "text": "| Propietario **13**, recomendaciones C0 técnicas | **FIJADA.** Se adoptan C0-A D1-A: Clerk con claim A0.6-A y convivencia gradual legacy; D2-A: solo Client vinculado explícitamente por tenant; D3-A: ver/repetir primero y acciones según política después; D4-A: recuperación segura de sesión y borrador temporal sin PII persistida. No se reabre password local como alternativa de M2. |"
+        },
+        {
+          "line": 61,
+          "text": "| Enumeración legacy | El [servicio público](../../apps/api/src/public-booking/public-booking.service.ts), `tryCreateCustomerAccount`, puede devolver `accountCreationError=EMAIL_ALREADY_EXISTS`. D11 aprobado neutraliza colisiones de contacto, pero conserva el alta secundaria legacy y su riesgo residual. Cambiar el texto web no protege el HTTP. **Se detiene cualquier propuesta de cambiar esta respuesta aprobada dentro de M2 sin enmienda expresa.** D8 ofrece opciones. No se promete protección integral de enumeración de toda la plataforma mientras siga esta vía. |"
+        },
+        {
+          "line": 63,
+          "text": "| Historial y deduplicación operativa | La creación pública reutiliza Client por teléfono/correo dentro del negocio; eso no vincula User. Un claim aprobado vincula el Client, no una única Booking. La lectura propuesta comprende sus reservas, no todas las que coincidan con un correo. No se presenta como prueba individual de cada reserva antigua. Si el negocio mezcló personas en un Client, bloquear la exposición de ese caso y reconciliar con evidencia; no fusionar ni separar registros automáticamente. D4 define el tratamiento. |"
+        },
+        {
+          "line": 72,
+          "text": "El resultado esperado es entrar a **Mis reservas** del negocio correcto y ver exclusivamente reservas del Client enlazado a esa identidad. La persona entiende la diferencia entre reserva registrada y confirmada, puede salir y recuperar acceso, revisar su perfil y comenzar otra cita con datos vigentes. Un fallo de cuenta o claim conserva la reserva ya creada."
+        },
+        {
+          "line": 88,
+          "text": "| Claim aprobado | [Controller](../../apps/api/src/auth/clerk-customer-claims.controller.ts), [DTO](../../apps/api/src/auth/dto/clerk-customer-claim.dto.ts), [servicio](../../apps/api/src/auth/clerk-customer-claims.service.ts): transacción SERIALIZABLE, locks Organization → Client → Booking, idempotencia y auditado sin PII | Recorrido público de entrada, verificación, claim explícito y fallo recuperable |"
+        },
+        {
+          "line": 125,
+          "text": "El mini-sitio conserva **Reservar cita** como acción principal. **Crear cuenta** e **Iniciar sesión** permanecen visibles como entradas secundarias; con sesión aparece **Mis reservas** y **Mi perfil**, dentro del contexto del negocio. No se usa el registro B2B con destino `/dashboard/setup`."
+        },
+        {
+          "line": 141,
+          "text": "5. Se presenta «Añadir esta reserva a Mis reservas» y se pide confirmación explícita del vínculo por negocio. Se llama al claim aprobado con el bookingId recibido y el slug de esa visita, sin identidad/tenant/rol aportados como autoridad."
+        },
+        {
+          "line": 150,
+          "text": "### 6.3 Mis reservas: Próximas e Historial"
+        },
+        {
+          "line": 203,
+          "text": "| Falta de acceso/recurso | «Esta reserva no está disponible para tu cuenta.» | «Volver a Mis reservas»; misma frase para inexistente y ajena |"
+        },
+        {
+          "line": 206,
+          "text": "| Claim explícito | «Añadir esta reserva a Mis reservas» · «Vincularás tu cuenta con tus reservas en este negocio.» | «Añadir reserva» / «Ahora no» |"
+        },
+        {
+          "line": 208,
+          "text": "| Cuenta creada, claim fallido | «Tu cuenta está lista. No pudimos añadir la reserva a Mis reservas. La reserva sigue registrada.» | Reintentar vínculo si conserva referencia; asistencia si falta |"
+        },
+        {
+          "line": 210,
+          "text": "| Claim exitoso | «La reserva ya aparece en Mis reservas.» | Mostrar solo tras lectura autorizada; no anunciar antes |"
+        },
+        {
+          "line": 228,
+          "text": "Alternativas de beneficio, sin cambiar las decisiones fijadas: «Vuelve a tus reservas cuando lo necesites» enfatiza seguimiento; «Tu próxima cita, desde Mis reservas» enfatiza repetición. Se recomienda «Crea una cuenta para volver a tus reservas» en el alta por describir una tarea comprobable. No se publican tasas de conversión, ahorro de tiempo o testimonios inexistentes ni se instrumenta un embudo en este C0."
+        },
+        {
+          "line": 246,
+          "text": "A0.6-A existente permanece exactamente: `POST /auth/clerk/customer/claims`, body `{bookingId: UUID, organizationSlug: string}`; slug 3–50 caracteres alfanuméricos con guiones intermedios; correo principal verificado y nombre del proveedor. `201` primer enlace, `200` repetición por la misma identidad, `{claimed:true}`; `404` reserva/slug ausente o ajeno, `409` colisión genérica. El correo prueba la reclamación del Client señalado, nunca resuelve un User legacy. Sin Membership CUSTOMER, sin cambios de contrato ni TTL atribuido."
+        },
+        {
+          "line": 254,
+          "text": "| **Existente** `POST /public/:slug/bookings` | DTO aprobado de M1. Consumidor M2 omite password y creación legacy; contacto/opt-in conservan validaciones | Respuesta vigente `{booking,accountCreated,accountCreationError}`; no usar esos indicadores legacy como éxito de Clerk ni claim |"
+        },
+        {
+          "line": 255,
+          "text": "| **Existente** `POST /auth/clerk/customer/claims` | DTO A0.6-A descrito arriba | Contrato aprobado intacto |"
+        },
+        {
+          "line": 256,
+          "text": "| **Nuevo** `GET /customer/businesses` | Sin body; sesión Clerk | `{businesses:[{slug,name,canBook}]}` solo de Clients vinculados del User y organizaciones activas; sin UUID tenant ni PII. `[]` si no tiene enlaces |"
+        },
+        {
+          "line": 257,
+          "text": "| **Nuevo** `GET /customer/:slug/bookings` | `view=upcoming\\|history`, `limit` 1–50, default 20, `cursor` opcional opaco y acotado | `{business:{slug,name,timeZone},items:CustomerBookingSummary[],nextCursor:string\\|null,asOf:string}`. Cursor ligado a identidad/negocio/vista/orden; no acepta clientId ni scope alternativo |"
+        },
+        {
+          "line": 258,
+          "text": "| **Nuevo** `GET /customer/:slug/bookings/:id` | UUID; sin body | `CustomerBookingDetail`; consulta final tenant + Client.userId + Booking.clientId. `404` idéntico para ajeno/inexistente/sin vínculo |"
+        },
+        {
+          "line": 259,
+          "text": "| **Nuevo** `GET /customer/:slug/profile` | Sin body | `{name,phone:string\\|null,email:string\\|null,canEditContact:boolean}` exclusivamente Client propio; correo de contacto no equivale a identidad Clerk |"
+        },
+        {
+          "line": 260,
+          "text": "| **Nuevo** `PATCH /customer/:slug/profile` | `{name?:string,phone?:string\\|null}`; al menos un campo; nombre 1–120 sin vacío/null; teléfono entrada ≤30 y normalización vigente | Misma proyección de perfil, no notas/email/userId/isActive. Conflicto de contacto neutro. Actor y tenant derivados; D7 pendiente |"
+        },
+        {
+          "line": 261,
+          "text": "| **Nuevo** `POST /customer/:slug/bookings` | `{serviceId:UUID,professionalId:UUID,startTime:string,emailNotifications?:entrada aprobada}` e `Idempotency-Key` opaca | Client del vínculo, contacto del perfil, recursos actuales públicos del mismo tenant; nueva Booking PENDING. `{booking:CustomerBookingDetail}`. `201` alta y `200` repetición exacta por mismo contexto |"
+        },
+        {
+          "line": 275,
+          "text": "| `GET /customer/:slug/booking-policy` | Política efectiva y revisión, sin motivos internos | Cliente vinculado; no inferir acceso desde respuesta pública |"
+        },
+        {
+          "line": 276,
+          "text": "| `POST /customer/:slug/bookings/:id/cancel` | `{expectedBookingUpdatedAt:string,expectedPolicyRevision:int}` + clave idempotente; devuelve detalle y política efectiva | Ownership, PENDING/CONFIRMED, ventana y locks de §7 |"
+        },
+        {
+          "line": 277,
+          "text": "| `POST /customer/:slug/bookings/:id/reschedule` | Lo anterior + `{startTime:string}`; devuelve detalle | Conserva servicio/profesional/status; slot actual y exclusión de sí mismo comprobados en transacción |"
+        },
+        {
+          "line": 278,
+          "text": "| `GET /customer-booking-policy` | Contexto B2B aprobado, sin body; devuelve política y revisión | OWNER/ADMIN/RECEPTIONIST/BARBER del tenant; no CUSTOMER |"
+        },
+        {
+          "line": 279,
+          "text": "| `PATCH /customer-booking-policy` | `{expectedRevision:int,allowCancellation:boolean,allowReschedule:boolean,cancellationNoticeHours:int,rescheduleNoticeHours:int}` | OWNER propuesto; rango 1–168, actualización optimista/auditable, sin editar horarios ni vínculo |"
+        },
+        {
+          "line": 325,
+          "text": "| Client histórico mezclado | No convertir deduplicación en identidad. D4 bloquea casos ambiguos y requiere verificación asistida, sin exponer otras reservas como ayuda a reclamar |"
+        },
+        {
+          "line": 341,
+          "text": "El cliente vuelve a ver la experiencia anterior y sus límites, sin prometer Mis reservas si se retiró su backend. Las cuentas Clerk creadas siguen siendo identidades válidas; las reservas siguen en el negocio. Verificar compatibilidad del API anterior con el schema aditivo, idempotencia de reintentos y que el rollback no envía correos duplicados. Un vínculo aprobado previo se preserva para recuperar M2 después."
+        },
+        {
+          "line": 390,
+          "text": "| **D4 Historial de Clients antiguos/ambiguos** | Solo Clients ya vinculados o claim explícito aprobado, sin backfill ni exposición de casos mezclados; revisar casos ambiguos antes de habilitarlos: usa base aprobada, protege registros; resolución asistida y no garantiza historial completo | Añadir grants por Booking tras prueba individual: reduce exposición de registros mezclados; nuevo modelo/contrato y migración de vínculos ya aceptados, más trabajo para el cliente | **A**, bloquear casos ambiguos, no inferir identidad de deduplicación. C1 debe definir cómo registrar esa restricción/revisión si el inventario sintético demuestra el caso; no afirmar prueba de titularidad individual del histórico |"
+        },
+        {
+          "line": 431,
+          "text": "| D4-A | **FIJADA.** Bloquear casos ambiguos antes de exponer historial; revisión asistida, sin backfill ni inferir identidad de deduplicación. El mecanismo autoritativo de bloqueo se deberá definir y probar en C1 autorizado. |"
+        },
+        {
+          "line": 441,
+          "text": "La aprobación elimina el impedimento de decisión que registraban §§2.1 y 13 para definir el correctivo de enumeración. Su alcance se limita a neutralizar la señal de existencia de identidad que puede devolver `tryCreateCustomerAccount` mediante `accountCreationError` en `POST /public/:slug/bookings`, con respuesta segura y regresiones HTTP por definir en C1. No basta sustituir el mensaje visible mientras el API siga diferenciando la existencia de una cuenta."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C0.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 63,
+          "text": "| [AccountStep](../../apps/web/app/%5Bslug%5D/_components/AccountStep.tsx), [SuccessView](../../apps/web/app/%5Bslug%5D/_components/SuccessView.tsx) | Mínimo 8 ya corregido. Alta secundaria crea User/password + Membership CUSTOMER legacy tras Booking, sin el recorrido Clerk B2C ni Client.userId. Éxito todavía promete iniciar sesión con correo. Esa identidad legacy no acredita “Mis reservas”. |"
+        },
+        {
+          "line": 141,
+          "text": "Copy principal: “Tu reserva quedó registrada”. Estado: “Pendiente de confirmación”. Próximo paso: “El negocio debe confirmar tu cita. Si necesitas consultar su estado, comunícate con el negocio.” El contacto solo se propone con datos publicados elegibles. Sin contacto: “La cita sigue pendiente de confirmación. Puedes volver a la página del negocio.” No inventar plazo de respuesta, promesa de contacto, enlace Mis reservas o notificación entregada."
+        },
+        {
+          "line": 162,
+          "text": "Después del alta, `accountCreated=true` solo permite “Se creó la cuenta de prueba. El acceso a tus reservas todavía no está disponible.” No decir “ya puedes iniciar sesión”, porque la web vigente usa Clerk y no acredita continuidad de esta identidad legacy. Si false/error: “Tu reserva quedó registrada. La cuenta no se creó; no necesitas repetir la reserva.” No mostrar EMAIL_ALREADY_EXISTS ni invitar a una ruta B2C inexistente. Fallo de reserva no muestra éxito de cuenta."
+        },
+        {
+          "line": 170,
+          "text": "3. Mis reservas, reservar otra vez y perfil funcionando; cancelación/reprogramación solo por sus etapas aprobadas, sin prometerlas antes."
+        },
+        {
+          "line": 209,
+          "text": "Respuesta existente: `booking:{id, serviceId, professionalId, startTime, endTime, status}`, `accountCreated`, `accountCreationError`. La foto/nombre se compone con proyecciones autorizadas, no se añade un objeto privado Booking/Client/User. El precio mostrado es catálogo vigente, no un campo retornado por POST. No enviar status ni endTime desde el visitante."
+        },
+        {
+          "line": 259,
+          "text": "| **D4 FIJADA**, cuenta y privacidad | A mantener casilla y continuidad Clerk/claim explícito: respeta visión y seguridad; depende del siguiente módulo. B ocultar o extender identidad por email/password local: reduce trabajo inmediato; incumple decisiones/aislamiento | **A**, decisión 2 y 13/C0-A D1–D4. Mis reservas por Client vinculado/tenant, ver/repetir primero, autoservicio por etapas y sin unión por correo |"
+        },
+        {
+          "line": 312,
+          "text": "| A11 | Cuenta secundaria fallida no oculta Booking creada ni propone nueva reserva; QA advierte falta de continuidad | Caso legado permitido/error controlado, solo identidades sintéticas; cero promesas de Mis reservas |"
+        },
+        {
+          "line": 331,
+          "text": "| Personal, sin rediseñar panel | OWNER/ADMIN/RECEPTIONIST comprueban nueva reserva en el tenant correcto; Profesional ve solo propia; intento ajeno/CUSTOMER no concede panel. Usar contratos actuales, no añadir permisos |"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C1_CIERRE.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 55,
+          "text": "Pruebas unitarias e integración comparan exactamente código y cuerpo entre colisión y rechazo sin contacto existente. La carrera de correo provoca un P2002 real mediante actualización sintética concurrente entre lectura e inserción y acredita rollback. Reutilización válida y contacto nuevo devuelven **201/PENDING**, con la misma estructura y sin indicador de existencia del contacto; una reserva conserva sus IDs/instantes propios. Reutilizar un contacto dentro del mismo tenant sigue siendo válido. La identidad secundaria legacy conserva `accountCreated/accountCreationError` y su señal de correo global; no pertenece a la colisión entre Clients neutralizada ni se declara corregida en esta entrega."
+        },
+        {
+          "line": 104,
+          "text": "- D11 neutraliza errores por decisión expresa; no acredita indistinguibilidad temporal ni igualdad entre éxito y rechazo. La cuenta secundaria legacy conserva señal de identidad global en `accountCreated/accountCreationError`; permanece documentada dentro de la frontera de cuenta D8, sin ampliación B2C ni afirmación de anti-enumeración total."
+        },
+        {
+          "line": 148,
+          "text": "Para C2, después de aprobación del backend y autorización expresa: ruta /{slug}/reservar, consumo de rango/día y fotos existentes, calendario D6-B con días no disponibles visibles/deshabilitados y hora compacta, copy PENDING, error D11 útil/genérico, revalidación, aislamiento del estado de visita y estados de C0. Mis reservas/cuenta real, Pagos, editor y calendario del panel conservan sus módulos. QA visual C3 y producción separados."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C2_CIERRE.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 62,
+          "text": "Sesiones Clerk **reales de prueba**, cuatro identidades sintéticas existentes y ocho Memberships nuevas solo en la base desechable. OWNER, ADMIN, RECEPTIONIST y BARBER completaron una reserva PENDING en cada negocio: **ocho recorridos**. Desde el navegador se leyeron `/bookings` con cada sesión y contexto tenant; IDs contrastados con DB confirman aislamiento. Profesional solo recibe su agenda vinculada. CUSTOMER obtuvo 403 usando JWT legacy controlado y Membership local; no se acredita continuidad Clerk/Mis reservas B2C."
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 164,
+          "text": "| Advertencia de cuenta | Leer antes de marcar y luego desmarcar | «Esta opción está en pruebas…» advierte que aún no hay Mis reservas ni reserva rápida; desmarcar elimina la contraseña |"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/executor.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 767,
+          "text": "source=(ROOT/'apps/api/test/customer-runtime-compat.cjs').read_text(encoding='utf-8')"
+        },
+        {
+          "line": 785,
+          "text": "args=['C:/Program Files/nodejs/node.exe','-r',str(ROOT/'apps/api/test/customer-no-dotenv.cjs'),"
+        },
+        {
+          "line": 827,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/image-drill.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 25,
+          "text": "node=(m.ROOT/'apps/api/test/customer-runtime-compat.cjs').read_text(encoding='utf-8')"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-gpg-ejecutor.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 600,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-1-ejecutor.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 602,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-ejecutor.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 650,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 418,
+          "text": "original=(ROOT/'apps/api/test/customer-runtime-grants-drill.cjs').read_text()"
+        },
+        {
+          "line": 454,
+          "text": "const compatPath=path.join(current,'apps/api/test/customer-runtime-compat.cjs');"
+        },
+        {
+          "line": 567,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 464,
+          "text": "original=(ROOT/'apps/api/test/customer-runtime-grants-drill.cjs').read_text(encoding='utf-8')"
+        },
+        {
+          "line": 500,
+          "text": "const compatPath=path.join(current,'apps/api/test/customer-runtime-compat.cjs');"
+        },
+        {
+          "line": 614,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt",
+      "category": "evidencia historica",
+      "hits": [
+        {
+          "line": 540,
+          "text": "inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'"
+        }
+      ]
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "category": "documentacion; vigencia por seccion",
+      "hits": [
+        {
+          "line": 5381,
+          "text": "resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}"
+        }
+      ]
+    }
+  ]
+}

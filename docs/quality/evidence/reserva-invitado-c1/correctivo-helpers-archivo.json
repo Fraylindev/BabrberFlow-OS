@@ -1,0 +1,28 @@
+[
+  {
+    "source": "apps/api/test/customer-runtime-grants-drill.cjs",
+    "archive": "docs/history/reserva-invitado/helpers/customer-runtime-grants-drill.cjs.txt",
+    "sha256": "5a83fbc75361011e72cdf2d889a7ecd5956f72bc941a980f153a667086ab42e4"
+  },
+  {
+    "source": "apps/api/test/customer-runtime-compat.cjs",
+    "archive": "docs/history/reserva-invitado/helpers/customer-runtime-compat.cjs.txt",
+    "sha256": "28ff1b4e0ac4ee0bdb845282cf077affca9a4cfd9ded88d27b50e13b41778388"
+  },
+  {
+    "source": "apps/api/test/customer-code-rollback.cjs",
+    "archive": "docs/history/reserva-invitado/helpers/customer-code-rollback.cjs.txt",
+    "sha256": "e39cf8afda8456fa1ef3712be9418174cb44cf38a9074012a17240b85f30a9f6"
+  },
+  {
+    "source": ".tmp/m2-d4/probe.cjs",
+    "archive": "docs/history/reserva-invitado/helpers/m2-d4-probe.cjs.txt",
+    "sha256": "7d7c364b4329e53a3254b3ec247a91903e044ab11a758a09716bca6a09e347d1"
+  },
+  {
+    "source": "apps/web/components/customer/Customer.test.tsx",
+    "archive": "docs/history/reserva-invitado/Customer.test.tsx.txt",
+    "sha256": "c0f1f2f491675e138ea53db4586e419c3ceb09e11d410f88ccce04625bad02db",
+    "source_retained_except_two_claim_tests": true
+  }
+]

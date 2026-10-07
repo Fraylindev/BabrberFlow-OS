@@ -310,8 +310,6 @@ describe('WhatsApp C1 - existing public HTTP contract', () => {
         endTime: booking.endTime.toISOString(),
         status: 'PENDING',
       },
-      accountCreated: false,
-      accountCreationError: null,
     });
     expect(createBooking).toHaveBeenCalledTimes(1);
     expect(createBooking).toHaveBeenCalledWith(

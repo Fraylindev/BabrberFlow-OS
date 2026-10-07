@@ -1,0 +1,35 @@
+const { randomUUID } = require('node:crypto');
+const { writeFileSync } = require('node:fs');
+const { PrismaClient } = require('@prisma/client');
+const request = require('supertest');
+const { createE2eApp } = require('../../apps/api/test/create-e2e-app');
+const { ClerkSessionVerifierService } = require('../../apps/api/src/auth/clerk/clerk-session-verifier.service');
+const { MediaPurgeWorker } = require('../../apps/api/src/media/media-purge.worker');
+async function main() {
+  const url = new URL(process.env.DATABASE_URL);
+  if (url.hostname !== '127.0.0.1' || url.port !== '55439' || url.pathname !== '/kortek_m2_test') throw Error('Base no autorizada');
+  const db = new PrismaClient();
+  const id = randomUUID();
+  const actor = `m2_test_${id}`;
+  const email = `${id}@test.invalid`;
+  let app;
+  try {
+    await db.organization.create({data:{id,name:'Ensayo D4',slug:id,email,businessSchedule:{create:{state:'CONFIRMED',zoneConfirmed:true,days:{create:Array.from({length:7},(_,dayOfWeek)=>({dayOfWeek,windows:{create:{startMinute:540,endMinute:1080}}}))}}}}});
+    await db.cmsPage.update({where:{organizationId:id},data:{isPublished:true,publishedRevision:0,publishedSnapshot:{publicName:'Ensayo D4',description:null,phone:null,address:null,googleMapsUrl:null}}});
+    const service = await db.service.create({data:{organizationId:id,name:'Servicio',duration:30,price:100}});
+    const professional = await db.professional.create({data:{organizationId:id,name:'Profesional',status:'ACTIVE',isPublic:true}});
+    app = await createE2eApp(b=>b.overrideProvider(ClerkSessionVerifierService).useValue({verify:()=>Promise.resolve({clerkUserId:actor,sessionId:'synthetic'}),getClient:()=>({users:{getUser:()=>Promise.resolve({id:actor,firstName:'Cliente',lastName:'Sintético',primaryEmailAddressId:'primary',emailAddresses:[{id:'primary',emailAddress:email,verification:{status:'verified'}}]})}})}).overrideProvider(MediaPurgeWorker).useValue({onModuleInit(){},onModuleDestroy(){}}));
+    app.useLogger(false);
+    await app.listen(0,'127.0.0.1');
+    const server = app.getHttpServer();
+    const guest = await request(server).post(`/public/${id}/bookings`).send({serviceId:service.id,professionalId:professional.id,startTime:'2099-05-02T13:00:00Z',clientName:'Cliente sintético',clientEmail:email,clientPhone:'+18095550177'});
+    if (guest.status !== 201) throw Error(`Reserva: ${guest.status} ${JSON.stringify(guest.body)}`);
+    const claim = await request(server).post('/auth/clerk/customer/claims').auth(actor,{type:'bearer'}).send({bookingId:guest.body.booking.id,organizationSlug:id});
+    const list = await request(server).get(`/customer/${id}/bookings`).auth(actor,{type:'bearer'});
+    const persisted = await db.booking.findUniqueOrThrow({where:{id:guest.body.booking.id}}); const client = await db.client.findUnique({where:{id:persisted.clientId}});
+    const result={phase:process.argv[2]||'before',guestStatus:guest.status,claimStatus:claim.status,claimed:claim.body.claimed,listStatus:list.status,containsBooking:list.body.items?.some(b=>b.id===guest.body.booking.id)||false,customerAccessBlocked:client?.customerAccessBlocked};
+    writeFileSync(`.tmp/m2-d4/${result.phase}-http.json`,JSON.stringify(result,null,2)+'\n');
+    process.stdout.write(JSON.stringify(result)+'\n');
+  } finally { if(app) await app.close(); await db.$disconnect(); }
+}
+main().catch(e=>{process.stderr.write(String(e)+'\n');process.exitCode=1;});

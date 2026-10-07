@@ -19,7 +19,7 @@ beforeEach(() => {
     professionals: [{ id: 'professional-qa', name: 'Alex QA', bio: null, avatar: null }],
   });
   vi.spyOn(api, 'post').mockResolvedValue({ booking: { id: 'booking-qa', status: 'PENDING', serviceId: 'service-qa', professionalId: 'professional-qa',
-    startTime: '2026-10-05T14:00:00.000Z', endTime: '2026-10-05T14:30:00.000Z' }, accountCreated: false, accountCreationError: null });
+    startTime: '2026-10-05T14:00:00.000Z', endTime: '2026-10-05T14:30:00.000Z' } });
 });
 async function contact() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -68,5 +68,3 @@ it('a choice without an email does not block a valid reservation or expose omiss
   }));
   expect(screen.queryByText(/Omitido|Sin destinatario|Preferencia guardada/)).not.toBeInTheDocument();
 });
-vi.mock('@/components/customer/CustomerProvider', () => ({ useCustomer: () => ({ scope: 'public-notification-regression' }) }));
-vi.mock('@/components/customer/CustomerClaim', () => ({ CustomerClaim: () => null }));

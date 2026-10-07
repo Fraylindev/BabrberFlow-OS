@@ -86,7 +86,9 @@ async function budget(route, method, limit, admitted, host = '127.0.0.1') {
     assert.equal(await request(3321, '/auth/login', 'POST', '127.0.0.1', 99), 429);
     console.log('HTTP_RESTART_PERSISTENCE_OK');
     await budget('/auth/clerk/onboarding', 'POST', 10, 401);
-    await budget('/auth/clerk/customer/claims', 'POST', 10, 401);
+    // Retired B2C route: it must remain absent, not expose an authenticated budget.
+    assert.equal(await request(3321, '/auth/clerk/customer/claims', 'POST', '127.0.0.1', 0), 404);
+    console.log('HTTP_CUSTOMER_CLAIM_ABSENT_OK');
     await budget('/auth/clerk/bootstrap', 'GET', 30, 401);
     await budget('/auth/clerk/invitations/00000000-0000-4000-8000-000000000001/accept', 'POST', 10, 401);
     await budget('/public/c1-rate-drill/bookings', 'POST', 5, 400);

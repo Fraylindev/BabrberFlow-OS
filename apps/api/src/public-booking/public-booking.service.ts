@@ -2,11 +2,9 @@ import {
   BadRequestException,
   Injectable,
   ServiceUnavailableException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
-import { Prisma, ProfessionalStatus, UserRole } from '@prisma/client';
+import { Prisma, ProfessionalStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { AuditService } from '../audit/audit.service';
@@ -47,8 +45,6 @@ const PUBLIC_CONTACT_REJECTION_MESSAGE =
 
 @Injectable()
 export class PublicBookingService {
-  private readonly logger = new Logger(PublicBookingService.name);
-
   constructor(
     private prisma: PrismaService,
     private bookingsService: BookingsService,
@@ -432,12 +428,6 @@ export class PublicBookingService {
     dto: CreatePublicBookingDto,
   ): Promise<PublicBookingResponseDto> {
     const organization = await this.resolveOrganization(slug);
-    if (dto.createAccount && !dto.clientEmail) {
-      throw new BadRequestException(
-        'Se necesita un correo para crear la cuenta',
-      );
-    }
-
     let normalizedPhone: string | null;
     try {
       normalizedPhone = normalizeClientPhone(dto.clientPhone);
@@ -495,15 +485,6 @@ export class PublicBookingService {
       result.clientResult.action,
     );
 
-    if (dto.createAccount && normalized.email && dto.password) {
-      await this.tryCreateCustomerAccount(
-        organization.id,
-        normalized.name,
-        normalized.email,
-        dto.password,
-      );
-    }
-
     return {
       booking: {
         id: result.booking.id,
@@ -513,9 +494,6 @@ export class PublicBookingService {
         endTime: result.booking.endTime,
         status: result.booking.status,
       },
-      // D8-A: el HTTP no confirma existencia ni éxito de identidad secundaria.
-      accountCreated: false,
-      accountCreationError: null,
     };
   }
 
@@ -585,51 +563,5 @@ export class PublicBookingService {
       entity: 'Client',
       entityId: clientId,
     });
-  }
-
-  private async tryCreateCustomerAccount(
-    organizationId: string,
-    name: string,
-    email: string,
-    password: string,
-  ): Promise<{ created: boolean; error: string | null }> {
-    try {
-      // Mismo trabajo bcrypt también cuando el correo ya existe.
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const existing = await this.prisma.db.user.findFirst({
-        where: { email: { equals: email, mode: 'insensitive' } },
-        select: { id: true },
-      });
-      if (existing) {
-        return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
-      }
-
-      await this.prisma.db.$transaction(async (transaction) => {
-        const user = await transaction.user.create({
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-            lastOrganizationId: organizationId,
-          },
-        });
-        await transaction.membership.create({
-          data: {
-            userId: user.id,
-            organizationId,
-            role: UserRole.CUSTOMER,
-          },
-        });
-      });
-      return { created: true, error: null };
-    } catch (error) {
-      if (isUniqueConstraintError(error, 'email')) {
-        return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
-      }
-      this.logger.error(
-        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
-      );
-      return { created: false, error: 'ACCOUNT_CREATION_FAILED' };
-    }
   }
 }

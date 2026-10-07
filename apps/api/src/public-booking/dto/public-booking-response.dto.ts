@@ -11,6 +11,4 @@ export class PublicBookingSummaryDto {
 
 export class PublicBookingResponseDto {
   booking!: PublicBookingSummaryDto;
-  accountCreated!: boolean;
-  accountCreationError!: string | null;
 }

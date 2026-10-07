@@ -539,7 +539,11 @@ describeDatabase('C1 schedule: real isolated PostgreSQL/runtime', () => {
     const data = await publicBooking.getBookingData(f.org.slug);
     expect(data.minimumBookingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(JSON.stringify(data)).not.toContain(f.org.id);
-    expect(JSON.stringify(data)).not.toContain('America/');
+    // F0-D/2A approved the technical zone at the root only (BACKEND_CHANGES, 2026-10-01).
+    // Preserve H5 privacy on every other field; do not remove the contract's zone.
+    const { timeZone, ...publicProjection } = data;
+    expect(timeZone).toBe(f.org.timeZone);
+    expect(JSON.stringify(publicProjection)).not.toContain('America/');
     const slots = await publicBooking.getAvailability(f.org.slug, {
       date: '2099-01-05',
       serviceId: f.service.id,

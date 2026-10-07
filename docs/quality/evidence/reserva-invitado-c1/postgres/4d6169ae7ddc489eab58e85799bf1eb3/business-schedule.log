@@ -1,0 +1,29 @@
+  console.info
+    C1 controlled load: 8 concurrent writes, 480ms total
+
+      at Object.<anonymous> (business-schedule/business-schedule.integration.spec.ts:838:13)
+
+FAIL src/business-schedule/business-schedule.integration.spec.ts (5.237 s)
+  ● C1 schedule: real isolated PostgreSQL/runtime › public slots preserve H5, privacy, cadence, custom intersection and eligibility
+
+    expect(received).not.toContain(expected) // indexOf
+
+    Expected substring: not "America/"
+    Received string:        "{\"minimumBookingDate\":\"2026-10-07\",\"timeZone\":\"America/Santo_Domingo\",\"organization\":{\"name\":\"Controlled business\",\"slug\":\"1756149c-9bc6-455a-a1ac-1b534968c19e\",\"phone\":null,\"description\":null,\"address\":null,\"googleMapsUrl\":null},\"whatsappBaseUrl\":\"https://wa.me/\",\"services\":[{\"id\":\"851bd95c-4453-4303-be25-57a6c99fe739\",\"name\":\"Controlled service\",\"description\":null,\"duration\":30,\"price\":\"100\"}],\"professionals\":[{\"id\":\"27c26d7f-9599-41a1-8e23-c16bba54774d\",\"name\":\"A professional\",\"bio\":null,\"avatar\":null}]}"
+
+      540 |     expect(data.minimumBookingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      541 |     expect(JSON.stringify(data)).not.toContain(f.org.id);
+    > 542 |     expect(JSON.stringify(data)).not.toContain('America/');
+          |                                      ^
+      543 |     const slots = await publicBooking.getAvailability(f.org.slug, {
+      544 |       date: '2099-01-05',
+      545 |       serviceId: f.service.id,
+
+      at Object.<anonymous> (business-schedule/business-schedule.integration.spec.ts:542:38)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 25 passed, 26 total
+Snapshots:   0 total
+Time:        5.799 s, estimated 7 s
+Ran all test suites within paths "src/business-schedule/business-schedule.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\reserva-invitado-c1\postgres\4d6169ae7ddc489eab58e85799bf1eb3\business-schedule.json

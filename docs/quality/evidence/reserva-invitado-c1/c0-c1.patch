@@ -1,0 +1,4503 @@
+diff --git a/BACKEND_CHANGES.md b/BACKEND_CHANGES.md
+index 51562195d9ff58ca544ebb8119d9f794c8dda803..7a4bf31c78c95cc8159a4f84c2000ef79cce620a 100644
+--- a/BACKEND_CHANGES.md
++++ b/BACKEND_CHANGES.md
+@@ -1,5 +1,15 @@
+ # BACKEND_CHANGES.md
+ 
++## 2026-10-07 — Reserva de invitado, retiro B2C C1 local
++
++**IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISIÓN.** Solo C0/C1 autorizado. [Contrato, inventario de exclusividad, pruebas y rollback](docs/features/RESERVA_INVITADO_C0_C1.md).
++
++- `POST /public/:slug/bookings` conserva ruta, campos de servicio/profesional/instante y contacto, consentimiento, transacción, PENDING y aislamiento. `createAccount` y `password` dejan de pertenecer al DTO: 400 por whitelist antes de persistir, también con `createAccount:false`.
++- Se retiran GET `/customer/businesses`, GET/POST `/customer/:slug/bookings`, GET `/customer/:slug/bookings/:id`, GET/PATCH `/customer/:slug/profile` y POST `/auth/clerk/customer/claims`: 404 con/sin bearer; no proveedor ni escritura.
++- `accountCreated:false` y `accountCreationError:null` quedan **deprecated**, sin lógica de cuenta. Existen consumidores tipados/fixtures web; C2 retirará primero esas dependencias y, en checkpoint coordinado posterior, los campos del API tras repetir búsqueda global. No se implementa C2 aquí.
++- Login/JWT legacy excluye CUSTOMER; un actor con membresía interna válida conserva ese acceso. Guards compartidos y Clerk se conservan. Sin nuevos roles ni cambios de MFA, TTL, proveedor o rutas internas.
++- Prisma, migraciones, datos, grants, scripts de compatibilidad e historiales intactos. Sin publicación/QA/producción/P4b.
++
+ ## 2026-10-03 — M2 C1: correctivo D4 autorizado y publicación de un único commit
+ 
+ Refinamiento explícito del propietario: claim A0.6-A exitoso habilita lectura del Client sin operador. Sustituye solo la regla D4 de la entrada C1 anterior, conservada como historial. **IMPLEMENTADO / EN REVISIÓN**, único gate C1; commit/push de todo C1 autorizados solo a `origin/ai/antigravity-qa`. Sin despliegue, C2 ni producción. [Contrato actualizado](docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md), [cierre/evidencia](docs/quality/M2_C1_CIERRE.md#correctivo-d4-y-publicación-autorizada-2026-10-03).
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index a5f9418d5bbb2e29bd6fffc6b493241be7383159..549d55b4072013581e5a184465821363194e3f40 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,11 @@
+ # CHANGELOG
+ 
++## 2026-10-07 — Retiro funcional B2C, solo C0/C1 local
++
++- Cuenta de cliente final fuera del producto/MVP; reserva de invitado oficial y Client como contacto operativo. [Contrato, evidencia y límites](docs/features/RESERVA_INVITADO_C0_C1.md).
++- C1 retira rutas/customer y claims, alta secundaria legacy y campos de entrada de cuenta. Bloquea JWT CUSTOMER sin cambiar los roles internos ni Clerk. Campos de salida de cuenta deprecated hasta retirar tipos web en C2.
++- Sin C2/C3, datos, Prisma/migraciones, dependencias instaladas, P4b, commit/push/despliegue o cambios QA. Implementación local validada/en revisión; no aprobación inferida.
++
+ ## 2026-10-03 — Consolidación documental local de M1 y M2 C1
+ 
+ - Siete rutas pendientes reunidas en un único commit local sobre `d222115f7d624b5698b67a24e22486625fec22b2`, sin incorporar cambios nuevos de código o contratos. El commit C2 y `cierre-documental-20261003.json` permanecen intactos. **Sin push ni despliegue**: [alcance y motivo](PROJECT_MASTER.md).
+diff --git a/PROJECT_MASTER.md b/PROJECT_MASTER.md
+index 000eeadd9cc1d77031cd2c8df18b09bd47510425..4e3211e0c2445630d9d7e722f1ffb7a94f4c8127 100644
+--- a/PROJECT_MASTER.md
++++ b/PROJECT_MASTER.md
+@@ -1,5 +1,13 @@
+ # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
+ 
++## Decisión vigente — reserva de invitado y retiro B2C, 2026-10-07
++
++La cuenta del cliente final queda fuera del producto y del MVP actual por decisión explícita del propietario. **La reserva de invitado es el flujo oficial.** `Client` permanece como ficha operativa tenant-scoped, sin equivaler a una cuenta autenticada. [Alcance C0/C1, contrato, evidencia y límites](docs/features/RESERVA_INVITADO_C0_C1.md).
++
++Solo C0 documental y C1 backend/seguridad autorizados: implementación local validada/en revisión, sin commit/push/despliegue ni cambios en QA. C2 frontend y C3 QA no iniciados; la UI B2C local permanece hasta su entrega separada. No se modifica Clerk ni el comportamiento de autenticación de OWNER/ADMIN/RECEPTIONIST/BARBER; se retira exclusivamente la capacidad CUSTOMER y se conserva el acceso interno de identidades mixtas. Datos, Prisma, migraciones, grants y estructuras de compatibilidad intactos. P4b y su auditoría excluidos.
++
++M2 y A0.6-B/C/D ya no son siguientes entregas del producto; las aprobaciones anteriores de cuentas y claims se conservan como antecedentes, no autorizan activación. El roadmap funcional continúa con calendario operativo día/semana y C0 financiero de transferencias/comprobantes privados para invitados; Analytics/Resumen después. Ninguna etapa futura se autoriza aquí. Retirar historial B2C elimina esa vía de exposición D4, pero no acredita resolver contactos mezclados ni deuda de paginación del panel. Producción continúa cerrada.
++
+ **Resultado local P0/P1 de M2 C3 — 2026-10-03:** [informe posterior](docs/quality/M2_C3_PREFLIGHT.md#11-ejecución-autorizada-de-p0-y-p1--2026-10-03). P0 READ ONLY confirma API QA `791569b`, runtime `kortek_runtime`, destino del proyecto QA, 27 migraciones y Preview `9f04dba`; producción se contrasta exclusivamente con metadatos históricos aportados, sin consulta viva. P1 corrige localmente grants SID de CustomerOperation y matriz/gate de 37 tablas, conserva la migración 28 intacta y pasa upgrade 27→28, negativos, triggers y compatibilidad del API anterior con login restringido en desechable PG17; type-check, lint, 812 pruebas API, build y Prisma validate exit 0. Ensayo final sin dotenv y contenedor propio retirado. **IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISIÓN; único commit local autorizado, SIN PUSH.** P2 y activación no iniciados; no se infiere aprobación de P1/C3. D4 y paginación del panel siguen bloqueando Paso 8.
+ 
+ **M2 C2 y preflight C3 — 2026-10-03:** el propietario **aprueba C2 como checkpoint local** en `d222115f7d624b5698b67a24e22486625fec22b2`, sin publicación ni despliegue. [Registro posterior y límites](docs/quality/M2_C2_CIERRE.md#aprobación-del-checkpoint-local-c2--2026-10-03). Se autorizan P0 (lecturas vivas previstas) y P1 (grants mínimos, matriz/gate y ensayos únicamente desechables) del [preflight](docs/quality/M2_C3_PREFLIGHT.md), junto con un único commit local de ese alcance y el registro de aprobación. **NO PUSH; NO P2.** No se aplican migraciones en QA, no se despliega ni se detiene/reinicia ningún servicio existente, no se cambian variables/flags/Clerk ni dependencias. Producción permanece cerrada e intacta. D4 (mezcla en una ficha) y la paginación del panel continúan bloqueando Paso 8. Las cabeceras inferiores conservan sus autorizaciones y estados históricos.
+diff --git a/apps/api/src/app.module.ts b/apps/api/src/app.module.ts
+index b7f7f968a1ef223d886f00aa1f419e569e4855f8..fec5a8433868d28c48d5223c4133d4348437dbfa 100644
+--- a/apps/api/src/app.module.ts
++++ b/apps/api/src/app.module.ts
+@@ -18,7 +18,6 @@ import { MediaModule } from './media/media.module';
+ import { PostgresThrottlerStorage } from './security/postgres-throttler.storage';
+ import { PrismaService } from './prisma/prisma.service';
+ import { BusinessScheduleModule } from './business-schedule/business-schedule.module';
+-import { CustomerModule } from './customer/customer.module';
+ 
+ @Module({
+   imports: [
+@@ -69,7 +68,6 @@ import { CustomerModule } from './customer/customer.module';
+     CmsModule,
+     NotificationsModule,
+     MediaModule,
+-    CustomerModule,
+   ],
+   controllers: [],
+   providers: [],
+diff --git a/apps/api/src/auth/auth.module.ts b/apps/api/src/auth/auth.module.ts
+index b3f87651e1a3324c89f9face0b4c5a0bec59c679..72e333e6e2137d2b0c0fa4ff797c90efc988b55f 100644
+--- a/apps/api/src/auth/auth.module.ts
++++ b/apps/api/src/auth/auth.module.ts
+@@ -26,8 +26,6 @@ import { TeamInvitationsService } from './team-invitations.service';
+ import { B2bAuthGuard } from './guards/b2b-auth.guard';
+ import { ClerkBootstrapController } from './clerk-bootstrap.controller';
+ import { ClerkBootstrapService } from './clerk-bootstrap.service';
+-import { ClerkCustomerClaimsController } from './clerk-customer-claims.controller';
+-import { ClerkCustomerClaimsService } from './clerk-customer-claims.service';
+ 
+ if (!process.env.JWT_SECRET) {
+   throw new Error(
+@@ -53,7 +51,6 @@ if (!process.env.JWT_SECRET) {
+     TeamInvitationsController,
+     TeamInvitationAcceptanceController,
+     ClerkBootstrapController,
+-    ClerkCustomerClaimsController,
+   ],
+   providers: [
+     AuthService,
+@@ -69,7 +66,6 @@ if (!process.env.JWT_SECRET) {
+     TeamInvitationsService,
+     B2bAuthGuard,
+     ClerkBootstrapService,
+-    ClerkCustomerClaimsService,
+   ],
+   exports: [
+     ClerkAuthGuard,
+diff --git a/apps/api/src/auth/auth.service.spec.ts b/apps/api/src/auth/auth.service.spec.ts
+index 56b9e57bac5fffbc3cc00535b335b30f5ccd59bf..e2902102c77f15588deba983e6ae2a8300430de3 100644
+--- a/apps/api/src/auth/auth.service.spec.ts
++++ b/apps/api/src/auth/auth.service.spec.ts
+@@ -147,6 +147,67 @@ describe('AuthService — autenticación', () => {
+       expect(result.user.role).toBe('BARBER');
+     });
+ 
++    it.each(['OWNER', 'ADMIN', 'RECEPTIONIST', 'BARBER'])(
++      'preserva el login interno %s sin buscar otra membresía',
++      async (role) => {
++        await mockValidUser();
++        prisma.db.membership.findUnique.mockResolvedValue({
++          userId: 'user-1',
++          organizationId: 'org-1',
++          role,
++        });
++        const result = await service.login({
++          email: EMAIL,
++          password: PASSWORD,
++        });
++        expect(result.user.role).toBe(role);
++        expect(prisma.db.membership.findFirst).not.toHaveBeenCalled();
++        expect(prisma.db.user.update).not.toHaveBeenCalled();
++      },
++    );
++
++    it('rechaza CUSTOMER sin membresía interna y no altera su identidad', async () => {
++      await mockValidUser();
++      prisma.db.membership.findUnique.mockResolvedValue({
++        userId: 'user-1',
++        organizationId: 'org-1',
++        role: 'CUSTOMER',
++      });
++      prisma.db.membership.findFirst.mockResolvedValue(null);
++      await expect(
++        service.login({ email: EMAIL, password: PASSWORD }),
++      ).rejects.toMatchObject({ message: 'Credenciales inválidas' });
++      expect(prisma.db.membership.findFirst).toHaveBeenCalledWith({
++        where: {
++          userId: 'user-1',
++          role: { in: ['OWNER', 'ADMIN', 'BARBER', 'RECEPTIONIST'] },
++        },
++        orderBy: { createdAt: 'asc' },
++      });
++      expect(prisma.db.user.update).not.toHaveBeenCalled();
++    });
++
++    it('preserva la membresía interna de una identidad con CUSTOMER histórico', async () => {
++      await mockValidUser();
++      prisma.db.membership.findUnique.mockResolvedValue({
++        userId: 'user-1',
++        organizationId: 'old-org',
++        role: 'CUSTOMER',
++      });
++      prisma.db.membership.findFirst.mockResolvedValue({
++        userId: 'user-1',
++        organizationId: 'org-1',
++        role: 'ADMIN',
++      });
++      const result = await service.login({ email: EMAIL, password: PASSWORD });
++      expect(result.user.role).toBe('ADMIN');
++      expect(result.user.organizationId).toBe('org-1');
++      expect(prisma.db.user.update).toHaveBeenCalledWith({
++        where: { id: 'user-1' },
++        data: { lastOrganizationId: 'org-1' },
++      });
++    });
++
+     it('un login exitoso devuelve user, accessToken y organization completos', async () => {
+       await mockValidUser();
+ 
+diff --git a/apps/api/src/auth/auth.service.ts b/apps/api/src/auth/auth.service.ts
+index 2f80ba8bfc3655bc8b2d115b5b1c37c19bcdac5e..f6bfd43ae7fecdc9e1e2ced640a7ef994be5f37f 100644
+--- a/apps/api/src/auth/auth.service.ts
++++ b/apps/api/src/auth/auth.service.ts
+@@ -1,4 +1,4 @@
+-import { Prisma } from '@prisma/client';
++import { Prisma, UserRole } from '@prisma/client';
+ import {
+   Injectable,
+   BadRequestException,
+@@ -21,6 +21,7 @@ import {
+   normalizeAccountEmail,
+   normalizeOrganizationSlug,
+ } from './organization-slug';
++import { B2B_ROLES } from './roles.constants';
+ 
+ // Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
+ // attempt-limiter.ts para el presupuesto compartido por cuenta. 8/10min en login: generoso para alguien que
+@@ -232,17 +233,20 @@ export class AuthService {
+         })
+       : null;
+ 
+-    if (!membership) {
++    const retiredCustomerMembership = membership?.role === UserRole.CUSTOMER;
++    if (!membership || retiredCustomerMembership) {
+       // Caso legacy (o lastOrganizationId apuntando a una membresía que ya
+-      // no existe): usa la primera membresía disponible y la guarda.
++      // no existe, o CUSTOMER histórico): usa la primera membresía interna.
+       membership = await this.prisma.db.membership.findFirst({
+-        where: { userId: user.id },
++        where: { userId: user.id, role: { in: B2B_ROLES } },
+         orderBy: { createdAt: 'asc' },
+       });
+ 
+       if (!membership) {
+         throw new UnauthorizedException(
+-          'Esta cuenta no tiene ninguna organización asociada',
++          retiredCustomerMembership
++            ? 'Credenciales inválidas'
++            : 'Esta cuenta no tiene ninguna organización asociada',
+         );
+       }
+ 
+diff --git a/apps/api/src/auth/clerk-customer-claims.controller.spec.ts b/apps/api/src/auth/clerk-customer-claims.controller.spec.ts
+deleted file mode 100644
+index fc9368a0dfc9083dcd576d1191bbd6a4df579674..0000000000000000000000000000000000000000
+--- a/apps/api/src/auth/clerk-customer-claims.controller.spec.ts
++++ /dev/null
+@@ -1,45 +0,0 @@
+-import { HttpStatus, UnauthorizedException } from '@nestjs/common';
+-import type { Response } from 'express';
+-import { ClerkCustomerClaimsController } from './clerk-customer-claims.controller';
+-import { ClerkCustomerClaimsService } from './clerk-customer-claims.service';
+-import type { ClerkOnboardingRequest } from './guards/clerk-onboarding.guard';
+-
+-describe('ClerkCustomerClaimsController', () => {
+-  const claim = jest.fn();
+-  const controller = new ClerkCustomerClaimsController({
+-    claim,
+-  } as unknown as ClerkCustomerClaimsService);
+-  const dto = {
+-    bookingId: '843b7699-f9e7-47ce-abfb-f08bdf2e7ea5',
+-    organizationSlug: 'tenant-one',
+-  };
+-
+-  beforeEach(() => jest.clearAllMocks());
+-
+-  it.each([
+-    [true, HttpStatus.CREATED],
+-    [false, HttpStatus.OK],
+-  ])('devuelve el estado idempotente esperado', async (isNew, status) => {
+-    claim.mockResolvedValue({ isNew });
+-    const setStatus = jest.fn();
+-    const response = { status: setStatus } as unknown as Response;
+-    const request = {
+-      clerkSession: { clerkUserId: 'user_clerk_customer', sessionId: 'sess' },
+-    } as ClerkOnboardingRequest;
+-
+-    await expect(controller.claim(request, dto, response)).resolves.toEqual({
+-      claimed: true,
+-    });
+-    expect(setStatus).toHaveBeenCalledWith(status);
+-    expect(claim).toHaveBeenCalledWith('user_clerk_customer', dto);
+-  });
+-
+-  it('rechaza si el guard no dejó una identidad verificada', async () => {
+-    await expect(
+-      controller.claim({} as ClerkOnboardingRequest, dto, {
+-        status: jest.fn(),
+-      } as unknown as Response),
+-    ).rejects.toBeInstanceOf(UnauthorizedException);
+-    expect(claim).not.toHaveBeenCalled();
+-  });
+-});
+diff --git a/apps/api/src/auth/clerk-customer-claims.controller.ts b/apps/api/src/auth/clerk-customer-claims.controller.ts
+deleted file mode 100644
+index a20551c01b2b944cd53838f773b104a21d68bb1a..0000000000000000000000000000000000000000
+--- a/apps/api/src/auth/clerk-customer-claims.controller.ts
++++ /dev/null
+@@ -1,41 +0,0 @@
+-import {
+-  Body,
+-  Controller,
+-  HttpStatus,
+-  Post,
+-  Req,
+-  Res,
+-  UnauthorizedException,
+-  UseGuards,
+-} from '@nestjs/common';
+-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+-import type { Response } from 'express';
+-import { ClerkCustomerClaimsService } from './clerk-customer-claims.service';
+-import { ClerkCustomerClaimDto } from './dto/clerk-customer-claim.dto';
+-import {
+-  ClerkOnboardingGuard,
+-  type ClerkOnboardingRequest,
+-} from './guards/clerk-onboarding.guard';
+-
+-@Controller('auth/clerk/customer')
+-export class ClerkCustomerClaimsController {
+-  constructor(private readonly claims: ClerkCustomerClaimsService) {}
+-
+-  @UseGuards(ThrottlerGuard, ClerkOnboardingGuard)
+-  @Throttle({ default: { limit: 10, ttl: 60000 } })
+-  @Post('claims')
+-  async claim(
+-    @Req() request: ClerkOnboardingRequest,
+-    @Body() dto: ClerkCustomerClaimDto,
+-    @Res({ passthrough: true }) response: Response,
+-  ) {
+-    const clerkUserId = request.clerkSession?.clerkUserId;
+-    if (!clerkUserId) {
+-      throw new UnauthorizedException('Sesión no válida');
+-    }
+-
+-    const result = await this.claims.claim(clerkUserId, dto);
+-    response.status(result.isNew ? HttpStatus.CREATED : HttpStatus.OK);
+-    return { claimed: true };
+-  }
+-}
+diff --git a/apps/api/src/auth/clerk-customer-claims.service.spec.ts b/apps/api/src/auth/clerk-customer-claims.service.spec.ts
+deleted file mode 100644
+index 96cd05bc251738d59bd0b9a8cd31ae868fb12349..0000000000000000000000000000000000000000
+--- a/apps/api/src/auth/clerk-customer-claims.service.spec.ts
++++ /dev/null
+@@ -1,240 +0,0 @@
+-import { ConflictException, NotFoundException } from '@nestjs/common';
+-import { AuditService } from '../audit/audit.service';
+-import { PrismaService } from '../prisma/prisma.service';
+-import { ClerkCustomerClaimsService } from './clerk-customer-claims.service';
+-import { ClerkOnboardingService } from './clerk-onboarding.service';
+-
+-describe('ClerkCustomerClaimsService', () => {
+-  const booking = {
+-    id: '843b7699-f9e7-47ce-abfb-f08bdf2e7ea5',
+-    organizationId: 'c09aee14-cc14-42cc-97bc-c980b46d329a',
+-    clientId: '61179e28-d53c-466f-a880-d9a693933e93',
+-  };
+-  const client = {
+-    id: booking.clientId,
+-    organizationId: booking.organizationId,
+-    email: 'customer@example.test',
+-    userId: null as string | null,
+-    phone: '+18095550101',
+-    customerAccessBlocked: true,
+-    customerHistoryAmbiguous: false,
+-  };
+-  const queryRaw = jest.fn();
+-  const findUser = jest.fn();
+-  const createUser = jest.fn();
+-  const updateClients = jest.fn();
+-  const findClient = jest.fn();
+-  const tx = {
+-    $queryRaw: queryRaw,
+-    user: { findUnique: findUser, create: createUser },
+-    client: { updateMany: updateClients, findFirst: findClient },
+-  };
+-  const transaction = jest.fn();
+-  const prisma = {
+-    db: { $transaction: transaction },
+-  } as unknown as PrismaService;
+-  const logTransactional = jest.fn();
+-  const audit = { logTransactional } as unknown as AuditService;
+-  const getVerifiedClerkProfile = jest.fn();
+-  const onboarding = {
+-    getVerifiedClerkProfile,
+-  } as unknown as ClerkOnboardingService;
+-  const service = new ClerkCustomerClaimsService(prisma, audit, onboarding);
+-  const dto = {
+-    bookingId: booking.id,
+-    organizationSlug: 'Tenant-One',
+-  };
+-
+-  beforeEach(() => {
+-    jest.clearAllMocks();
+-    queryRaw.mockReset();
+-    getVerifiedClerkProfile.mockResolvedValue({
+-      name: 'Customer QA',
+-      email: 'customer@example.test',
+-    });
+-    transaction.mockImplementation(
+-      (callback: (client: typeof tx) => Promise<unknown>) => callback(tx),
+-    );
+-    queryRaw.mockResolvedValueOnce([booking]).mockResolvedValueOnce([client]);
+-    queryRaw.mockResolvedValue([booking]);
+-    findUser.mockResolvedValue(null);
+-    createUser.mockResolvedValue({
+-      id: '0d2216b9-f649-4ad3-b661-87f29889eaff',
+-      email: 'customer@example.test',
+-    });
+-    updateClients.mockResolvedValue({ count: 1 });
+-    findClient.mockResolvedValue(null);
+-    logTransactional.mockResolvedValue(undefined);
+-  });
+-
+-  it('crea User sin Membership, enlaza Client y audita sin PII', async () => {
+-    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+-      isNew: true,
+-    });
+-
+-    expect(transaction).toHaveBeenCalledWith(expect.any(Function), {
+-      isolationLevel: 'Serializable',
+-    });
+-    expect(createUser).toHaveBeenCalledWith({
+-      data: {
+-        name: 'Customer QA',
+-        email: 'customer@example.test',
+-        password: null,
+-        clerkUserId: 'clerk_customer',
+-      },
+-      select: { id: true, email: true },
+-    });
+-    expect(tx).not.toHaveProperty('membership');
+-    expect(logTransactional).toHaveBeenCalledWith(
+-      {
+-        organizationId: booking.organizationId,
+-        userId: '0d2216b9-f649-4ad3-b661-87f29889eaff',
+-        action: 'LINK',
+-        entity: 'Client',
+-        entityId: client.id,
+-      },
+-      tx,
+-    );
+-    expect(JSON.stringify(logTransactional.mock.calls)).not.toContain(
+-      'customer@example.test',
+-    );
+-  });
+-
+-  it('es idempotente para el mismo Clerk y no vuelve a escribir', async () => {
+-    queryRaw.mockReset();
+-    queryRaw
+-      .mockResolvedValueOnce([booking])
+-      .mockResolvedValueOnce([
+-        { ...client, userId: 'local-user', customerAccessBlocked: false },
+-      ])
+-      .mockResolvedValueOnce([booking]);
+-    findUser.mockResolvedValueOnce({ clerkUserId: 'clerk_customer' });
+-
+-    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+-      isNew: false,
+-    });
+-    expect(createUser).not.toHaveBeenCalled();
+-    expect(updateClients).not.toHaveBeenCalled();
+-    expect(logTransactional).not.toHaveBeenCalled();
+-  });
+-
+-  it('rechaza colisión de correo local sin crear, enlazar ni auditar', async () => {
+-    findUser
+-      .mockResolvedValueOnce(null)
+-      .mockResolvedValueOnce({ id: 'legacy-user', clerkUserId: null });
+-
+-    await expect(service.claim('clerk_customer', dto)).rejects.toBeInstanceOf(
+-      ConflictException,
+-    );
+-    expect(createUser).not.toHaveBeenCalled();
+-    expect(updateClients).not.toHaveBeenCalled();
+-    expect(logTransactional).not.toHaveBeenCalled();
+-  });
+-
+-  it('habilita después del enlace aunque la fila original estuviera habilitada', async () => {
+-    queryRaw.mockReset();
+-    queryRaw
+-      .mockResolvedValueOnce([booking])
+-      .mockResolvedValueOnce([{ ...client, customerAccessBlocked: false }])
+-      .mockResolvedValueOnce([booking]);
+-    await service.claim('clerk_customer', dto);
+-    expect(updateClients).toHaveBeenLastCalledWith({
+-      where: {
+-        id: client.id,
+-        organizationId: client.organizationId,
+-        userId: '0d2216b9-f649-4ad3-b661-87f29889eaff',
+-      },
+-      data: { customerAccessBlocked: false },
+-    });
+-  });
+-
+-  it('conserva la cuarentena con señal de teléfono compartido sin inferir identidad', async () => {
+-    findClient.mockResolvedValue({ id: 'otra-ficha' });
+-    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+-      isNew: true,
+-    });
+-    expect(updateClients).toHaveBeenLastCalledWith({
+-      where: {
+-        id: client.id,
+-        organizationId: client.organizationId,
+-        userId: '0d2216b9-f649-4ad3-b661-87f29889eaff',
+-      },
+-      data: { customerAccessBlocked: true, customerHistoryAmbiguous: true },
+-    });
+-  });
+-
+-  it('un replay no libera la cuarentena persistente', async () => {
+-    queryRaw.mockReset();
+-    queryRaw
+-      .mockResolvedValueOnce([booking])
+-      .mockResolvedValueOnce([
+-        { ...client, userId: 'local-user', customerHistoryAmbiguous: true },
+-      ])
+-      .mockResolvedValueOnce([booking]);
+-    findUser.mockResolvedValueOnce({
+-      clerkUserId: 'clerk_customer',
+-      email: client.email,
+-    });
+-    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+-      isNew: false,
+-    });
+-    expect(updateClients).toHaveBeenLastCalledWith({
+-      where: {
+-        id: client.id,
+-        organizationId: client.organizationId,
+-        userId: 'local-user',
+-      },
+-      data: { customerAccessBlocked: true, customerHistoryAmbiguous: true },
+-    });
+-  });
+-
+-  it('rehabilita un vínculo revocado solo con el correo primario verificado coherente', async () => {
+-    queryRaw.mockReset();
+-    queryRaw
+-      .mockResolvedValueOnce([booking])
+-      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }])
+-      .mockResolvedValueOnce([booking]);
+-    findUser.mockResolvedValueOnce({
+-      clerkUserId: 'clerk_customer',
+-      email: client.email,
+-    });
+-    await expect(service.claim('clerk_customer', dto)).resolves.toEqual({
+-      isNew: false,
+-    });
+-    expect(updateClients).toHaveBeenLastCalledWith({
+-      where: {
+-        id: client.id,
+-        organizationId: client.organizationId,
+-        userId: 'local-user',
+-      },
+-      data: { customerAccessBlocked: false },
+-    });
+-  });
+-
+-  it('correo cambiado no libera un vínculo revocado', async () => {
+-    queryRaw.mockReset();
+-    queryRaw
+-      .mockResolvedValueOnce([booking])
+-      .mockResolvedValueOnce([{ ...client, userId: 'local-user' }])
+-      .mockResolvedValueOnce([booking]);
+-    findUser.mockResolvedValueOnce({
+-      clerkUserId: 'clerk_customer',
+-      email: 'other@example.test',
+-    });
+-    await expect(service.claim('clerk_customer', dto)).rejects.toBeInstanceOf(
+-      ConflictException,
+-    );
+-    expect(updateClients).not.toHaveBeenCalled();
+-  });
+-
+-  it('oculta reservas de otro tenant con el mismo 404', async () => {
+-    queryRaw.mockReset();
+-    queryRaw.mockResolvedValueOnce([]);
+-
+-    await expect(service.claim('clerk_customer', dto)).rejects.toBeInstanceOf(
+-      NotFoundException,
+-    );
+-    expect(findUser).not.toHaveBeenCalled();
+-    expect(createUser).not.toHaveBeenCalled();
+-  });
+-});
+diff --git a/apps/api/src/auth/clerk-customer-claims.service.ts b/apps/api/src/auth/clerk-customer-claims.service.ts
+deleted file mode 100644
+index 781f121a68fbe3d6ee4c271f359116d8cd98bdc0..0000000000000000000000000000000000000000
+--- a/apps/api/src/auth/clerk-customer-claims.service.ts
++++ /dev/null
+@@ -1,266 +0,0 @@
+-import {
+-  ConflictException,
+-  Injectable,
+-  NotFoundException,
+-} from '@nestjs/common';
+-import { Prisma } from '@prisma/client';
+-import { AuditService } from '../audit/audit.service';
+-import {
+-  isSerializationFailureError,
+-  isUniqueConstraintError,
+-} from '../common/prisma-error.util';
+-import { PrismaService } from '../prisma/prisma.service';
+-import { ClerkOnboardingService } from './clerk-onboarding.service';
+-import { ClerkCustomerClaimDto } from './dto/clerk-customer-claim.dto';
+-import {
+-  normalizeAccountEmail,
+-  normalizeOrganizationSlug,
+-} from './organization-slug';
+-
+-interface LockedBooking {
+-  id: string;
+-  organizationId: string;
+-  clientId: string;
+-}
+-
+-interface LockedClient {
+-  id: string;
+-  organizationId: string;
+-  email: string | null;
+-  userId: string | null;
+-  phone: string | null;
+-  customerAccessBlocked: boolean;
+-  customerHistoryAmbiguous: boolean;
+-}
+-
+-interface ClaimResult {
+-  isNew: boolean;
+-}
+-
+-@Injectable()
+-export class ClerkCustomerClaimsService {
+-  private static readonly MAX_SERIALIZATION_ATTEMPTS = 3;
+-  private static readonly CONFLICT_MESSAGE =
+-    'No es posible reclamar esta reserva.';
+-
+-  constructor(
+-    private readonly prisma: PrismaService,
+-    private readonly audit: AuditService,
+-    private readonly onboarding: ClerkOnboardingService,
+-  ) {}
+-
+-  async claim(
+-    clerkUserId: string,
+-    dto: ClerkCustomerClaimDto,
+-  ): Promise<ClaimResult> {
+-    const profile = await this.onboarding.getVerifiedClerkProfile(clerkUserId);
+-    const organizationSlug = normalizeOrganizationSlug(dto.organizationSlug);
+-
+-    for (
+-      let attempt = 1;
+-      attempt <= ClerkCustomerClaimsService.MAX_SERIALIZATION_ATTEMPTS;
+-      attempt++
+-    ) {
+-      try {
+-        return await this.prisma.db.$transaction(
+-          (tx) =>
+-            this.claimInTransaction(
+-              tx,
+-              clerkUserId,
+-              profile.name,
+-              profile.email,
+-              dto.bookingId,
+-              organizationSlug,
+-            ),
+-          { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+-        );
+-      } catch (error: unknown) {
+-        if (
+-          isSerializationFailureError(error) &&
+-          attempt < ClerkCustomerClaimsService.MAX_SERIALIZATION_ATTEMPTS
+-        ) {
+-          continue;
+-        }
+-        if (
+-          isSerializationFailureError(error) ||
+-          isUniqueConstraintError(error)
+-        ) {
+-          throw new ConflictException(
+-            ClerkCustomerClaimsService.CONFLICT_MESSAGE,
+-          );
+-        }
+-        throw error;
+-      }
+-    }
+-
+-    throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-  }
+-
+-  private async claimInTransaction(
+-    tx: Prisma.TransactionClient,
+-    clerkUserId: string,
+-    name: string,
+-    verifiedEmail: string,
+-    bookingId: string,
+-    organizationSlug: string,
+-  ): Promise<ClaimResult> {
+-    const bookings = await tx.$queryRaw<LockedBooking[]>`
+-      SELECT b."id", b."organizationId", b."clientId"
+-      FROM "Booking" b
+-      INNER JOIN "Organization" o ON o."id" = b."organizationId"
+-      WHERE b."id" = ${bookingId} AND o."slug" = ${organizationSlug}
+-      FOR UPDATE OF o
+-    `;
+-    const booking = bookings[0];
+-    if (!booking) {
+-      throw new NotFoundException('No se encontró la reserva.');
+-    }
+-
+-    const clients = await tx.$queryRaw<LockedClient[]>`
+-      SELECT c."id", c."organizationId", c."email", c."userId", c."phone",
+-        c."customerAccessBlocked", c."customerHistoryAmbiguous"
+-      FROM "Client" c
+-      WHERE c."id" = ${booking.clientId}
+-        AND c."organizationId" = ${booking.organizationId}
+-      FOR UPDATE OF c
+-    `;
+-    const client = clients[0];
+-    if (!client) {
+-      throw new NotFoundException('No se encontró la reserva.');
+-    }
+-
+-    // Match the scheduling order: Organization -> Client -> Booking.
+-    const currentBookings = await tx.$queryRaw<LockedBooking[]>`
+-      SELECT b."id", b."organizationId", b."clientId"
+-      FROM "Booking" b
+-      WHERE b."id" = ${booking.id}
+-        AND b."organizationId" = ${booking.organizationId}
+-        AND b."clientId" = ${client.id}
+-      FOR UPDATE OF b
+-    `;
+-    if (!currentBookings[0]) {
+-      throw new NotFoundException('No se encontró la reserva.');
+-    }
+-
+-    if (client.userId) {
+-      const linkedUser = await tx.user.findUnique({
+-        where: { id: client.userId },
+-        select: { clerkUserId: true, email: true },
+-      });
+-      if (linkedUser?.clerkUserId === clerkUserId) {
+-        // Un replay ya habilitado conserva A0.6-A. Una revocación exige de nuevo
+-        // correo primario verificado coherente con Client y User, sin inferir vínculo.
+-        if (
+-          client.customerAccessBlocked &&
+-          (!client.email ||
+-            normalizeAccountEmail(client.email) !== verifiedEmail ||
+-            normalizeAccountEmail(linkedUser.email) !== verifiedEmail)
+-        ) {
+-          throw new ConflictException(
+-            ClerkCustomerClaimsService.CONFLICT_MESSAGE,
+-          );
+-        }
+-        await this.enableClaimedClient(tx, client, client.userId);
+-        return { isNew: false };
+-      }
+-      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-    }
+-
+-    if (
+-      !client.email ||
+-      normalizeAccountEmail(client.email) !== verifiedEmail
+-    ) {
+-      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-    }
+-
+-    let user = await tx.user.findUnique({
+-      where: { clerkUserId },
+-      select: { id: true, email: true },
+-    });
+-
+-    const userByEmail = await tx.user.findUnique({
+-      where: { email: verifiedEmail },
+-      select: { id: true, clerkUserId: true },
+-    });
+-    if (userByEmail && userByEmail.id !== user?.id) {
+-      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-    }
+-
+-    if (user && normalizeAccountEmail(user.email) !== verifiedEmail) {
+-      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-    }
+-
+-    if (!user) {
+-      user = await tx.user.create({
+-        data: {
+-          name,
+-          email: verifiedEmail,
+-          password: null,
+-          clerkUserId,
+-        },
+-        select: { id: true, email: true },
+-      });
+-    }
+-
+-    const linked = await tx.client.updateMany({
+-      where: {
+-        id: client.id,
+-        organizationId: booking.organizationId,
+-        userId: null,
+-      },
+-      data: { userId: user.id },
+-    });
+-    if (linked.count !== 1) {
+-      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-    }
+-
+-    // El trigger revoca al cambiar userId: habilitar en una segunda escritura
+-    // dentro de la misma transacción, únicamente después del claim autorizado.
+-    await this.enableClaimedClient(tx, client, user.id, true);
+-
+-    await this.audit.logTransactional(
+-      {
+-        organizationId: booking.organizationId,
+-        userId: user.id,
+-        action: 'LINK',
+-        entity: 'Client',
+-        entityId: client.id,
+-      },
+-      tx,
+-    );
+-
+-    return { isNew: true };
+-  }
+-
+-  private async enableClaimedClient(
+-    tx: Prisma.TransactionClient,
+-    client: LockedClient,
+-    userId: string,
+-    newlyLinked = false,
+-  ) {
+-    // Señal objetiva del inventario: dos fichas con reservas en el mismo negocio
+-    // comparten teléfono. No se usa para encontrar identidad ni unir historiales.
+-    const sharedContact = client.phone
+-      ? await tx.client.findFirst({
+-          where: {
+-            id: { not: client.id },
+-            organizationId: client.organizationId,
+-            phone: client.phone,
+-            bookings: { some: { organizationId: client.organizationId } },
+-          },
+-          select: { id: true },
+-        })
+-      : null;
+-    const ambiguous = client.customerHistoryAmbiguous || !!sharedContact;
+-    if (!ambiguous && !client.customerAccessBlocked && !newlyLinked) return;
+-    const result = await tx.client.updateMany({
+-      where: { id: client.id, organizationId: client.organizationId, userId },
+-      data: {
+-        customerAccessBlocked: ambiguous,
+-        ...(ambiguous ? { customerHistoryAmbiguous: true } : {}),
+-      },
+-    });
+-    if (result.count !== 1)
+-      throw new ConflictException(ClerkCustomerClaimsService.CONFLICT_MESSAGE);
+-  }
+-}
+diff --git a/apps/api/src/auth/dto/clerk-customer-claim.dto.ts b/apps/api/src/auth/dto/clerk-customer-claim.dto.ts
+deleted file mode 100644
+index c8d6421709644f1c64ba5f1e5a94db6f762d9903..0000000000000000000000000000000000000000
+--- a/apps/api/src/auth/dto/clerk-customer-claim.dto.ts
++++ /dev/null
+@@ -1,23 +0,0 @@
+-import {
+-  IsString,
+-  IsUUID,
+-  Matches,
+-  MaxLength,
+-  MinLength,
+-} from 'class-validator';
+-import {
+-  ORGANIZATION_SLUG_INPUT_PATTERN,
+-  ORGANIZATION_SLUG_MAX_LENGTH,
+-  ORGANIZATION_SLUG_MIN_LENGTH,
+-} from '../organization-slug';
+-
+-export class ClerkCustomerClaimDto {
+-  @IsUUID()
+-  bookingId!: string;
+-
+-  @IsString()
+-  @MinLength(ORGANIZATION_SLUG_MIN_LENGTH)
+-  @MaxLength(ORGANIZATION_SLUG_MAX_LENGTH)
+-  @Matches(ORGANIZATION_SLUG_INPUT_PATTERN)
+-  organizationSlug!: string;
+-}
+diff --git a/apps/api/src/auth/guards/b2b-auth.guard.spec.ts b/apps/api/src/auth/guards/b2b-auth.guard.spec.ts
+index 857ee443fedd8817839a134916a209270ebdd85a..8e3cbd30b1d36fdc1043782845de3c89f95ae458 100644
+--- a/apps/api/src/auth/guards/b2b-auth.guard.spec.ts
++++ b/apps/api/src/auth/guards/b2b-auth.guard.spec.ts
+@@ -61,6 +61,36 @@ describe('B2bAuthGuard', () => {
+     });
+   });
+ 
++  it.each([
++    UserRole.OWNER,
++    UserRole.ADMIN,
++    UserRole.RECEPTIONIST,
++    UserRole.BARBER,
++  ])('preserva JWT del rol interno %s', async (role) => {
++    findMembership.mockResolvedValue({
++      organizationId,
++      role,
++      user: { id: userId, name: 'Interno', email: 'internal@example.test' },
++    });
++    const req = request();
++    await expect(guard.canActivate(context(req))).resolves.toBe(true);
++    expect(req.user?.role).toBe(role);
++    expect(clerkCanActivate).not.toHaveBeenCalled();
++  });
++
++  it('rechaza el JWT CUSTOMER existente sin delegarlo a Clerk', async () => {
++    findMembership.mockResolvedValue({
++      organizationId,
++      role: UserRole.CUSTOMER,
++    });
++    const req = request();
++    await expect(guard.canActivate(context(req))).rejects.toBeInstanceOf(
++      UnauthorizedException,
++    );
++    expect(req.user).toBeUndefined();
++    expect(clerkCanActivate).not.toHaveBeenCalled();
++  });
++
+   it('delega una sesión no legacy al ClerkAuthGuard autoritativo', async () => {
+     verifyAsync.mockRejectedValue(new Error('invalid legacy signature'));
+     clerkCanActivate.mockResolvedValue(true);
+diff --git a/apps/api/src/auth/guards/b2b-auth.guard.ts b/apps/api/src/auth/guards/b2b-auth.guard.ts
+index 5d716c9d79de9ea4e223e369b8d840a00f375a51..07ddc297a4022e53d7e06184390e250a0b01a024 100644
+--- a/apps/api/src/auth/guards/b2b-auth.guard.ts
++++ b/apps/api/src/auth/guards/b2b-auth.guard.ts
+@@ -7,6 +7,7 @@ import {
+ } from '@nestjs/common';
+ import { JwtService } from '@nestjs/jwt';
+ import { isUUID } from 'class-validator';
++import { UserRole } from '@prisma/client';
+ import { PrismaService } from '../../prisma/prisma.service';
+ import type { AuthenticatedRequest } from '../types/authenticated-request';
+ import type { JwtPayload } from '../strategies/jwt.strategy';
+@@ -70,7 +71,7 @@ export class B2bAuthGuard implements CanActivate {
+         },
+       });
+ 
+-      if (!membership) {
++      if (!membership || membership.role === UserRole.CUSTOMER) {
+         throw this.unauthorized();
+       }
+ 
+diff --git a/apps/api/src/auth/roles.constants.ts b/apps/api/src/auth/roles.constants.ts
+index b78ac1c874c8e78bef062736186b05cd45f31034..cdaa168fedf346e0f55070de24413b6f563da8e1 100644
+--- a/apps/api/src/auth/roles.constants.ts
++++ b/apps/api/src/auth/roles.constants.ts
+@@ -6,15 +6,13 @@ import { UserRole } from '@prisma/client';
+  *
+  * - B2B_ROLES: personal interno de la barbería/salón. Tienen acceso al
+  *   panel de gestión (/dashboard/*). Son OWNER, ADMIN, BARBER, RECEPTIONIST.
+- * - B2C: clientes finales que reservan servicios. Un solo rol, CUSTOMER.
+- *   Se crean exclusivamente desde el flujo público de reservas
+- *   (POST /public/:slug/bookings), nunca desde /auth/invite ni /auth/register.
++ * - CUSTOMER: valor histórico conservado por compatibilidad de persistencia.
++ *   El flujo público es de invitado y no crea identidades ni membresías.
+  *   No tienen ni deben tener acceso a ningún endpoint del panel interno.
+  *
+- * Todo endpoint que hoy protegemos solo con JwtAuthGuard (sin @Roles)
+- * queda, sin querer, abierto a CUALQUIER usuario autenticado — incluido
+- * un CUSTOMER. Por eso cada endpoint de uso interno debe declarar
+- * explícitamente @Roles(...B2B_ROLES) además de RolesGuard.
++ * Los guards JWT rechazan Membership CUSTOMER histórica. Cada endpoint
++ * interno sigue declarando los roles permitidos además de RolesGuard;
++ * autenticarse no sustituye la autorización de la tarea.
+  */
+ export const B2B_ROLES: UserRole[] = [
+   UserRole.OWNER,
+diff --git a/apps/api/src/auth/strategies/jwt.strategy.ts b/apps/api/src/auth/strategies/jwt.strategy.ts
+index 2a5f0c73bb5fcfe3a98d4f7ce1664483e89c9420..52299d1e1814203c81159b7910f2d7e1596d9b00 100644
+--- a/apps/api/src/auth/strategies/jwt.strategy.ts
++++ b/apps/api/src/auth/strategies/jwt.strategy.ts
+@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
+ import { ExtractJwt, Strategy } from 'passport-jwt';
+ import { PrismaService } from '../../prisma/prisma.service';
+ import type { RequestUser } from '../types/authenticated-request';
++import { UserRole } from '@prisma/client';
+ 
+ // Definimos la estructura exacta del payload que creamos en el login
+ export interface JwtPayload {
+@@ -37,7 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
+       include: { user: true },
+     });
+ 
+-    if (!membership) {
++    if (!membership || membership.role === UserRole.CUSTOMER) {
+       throw new UnauthorizedException(
+         'Sesión no válida para esta organización',
+       );
+diff --git a/apps/api/src/customer/customer-budget.guard.ts b/apps/api/src/customer/customer-budget.guard.ts
+deleted file mode 100644
+index 9cd5478a0ded0869c964134e49adef1bacd9113d..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer-budget.guard.ts
++++ /dev/null
+@@ -1,66 +0,0 @@
+-import {
+-  CanActivate,
+-  ExecutionContext,
+-  HttpException,
+-  Injectable,
+-  UnauthorizedException,
+-} from '@nestjs/common';
+-import type { Response } from 'express';
+-import type { ClerkOnboardingRequest } from '../auth/guards/clerk-onboarding.guard';
+-import { PostgresThrottlerStorage } from '../security/postgres-throttler.storage';
+-import { PrismaService } from '../prisma/prisma.service';
+-
+-@Injectable()
+-export class CustomerBudgetGuard implements CanActivate {
+-  private readonly storage: PostgresThrottlerStorage;
+-  constructor(prisma: PrismaService) {
+-    this.storage = new PostgresThrottlerStorage(
+-      prisma,
+-      process.env.RATE_LIMIT_SECRET ?? process.env.JWT_SECRET ?? '',
+-      100,
+-    );
+-  }
+-
+-  async canActivate(context: ExecutionContext) {
+-    const request = context.switchToHttp().getRequest<ClerkOnboardingRequest>();
+-    const response = context.switchToHttp().getResponse<Response>();
+-    // Se aplica también antes de errores de validación, permisos o dependencia.
+-    response.setHeader('Cache-Control', 'private, no-store');
+-    const actor = request.clerkSession?.clerkUserId;
+-    if (!actor) throw new UnauthorizedException('Sesión no válida');
+-    const kind =
+-      request.method === 'POST'
+-        ? 'create'
+-        : request.method === 'PATCH'
+-          ? 'profile'
+-          : 'read';
+-    const limit = kind === 'create' ? 5 : kind === 'profile' ? 10 : 60;
+-    const slug = String(request.params.slug ?? 'businesses')
+-      .toLowerCase()
+-      .slice(0, 50);
+-    // Techo IP global por superficie; el slug forjado no lo reinicia.
+-    for (const [tracker, budget] of [
+-      [`ip:${request.ip ?? request.socket.remoteAddress ?? 'unknown'}`, 180],
+-      [`actor:${actor}:${slug}:${kind}`, limit],
+-    ] as const) {
+-      const result = await this.storage.increment(
+-        tracker,
+-        60000,
+-        budget,
+-        60000,
+-        'customer',
+-      );
+-      if (result.isBlocked) {
+-        response.setHeader(
+-          'Retry-After',
+-          Math.max(1, result.timeToBlockExpire),
+-        );
+-        throw new HttpException(
+-          'Has realizado varios intentos. Espera un momento antes de volver a probar.',
+-          429,
+-        );
+-      }
+-    }
+-    return true;
+-  }
+-}
+diff --git a/apps/api/src/customer/customer-crypto.spec.ts b/apps/api/src/customer/customer-crypto.spec.ts
+deleted file mode 100644
+index e186d935f98734c6c8f4dc78094054ad0f6d885c..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer-crypto.spec.ts
++++ /dev/null
+@@ -1,92 +0,0 @@
+-import {
+-  BadRequestException,
+-  ServiceUnavailableException,
+-} from '@nestjs/common';
+-import {
+-  customerDigest,
+-  decodeCustomerCursor,
+-  encodeCustomerCursor,
+-  type CustomerCursor,
+-} from './customer-crypto';
+-
+-describe('M2 cursor privado y digests de recibos', () => {
+-  const original = process.env.JWT_SECRET;
+-  const cursor: CustomerCursor = {
+-    v: 1,
+-    actor: 'actor',
+-    organization: 'tenant',
+-    client: 'client',
+-    view: 'upcoming',
+-    revision: '42',
+-    asOf: new Date().toISOString(),
+-    startTime: '2099-01-01T00:00:00Z',
+-    id: 'booking',
+-  };
+-  beforeEach(() => {
+-    process.env.JWT_SECRET = 'synthetic-m2-only-crypto-secret-123456';
+-  });
+-  afterAll(() => {
+-    if (original === undefined) delete process.env.JWT_SECRET;
+-    else process.env.JWT_SECRET = original;
+-  });
+-
+-  it('cifra contexto y autentica cada byte sin exponer ids internos', () => {
+-    const encoded = encodeCustomerCursor(cursor);
+-    expect(decodeCustomerCursor(encoded)).toEqual(cursor);
+-    expect(encoded).not.toBe(encodeCustomerCursor(cursor));
+-    expect(Buffer.from(encoded, 'base64url').toString()).not.toMatch(
+-      /tenant|client|actor|booking/,
+-    );
+-    const raw = Buffer.from(encoded, 'base64url');
+-    raw[30] ^= 1;
+-    expect(() => decodeCustomerCursor(raw.toString('base64url'))).toThrow(
+-      BadRequestException,
+-    );
+-  });
+-
+-  it.each(['x', 'a'.repeat(2049), '{}', 'abc=', 'a/b'])(
+-    'rechaza cursor malformado/acotado %s',
+-    (value) => {
+-      expect(() => decodeCustomerCursor(value)).toThrow(BadRequestException);
+-    },
+-  );
+-
+-  it('vence en quince minutos y rechaza asOf futuro incluso si está firmado', () => {
+-    expect(() =>
+-      decodeCustomerCursor(
+-        encodeCustomerCursor({
+-          ...cursor,
+-          asOf: new Date(Date.now() - 901000).toISOString(),
+-        }),
+-      ),
+-    ).toThrow(BadRequestException);
+-    expect(() =>
+-      decodeCustomerCursor(
+-        encodeCustomerCursor({
+-          ...cursor,
+-          asOf: new Date(Date.now() + 60000).toISOString(),
+-        }),
+-      ),
+-    ).toThrow(BadRequestException);
+-  });
+-
+-  it('digests separados por propósito, deterministas y no reversibles por hash simple', () => {
+-    expect(customerDigest('command', 'same')).toBe(
+-      customerDigest('command', 'same'),
+-    );
+-    expect(customerDigest('command', 'same')).not.toBe(
+-      customerDigest('idempotency-key', 'same'),
+-    );
+-    expect(customerDigest('command', 'same')).toMatch(/^[0-9a-f]{64}$/);
+-  });
+-
+-  it('secreto ausente falla cerrado con 503', () => {
+-    delete process.env.JWT_SECRET;
+-    expect(() => encodeCustomerCursor(cursor)).toThrow(
+-      ServiceUnavailableException,
+-    );
+-    expect(() => decodeCustomerCursor('x')).toThrow(
+-      ServiceUnavailableException,
+-    );
+-  });
+-});
+diff --git a/apps/api/src/customer/customer-crypto.ts b/apps/api/src/customer/customer-crypto.ts
+deleted file mode 100644
+index 847448224f0a53ed3c1fb7f2b8c2df92b813134a..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer-crypto.ts
++++ /dev/null
+@@ -1,90 +0,0 @@
+-import {
+-  BadRequestException,
+-  ServiceUnavailableException,
+-} from '@nestjs/common';
+-import {
+-  createCipheriv,
+-  createDecipheriv,
+-  createHmac,
+-  randomBytes,
+-} from 'node:crypto';
+-
+-export interface CustomerCursor {
+-  v: 1;
+-  actor: string;
+-  organization: string;
+-  client: string;
+-  view: 'upcoming' | 'history';
+-  revision: string;
+-  asOf: string;
+-  startTime: string;
+-  id: string;
+-}
+-
+-function key(domain: string) {
+-  const secret = process.env.JWT_SECRET;
+-  if (!secret || secret.length < 32)
+-    throw new ServiceUnavailableException(
+-      'Servicio temporalmente no disponible.',
+-    );
+-  return createHmac('sha256', secret).update(`kortek:m2:${domain}:v1`).digest();
+-}
+-
+-export function customerDigest(domain: string, value: string) {
+-  return createHmac('sha256', key(domain)).update(value).digest('hex');
+-}
+-
+-export function encodeCustomerCursor(value: CustomerCursor): string {
+-  const iv = randomBytes(12);
+-  const cipher = createCipheriv('aes-256-gcm', key('cursor'), iv);
+-  const data = Buffer.concat([
+-    cipher.update(JSON.stringify(value), 'utf8'),
+-    cipher.final(),
+-  ]);
+-  return Buffer.concat([iv, cipher.getAuthTag(), data]).toString('base64url');
+-}
+-
+-export function decodeCustomerCursor(raw: string): CustomerCursor {
+-  const secret = key('cursor');
+-  try {
+-    if (raw.length > 2048 || !/^[A-Za-z0-9_-]+$/.test(raw)) throw new Error();
+-    const data = Buffer.from(raw, 'base64url');
+-    if (data.length < 29 || data.toString('base64url') !== raw)
+-      throw new Error();
+-    const cipher = createDecipheriv(
+-      'aes-256-gcm',
+-      secret,
+-      data.subarray(0, 12),
+-    );
+-    cipher.setAuthTag(data.subarray(12, 28));
+-    const value = JSON.parse(
+-      Buffer.concat([
+-        cipher.update(data.subarray(28)),
+-        cipher.final(),
+-      ]).toString('utf8'),
+-    ) as CustomerCursor;
+-    if (
+-      value.v !== 1 ||
+-      !['upcoming', 'history'].includes(value.view) ||
+-      ![
+-        value.actor,
+-        value.organization,
+-        value.client,
+-        value.revision,
+-        value.asOf,
+-        value.startTime,
+-        value.id,
+-      ].every((x) => typeof x === 'string') ||
+-      !Number.isFinite(Date.parse(value.asOf)) ||
+-      !Number.isFinite(Date.parse(value.startTime)) ||
+-      Date.now() - Date.parse(value.asOf) > 900_000 ||
+-      Date.parse(value.asOf) > Date.now()
+-    )
+-      throw new Error();
+-    return value;
+-  } catch {
+-    throw new BadRequestException(
+-      'La página solicitada no es válida. Actualiza tus reservas.',
+-    );
+-  }
+-}
+diff --git a/apps/api/src/customer/customer.controller.ts b/apps/api/src/customer/customer.controller.ts
+deleted file mode 100644
+index 180bb63fb76491ada20569b692870b5c1a48074d..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer.controller.ts
++++ /dev/null
+@@ -1,108 +0,0 @@
+-import {
+-  Body,
+-  CanActivate,
+-  Controller,
+-  ExecutionContext,
+-  Get,
+-  Headers,
+-  Injectable,
+-  Param,
+-  ParseUUIDPipe,
+-  Patch,
+-  Post,
+-  Query,
+-  Req,
+-  Res,
+-  UseGuards,
+-} from '@nestjs/common';
+-import type { Response } from 'express';
+-import {
+-  ClerkOnboardingGuard,
+-  type ClerkOnboardingRequest,
+-} from '../auth/guards/clerk-onboarding.guard';
+-import { CustomerBudgetGuard } from './customer-budget.guard';
+-import { CustomerService } from './customer.service';
+-import {
+-  CustomerCreateDto,
+-  CustomerListDto,
+-  CustomerProfileDto,
+-} from './customer.dto';
+-
+-@Injectable()
+-export class CustomerSessionGuard implements CanActivate {
+-  constructor(private readonly session: ClerkOnboardingGuard) {}
+-  canActivate(context: ExecutionContext) {
+-    context
+-      .switchToHttp()
+-      .getResponse<Response>()
+-      .setHeader('Cache-Control', 'private, no-store');
+-    return this.session.canActivate(context);
+-  }
+-}
+-
+-@Controller('customer')
+-@UseGuards(CustomerSessionGuard, CustomerBudgetGuard)
+-export class CustomerController {
+-  constructor(private readonly customer: CustomerService) {}
+-
+-  @Get('businesses')
+-  businesses(@Req() req: ClerkOnboardingRequest) {
+-    return this.customer.businesses(req.clerkSession!.clerkUserId);
+-  }
+-
+-  @Get(':slug/bookings')
+-  list(
+-    @Req() req: ClerkOnboardingRequest,
+-    @Param('slug') slug: string,
+-    @Query() dto: CustomerListDto,
+-  ) {
+-    return this.customer.list(req.clerkSession!.clerkUserId, slug, dto);
+-  }
+-
+-  @Get(':slug/bookings/:id')
+-  detail(
+-    @Req() req: ClerkOnboardingRequest,
+-    @Param('slug') slug: string,
+-    @Param('id', new ParseUUIDPipe()) id: string,
+-  ) {
+-    return this.customer.detail(req.clerkSession!.clerkUserId, slug, id);
+-  }
+-
+-  @Get(':slug/profile')
+-  profile(@Req() req: ClerkOnboardingRequest, @Param('slug') slug: string) {
+-    return this.customer.profile(req.clerkSession!.clerkUserId, slug);
+-  }
+-
+-  @Patch(':slug/profile')
+-  updateProfile(
+-    @Req() req: ClerkOnboardingRequest,
+-    @Param('slug') slug: string,
+-    @Body() dto: CustomerProfileDto,
+-    @Headers('idempotency-key') key: string | undefined,
+-  ) {
+-    return this.customer.updateProfile(
+-      req.clerkSession!.clerkUserId,
+-      slug,
+-      dto,
+-      key,
+-    );
+-  }
+-
+-  @Post(':slug/bookings')
+-  async create(
+-    @Req() req: ClerkOnboardingRequest,
+-    @Param('slug') slug: string,
+-    @Body() dto: CustomerCreateDto,
+-    @Headers('idempotency-key') key: string | undefined,
+-    @Res({ passthrough: true }) response: Response,
+-  ) {
+-    const result = await this.customer.create(
+-      req.clerkSession!.clerkUserId,
+-      slug,
+-      dto,
+-      key,
+-    );
+-    response.status(result.isNew ? 201 : 200);
+-    return { booking: result.booking };
+-  }
+-}
+diff --git a/apps/api/src/customer/customer.dto.ts b/apps/api/src/customer/customer.dto.ts
+deleted file mode 100644
+index 675b991eef045148f3d7b39a943ca1a844ea3f4e..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer.dto.ts
++++ /dev/null
+@@ -1,62 +0,0 @@
+-import { Type } from 'class-transformer';
+-import {
+-  IsDateString,
+-  IsIn,
+-  IsInt,
+-  IsString,
+-  IsUUID,
+-  Matches,
+-  Max,
+-  MaxLength,
+-  Min,
+-  MinLength,
+-  ValidateIf,
+-} from 'class-validator';
+-import { PublicEmailPreferenceInput } from '../notifications/email-preference.dto';
+-import { ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN } from '../professionals/professional-availability.util';
+-
+-export class CustomerListDto {
+-  @IsIn(['upcoming', 'history'], { message: 'Elige Próximas o Historial.' })
+-  view: 'upcoming' | 'history' = 'upcoming';
+-
+-  @Type(() => Number)
+-  @IsInt({ message: 'Indica una cantidad entera de reservas.' })
+-  @Min(1, { message: 'Solicita al menos una reserva.' })
+-  @Max(50, { message: 'Solicita hasta 50 reservas por página.' })
+-  limit = 20;
+-
+-  @ValidateIf((_dto, value: unknown) => value !== undefined)
+-  @IsString({ message: 'Actualiza la lista para continuar.' })
+-  @MinLength(1, { message: 'Actualiza la lista para continuar.' })
+-  @MaxLength(2048, { message: 'Actualiza la lista para continuar.' })
+-  cursor?: string;
+-}
+-
+-export class CustomerProfileDto {
+-  @ValidateIf((_dto, value: unknown) => value !== undefined)
+-  @IsString({ message: 'Indica un nombre válido.' })
+-  @MinLength(1, { message: 'Indica tu nombre.' })
+-  @MaxLength(120, { message: 'El nombre admite hasta 120 caracteres.' })
+-  name?: string;
+-
+-  @ValidateIf((_dto, value: unknown) => value !== undefined && value !== null)
+-  @IsString({ message: 'Indica un teléfono válido.' })
+-  @MaxLength(30, {
+-    message: 'El teléfono admite hasta 30 caracteres de entrada.',
+-  })
+-  phone?: string | null;
+-}
+-
+-export class CustomerCreateDto extends PublicEmailPreferenceInput {
+-  @IsUUID(undefined, { message: 'Elige un servicio válido.' })
+-  serviceId!: string;
+-
+-  @IsUUID(undefined, { message: 'Elige un profesional válido.' })
+-  professionalId!: string;
+-
+-  @IsDateString({}, { message: 'Elige una fecha y hora disponibles.' })
+-  @Matches(ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN, {
+-    message: 'Elige una fecha y hora disponibles.',
+-  })
+-  startTime!: string;
+-}
+diff --git a/apps/api/src/customer/customer.module.ts b/apps/api/src/customer/customer.module.ts
+deleted file mode 100644
+index 0b76676e9af320ff7666c016189adc2baa44d031..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer.module.ts
++++ /dev/null
+@@ -1,16 +0,0 @@
+-import { Module } from '@nestjs/common';
+-import { BookingsModule } from '../bookings/bookings.module';
+-import { AuditModule } from '../audit/audit.module';
+-import {
+-  CustomerController,
+-  CustomerSessionGuard,
+-} from './customer.controller';
+-import { CustomerBudgetGuard } from './customer-budget.guard';
+-import { CustomerService } from './customer.service';
+-
+-@Module({
+-  imports: [BookingsModule, AuditModule],
+-  controllers: [CustomerController],
+-  providers: [CustomerService, CustomerSessionGuard, CustomerBudgetGuard],
+-})
+-export class CustomerModule {}
+diff --git a/apps/api/src/customer/customer.service.ts b/apps/api/src/customer/customer.service.ts
+deleted file mode 100644
+index e6b12d33be1a9d93e92bb8cde3080ebeb99f4df4..0000000000000000000000000000000000000000
+--- a/apps/api/src/customer/customer.service.ts
++++ /dev/null
+@@ -1,604 +0,0 @@
+-import {
+-  BadRequestException,
+-  ConflictException,
+-  HttpException,
+-  Injectable,
+-  NotFoundException,
+-  ServiceUnavailableException,
+-} from '@nestjs/common';
+-import { BookingStatus, Prisma } from '@prisma/client';
+-import { PrismaService } from '../prisma/prisma.service';
+-import { BookingsService } from '../bookings/bookings.service';
+-import { AuditService } from '../audit/audit.service';
+-import {
+-  normalizeClientName,
+-  normalizeClientPhone,
+-} from '../clients/client-normalization.util';
+-import {
+-  businessPolicySelect,
+-  canReadPublicSchedule,
+-  policyFromOrganization,
+-} from '../business-schedule/business-schedule.policy';
+-import { projectContent } from '../cms/cms.projection';
+-import { isValidTimeZone } from '../professionals/professional-availability.util';
+-import {
+-  isSerializationFailureError,
+-  isUniqueConstraintError,
+-} from '../common/prisma-error.util';
+-import {
+-  CustomerCreateDto,
+-  CustomerListDto,
+-  CustomerProfileDto,
+-} from './customer.dto';
+-import {
+-  customerDigest,
+-  decodeCustomerCursor,
+-  encodeCustomerCursor,
+-} from './customer-crypto';
+-
+-const organizationSelect = {
+-  id: true,
+-  name: true,
+-  slug: true,
+-  isActive: true,
+-  deletedAt: true,
+-  ...businessPolicySelect,
+-  cmsPage: { select: { isPublished: true, publishedSnapshot: true } },
+-} satisfies Prisma.OrganizationSelect;
+-const clientSelect = {
+-  id: true,
+-  organizationId: true,
+-  userId: true,
+-  name: true,
+-  phone: true,
+-  email: true,
+-  isActive: true,
+-  customerAccessBlocked: true,
+-  customerBookingRevision: true,
+-  organization: { select: organizationSelect },
+-} satisfies Prisma.ClientSelect;
+-const bookingSelect = {
+-  id: true,
+-  startTime: true,
+-  endTime: true,
+-  status: true,
+-  service: {
+-    select: { id: true, name: true, isActive: true, organizationId: true },
+-  },
+-  professional: {
+-    select: {
+-      id: true,
+-      name: true,
+-      status: true,
+-      isPublic: true,
+-      organizationId: true,
+-    },
+-  },
+-} satisfies Prisma.BookingSelect;
+-type Context = Prisma.ClientGetPayload<{ select: typeof clientSelect }>;
+-type Organization = Context['organization'];
+-type Booking = Prisma.BookingGetPayload<{ select: typeof bookingSelect }>;
+-const unavailable = () => new NotFoundException('Información no disponible.');
+-const conflict = () =>
+-  new ConflictException(
+-    'No pudimos completar la operación. Actualiza la información e inténtalo de nuevo.',
+-  );
+-
+-@Injectable()
+-export class CustomerService {
+-  constructor(
+-    private readonly prisma: PrismaService,
+-    private readonly bookings: BookingsService,
+-    private readonly audit: AuditService,
+-  ) {}
+-
+-  private canBook(organization: Organization): boolean {
+-    if (
+-      process.env.PUBLIC_BOOKING_CLOSED === 'true' ||
+-      !organization.cmsPage?.isPublished ||
+-      !organization.cmsPage.publishedSnapshot
+-    )
+-      return false;
+-    try {
+-      projectContent(organization.cmsPage.publishedSnapshot);
+-      return canReadPublicSchedule(policyFromOrganization(organization));
+-    } catch {
+-      return false;
+-    }
+-  }
+-
+-  private async resolve(
+-    db: Prisma.TransactionClient,
+-    clerkUserId: string,
+-    slug: string,
+-  ): Promise<Context> {
+-    const client = await db.client.findFirst({
+-      where: {
+-        user: { clerkUserId },
+-        customerAccessBlocked: false,
+-        customerHistoryAmbiguous: false,
+-        organization: { slug, isActive: true, deletedAt: null },
+-      },
+-      select: clientSelect,
+-    });
+-    if (!client) throw unavailable();
+-    if (!isValidTimeZone(client.organization.timeZone))
+-      throw new ServiceUnavailableException(
+-        'La información del negocio no está disponible temporalmente.',
+-      );
+-    return client;
+-  }
+-
+-  private profileProjection(client: Context) {
+-    return {
+-      name: client.name,
+-      phone: client.phone,
+-      email: client.email,
+-      canEditContact: client.isActive,
+-    };
+-  }
+-
+-  private businessProjection(organization: Organization, contacts = false) {
+-    const result = {
+-      slug: organization.slug,
+-      name: organization.name,
+-      timeZone: organization.timeZone,
+-    };
+-    if (!contacts) return result;
+-    const content =
+-      organization.cmsPage?.isPublished &&
+-      organization.cmsPage.publishedSnapshot
+-        ? projectContent(organization.cmsPage.publishedSnapshot)
+-        : null;
+-    return {
+-      ...result,
+-      phone: content?.phone ?? null,
+-      address: content?.address ?? null,
+-      googleMapsUrl: content?.googleMapsUrl ?? null,
+-    };
+-  }
+-
+-  private summary(client: Context, booking: Booking) {
+-    // Relaciones históricas corruptas nunca sirven para descubrir otro tenant.
+-    if (
+-      booking.service.organizationId !== client.organizationId ||
+-      booking.professional.organizationId !== client.organizationId
+-    )
+-      throw unavailable();
+-    return {
+-      id: booking.id,
+-      startTime: booking.startTime,
+-      endTime: booking.endTime,
+-      status: booking.status,
+-      service: { id: booking.service.id, name: booking.service.name },
+-      professional: {
+-        id: booking.professional.id,
+-        name: booking.professional.name,
+-      },
+-      canBookAgain:
+-        client.isActive &&
+-        this.canBook(client.organization) &&
+-        booking.service.isActive &&
+-        booking.professional.status === 'ACTIVE' &&
+-        booking.professional.isPublic,
+-    };
+-  }
+-
+-  private async detailInTransaction(
+-    db: Prisma.TransactionClient,
+-    client: Context,
+-    id: string,
+-  ) {
+-    const booking = await db.booking.findFirst({
+-      where: {
+-        id,
+-        organizationId: client.organizationId,
+-        clientId: client.id,
+-        client: {
+-          userId: client.userId,
+-          customerAccessBlocked: false,
+-          customerHistoryAmbiguous: false,
+-        },
+-      },
+-      select: bookingSelect,
+-    });
+-    if (!booking) throw unavailable();
+-    const summary = this.summary(client, booking);
+-    return {
+-      ...summary,
+-      business: this.businessProjection(client.organization, true),
+-      actions: { canBookAgain: summary.canBookAgain },
+-    };
+-  }
+-
+-  private async read<T>(
+-    work: (db: Prisma.TransactionClient) => Promise<T>,
+-  ): Promise<T> {
+-    try {
+-      return await this.prisma.db.$transaction(work, {
+-        isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead,
+-      });
+-    } catch (error) {
+-      if (error instanceof HttpException) throw error;
+-      throw new ServiceUnavailableException(
+-        'La información no está disponible temporalmente. Inténtalo de nuevo.',
+-      );
+-    }
+-  }
+-
+-  businesses(clerkUserId: string) {
+-    return this.read(async (db) => {
+-      const clients = await db.client.findMany({
+-        where: {
+-          user: { clerkUserId },
+-          customerAccessBlocked: false,
+-          customerHistoryAmbiguous: false,
+-          organization: { isActive: true, deletedAt: null },
+-        },
+-        select: {
+-          isActive: true,
+-          organization: { select: organizationSelect },
+-        },
+-        orderBy: { organization: { slug: 'asc' } },
+-      });
+-      return {
+-        businesses: clients.map((c) => ({
+-          slug: c.organization.slug,
+-          name: c.organization.name,
+-          canBook: c.isActive && this.canBook(c.organization),
+-        })),
+-      };
+-    });
+-  }
+-
+-  profile(clerkUserId: string, slug: string) {
+-    return this.read(async (db) =>
+-      this.profileProjection(await this.resolve(db, clerkUserId, slug)),
+-    );
+-  }
+-
+-  detail(clerkUserId: string, slug: string, id: string) {
+-    return this.read(async (db) =>
+-      this.detailInTransaction(
+-        db,
+-        await this.resolve(db, clerkUserId, slug),
+-        id,
+-      ),
+-    );
+-  }
+-
+-  list(clerkUserId: string, slug: string, dto: CustomerListDto) {
+-    return this.read(async (db) => {
+-      const client = await this.resolve(db, clerkUserId, slug);
+-      const cursor = dto.cursor ? decodeCustomerCursor(dto.cursor) : null;
+-      if (
+-        cursor &&
+-        (cursor.actor !== client.userId ||
+-          cursor.organization !== client.organizationId ||
+-          cursor.client !== client.id ||
+-          cursor.view !== dto.view)
+-      )
+-        throw unavailable();
+-      if (
+-        cursor &&
+-        cursor.revision !== client.customerBookingRevision.toString()
+-      )
+-        throw new ConflictException(
+-          'Tus reservas cambiaron. Actualiza la lista para continuar.',
+-        );
+-      const asOf = cursor?.asOf ?? new Date().toISOString();
+-      const active: BookingStatus[] = ['PENDING', 'CONFIRMED'];
+-      const partition: Prisma.BookingWhereInput =
+-        dto.view === 'upcoming'
+-          ? { status: { in: active }, endTime: { gt: new Date(asOf) } }
+-          : {
+-              OR: [
+-                { status: { notIn: active } },
+-                { endTime: { lte: new Date(asOf) } },
+-              ],
+-            };
+-      const direction = dto.view === 'upcoming' ? 'asc' : 'desc';
+-      const after: Prisma.BookingWhereInput = cursor
+-        ? {
+-            OR: [
+-              {
+-                startTime:
+-                  direction === 'asc'
+-                    ? { gt: new Date(cursor.startTime) }
+-                    : { lt: new Date(cursor.startTime) },
+-              },
+-              {
+-                startTime: new Date(cursor.startTime),
+-                id: direction === 'asc' ? { gt: cursor.id } : { lt: cursor.id },
+-              },
+-            ],
+-          }
+-        : {};
+-      const rows = await db.booking.findMany({
+-        where: {
+-          organizationId: client.organizationId,
+-          clientId: client.id,
+-          client: {
+-            userId: client.userId,
+-            customerAccessBlocked: false,
+-            customerHistoryAmbiguous: false,
+-          },
+-          AND: [partition, after],
+-        },
+-        select: bookingSelect,
+-        orderBy: [{ startTime: direction }, { id: direction }],
+-        take: dto.limit + 1,
+-      });
+-      const items = rows
+-        .slice(0, dto.limit)
+-        .map((b) => this.summary(client, b));
+-      const last = items.at(-1);
+-      return {
+-        business: this.businessProjection(client.organization),
+-        items,
+-        asOf,
+-        nextCursor:
+-          rows.length > dto.limit && last
+-            ? encodeCustomerCursor({
+-                v: 1,
+-                actor: client.userId!,
+-                organization: client.organizationId,
+-                client: client.id,
+-                view: dto.view,
+-                revision: client.customerBookingRevision.toString(),
+-                asOf,
+-                startTime: last.startTime.toISOString(),
+-                id: last.id,
+-              })
+-            : null,
+-      };
+-    });
+-  }
+-
+-  private async mutate<T>(
+-    clerkUserId: string,
+-    slug: string,
+-    work: (db: Prisma.TransactionClient, client: Context) => Promise<T>,
+-  ): Promise<T> {
+-    for (let attempt = 0; attempt < 3; attempt++) {
+-      try {
+-        return await this.prisma.db.$transaction(
+-          async (db) => {
+-            const initial = await this.resolve(db, clerkUserId, slug);
+-            await db.$queryRaw`SELECT "id" FROM "Organization" WHERE "id" = ${initial.organizationId} FOR UPDATE`;
+-            await db.$queryRaw`SELECT "id" FROM "Client" WHERE "id" = ${initial.id} AND "organizationId" = ${initial.organizationId} FOR UPDATE`;
+-            const client = await this.resolve(db, clerkUserId, slug);
+-            if (client.id !== initial.id || client.userId !== initial.userId)
+-              throw unavailable();
+-            return work(db, client);
+-          },
+-          {
+-            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+-            timeout: 10000,
+-          },
+-        );
+-      } catch (error) {
+-        if (isSerializationFailureError(error) && attempt < 2) continue;
+-        if (
+-          isSerializationFailureError(error) ||
+-          isUniqueConstraintError(error)
+-        )
+-          throw conflict();
+-        if (error instanceof HttpException) throw error;
+-        throw new ServiceUnavailableException(
+-          'No pudimos completar la operación. Inténtalo de nuevo.',
+-        );
+-      }
+-    }
+-    throw conflict();
+-  }
+-
+-  updateProfile(
+-    clerkUserId: string,
+-    slug: string,
+-    dto: CustomerProfileDto,
+-    rawKey: string | undefined,
+-  ) {
+-    if (dto.name === undefined && dto.phone === undefined)
+-      throw new BadRequestException('Indica los datos que quieres guardar.');
+-    const data = {
+-      ...(dto.name !== undefined
+-        ? { name: normalizeClientName(dto.name) }
+-        : {}),
+-      ...(dto.phone !== undefined
+-        ? { phone: normalizeClientPhone(dto.phone) }
+-        : {}),
+-    };
+-    const keyDigest = this.operationKey(rawKey);
+-    const commandDigest = customerDigest('command', JSON.stringify(data));
+-    return this.mutate(clerkUserId, slug, async (db, client) => {
+-      const receipt = await db.customerOperation.findUnique({
+-        where: {
+-          organizationId_actorUserId_operation_keyDigest: {
+-            organizationId: client.organizationId,
+-            actorUserId: client.userId!,
+-            operation: 'UPDATE_PROFILE',
+-            keyDigest,
+-          },
+-        },
+-      });
+-      const now = new Date();
+-      if (receipt) {
+-        if (receipt.clientId !== client.id) throw unavailable();
+-        if (receipt.commandDigest !== commandDigest || receipt.expiresAt <= now)
+-          throw conflict();
+-        return this.profileProjection(client);
+-      }
+-      if (!client.isActive) throw conflict();
+-      if (
+-        data.phone &&
+-        (await db.client.findFirst({
+-          where: {
+-            organizationId: client.organizationId,
+-            id: { not: client.id },
+-            phone: data.phone,
+-          },
+-          select: { id: true },
+-        }))
+-      )
+-        throw conflict();
+-      const updated = await db.client.update({
+-        where: {
+-          id: client.id,
+-          organizationId: client.organizationId,
+-          userId: client.userId,
+-          customerAccessBlocked: false,
+-          customerHistoryAmbiguous: false,
+-        },
+-        data,
+-        select: clientSelect,
+-      });
+-      await this.cleanupReceipts(db);
+-      await db.customerOperation.create({
+-        data: {
+-          organizationId: client.organizationId,
+-          actorUserId: client.userId!,
+-          clientId: client.id,
+-          operation: 'UPDATE_PROFILE',
+-          keyDigest,
+-          commandDigest,
+-          createdAt: now,
+-          expiresAt: new Date(now.getTime() + 86400000),
+-        },
+-      });
+-      await this.audit.logTransactional(
+-        {
+-          organizationId: client.organizationId,
+-          userId: client.userId!,
+-          action: 'UPDATE',
+-          entity: 'Client',
+-          entityId: client.id,
+-        },
+-        db,
+-      );
+-      return this.profileProjection(updated);
+-    });
+-  }
+-
+-  private operationKey(rawKey: string | undefined) {
+-    if (
+-      !rawKey ||
+-      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+-        rawKey,
+-      )
+-    )
+-      throw new BadRequestException('Indica una clave de operación válida.');
+-    return customerDigest('idempotency-key', rawKey.toLowerCase());
+-  }
+-
+-  private cleanupReceipts(db: Prisma.TransactionClient) {
+-    return db.$executeRaw`DELETE FROM "CustomerOperation" WHERE "id" IN (SELECT "id" FROM "CustomerOperation" WHERE "expiresAt" < NOW() - INTERVAL '24 hours' ORDER BY "expiresAt" LIMIT 100)`;
+-  }
+-
+-  create(
+-    clerkUserId: string,
+-    slug: string,
+-    dto: CustomerCreateDto,
+-    rawKey: string | undefined,
+-  ) {
+-    // Una clave aleatoria UUID evita identificadores de contacto usados como claves.
+-    const keyDigest = this.operationKey(rawKey);
+-    const commandDigest = customerDigest(
+-      'command',
+-      JSON.stringify({
+-        serviceId: dto.serviceId.toLowerCase(),
+-        professionalId: dto.professionalId.toLowerCase(),
+-        startTime: new Date(dto.startTime).toISOString(),
+-        emailNotifications: dto.emailNotifications
+-          ? {
+-              optedIn: dto.emailNotifications.optedIn,
+-              noticeVersion: dto.emailNotifications.noticeVersion,
+-            }
+-          : null,
+-      }),
+-    );
+-    return this.mutate(clerkUserId, slug, async (db, client) => {
+-      const receipt = await db.customerOperation.findUnique({
+-        where: {
+-          organizationId_actorUserId_operation_keyDigest: {
+-            organizationId: client.organizationId,
+-            actorUserId: client.userId!,
+-            operation: 'CREATE_BOOKING',
+-            keyDigest,
+-          },
+-        },
+-      });
+-      const now = new Date();
+-      if (receipt) {
+-        if (receipt.clientId !== client.id) throw unavailable();
+-        if (
+-          receipt.commandDigest !== commandDigest ||
+-          receipt.expiresAt <= now ||
+-          !receipt.bookingId
+-        )
+-          throw conflict();
+-        // Ownership vigente incluso para recibos; no devuelve snapshots privados.
+-        const booking = await this.detailInTransaction(
+-          db,
+-          client,
+-          receipt.bookingId,
+-        );
+-        return { booking, isNew: false };
+-      }
+-      if (!client.isActive || !this.canBook(client.organization))
+-        throw conflict();
+-      if (dto.emailNotifications?.optedIn && !client.email)
+-        throw new BadRequestException(
+-          'Revisa el correo de contacto con el negocio antes de activar avisos.',
+-        );
+-      // Limpieza acotada; expirar no autoriza reenvío automático de una petición incierta.
+-      await this.cleanupReceipts(db);
+-      const created = await this.bookings.create(
+-        client.organizationId,
+-        {
+-          serviceId: dto.serviceId,
+-          professionalId: dto.professionalId,
+-          startTime: dto.startTime,
+-          clientId: client.id,
+-          ...(dto.emailNotifications
+-            ? {
+-                emailNotifications: {
+-                  ...dto.emailNotifications,
+-                  reviewedEmail: client.email ?? undefined,
+-                },
+-              }
+-            : {}),
+-        },
+-        db,
+-        true,
+-      );
+-      await db.customerOperation.create({
+-        data: {
+-          organizationId: client.organizationId,
+-          actorUserId: client.userId!,
+-          operation: 'CREATE_BOOKING',
+-          clientId: client.id,
+-          keyDigest,
+-          commandDigest,
+-          bookingId: created.id,
+-          createdAt: now,
+-          expiresAt: new Date(now.getTime() + 86400000),
+-        },
+-      });
+-      await this.audit.logTransactional(
+-        {
+-          organizationId: client.organizationId,
+-          userId: client.userId!,
+-          action: 'CREATE',
+-          entity: 'Booking',
+-          entityId: created.id,
+-        },
+-        db,
+-      );
+-      return {
+-        booking: await this.detailInTransaction(db, client, created.id),
+-        isNew: true,
+-      };
+-    });
+-  }
+-}
+diff --git a/apps/api/src/public-booking/dto/create-public-booking.dto.ts b/apps/api/src/public-booking/dto/create-public-booking.dto.ts
+index 2f82fde0a84d4297ea2b37de173d631bd48333a7..c0e23de10e0677270fbe9fd8364fea46ed69e140 100644
+--- a/apps/api/src/public-booking/dto/create-public-booking.dto.ts
++++ b/apps/api/src/public-booking/dto/create-public-booking.dto.ts
+@@ -1,5 +1,4 @@
+ import {
+-  IsBoolean,
+   IsEmail,
+   IsISO8601,
+   IsNotEmpty,
+@@ -8,16 +7,10 @@ import {
+   IsUUID,
+   Matches,
+   MaxLength,
+-  MinLength,
+-  ValidateIf,
+ } from 'class-validator';
+ import { Transform } from 'class-transformer';
+ import { ISO_TIMESTAMP_WITH_TIME_ZONE_PATTERN } from '../../professionals/professional-availability.util';
+ import { PublicEmailPreferenceInput } from '../../notifications/email-preference.dto';
+-import {
+-  PASSWORD_MIN_LENGTH,
+-  PASSWORD_MIN_LENGTH_MESSAGE,
+-} from '../../auth/auth.constants';
+ import {
+   CLIENT_EMAIL_MAX_LENGTH,
+   CLIENT_NAME_MAX_LENGTH,
+@@ -61,13 +54,4 @@ export class CreatePublicBookingDto extends PublicEmailPreferenceInput {
+   @IsEmail()
+   @MaxLength(CLIENT_EMAIL_MAX_LENGTH)
+   clientEmail?: string;
+-
+-  @IsOptional()
+-  @IsBoolean()
+-  createAccount?: boolean;
+-
+-  @ValidateIf((dto: CreatePublicBookingDto) => dto.createAccount === true)
+-  @IsString()
+-  @MinLength(PASSWORD_MIN_LENGTH, { message: PASSWORD_MIN_LENGTH_MESSAGE })
+-  password?: string;
+ }
+diff --git a/apps/api/src/public-booking/dto/public-booking-response.dto.ts b/apps/api/src/public-booking/dto/public-booking-response.dto.ts
+index afb10ea8e2d9b7b2b5eebe681078c63b5039d8ac..1f9728e8d1eadac30159b2ab0f606cfdb522a9a6 100644
+--- a/apps/api/src/public-booking/dto/public-booking-response.dto.ts
++++ b/apps/api/src/public-booking/dto/public-booking-response.dto.ts
+@@ -11,6 +11,8 @@ export class PublicBookingSummaryDto {
+ 
+ export class PublicBookingResponseDto {
+   booking!: PublicBookingSummaryDto;
+-  accountCreated!: boolean;
+-  accountCreationError!: string | null;
++  /** @deprecated Compatibilidad web; retirar tras C2 en checkpoint backend coordinado. */
++  accountCreated!: false;
++  /** @deprecated Siempre null; retirar tras C2 en checkpoint backend coordinado. */
++  accountCreationError!: null;
+ }
+diff --git a/apps/api/src/public-booking/public-booking.service.spec.ts b/apps/api/src/public-booking/public-booking.service.spec.ts
+index c629ec070c0c1a98448c94f2e4c45541e2f93322..db7473106df5ccaa372b684395ded03d3aa94e0e 100644
+--- a/apps/api/src/public-booking/public-booking.service.spec.ts
++++ b/apps/api/src/public-booking/public-booking.service.spec.ts
+@@ -1,4 +1,4 @@
+-import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
++import { BadRequestException, ConflictException } from '@nestjs/common';
+ import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
+ import { ServiceUnavailableException } from '@nestjs/common';
+ import { PublicBookingService } from './public-booking.service';
+@@ -276,30 +276,28 @@ describe('PublicBookingService - secure public creation', () => {
+     expect(dependencies.audit.log).not.toHaveBeenCalled();
+   });
+ 
+-  it('keeps booking success when secondary CUSTOMER account creation fails', async () => {
+-    const log = jest.spyOn(Logger.prototype, 'error').mockImplementation();
++  it('creates only an operational contact and booking, never an identity', async () => {
+     dependencies.transaction.client.findFirst.mockResolvedValue(null);
+     dependencies.transaction.client.create.mockResolvedValue({ id: CLIENT_ID });
+-    dependencies.prisma.db.user.findFirst.mockRejectedValue(
+-      new Error('ana@example.com: private database detail'),
+-    );
+-    try {
+-      const result = await service.createBooking('demo', {
+-        ...DTO,
+-        createAccount: true,
+-        password: 'ValidPassword123!',
+-      });
+-
+-      expect(result.booking.id).toBe(BOOKING.id);
+-      expect(result.accountCreated).toBe(false);
+-      expect(result.accountCreationError).toBeNull();
+-      expect(log).toHaveBeenCalledTimes(1);
+-      expect(log).toHaveBeenCalledWith(
+-        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
+-      );
+-    } finally {
+-      log.mockRestore();
+-    }
++    const result = await service.createBooking('demo', DTO);
++    expect(result.booking.status).toBe(BookingStatus.PENDING);
++    expect(result.accountCreated).toBe(false);
++    expect(result.accountCreationError).toBeNull();
++    expect(dependencies.prisma.db.user.findFirst).not.toHaveBeenCalled();
++    expect(dependencies.transaction.user.create).not.toHaveBeenCalled();
++    expect(dependencies.transaction.membership.create).not.toHaveBeenCalled();
++    expect(dependencies.prisma.db.$transaction).toHaveBeenCalledTimes(1);
++    expect(dependencies.transaction.client.create.mock.calls[0]).toEqual([
++      {
++        data: {
++          organizationId: ORGANIZATION.id,
++          name: 'Ana Pérez',
++          phone: '+18095551234',
++          email: 'ana@example.com',
++        },
++        select: { id: true },
++      },
++    ]);
+   });
+ });
+ 
+diff --git a/apps/api/src/public-booking/public-booking.service.ts b/apps/api/src/public-booking/public-booking.service.ts
+index c54bbcd05d0c278c7b0df3fc16afbc5631ac9a54..28f09a66deee8fb362a07d987bd683925bc06e24 100644
+--- a/apps/api/src/public-booking/public-booking.service.ts
++++ b/apps/api/src/public-booking/public-booking.service.ts
+@@ -2,11 +2,9 @@ import {
+   BadRequestException,
+   Injectable,
+   ServiceUnavailableException,
+-  Logger,
+   NotFoundException,
+ } from '@nestjs/common';
+-import * as bcrypt from 'bcryptjs';
+-import { Prisma, ProfessionalStatus, UserRole } from '@prisma/client';
++import { Prisma, ProfessionalStatus } from '@prisma/client';
+ import { PrismaService } from '../prisma/prisma.service';
+ import { BookingsService } from '../bookings/bookings.service';
+ import { AuditService } from '../audit/audit.service';
+@@ -47,8 +45,6 @@ const PUBLIC_CONTACT_REJECTION_MESSAGE =
+ 
+ @Injectable()
+ export class PublicBookingService {
+-  private readonly logger = new Logger(PublicBookingService.name);
+-
+   constructor(
+     private prisma: PrismaService,
+     private bookingsService: BookingsService,
+@@ -432,12 +428,6 @@ export class PublicBookingService {
+     dto: CreatePublicBookingDto,
+   ): Promise<PublicBookingResponseDto> {
+     const organization = await this.resolveOrganization(slug);
+-    if (dto.createAccount && !dto.clientEmail) {
+-      throw new BadRequestException(
+-        'Se necesita un correo para crear la cuenta',
+-      );
+-    }
+-
+     let normalizedPhone: string | null;
+     try {
+       normalizedPhone = normalizeClientPhone(dto.clientPhone);
+@@ -495,15 +485,6 @@ export class PublicBookingService {
+       result.clientResult.action,
+     );
+ 
+-    if (dto.createAccount && normalized.email && dto.password) {
+-      await this.tryCreateCustomerAccount(
+-        organization.id,
+-        normalized.name,
+-        normalized.email,
+-        dto.password,
+-      );
+-    }
+-
+     return {
+       booking: {
+         id: result.booking.id,
+@@ -513,7 +494,7 @@ export class PublicBookingService {
+         endTime: result.booking.endTime,
+         status: result.booking.status,
+       },
+-      // D8-A: el HTTP no confirma existencia ni éxito de identidad secundaria.
++      // Deprecated: compatibilidad con los tipos web hasta el retiro C2. Sin identidad secundaria.
+       accountCreated: false,
+       accountCreationError: null,
+     };
+@@ -586,50 +567,4 @@ export class PublicBookingService {
+       entityId: clientId,
+     });
+   }
+-
+-  private async tryCreateCustomerAccount(
+-    organizationId: string,
+-    name: string,
+-    email: string,
+-    password: string,
+-  ): Promise<{ created: boolean; error: string | null }> {
+-    try {
+-      // Mismo trabajo bcrypt también cuando el correo ya existe.
+-      const hashedPassword = await bcrypt.hash(password, 10);
+-      const existing = await this.prisma.db.user.findFirst({
+-        where: { email: { equals: email, mode: 'insensitive' } },
+-        select: { id: true },
+-      });
+-      if (existing) {
+-        return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
+-      }
+-
+-      await this.prisma.db.$transaction(async (transaction) => {
+-        const user = await transaction.user.create({
+-          data: {
+-            name,
+-            email,
+-            password: hashedPassword,
+-            lastOrganizationId: organizationId,
+-          },
+-        });
+-        await transaction.membership.create({
+-          data: {
+-            userId: user.id,
+-            organizationId,
+-            role: UserRole.CUSTOMER,
+-          },
+-        });
+-      });
+-      return { created: true, error: null };
+-    } catch (error) {
+-      if (isUniqueConstraintError(error, 'email')) {
+-        return { created: false, error: 'EMAIL_ALREADY_EXISTS' };
+-      }
+-      this.logger.error(
+-        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
+-      );
+-      return { created: false, error: 'ACCOUNT_CREATION_FAILED' };
+-    }
+-  }
+ }
+diff --git a/apps/api/test/clerk-customer-claims.e2e-spec.ts b/apps/api/test/clerk-customer-claims.e2e-spec.ts
+deleted file mode 100644
+index 83aa1179888e072e5edc611e8b33f803a14cc5ee..0000000000000000000000000000000000000000
+--- a/apps/api/test/clerk-customer-claims.e2e-spec.ts
++++ /dev/null
+@@ -1,299 +0,0 @@
+-import { INestApplication, UnauthorizedException } from '@nestjs/common';
+-import { ThrottlerGuard } from '@nestjs/throttler';
+-import { BookingStatus, UserRole } from '@prisma/client';
+-import { ClerkSessionVerifierService } from '../src/auth/clerk/clerk-session-verifier.service';
+-import { PrismaService } from '../src/prisma/prisma.service';
+-import { createE2eApp, requestApp } from './create-e2e-app';
+-
+-interface ClerkProfile {
+-  id: string;
+-  firstName: string;
+-  lastName: string;
+-  username: null;
+-  primaryEmailAddressId: string;
+-  emailAddresses: Array<{
+-    id: string;
+-    emailAddress: string;
+-    verification: { status: string };
+-  }>;
+-}
+-
+-describe('Clerk customer booking claims (e2e PostgreSQL)', () => {
+-  let app: INestApplication;
+-  let prisma: PrismaService;
+-  const sessions = new Map<string, string>();
+-  const profiles = new Map<string, ClerkProfile>();
+-  const verifier = {
+-    verify: jest.fn().mockImplementation((request: globalThis.Request) => {
+-      const token = request.headers
+-        .get('authorization')
+-        ?.replace(/^Bearer\s+/i, '');
+-      const clerkUserId = token ? sessions.get(token) : undefined;
+-      if (!clerkUserId) {
+-        return Promise.reject(new UnauthorizedException('Sesión no válida'));
+-      }
+-      return Promise.resolve({ clerkUserId, sessionId: `sess_${clerkUserId}` });
+-    }),
+-    getClient: jest.fn().mockReturnValue({
+-      users: {
+-        getUser: jest
+-          .fn()
+-          .mockImplementation((clerkUserId: string) =>
+-            Promise.resolve(profiles.get(clerkUserId) ?? null),
+-          ),
+-      },
+-    }),
+-  };
+-
+-  const unique = (label: string) =>
+-    `${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+-
+-  function addIdentity(token: string, clerkUserId: string, email: string) {
+-    sessions.set(token, clerkUserId);
+-    profiles.set(clerkUserId, {
+-      id: clerkUserId,
+-      firstName: 'Customer',
+-      lastName: 'QA',
+-      username: null,
+-      primaryEmailAddressId: `email_${clerkUserId}`,
+-      emailAddresses: [
+-        {
+-          id: `email_${clerkUserId}`,
+-          emailAddress: email,
+-          verification: { status: 'verified' },
+-        },
+-      ],
+-    });
+-  }
+-
+-  async function createBooking(email: string) {
+-    const suffix = unique('claim');
+-    const organization = await prisma.db.organization.create({
+-      data: {
+-        name: 'Claim tenant',
+-        slug: suffix,
+-        email: `${suffix}@organization.test`,
+-      },
+-    });
+-    const [client, professional, service] = await Promise.all([
+-      prisma.db.client.create({
+-        data: { organizationId: organization.id, name: 'Customer', email },
+-      }),
+-      prisma.db.professional.create({
+-        data: {
+-          organizationId: organization.id,
+-          name: 'Professional',
+-          status: 'ACTIVE',
+-          isPublic: true,
+-        },
+-      }),
+-      prisma.db.service.create({
+-        data: {
+-          organizationId: organization.id,
+-          name: 'Service',
+-          duration: 30,
+-          price: 25,
+-        },
+-      }),
+-    ]);
+-    const startTime = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+-    const booking = await prisma.db.booking.create({
+-      data: {
+-        organizationId: organization.id,
+-        clientId: client.id,
+-        professionalId: professional.id,
+-        serviceId: service.id,
+-        startTime,
+-        endTime: new Date(startTime.getTime() + 30 * 60 * 1000),
+-        status: BookingStatus.PENDING,
+-      },
+-    });
+-    return { organization, client, booking };
+-  }
+-
+-  beforeAll(async () => {
+-    app = await createE2eApp((builder) =>
+-      builder
+-        .overrideProvider(ClerkSessionVerifierService)
+-        .useValue(verifier)
+-        .overrideGuard(ThrottlerGuard)
+-        .useValue({ canActivate: () => true }),
+-    );
+-    prisma = app.get(PrismaService);
+-  });
+-
+-  beforeEach(() => {
+-    sessions.clear();
+-    profiles.clear();
+-  });
+-
+-  afterAll(async () => app.close());
+-
+-  it('crea el vínculo con 201 y repite con 200 sin Membership ni duplicados', async () => {
+-    const email = `${unique('idempotent')}@customer.test`;
+-    const fixture = await createBooking(email);
+-    const clerkUserId = `user_${unique('idempotent')}`;
+-    addIdentity('idempotent-token', clerkUserId, email);
+-    const payload = {
+-      bookingId: fixture.booking.id,
+-      organizationSlug: fixture.organization.slug,
+-    };
+-
+-    const first = await requestApp(app)
+-      .post('/auth/clerk/customer/claims')
+-      .set('Authorization', 'Bearer idempotent-token')
+-      .send(payload);
+-    const repeated = await requestApp(app)
+-      .post('/auth/clerk/customer/claims')
+-      .set('Authorization', 'Bearer idempotent-token')
+-      .send(payload);
+-
+-    expect(first.status).toBe(201);
+-    expect(repeated.status).toBe(200);
+-    expect(first.body as unknown).toEqual({ claimed: true });
+-    expect(repeated.body as unknown).toEqual({ claimed: true });
+-    const user = await prisma.db.user.findUniqueOrThrow({
+-      where: { clerkUserId },
+-      include: { memberships: true },
+-    });
+-    expect(user.password).toBeNull();
+-    expect(user.memberships).toHaveLength(0);
+-    expect(
+-      await prisma.db.client.findUniqueOrThrow({
+-        where: { id: fixture.client.id },
+-      }),
+-    ).toMatchObject({ userId: user.id });
+-    expect(
+-      await prisma.db.auditLog.count({
+-        where: {
+-          organizationId: fixture.organization.id,
+-          userId: user.id,
+-          action: 'LINK',
+-          entity: 'Client',
+-          entityId: fixture.client.id,
+-        },
+-      }),
+-    ).toBe(1);
+-  });
+-
+-  it('serializa dos reclamos iguales en 201/200 con un solo agregado', async () => {
+-    const email = `${unique('race-same')}@customer.test`;
+-    const fixture = await createBooking(email);
+-    const clerkUserId = `user_${unique('race-same')}`;
+-    addIdentity('race-same-token', clerkUserId, email);
+-    const call = () =>
+-      requestApp(app)
+-        .post('/auth/clerk/customer/claims')
+-        .set('Authorization', 'Bearer race-same-token')
+-        .send({
+-          bookingId: fixture.booking.id,
+-          organizationSlug: fixture.organization.slug,
+-        });
+-
+-    const responses = await Promise.all([call(), call()]);
+-    expect(responses.map(({ status }) => status).sort()).toEqual([200, 201]);
+-    expect(await prisma.db.user.count({ where: { clerkUserId } })).toBe(1);
+-    expect(
+-      await prisma.db.auditLog.count({
+-        where: { entityId: fixture.client.id, action: 'LINK' },
+-      }),
+-    ).toBe(1);
+-  });
+-
+-  it('devuelve el mismo 404 para slug ajeno y no revela el tenant', async () => {
+-    const email = `${unique('tenant')}@customer.test`;
+-    const fixture = await createBooking(email);
+-    const other = await createBooking(`${unique('other')}@customer.test`);
+-    const clerkUserId = `user_${unique('tenant')}`;
+-    addIdentity('tenant-token', clerkUserId, email);
+-
+-    const response = await requestApp(app)
+-      .post('/auth/clerk/customer/claims')
+-      .set('Authorization', 'Bearer tenant-token')
+-      .send({
+-        bookingId: fixture.booking.id,
+-        organizationSlug: other.organization.slug,
+-      });
+-    expect(response.status).toBe(404);
+-    expect(JSON.stringify(response.body)).not.toContain(
+-      fixture.organization.id,
+-    );
+-    expect(await prisma.db.user.count({ where: { clerkUserId } })).toBe(0);
+-  });
+-
+-  it('rechaza 409 ante cualquier User local por correo, incluido CUSTOMER legacy, sin escrituras', async () => {
+-    const email = `${unique('legacy')}@customer.test`;
+-    const fixture = await createBooking(email);
+-    const legacyUser = await prisma.db.user.create({
+-      data: { name: 'Legacy customer', email, password: 'legacy-hash' },
+-    });
+-    await prisma.db.membership.create({
+-      data: {
+-        userId: legacyUser.id,
+-        organizationId: fixture.organization.id,
+-        role: UserRole.CUSTOMER,
+-      },
+-    });
+-    const clerkUserId = `user_${unique('legacy')}`;
+-    addIdentity('legacy-token', clerkUserId, email);
+-    const before = {
+-      users: await prisma.db.user.count(),
+-      memberships: await prisma.db.membership.count(),
+-      audits: await prisma.db.auditLog.count(),
+-    };
+-
+-    const response = await requestApp(app)
+-      .post('/auth/clerk/customer/claims')
+-      .set('Authorization', 'Bearer legacy-token')
+-      .send({
+-        bookingId: fixture.booking.id,
+-        organizationSlug: fixture.organization.slug,
+-      });
+-    expect(response.status).toBe(409);
+-    expect(response.body as unknown).toEqual({
+-      message: 'No es posible reclamar esta reserva.',
+-      error: 'Conflict',
+-      statusCode: 409,
+-    });
+-    expect(await prisma.db.user.count()).toBe(before.users);
+-    expect(await prisma.db.membership.count()).toBe(before.memberships);
+-    expect(await prisma.db.auditLog.count()).toBe(before.audits);
+-    expect(
+-      await prisma.db.client.findUniqueOrThrow({
+-        where: { id: fixture.client.id },
+-      }),
+-    ).toMatchObject({ userId: null });
+-  });
+-
+-  it('solo permite un ganador si dos identidades verificadas reclaman a la vez', async () => {
+-    const email = `${unique('race-different')}@customer.test`;
+-    const fixture = await createBooking(email);
+-    const clerkIds = [`user_${unique('race-a')}`, `user_${unique('race-b')}`];
+-    addIdentity('race-a-token', clerkIds[0], email);
+-    addIdentity('race-b-token', clerkIds[1], email);
+-    const call = (token: string) =>
+-      requestApp(app)
+-        .post('/auth/clerk/customer/claims')
+-        .set('Authorization', `Bearer ${token}`)
+-        .send({
+-          bookingId: fixture.booking.id,
+-          organizationSlug: fixture.organization.slug,
+-        });
+-
+-    const responses = await Promise.all([
+-      call('race-a-token'),
+-      call('race-b-token'),
+-    ]);
+-    expect(responses.map(({ status }) => status).sort()).toEqual([201, 409]);
+-    expect(
+-      await prisma.db.user.count({
+-        where: { clerkUserId: { in: clerkIds } },
+-      }),
+-    ).toBe(1);
+-    expect(
+-      await prisma.db.auditLog.count({
+-        where: { entityId: fixture.client.id, action: 'LINK' },
+-      }),
+-    ).toBe(1);
+-  });
+-});
+diff --git a/apps/api/test/customer.e2e-spec.ts b/apps/api/test/customer.e2e-spec.ts
+deleted file mode 100644
+index 7af8335886b5c3b53537b58777ada2d31a341b08..0000000000000000000000000000000000000000
+--- a/apps/api/test/customer.e2e-spec.ts
++++ /dev/null
+@@ -1,1336 +0,0 @@
+-import { fork, type ChildProcess } from 'node:child_process';
+-import { randomUUID } from 'node:crypto';
+-import { resolve } from 'node:path';
+-import { performance } from 'node:perf_hooks';
+-import { BookingStatus, PrismaClient, UserRole } from '@prisma/client';
+-import request from 'supertest';
+-import { EMAIL_NOTICE_VERSION } from '../src/notifications/notification-policy';
+-import { PostgresThrottlerStorage } from '../src/security/postgres-throttler.storage';
+-import { PrismaService } from '../src/prisma/prisma.service';
+-
+-interface Summary {
+-  id: string;
+-  startTime: string;
+-  endTime: string;
+-  status: string;
+-  canBookAgain: boolean;
+-}
+-interface Page {
+-  items: Summary[];
+-  asOf: string;
+-  nextCursor: string | null;
+-  business: { slug: string; name: string };
+-}
+-interface Detail extends Summary {
+-  business: { phone: string | null; address: string | null };
+-  actions: { canBookAgain: boolean };
+-}
+-interface Profile {
+-  name: string;
+-  phone: string | null;
+-  email: string | null;
+-  canEditContact: boolean;
+-}
+-interface Tenant {
+-  id: string;
+-  slug: string;
+-  serviceId: string;
+-  professionalId: string;
+-}
+-
+-describe('M2 C1 — HTTP y PostgreSQL, dos procesos aislados', () => {
+-  const db = new PrismaClient();
+-  const children: ChildProcess[] = [];
+-  const actor = `m2_test_${randomUUID()}`;
+-  const stranger = `m2_test_${randomUUID()}`;
+-  let userId: string;
+-  let strangerId: string;
+-  let clientId: string;
+-  let otherClientId: string;
+-  let southClientId: string;
+-  let north: Tenant;
+-  let south: Tenant;
+-  let first: string;
+-  let second: string;
+-  let original: string;
+-
+-  async function startProcess(): Promise<string> {
+-    const child = fork(resolve(__dirname, 'customer-process.ts'), [], {
+-      cwd: resolve(__dirname, '..'),
+-      execArgv: ['-r', 'ts-node/register'],
+-      stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
+-      env: { ...process.env, TS_NODE_TRANSPILE_ONLY: 'true' },
+-    });
+-    children.push(child);
+-    // Nunca reenviar stdout ni tokens/cuerpos de peticiones a la evidencia.
+-    child.stderr?.resume();
+-    return new Promise((done, reject) => {
+-      const timer = setTimeout(
+-        () => reject(new Error('El proceso HTTP no arrancó')),
+-        30000,
+-      );
+-      child.once('error', reject);
+-      child.once('exit', (code) => {
+-        if (code !== 0) reject(new Error('Falló el proceso HTTP'));
+-      });
+-      child.once('message', (message: { port: number; pid: number }) => {
+-        clearTimeout(timer);
+-        expect(message.pid).not.toBe(process.pid);
+-        done(`http://127.0.0.1:${message.port}`);
+-      });
+-    });
+-  }
+-
+-  async function tenant(): Promise<Tenant> {
+-    const id = randomUUID();
+-    await db.organization.create({
+-      data: {
+-        id,
+-        name: 'Negocio M2 sintético',
+-        slug: id,
+-        email: `${id}@test.invalid`,
+-        businessSchedule: {
+-          create: {
+-            state: 'CONFIRMED',
+-            zoneConfirmed: true,
+-            days: {
+-              create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+-                dayOfWeek,
+-                windows: { create: { startMinute: 540, endMinute: 1080 } },
+-              })),
+-            },
+-          },
+-        },
+-      },
+-    });
+-    await db.cmsPage.update({
+-      where: { organizationId: id },
+-      data: {
+-        isPublished: true,
+-        publishedRevision: 0,
+-        publishedSnapshot: {
+-          publicName: 'Publicado M2',
+-          description: null,
+-          phone: '+18095550100',
+-          address: 'Dirección sintética',
+-          googleMapsUrl: null,
+-        },
+-      },
+-    });
+-    const service = await db.service.create({
+-      data: {
+-        organizationId: id,
+-        name: 'Servicio M2',
+-        duration: 30,
+-        price: 100,
+-      },
+-    });
+-    const professional = await db.professional.create({
+-      data: {
+-        organizationId: id,
+-        name: 'Profesional M2',
+-        status: 'ACTIVE',
+-        isPublic: true,
+-      },
+-    });
+-    return {
+-      id,
+-      slug: id,
+-      serviceId: service.id,
+-      professionalId: professional.id,
+-    };
+-  }
+-
+-  const get = (path: string, token = actor, server = first) =>
+-    request(server).get(path).auth(token, { type: 'bearer' });
+-  const create = (
+-    time: string,
+-    key: string = randomUUID(),
+-    server = first,
+-    extra: Record<string, unknown> = {},
+-  ) =>
+-    request(server)
+-      .post(`/customer/${north.slug}/bookings`)
+-      .auth(actor, { type: 'bearer' })
+-      .set('Idempotency-Key', key)
+-      .send({
+-        serviceId: north.serviceId,
+-        professionalId: north.professionalId,
+-        startTime: time,
+-        ...extra,
+-      });
+-  const profile = (
+-    body: Record<string, unknown>,
+-    key: string = randomUUID(),
+-    server = first,
+-  ) =>
+-    request(server)
+-      .patch(`/customer/${north.slug}/profile`)
+-      .auth(actor, { type: 'bearer' })
+-      .set('Idempotency-Key', key)
+-      .send(body);
+-  const slot = (day: number, hour = 13) =>
+-    `2099-02-${String(day).padStart(2, '0')}T${hour}:00:00Z`;
+-  const emailFor = (token: string) => `${token.slice(8)}@test.invalid`;
+-  const claim = (
+-    tenant: Tenant,
+-    bookingId: string,
+-    token = actor,
+-    server = first,
+-  ) =>
+-    request(server)
+-      .post('/auth/clerk/customer/claims')
+-      .auth(token, { type: 'bearer' })
+-      .send({ bookingId, organizationSlug: tenant.slug });
+-
+-  async function guestFixture() {
+-    const business = await tenant();
+-    const token = `m2_test_${randomUUID()}`;
+-    const response = await request(first)
+-      .post(`/public/${business.slug}/bookings`)
+-      .send({
+-        serviceId: business.serviceId,
+-        professionalId: business.professionalId,
+-        startTime: slot(1),
+-        clientName: 'Invitado D4',
+-        clientEmail: emailFor(token),
+-        clientPhone: '+18095550771',
+-      })
+-      .expect(201);
+-    const id = (response.body as { booking: Summary }).booking.id;
+-    const booking = await db.booking.findUniqueOrThrow({ where: { id } });
+-    return { business, token, bookingId: id, clientId: booking.clientId };
+-  }
+-
+-  beforeAll(async () => {
+-    north = await tenant();
+-    south = await tenant();
+-    userId = (
+-      await db.user.create({
+-        data: {
+-          name: 'Cliente A',
+-          email: emailFor(actor),
+-          clerkUserId: actor,
+-        },
+-      })
+-    ).id;
+-    strangerId = (
+-      await db.user.create({
+-        data: {
+-          name: 'Cliente B',
+-          email: emailFor(stranger),
+-          clerkUserId: stranger,
+-        },
+-      })
+-    ).id;
+-    clientId = (
+-      await db.client.create({
+-        data: {
+-          organizationId: north.id,
+-          userId,
+-          name: 'Cliente A',
+-          phone: '+18095550101',
+-          email: emailFor(actor),
+-          notes: 'NO EXPONER',
+-        },
+-      })
+-    ).id;
+-    otherClientId = (
+-      await db.client.create({
+-        data: {
+-          organizationId: north.id,
+-          userId: strangerId,
+-          name: 'Cliente B',
+-          phone: '+18095550102',
+-          customerAccessBlocked: false,
+-        },
+-      })
+-    ).id;
+-    southClientId = (
+-      await db.client.create({
+-        data: {
+-          organizationId: south.id,
+-          userId,
+-          name: 'Cliente A Sur',
+-          phone: '+18095550101',
+-          email: emailFor(actor),
+-        },
+-      })
+-    ).id;
+-    original = (
+-      await db.booking.create({
+-        data: {
+-          organizationId: north.id,
+-          clientId,
+-          serviceId: north.serviceId,
+-          professionalId: north.professionalId,
+-          startTime: new Date(slot(1)),
+-          endTime: new Date(slot(1, 14)),
+-        },
+-      })
+-    ).id;
+-    first = await startProcess();
+-    second = await startProcess();
+-    expect(children[0].pid).not.toBe(children[1].pid);
+-    await claim(north, original).expect(200);
+-    const southBooking = await db.booking.create({
+-      data: {
+-        organizationId: south.id,
+-        clientId: southClientId,
+-        serviceId: south.serviceId,
+-        professionalId: south.professionalId,
+-        startTime: new Date(slot(1)),
+-        endTime: new Date(slot(1, 14)),
+-      },
+-    });
+-    await claim(south, southBooking.id).expect(200);
+-  }, 90000);
+-  beforeEach(async () => {
+-    await db.securityRateBucket.deleteMany();
+-  });
+-  afterAll(async () => {
+-    await Promise.all(
+-      children.map(
+-        (child) =>
+-          new Promise<void>((done) => {
+-            if (child.exitCode !== null) {
+-              done();
+-              return;
+-            }
+-            child.once('exit', () => done());
+-            child.send('close');
+-          }),
+-      ),
+-    );
+-    await db.$disconnect();
+-  });
+-
+-  it('sin User devuelve vínculos vacíos y no provisiona identidad ni Membership', async () => {
+-    const before = await db.user.count();
+-    const memberships = await db.membership.count();
+-    const result = await get(
+-      '/customer/businesses',
+-      `m2_test_${randomUUID()}`,
+-    ).expect(200);
+-    expect(result.body).toEqual({ businesses: [] });
+-    expect(await db.user.count()).toBe(before);
+-    expect(await db.membership.count()).toBe(memberships);
+-  });
+-
+-  it('rechaza JWT legacy, sesión ausente/revocada, no-store incluso en 401', async () => {
+-    for (const token of ['legacy-jwt-synthetic', 'revoked-synthetic']) {
+-      const result = await get('/customer/businesses', token).expect(401);
+-      expect(result.headers['cache-control']).toBe('private, no-store');
+-    }
+-    await request(first).get('/customer/businesses').expect(401);
+-    const unavailable = await get(
+-      '/customer/businesses',
+-      'synthetic-clerk-unavailable',
+-    ).expect(503);
+-    expect(unavailable.headers['cache-control']).toBe('private, no-store');
+-  });
+-
+-  it('lista solo negocios vinculados y no expone IDs/contactos internos', async () => {
+-    const result = await get('/customer/businesses').expect(200);
+-    const body = result.body as {
+-      businesses: { slug: string; name: string; canBook: boolean }[];
+-    };
+-    expect(body.businesses.map((b) => b.slug).sort()).toEqual(
+-      [north.slug, south.slug].sort(),
+-    );
+-    expect(JSON.stringify(body)).not.toMatch(
+-      /organizationId|userId|clientId|notes|email|Membership/,
+-    );
+-    const other = await get('/customer/businesses', stranger).expect(200);
+-    expect((other.body as typeof body).businesses.map((b) => b.slug)).toEqual([
+-      north.slug,
+-    ]);
+-  });
+-
+-  it('otro cliente, otro negocio, sin vínculo e inexistente devuelven el mismo 404', async () => {
+-    const own = await get(
+-      `/customer/${north.slug}/bookings/${original}`,
+-    ).expect(200);
+-    expect(JSON.stringify(own.body)).not.toMatch(
+-      /NO EXPONER|organizationId|clientId|userId|Invoice|Payment|email|avatar/,
+-    );
+-    const a = await get(
+-      `/customer/${north.slug}/bookings/${original}`,
+-      stranger,
+-    ).expect(404);
+-    const b = await get(
+-      `/customer/${north.slug}/bookings/${randomUUID()}`,
+-    ).expect(404);
+-    const c = await get(`/customer/${south.slug}/bookings/${original}`).expect(
+-      404,
+-    );
+-    const d = await get(`/customer/${randomUUID()}/profile`).expect(404);
+-    expect(a.body).toEqual(b.body);
+-    expect(b.body).toEqual(c.body);
+-    expect(c.body).toEqual(d.body);
+-  });
+-
+-  it.each([
+-    UserRole.OWNER,
+-    UserRole.ADMIN,
+-    UserRole.RECEPTIONIST,
+-    UserRole.BARBER,
+-    UserRole.CUSTOMER,
+-  ])(
+-    'rol %s no concede lectura de otro cliente ni acceso sin vínculo',
+-    async (role) => {
+-      const id = randomUUID();
+-      const token = `m2_test_${id}`;
+-      await db.user.create({
+-        data: {
+-          id,
+-          name: 'Personal sintético',
+-          email: `${id}@test.invalid`,
+-          clerkUserId: token,
+-        },
+-      });
+-      await db.membership.create({
+-        data: { organizationId: north.id, userId: id, role },
+-      });
+-      await get(`/customer/${north.slug}/bookings/${original}`, token).expect(
+-        404,
+-      );
+-      await db.client.create({
+-        data: {
+-          organizationId: north.id,
+-          userId: id,
+-          name: 'Personal como cliente',
+-          customerAccessBlocked: false,
+-        },
+-      });
+-      await get(`/customer/${north.slug}/profile`, token).expect(200);
+-      await get(`/customer/${north.slug}/bookings/${original}`, token).expect(
+-        404,
+-      );
+-    },
+-  );
+-
+-  it('sesión solo cliente no obtiene agenda, clientes internos, finanzas ni política etapa 2', async () => {
+-    for (const path of [
+-      '/bookings',
+-      '/clients',
+-      '/invoices',
+-      '/professionals',
+-    ]) {
+-      const denied = await get(path).set('x-organization-id', north.id);
+-      expect([401, 403]).toContain(denied.status);
+-    }
+-    await get(`/customer/${north.slug}/booking-policy`).expect(404);
+-    await request(first)
+-      .post(`/customer/${north.slug}/bookings/${original}/cancel`)
+-      .auth(actor, { type: 'bearer' })
+-      .send({})
+-      .expect(404);
+-  });
+-
+-  it('D4 cuarentena de mezcla confirmada persiste y requiere revisión explícita', async () => {
+-    await db.client.update({
+-      where: { id: clientId },
+-      data: { customerHistoryAmbiguous: true },
+-    });
+-    await get(`/customer/${north.slug}/profile`).expect(404);
+-    await get(`/customer/${north.slug}/bookings/${original}`).expect(404);
+-    const result = await get('/customer/businesses').expect(200);
+-    expect(
+-      (result.body as { businesses: { slug: string }[] }).businesses.map(
+-        (b) => b.slug,
+-      ),
+-    ).toEqual([south.slug]);
+-    await db.client.update({
+-      where: { id: clientId },
+-      data: { customerHistoryAmbiguous: false },
+-    });
+-    await claim(north, original).expect(200);
+-    await get(`/customer/${north.slug}/bookings/${original}`).expect(200);
+-    const defaultClient = await db.client.create({
+-      data: { organizationId: north.id, name: 'Histórico ambiguo' },
+-    });
+-    expect(defaultClient.customerAccessBlocked).toBe(true);
+-  });
+-
+-  it('D4 invitado→claim válido habilita lista/detalle sin operador ni Membership', async () => {
+-    const f = await guestFixture();
+-    await get(`/customer/${f.business.slug}/bookings`, f.token).expect(404);
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: f.clientId } })).userId,
+-    ).toBeNull();
+-    const memberships = await db.membership.count();
+-    await claim(f.business, f.bookingId, f.token).expect(201);
+-    const page = (
+-      await get(`/customer/${f.business.slug}/bookings`, f.token).expect(200)
+-    ).body as Page;
+-    expect(page.items.map((b) => b.id)).toEqual([f.bookingId]);
+-    await get(
+-      `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-      f.token,
+-    ).expect(200);
+-    const foreign = await get(
+-      `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-      stranger,
+-    ).expect(404);
+-    const absent = await get(
+-      `/customer/${f.business.slug}/bookings/${randomUUID()}`,
+-      stranger,
+-    ).expect(404);
+-    expect(foreign.body).toEqual(absent.body);
+-    expect(await db.membership.count()).toBe(memberships);
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: f.clientId } }))
+-        .customerAccessBlocked,
+-    ).toBe(false);
+-  });
+-
+-  it('D4 conflicto objetivo de teléfono compartido con reservas mantiene cuarentena tras claim', async () => {
+-    const f = await guestFixture();
+-    const peer = await db.client.create({
+-      data: {
+-        organizationId: f.business.id,
+-        name: 'Otra ficha histórica',
+-        email: `${randomUUID()}@test.invalid`,
+-        phone: '+18095550771',
+-      },
+-    });
+-    await db.booking.create({
+-      data: {
+-        organizationId: f.business.id,
+-        clientId: peer.id,
+-        serviceId: f.business.serviceId,
+-        professionalId: f.business.professionalId,
+-        startTime: new Date(slot(2)),
+-        endTime: new Date(slot(2, 14)),
+-      },
+-    });
+-    await claim(f.business, f.bookingId, f.token).expect(201);
+-    expect(
+-      await db.client.findUniqueOrThrow({ where: { id: f.clientId } }),
+-    ).toMatchObject({
+-      customerAccessBlocked: true,
+-      customerHistoryAmbiguous: true,
+-    });
+-    await get(`/customer/${f.business.slug}/bookings`, f.token).expect(404);
+-    // Quitar el síntoma no resuelve por sí solo la mezcla histórica.
+-    await db.client.update({ where: { id: peer.id }, data: { phone: null } });
+-    await claim(f.business, f.bookingId, f.token).expect(200);
+-    await db.client.update({
+-      where: { id: f.clientId },
+-      data: { customerAccessBlocked: false },
+-    });
+-    await get(
+-      `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-      f.token,
+-    ).expect(404);
+-  });
+-
+-  it('D4 reasignación bloquea ambas sesiones; exige un nuevo claim válido y coherente', async () => {
+-    const f = await guestFixture();
+-    await claim(f.business, f.bookingId, f.token).expect(201);
+-    const newActor = `m2_test_${randomUUID()}`;
+-    const user = await db.user.create({
+-      data: {
+-        name: 'Nueva identidad sintética',
+-        clerkUserId: newActor,
+-        email: emailFor(newActor),
+-      },
+-    });
+-    await db.client.update({
+-      where: { id: f.clientId },
+-      data: { userId: user.id },
+-    });
+-    await get(`/customer/${f.business.slug}/bookings`, f.token).expect(404);
+-    await get(`/customer/${f.business.slug}/bookings`, newActor).expect(404);
+-    await claim(f.business, f.bookingId, newActor).expect(409);
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: f.clientId } }))
+-        .customerAccessBlocked,
+-    ).toBe(true);
+-    await db.client.update({
+-      where: { id: f.clientId },
+-      data: { email: emailFor(newActor) },
+-    });
+-    await get(`/customer/${f.business.slug}/bookings`, newActor).expect(404);
+-    await claim(f.business, f.bookingId, newActor).expect(200);
+-    await get(
+-      `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-      newActor,
+-    ).expect(200);
+-    await get(
+-      `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-      f.token,
+-    ).expect(404);
+-  });
+-
+-  it('D4 dos procesos reclaman a la vez: 201/200 y lectura habilitada en ambos', async () => {
+-    const f = await guestFixture();
+-    const results = await Promise.all([
+-      claim(f.business, f.bookingId, f.token, first),
+-      claim(f.business, f.bookingId, f.token, second),
+-    ]);
+-    expect(results.map((r) => r.status).sort()).toEqual([200, 201]);
+-    for (const server of [first, second])
+-      await get(
+-        `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-        f.token,
+-        server,
+-      ).expect(200);
+-    expect(
+-      await db.auditLog.count({
+-        where: { entityId: f.clientId, action: 'LINK' },
+-      }),
+-    ).toBe(1);
+-  });
+-
+-  it('D4 fallo de auditoría revierte enlace y habilitación; reintento conserva una reserva', async () => {
+-    const f = await guestFixture();
+-    await db.$executeRawUnsafe(
+-      "CREATE FUNCTION m2_d4_fail_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic claim audit failure'; END $$",
+-    );
+-    await db.$executeRawUnsafe(
+-      'CREATE TRIGGER m2_d4_fail_audit BEFORE INSERT ON "AuditLog" FOR EACH ROW EXECUTE FUNCTION m2_d4_fail_audit()',
+-    );
+-    try {
+-      await claim(f.business, f.bookingId, f.token).expect(500);
+-      expect(
+-        await db.client.findUniqueOrThrow({ where: { id: f.clientId } }),
+-      ).toMatchObject({ userId: null, customerAccessBlocked: true });
+-      expect(
+-        await db.user.findUnique({ where: { clerkUserId: f.token } }),
+-      ).toBeNull();
+-      await get(`/customer/${f.business.slug}/bookings`, f.token).expect(404);
+-    } finally {
+-      await db.$executeRawUnsafe('DROP TRIGGER m2_d4_fail_audit ON "AuditLog"');
+-      await db.$executeRawUnsafe('DROP FUNCTION m2_d4_fail_audit()');
+-    }
+-    await claim(f.business, f.bookingId, f.token).expect(201);
+-    await get(
+-      `/customer/${f.business.slug}/bookings/${f.bookingId}`,
+-      f.token,
+-    ).expect(200);
+-    expect(
+-      await db.booking.count({ where: { organizationId: f.business.id } }),
+-    ).toBe(1);
+-  });
+-
+-  it('perfil solo propio: normaliza, no propaga y no modifica correo/avisos', async () => {
+-    const before = await db.client.findUniqueOrThrow({
+-      where: { id: clientId },
+-    });
+-    const result = await profile({
+-      name: '  Nombre nuevo  ',
+-      phone: '+1 (809) 555-0103',
+-    }).expect(200);
+-    expect(result.body as Profile).toEqual({
+-      name: 'Nombre nuevo',
+-      phone: '+18095550103',
+-      email: before.email,
+-      canEditContact: true,
+-    });
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: clientId } }))
+-        .emailRevision,
+-    ).toBe(before.emailRevision);
+-    const southClient = await db.client.findFirstOrThrow({
+-      where: { organizationId: south.id, userId },
+-    });
+-    expect(southClient.name).toBe('Cliente A Sur');
+-    expect(southClient.phone).toBe('+18095550101');
+-    const audit = await db.auditLog.findFirstOrThrow({
+-      where: { entityId: clientId, action: 'UPDATE' },
+-    });
+-    expect(JSON.stringify(audit)).not.toMatch(
+-      /Nombre nuevo|18095550103|m2-contact/,
+-    );
+-    await profile({ phone: null }).expect(200);
+-  });
+-
+-  it.each([
+-    { name: null },
+-    { name: ' ' },
+-    { name: '' },
+-    { name: 'a'.repeat(121) },
+-    { phone: '123' },
+-    { phone: 'a'.repeat(31) },
+-    {},
+-    { email: 'other@test.invalid' },
+-    { notes: 'x' },
+-    { userId: randomUUID() },
+-    { clientId: randomUUID() },
+-    { organizationId: randomUUID() },
+-    { isActive: true },
+-    { role: 'OWNER' },
+-    { customerAccessBlocked: false },
+-    { customerHistoryAmbiguous: false },
+-  ])('perfil rechaza campos inválidos/forjados %j', async (body) => {
+-    await profile(body).expect(400);
+-  });
+-
+-  it('perfil idempotente entre dos procesos: un recibo y una auditoría; comandos diferentes/vencidos no escriben', async () => {
+-    const key = randomUUID();
+-    const before = await db.auditLog.count({
+-      where: { entityId: clientId, action: 'UPDATE' },
+-    });
+-    const results = await Promise.all([
+-      profile({ name: 'Perfil único' }, key, first),
+-      profile({ name: '  Perfil único  ' }, key, second),
+-    ]);
+-    expect(results.map((r) => r.status)).toEqual([200, 200]);
+-    expect(results[0].body).toEqual(results[1].body);
+-    expect(
+-      await db.auditLog.count({
+-        where: { entityId: clientId, action: 'UPDATE' },
+-      }),
+-    ).toBe(before + 1);
+-    const receipt = await db.customerOperation.findFirstOrThrow({
+-      where: {
+-        organizationId: north.id,
+-        clientId,
+-        operation: 'UPDATE_PROFILE',
+-      },
+-      orderBy: { createdAt: 'desc' },
+-    });
+-    expect(receipt.bookingId).toBeNull();
+-    expect(JSON.stringify(receipt)).not.toMatch(
+-      /Perfil único|1809555|m2-contact/,
+-    );
+-    await profile({ name: 'Otro comando' }, key).expect(409);
+-    await db.customerOperation.update({
+-      where: { id: receipt.id },
+-      data: {
+-        createdAt: new Date(Date.now() - 86500000),
+-        expiresAt: new Date(Date.now() - 100000),
+-      },
+-    });
+-    await profile({ name: 'Perfil único' }, key).expect(409);
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: clientId } })).name,
+-    ).toBe('Perfil único');
+-  });
+-
+-  it('perfil exige clave; fallo de recibo revierte contacto y auditoría', async () => {
+-    await request(first)
+-      .patch(`/customer/${north.slug}/profile`)
+-      .auth(actor, { type: 'bearer' })
+-      .send({ name: 'Sin clave' })
+-      .expect(400);
+-    const before = await db.client.findUniqueOrThrow({
+-      where: { id: clientId },
+-    });
+-    const audits = await db.auditLog.count({ where: { entityId: clientId } });
+-    await db.$executeRawUnsafe(
+-      `CREATE FUNCTION m2_fail_profile() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic profile failure'; END $$`,
+-    );
+-    await db.$executeRawUnsafe(
+-      `CREATE TRIGGER m2_fail_profile BEFORE INSERT ON "CustomerOperation" FOR EACH ROW EXECUTE FUNCTION m2_fail_profile()`,
+-    );
+-    try {
+-      await profile({ name: 'No persistir' }).expect(503);
+-      expect(
+-        (await db.client.findUniqueOrThrow({ where: { id: clientId } })).name,
+-      ).toBe(before.name);
+-      expect(await db.auditLog.count({ where: { entityId: clientId } })).toBe(
+-        audits,
+-      );
+-    } finally {
+-      await db.$executeRawUnsafe(
+-        'DROP TRIGGER m2_fail_profile ON "CustomerOperation"',
+-      );
+-      await db.$executeRawUnsafe('DROP FUNCTION m2_fail_profile()');
+-    }
+-  });
+-
+-  it('colisión de contacto es neutra y no sobrescribe otro cliente', async () => {
+-    const result = await profile({ phone: '+18095550102' }).expect(409);
+-    expect(JSON.stringify(result.body)).not.toMatch(
+-      /Prisma|P2002|constraint|Cliente B|18095550102/,
+-    );
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: otherClientId } }))
+-        .phone,
+-    ).toBe('+18095550102');
+-  });
+-
+-  it('partición/orden/páginas, asOf fijo; todos los estados y fechas', async () => {
+-    for (const [index, status] of [
+-      'PENDING',
+-      'CONFIRMED',
+-      'COMPLETED',
+-      'CANCELLED',
+-      'NO_SHOW',
+-    ].entries()) {
+-      await db.booking.create({
+-        data: {
+-          organizationId: north.id,
+-          clientId,
+-          serviceId: north.serviceId,
+-          professionalId: north.professionalId,
+-          status: status as BookingStatus,
+-          startTime: new Date(slot(10 + index)),
+-          endTime: new Date(slot(10 + index, 14)),
+-        },
+-      });
+-    }
+-    await db.booking.create({
+-      data: {
+-        organizationId: north.id,
+-        clientId,
+-        serviceId: north.serviceId,
+-        professionalId: north.professionalId,
+-        startTime: new Date('2000-01-01T13:00:00Z'),
+-        endTime: new Date('2000-01-01T14:00:00Z'),
+-      },
+-    });
+-    const upcoming = (
+-      await get(
+-        `/customer/${north.slug}/bookings?view=upcoming&limit=1`,
+-      ).expect(200)
+-    ).body as Page;
+-    expect(upcoming.items[0].id).toBe(original);
+-    expect(upcoming.nextCursor).toBeTruthy();
+-    const next = (
+-      await get(
+-        `/customer/${north.slug}/bookings?view=upcoming&limit=1&cursor=${upcoming.nextCursor}`,
+-      ).expect(200)
+-    ).body as Page;
+-    expect(next.asOf).toBe(upcoming.asOf);
+-    expect(next.items[0].id).not.toBe(original);
+-    const history = (
+-      await get(
+-        `/customer/${north.slug}/bookings?view=history&limit=50`,
+-      ).expect(200)
+-    ).body as Page;
+-    expect(history.items.map((b) => b.status)).toEqual([
+-      'NO_SHOW',
+-      'CANCELLED',
+-      'COMPLETED',
+-      'PENDING',
+-    ]);
+-    const allUpcoming = (
+-      await get(`/customer/${north.slug}/bookings`).expect(200)
+-    ).body as Page;
+-    expect(allUpcoming.items.length).toBe(3);
+-    expect(
+-      allUpcoming.items.every((b) => !history.items.some((h) => h.id === b.id)),
+-    ).toBe(true);
+-  });
+-
+-  it('cursor manipulado/otro actor/tenant/vista/instante elegido y límites', async () => {
+-    const page = (
+-      await get(`/customer/${north.slug}/bookings?limit=1`).expect(200)
+-    ).body as Page;
+-    await get(
+-      `/customer/${north.slug}/bookings?cursor=${page.nextCursor}`,
+-      stranger,
+-    ).expect(404);
+-    await get(
+-      `/customer/${south.slug}/bookings?cursor=${page.nextCursor}`,
+-    ).expect(404);
+-    await get(
+-      `/customer/${north.slug}/bookings?view=history&cursor=${page.nextCursor}`,
+-    ).expect(404);
+-    await get(
+-      `/customer/${north.slug}/bookings?cursor=${page.nextCursor!.slice(0, -3)}xxx`,
+-    ).expect(400);
+-    for (const query of [
+-      'limit=0',
+-      'limit=51',
+-      'view=all',
+-      'cursor=x',
+-      'asOf=2099-01-01',
+-      `clientId=${clientId}`,
+-      'limit=1.5',
+-    ])
+-      await get(`/customer/${north.slug}/bookings?${query}`).expect(400);
+-  });
+-
+-  it('reserva en curso sigue en Próximas; desempate por id y paginación sin duplicados', async () => {
+-    const ongoing = await db.booking.create({
+-      data: {
+-        organizationId: north.id,
+-        clientId,
+-        serviceId: north.serviceId,
+-        professionalId: north.professionalId,
+-        status: 'CONFIRMED',
+-        startTime: new Date(Date.now() - 60000),
+-        endTime: new Date(Date.now() + 600000),
+-      },
+-    });
+-    const upcoming = (await get(`/customer/${north.slug}/bookings`).expect(200))
+-      .body as Page;
+-    expect(upcoming.items.some((b) => b.id === ongoing.id)).toBe(true);
+-    for (let i = 0; i < 3; i++)
+-      await db.booking.create({
+-        data: {
+-          organizationId: north.id,
+-          clientId,
+-          serviceId: north.serviceId,
+-          professionalId: north.professionalId,
+-          status: 'CANCELLED',
+-          startTime: new Date('2110-01-01T00:00:00Z'),
+-          endTime: new Date('2110-01-01T00:30:00Z'),
+-        },
+-      });
+-    const ids: string[] = [];
+-    let cursor: string | null = null;
+-    let asOf: string | null = null;
+-    do {
+-      const page = (
+-        await get(
+-          `/customer/${north.slug}/bookings?view=history&limit=1${cursor ? `&cursor=${cursor}` : ''}`,
+-        ).expect(200)
+-      ).body as Page;
+-      if (asOf) expect(page.asOf).toBe(asOf);
+-      else asOf = page.asOf;
+-      ids.push(...page.items.map((b) => b.id));
+-      cursor = page.nextCursor;
+-    } while (cursor);
+-    expect(new Set(ids).size).toBe(ids.length);
+-    expect(ids.slice(0, 3)).toEqual([...ids.slice(0, 3)].sort().reverse());
+-    expect(ids).not.toContain(ongoing.id);
+-  });
+-
+-  it('cambio SQL de fecha/estado invalida continuación sin depender del ORM', async () => {
+-    const page = (
+-      await get(`/customer/${north.slug}/bookings?limit=1`).expect(200)
+-    ).body as Page;
+-    await db.$executeRaw`UPDATE "Booking" SET "status" = 'CANCELLED' WHERE "id" = ${original}`;
+-    await get(
+-      `/customer/${north.slug}/bookings?cursor=${page.nextCursor}`,
+-    ).expect(409);
+-    await db.$executeRaw`UPDATE "Booking" SET "status" = 'PENDING' WHERE "id" = ${original}`;
+-  });
+-
+-  it('dos procesos con igual clave: una Booking PENDING, recibo, evento y auditoría', async () => {
+-    const key = randomUUID();
+-    const results = await Promise.all([
+-      create(slot(2), key, first, {
+-        emailNotifications: {
+-          optedIn: true,
+-          noticeVersion: EMAIL_NOTICE_VERSION,
+-        },
+-      }),
+-      create(slot(2), key, second, {
+-        emailNotifications: {
+-          optedIn: true,
+-          noticeVersion: EMAIL_NOTICE_VERSION,
+-        },
+-      }),
+-    ]);
+-    expect(results.map((r) => r.status).sort()).toEqual([200, 201]);
+-    const body = results[0].body as { booking: Detail };
+-    expect(results[1].body).toEqual(results[0].body);
+-    expect(body.booking.status).toBe('PENDING');
+-    expect(body.booking.id).not.toBe(original);
+-    expect(
+-      await db.booking.count({
+-        where: {
+-          organizationId: north.id,
+-          clientId,
+-          startTime: new Date(slot(2)),
+-        },
+-      }),
+-    ).toBe(1);
+-    expect(
+-      await db.customerOperation.count({
+-        where: { bookingId: body.booking.id },
+-      }),
+-    ).toBe(1);
+-    expect(
+-      await db.bookingEmailEvent.count({
+-        where: { bookingId: body.booking.id },
+-      }),
+-    ).toBe(1);
+-    expect(
+-      await db.emailOutbox.count({ where: { bookingId: body.booking.id } }),
+-    ).toBe(1);
+-    expect(
+-      await db.auditLog.count({
+-        where: { entityId: body.booking.id, action: 'CREATE' },
+-      }),
+-    ).toBe(1);
+-    expect(
+-      (await db.booking.findUniqueOrThrow({ where: { id: original } })).status,
+-    ).toBe('PENDING');
+-    await create(slot(3), key).expect(409);
+-    await db.client.update({ where: { id: clientId }, data: { userId: null } });
+-    await create(slot(2), key).expect(404);
+-    await db.client.update({ where: { id: clientId }, data: { userId } });
+-    expect(
+-      (await db.client.findUniqueOrThrow({ where: { id: clientId } }))
+-        .customerAccessBlocked,
+-    ).toBe(true);
+-    await claim(north, original).expect(200);
+-  });
+-
+-  it('dos claves para mismo slot: exclusión y rollback de recibo/eventos', async () => {
+-    const before = await db.customerOperation.count();
+-    const results = await Promise.all([
+-      create(slot(3), randomUUID(), first),
+-      create(slot(3), randomUUID(), second),
+-    ]);
+-    expect(results.map((r) => r.status).sort()).toEqual([201, 409]);
+-    expect(await db.customerOperation.count()).toBe(before + 1);
+-  });
+-
+-  it('recibo vencido no reenvía, conflicto y reserva conservada', async () => {
+-    const key = randomUUID();
+-    const result = await create(slot(4), key).expect(201);
+-    const id = (result.body as { booking: Detail }).booking.id;
+-    await db.customerOperation.updateMany({
+-      where: { bookingId: id },
+-      data: {
+-        createdAt: new Date(Date.now() - 86500000),
+-        expiresAt: new Date(Date.now() - 100000),
+-      },
+-    });
+-    await create(slot(4), key).expect(409);
+-    expect(await db.booking.count({ where: { id } })).toBe(1);
+-  });
+-
+-  it('servicio/profesional ajenos o retirados y campos forjados no crean reservas', async () => {
+-    const before = await db.booking.count();
+-    await create(slot(5), randomUUID(), first, {
+-      serviceId: south.serviceId,
+-    }).expect(400);
+-    await create(slot(5), randomUUID(), first, {
+-      professionalId: south.professionalId,
+-    }).expect(400);
+-    await create(slot(5), randomUUID(), first, {
+-      clientId: otherClientId,
+-    }).expect(400);
+-    await create(slot(5), randomUUID(), first, { status: 'CONFIRMED' }).expect(
+-      400,
+-    );
+-    await create(slot(5), randomUUID(), first, {
+-      startTime: '2099-02-05T13:00:00',
+-    }).expect(400);
+-    await db.service.update({
+-      where: { id: north.serviceId },
+-      data: { isActive: false },
+-    });
+-    await db.securityRateBucket.deleteMany();
+-    await create(slot(5)).expect(400);
+-    expect(
+-      (
+-        (await get(`/customer/${north.slug}/bookings/${original}`).expect(200))
+-          .body as Detail
+-      ).canBookAgain,
+-    ).toBe(false);
+-    await db.service.update({
+-      where: { id: north.serviceId },
+-      data: { isActive: true },
+-    });
+-    expect(await db.booking.count()).toBe(before);
+-  });
+-
+-  it('alta exige clave opaca y no acepta contacto/consentimiento no aprobado', async () => {
+-    const dto = {
+-      serviceId: north.serviceId,
+-      professionalId: north.professionalId,
+-      startTime: slot(6),
+-    };
+-    await request(first)
+-      .post(`/customer/${north.slug}/bookings`)
+-      .auth(actor, { type: 'bearer' })
+-      .send(dto)
+-      .expect(400);
+-    await create(slot(6), 'email@test.invalid').expect(400);
+-    await create(slot(6), randomUUID(), first, {
+-      emailNotifications: {
+-        optedIn: true,
+-        noticeVersion: EMAIL_NOTICE_VERSION,
+-        reviewedEmail: 'forged@test.invalid',
+-      },
+-    }).expect(400);
+-    await create(slot(6), randomUUID(), first, {
+-      clientName: 'Otro contacto',
+-    }).expect(400);
+-  });
+-
+-  it('retirado conserva historia sin contacto publicado; archivo bloquea mutaciones e inactivo da 404', async () => {
+-    await db.cmsPage.update({
+-      where: { organizationId: north.id },
+-      data: { isPublished: false },
+-    });
+-    const result = (
+-      await get(`/customer/${north.slug}/bookings/${original}`).expect(200)
+-    ).body as Detail;
+-    expect(result.business.phone).toBeNull();
+-    expect(result.business.address).toBeNull();
+-    expect(result.actions).toEqual({ canBookAgain: false });
+-    await create(slot(5)).expect(409);
+-    await db.cmsPage.update({
+-      where: { organizationId: north.id },
+-      data: { isPublished: true },
+-    });
+-    await db.client.update({
+-      where: { id: clientId },
+-      data: { isActive: false },
+-    });
+-    expect(
+-      (
+-        (await get(`/customer/${north.slug}/profile`).expect(200))
+-          .body as Profile
+-      ).canEditContact,
+-    ).toBe(false);
+-    await profile({ name: 'Intento' }).expect(409);
+-    await create(slot(5)).expect(409);
+-    await db.client.update({
+-      where: { id: clientId },
+-      data: { isActive: true },
+-    });
+-    await db.organization.update({
+-      where: { id: north.id },
+-      data: { isActive: false },
+-    });
+-    await get(`/customer/${north.slug}/profile`).expect(404);
+-    await db.organization.update({
+-      where: { id: north.id },
+-      data: { isActive: true },
+-    });
+-  });
+-
+-  it('fallo de recibo o auditoría revierte reserva, preferencia, evento e intención juntos', async () => {
+-    for (const table of ['CustomerOperation', 'AuditLog']) {
+-      const before = await Promise.all([
+-        db.booking.count(),
+-        db.customerOperation.count(),
+-        db.bookingEmailPreference.count(),
+-        db.bookingEmailEvent.count(),
+-        db.emailOutbox.count(),
+-      ]);
+-      await db.$executeRawUnsafe(
+-        `CREATE FUNCTION m2_fail_atomic() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic atomic failure'; END $$`,
+-      );
+-      await db.$executeRawUnsafe(
+-        `CREATE TRIGGER m2_fail_atomic BEFORE INSERT ON "${table}" FOR EACH ROW EXECUTE FUNCTION m2_fail_atomic()`,
+-      );
+-      try {
+-        const result = await create(slot(7)).expect(503);
+-        expect(JSON.stringify(result.body)).not.toMatch(
+-          /Prisma|P200|trigger|synthetic|constraint/,
+-        );
+-        expect(
+-          await Promise.all([
+-            db.booking.count(),
+-            db.customerOperation.count(),
+-            db.bookingEmailPreference.count(),
+-            db.bookingEmailEvent.count(),
+-            db.emailOutbox.count(),
+-          ]),
+-        ).toEqual(before);
+-      } finally {
+-        await db.$executeRawUnsafe(`DROP TRIGGER m2_fail_atomic ON "${table}"`);
+-        await db.$executeRawUnsafe('DROP FUNCTION m2_fail_atomic()');
+-      }
+-    }
+-  });
+-
+-  it('FK compuesta niega recibo con Booking de otro tenant y CHECK niega retención inválida', async () => {
+-    const southClient = await db.client.findFirstOrThrow({
+-      where: { organizationId: south.id, userId },
+-    });
+-    const data = {
+-      organizationId: south.id,
+-      actorUserId: userId,
+-      clientId: southClient.id,
+-      operation: 'CREATE_BOOKING',
+-      keyDigest: 'a'.repeat(64),
+-      commandDigest: 'b'.repeat(64),
+-      bookingId: original,
+-      createdAt: new Date(),
+-      expiresAt: new Date(Date.now() + 86000000),
+-    };
+-    await expect(db.customerOperation.create({ data })).rejects.toMatchObject({
+-      code: 'P2003',
+-    });
+-    await expect(
+-      db.customerOperation.create({
+-        data: {
+-          ...data,
+-          organizationId: north.id,
+-          clientId,
+-          expiresAt: new Date(Date.now() + 90000000),
+-        },
+-      }),
+-    ).rejects.toBeDefined();
+-  });
+-
+-  it('misma clave en otro actor es independiente y no devuelve su reserva', async () => {
+-    const key = randomUUID();
+-    const own = await create(slot(8), key).expect(201);
+-    const other = await request(second)
+-      .post(`/customer/${north.slug}/bookings`)
+-      .auth(stranger, { type: 'bearer' })
+-      .set('Idempotency-Key', key)
+-      .send({
+-        serviceId: north.serviceId,
+-        professionalId: north.professionalId,
+-        startTime: slot(9),
+-      })
+-      .expect(201);
+-    expect((own.body as { booking: Detail }).booking.id).not.toBe(
+-      (other.body as { booking: Detail }).booking.id,
+-    );
+-    await get(
+-      `/customer/${north.slug}/bookings/${(own.body as { booking: Detail }).booking.id}`,
+-      stranger,
+-    ).expect(404);
+-  });
+-
+-  it('lecturas 60, perfil 10 y alta 5 por actor/negocio compartidos entre procesos', async () => {
+-    const paths = Array.from({ length: 61 }, (_, index) =>
+-      get(`/customer/${north.slug}/profile`, actor, index % 2 ? first : second),
+-    );
+-    const responses = await Promise.all(paths);
+-    expect(responses.filter((r) => r.status === 200)).toHaveLength(60);
+-    const blocked = responses.find((r) => r.status === 429)!;
+-    expect(Number(blocked.headers['retry-after'])).toBeGreaterThan(0);
+-    await db.securityRateBucket.deleteMany();
+-    for (let i = 0; i < 10; i++)
+-      await profile({ name: 'Cliente prueba' }).expect(200);
+-    await profile({ name: 'Cliente prueba' }).expect(429);
+-    await db.securityRateBucket.deleteMany();
+-    for (let i = 0; i < 5; i++)
+-      await create(slot(6), randomUUID(), i % 2 ? first : second, {
+-        serviceId: south.serviceId,
+-      }).expect(400);
+-    await create(slot(6)).expect(429);
+-    const buckets = await db.securityRateBucket.findMany();
+-    expect(buckets.every((b) => /^[a-f0-9]{64}$/.test(b.key))).toBe(true);
+-  }, 30000);
+-
+-  it('techo IP 180 no se elude rotando actor/slug', async () => {
+-    for (let i = 0; i < 180; i++)
+-      await get(
+-        `/customer/${randomUUID()}/profile`,
+-        `m2_test_${randomUUID()}`,
+-        i % 2 ? first : second,
+-      ).expect(404);
+-    await get('/customer/businesses', `m2_test_${randomUUID()}`).expect(429);
+-  }, 30000);
+-
+-  it('limpieza M2 compartida elimina como máximo cien contadores antiguos por pasada', async () => {
+-    await db.securityRateBucket.createMany({
+-      data: Array.from({ length: 105 }, (_, i) => ({
+-        key: i.toString(16).padStart(64, '0'),
+-        count: 1,
+-        expiresAt: new Date(Date.now() - 172800000),
+-      })),
+-    });
+-    const storage = new PostgresThrottlerStorage(
+-      { db } as unknown as PrismaService,
+-      process.env.JWT_SECRET!,
+-      100,
+-    );
+-    await storage.increment('synthetic-cleanup', 60000, 5, 60000, 'customer');
+-    let remaining = 105;
+-    for (let i = 0; i < 20 && remaining === 105; i++) {
+-      await new Promise((done) => setTimeout(done, 10));
+-      remaining = await db.securityRateBucket.count({
+-        where: { expiresAt: { lt: new Date(Date.now() - 86400000) } },
+-      });
+-    }
+-    expect(remaining).toBe(5);
+-  });
+-
+-  it('D8-A: correo legacy existente/nuevo y fallo real secundario tienen mismos indicadores; fail-open', async () => {
+-    const existingEmail = `${randomUUID()}@test.invalid`;
+-    await db.user.create({
+-      data: {
+-        name: 'Legacy sintético',
+-        email: existingEmail,
+-        password: 'fixture-no-login',
+-      },
+-    });
+-    const reserve = (email: string, phone: string, day: number) =>
+-      request(first)
+-        .post(`/public/${north.slug}/bookings`)
+-        .send({
+-          serviceId: north.serviceId,
+-          professionalId: north.professionalId,
+-          startTime: slot(day),
+-          clientName: 'Legacy M2',
+-          clientEmail: email,
+-          clientPhone: phone,
+-          createAccount: true,
+-          password: 'Synthetic-Password-2099!',
+-        });
+-    const existingStarted = performance.now();
+-    const existed = await reserve(existingEmail, '+18095550201', 20).expect(
+-      201,
+-    );
+-    const existingMs = Math.round(performance.now() - existingStarted);
+-    const freshEmail = `${randomUUID()}@test.invalid`;
+-    const freshStarted = performance.now();
+-    const fresh = await reserve(freshEmail, '+18095550202', 21).expect(201);
+-    const freshMs = Math.round(performance.now() - freshStarted);
+-    console.log(
+-      `M2_D8_TIMING ${JSON.stringify({ existingMs, freshMs, samplesPerCase: 1, constantTimeProven: false })}`,
+-    );
+-    const indicators = (body: unknown) => {
+-      const value = body as {
+-        accountCreated: boolean;
+-        accountCreationError: string | null;
+-        booking: Summary;
+-      };
+-      return {
+-        accountCreated: value.accountCreated,
+-        accountCreationError: value.accountCreationError,
+-        status: value.booking.status,
+-        keys: Object.keys(value).sort(),
+-      };
+-    };
+-    expect(indicators(existed.body)).toEqual(indicators(fresh.body));
+-    expect(indicators(fresh.body)).toMatchObject({
+-      accountCreated: false,
+-      accountCreationError: null,
+-      status: 'PENDING',
+-    });
+-    expect(
+-      await db.membership.count({
+-        where: {
+-          organizationId: north.id,
+-          user: { email: freshEmail },
+-          role: 'CUSTOMER',
+-        },
+-      }),
+-    ).toBe(1);
+-    const login = await request(first)
+-      .post('/auth/login')
+-      .send({ email: freshEmail, password: 'Synthetic-Password-2099!' })
+-      .expect(201);
+-    expect((login.body as { accessToken: string }).accessToken).toEqual(
+-      expect.any(String),
+-    );
+-    await get(
+-      '/customer/businesses',
+-      (login.body as { accessToken: string }).accessToken,
+-    ).expect(401);
+-    // Trigger solo en DB desechable: fallo secundario después de confirmar Booking.
+-    await db.$executeRawUnsafe(
+-      `CREATE FUNCTION m2_fail_user() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic secondary failure'; END $$`,
+-    );
+-    await db.$executeRawUnsafe(
+-      `CREATE TRIGGER m2_fail_user BEFORE INSERT ON "User" FOR EACH ROW EXECUTE FUNCTION m2_fail_user()`,
+-    );
+-    try {
+-      const failed = await reserve(
+-        `${randomUUID()}@test.invalid`,
+-        '+18095550203',
+-        22,
+-      ).expect(201);
+-      expect(indicators(failed.body)).toEqual(indicators(fresh.body));
+-      const id = (failed.body as { booking: Summary }).booking.id;
+-      expect(
+-        (await db.booking.findUniqueOrThrow({ where: { id } })).status,
+-      ).toBe('PENDING');
+-    } finally {
+-      await db.$executeRawUnsafe('DROP TRIGGER m2_fail_user ON "User"');
+-      await db.$executeRawUnsafe('DROP FUNCTION m2_fail_user()');
+-    }
+-  });
+-});
+diff --git a/apps/api/test/dashboard-summary.e2e-spec.ts b/apps/api/test/dashboard-summary.e2e-spec.ts
+index f1810053523b22035d7fdf96b5c415e1ae37d1bb..92f126628cbb313931216ddd2b93c6ace1effb8d 100644
+--- a/apps/api/test/dashboard-summary.e2e-spec.ts
++++ b/apps/api/test/dashboard-summary.e2e-spec.ts
+@@ -223,7 +223,7 @@ describe('Resumen acotado (PostgreSQL aislado)', () => {
+     await requestApp(app)
+       .get('/analytics/summary')
+       .set('Authorization', `Bearer ${tokens.get('A-customer')}`)
+-      .expect(403);
++      .expect(401);
+     for (const query of [
+       'agendaPage=0',
+       'agendaPage=1.5',
+diff --git a/apps/api/test/invoices.e2e-spec.ts b/apps/api/test/invoices.e2e-spec.ts
+index 95ff80d82b53941a842faae1391d065c2f35e267..382474ce87458179a7285b3f783e98efd207ec4f 100644
+--- a/apps/api/test/invoices.e2e-spec.ts
++++ b/apps/api/test/invoices.e2e-spec.ts
+@@ -914,11 +914,11 @@ describe('Facturación-A Backend (e2e PostgreSQL)', () => {
+     await requestApp(app)
+       .get('/invoices')
+       .set('Authorization', `Bearer ${customerToken}`)
+-      .expect(403);
++      .expect(401);
+     await requestApp(app)
+       .get('/analytics/dashboard')
+       .set('Authorization', `Bearer ${customerToken}`)
+-      .expect(403);
++      .expect(401);
+   });
+ 
+   it('serializa ráfagas de emisión y cobro en un solo agregado y AuditLog', async () => {
+diff --git a/apps/api/test/services.e2e-spec.ts b/apps/api/test/services.e2e-spec.ts
+index f1683d37c6f7624b74c67c9d4d05652b8acf6ce5..5bd123eaa64cfe017790fd4e256f4201a42a200f 100644
+--- a/apps/api/test/services.e2e-spec.ts
++++ b/apps/api/test/services.e2e-spec.ts
+@@ -466,7 +466,7 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
+     await requestApp(app)
+       .get('/services')
+       .set('Authorization', `Bearer ${customerToken}`)
+-      .expect(403);
++      .expect(401);
+   });
+ 
+   it('edita con ADMIN, audita y rechaza modificar estado por PATCH general', async () => {
+diff --git a/docs/README.md b/docs/README.md
+index 037816c2e22bc02161248e32ad4ef495eb4f1483..e36032c45c847972e684f4bff6aabbdde68fcf83 100644
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -1,5 +1,9 @@
+ # Documentación de Kortek Booking
+ 
++## Alcance vigente — 2026-10-07
++
++**Reserva exclusivamente de invitado; cuenta de cliente final fuera del producto/MVP.** [Entrega C0/C1 de retiro B2C](features/RESERVA_INVITADO_C0_C1.md): trabajo local validado/en revisión, sin commit/push/despliegue ni QA. `Client` es ficha operativa del negocio. C2/C3 pendientes de autorización separada; la web local aún contiene el portal anterior. Las referencias M2/A0.6 inferiores conservan historia y no autorizan continuidad B2C. Datos y compatibilidad intactos; Clerk y autenticación interna preservados; P4b excluido.
++
+ Consolidación documental local — 2026-10-03, posterior a C2 `d222115`: [alcance vigente y contradicciones históricas](../PROJECT_MASTER.md). **Un commit local autorizado; sin push ni despliegue** por la migración 28 pendiente en el API QA. M2 C1 está [cerrado/aprobado](quality/M2_C1_CIERRE.md#aprobación-explícita-del-backend-c1-y-bloqueo-de-producción--2026-10-03); [D4](quality/M2_C1_CIERRE.md#riesgo-residual-d4-aceptado-solo-para-qa-bloqueante-en-paso-8) se acepta solo para QA y bloquea Paso 8. C2 mantiene su [estado local/en revisión](quality/M2_C2_CIERRE.md).
+ 
+ Las referencias históricas inferiores a confirmación UX pendiente, C3 en revisión y respaldo retenido contradicen el estado posterior aprobado, conservado en la cabecera y en los registros de [aprobación UX](quality/RESERVA_PUBLICA_CONFIRMACION_UX.md#aprobación-posterior-del-propietario--2026-10-03) y [limpieza previa](quality/RESERVA_PUBLICA_M1_C3_CIERRE.md#antecedente-de-aprobación-y-limpieza--2026-10-03). El [JSON de aprobación/limpieza](quality/evidence/m1-c3/aprobacion-cierre-20261003.json) documenta SHA previo y eliminación; el [JSON del cierre documental](quality/evidence/m1-c3/cierre-documental-20261003.json) acredita ausencia posterior. Ambos se conservan sin reescribir evidencia ni repetir operaciones o QA.
+diff --git a/docs/architecture/DATA_MODEL.md b/docs/architecture/DATA_MODEL.md
+index 8e995de403d3db95020a6757a05266926170c3b3..337374b41dfcd8d97288452a3ef8229b0599b4b9 100644
+--- a/docs/architecture/DATA_MODEL.md
++++ b/docs/architecture/DATA_MODEL.md
+@@ -1,5 +1,9 @@
+ # Modelo de datos — mapa vigente
+ 
++## Decisión vigente — 2026-10-07
++
++`Client` es la ficha de contacto operativa por negocio; no es una cuenta autenticada. Reserva pública de invitado sin alta de `User`/`Membership`. `Client.userId`, rol CUSTOMER, campos `customer*`, `CustomerOperation`, relaciones, índices y triggers permanecen por compatibilidad histórica; no conceden acceso B2C tras C1. Sin eliminación de datos ni cambios Prisma/migraciones. [Retiro funcional C0/C1](../features/RESERVA_INVITADO_C0_C1.md).
++
+ ## C1 aprobado e integrado localmente — Horario y zona
+ 
+ **BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. BusinessSchedule/Day/Window/Closure/Revision forman el agregado operativo por tenant; Organization conserva la zona autoritativa. Revisión esperada y lock Organization antes de Client/Booking/Professional protegen comandos globales y dependencias. Estado legacy no confirmado conserva diagnóstico/lectura; confirmado usa solo el agregado y falla cerrado ante corrupción. Revisión durable, motivos privados y cierres cancelados preservan historia. [Contrato](../features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](../features/HORARIO_ZONA_C1_EVIDENCIA.md). Estas relaciones están integradas en el código del proyecto local; el archivo de migración sigue pendiente de aplicación autorizada. No afirman migración productiva ni autorización C2.
+diff --git a/docs/architecture/TRD.md b/docs/architecture/TRD.md
+index 957d2d171a52580b44c97c2b19fabbc3207aedd3..ded0f459ed5f3ce38a29504cc2a99da9d7b0b4bd 100644
+--- a/docs/architecture/TRD.md
++++ b/docs/architecture/TRD.md
+@@ -1,5 +1,9 @@
+ # TRD — Arquitectura técnica vigente
+ 
++## Decisión de arquitectura vigente — 2026-10-07
++
++La reserva pública es de invitado y obtiene el tenant del slug publicado. C0/C1 retira el runtime exclusivo de `/customer/*`, claims y creación secundaria; `Client` sigue siendo contacto operativo, separado de `User`/`Membership`. Los campos/tabla/triggers/índices B2C permanecen solo por compatibilidad del ledger, sin nuevo contrato de autoservicio. No se cambia schema, migraciones, grants ni Clerk. [Contrato y límites de C1](../features/RESERVA_INVITADO_C0_C1.md). Las referencias posteriores a vínculo B2C son antecedentes de persistencia, no capacidades vigentes.
++
+ ## C1 aprobado e integrado localmente — Horario y zona
+ 
+ **BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. BusinessSchedule/Day/Window/Closure/Revision forman el agregado operativo por tenant; Organization conserva la zona autoritativa. Revisión esperada y lock Organization antes de Client/Booking/Professional protegen comandos globales y dependencias. Estado legacy no confirmado conserva diagnóstico/lectura; confirmado usa solo el agregado y falla cerrado ante corrupción. Revisión durable, motivos privados y cierres cancelados preservan historia. [Contrato](../features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](../features/HORARIO_ZONA_C1_EVIDENCIA.md). Estas relaciones están integradas en el código del proyecto local; el archivo de migración sigue pendiente de aplicación autorizada. No afirman migración productiva ni autorización C2.
+diff --git a/docs/product/APP_FLOWS.md b/docs/product/APP_FLOWS.md
+index 34b28e44c277981b470c4a8b6eada46cfddad907..b930c830455a3d7bc02838a85a5f269e652bea77 100644
+--- a/docs/product/APP_FLOWS.md
++++ b/docs/product/APP_FLOWS.md
+@@ -46,7 +46,13 @@ El Resumen obtiene agenda/carga paginadas desde `GET /analytics/summary` y métr
+ 
+ Los contratos concretos de Reservas, Clientes, Profesionales y Facturación se leen en sus entradas vigentes; este mapa no concede permisos nuevos.
+ 
+-## 5. Reserva pública y continuidad B2C
++## 5. Reserva pública de invitado — decisión 2026-10-07
++
++Flujo oficial: mini-sitio → reservar → servicio → profesional → fecha/hora → nombre/teléfono/correo opcional → revisión → resultado PENDING. No se crea ni autentica cuenta. Client conserva contacto y vínculo con reservas del negocio. Cambios/cancelaciones se solicitan al negocio con sus contactos existentes. Correo/opt-in es independiente de identidad y no acredita entrega; WhatsApp es manual. Sin enlaces privados nuevos ni consulta pública de historial.
++
++C0/C1 retira backend B2C; C2 no iniciado deja todavía componentes y rutas web del alcance anterior. No desplegar esta combinación como candidato final. [Contrato y límites](../features/RESERVA_INVITADO_C0_C1.md).
++
++**Antecedentes M1/M2:** el recorrido numerado y párrafos siguientes conservan contexto previo; las menciones de crear cuenta, claims y autoservicio quedan revocadas por esta decisión.
+ 
+ 1. `/{slug}` presenta solo la revisión CMS publicada: nombre, descripción, teléfono y ubicación opcionales; consume por separado la proyección pública de medios aprobada cuando está disponible;
+ 2. `/public/:slug/booking-data` entrega esa proyección, catálogo, profesionales públicos mínimos y la fecha mínima calculada en la zona del negocio, sin UUID de Organization. F0-D/2A añade `timeZone` técnico en la raíz: backend aprobado e integrado en web localmente/en revisión; confirmación/éxito presentan el instante autoritativo con Hoy/Ayer/Mañana y año según ese negocio, sin mostrar el identificador de zona;
+diff --git a/docs/product/PRD.md b/docs/product/PRD.md
+index a30498193665c75c658d09ae0d7d90b1d08ec2df..c00a711b98d6aee5492764414f94e7cff007b7ec 100644
+--- a/docs/product/PRD.md
++++ b/docs/product/PRD.md
+@@ -14,9 +14,15 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
+ | ADMIN | Gestión delegada | Operar capacidades autorizadas con controles equivalentes de seguridad |
+ | RECEPTIONIST | Atención y agenda | Gestionar el trabajo permitido sin privilegios administrativos innecesarios |
+ | BARBER | Profesional vinculado | Consultar y operar únicamente sus reservas y datos autorizados |
+-| CUSTOMER | Flujo público B2C | Reservar con mínima fricción y mínima exposición de datos |
++| Invitado | Visitante del negocio | Reservar sin registro, autenticación ni cuenta; solicitar cambios al negocio |
+ 
+-`CUSTOMER` no accede al dashboard interno. Roles y permisos efectivos se verifican en backend y en el contrato vigente de cada módulo.
++`Client` es la ficha operativa del negocio, no una cuenta. `CUSTOMER` se conserva únicamente como valor histórico de persistencia y no habilita acceso. Roles y permisos efectivos se verifican en backend y en el contrato vigente de cada módulo.
++
++## Reserva oficial y MVP — decisión 2026-10-07
++
++Reserva de invitado con nombre/teléfono y correo opcional. Sin registro, login, perfil ni historial/autoservicio B2C. Cambios y cancelaciones se solicitan al negocio; el personal los opera bajo contratos existentes. Client, reservas y registros financieros se conservan. [C0/C1 de retiro](../features/RESERVA_INVITADO_C0_C1.md) no autoriza C2/C3 ni activación.
++
++El objetivo comercial mantiene calendario operativo día/semana, pago presencial y transferencia con comprobante privado revisable. Carga de evidencia no equivale a Payment. La autorización segura de carga sin cuenta requiere C0 financiero propio; no basta un ID de reserva. Analytics/Resumen siguen después, con sus gates. La web local todavía contiene B2C hasta C2.
+ 
+ ## Capacidades y estado
+ 
+@@ -27,7 +33,7 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
+ - Configuración/CMS C1, C2 y C3 están cerrados/aprobados. Cualquier ampliación posterior requiere autorización modular propia.
+ - WhatsApp público manual C1–C3 y Notificaciones transaccionales C1–C3 están cerrados/aprobados; el canal de correo permanece pausado y no hay activación productiva.
+ - Medios y promociones editoriales C1–C3 están cerrados/aprobados. La cuota de moderación observada en QA quedó agotada hasta un nuevo ciclo comprobado; no hay activación productiva.
+-- Security A0.5 y A0.6-A están cerrados/aprobados. A0.6-B/C/D y el retiro legacy siguen pendientes de autorización.
++- Security A0.5 conserva su estado aprobado. A0.6-A de claims es antecedente retirado funcionalmente por C1; A0.6-B/C/D quedan fuera del producto actual. El retiro general de autenticación interna legacy sigue siendo una entrega distinta.
+ 
+ Este documento no convierte una visión futura o una pantalla existente en una capacidad aprobada.
+ 
+@@ -66,7 +72,7 @@ Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / AP
+ ## No-alcance vigente
+ 
+ - No reabrir ni ampliar módulos cerrados por inferencia.
+-- No iniciar A0.6-B/C/D, retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
++- La cuenta de cliente final y A0.6-B/C/D quedan fuera del producto/MVP. No iniciar retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
+ - No publicar precios, límites de planes, testimonios o cifras comerciales sin decisión y evidencia del propietario.
+ - No crear un flujo de organizaciones adicionales hasta definir su contrato atómico, permisos, límites, auditoría y UX.
+ - No ampliar Configuración/CMS, Medios/Promociones o Notificaciones más allá de sus alcances aprobados, ni activar canales productivos, cuentas bancarias, transferencias, comprobantes, propinas, descuentos ejecutables o nuevos estados de Booking por inferencia. Cada ampliación exige plan, contrato y aprobación propios.
+diff --git a/apps/api/src/auth/strategies/jwt.strategy.spec.ts b/apps/api/src/auth/strategies/jwt.strategy.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..669187160ebfad54f25f8cac24ef6e5df6804fa6
+--- /dev/null
++++ b/apps/api/src/auth/strategies/jwt.strategy.spec.ts
+@@ -0,0 +1,57 @@
++import { UnauthorizedException } from '@nestjs/common';
++import { UserRole } from '@prisma/client';
++import { PrismaService } from '../../prisma/prisma.service';
++import { JwtStrategy } from './jwt.strategy';
++
++describe('JwtStrategy — retiro CUSTOMER, compatibilidad interna', () => {
++  const findUnique = jest.fn();
++  let strategy: JwtStrategy;
++  const payload = {
++    sub: 'actor',
++    organizationId: 'tenant',
++    email: 'ignored@example.test',
++    role: 'OWNER',
++  };
++  beforeEach(() => {
++    findUnique.mockReset();
++    strategy = new JwtStrategy({
++      db: { membership: { findUnique } },
++    } as unknown as PrismaService);
++  });
++
++  it.each([
++    UserRole.OWNER,
++    UserRole.ADMIN,
++    UserRole.RECEPTIONIST,
++    UserRole.BARBER,
++  ])('preserva %s y revalida rol/tenant desde Membership', async (role) => {
++    findUnique.mockResolvedValue({
++      organizationId: 'tenant',
++      role,
++      user: { id: 'actor', name: 'Interno', email: 'internal@example.test' },
++    });
++    await expect(strategy.validate(payload)).resolves.toEqual({
++      id: 'actor',
++      name: 'Interno',
++      email: 'internal@example.test',
++      organizationId: 'tenant',
++      role,
++    });
++    expect(findUnique).toHaveBeenCalledWith({
++      where: {
++        userId_organizationId: { userId: 'actor', organizationId: 'tenant' },
++      },
++      include: { user: true },
++    });
++  });
++
++  it.each([null, { role: UserRole.CUSTOMER }])(
++    'rechaza membresía inexistente o CUSTOMER aunque el payload diga OWNER',
++    async (membership) => {
++      findUnique.mockResolvedValue(membership);
++      await expect(strategy.validate(payload)).rejects.toBeInstanceOf(
++        UnauthorizedException,
++      );
++    },
++  );
++});
+diff --git a/apps/api/src/public-booking/guest-retirement.spec.ts b/apps/api/src/public-booking/guest-retirement.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..afde11406be3fa6f407d1b89fcd10999ba588b0f
+--- /dev/null
++++ b/apps/api/src/public-booking/guest-retirement.spec.ts
+@@ -0,0 +1,208 @@
++import type { Server } from 'node:http';
++import {
++  INestApplication,
++  UnauthorizedException,
++  ValidationPipe,
++} from '@nestjs/common';
++import { Test } from '@nestjs/testing';
++import { ThrottlerGuard } from '@nestjs/throttler';
++import { JwtService } from '@nestjs/jwt';
++import { BookingStatus } from '@prisma/client';
++import request from 'supertest';
++import { AppModule } from '../app.module';
++import { PrismaService } from '../prisma/prisma.service';
++import { BookingsService } from '../bookings/bookings.service';
++import { AuditService } from '../audit/audit.service';
++import { ClerkSessionVerifierService } from '../auth/clerk/clerk-session-verifier.service';
++import { MediaPurgeWorker } from '../media/media-purge.worker';
++import { globalValidationPipeOptions } from '../common/validation.config';
++
++// Aplicación real y HTTP real; persistencia/proveedor controlados, sin base ni Clerk vivos.
++describe('Retiro B2C C1 — HTTP de AppModule', () => {
++  let app: INestApplication;
++  const orgId = '00000000-0000-4000-8000-000000000001';
++  const id = '00000000-0000-4000-8000-000000000002';
++  const dto = {
++    serviceId: id,
++    professionalId: id,
++    startTime: '2099-01-01T10:00:00.000Z',
++    clientName: 'Invitado sintético',
++    clientPhone: '+18095550100',
++  };
++  const organization = {
++    id: orgId,
++    isActive: true,
++    deletedAt: null,
++    timeZone: 'America/Santo_Domingo',
++    businessHours: null,
++    businessSchedule: {
++      state: 'LEGACY_UNCONFIRMED',
++      zoneConfirmed: false,
++      legacyPublicAllowed: true,
++      days: [],
++      closures: [],
++      revision: 0,
++    },
++    cmsPage: { isPublished: true, publishedSnapshot: { publicName: 'Demo' } },
++  };
++  const tx = {
++    $queryRaw: jest.fn().mockResolvedValue([{ id: orgId }]),
++    organization: { findUnique: jest.fn().mockResolvedValue(organization) },
++    client: {
++      findFirst: jest.fn().mockResolvedValue(null),
++      create: jest.fn().mockResolvedValue({ id }),
++    },
++    user: { create: jest.fn() },
++    membership: { create: jest.fn() },
++  };
++  const db = {
++    organization: { findUnique: jest.fn().mockResolvedValue(organization) },
++    user: { findFirst: jest.fn(), create: jest.fn() },
++    membership: { findUnique: jest.fn() },
++    $transaction: jest.fn((callback: (transaction: typeof tx) => unknown) =>
++      callback(tx),
++    ),
++  };
++  const verify = jest.fn().mockRejectedValue(new UnauthorizedException());
++  const create = jest.fn().mockResolvedValue({
++    id,
++    serviceId: id,
++    professionalId: id,
++    startTime: new Date(dto.startTime),
++    endTime: new Date('2099-01-01T10:30:00.000Z'),
++    status: BookingStatus.PENDING,
++  });
++
++  beforeAll(async () => {
++    const module = await Test.createTestingModule({ imports: [AppModule] })
++      .overrideProvider(PrismaService)
++      .useValue({ db })
++      .overrideProvider(BookingsService)
++      .useValue({ create })
++      .overrideProvider(AuditService)
++      .useValue({ log: jest.fn().mockResolvedValue(undefined) })
++      .overrideProvider(ClerkSessionVerifierService)
++      .useValue({ verify })
++      .overrideProvider(MediaPurgeWorker)
++      .useValue({})
++      .overrideGuard(ThrottlerGuard)
++      .useValue({ canActivate: () => true })
++      .compile();
++    app = module.createNestApplication();
++    app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
++    await app.init();
++  });
++  beforeEach(() => jest.clearAllMocks());
++  afterAll(async () => {
++    if (app) await app.close();
++  });
++
++  it.each([
++    ['get', '/customer/businesses'],
++    ['get', '/customer/demo/bookings'],
++    ['get', `/customer/demo/bookings/${id}`],
++    ['get', '/customer/demo/profile'],
++    ['patch', '/customer/demo/profile'],
++    ['post', '/customer/demo/bookings'],
++    ['post', '/auth/clerk/customer/claims'],
++  ] as const)(
++    '%s %s queda inexistente con y sin bearer',
++    async (method, path) => {
++      for (const bearer of [null, 'synthetic-session']) {
++        const req = request(app.getHttpServer() as Server)[method](path);
++        if (bearer) req.set('Authorization', `Bearer ${bearer}`);
++        await req.send({}).expect(404);
++      }
++      expect(verify).not.toHaveBeenCalled();
++      expect(db.$transaction).not.toHaveBeenCalled();
++    },
++  );
++
++  it.each([
++    { createAccount: true },
++    { createAccount: false },
++    { password: 'Synthetic-password-123!' },
++    { createAccount: true, password: 'Synthetic-password-123!' },
++  ])('rechaza campos de cuenta antes de persistir: %j', async (extra) => {
++    await request(app.getHttpServer() as Server)
++      .post('/public/demo/bookings')
++      .send({ ...dto, ...extra })
++      .expect(400);
++    expect(db.$transaction).not.toHaveBeenCalled();
++    expect(tx.client.create).not.toHaveBeenCalled();
++    expect(create).not.toHaveBeenCalled();
++  });
++
++  it.each([null, 'internal-synthetic-session'])(
++    'reserva invitada sin correo, independientemente del bearer %s',
++    async (bearer) => {
++      const req = request(app.getHttpServer() as Server).post(
++        '/public/demo/bookings',
++      );
++      if (bearer) req.set('Authorization', `Bearer ${bearer}`);
++      const response = await req.send(dto).expect(201);
++      expect(response.body).toEqual({
++        booking: {
++          id,
++          serviceId: id,
++          professionalId: id,
++          startTime: dto.startTime,
++          endTime: '2099-01-01T10:30:00.000Z',
++          status: 'PENDING',
++        },
++        accountCreated: false,
++        accountCreationError: null,
++      });
++      expect(tx.client.create).toHaveBeenCalledWith({
++        data: {
++          organizationId: orgId,
++          name: dto.clientName,
++          phone: dto.clientPhone,
++          email: null,
++        },
++        select: { id: true },
++      });
++      expect(db.$transaction).toHaveBeenCalledTimes(1);
++      expect(tx.user.create).not.toHaveBeenCalled();
++      expect(tx.membership.create).not.toHaveBeenCalled();
++      expect(db.user.create).not.toHaveBeenCalled();
++      expect(db.user.findFirst).not.toHaveBeenCalled();
++      expect(verify).not.toHaveBeenCalled();
++    },
++  );
++
++  it.each([
++    '/invoices',
++    '/analytics/dashboard',
++    '/analytics/summary',
++    '/services',
++  ])('rechaza JWT CUSTOMER previo con 401 en %s', async (path) => {
++    db.membership.findUnique.mockResolvedValue({
++      organizationId: orgId,
++      role: 'CUSTOMER',
++    });
++    const token = await app
++      .get(JwtService)
++      .signAsync({ sub: id, organizationId: orgId, role: 'OWNER' });
++    await request(app.getHttpServer() as Server)
++      .get(path)
++      .set('Authorization', `Bearer ${token}`)
++      .expect(401);
++    expect(db.membership.findUnique).toHaveBeenCalled();
++    expect(verify).not.toHaveBeenCalled();
++    expect(db.$transaction).not.toHaveBeenCalled();
++  });
++
++  it.each([
++    ['get', '/auth/clerk/me'],
++    ['post', '/auth/clerk/onboarding'],
++    ['get', '/clients'],
++    ['get', '/bookings'],
++    ['get', '/professionals'],
++  ] as const)('conserva ruta interna protegida %s %s', async (method, path) => {
++    await request(app.getHttpServer() as Server)
++      [method](path)
++      .send({})
++      .expect(401);
++  });
++});
+diff --git a/apps/api/test/guest-retirement-run.cjs b/apps/api/test/guest-retirement-run.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..38ba30c9533f9633d06522f1031029491432eed7
+--- /dev/null
++++ b/apps/api/test/guest-retirement-run.cjs
+@@ -0,0 +1,39 @@
++// Validaciones C1 locales sin dotenv, red de proveedores ni base real.
++const { spawnSync } = require('node:child_process');
++const { resolve } = require('node:path');
++const root = resolve(__dirname, '..');
++const commands = {
++  jest: 'jest/bin/jest.js',
++  tsc: 'typescript/bin/tsc',
++  eslint: 'eslint/bin/eslint.js',
++  build: '@nestjs/cli/bin/nest.js',
++  prettier: 'prettier/bin/prettier.cjs',
++};
++const [command, ...args] = process.argv.slice(2);
++if (!commands[command]) throw new Error('Comando de validación C1 desconocido');
++const preload = resolve(__dirname, 'customer-no-dotenv.cjs');
++const result = spawnSync(
++  process.execPath,
++  [
++    '--require',
++    preload,
++    resolve(root, 'node_modules', commands[command]),
++    ...args,
++  ],
++  {
++    cwd: root,
++    stdio: 'inherit',
++    env: {
++      ...process.env,
++      NODE_OPTIONS: `--require="${preload.replaceAll('\\', '/')}"`,
++      JWT_SECRET: 'guest-retirement-synthetic-test-secret-32',
++      RATE_LIMIT_SECRET: 'guest-retirement-synthetic-rate-secret-32',
++      DATABASE_URL:
++        'postgresql://synthetic:synthetic@127.0.0.1:1/synthetic_test',
++      PUBLIC_BOOKING_CLOSED: 'false',
++      REQUIRE_INTERNAL_MFA: 'false',
++    },
++  },
++);
++if (result.error) throw result.error;
++process.exitCode = result.status ?? 1;
+diff --git a/docs/features/RESERVA_INVITADO_C0_C1.md b/docs/features/RESERVA_INVITADO_C0_C1.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..9db621dc69353dd30b8968c4f10e08a61fca80d8
+--- /dev/null
++++ b/docs/features/RESERVA_INVITADO_C0_C1.md
+@@ -0,0 +1,100 @@
++# Reserva de invitado — C0/C1, retiro funcional B2C
++
++Fecha: 2026-10-07. Base: `c4625ef23a3766c5be5172dde0aea4b1cb57d7ac`, rama `ai/antigravity-qa`, árbol inicial limpio. **IMPLEMENTADO / VALIDADO LOCALMENTE, EN REVISIÓN.** No hay aprobación del backend inferida.
++
++## C0 — decisión y alcance autorizado
++
++El propietario retira la cuenta del cliente final del producto y del MVP. La reserva de invitado es oficial: servicio → profesional → fecha/hora → nombre/teléfono/correo opcional → revisión → reserva `PENDING`. `Client` es ficha operativa tenant-scoped; no es identidad autenticada. Cambios/cancelaciones se solicitan al negocio; no hay portal, historial público ni enlaces privados nuevos.
++
++Solo se ejecutan C0 documental y C1 backend/seguridad. C2 frontend exige primero entregar diff y pruebas backend, más aprobación expresa según gates. C3 QA no iniciado. Sin commit, push, despliegue, cambios QA, Clerk, datos reales o producción. P4b y su auditoría quedan excluidos.
++
++Se preservan Client, User, Membership, reservas, facturas, pagos, datos, schema, tablas/columnas, migraciones históricas, índices/triggers, grants y estructuras/scripts de compatibilidad. No se retira la autenticación interna legacy completa ni se cambian MFA, TTL, secretos, configuración, Clerk o autenticación de los roles internos. Solo se rechaza CUSTOMER legacy, conservando acceso de una identidad que tenga una Membership interna válida.
++
++El siguiente bloque del roadmap es calendario operativo día/semana y C0 financiero de pago presencial/transferencia con comprobante privado para invitados; Analytics y cierre del Resumen después. La carga de evidencia no implica Payment. Definir autorización de carga y recuperación sin cuenta dentro del futuro C0 financiero: un ID de reserva no concede acceso. Esta entrega no implementa ni autoriza esos módulos.
++
++## C1 — contrato y privacidad
++
++`POST /public/:slug/bookings` conserva servicio, profesional, startTime autoritativo, clientName/clientPhone, clientEmail opcional y emailNotifications opcional. Se eliminan createAccount/password del DTO y la creación secundaria. Whitelist/forbidNonWhitelisted rechaza esos campos con 400 antes de cualquier transacción, incluso createAccount:false. No se deduce identidad de teléfono/email.
++
++Tenant derivado del slug elegible y publicado, revalidación bajo lock, transacción Client/Booking, reactivación de contacto, conflictos de horario, D11 neutro, AuditLog sin PII y PENDING permanecen. No se transforma una ficha operativa en identidad ni se enlaza por contacto. No se modifica correo/consentimiento ni se promete entrega.
++
++### Consumo de campos de salida y retirada
++
++Búsqueda previa global: `rg -n 'accountCreated|accountCreationError' apps .github`. Consumidor tipado vigente: `apps/web/lib/api.ts`, PublicBookingResult, usado por el POST público y éxito/calendario. Fixtures: tests públicos, notificaciones, WhatsApp y scripts f0a/f0e. No se encontró una lectura funcional de ambos campos en componentes productivos; hay dependencia de forma/tipo y expectativas de tests. La evidencia es del repositorio, no un inventario de consumidores externos.
++
++Por compatibilidad durante C1 sin C2, PublicBookingResponseDto conserva **deprecated** `accountCreated:false` y `accountCreationError:null`, tipados como constantes, sin intento de creación ni lógica asociada. No reflejan el estado de identidades históricas.
++
++Plan de retirada: en C2 retirar tipos/fixtures y cualquier dependencia web comprobada; repetir búsqueda global, verificar consumidores externos antes de publicar un contrato reducido y eliminar ambos campos en un checkpoint backend coordinado autorizado. No mantener compatibilidad indefinida ni eliminarlos anticipadamente en C1 mientras web sigue tipada con ellos.
++
++### Rutas retiradas (404 con y sin bearer)
++
++| Método | Ruta |
++| --- | --- |
++| GET | `/customer/businesses` |
++| GET | `/customer/:slug/bookings` |
++| POST | `/customer/:slug/bookings` |
++| GET | `/customer/:slug/bookings/:id` |
++| GET | `/customer/:slug/profile` |
++| PATCH | `/customer/:slug/profile` |
++| POST | `/auth/clerk/customer/claims` |
++
++### Rutas conservadas
++
++- Pública: GET `/public/:slug/booking-data`, `/availability`, `/availability-days` y POST `/public/:slug/bookings`.
++- Internas: auth/clerk/me, onboarding, bootstrap, equipo/invitaciones, register/login/invite/update-password legacy; dominios de Clientes, Reservas, Profesionales, Servicios, Facturación, Analytics, CMS, Notificaciones, Medios y Horarios.
++- Login legacy mantiene el camino interno existente; el fallback excluye CUSTOMER. Si el tenant preferido histórico es CUSTOMER pero hay Membership interna válida, se usa esa interna mediante el mecanismo de preferencia existente. Sin Membership interna no se emite JWT CUSTOMER.
++- JwtStrategy y la rama JWT de B2bAuthGuard rechazan Membership CUSTOMER actual aunque el payload afirme otro rol. Se conservan guards compartidos y su revalidación autoritativa. La delegación a Clerk no cambia; las rutas internas Clerk mantienen sus RolesGuard.
++
++### Exclusividad demostrada y límites
++
++Antes de editar se buscaron importaciones y usos en `apps/api/src` y `apps/api/test`:
++
++- CustomerModule solo se registraba en AppModule. Su controller/session guard/budget guard/service/DTO/crypto no tenían consumidores internos fuera del módulo y tests propios; retirados.
++- ClerkCustomerClaimsController/Service solo se registraban en AuthModule, con DTO/tests exclusivos; retirados.
++- Las dos suites e2e de cuentas/claims exigían comportamiento que dejó de existir; retiradas y sustituidas por cobertura HTTP de inexistencia en AppModule real, rechazo DTO y reserva de invitado. Los ensayos de schema/migración/grants/rollback quedan intactos.
++- **ClerkOnboardingGuard no es exclusivo:** también sirve onboarding, bootstrap y aceptación de invitaciones. Se conserva sin cambios, igual que ClerkAuthGuard, verificadores, proveedores y configuración Clerk.
++- BookingsService, ClientsModule, AuditService, PrismaService, limitadores compartidos y bcryptjs tienen consumidores internos: se conservan. Se retira solo el import bcryptjs de PublicBookingService, no la dependencia instalada. Sin cambios de manifiestos/lockfile.
++- Ningún archivo web se modifica en C1. La UI B2C sigue presente localmente y puede solicitar rutas retiradas; no desplegar este checkpoint como producto final antes de C2/C3.
++
++## Migraciones y estado operativo
++
++**Cero migraciones propuestas o ejecutadas.** Schema, ledger completo (incluida migración 28), rollback SQL y ops permanecen intactos. CustomerOperation y customer* quedan inactivos desde el runtime B2C retirado; los triggers conservados pueden seguir actualizando revisiones por compatibilidad al escribir Booking. No se desactiva ni altera esa garantía histórica.
++
++No se consulta ni modifica ninguna base habitual/QA/productiva ni proveedor. Docker daemon no disponible (`docker version --format '{{.Server.Version}}'`, exit 1); no se arranca. No se ejecuta integración PostgreSQL ni migrate deploy. El ledger aplicable deberá revisarse antes de una futura publicación; no asumir que QA tiene migración 28 ni aplicarla/eliminarla por inferencia.
++
++Retirar el historial público corta la vía de exposición D4; no demuestra que Client históricos estén libres de mezcla. Esa integridad y la paginación de GET /bookings conservan revisión independiente antes de producción.
++
++## Pruebas C1 y evidencia
++
++Harness reproducible: `apps/api/test/guest-retirement-run.cjs`; invoca herramientas ya instaladas mediante pnpm, bloquea lecturas/probes de dotenv con el preload existente y usa valores sintéticos, DATABASE_URL local puerto 1 y persistencia/proveedor controlados. El harness no crea conexiones DB ni sesiones Clerk. HTTP usa la aplicación Nest AppModule real y ValidationPipe real; ThrottlerGuard y BookingsService usan dobles, por lo que no acredita limitador ni persistencia/concurrencia reales.
++
++Resultados reales (comandos ejecutados desde raíz, sin instalar dependencias):
++
++| Comando | Resultado |
++| --- | --- |
++| `pnpm --filter api exec node test/guest-retirement-run.cjs tsc --noEmit` | exit 0 |
++| `pnpm --filter api exec node test/guest-retirement-run.cjs eslint "{src,apps,libs,test}/**/*.ts"` | exit 0 |
++| `pnpm --filter api exec node test/guest-retirement-run.cjs jest --runInBand` | exit 0; 61 suites aprobadas, 3 omitidas; 830 pruebas aprobadas, 37 omitidas |
++| `pnpm --filter api exec node test/guest-retirement-run.cjs build build` | exit 0 |
++| `git diff --check` | exit 0; avisos CRLF de Git no son fallos |
++
++Incidencias conservadas: primer intento focalizado 72 aprobadas/2 fallidas, exit 1, por fixture HTTP de negocio sin zona/horario elegible; se corrigió el fixture y la suite completa posterior pasó. Intentos pnpm dentro del sandbox fallaron con unable to open database file; pnpm 11.18.0 se verificó fuera del sandbox con exit 0 y las validaciones usaron ese acceso aprobado al caché. Una invocación node -e sin listado de pruebas no se cuenta como validación. Primer harness Windows falló por escape de NODE_OPTIONS; corregido a barras normales y repetido. Los 37 tests omitidos son las suites preexistentes omitidas; no se añadieron skips para hacer pasar el retiro.
++
++En las suites e2e PostgreSQL de Facturación, Servicios y Resumen se ajustan únicamente cuatro expectativas JWT CUSTOMER de 403 a 401, porque se rechaza la autenticación antes de RolesGuard; los rechazos Clerk permanecen 403. Se añadieron cuatro casos HTTP locales de AppModule para esos endpoints, aprobados. Esas tres suites PostgreSQL no se ejecutaron.
++
++No se ejecutó e2e PostgreSQL: Docker no disponible y ausencia de psql/pg_ctl en PATH. No se relajaron assertions ni gates para simular evidencia de persistencia real. No se ejecutaron navegador, QA funcional/visual C3, Clerk/correo real ni pruebas físicas.
++
++Criterios: siete métodos/rutas retirados 404; campos de cuenta 400 antes de escribir; invitado sin correo con/sin bearer crea PENDING y solo contacto/reserva; JWT CUSTOMER revocado por Membership actual; cuatro roles internos preservados; identidad mixta conserva rol interno; contrato deprecated constante; regresiones pertinentes sin fallos. C2/C3 y QA visual/física/proveedor quedan fuera.
++
++## Riesgos y rollback
++
++- Frontend anterior solicita APIs ya retiradas: checkpoint local intermedio, no candidato integrado/publicable.
++- Clientes viejos que envíen createAccount/password reciben 400; API reducida exige C2 y revisión de consumidores antes de activar.
++- No eliminar identidades históricas ni inferir que un User sin Membership es exclusivamente cliente. No se modifica el proveedor Clerk; retirar una cuenta externamente sería una operación distinta.
++- Las estructuras B2C conservadas generan deuda de persistencia, documentada para una entrega de inventario/migración compensatoria independiente; no se limpia por inferencia.
++- Rollback de este trabajo local: restaurar **solo** los archivos de C0/C1 contra el HEAD base desde un diff/snapshot revisado, preservando trabajo ajeno. No se ha realizado esa restauración. No hay rollback DB, migración ni proveedor porque no se tocaron.
++- Reponer código anterior reabre APIs y alta CUSTOMER; cualquier rollback desplegado posterior exige autorización expresa y comunica esa consecuencia. No revertir historia ni hacer force-push.
++
++## Entrega antes de commit
++
++Inventario exacto y evidencia estructurada: [validacion.json](../quality/evidence/reserva-invitado-c1/validacion.json). Diff completo de código y documentación, incluidos archivos nuevos, sin incluir el propio paquete de evidencia: [c0-c1.patch](../quality/evidence/reserva-invitado-c1/c0-c1.patch). Staging/commit/publicación no autorizados. Evidencia final debe incluir comandos/exit codes, rutas arriba, migraciones evitadas, riesgos y rollback, con C1 **EN REVISIÓN** y C2/C3 sin ejecutar.

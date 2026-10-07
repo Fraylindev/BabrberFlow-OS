@@ -1,0 +1,46 @@
+{
+  "diffCheck": {
+    "exitCode": 0,
+    "output": "",
+    "stderr": "warning: in the working copy of 'apps/api/ops/rate-limit-http-drill.cjs', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/app.module.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/auth.module.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/auth.service.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/auth.service.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/guards/b2b-auth.guard.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/guards/b2b-auth.guard.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/roles.constants.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/auth/strategies/jwt.strategy.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/business-schedule/business-schedule.integration.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/public-booking/dto/create-public-booking.dto.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/public-booking/dto/public-booking-response.dto.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/public-booking/public-booking.service.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/public-booking/public-booking.service.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/public-booking/whatsapp-contract.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/test/dashboard-summary.e2e-spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/test/invoices.e2e-spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/test/public-booking-m1.e2e-spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/test/services.e2e-spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/components/public/PublicBookingScreen.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/components/public/PublicMiniSite.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/lib/public-booking-ui.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/next.config.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/proxy.ts', LF will be replaced by CRLF the next time Git touches it"
+  },
+  "reversePatchCheck": {
+    "exitCode": 0,
+    "output": "",
+    "stderr": ""
+  },
+  "indexCheck": {
+    "exitCode": 0,
+    "output": "",
+    "stderr": ""
+  },
+  "jsonFilesParsed": 52,
+  "missingPreparationLinks": [],
+  "sourceTestsRerun": false,
+  "externalOperations": false,
+  "C3Status": "BLOCKED / INCOMPLETE",
+  "formalP4bExecuted": false,
+  "staticB1": "Existing browser WhatsApp assertions disagree with current label/description/phone; not executed or modified during preparation",
+  "counts": {
+    "M": 46,
+    "D": 41,
+    "A": 207
+  },
+  "fullPatchBytes": 703503,
+  "fullPatchSha256": "da3feb49e49fd9f264cb6939abf00771488c9abe791d76138599d1b6a98e21e9",
+  "branch": "ai/antigravity-qa",
+  "head": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac",
+  "cachedRemoteOnly": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+  "manifestMatchesGit": true,
+  "amendment": {
+    "date": "2026-10-07",
+    "originalPaths": 294,
+    "originalHashedFilesVerified": 251,
+    "deletedPathsVerified": 41,
+    "mismatches": [],
+    "newPath": "docs/quality/DECISIONES_PROPIETARIO_2026_09_29.md",
+    "totalPaths": 295,
+    "previousInventorySha256": "9737cdfc91cfa6edfd21e772fe518d3ea5da0ed22a74cf2b42a4a09c5a09720e",
+    "P4bExecuted": false
+  }
+}

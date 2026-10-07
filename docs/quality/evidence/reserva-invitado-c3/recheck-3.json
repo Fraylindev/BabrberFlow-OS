@@ -1,0 +1,24 @@
+{
+  "checkedUtc": "2026-10-07 15:48:13 UTC",
+  "goalTurn": 3,
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "329466",
+        "wall_time_seconds": 1.5620745999999999,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac\n{\"release\":\"bc1d559e42928ca0deb60319b33cf98b3cd69291\",\"deployEnv\":\"staging\"}\n"
+      }
+    },
+    {
+      "alias": "qa.booking.kortek.cloud",
+      "deploymentId": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+      "updatedAt": 1791016704231
+    }
+  ],
+  "blocker": "QA anterior al candidato; despliegue prohibido por autorización C3",
+  "functionalValidationComplete": false,
+  "writesIssued": false
+}

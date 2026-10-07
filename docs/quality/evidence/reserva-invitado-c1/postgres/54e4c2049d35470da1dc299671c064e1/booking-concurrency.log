@@ -1,0 +1,6 @@
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        4.891 s
+Ran all test suites within paths "src/bookings/booking-concurrency.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\reserva-invitado-c1\postgres\54e4c2049d35470da1dc299671c064e1\booking-concurrency.json

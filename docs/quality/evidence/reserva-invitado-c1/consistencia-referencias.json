@@ -1,0 +1,6492 @@
+{
+  "date": "2026-10-07",
+  "search_scope": "Git cached plus untracked non-ignored existing text files; ignored .tmp separately inspected with rg; no node_modules/.git/.next generated source in main census",
+  "pattern": "ClerkCustomerClaims?|CustomerClaim|CustomerModule|customer[ _-]?claims|customer[ _-]?(?:account|login)|Mis reservas|/customer(?:/|\\b)|/auth/clerk/customer/claims|accountCreated|accountCreationError|portal[ -]?B2C|claimnorth|claimf|\\bD4\\b",
+  "scanned_text_files": 845,
+  "matched_files": 116,
+  "categories": {
+    "prueba activa actual": 16,
+    "documentación vigente": 5,
+    "evidencia histórica": 23,
+    "documentación histórica": 35,
+    "fixture/helper activo": 8,
+    "código productivo actual": 29
+  },
+  "findings": [
+    {
+      "path": "apps/api/src/public-booking/guest-retirement.spec.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 101,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 102,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 103,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 104,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 105,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 106,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 107,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 153,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 154,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_C0_C1.md",
+      "category": "documentación vigente",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 23,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 25,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 33,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 34,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 35,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 36,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 37,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 38,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 39,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 52,
+          "terms": [
+            "CustomerModule"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 53,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 65,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación vigente"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c1/c0-c1.patch",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 13,
+          "terms": [
+            "/auth/clerk/customer/claims",
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 14,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 18,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 20,
+          "terms": [
+            "D4",
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 31,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 50,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 52,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 54,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 63,
+          "terms": [
+            "/customer/",
+            "CustomerModule"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 67,
+          "terms": [
+            "/customer/",
+            "CustomerModule"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 71,
+          "terms": [
+            "CustomerModule"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 83,
+          "terms": [
+            "ClerkCustomerClaims",
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 84,
+          "terms": [
+            "ClerkCustomerClaims",
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 92,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 100,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 219,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 222,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 227,
+          "terms": [
+            "ClerkCustomerClaims",
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 228,
+          "terms": [
+            "ClerkCustomerClaims",
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 231,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 233,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 235,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 270,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 273,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 288,
+          "terms": [
+            "ClerkCustomerClaims",
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 289,
+          "terms": [
+            "ClerkCustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 295,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 296,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 297,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 304,
+          "terms": [
+            "ClerkCustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 317,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 320,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 326,
+          "terms": [
+            "ClerkCustomerClaims",
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 329,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 364,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 563,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 566,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 582,
+          "terms": [
+            "ClerkCustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 609,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 622,
+          "terms": [
+            "ClerkCustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 629,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 648,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 657,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 664,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 728,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 734,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 741,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 754,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 758,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 782,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 832,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 854,
+          "terms": [
+            "ClerkCustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 972,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 975,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1044,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1047,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1059,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1142,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1145,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1238,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1241,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1266,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1267,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1272,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1352,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1355,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1420,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1423,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1432,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1433,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1434,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1441,
+          "terms": [
+            "CustomerModule"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1442,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1445,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1479,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1484,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2101,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2102,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2104,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2106,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2122,
+          "terms": [
+            "CUSTOMER account"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2138,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2139,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2149,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2150,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2213,
+          "terms": [
+            "CustomerAccount"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2230,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2231,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2238,
+          "terms": [
+            "CustomerAccount"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2284,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2287,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2432,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2436,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2475,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2500,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2535,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2565,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2589,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2592,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2747,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2762,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2776,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2789,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2906,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2916,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2919,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2921,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2928,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2938,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2946,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2952,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2956,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2958,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2961,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 2989,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3000,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3001,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3017,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3019,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3025,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3030,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3031,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3032,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3043,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3050,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3052,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3059,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3063,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3067,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3071,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3082,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3109,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3118,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3123,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3138,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3139,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3149,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3152,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3156,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3161,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3170,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3181,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3197,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3204,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3309,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3382,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3389,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3396,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3406,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3416,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3419,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3423,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3426,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3429,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3440,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3455,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3476,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3491,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3495,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3612,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3630,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3653,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3669,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3683,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3760,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3773,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3780,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3803,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3807,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3870,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3871,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3875,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3876,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3883,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3884,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3904,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 3986,
+          "terms": [
+            "D4",
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4012,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4245,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4246,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4247,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4248,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4249,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4250,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4251,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4297,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4298,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4426,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4428,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4436,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4437,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4438,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4439,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4440,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4441,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4442,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4455,
+          "terms": [
+            "CustomerModule"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4456,
+          "terms": [
+            "ClerkCustomerClaims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4468,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c1/validacion.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 62,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 67,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 72,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 77,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 107,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 112,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 117,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 122,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 127,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 132,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 137,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 162,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 167,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 294,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 295,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 296,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 297,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 298,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 299,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 300,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 303,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 304,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "BACKEND_CHANGES.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 8,
+          "terms": [
+            "/auth/clerk/customer/claims",
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 9,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 13,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 15,
+          "terms": [
+            "D4",
+            "d4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 27,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 28,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 30,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 447,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 751,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 752,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 874,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "CHANGELOG.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 6,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 13,
+          "terms": [
+            "D4",
+            "d4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 207,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "PROJECT_MASTER.md",
+      "category": "documentación vigente",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 9,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 11,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 13,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 17,
+          "terms": [
+            "D4",
+            "d4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 81,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación vigente"
+        },
+        {
+          "line": 298,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación vigente"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/ops/README.md",
+      "category": "documentación vigente",
+      "context": "ejecutable manual o auxiliar; revisar objetivo y baseline",
+      "hits": [
+        {
+          "line": 24,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación vigente"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/ops/rate-limit-http-drill.cjs",
+      "category": "fixture/helper activo",
+      "context": "helper activo obsoleto para C1: carga dist/main.js actual y espera 401/429 en claim; necesita reescritura antes de ejecutar",
+      "hits": [
+        {
+          "line": 89,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260925010000_security_rate_bucket/migration.sql",
+      "category": "código productivo actual",
+      "context": "D4 de otra decisión técnica; no es cuenta B2C ni claim",
+      "hits": [
+        {
+          "line": 10,
+          "terms": [
+            "D4"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/prisma/schema.prisma",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 598,
+          "terms": [
+            "D4"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/professionals/professional-availability.util.ts",
+      "category": "código productivo actual",
+      "context": "D4 de otra decisión técnica; no es cuenta B2C ni claim",
+      "hits": [
+        {
+          "line": 249,
+          "terms": [
+            "D4"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 15,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 17,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 284,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 285,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 498,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 499,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/src/public-booking/whatsapp-contract.spec.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 313,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 314,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/cms.e2e-spec.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 732,
+          "terms": [
+            "D4"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/customer-code-rollback.cjs",
+      "category": "fixture/helper activo",
+      "context": "helper ejecutable de rollback histórico: carga .tmp/m2-c1/baseline/apps/api de 61ec6677; no backend actual",
+      "hits": [
+        {
+          "line": 30,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 36,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/customer-migration-fixture.cjs",
+      "category": "fixture/helper activo",
+      "context": "ejecutable manual o auxiliar; revisar objetivo y baseline",
+      "hits": [
+        {
+          "line": 40,
+          "terms": [
+            "D4"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/customer-runtime-compat.cjs",
+      "category": "fixture/helper activo",
+      "context": "helper ejecutable de compatibilidad histórica: carga P1_PREVIOUS_API, copia de 791569b; el positivo no prueba el backend actual",
+      "hits": [
+        {
+          "line": 123,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 153,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/customer-runtime-grants-drill.cjs",
+      "category": "fixture/helper activo",
+      "context": "ejecutable manual o auxiliar; revisar objetivo y baseline",
+      "hits": [
+        {
+          "line": 101,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 102,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 103,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 104,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 186,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 341,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 348,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        },
+        {
+          "line": 578,
+          "terms": [
+            "/customer"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/api/test/public-booking-m1.e2e-spec.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 859,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 860,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 869,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 870,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 2,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/layout.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 1,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 2,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mi-perfil/page.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 1,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 1,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 1,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/mis-reservas/page.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 1,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/booking/F0A.test.tsx",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 36,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/Customer.test.tsx",
+      "category": "prueba activa actual",
+      "context": "Vitest actual incluido en componentes; dos positivos de claim con api.post mockResolvedValue claimed:true; bloqueante de consistencia",
+      "hits": [
+        {
+          "line": 7,
+          "terms": [
+            "CustomerClaim"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 25,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 45,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 94,
+          "terms": [
+            "CustomerClaim"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 95,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 98,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 99,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 103,
+          "terms": [
+            "CustomerClaim",
+            "Mis reservas"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 104,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 105,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 148,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 162,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerAuth.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 9,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 10,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerBookingDetail.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 4,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 5,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 6,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 20,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 21,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 38,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerBookings.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 7,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 8,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 9,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 15,
+          "terms": [
+            "CustomerClaim"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 18,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 31,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 35,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 74,
+          "terms": [
+            "CustomerClaim"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerClaim.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 6,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 7,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 8,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 13,
+          "terms": [
+            "CustomerClaim"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 30,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 33,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 35,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 40,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 51,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 58,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerEntryLinks.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 4,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 9,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerProfile.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 4,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 5,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 14,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 57,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 5,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 6,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 7,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 28,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 29,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 30,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 76,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 79,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 91,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 92,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 95,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 103,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerShell.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 7,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 8,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 9,
+          "terms": [
+            "/customer"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 27,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 22,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 71,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 72,
+          "terms": [
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/BookingLight.test.tsx",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 21,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/M1C2.test.tsx",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 10,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 11,
+          "terms": [
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 22,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/PublicBookingScreen.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 25,
+          "terms": [
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 26,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 212,
+          "terms": [
+            "CustomerClaim"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/PublicDates.test.tsx",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 16,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/PublicMiniSite.tsx",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 13,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/public/WhatsAppSuccess.test.tsx",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 12,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/e2e/whatsapp-c2.spec.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 11,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/api.ts",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 466,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 467,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/customer-ui.test.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 3,
+          "terms": [
+            "/customer"
+          ],
+          "category": "prueba activa actual"
+        },
+        {
+          "line": 4,
+          "terms": [
+            "/customer"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/customer-ui.ts",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 12,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 15,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/public-booking-ui.test.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 29,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/queries/customer.ts",
+      "category": "código productivo actual",
+      "context": "incluye web B2C pendiente y persistencia de compatibilidad; no implica registro backend",
+      "hits": [
+        {
+          "line": 4,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/whatsapp-link.test.ts",
+      "category": "prueba activa actual",
+      "context": "su selección depende de Jest/Vitest/Playwright; referencia no implica prueba positiva",
+      "hits": [
+        {
+          "line": 42,
+          "terms": [
+            "D4"
+          ],
+          "category": "prueba activa actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/scripts/f0a-browser.mjs",
+      "category": "fixture/helper activo",
+      "context": "ejecutable manual o auxiliar; revisar objetivo y baseline",
+      "hits": [
+        {
+          "line": 50,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/scripts/f0e-ajuste-browser.mjs",
+      "category": "fixture/helper activo",
+      "context": "ejecutable manual o auxiliar; revisar objetivo y baseline",
+      "hits": [
+        {
+          "line": 123,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/scripts/f0e-browser.mjs",
+      "category": "fixture/helper activo",
+      "context": "ejecutable manual o auxiliar; revisar objetivo y baseline",
+      "hits": [
+        {
+          "line": 117,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "fixture/helper activo"
+        }
+      ]
+    },
+    {
+      "path": "docs/README.md",
+      "category": "documentación vigente",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 7,
+          "terms": [
+            "D4",
+            "d4"
+          ],
+          "category": "documentación vigente"
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/TRD.md",
+      "category": "documentación vigente",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 5,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación vigente"
+        }
+      ]
+    },
+    {
+      "path": "docs/decisions/ADR-001-authentication-strategy.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 157,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 257,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 318,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/CONFIGURACION_CMS_C0_AUDITORIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 63,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 86,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 262,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/FACTURACION_A_CONTRATO_TECNICO.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 30,
+          "terms": [
+            "mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 418,
+          "terms": [
+            "mis reservas"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C0_AUDITORIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 78,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 171,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 202,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 224,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C1_CONTRATO.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 11,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C1_EVIDENCIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 16,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 3,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/M2_CUENTA_CLIENTE_C1_CONTRATO.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 3,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 11,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 13,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 19,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 20,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 21,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 22,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 23,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 24,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 40,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 60,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 76,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 86,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 87,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 89,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 101,
+          "terms": [
+            "d4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/MEDIOS_PROMOCIONES_C0_AUDITORIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 76,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 110,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/MEDIOS_PROMOCIONES_C1_CONTRATO.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 12,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/NOTIFICACIONES_C0_AUDITORIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 90,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 94,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 224,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/NOTIFICACIONES_C1_CONTRATO.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 58,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 116,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/NOTIFICACIONES_C2_FRONTEND.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 45,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 87,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/WHATSAPP_C0_AUDITORIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 72,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 105,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/WHATSAPP_C1_CONTRATO.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 22,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 67,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 68,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 98,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/features/WHATSAPP_C2_FRONTEND.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 22,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/history/PROJECT_MASTER_LEGACY_2026-08-13.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 481,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/AUDITORIA_DISENO_UX_MARKETING_2026_09_29.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 49,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 84,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 99,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 102,
+          "terms": [
+            "Mis reservas",
+            "mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 120,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 158,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 186,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 199,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/AUDITORIA_HALLAZGOS_ROADMAP_MVP_2026_09_29.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 20,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 49,
+          "terms": [
+            "Mis reservas",
+            "accountCreated",
+            "accountCreationError",
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 62,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 75,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 84,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 99,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 101,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 118,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 131,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/AUDITORIA_INTEGRAL_2026_09_24.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 17,
+          "terms": [
+            "/auth/clerk/customer/claims",
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/BASE_PREPRODUCCION_C0_AUDITORIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 55,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 32,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 125,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 131,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 182,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/CORRECTIVO_F0E.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 152,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/DECISIONES_PROPIETARIO_2026_09_29.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 6,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 56,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 62,
+          "terms": [
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C1_CIERRE.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 3,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 5,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 23,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 27,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 35,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 39,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 63,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 64,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 65,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 66,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 79,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 87,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 96,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 98,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 102,
+          "terms": [
+            "d4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 106,
+          "terms": [
+            "d4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 112,
+          "terms": [
+            "d4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 125,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 130,
+          "terms": [
+            "/customer",
+            "d4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 140,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 144,
+          "terms": [
+            "d4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 146,
+          "terms": [
+            "d4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 150,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 152,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 154,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 159,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 172,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C2_CIERRE.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 7,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 23,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 39,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 40,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 41,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 42,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 43,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 44,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 56,
+          "terms": [
+            "/customer",
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 83,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 84,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 110,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 112,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 127,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 143,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C3_P4_CLERK_CHECKLIST.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 18,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 20,
+          "terms": [
+            "/customer/",
+            "CustomerClaim",
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 125,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 126,
+          "terms": [
+            "/customer/",
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 159,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 176,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 180,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_C3_PREFLIGHT.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 27,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 71,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 79,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 117,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 165,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 169,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 184,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 186,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 207,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 265,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 286,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 412,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 413,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 414,
+          "terms": [
+            "/auth/clerk/customer/claims",
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 417,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 418,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 420,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 468,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 481,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 482,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 529,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 541,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 595,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 613,
+          "terms": [
+            "/customer/",
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 619,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 625,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 649,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 661,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 667,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 673,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 924,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 930,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 937,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 959,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 968,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 2092,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 2146,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 2339,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/M2_CUENTA_CLIENTE_C0.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 48,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 49,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 61,
+          "terms": [
+            "CustomerAccount",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 63,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 72,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 88,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 125,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 141,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 150,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 203,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 206,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 208,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 210,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 228,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 246,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 254,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 255,
+          "terms": [
+            "/auth/clerk/customer/claims"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 256,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 257,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 258,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 259,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 260,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 261,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 275,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 276,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 277,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 278,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 279,
+          "terms": [
+            "/customer"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 325,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 341,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 390,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 431,
+          "terms": [
+            "D4"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 441,
+          "terms": [
+            "CustomerAccount",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C0.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 63,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 141,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 162,
+          "terms": [
+            "accountCreated"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 170,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 209,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 259,
+          "terms": [
+            "D4",
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 312,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 331,
+          "terms": [
+            "/CUSTOMER"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C1_CIERRE.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 55,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 104,
+          "terms": [
+            "accountCreated",
+            "accountCreationError"
+          ],
+          "category": "documentación histórica"
+        },
+        {
+          "line": 148,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C2_CIERRE.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 62,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "category": "documentación histórica",
+      "context": "referencias de control/historia; D4 también puede ser una decisión de otro módulo",
+      "hits": [
+        {
+          "line": 164,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "documentación histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c1/d4-http-antes-despues.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 16,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 17,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c1/d4-validation.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 59,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 60,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 69,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 70,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 71,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 72,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 73,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 74,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 75,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 86,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 87,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 90,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 94,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 100,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 101,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 106,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 114,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 119,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 125,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 134,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 136,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 140,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 147,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 156,
+          "terms": [
+            "/customer",
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 162,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 169,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 170,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 176,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 177,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 183,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 190,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 197,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 198,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 204,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 205,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 211,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 212,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 218,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 225,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 226,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 232,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 239,
+          "terms": [
+            "d4"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 256,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 268,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 272,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 276,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 280,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 284,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 288,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 292,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 296,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 300,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 316,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 320,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 324,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 328,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 332,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 336,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 352,
+          "terms": [
+            "D4"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c1/validation.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 106,
+          "terms": [
+            "customer-claims"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 109,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 116,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 217,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 218,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 219,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 220,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 221,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 222,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 223,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 235,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 247,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 251,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 255,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 259,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 263,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 267,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 271,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 287,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 291,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 295,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 299,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 303,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 307,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c2/validation.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 506,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 512,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 518,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 524,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 530,
+          "terms": [
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 536,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 542,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 548,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 554,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 560,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 566,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 572,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 578,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 584,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 590,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 654,
+          "terms": [
+            "/customer",
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1003,
+          "terms": [
+            "Mis reservas"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4412,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4418,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4424,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4430,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4436,
+          "terms": [
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4442,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4448,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4454,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4460,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4466,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4472,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4478,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4484,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4490,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4496,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4648,
+          "terms": [
+            "/customer",
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4673,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4674,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4675,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4676,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4677,
+          "terms": [
+            "/customer/",
+            "CustomerClaim"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4678,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4679,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4680,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4681,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4682,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4683,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4691,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4692,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4693,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 4696,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/executor.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 767,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 785,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 827,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/image-drill.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 25,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-gpg-ejecutor.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 600,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-1-ejecutor.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 602,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-ejecutor.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 650,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 418,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 454,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 567,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 464,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 500,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 614,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 540,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/local-gate-correction-20261004/impediments.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 25,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/executed-sources.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 8,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 29,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 50,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 106,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r1-live-readonly.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 361,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r1-real-p2-reference.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 15863,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r4-activation.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 1062,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1080,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1089,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1098,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1107,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1116,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 1125,
+          "terms": [
+            "/customer/"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/assessment.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 34,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/executed-sources.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 8,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/result.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 361,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "docs/quality/evidence/m2-c3-p3/sql-eol-lf-20261004/verification.json",
+      "category": "evidencia histórica",
+      "context": "artefacto conservado; no ejecuta ni registra rutas",
+      "hits": [
+        {
+          "line": 61,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        },
+        {
+          "line": 553,
+          "terms": [
+            "/customer"
+          ],
+          "category": "evidencia histórica"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/components/customer/CustomerProvider.tsx",
+      "category": "código productivo actual",
+      "context": "dependencia frontend actual del alcance B2C pendiente de retirar en C2",
+      "hits": [
+        {
+          "line": 10,
+          "terms": [
+            "ClaimReference"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 11,
+          "terms": [
+            "ClaimReference"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 20,
+          "terms": [
+            "CustomerProvider"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 24,
+          "terms": [
+            "ClaimReference"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 30,
+          "terms": [
+            "ClaimReference"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 38,
+          "terms": [
+            "useClaimReference"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 73,
+          "terms": [
+            "useClaimReference"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/customer-routes.ts",
+      "category": "código productivo actual",
+      "context": "dependencia frontend actual del alcance B2C pendiente de retirar en C2",
+      "hits": [
+        {
+          "line": 2,
+          "terms": [
+            "customerRoutes"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 4,
+          "terms": [
+            "mis-reservas"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 7,
+          "terms": [
+            "customerRoutes"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/proxy.ts",
+      "category": "código productivo actual",
+      "context": "dependencia frontend actual del alcance B2C pendiente de retirar en C2",
+      "hits": [
+        {
+          "line": 40,
+          "terms": [
+            "mis-reservas"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/app/[slug]/_components/ContactStep.tsx",
+      "category": "código productivo actual",
+      "context": "dependencia frontend actual del alcance B2C pendiente de retirar en C2",
+      "hits": [
+        {
+          "line": 12,
+          "terms": [
+            "createAccount"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 15,
+          "terms": [
+            "createAccount"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 23,
+          "terms": [
+            "createAccount"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 46,
+          "terms": [
+            "createAccount"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/lib/public-booking-ui.ts",
+      "category": "código productivo actual",
+      "context": "dependencia frontend actual del alcance B2C pendiente de retirar en C2",
+      "hits": [
+        {
+          "line": 10,
+          "terms": [
+            "createAccount"
+          ],
+          "category": "código productivo actual"
+        },
+        {
+          "line": 22,
+          "terms": [
+            "createAccount"
+          ],
+          "category": "código productivo actual"
+        }
+      ]
+    }
+  ],
+  "removed_references": [
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.spec.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.service.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/auth/dto/clerk-customer-claim.dto.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer-budget.guard.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.spec.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer.controller.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer.dto.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer.module.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/src/customer/customer.service.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/test/clerk-customer-claims.e2e-spec.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    },
+    {
+      "path": "apps/api/test/customer.e2e-spec.ts",
+      "category": "referencia eliminada",
+      "exists": false
+    }
+  ],
+  "code_paths_verified_unchanged_this_task": [
+    "apps/api/src/app.module.ts",
+    "apps/api/src/auth/auth.module.ts",
+    "apps/api/src/auth/auth.service.spec.ts",
+    "apps/api/src/auth/auth.service.ts",
+    "apps/api/src/auth/clerk-customer-claims.controller.spec.ts",
+    "apps/api/src/auth/clerk-customer-claims.controller.ts",
+    "apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+    "apps/api/src/auth/clerk-customer-claims.service.ts",
+    "apps/api/src/auth/dto/clerk-customer-claim.dto.ts",
+    "apps/api/src/auth/guards/b2b-auth.guard.spec.ts",
+    "apps/api/src/auth/guards/b2b-auth.guard.ts",
+    "apps/api/src/auth/roles.constants.ts",
+    "apps/api/src/auth/strategies/jwt.strategy.ts",
+    "apps/api/src/customer/customer-budget.guard.ts",
+    "apps/api/src/customer/customer-crypto.spec.ts",
+    "apps/api/src/customer/customer-crypto.ts",
+    "apps/api/src/customer/customer.controller.ts",
+    "apps/api/src/customer/customer.dto.ts",
+    "apps/api/src/customer/customer.module.ts",
+    "apps/api/src/customer/customer.service.ts",
+    "apps/api/src/public-booking/dto/create-public-booking.dto.ts",
+    "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+    "apps/api/src/public-booking/public-booking.service.spec.ts",
+    "apps/api/src/public-booking/public-booking.service.ts",
+    "apps/api/test/clerk-customer-claims.e2e-spec.ts",
+    "apps/api/test/customer.e2e-spec.ts",
+    "apps/api/test/dashboard-summary.e2e-spec.ts",
+    "apps/api/test/invoices.e2e-spec.ts",
+    "apps/api/test/services.e2e-spec.ts",
+    "apps/api/src/auth/strategies/jwt.strategy.spec.ts",
+    "apps/api/src/public-booking/guest-retirement.spec.ts",
+    "apps/api/test/guest-retirement-run.cjs"
+  ],
+  "exact_named_helpers_in_main_tree": [],
+  "ignored_helpers_inspected": [
+    {
+      "path": ".tmp/m2-d4/probe.cjs",
+      "category": "fixture/helper activo",
+      "context": "probe manual conservado de D4, no seleccionado por Jest/CI; importa backend root actual, llama claim y registra status sin assertion positiva; incompatible con relato antiguo de claim visible"
+    },
+    {
+      "path": ".tmp/m2-c3-p1/*/previous/**",
+      "category": "evidencia histórica",
+      "context": "snapshots previos, no source root actual"
+    },
+    {
+      "path": ".tmp/m2-c3-p1/*/current/**",
+      "category": "evidencia histórica",
+      "context": "current es nombre de snapshot antiguo; no root actual"
+    }
+  ],
+  "initial_scan_matched_files": 111,
+  "extra_search": "targeted frontend dependencies useClaimReference/ClaimReference/CustomerProvider/CustomerAuth/customerRoutes/mis-reservas/createAccount/accountWanted"
+}

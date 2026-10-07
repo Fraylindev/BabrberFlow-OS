@@ -147,6 +147,67 @@ describe('AuthService — autenticación', () => {
       expect(result.user.role).toBe('BARBER');
     });
 
+    it.each(['OWNER', 'ADMIN', 'RECEPTIONIST', 'BARBER'])(
+      'preserva el login interno %s sin buscar otra membresía',
+      async (role) => {
+        await mockValidUser();
+        prisma.db.membership.findUnique.mockResolvedValue({
+          userId: 'user-1',
+          organizationId: 'org-1',
+          role,
+        });
+        const result = await service.login({
+          email: EMAIL,
+          password: PASSWORD,
+        });
+        expect(result.user.role).toBe(role);
+        expect(prisma.db.membership.findFirst).not.toHaveBeenCalled();
+        expect(prisma.db.user.update).not.toHaveBeenCalled();
+      },
+    );
+
+    it('rechaza CUSTOMER sin membresía interna y no altera su identidad', async () => {
+      await mockValidUser();
+      prisma.db.membership.findUnique.mockResolvedValue({
+        userId: 'user-1',
+        organizationId: 'org-1',
+        role: 'CUSTOMER',
+      });
+      prisma.db.membership.findFirst.mockResolvedValue(null);
+      await expect(
+        service.login({ email: EMAIL, password: PASSWORD }),
+      ).rejects.toMatchObject({ message: 'Credenciales inválidas' });
+      expect(prisma.db.membership.findFirst).toHaveBeenCalledWith({
+        where: {
+          userId: 'user-1',
+          role: { in: ['OWNER', 'ADMIN', 'BARBER', 'RECEPTIONIST'] },
+        },
+        orderBy: { createdAt: 'asc' },
+      });
+      expect(prisma.db.user.update).not.toHaveBeenCalled();
+    });
+
+    it('preserva la membresía interna de una identidad con CUSTOMER histórico', async () => {
+      await mockValidUser();
+      prisma.db.membership.findUnique.mockResolvedValue({
+        userId: 'user-1',
+        organizationId: 'old-org',
+        role: 'CUSTOMER',
+      });
+      prisma.db.membership.findFirst.mockResolvedValue({
+        userId: 'user-1',
+        organizationId: 'org-1',
+        role: 'ADMIN',
+      });
+      const result = await service.login({ email: EMAIL, password: PASSWORD });
+      expect(result.user.role).toBe('ADMIN');
+      expect(result.user.organizationId).toBe('org-1');
+      expect(prisma.db.user.update).toHaveBeenCalledWith({
+        where: { id: 'user-1' },
+        data: { lastOrganizationId: 'org-1' },
+      });
+    });
+
     it('un login exitoso devuelve user, accessToken y organization completos', async () => {
       await mockValidUser();
 

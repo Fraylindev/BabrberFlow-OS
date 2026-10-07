@@ -18,7 +18,6 @@ import { MediaModule } from './media/media.module';
 import { PostgresThrottlerStorage } from './security/postgres-throttler.storage';
 import { PrismaService } from './prisma/prisma.service';
 import { BusinessScheduleModule } from './business-schedule/business-schedule.module';
-import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -69,7 +68,6 @@ import { CustomerModule } from './customer/customer.module';
     CmsModule,
     NotificationsModule,
     MediaModule,
-    CustomerModule,
   ],
   controllers: [],
   providers: [],

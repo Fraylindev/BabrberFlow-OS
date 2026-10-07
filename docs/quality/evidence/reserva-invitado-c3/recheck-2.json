@@ -1,0 +1,23 @@
+{
+  "checkedUtc": "2026-10-07 15:47:41 UTC",
+  "goalTurn": 2,
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "670079",
+        "wall_time_seconds": 1.5422011,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac\n{\"release\":\"bc1d559e42928ca0deb60319b33cf98b3cd69291\",\"deployEnv\":\"staging\"}\n"
+      }
+    },
+    {
+      "alias": "qa.booking.kortek.cloud",
+      "deploymentId": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+      "updatedAt": 1791016704231
+    }
+  ],
+  "blocker": "QA sigue en versiones anteriores; candidato sin commit/despliegue; publicación prohibida",
+  "writesIssued": false
+}

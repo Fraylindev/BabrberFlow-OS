@@ -7,8 +7,7 @@ const result = {
   booking: {
     id: 'booking-qa', serviceId: 'service-qa', professionalId: 'professional-qa',
     startTime: '2099-01-05T14:00:00.000Z', endTime: '2099-01-05T14:30:00.000Z', status: 'PENDING',
-  },
-  accountCreated: false, accountCreationError: null,
+  }
 };
 
 // Controlled HTTP boundary; all rendering, events and navigation use real Next/Chrome.
@@ -154,7 +153,7 @@ test('C2 full flow: loading/pending, no automatic popup, native accessible link,
   expect(state.posts).toBe(1);
   expect(state.writes).toEqual([{
     serviceId: 'service-qa', professionalId: 'professional-qa', startTime: result.booking.startTime,
-    clientName: 'Visitante QA', clientPhone: '8095554321', clientEmail: 'visitante@example.test', createAccount: false,
+    clientName: 'Visitante QA', clientPhone: '8095554321', clientEmail: 'visitante@example.test',
   }]);
   expect(result.booking.status).toBe('PENDING');
   expect(errors).toEqual([]);

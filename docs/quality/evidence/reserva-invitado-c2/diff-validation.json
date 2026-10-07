@@ -1,0 +1,12 @@
+{
+  "bytes": 656985,
+  "sha256": "6a520c48fcf4493f089a2ada95afe81727cf4ee677572a6459a2c03abec02e33",
+  "reverseCheckExit": 0,
+  "evidenceSeparate": true,
+  "counts": {
+    "M": 46,
+    "D": 41,
+    "A": 184
+  },
+  "noStaging": true
+}
