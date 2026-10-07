@@ -1,8 +1,8 @@
 import { expect, test, type BrowserContext, type FrameLocator, type Page } from '@playwright/test';
 
 const message = 'Hola. Acabo de registrar una reserva en su página y quisiera consultar con ustedes.';
-const explanation = 'Abrirás WhatsApp. Revisa y envía el mensaje allí; abrirlo no confirma tu reserva.';
-const linkName = 'Abrir WhatsApp (se abre en una pestaña nueva)';
+const retiredExplanation = 'Abrirás WhatsApp. Revisa y envía el mensaje allí; abrirlo no confirma tu reserva.';
+const linkName = 'Contactar por WhatsApp (se abre en una pestaña nueva)';
 const result = {
   booking: {
     id: 'booking-qa', serviceId: 'service-qa', professionalId: 'professional-qa',
@@ -87,8 +87,9 @@ async function toConfirm(root: Page | FrameLocator) {
 
 async function dateToContact(root: Page | FrameLocator) {
   await root.getByRole('button', { name: '5 de enero de 2099', exact: true }).click();
-  await expect(root.getByLabel('Hora', { exact: true })).toBeEnabled();
-  await root.getByLabel('Hora', { exact: true }).selectOption(result.booking.startTime);
+  const hour = root.getByRole('group', { name: 'Horas disponibles', exact: true }).getByRole('button', { name: '10:00 a. m.', exact: true });
+  await expect(hour).toBeEnabled();
+  await hour.click();
   await root.getByRole('button', { name: 'Continuar con tus datos', exact: true }).click();
 }
 
@@ -124,7 +125,8 @@ test('C2 full flow: loading/pending, no automatic popup, native accessible link,
   expect(state.destinations).toHaveLength(0);
   const link = page.getByRole('link', { name: linkName });
   await expect(link).toHaveCount(1);
-  await expect(link).toHaveAccessibleDescription(explanation);
+  await expect(link).toHaveAccessibleDescription('');
+  await expect(page.getByText(retiredExplanation, { exact: true })).toHaveCount(0);
   await expect(link).toHaveAttribute('target', '_blank');
   await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   expect(await link.evaluate((el) => !!el.querySelector('a, button, input, [role="button"]') ||
@@ -153,7 +155,7 @@ test('C2 full flow: loading/pending, no automatic popup, native accessible link,
   expect(state.posts).toBe(1);
   expect(state.writes).toEqual([{
     serviceId: 'service-qa', professionalId: 'professional-qa', startTime: result.booking.startTime,
-    clientName: 'Visitante QA', clientPhone: '8095554321', clientEmail: 'visitante@example.test',
+    clientName: 'Visitante QA', clientPhone: '+18095554321', clientEmail: 'visitante@example.test',
   }]);
   expect(result.booking.status).toBe('PENDING');
   expect(errors).toEqual([]);
@@ -169,7 +171,7 @@ for (const phone of [null, '8095551234', '+18095551234\n']) {
     await toConfirm(page);
     await success(page);
     await expect(page.getByRole('link', { name: linkName })).toHaveCount(0);
-    await expect(page.getByText(explanation)).toHaveCount(0);
+    await expect(page.getByText(retiredExplanation)).toHaveCount(0);
     expect(state.posts).toBe(1);
     expect(context.pages()).toHaveLength(1);
   });
@@ -206,7 +208,8 @@ test('C2 two slugs A → B → A use only their published recipient', async ({ p
   const state = await fixture(context);
   for (const [slug, digits] of [['a', '18095551234'], ['b', '34912345678'], ['a', '18095551234']]) {
     await page.goto(`/qa-whatsapp-${slug}`);
-    await expect(page.getByRole('link', { name: linkName })).toHaveCount(0);
+    // El mini-sitio ya ofrece el contacto general del negocio antes de reservar.
+    await expect(page.getByRole('heading', { name: 'Tu reserva quedó registrada', exact: true })).toHaveCount(0);
     await toConfirm(page);
     await success(page);
     await expect(page.getByRole('link', { name: linkName })).toHaveAttribute('href', `https://wa.me/${digits}?text=${encodeURIComponent(message)}`);
