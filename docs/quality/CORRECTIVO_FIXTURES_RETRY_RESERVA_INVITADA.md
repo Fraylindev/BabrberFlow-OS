@@ -44,7 +44,7 @@ Por tanto: se acredita el comportamiento histórico QA y las ramas CI actuales d
 
 Inventario local: solo `C:/Program Files/PostgreSQL/18`; no binarios PG16 encontrados allí/PATH. Docker CLI existe pero `docker image ls` da exit 1 por ausencia del daemon Linux. No se arranca Desktop ni se descarga/instala una imagen; no hay una forma local verificada de ejecutar PG16 con los recursos disponibles. PG16 y CI remoto quedan sin verificar.
 
-## Whitespace: resultado pendiente de commit separado
+## Whitespace: aplicado en commit separado
 
 Se aplican únicamente las dos reglas autorizadas `whitespace=-blank-at-eol,-blank-at-eof` para `docs/quality/evidence/**/*.patch` y `docs/quality/evidence/**/*.log`. Sin atributos `text/eol`, filtros, renormalización o cambios a `.git/info/attributes`. El hash SHA-256 de los 83 archivos actuales .patch/.log se mantiene byte a byte. No se alteran auditorías/evidencias previas.
 
@@ -62,5 +62,7 @@ Todos bajo `docs/quality/evidence/`. No se amplía la regla a .txt ni se editan 
 ## Verificación y límites de entrega
 
 Tipos API y lint de los tres archivos cambiados: exit 0. El diff completo de fixtures y expectativa F0-B fue revisado. Las siguientes verificaciones completas y el P4b suplementario de los commits nuevos se acreditarán con su resultado real en la entrega; ningún resultado se presume verde. Staging por rutas explícitas; commit (i) de pruebas/arnés/documentación y commit (iii) de atributos/documentación, separados. SHA se entregan después de crearlos, sin autorreferencia.
+
+Commit (i) creado: `15515cc2963692937af9f46f56bdc3f870708643`; ocho rutas de tests/documentación, diff completo y JSON revisados, staged --check exit 0. El commit de atributos conserva esa separación. Suplemento P4b previo: texto LF, sin binarios nuevos, dumps, credenciales o PII nuevos confirmados; el valor sintético de firma es el fixture explícito de esta suite. Se revisó el cambio de expectativas contra F0-B, la instrumentación permanece ignorada y el cuerpo original de Retry-After conserva su hash. Los 83 .patch/.log tienen idénticos hashes antes/después; ningún blob histórico de evidencias se cambia. La entrega incluirá el cotejo final de los commits, resultados completos postcommit y siete diagnósticos históricos aún vigentes.
 
 La API puede seguir roja por Retry-After aunque las 37 fallas de fixtures se resuelvan. Tampoco el check de whitespace global queda verde mientras existan los siete .txt. No verificado: PG16/CI remoto, recursos/proveedores reales, auth real, QA desplegada o dispositivos físicos. Producción cerrada; el resultado local no aprueba producto ni abre publicación.
