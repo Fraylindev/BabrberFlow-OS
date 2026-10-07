@@ -1,3 +1,11 @@
+## ENMIENDA / CANCELACIÓN — 2026-10-07
+
+Quedan superadas las recomendaciones de exigir/mantener la cuenta B2C en MVP/Piloto 1 y continuar el roadmap M2 de cuenta de cliente. M2 C3/P4/P5 están CANCELADOS. Los demás hallazgos y decisiones conservan su alcance original.
+
+Prevalece la [ENMIENDA 2026-10-07 del propietario](DECISIONES_PROPIETARIO_2026_09_29.md#enmienda-2026-10-07). Se conserva la autenticación interna Clerk/legacy y los roles OWNER, ADMIN, RECEPTIONIST y BARBER. Producción permanece cerrada; sin push, proveedores ni bases reales. Solo se abre el gate local de diagnóstico/corrección de suites de reserva invitada.
+
+El texto inferior se conserva íntegro como registro histórico y no revoca esta enmienda.
+
 # Auditoría del recorrido del propietario y propuesta de roadmap/MVP — 2026-09-29
 
 **Estado:** AUDITORÍA DOCUMENTAL / PROPUESTA, sin aprobación de implementación. **Base versionada:** `ai/antigravity-qa` en `6117568eff608fe5474ead2776061ead918c4863` (`git rev-parse HEAD`). **Fuente de hallazgos:** informe del propietario `reporte_de_testing_y_hallazgos_t_cnicos_cto.md`, recorrido manual del 29 de septiembre en `qa.booking.kortek.cloud`, más los requisitos adicionales comunicados en esta tarea. El HTML de Google Stitch en §§1 y 3 es referencia visual, no especificación ni prueba de una capacidad existente.

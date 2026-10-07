@@ -1,3 +1,11 @@
+## ENMIENDA / CANCELACIÓN — 2026-10-07
+
+El C3 de M2 cuenta de cliente y sus pasos P4/P5 están CANCELADOS por el retiro B2C. Este preflight y sus evidencias permanecen como historia; sus planes no autorizan continuar Clerk, QA, fixtures o activaciones.
+
+Prevalece la [ENMIENDA 2026-10-07 del propietario](DECISIONES_PROPIETARIO_2026_09_29.md#enmienda-2026-10-07). Se conserva la autenticación interna Clerk/legacy y los roles OWNER, ADMIN, RECEPTIONIST y BARBER. Producción permanece cerrada; sin push, proveedores ni bases reales. Solo se abre el gate local de diagnóstico/corrección de suites de reserva invitada.
+
+El texto inferior se conserva íntegro como registro histórico y no revoca esta enmienda.
+
 # M2 C3 — Preflight de Cuenta de cliente, etapa 1
 
 **Continuación P2 — 2026-10-03:** el propietario indicó continuar y precisó `C:\KortekBackups\Clave.txt`. El [segundo intento §13](#13-continuación-p2-revalidada-y-parada-en-preparación-local--2026-10-03) sigue **P2 PAUSADO / INCOMPLETO**: destino/release efectivos, ledger y Preview revalidados contra P0; preparación PG17 detenida por fallo de transferencia de CA al contenedor local. API/worker no se congelaron, siguen activos sin reinicios y reserva pública responde `200`. Sin backup/hash/restore/rollback, push, P3 ni acceso productivo. El registro §12 conserva el primer intento; este párrafo define el resultado posterior.

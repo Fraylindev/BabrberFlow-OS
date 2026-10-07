@@ -1,3 +1,11 @@
+## ENMIENDA / CANCELACIÓN — 2026-10-07
+
+P4/P5 y C3 de M2 cuenta de cliente están CANCELADOS por el retiro B2C. Este checklist conserva su evidencia y texto histórico, pero no autoriza configurar Clerk ni ejecutar sus pasos.
+
+Prevalece la [ENMIENDA 2026-10-07 del propietario](DECISIONES_PROPIETARIO_2026_09_29.md#enmienda-2026-10-07). Se conserva la autenticación interna Clerk/legacy y los roles OWNER, ADMIN, RECEPTIONIST y BARBER. Producción permanece cerrada; sin push, proveedores ni bases reales. Solo se abre el gate local de diagnóstico/corrección de suites de reserva invitada.
+
+El texto inferior se conserva íntegro como registro histórico y no revoca esta enmienda.
+
 # M2 C3 P4 — Checklist de Clerk Development
 
 Fecha: **2026-10-04, America/Santo_Domingo**. Estado: **PREPARACIÓN DOCUMENTAL ENTREGADA / CONFIGURACIÓN Y PRUEBAS REALES PENDIENTES**.

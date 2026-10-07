@@ -1,3 +1,11 @@
+## ENMIENDA / CANCELACIÓN — 2026-10-07
+
+La cuenta de cliente/portal B2C dejó de ser requisito del MVP y del Piloto 1. El alcance M2 de cuenta de cliente queda retirado; C3 y sus pasos P4/P5 están CANCELADOS. Este C0 se conserva como historia y no autoriza su implementación o activación.
+
+Prevalece la [ENMIENDA 2026-10-07 del propietario](DECISIONES_PROPIETARIO_2026_09_29.md#enmienda-2026-10-07). Se conserva la autenticación interna Clerk/legacy y los roles OWNER, ADMIN, RECEPTIONIST y BARBER. Producción permanece cerrada; sin push, proveedores ni bases reales. Solo se abre el gate local de diagnóstico/corrección de suites de reserva invitada.
+
+El texto inferior se conserva íntegro como registro histórico y no revoca esta enmienda.
+
 # M2 Cuenta de cliente: volver a tus reservas
 
 **Estado vigente al 2026-10-03: C0 APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO. D1–D8 FIJADAS, todas en A.** La [aprobación posterior de §15](#15-aprobación-del-propietario-y-publicación-documental-2026-10-03) prevalece sobre los estados de revisión y decisiones pendientes de las secciones 1–14, conservadas como historial de la entrega original. La aprobación del diseño no acredita implementación, pruebas nuevas ni autoriza C1/C2/C3 o despliegue.

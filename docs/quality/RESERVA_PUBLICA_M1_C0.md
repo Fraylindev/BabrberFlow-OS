@@ -1,3 +1,11 @@
+## ENMIENDA / CANCELACIÓN — 2026-10-07
+
+Se superan únicamente las referencias a cuenta de cliente obligatoria y casilla «Crear cuenta». La reserva vigente es exclusivamente de invitado: nombre, teléfono y correo opcional, sin contraseña. El resto del contrato M1 y sus aprobaciones se conserva.
+
+Prevalece la [ENMIENDA 2026-10-07 del propietario](DECISIONES_PROPIETARIO_2026_09_29.md#enmienda-2026-10-07). Se conserva la autenticación interna Clerk/legacy y los roles OWNER, ADMIN, RECEPTIONIST y BARBER. Producción permanece cerrada; sin push, proveedores ni bases reales. Solo se abre el gate local de diagnóstico/corrección de suites de reserva invitada.
+
+El texto inferior se conserva íntegro como registro histórico y no revoca esta enmienda.
+
 # Reserva pública M1: elegir una cita y entender su estado
 
 Fecha: 2026-10-01, hora del negocio de referencia en República Dominicana. **Estado: C0 DOCUMENTAL ENTREGADO / EN REVISIÓN; decisiones nuevas pendientes del propietario.** Este documento define el recorrido público separado, el calendario con hora compacta y el resultado de una reserva pendiente. No acredita implementación, QA nueva, aprobación de C0 ni autorización de C1/C2/C3.
