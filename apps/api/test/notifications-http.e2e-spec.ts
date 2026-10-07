@@ -65,6 +65,18 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
           name: 'Negocio controlado',
           email: `${id}@example.com`,
           businessHours: { open: '09:00', close: '19:00' },
+          businessSchedule: {
+            create: {
+              state: 'CONFIRMED',
+              zoneConfirmed: true,
+              days: {
+                create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                  dayOfWeek,
+                  windows: { create: [{ startMinute: 540, endMinute: 1140 }] },
+                })),
+              },
+            },
+          },
         },
       });
     for (const role of Object.values(UserRole)) {
@@ -119,7 +131,7 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
       'x-organization-id': organizationId,
     };
   }
-  async function create() {
+  async function create(bookingStart = startTime) {
     const response = await requestApp(app)
       .post('/bookings')
       .set(auth())
@@ -127,7 +139,7 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
         clientId,
         professionalId,
         serviceId,
-        startTime,
+        startTime: bookingStart,
         emailNotifications,
       })
       .expect((response) => {
@@ -327,7 +339,8 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
       }),
     ).toBe(0);
 
-    const endedId = await create();
+    // Otra ventana del fixture: COMPLETED también conserva la ocupación original.
+    const endedId = await create('2030-01-02T16:00:00Z');
     await requestApp(app)
       .patch(`/bookings/${endedId}/status`)
       .set(auth('BARBER'))

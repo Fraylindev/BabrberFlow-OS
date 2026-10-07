@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Fixtures de reserva invitada y Retry-After — 2026-10-07
+
+Horarios semanales CONFIRMED por organización en Servicios/Notificaciones, firma local sintética para medios M1 y citas de fixture sin solapamiento. Expectativa estricta de factura en GET /bookings actualizada según F0-B por autorización expresa adicional. Las 37 fallas anteriores pasan; API previa al commit 263/1/1, browser 21/0/1. Diez muestras frías de Retry-After: 7 headers 60/3 headers 61; diagnóstico de producto por dos relojes, sin modificar producto ni test de ese límite. Atributos .patch/.log autorizados en commit local separado, conservando bytes; no eliminan siete diagnósticos .txt. [Informe y evidencia](docs/quality/CORRECTIVO_FIXTURES_RETRY_RESERVA_INVITADA.md). Sin push, QA/proveedores/bases reales o aprobación funcional.
+
 ## Diagnóstico de suites de reserva invitada — 2026-10-07
 
 Línea base externa `c4625ef` en PG18 desechable; worktree eliminado. Cuatro rechazos JWT CUSTOMER de Facturación esperan ahora 401 según C1. Nuevo arnés reproduce las suites completas en PG18 nuevo y bloquea dotenv/red externa/instalación automática; fixtures browser sirven SDK/UI Clerk anónimos y banderas neutras sin filtrar errores de consola. Se conservan las 37 fallas API preexistentes y se registra una falla temporal adicional de Retry-After. Browser previo al commit: 21 aprobadas/0 fallidas/1 omisión prevista; no acredita proveedor ni recursos visuales finales. Cabeceras documentales de enmienda/cancelación M2, clasificación de 43 fallas y conciliación de P4b 624/633 según corte. [Informe y límites](docs/quality/DIAGNOSTICO_SUITES_RESERVA_INVITADA.md). Sin push ni aprobación/cierre funcional.

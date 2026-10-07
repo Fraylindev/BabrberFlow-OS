@@ -51,6 +51,7 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
   let professionalId: string;
   let otherServiceId: string;
   let otherProfessionalId: string;
+  let previousMediaSigningSecret: string | undefined;
 
   async function newApp(measured = false) {
     return createE2eApp((b) => {
@@ -83,6 +84,9 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
     });
   }
   beforeAll(async () => {
+    // Firma sintética de esta suite aislada; MediaCloudinary permanece sustituido.
+    previousMediaSigningSecret = process.env.CLOUDINARY_API_SECRET;
+    process.env.CLOUDINARY_API_SECRET = 'synthetic-media-signing-fixture';
     const measured = new PrismaClient({
       log: [{ level: 'query', emit: 'event' }],
     });
@@ -92,9 +96,15 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
     second = await newApp();
   });
   afterAll(async () => {
-    if (second) await second.close();
-    if (app) await app.close();
-    await db.$disconnect();
+    try {
+      if (second) await second.close();
+      if (app) await app.close();
+      await db.$disconnect();
+    } finally {
+      if (previousMediaSigningSecret === undefined)
+        delete process.env.CLOUDINARY_API_SECRET;
+      else process.env.CLOUDINARY_API_SECRET = previousMediaSigningSecret;
+    }
   });
   async function organization(
     zone = 'America/Santo_Domingo',

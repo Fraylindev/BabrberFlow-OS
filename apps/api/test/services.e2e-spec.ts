@@ -49,6 +49,18 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
           name: 'Servicios tenant A',
           slug: `services-a-${suffix}`,
           email: `services-a-${suffix}@organization.test`,
+          businessSchedule: {
+            create: {
+              state: 'CONFIRMED',
+              zoneConfirmed: true,
+              days: {
+                create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                  dayOfWeek,
+                  windows: { create: [{ startMinute: 540, endMinute: 1140 }] },
+                })),
+              },
+            },
+          },
         },
       }),
       prisma.db.organization.create({
@@ -56,6 +68,18 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
           name: 'Servicios tenant B',
           slug: `services-b-${suffix}`,
           email: `services-b-${suffix}@organization.test`,
+          businessSchedule: {
+            create: {
+              state: 'CONFIRMED',
+              zoneConfirmed: true,
+              days: {
+                create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                  dayOfWeek,
+                  windows: { create: [{ startMinute: 540, endMinute: 1140 }] },
+                })),
+              },
+            },
+          },
         },
       }),
     ]);
@@ -575,6 +599,7 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
         'clientId',
         'endTime',
         'id',
+        'invoice',
         'professional',
         'professionalId',
         'service',
@@ -583,6 +608,10 @@ describe('Servicios — Entrega A Backend (e2e PostgreSQL)', () => {
         'status',
       ].sort(),
     );
+    expect(asRecord(historicalBooking?.invoice)).toEqual({
+      id: invoiceId,
+      state: 'ISSUED',
+    });
     expect(Object.keys(asRecord(historicalBooking?.client)).sort()).toEqual(
       ['email', 'id', 'name', 'phone'].sort(),
     );
