@@ -1,0 +1,398 @@
+{
+  "id": "8e0ab2425d46494fa8b6e3713859bbcf",
+  "database": "guest_c1_8e0ab2425d46494fa8b6e3713859bbcf_test",
+  "bind": "127.0.0.1",
+  "commands": [
+    {
+      "label": "postgres-version",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+      "args": [
+        "--version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\initdb.exe",
+      "args": [
+        "-D",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-8e0ab2425d46494fa8b6e3713859bbcf\\data",
+        "-U",
+        "guest_c1_admin",
+        "--auth-local=trust",
+        "--auth-host=scram-sha-256",
+        "--encoding=UTF8",
+        "--locale=C",
+        "--pwfile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-8e0ab2425d46494fa8b6e3713859bbcf\\init-password"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-8e0ab2425d46494fa8b6e3713859bbcf\\data",
+        "-l",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-8e0ab2425d46494fa8b6e3713859bbcf\\postgres.log",
+        "-o",
+        "-h 127.0.0.1 -p 62649",
+        "-w",
+        "start"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "bootstrap",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "args": [
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "62649",
+        "-U",
+        "guest_c1_admin",
+        "-d",
+        "postgres"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "migrate-deploy",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--require",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\node_modules\\.pnpm\\prisma@6.19.3_typescript@5.9.3\\node_modules\\prisma\\build\\index.js",
+        "migrate",
+        "deploy",
+        "--schema",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\prisma\\schema.prisma"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "provision-runtime",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "args": [
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "62649",
+        "-U",
+        "guest_c1_admin",
+        "-d",
+        "guest_c1_8e0ab2425d46494fa8b6e3713859bbcf_test",
+        "-f",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\ops\\provision-database-roles.sql"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "runtime-gate",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "args": [
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "62649",
+        "-U",
+        "kortek_runtime",
+        "-d",
+        "guest_c1_8e0ab2425d46494fa8b6e3713859bbcf_test",
+        "-f",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\ops\\verify-runtime-role.sql"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "server-version",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "args": [
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "62649",
+        "-U",
+        "kortek_migrator",
+        "-d",
+        "guest_c1_8e0ab2425d46494fa8b6e3713859bbcf_test",
+        "-At",
+        "-c",
+        "SHOW server_version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "migration-ledger",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+      "args": [
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "62649",
+        "-U",
+        "kortek_migrator",
+        "-d",
+        "guest_c1_8e0ab2425d46494fa8b6e3713859bbcf_test",
+        "-At",
+        "-c",
+        "SELECT migration_name FROM \"_prisma_migrations\" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL ORDER BY migration_name"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "full-api",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--require",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\node_modules\\.pnpm\\jest@30.4.2_@types+node@24._8e363def8bd01778ec0af58dd86e84ee\\node_modules\\jest\\bin\\jest.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\ci-deps-evidence\\after\\8e0ab2425d46494fa8b6e3713859bbcf\\full-api.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "api-e2e",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--require",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+        "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "--filter",
+        "api",
+        "test:e2e",
+        "--runInBand",
+        "--json",
+        "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\ci-deps-evidence\\after\\8e0ab2425d46494fa8b6e3713859bbcf\\api.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "web-build",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--require",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+        "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "--filter",
+        "web",
+        "build",
+        "--webpack"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "web-browser",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--require",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+        "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "--filter",
+        "web",
+        "test:browser",
+        "--config",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\ci-deps-after.config.ts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "stop",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-8e0ab2425d46494fa8b6e3713859bbcf\\data",
+        "-m",
+        "fast",
+        "-w",
+        "stop"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "migrations": [
+    "20260719162646_initial_schema",
+    "20260720044928_add_invoice_model",
+    "20260722030552_link_professional_user",
+    "20260722042926_add_customer_role",
+    "20260723212248_microsite_and_indexes",
+    "20260724023058_global_identity_membership",
+    "20260725215619_service_client_is_active",
+    "20260727010227_audit_log_user_id",
+    "20260811180000_booking_schedule_exclusion",
+    "20260812010000_professionals_backend_a1",
+    "20260813193000_professional_individual_availability_a2",
+    "20260813200000_professional_availability_tenant_fk",
+    "20260814190000_add_user_clerk_link_a0_1",
+    "20260815120000_password_nullable",
+    "20260820220000_audit_log_pre_tenant_security_events",
+    "20260821220000_team_invitations_a0_4",
+    "20260822150000_client_user_b2c_link_a0_6_a",
+    "20260825220000_facturacion_a_internal_invoices",
+    "20260826210000_facturacion_a_completion_service_price_guards",
+    "20260909120000_restore_invoice_integrity_checks",
+    "20260912120000_cms_editorial",
+    "20260914120000_booking_email_outbox",
+    "20260914120100_email_channel_control",
+    "20260915120000_email_template_version",
+    "20260923100000_media_promotions",
+    "20260925010000_security_rate_bucket",
+    "20260927170000_business_schedule",
+    "20261003120000_customer_stage_one"
+  ],
+  "suites": [],
+  "cleanup": true,
+  "providersContacted": false,
+  "postgresBinary": "postgres (PostgreSQL) 18.1",
+  "port": 62649,
+  "postgresServer": "18.1",
+  "migrationHashes": [
+    {
+      "name": "20260719162646_initial_schema",
+      "sha256": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d"
+    },
+    {
+      "name": "20260720044928_add_invoice_model",
+      "sha256": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b"
+    },
+    {
+      "name": "20260722030552_link_professional_user",
+      "sha256": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b"
+    },
+    {
+      "name": "20260722042926_add_customer_role",
+      "sha256": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a"
+    },
+    {
+      "name": "20260723212248_microsite_and_indexes",
+      "sha256": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd"
+    },
+    {
+      "name": "20260724023058_global_identity_membership",
+      "sha256": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389"
+    },
+    {
+      "name": "20260725215619_service_client_is_active",
+      "sha256": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c"
+    },
+    {
+      "name": "20260727010227_audit_log_user_id",
+      "sha256": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67"
+    },
+    {
+      "name": "20260811180000_booking_schedule_exclusion",
+      "sha256": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21"
+    },
+    {
+      "name": "20260812010000_professionals_backend_a1",
+      "sha256": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3"
+    },
+    {
+      "name": "20260813193000_professional_individual_availability_a2",
+      "sha256": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33"
+    },
+    {
+      "name": "20260813200000_professional_availability_tenant_fk",
+      "sha256": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896"
+    },
+    {
+      "name": "20260814190000_add_user_clerk_link_a0_1",
+      "sha256": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7"
+    },
+    {
+      "name": "20260815120000_password_nullable",
+      "sha256": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22"
+    },
+    {
+      "name": "20260820220000_audit_log_pre_tenant_security_events",
+      "sha256": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67"
+    },
+    {
+      "name": "20260821220000_team_invitations_a0_4",
+      "sha256": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef"
+    },
+    {
+      "name": "20260822150000_client_user_b2c_link_a0_6_a",
+      "sha256": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4"
+    },
+    {
+      "name": "20260825220000_facturacion_a_internal_invoices",
+      "sha256": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca"
+    },
+    {
+      "name": "20260826210000_facturacion_a_completion_service_price_guards",
+      "sha256": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131"
+    },
+    {
+      "name": "20260909120000_restore_invoice_integrity_checks",
+      "sha256": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee"
+    },
+    {
+      "name": "20260912120000_cms_editorial",
+      "sha256": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653"
+    },
+    {
+      "name": "20260914120000_booking_email_outbox",
+      "sha256": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561"
+    },
+    {
+      "name": "20260914120100_email_channel_control",
+      "sha256": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af"
+    },
+    {
+      "name": "20260915120000_email_template_version",
+      "sha256": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65"
+    },
+    {
+      "name": "20260923100000_media_promotions",
+      "sha256": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2"
+    },
+    {
+      "name": "20260925010000_security_rate_bucket",
+      "sha256": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d"
+    },
+    {
+      "name": "20260927170000_business_schedule",
+      "sha256": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82"
+    },
+    {
+      "name": "20261003120000_customer_stage_one",
+      "sha256": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee"
+    }
+  ],
+  "fullApi": {
+    "passed": 877,
+    "failed": 0,
+    "pending": 0,
+    "exitCode": 0
+  },
+  "apiExitCode": 0,
+  "api": {
+    "passed": 272,
+    "failed": 0,
+    "pending": 1,
+    "total": 273
+  },
+  "webBuildExitCode": 0,
+  "browserExitCode": 0,
+  "stopped": true,
+  "exitCode": 0
+}

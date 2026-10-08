@@ -1,0 +1,7 @@
+const fs=require('node:fs'),path=require('node:path'),Module=require('node:module');
+const filename=path.resolve('apps/api/test/guest-suites-run.cjs');
+let source=fs.readFileSync(filename,'utf8');
+source=source.replaceAll('guest-suite-','ci-deps-').replaceAll('guest-suite-evidence','ci-deps-evidence');
+process.env.GUEST_SUITE_PHASE='after';process.env.GUEST_RUN_FULL_API='1';
+delete process.env.GUEST_SUITE_SKIP_BUILD;
+const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));m._compile(source,filename);

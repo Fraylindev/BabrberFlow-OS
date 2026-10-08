@@ -1,0 +1,80 @@
+[
+  {
+    "label": "prisma-generate",
+    "args": [
+      "--filter",
+      "api",
+      "exec",
+      "prisma",
+      "generate"
+    ],
+    "exitCode": 0
+  },
+  {
+    "label": "api-types",
+    "args": [
+      "--filter",
+      "api",
+      "type-check"
+    ],
+    "exitCode": 0
+  },
+  {
+    "label": "web-types",
+    "args": [
+      "--filter",
+      "web",
+      "type-check:clean"
+    ],
+    "exitCode": 1
+  },
+  {
+    "label": "api-lint",
+    "args": [
+      "--filter",
+      "api",
+      "lint"
+    ],
+    "exitCode": 0
+  },
+  {
+    "label": "web-lint",
+    "args": [
+      "--filter",
+      "web",
+      "lint"
+    ],
+    "exitCode": 0
+  },
+  {
+    "label": "api-build",
+    "args": [
+      "--filter",
+      "api",
+      "build"
+    ],
+    "exitCode": 0
+  },
+  {
+    "label": "web-unit",
+    "args": [
+      "--filter",
+      "web",
+      "test:unit"
+    ],
+    "exitCode": 0
+  },
+  {
+    "label": "web-components",
+    "args": [
+      "--filter",
+      "web",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-vitest.config.mts"
+    ],
+    "exitCode": 0
+  }
+]

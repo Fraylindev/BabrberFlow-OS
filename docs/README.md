@@ -1,5 +1,10 @@
 # Documentación de Kortek Booking
 
+## Correctivo Dependency and peer audit — 2026-10-07
+
+Gate único sobre `36061fc`, rama temporal `ai/reserva-invitado-ci`. Audit local pnpm 11.18.0: 11 avisos en versiones idénticas a la base, corregidos mediante parches/minor de Next, sharp, multer, proxy-addr y source-map-js; pins exactos autorizados después por el propietario. Audit y peers estrictos exit 0. Tipos/lint y builds API/web pasan; PG18.1 nuevo: 877/0/0 unitarias API, 272/0/1 e2e API; web 158+130 pruebas y browser 21/0/1, exit 0. Clúster propio eliminado. Validado localmente/en revisión; commit/push autorizados solo a la rama temporal, sin merge, workflows, contratos, proveedores, QA desplegada ni producción. CI remoto posterior no verificado. [Informe y evidencia](quality/CORRECTIVO_CI_DEPENDENCY_PEER_AUDIT.md).
+
+
 ## Correctivo Retry-After, CI y evidencia — 2026-10-07
 
 Gate único local sobre base `58f536f`: restante de bloqueo/expiración calculado en el mismo upsert y reloj PostgreSQL; 30/min, bloqueo 60 s, fail-closed y HMAC preservados. Caso original intacto; 20/20 clústeres fríos pasan con header 60. Solo dos separadores Jest retirados de quality.yml y una regla whitespace para evidencia .txt, con 40 hashes existentes idénticos. Unitarias API 877/0/0, e2e 272/0/1 y browser 21/0/1, exit 0; implementado/en revisión. Resultado final de suites y P4b en [informe del correctivo](quality/CORRECTIVO_RETRY_AFTER_CI_WHITESPACE.md). Tres commits locales separados, sin push/proveedores/QA/producción/dependencias ni contratos nuevos. Ningún gate posterior abierto.

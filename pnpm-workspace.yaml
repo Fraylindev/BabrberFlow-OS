@@ -5,9 +5,11 @@ overrides:
   deepmerge-ts: 8.0.0
   nanoid: 3.3.18
   postcss: 8.5.25
-  sharp: 0.35.4
+  sharp: 0.35.5
   # Security fixes within the current transitive major versions.
-  multer: 2.3.0
+  multer: 2.4.0
+  proxy-addr: 2.0.8
+  source-map-js: 1.2.2
   qs: 6.16.0
 allowBuilds:
   '@prisma/client': false
