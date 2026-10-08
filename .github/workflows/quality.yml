@@ -107,7 +107,7 @@ jobs:
 
       - name: Unit and component tests
         run: |
-          pnpm --filter api test -- --runInBand
+          pnpm --filter api test --runInBand
           pnpm --filter web test
 
       - name: Production builds
@@ -118,7 +118,7 @@ jobs:
       - name: PostgreSQL integrity and isolated E2E
         run: |
           node apps/api/dist/prisma/verify-integrity.cli.js
-          pnpm --filter api test:e2e -- --runInBand
+          pnpm --filter api test:e2e --runInBand
 
       - name: Browser smoke tests
         run: pnpm --filter web test:browser
