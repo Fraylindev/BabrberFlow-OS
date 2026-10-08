@@ -6,3 +6,4 @@ apps/api/prisma/migrations/**/migration.sql text eol=lf
 apps/api/ops/*.sql text eol=lf
 docs/quality/evidence/**/*.patch whitespace=-blank-at-eol,-blank-at-eof
 docs/quality/evidence/**/*.log whitespace=-blank-at-eol,-blank-at-eof
+docs/quality/evidence/**/*.txt whitespace=-blank-at-eol,-blank-at-eof
