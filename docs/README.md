@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## Entorno sintético del CI y lectura API — 2026-10-08
+
+[Inventario por paso, resultados y evidencia](quality/CI_ENTORNO_SINTETICO.md): JWT_SECRET era la única variable obligatoria ausente; quality.yml genera claves efímeras y las enmascara solo en los pasos unitarias/componentes e integridad/E2E. Entorno limpio sin dotenv ni variables del arnés anterior: PG18.1, Prisma/runtime/tipos/lint, API 836/0/41, web 158+130, builds originales, API E2E 272/0/1 y browser 21/0/1 pasan. PG16/runner GitHub no reproducibles aquí; PR nuevo pendiente. Lectura mínima SSH autorizada: API active, PID 1523015, NRestarts 0, imagen 8ba1b6c8… y release b318ca5 exactos. Implementado/en revisión; publicación solo rama temporal, sin producto, contratos, dependencias, flags, migraciones ni cambios remotos.
+
 ## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
 
 [Informe, reproducción y límites](quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md): fallo aportado **(a), preparación CI**; las dos funciones son INVOKER pero quedan del runner por el clon. Migración 28 intacta. `9f04dba` también falla, por otra causa: CustomerOperation ausente de la matriz histórica. Correctivo solo del workflow: base independiente migrada como `kortek_migrator`; PG18.1 pasa guardia/gate y bloque Bash completo. PG16 no disponible localmente; CI remoto pendiente. Lectura autorizada confirma ahora alias web en **dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe, READY, b318ca5**, distinto de dpl_KEKT6X12; sustituye el identificador anterior como estado actual, sin verificar variables/login. Commit/push solo `ai/reserva-invitado-ci`, implementado/en revisión; sin QA, bases reales, cambios de proveedores ni producción.

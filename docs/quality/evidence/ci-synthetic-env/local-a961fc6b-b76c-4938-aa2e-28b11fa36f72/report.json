@@ -1,0 +1,81 @@
+{
+  "id": "a961fc6b-b76c-4938-aa2e-28b11fa36f72",
+  "cleanCheckout": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\ci-synthetic-clean",
+  "variables": [
+    "DATABASE_URL",
+    "E2E_PRIMARY_DATABASE_NAME",
+    "E2E_PRIMARY_DATABASE_USER",
+    "NODE_ENV",
+    "DEPLOY_ENV",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY"
+  ],
+  "systemVariables": [
+    "APPDATA",
+    "ComSpec",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "OS",
+    "Path",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "ProgramW6432",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "commands": [
+    {
+      "label": "version",
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "exitCode": 0
+    },
+    {
+      "label": "bootstrap",
+      "exitCode": 0
+    },
+    {
+      "label": "Prisma-contract-and-generated-client",
+      "exitCode": 1
+    }
+  ],
+  "cleanup": true,
+  "steps": [
+    {
+      "name": "Prisma contract and generated client",
+      "environmentNames": [
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "PGPORT"
+      ],
+      "adaptations": [
+        "ephemeral PG port",
+        "administrative password for own cluster",
+        "Windows shell PATH"
+      ]
+    }
+  ],
+  "version": "postgres (PostgreSQL) 18.1",
+  "port": 65284,
+  "error": "Prisma-contract-and-generated-client failed; see sanitized log",
+  "stopExit": 0
+}

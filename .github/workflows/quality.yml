@@ -115,8 +115,12 @@ jobs:
 
       - name: Unit and component tests
         run: |
+          JWT_SECRET="$(openssl rand -hex 32)"
+          printf '::add-mask::%s\n' "$JWT_SECRET"
+          export JWT_SECRET
           pnpm --filter api test --runInBand
           pnpm --filter web test
+          unset JWT_SECRET
 
       - name: Production builds
         run: |
@@ -125,8 +129,12 @@ jobs:
 
       - name: PostgreSQL integrity and isolated E2E
         run: |
+          JWT_SECRET="$(openssl rand -hex 32)"
+          printf '::add-mask::%s\n' "$JWT_SECRET"
+          export JWT_SECRET
           node apps/api/dist/prisma/verify-integrity.cli.js
           pnpm --filter api test:e2e --runInBand
+          unset JWT_SECRET
 
       - name: Browser smoke tests
         run: pnpm --filter web test:browser

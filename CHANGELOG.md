@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Entorno sintético del CI y lectura API — 2026-10-08
+
+Añadida únicamente JWT_SECRET efímera/enmascarada a los pasos unitarias/componentes e integridad/E2E de quality.yml. PG18.1 y checkout limpio sin dotenv/env del arnés anterior: Prisma/runtime/tipos/lint/builds originales pasan; API unitarias 836/0/41, web 158+130, API E2E 272/0/1 y browser 21/0/1. No faltó otra variable ni se cambiaron omisiones/aserciones. PG16/runner GitHub no reproducibles aquí. Lectura mínima autorizada confirma API active/PID 1523015/NRestarts 0/imagen 8ba1b6c8…/release b318ca5; sin cambios remotos. [Inventario, evidencia y límites](docs/quality/CI_ENTORNO_SINTETICO.md). Implementado/en revisión; un commit/push solo a rama temporal, PR nuevo pendiente; producto, contratos, migraciones, SQL, flags y dependencias intactos.
+
 ## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
 
 Error de b318ca5 clasificado **(a), preparación CI**: las funciones trigger INVOKER conservaban ownership del runner en el clon; la guardia exige migrator. Solo quality.yml prepara ahora base independiente y aplica migraciones como `kortek_migrator`, sin tocar SQL/migraciones/producto ni relajar aserciones. PG18.1 reproduce el fallo y pasa el bloque Bash corregido/gate íntegro; `9f04dba` falla por otra causa histórica (CustomerOperation no revisada). PG16 no disponible aquí; CI remoto pendiente. Lectura Vercel confirma alias en **dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe, READY, b318ca5**, distinto de dpl_KEKT6X12; sin reasignación/redeploy ni variables/login verificados. [Informe y evidencia](docs/quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md). Implementado/en revisión; un commit/push solo `ai/reserva-invitado-ci`, sin QA, OCI/SSH/Clerk/bases reales ni producción.

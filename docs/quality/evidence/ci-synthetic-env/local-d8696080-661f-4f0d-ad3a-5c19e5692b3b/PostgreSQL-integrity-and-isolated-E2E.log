@@ -1,0 +1,141 @@
+::add-mask::[omitted]
+Supplemental PostgreSQL constraints and indexes: OK
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "kortek_ci_test", schema "public" at "127.0.0.1:53983"
+
+28 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+$ jest --config ./test/jest-e2e.json "--runInBand"
+[31m[Nest] 29328  - [39m08/10/2026, 2:16:29 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90mC:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\invoices.e2e-spec.ts:1097:30
+    at createE2eApp [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\invoices.e2e-spec.ts:1092:29[90m)[39m
+    at Promise.finally.completed (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+[31m[Nest] 29328  - [39m08/10/2026, 2:16:29 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90mC:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\invoices.e2e-spec.ts:1097:30
+    at createE2eApp [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\invoices.e2e-spec.ts:1092:29[90m)[39m
+    at Promise.finally.completed (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+PASS test/invoices.e2e-spec.ts (12.964 s)
+[31m[Nest] 29328  - [39m08/10/2026, 2:16:34 a. m. [31m  ERROR[39m [38;5;3m[AuditService] [39m[31mNo se pudo registrar auditoría: SAVE_DRAFT CmsPage (248053b8-86de-4bba-a908-6482691e95e4)[39m
+PrismaClientUnknownRequestError: 
+Invalid `this.prisma.db.auditLog.create()` invocation in
+C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\src\audit\audit.service.ts:43:37
+
+  40 
+  41 async log(entry: AuditLogEntry): Promise<void> {
+  42   try {
+→ 43     await this.prisma.db.auditLog.create(
+Error occurred during query execution:
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "P0001", message: "Synthetic audit outage", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+    at ei.handleRequestError (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\RequestHandler.ts:237:13)
+    at ei.handleAndLogRequestError (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at AuditService.log (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\src\audit\audit.service.ts:43:7)
+    at CmsService.mutate (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\src\cms\cms.service.ts:282:11)
+    at C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\.pnpm\@nestjs+core@11.1.28_@nestj_b1105a74c7a8287c4b52730207d5bfc0\node_modules\@nestjs\core\router\router-execution-context.js:47:62
+    at C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\.pnpm\@nestjs+core@11.1.28_@nestj_b1105a74c7a8287c4b52730207d5bfc0\node_modules\@nestjs\core\router\router-proxy.js:9:17
+PASS test/cms.e2e-spec.ts (5.103 s)
+[31m[Nest] 29328  - [39m08/10/2026, 2:16:37 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90mC:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\clerk-onboarding.e2e-spec.ts:904:32
+    at createE2eApp [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\clerk-onboarding.e2e-spec.ts:893:29[90m)[39m
+    at Promise.finally.completed (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+PASS test/clerk-onboarding.e2e-spec.ts
+PASS test/public-booking-m1.e2e-spec.ts (7.144 s)
+  ● Console
+
+    console.log
+      M1_BUDGET {"professionals":1,"duration":30,"blocks":0,"samplesMs":[82,63,61],"queries":19,"cpuMs":203}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:648:15)
+
+    console.log
+      M1_BUDGET {"professionals":10,"duration":60,"blocks":0,"samplesMs":[63,66,67],"queries":19,"cpuMs":187}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:648:15)
+
+    console.log
+      M1_BUDGET {"professionals":40,"duration":15,"blocks":1240,"samplesMs":[266,244,242],"queries":19,"cpuMs":812}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:648:15)
+
+    console.log
+      M1_BUDGET {"professionals":40,"duration":360,"blocks":1240,"samplesMs":[405,237,210],"queries":19,"cpuMs":718}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:648:15)
+
+PASS test/team-invitations.e2e-spec.ts
+PASS test/media.e2e-spec.ts
+PASS test/notifications-producer.e2e-spec.ts
+PASS test/notifications-http.e2e-spec.ts
+PASS test/services.e2e-spec.ts
+PASS test/team-members.e2e-spec.ts
+PASS test/professionals.e2e-spec.ts
+PASS test/clerk-me.e2e-spec.ts
+PASS test/clerk-bootstrap.e2e-spec.ts
+PASS test/business-schedule.e2e-spec.ts
+PASS test/postgres-throttler-retry.e2e-spec.ts
+PASS test/dashboard-summary.e2e-spec.ts
+[31m[Nest] 29328  - [39m08/10/2026, 2:17:18 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90mC:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\auth.e2e-spec.ts:164:30
+    at createE2eApp [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m(C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\[39mtest\auth.e2e-spec.ts:159:29[90m)[39m
+    at Promise.finally.completed (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest (C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+PASS test/auth.e2e-spec.ts
+PASS test/invoice-integrity-migration.e2e-spec.ts
+PASS test/cms-migration.e2e-spec.ts
+PASS test/organizations.e2e-spec.ts
+
+Test Suites: 1 skipped, 20 passed, 20 of 21 total
+Tests:       1 skipped, 272 passed, 273 total
+Snapshots:   0 total
+Time:        64.515 s
+Ran all test suites.

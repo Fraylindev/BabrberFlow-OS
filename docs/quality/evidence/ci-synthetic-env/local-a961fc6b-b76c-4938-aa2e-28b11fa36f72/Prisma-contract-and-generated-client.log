@@ -1,0 +1,36 @@
+Scope: all 3 workspace projects
+Recreating C:\Users\Fraylin\Desktop\Kortek-Booking\node_modules
+✓ Lockfile passes supply-chain policies (verified 3h ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+devDependencies:
++ @typescript-eslint/eslint-plugin 8.65.0
++ @typescript-eslint/parser 8.65.0
++ eslint 10.8.0
++ eslint-config-prettier 10.1.8
++ prettier 3.9.6
++ turbo 2.10.7
++ typescript 5.9.3
+
+Done in 13.8s using pnpm v11.18.0
+undefined
+C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: prisma validate
+node:internal/modules/cjs/loader:1433
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\api\node_modules\prisma\build\index.js'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.22.3

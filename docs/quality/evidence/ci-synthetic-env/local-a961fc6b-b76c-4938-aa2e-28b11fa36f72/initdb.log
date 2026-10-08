@@ -1,0 +1,23 @@
+Los archivos de este cluster ser�n de propiedad del usuario �Fraylin�.
+Este usuario tambi�n debe ser quien ejecute el proceso servidor.
+
+El cluster ser� inicializado con configuraci�n regional �C�.
+La configuraci�n de b�squeda en texto ha sido definida a �english�.
+
+Las sumas de verificaci�n en p�ginas de datos han sido activadas.
+
+creando el directorio C:/Users/Fraylin/Desktop/Kortek-Booking/.tmp/ci-synthetic-pg-a961fc6b-b76c-4938-aa2e-28b11fa36f72/data ... hecho
+creando subdirectorios ... hecho
+seleccionando implementaci�n de memoria compartida din�mica ... windows
+seleccionando el valor para �max_connections� ... 100
+seleccionando el valor para �shared_buffers� ... 128MB
+seleccionando el huso horario por omisi�n ... GMT
+creando archivos de configuraci�n ... hecho
+ejecutando script de inicio (bootstrap) ... hecho
+realizando inicializaci�n post-bootstrap ... hecho
+sincronizando los datos a disco ... hecho
+
+Completado. Ahora puede iniciar el servidor de bases de datos usando:
+
+    ^"C^:^\Program^ Files^\PostgreSQL^\18^\bin^\pg^_ctl^" -D ^"C^:^\Users^\Fraylin^\Desktop^\Kortek^-Booking^\^.tmp^\ci^-synthetic^-pg^-a961fc6b^-b76c^-4938^-aa2e^-28b11fa36f72^\data^" -l archivo_de_registro start
+

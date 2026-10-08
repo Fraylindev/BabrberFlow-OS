@@ -1,0 +1,7 @@
+
+Running 22 tests using 6 workers
+··°···················
+  1 skipped
+  21 passed (1.0m)
+::notice title=🎭 Playwright Run Summary::  1 skipped%0A  21 passed (1.0m)
+$ playwright test

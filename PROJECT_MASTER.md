@@ -1,5 +1,11 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Entorno sintético del CI y lectura API — 2026-10-08
+
+**CORRECTIVO CI / VALIDADO LOCALMENTE / EN REVISIÓN.** Quality #56 fallaba por JWT_SECRET ausente al cargar autenticación API. Solo quality.yml genera/enmascara claves efímeras en los dos pasos que la necesitan; no faltó otra variable. Checkout sin dotenv ni env del arnés anterior: PG18.1, Prisma/runtime/tipos/lint y builds originales pasan; unitarias API 836/0/41, web 158+130, E2E API 272/0/1, browser 21/0/1. Omisiones preexistentes, sin cambiar flags/aserciones. PG16 y runner GitHub no reproducibles aquí; ejecución del PR nuevo pendiente.
+
+Lectura mínima SSH expresamente confirmada: API **active, MainPID 1523015, NRestarts 0, imagen sha256:8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec, APP_RELEASE b318ca591d1ca6681269a6d25e29ca106d824df9**, coincide con lo esperado. Sin archivos/volcado de entorno, reinicios ni cambios. [Tabla de variables, evidencia y comparación para PR nuevo](docs/quality/CI_ENTORNO_SINTETICO.md). Un commit/push solo a `ai/reserva-invitado-ci`; antigravity-qa/main preservadas. Sin producto/contratos/migraciones/SQL/dependencias/proveedores ni otro gate abierto.
+
 ## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
 
 **CORRECTIVO CI / VALIDADO LOCALMENTE / EN REVISIÓN.** Error aportado clasificado **(a)**: clon migrado como runner conserva ambas funciones INVOKER con propietario `kortek_ci_runner`; la guardia exige `kortek_migrator`. Migración 28/SQL intactos. Worktree `9f04dba` reproduce un fallo histórico diferente por CustomerOperation no revisada. Workflow corregido solo en preparación de base independiente y migración como migrator; gate completo/Bash pasan en PG18.1. PG16 no disponible aquí; CI remoto posterior pendiente. [Informe, comandos/resultados y límites](docs/quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md). Un commit/push autorizado solo a `ai/reserva-invitado-ci`; ningún gate de producto posterior abierto.

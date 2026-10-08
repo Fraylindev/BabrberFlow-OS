@@ -1,0 +1,48 @@
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.ts took 188ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 19.1s
+  Running TypeScript ...
+  Finished TypeScript in 15.0s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/16) ...
+  Generating static pages using 11 workers (4/16) 
+  Generating static pages using 11 workers (8/16) 
+  Generating static pages using 11 workers (12/16) 
+✓ Generating static pages using 11 workers (16/16) in 1334ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /[slug]
+├ ƒ /[slug]/reservar
+├ ƒ /accept-invitation/[[...accept-invitation]]
+├ ○ /auth/continue
+├ ○ /auth/invitation/complete
+├ ○ /dashboard
+├ ○ /dashboard/access
+├ ○ /dashboard/bookings
+├ ƒ /dashboard/bookings/[id]/notifications
+├ ○ /dashboard/clients
+├ ○ /dashboard/invoices
+├ ƒ /dashboard/media
+├ ○ /dashboard/notifications
+├ ○ /dashboard/professionals
+├ ○ /dashboard/services
+├ ƒ /dashboard/settings
+├ ○ /dashboard/setup
+├ ○ /dashboard/team
+├ ƒ /invitation-login/[[...invitation-login]]
+├ ƒ /login/[[...login]]
+└ ƒ /register/[[...register]]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+$ nest build
+$ next build

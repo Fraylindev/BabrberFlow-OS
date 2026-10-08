@@ -1,0 +1,178 @@
+{
+  "id": "b4479c04-0636-41bd-9934-622d2fb77da7",
+  "cleanCheckout": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\ci-synthetic-clean",
+  "variables": [
+    "DATABASE_URL",
+    "E2E_PRIMARY_DATABASE_NAME",
+    "E2E_PRIMARY_DATABASE_USER",
+    "NODE_ENV",
+    "DEPLOY_ENV",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY"
+  ],
+  "systemVariables": [
+    "APPDATA",
+    "ComSpec",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "OS",
+    "Path",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "ProgramW6432",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "commands": [
+    {
+      "label": "version",
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "exitCode": 0
+    },
+    {
+      "label": "bootstrap",
+      "exitCode": 0
+    },
+    {
+      "label": "Prisma-contract-and-generated-client",
+      "exitCode": 0
+    },
+    {
+      "label": "Runtime-privilege-matrix-gate",
+      "exitCode": 0
+    },
+    {
+      "label": "TypeScript-and-lint",
+      "exitCode": 0
+    },
+    {
+      "label": "Unit-and-component-tests",
+      "exitCode": 0
+    },
+    {
+      "label": "Production-builds",
+      "exitCode": 1
+    }
+  ],
+  "cleanup": true,
+  "steps": [
+    {
+      "name": "Prisma contract and generated client",
+      "environmentNames": [
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "PGPORT"
+      ],
+      "adaptations": [
+        "ephemeral PG port",
+        "administrative password for own cluster",
+        "Windows shell PATH"
+      ]
+    },
+    {
+      "name": "Runtime privilege matrix gate",
+      "environmentNames": [
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "PGPASSWORD",
+        "PGPORT"
+      ],
+      "adaptations": [
+        "ephemeral PG port",
+        "administrative password for own cluster",
+        "Windows shell PATH"
+      ]
+    },
+    {
+      "name": "TypeScript and lint",
+      "environmentNames": [
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "PGPORT"
+      ],
+      "adaptations": [
+        "ephemeral PG port",
+        "administrative password for own cluster",
+        "Windows shell PATH"
+      ]
+    },
+    {
+      "name": "Unit and component tests",
+      "environmentNames": [
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "PGPORT"
+      ],
+      "adaptations": [
+        "ephemeral PG port",
+        "administrative password for own cluster",
+        "Windows shell PATH"
+      ]
+    },
+    {
+      "name": "Production builds",
+      "environmentNames": [
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "PGPORT"
+      ],
+      "adaptations": [
+        "ephemeral PG port",
+        "administrative password for own cluster",
+        "Windows shell PATH"
+      ]
+    }
+  ],
+  "version": "postgres (PostgreSQL) 18.1",
+  "port": 55601,
+  "error": "Production-builds failed; see sanitized log",
+  "stopExit": 0
+}
