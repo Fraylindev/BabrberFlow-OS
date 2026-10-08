@@ -1,5 +1,7 @@
 # Flujos de aplicación — Kortek Booking
 
+Estado posterior 2026-10-08: reserva invitada **ACTIVA EN QA** con pareja `b318ca5`; C3 **ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada**. M2 retirada por decisión del propietario. [Cierre, límites y pendientes](../features/RESERVA_INVITADO_C3_CIERRE_QA.md). Los checkpoints inferiores conservan su contexto histórico; producción sigue cerrada.
+
 C2 posterior, 2026-10-07: web local exclusivamente de invitado, portal B2C retirado y respuesta pública sólo `{booking}`; campos de cuenta eliminados coordinadamente de API/web. Validado localmente/en revisión; C3 no ejecutado. [Contrato, evidencia y límites](../features/RESERVA_INVITADO_C2_LOCAL.md). Los checkpoints anteriores se conservan como historia.
 
 Este mapa describe los recorridos ejecutados por el código vigente. Los contratos detallados viven en [`BACKEND_CHANGES.md`](../../BACKEND_CHANGES.md) y el estado de cada módulo en [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).

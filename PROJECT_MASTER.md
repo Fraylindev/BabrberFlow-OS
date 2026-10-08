@@ -1,5 +1,13 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Cierre documental de reserva invitada en QA — 2026-10-08
+
+**C3: ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada.** El propietario declara pruebas manuales satisfactorias en su iPhone sobre `qa.booking.kortek.cloud`, candidato `b318ca5`; no aporta capturas, evidencia automática ni casos concretos. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no están verificados por este cierre. Las reservas C3 permanecen como filas residuales en QA, sin limpieza; la limpieza transaccional queda fuera de alcance por decisión del propietario.
+
+**Reserva de invitado ACTIVA EN QA**, pareja `b318ca591d1ca6681269a6d25e29ca106d824df9`: API imagen `sha256:8ba1b6c8…`, web `dpl_KEKT6X12…`. Identificadores abreviados según el propietario, sin cotejo vivo en este gate. **M2 RETIRADA POR DECISIÓN DEL PROPIETARIO**; C3/P4/P5 de M2 cancelados, historia y Client operativo preservados. **Rollback no ejecutado**; retenidos API `sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261` y web `dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD`. Restaurarlos reexpone B2C y exige autorización separada.
+
+[Registro de aceptación, límites y seis pendientes ordenados por riesgo](docs/features/RESERVA_INVITADO_C3_CIERRE_QA.md). Este estado prevalece sobre checkpoints inferiores fechados de C3 pendiente/detenido o candidato solo local, conservados como historia. Gate exclusivamente documental: un commit y push solo a `origin/ai/reserva-invitado-ci`, sin force; prohibidos `ai/antigravity-qa` y main para evitar desalinear la pareja QA. El SHA documental posterior no cambia el candidato desplegado. Sin acceso/cambios QA, OCI, Vercel, Clerk, bases o producción; sin código/dependencias. Producción sigue cerrada y los pendientes no se ejecutan.
+
 ## Correctivo Dependency and peer audit — 2026-10-07
 
 Gate único sobre `36061fc`, rama temporal `ai/reserva-invitado-ci`. Audit local pnpm 11.18.0: 11 avisos en versiones idénticas a la base, corregidos mediante parches/minor de Next, sharp, multer, proxy-addr y source-map-js; pins exactos autorizados después por el propietario. Audit y peers estrictos exit 0. Tipos/lint y builds API/web pasan; PG18.1 nuevo: 877/0/0 unitarias API, 272/0/1 e2e API; web 158+130 pruebas y browser 21/0/1, exit 0. Clúster propio eliminado. Validado localmente/en revisión; commit/push autorizados solo a la rama temporal, sin merge, workflows, contratos, proveedores, QA desplegada ni producción. CI remoto posterior no verificado. [Informe y evidencia](docs/quality/CORRECTIVO_CI_DEPENDENCY_PEER_AUDIT.md).
@@ -269,6 +277,8 @@ Gobierno y estándares:
 | 6 | Equipo — Entrega B Frontend | **CERRADO / APROBADO** | Aprobación explícita del propietario 2026-09-09; directorio, invitaciones y gestión de accesos sobre los contratos aprobados |
 | 7 | Configuración del negocio / CMS | **CERRADO / APROBADO** | C1–C3 aprobados; proyección pública y mini-sitio activos en el código, sin despliegue productivo |
 | 7.1 | Reserva pública — H5 y fechas | **CERRADO / APROBADO** | Aprobación explícita sobre `8fd7b1ff9f14ad82bde3d3936817941660983b2c` |
+| 7.2 | Reserva de invitado — C3 QA | **ACTIVA EN QA; ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada** | 2026-10-08; pareja `b318ca5`, API `sha256:8ba1b6c8…`, web `dpl_KEKT6X12…`; reservas residuales sin limpieza; [límites y pendientes](docs/features/RESERVA_INVITADO_C3_CIERRE_QA.md) |
+| 7.3 | M2 — Cuenta de cliente final | **RETIRADA POR DECISIÓN DEL PROPIETARIO** | C3/P4/P5 cancelados; historia/datos preservados. Rollback no ejecutado; restaurar artefactos anteriores reexpone B2C |
 | 8 | Analytics modular | **PENDIENTE** | Debe completarse antes de revisar el Resumen |
 | 9 | Resumen / Dashboard | **CONGELADO** | Se revisa al final como agregador |
 

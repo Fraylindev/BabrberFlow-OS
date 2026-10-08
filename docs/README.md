@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## Cierre documental de reserva invitada en QA — 2026-10-08
+
+**C3: ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada.** Pruebas manuales satisfactorias declaradas en iPhone sobre `qa.booking.kortek.cloud`, sin casos enumerados. Reserva invitada activa en QA con pareja `b318ca5`, API `sha256:8ba1b6c8…` y web `dpl_KEKT6X12…`; M2 retirada. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no verificados. Reservas residuales conservadas; limpieza transaccional fuera de alcance por decisión del propietario. Rollback no ejecutado, artefactos anteriores retenidos; restaurarlos reexpone B2C. [Registro vigente y pendientes por riesgo, sin ejecución](features/RESERVA_INVITADO_C3_CIERRE_QA.md). Este cierre sustituye los estados previos de C3 pendiente/detenido conservados debajo como historia. Solo documentación, un commit y push a `ai/reserva-invitado-ci`; prohibidos `ai/antigravity-qa` y main. Producción cerrada; sin consultas ni cambios de proveedores/bases en este gate.
+
 ## Correctivo Dependency and peer audit — 2026-10-07
 
 Gate único sobre `36061fc`, rama temporal `ai/reserva-invitado-ci`. Audit local pnpm 11.18.0: 11 avisos en versiones idénticas a la base, corregidos mediante parches/minor de Next, sharp, multer, proxy-addr y source-map-js; pins exactos autorizados después por el propietario. Audit y peers estrictos exit 0. Tipos/lint y builds API/web pasan; PG18.1 nuevo: 877/0/0 unitarias API, 272/0/1 e2e API; web 158+130 pruebas y browser 21/0/1, exit 0. Clúster propio eliminado. Validado localmente/en revisión; commit/push autorizados solo a la rama temporal, sin merge, workflows, contratos, proveedores, QA desplegada ni producción. CI remoto posterior no verificado. [Informe y evidencia](quality/CORRECTIVO_CI_DEPENDENCY_PEER_AUDIT.md).

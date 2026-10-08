@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Cierre documental de reserva invitada en QA — 2026-10-08
+
+C3 **ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada**: pruebas manuales satisfactorias declaradas en iPhone con `b318ca5`, sin inventar casos. Estado vigente de reserva invitada activa en QA (API `sha256:8ba1b6c8…`, web `dpl_KEKT6X12…`), M2 retirada, reservas residuales conservadas y limpieza transaccional excluida por decisión del propietario. Rollback no ejecutado y pareja anterior retenida, con advertencia de reexposición B2C. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no verificados. [Registro y pendientes por riesgo](docs/features/RESERVA_INVITADO_C3_CIERRE_QA.md). Solo documentación, un commit local y push autorizado exclusivamente a `ai/reserva-invitado-ci`, sin force; sin QA/proveedores/bases/producción, código ni dependencias modificados. Los estados previos fechados conservan su contexto histórico.
+
 ## Correctivo Dependency and peer audit — 2026-10-07
 
 Gate único sobre `36061fc`, rama temporal `ai/reserva-invitado-ci`. Audit local pnpm 11.18.0: 11 avisos en versiones idénticas a la base, corregidos mediante parches/minor de Next, sharp, multer, proxy-addr y source-map-js; pins exactos autorizados después por el propietario. Audit y peers estrictos exit 0. Tipos/lint y builds API/web pasan; PG18.1 nuevo: 877/0/0 unitarias API, 272/0/1 e2e API; web 158+130 pruebas y browser 21/0/1, exit 0. Clúster propio eliminado. Validado localmente/en revisión; commit/push autorizados solo a la rama temporal, sin merge, workflows, contratos, proveedores, QA desplegada ni producción. CI remoto posterior no verificado. [Informe y evidencia](docs/quality/CORRECTIVO_CI_DEPENDENCY_PEER_AUDIT.md).

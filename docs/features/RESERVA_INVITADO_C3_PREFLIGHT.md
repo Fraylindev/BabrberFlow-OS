@@ -1,5 +1,9 @@
 # Reserva invitada — C3 QA: preflight y parada
 
+## Estado posterior — 2026-10-08
+
+C3 **ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada**, con reserva invitada activa en QA en la pareja `b318ca5`. [Cierre documental, límites, residuos, rollback y pendientes](RESERVA_INVITADO_C3_CIERRE_QA.md). El preflight y sus estados inferiores se conservan íntegros como evidencia histórica del 2026-10-07; no describen el estado vigente ni acreditan las pruebas manuales declaradas después. No se repitió el preflight en el cierre.
+
 2026-10-07. C3 autorizado para validación integrada en QA, sin publicación. **PREFLIGHT EJECUTADO; VALIDACIÓN FUNCIONAL INCOMPLETA / DETENIDA POR VERSIONES.** No aprobado ni cerrado. Se detienen pruebas de escritura al constatar que hace falta un despliegue, expresamente prohibido. Ningún cambio de aplicación implementado en C3.
 
 ## Evidencia actual
