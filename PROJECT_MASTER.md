@@ -1,5 +1,11 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
+
+**CORRECTIVO CI / VALIDADO LOCALMENTE / EN REVISIÓN.** Error aportado clasificado **(a)**: clon migrado como runner conserva ambas funciones INVOKER con propietario `kortek_ci_runner`; la guardia exige `kortek_migrator`. Migración 28/SQL intactos. Worktree `9f04dba` reproduce un fallo histórico diferente por CustomerOperation no revisada. Workflow corregido solo en preparación de base independiente y migración como migrator; gate completo/Bash pasan en PG18.1. PG16 no disponible aquí; CI remoto posterior pendiente. [Informe, comandos/resultados y límites](docs/quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md). Un commit/push autorizado solo a `ai/reserva-invitado-ci`; ningún gate de producto posterior abierto.
+
+Lectura autorizada posterior confirma alias `qa.booking.kortek.cloud` en **`dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe`, READY, `b318ca591d1ca6681269a6d25e29ca106d824df9`**, distinto de `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`. Sustituye solo el identificador web de las observaciones anteriores conservadas debajo. No prueba variables, login, funcionalidad o estado API; sin assign_alias/redeploy, QA funcional, OCI/SSH/Clerk/bases reales/producción.
+
 ## Clave Clerk rotada en API QA — 2026-10-08
 
 **CLERK_SECRET_KEY ACTUALIZADA EN API QA.** Comparación de hashes con el archivo local ignorado identifica solo la secret key rotada; publishable key intacta. Copia previa protegida root:root 0600 retenida, editor adaptado autorizado y ensayado (8 positivos/8 negativos), valor por stdin seguro y bytes ajenos conservados. Reiniciado solo API: active/running, NRestarts=0, release/imagen b318ca5 exactos; ocho GET/CORS pasan, 0 HTTP 5xx y 0 coincidencias de errores Clerk en la ventana observada. Worker sin variables Clerk, sin cambios ni reinicio. Rollback no ejecutado; restaurar el entorno previo devolvería la clave vieja revocada.

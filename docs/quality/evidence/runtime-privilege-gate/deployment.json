@@ -1,0 +1,15 @@
+{
+  "observedDate": "2026-10-08",
+  "methods": ["get_alias", "get_deployment"],
+  "alias": "qa.booking.kortek.cloud",
+  "deploymentId": "dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe",
+  "state": "READY",
+  "commit": "b318ca591d1ca6681269a6d25e29ca106d824df9",
+  "ref": "ai/antigravity-qa",
+  "source": "redeploy",
+  "deploymentHost": "kortek-booking-ot41fsaea-fraylindev.vercel.app",
+  "previousDeploymentId": "dpl_KEKT6X12exUWoReFRPtxxTXGuo9K",
+  "isDifferent": true,
+  "mutations": false,
+  "environmentOrLoginVerified": false
+}

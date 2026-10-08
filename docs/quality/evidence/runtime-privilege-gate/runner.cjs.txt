@@ -1,0 +1,78 @@
+const fs = require('node:fs'), path = require('node:path'), net = require('node:net');
+const {spawnSync} = require('node:child_process');
+const {randomUUID,randomBytes,createHash} = require('node:crypto');
+const root=process.cwd(), bin='C:/Program Files/PostgreSQL/18/bin';
+const work=path.join(root,'.tmp/runtime-baseline-9f04dba');
+const id=randomUUID(), own=path.join(root,'.tmp',`runtime-gate-${id}`), data=path.join(own,'data');
+const output=path.join(root,'docs/quality/evidence/runtime-privilege-gate');
+const preload=path.join(root,'apps/api/test/guest-postgres-no-dotenv.cjs');
+const prisma=require.resolve('prisma/build/index.js',{paths:[path.join(root,'apps/api')]});
+const secrets={admin:randomBytes(32).toString('hex'),runner:randomBytes(32).toString('hex'),migrator:randomBytes(32).toString('hex'),runtime:randomBytes(32).toString('hex')};
+const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>!/DATABASE|POSTGRES|^PG|CLERK|JWT|CLOUDINARY|RESEND|EMAIL|NOTIFICATION|TOKEN|SECRET|PASSWORD|NODE_OPTIONS/.test(k)));
+const report={id,bind:'127.0.0.1',commands:[],scenarios:[],cleanup:false,providersContacted:false};
+fs.mkdirSync(own);fs.mkdirSync(output,{recursive:true});
+let port,started=false;
+function clean(t){for(const s of Object.values(secrets))t=t.replaceAll(s,'[omitted]');return t.replace(/^::add-mask::.*$/gm,'::add-mask::[omitted]').replace(/postgres(?:ql)?:\/\/[^\s"']+/gi,'[local URL omitted]');}
+function run(cmd,args,label,opts={}){
+ const r=spawnSync(cmd,args,{cwd:root,env,encoding:'utf8',windowsHide:true,timeout:120000,maxBuffer:8e6,...opts});
+ const log=clean((r.stdout||'')+(r.stderr||'')+(r.error?.message||''));
+ fs.writeFileSync(path.join(output,label+'.log'),log);
+ report.commands.push({label,exitCode:r.status});console.log(label+': '+r.status);
+ if(r.status!==0&&!opts.allowed)throw Error(label+' failed');return {exitCode:r.status,log};
+}
+function sql(label,user,db,text,source,allowed=false){return run(path.join(bin,'psql.exe'),['-X','-h','127.0.0.1','-p',String(port),'-U',user,'-d',db,'-v','ON_ERROR_STOP=1',...(source?['-f',source]:['-At'])],label,{input:text,allowed,env:{...env,PGPASSWORD:secrets[user==='postgres'?'admin':user==='kortek_ci_runner'?'runner':user==='kortek_migrator'?'migrator':'runtime']}});}
+const census=`SELECT p.proname,r.rolname,p.prosecdef,p.prorettype::regtype,p.proconfig FROM pg_proc p JOIN pg_roles r ON r.oid=p.proowner WHERE p.oid IN ('public.customer_access_relink()'::regprocedure,'public.customer_booking_revision()'::regprocedure) ORDER BY p.proname;`;
+function migrate(base,db,user,label){run(process.execPath,['--require',preload,prisma,'migrate','deploy','--schema',path.join(base,'apps/api/prisma/schema.prisma')],label,{cwd:path.join(base,'apps/api'),env:{...env,NODE_OPTIONS:`--require="${preload.replaceAll('\\','/')}"`,DATABASE_URL:`postgresql://${user}:${secrets[user==='kortek_ci_runner'?'runner':'migrator']}@127.0.0.1:${port}/${db}?schema=public`}});}
+async function main(){
+ report.version=run(path.join(bin,'postgres.exe'),['--version'],'version').log.trim();
+ const pw=path.join(own,'password');fs.writeFileSync(pw,secrets.admin);
+ try{run(path.join(bin,'initdb.exe'),['-D',data,'-U','postgres','--auth-local=trust','--auth-host=scram-sha-256','--encoding=UTF8','--locale=C',`--pwfile=${pw}`],'initdb');}finally{fs.unlinkSync(pw);}
+ const server=net.createServer();await new Promise(res=>server.listen(0,'127.0.0.1',res));port=server.address().port;await new Promise(res=>server.close(res));report.port=port;
+ run(path.join(bin,'pg_ctl.exe'),['-D',data,'-l',path.join(own,'server.log'),'-o',`-h 127.0.0.1 -p ${port}`,'-w','start'],'start',{stdio:'ignore'});started=true;
+ sql('bootstrap','postgres','postgres',`REVOKE CONNECT ON DATABASE postgres FROM PUBLIC; CREATE ROLE kortek_ci_runner LOGIN PASSWORD '${secrets.runner}' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION; CREATE DATABASE kortek_ci_test OWNER kortek_ci_runner;`);
+ for(const [label,base] of [['candidate',root],['baseline',work]]){
+  if(label==='baseline'){sql('drop-candidate-clone','postgres','postgres','DROP DATABASE kortek_ci_grants_test;');sql('drop-candidate-source','postgres','postgres','DROP DATABASE kortek_ci_test; DROP ROLE kortek_runtime; DROP ROLE kortek_migrator;');sql('baseline-create','postgres','postgres','CREATE DATABASE kortek_ci_test OWNER kortek_ci_runner;');}
+  migrate(base,'kortek_ci_test','kortek_ci_runner',label+'-migrate');
+  sql(label+'-source-census','postgres','kortek_ci_test',census);
+  sql(label+'-clone','postgres','postgres','CREATE DATABASE kortek_ci_grants_test TEMPLATE kortek_ci_test OWNER postgres;');
+  const provision=sql(label+'-provision','postgres','kortek_ci_grants_test',undefined,path.join(base,'apps/api/ops/provision-database-roles.sql'),true);
+  const ownership=sql(label+'-clone-census','postgres','kortek_ci_grants_test',census).log.trim();
+  report.scenarios.push({label,provisionExit:provision.exitCode,ownership});
+  if(label==='candidate'){
+   if(provision.exitCode!==3||!provision.log.includes('Customer trigger functions require migrator ownership and SECURITY INVOKER'))throw Error('Expected original guard failure missing');
+  }else{
+   if(provision.exitCode!==0)throw Error('Baseline provision failed unexpectedly');
+   sql('baseline-runtime-password','postgres','kortek_ci_grants_test',`ALTER ROLE kortek_runtime PASSWORD '${secrets.runtime}';`);
+   const gate=sql('baseline-runtime-gate','kortek_runtime','kortek_ci_grants_test',undefined,path.join(base,'apps/api/ops/verify-runtime-role.sql'),true);
+   report.scenarios.at(-1).runtimeGateExit=gate.exitCode;
+  }
+ }
+ // Only local experiment for the proposed CI preparation; no tracked SQL edits.
+ sql('experiment-drop-clone','postgres','postgres','DROP DATABASE kortek_ci_grants_test;');
+ sql('experiment-create','postgres','postgres',`ALTER ROLE kortek_migrator PASSWORD '${secrets.migrator}'; CREATE DATABASE kortek_ci_grants_test OWNER kortek_migrator;`);
+ migrate(root,'kortek_ci_grants_test','kortek_migrator','experiment-migrate');
+ sql('experiment-census-before','postgres','kortek_ci_grants_test',census);
+ sql('experiment-provision','postgres','kortek_ci_grants_test',undefined,path.join(root,'apps/api/ops/provision-database-roles.sql'));
+ sql('experiment-runtime-password','postgres','kortek_ci_grants_test',`ALTER ROLE kortek_runtime PASSWORD '${secrets.runtime}';`);
+ sql('experiment-runtime-gate','kortek_runtime','kortek_ci_grants_test',undefined,path.join(root,'apps/api/ops/verify-runtime-role.sql'));
+ report.experimentOwnership=sql('experiment-census-after','postgres','kortek_ci_grants_test',census).log.trim();
+ report.runnerOwnership=sql('experiment-runner-unchanged','postgres','kortek_ci_test',census).log.trim();
+ report.ledger=sql('experiment-ledger','postgres','kortek_ci_grants_test',`SELECT count(*) FILTER (WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL), count(*) FILTER (WHERE finished_at IS NULL AND rolled_back_at IS NULL) FROM public."_prisma_migrations";`).log.trim();
+ sql('workflow-reset','postgres','postgres','DROP DATABASE kortek_ci_grants_test; DROP DATABASE kortek_ci_test; DROP ROLE kortek_runtime; DROP ROLE kortek_migrator; CREATE DATABASE kortek_ci_test OWNER kortek_ci_runner;');
+ migrate(root,'kortek_ci_test','kortek_ci_runner','workflow-runner-migrate');
+ const workflow=fs.readFileSync(path.join(root,'.github/workflows/quality.yml'),'utf8');
+ const body=workflow.split('      - name: Runtime privilege matrix gate')[1].split('        run: |')[1].split('      - name: TypeScript and lint')[0].split(/\r?\n/).filter(l=>l.startsWith('          ')).map(l=>l.slice(10)).join('\n');
+ const shell=path.join(own,'workflow.sh');
+ fs.writeFileSync(shell,'set -euo pipefail\nexport PATH="/c/Program Files/PostgreSQL/18/bin:$PATH"\n'+body.replaceAll(':5432/',`:${port}/`)+'\n');
+ report.workflowAdaptation='Only DATABASE_URL port 5432 replaced by ephemeral local port; PGPORT for psql; no dotenv preload. Original commands, roles and assertions.';
+ run('C:/Program Files/Git/bin/bash.exe',['--noprofile','--norc',shell],'workflow-exact',{env:{...env,PGPASSWORD:secrets.admin,PGPORT:String(port),NODE_OPTIONS:`--require="${preload.replaceAll('\\','/')}"`}});
+ report.workflowOwnership=sql('workflow-census','postgres','kortek_ci_grants_test',census).log.trim();
+ report.workflowRunnerOwnership=sql('workflow-runner-unchanged','postgres','kortek_ci_test',census).log.trim();
+ if(report.workflowRunnerOwnership!==report.runnerOwnership)throw Error('Runner functions changed');
+ report.hashes=Object.fromEntries(['.github/workflows/quality.yml','apps/api/ops/provision-database-roles.sql','apps/api/ops/apply-runtime-grants.sql','apps/api/ops/customer-stage-one-runtime-grants.sql','apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql'].map(f=>[f,{candidate:createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex'),baseline:fs.existsSync(path.join(work,f))?createHash('sha256').update(fs.readFileSync(path.join(work,f))).digest('hex'):null}]));
+ report.hashNote='Raw worktree hashes can differ due to CRLF/LF; compare Git blobs for historical SQL identity.';
+}
+main().catch(e=>{report.error=e.message;process.exitCode=1;console.error(e.message);}).finally(()=>{
+ if(started){const r=spawnSync(path.join(bin,'pg_ctl.exe'),['-D',data,'-m','fast','-w','stop'],{windowsHide:true,encoding:'utf8',timeout:60000});report.stopExit=r.status;if(r.status===0){const resolved=path.resolve(own);if(path.dirname(resolved)!==path.resolve(root,'.tmp')||!path.basename(resolved).startsWith('runtime-gate-'))throw Error('Cleanup boundary');fs.rmSync(resolved,{recursive:true});report.cleanup=!fs.existsSync(resolved);}}
+ fs.writeFileSync(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
+});

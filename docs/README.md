@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
+
+[Informe, reproducción y límites](quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md): fallo aportado **(a), preparación CI**; las dos funciones son INVOKER pero quedan del runner por el clon. Migración 28 intacta. `9f04dba` también falla, por otra causa: CustomerOperation ausente de la matriz histórica. Correctivo solo del workflow: base independiente migrada como `kortek_migrator`; PG18.1 pasa guardia/gate y bloque Bash completo. PG16 no disponible localmente; CI remoto pendiente. Lectura autorizada confirma ahora alias web en **dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe, READY, b318ca5**, distinto de dpl_KEKT6X12; sustituye el identificador anterior como estado actual, sin verificar variables/login. Commit/push solo `ai/reserva-invitado-ci`, implementado/en revisión; sin QA, bases reales, cambios de proveedores ni producción.
+
 ## Clave Clerk rotada en API QA — 2026-10-08
 
 [Registro de actualización, hashes y verificaciones](quality/CLERK_ROTACION_API_QA_2026_10_08.md): solo `CLERK_SECRET_KEY` sustituida, editor adaptado autorizado/ensayado, copia protegida y reinicio exclusivo del API. Release/imagen b318ca5 preservados, GET/CORS aprobados, cero 5xx y coincidencias de errores Clerk en la ventana observada; worker intacto. Alias QA sigue en `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`, READY/b318ca5; nuevo deployment de rollback no confirmado, sin reasignación. Sin sesión real probada ni cambios de producción/bases/Clerk/Vercel. Commit/push documental solo a `ai/reserva-invitado-ci`.

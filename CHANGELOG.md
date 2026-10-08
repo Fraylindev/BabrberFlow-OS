@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
+
+Error de b318ca5 clasificado **(a), preparación CI**: las funciones trigger INVOKER conservaban ownership del runner en el clon; la guardia exige migrator. Solo quality.yml prepara ahora base independiente y aplica migraciones como `kortek_migrator`, sin tocar SQL/migraciones/producto ni relajar aserciones. PG18.1 reproduce el fallo y pasa el bloque Bash corregido/gate íntegro; `9f04dba` falla por otra causa histórica (CustomerOperation no revisada). PG16 no disponible aquí; CI remoto pendiente. Lectura Vercel confirma alias en **dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe, READY, b318ca5**, distinto de dpl_KEKT6X12; sin reasignación/redeploy ni variables/login verificados. [Informe y evidencia](docs/quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md). Implementado/en revisión; un commit/push solo `ai/reserva-invitado-ci`, sin QA, OCI/SSH/Clerk/bases reales ni producción.
+
 ## Clave Clerk rotada en API QA — 2026-10-08
 
 Actualizada únicamente `CLERK_SECRET_KEY` desde archivo local ignorado mediante stdin SSH seguro; publishable key intacta, copia previa root:root 0600 y conservación de bytes ajenos. Editor adaptado autorizado y ensayado, 8 positivos/8 negativos. Reiniciado solo API QA, release/imagen b318ca5 intactos; ocho GET/CORS pasan, cero 5xx y coincidencias de errores Clerk en la ventana observada. Worker sin variables Clerk, intacto. Rollback no ejecutado. Alias web sigue en `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`, READY/b318ca5; nuevo deployment de rollback no confirmado, sin assign_alias. [Informe, hashes y límites](docs/quality/CLERK_ROTACION_API_QA_2026_10_08.md). Sin código/dependencias, bases ni producción; sin valores secretos versionados. Único commit documental/push solo a `ai/reserva-invitado-ci`.

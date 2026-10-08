@@ -1,0 +1,2 @@
+customer_access_relink|kortek_migrator|f|trigger|{"search_path=pg_catalog, public, pg_temp"}
+customer_booking_revision|kortek_migrator|f|trigger|{"search_path=pg_catalog, public, pg_temp"}

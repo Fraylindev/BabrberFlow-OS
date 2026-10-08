@@ -1,0 +1,3 @@
+BEGIN
+psql:C:/Users/Fraylin/Desktop/Kortek-Booking/.tmp/runtime-baseline-9f04dba/apps/api/ops/verify-runtime-role.sql:122: ERROR:  Unreviewed public table: CustomerOperation
+CONTEXT:  PL/pgSQL function inline_code_block line 83 at RAISE
