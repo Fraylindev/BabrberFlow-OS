@@ -1,0 +1,808 @@
+{
+  "node": "v22.22.3",
+  "platform": "win32",
+  "globalKeepAlive": true,
+  "superagentDefaultAgent": false,
+  "records": [
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 0,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 1,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 2,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 3,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 4,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 5,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 6,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 7,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 8,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 35,
+      "round": 9,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 0,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 1,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 2,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 3,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 4,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 5,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 6,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 7,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 8,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 35,
+      "round": 9,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 0,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 1,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 2,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 3,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 4,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 5,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 6,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 7,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 8,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 35,
+      "round": 9,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 0,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 1,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 2,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 3,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 4,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 5,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 6,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 7,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 8,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 35,
+      "round": 9,
+      "received": 35,
+      "completed": 35,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 0,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 1,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 2,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 3,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 4,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 5,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 6,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 7,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 8,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": false,
+      "size": 80,
+      "round": 9,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 0,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 1,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 2,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 3,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 4,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 5,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 6,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 7,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 8,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": false,
+      "size": 80,
+      "round": 9,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 0,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 1,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 2,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 3,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 4,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 5,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 6,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 7,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 8,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": false,
+      "keepAlive": true,
+      "size": 80,
+      "round": 9,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 2,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 0,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 1,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 2,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 3,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 4,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 5,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 6,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 7,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 8,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    },
+    {
+      "stable": true,
+      "keepAlive": true,
+      "size": 80,
+      "round": 9,
+      "received": 80,
+      "completed": 80,
+      "closingWithPending": 0,
+      "failures": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+Los archivos de este cluster ser�n de propiedad del usuario �[operator]�.
+Este usuario tambi�n debe ser quien ejecute el proceso servidor.
+
+El cluster ser� inicializado con configuraci�n regional �C�.
+La configuraci�n de b�squeda en texto ha sido definida a �english�.
+
+Las sumas de verificaci�n en p�ginas de datos han sido activadas.
+
+creando el directorio [workspace]/.tmp/ci-synthetic-pg-ae6ce45e-e82f-498b-8eaa-9b392f810309/data ... hecho
+creando subdirectorios ... hecho
+seleccionando implementaci�n de memoria compartida din�mica ... windows
+seleccionando el valor para �max_connections� ... 100
+seleccionando el valor para �shared_buffers� ... 128MB
+seleccionando el huso horario por omisi�n ... GMT
+creando archivos de configuraci�n ... hecho
+ejecutando script de inicio (bootstrap) ... hecho
+realizando inicializaci�n post-bootstrap ... hecho
+sincronizando los datos a disco ... hecho
+
+Completado. Ahora puede iniciar el servidor de bases de datos usando:
+
+    ^"C^:^\Program^ Files^\PostgreSQL^\18^\bin^\pg^_ctl^" -D ^"C^:^\Users^\[operator]^\Desktop^\Kortek^-Booking^\^.tmp^\ci^-synthetic^-pg^-ae6ce45e^-e82f^-498b^-8eaa^-9b392f810309^\data^" -l archivo_de_registro start
+

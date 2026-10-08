@@ -137,4 +137,7 @@ jobs:
           unset JWT_SECRET
 
       - name: Browser smoke tests
-        run: pnpm --filter web test:browser
+        run: |
+          # Both projects select the branded Chrome channel, not Chromium.
+          pnpm --filter web exec playwright install --with-deps chrome
+          pnpm --filter web test:browser

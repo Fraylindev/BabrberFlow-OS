@@ -1,0 +1,1 @@
+{"injected":true,"records":[{"drain":false,"injectedError":"ECONNRESET","bucketCountsAfterCleanupAndDrain":[79],"nextStatus":429},{"drain":true,"injectedError":"ECONNRESET","bucketCountsAfterCleanupAndDrain":[],"nextStatus":200}]}

@@ -1,6 +1,7 @@
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { PrismaClient, UserRole } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
+import { Agent } from 'node:http';
 import { performance } from 'node:perf_hooks';
 import { ClerkSessionVerifierService } from '../src/auth/clerk/clerk-session-verifier.service';
 import { MediaCloudinary } from '../src/media/media-cloudinary';
@@ -24,6 +25,7 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
   let app: INestApplication;
   let second: INestApplication;
   let db: PrismaClient;
+  const httpAgent = new Agent({ keepAlive: false, maxSockets: Infinity });
   let queryCount = 0;
   let beforePublicClientCreate: (() => Promise<void>) | null = null;
   const sessions = new Set<string>();
@@ -54,7 +56,7 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
   let previousMediaSigningSecret: string | undefined;
 
   async function newApp(measured = false) {
-    return createE2eApp((b) => {
+    const created = await createE2eApp((b) => {
       b.overrideProvider(ClerkSessionVerifierService)
         .useValue(verifier)
         .overrideProvider(MediaCloudinary)
@@ -82,6 +84,9 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
         });
       return b;
     });
+    // Bind once per instance so no request owns Supertest's automatic close.
+    await created.listen(0, '127.0.0.1');
+    return created;
   }
   beforeAll(async () => {
     // Firma sintética de esta suite aislada; MediaCloudinary permanece sustituido.
@@ -96,14 +101,17 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
     second = await newApp();
   });
   afterAll(async () => {
+    httpAgent.destroy();
     try {
-      if (second) await second.close();
-      if (app) await app.close();
-      await db.$disconnect();
+      await Promise.all([second, app].filter(Boolean).map((a) => a.close()));
     } finally {
-      if (previousMediaSigningSecret === undefined)
-        delete process.env.CLOUDINARY_API_SECRET;
-      else process.env.CLOUDINARY_API_SECRET = previousMediaSigningSecret;
+      try {
+        if (db) await db.$disconnect();
+      } finally {
+        if (previousMediaSigningSecret === undefined)
+          delete process.env.CLOUDINARY_API_SECRET;
+        else process.env.CLOUDINARY_API_SECRET = previousMediaSigningSecret;
+      }
     }
   });
   async function organization(
@@ -174,6 +182,14 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
     otherProfessionalId = b.professional.id;
     cloud.fetchVariant.mockClear();
   });
+  afterEach(async () => {
+    try {
+      beforePublicClientCreate = null;
+      jest.restoreAllMocks();
+    } finally {
+      await db.securityRateBucket.deleteMany();
+    }
+  });
   function days(
     target = app,
     overrides: Record<string, string | undefined> = {},
@@ -181,6 +197,7 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
   ) {
     return requestApp(target)
       .get(`/public/${slug}/availability-days`)
+      .agent(httpAgent)
       .query({ serviceId, from, to, ...overrides });
   }
   async function daily(
@@ -693,11 +710,17 @@ describe('M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso', () => {
   });
 
   it('35 solicitudes concurrentes a dos instancias: exactamente 30 admitidas y cinco 429', async () => {
-    const results = await Promise.all(
+    // Wait for all sibling writes before propagating a transport error so
+    // afterEach/beforeEach cannot race with the previous burst.
+    const settled = await Promise.allSettled(
       Array.from({ length: 35 }, (_, i) =>
         days(i % 2 ? app : second, { serviceId: 'invalid' }),
       ),
     );
+    const results = settled.map((result) => {
+      if (result.status === 'rejected') throw result.reason;
+      return result.value;
+    });
     expect(results.filter((r) => r.status === 400)).toHaveLength(30);
     expect(results.filter((r) => r.status === 429)).toHaveLength(5);
     expect((await db.securityRateBucket.findMany())[0].count).toBe(35);

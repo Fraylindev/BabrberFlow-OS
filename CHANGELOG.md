@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Concurrencia E2E y preparación de Chrome en CI — 2026-10-08
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Supertest cerraba el servidor iniciado por la primera solicitud mientras otras seguían pendientes; causa probable de los resets Linux, sin reproducción nativa en Windows. La contaminación tras Promise.all se demuestra con reset inyectado y PG18.1. Las dos suites mantienen puertos por instancia, agente explícito y esperan todo el lote antes de limpiar; cifras 35/80 y aserciones intactas. Cinco repeticiones: 125/0/0; E2E completo: 272/0/1; tipos/lint y Chrome dry-run pasan. Browser smoke instala explícitamente Chrome con dependencias. Linux/runner/PG16 pendientes del CI del PR 4; sin QA ni cambios de producto, migraciones, matriz, flags o dependencias. Un commit/push solo a ai/reserva-invitado-ci. [Informe, certeza y evidencia](docs/quality/CI_CONCURRENCIA_HTTP.md).
+
 ## Entorno sintético del CI y lectura API — 2026-10-08
 
 Añadida únicamente JWT_SECRET efímera/enmascarada a los pasos unitarias/componentes e integridad/E2E de quality.yml. PG18.1 y checkout limpio sin dotenv/env del arnés anterior: Prisma/runtime/tipos/lint/builds originales pasan; API unitarias 836/0/41, web 158+130, API E2E 272/0/1 y browser 21/0/1. No faltó otra variable ni se cambiaron omisiones/aserciones. PG16/runner GitHub no reproducibles aquí. Lectura mínima autorizada confirma API active/PID 1523015/NRestarts 0/imagen 8ba1b6c8…/release b318ca5; sin cambios remotos. [Inventario, evidencia y límites](docs/quality/CI_ENTORNO_SINTETICO.md). Implementado/en revisión; un commit/push solo a rama temporal, PR nuevo pendiente; producto, contratos, migraciones, SQL, flags y dependencias intactos.

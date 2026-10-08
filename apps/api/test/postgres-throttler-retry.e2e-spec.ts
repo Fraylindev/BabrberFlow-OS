@@ -1,4 +1,4 @@
-import type { Server } from 'node:http';
+import { Agent, type Server } from 'node:http';
 import { createHmac } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
@@ -23,12 +23,15 @@ describe('Retry-After: real PostgreSQL and HTTP with two independent clients', (
   const secret = 'synthetic-retry-e2e-storage-secret';
   const clients = [new PrismaClient(), new PrismaClient()];
   const apps: INestApplication[] = [];
+  const httpAgent = new Agent({ keepAlive: false, maxSockets: Infinity });
   const digest = (key: string) =>
     createHmac('sha256', secret).update(`default:${key}`).digest('hex');
   const storage = (db: unknown) =>
     new PostgresThrottlerStorage({ db } as PrismaService, secret);
   const hit = (index = 0) =>
-    request(apps[index].getHttpServer() as Server).get('/retry-fixture');
+    request(apps[index].getHttpServer() as Server)
+      .get('/retry-fixture')
+      .agent(httpAgent);
   const assertHeader = (header: string) => {
     expect(header).toMatch(/^\d+$/);
     expect(Number(header)).toBeGreaterThanOrEqual(1);
@@ -51,17 +54,28 @@ describe('Retry-After: real PostgreSQL and HTTP with two independent clients', (
       const app = module.createNestApplication();
       await app.init();
       apps.push(app);
+      // One allocated port per instance, held until afterAll. Supertest must not
+      // close a server on the first response while other requests are in flight.
+      await app.listen(0, '127.0.0.1');
     }
   });
   beforeEach(async () => {
     await clients[0].securityRateBucket.deleteMany();
   });
-  afterEach(() => {
-    jest.restoreAllMocks();
+  afterEach(async () => {
+    try {
+      jest.restoreAllMocks();
+    } finally {
+      await clients[0].securityRateBucket.deleteMany();
+    }
   });
   afterAll(async () => {
-    for (const app of apps) await app.close();
-    await Promise.all(clients.map((db) => db.$disconnect()));
+    httpAgent.destroy();
+    try {
+      await Promise.all(apps.map((app) => app.close()));
+    } finally {
+      await Promise.all(clients.map((db) => db.$disconnect()));
+    }
   });
 
   it('new block is 60 seconds and subsequent HTTP headers stay within 1..60', async () => {
@@ -78,9 +92,15 @@ describe('Retry-After: real PostgreSQL and HTTP with two independent clients', (
   });
 
   it('80 concurrent HTTP requests share exactly 30 successes and 50 bounded blocks', async () => {
-    const responses = await Promise.all(
+    // Drain every request even on a transport failure, before hooks clear the
+    // shared budget. Promise.all rejects while sibling writes can still run.
+    const settled = await Promise.allSettled(
       Array.from({ length: 80 }, (_, i) => hit(i % 2)),
     );
+    const responses = settled.map((result) => {
+      if (result.status === 'rejected') throw result.reason;
+      return result.value;
+    });
     expect(responses.filter((r) => r.status === 200)).toHaveLength(30);
     const blocked = responses.filter((r) => r.status === 429);
     expect(blocked).toHaveLength(50);

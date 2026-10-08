@@ -1,0 +1,95 @@
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "kortek_ci_test", schema "public" at "127.0.0.1:63816"
+
+28 migrations found in prisma/migrations
+
+Applying migration `20260719162646_initial_schema`
+Applying migration `20260720044928_add_invoice_model`
+Applying migration `20260722030552_link_professional_user`
+Applying migration `20260722042926_add_customer_role`
+Applying migration `20260723212248_microsite_and_indexes`
+Applying migration `20260724023058_global_identity_membership`
+Applying migration `20260725215619_service_client_is_active`
+Applying migration `20260727010227_audit_log_user_id`
+Applying migration `20260811180000_booking_schedule_exclusion`
+Applying migration `20260812010000_professionals_backend_a1`
+Applying migration `20260813193000_professional_individual_availability_a2`
+Applying migration `20260813200000_professional_availability_tenant_fk`
+Applying migration `20260814190000_add_user_clerk_link_a0_1`
+Applying migration `20260815120000_password_nullable`
+Applying migration `20260820220000_audit_log_pre_tenant_security_events`
+Applying migration `20260821220000_team_invitations_a0_4`
+Applying migration `20260822150000_client_user_b2c_link_a0_6_a`
+Applying migration `20260825220000_facturacion_a_internal_invoices`
+Applying migration `20260826210000_facturacion_a_completion_service_price_guards`
+Applying migration `20260909120000_restore_invoice_integrity_checks`
+Applying migration `20260912120000_cms_editorial`
+Applying migration `20260914120000_booking_email_outbox`
+Applying migration `20260914120100_email_channel_control`
+Applying migration `20260915120000_email_template_version`
+Applying migration `20260923100000_media_promotions`
+Applying migration `20260925010000_security_rate_bucket`
+Applying migration `20260927170000_business_schedule`
+Applying migration `20261003120000_customer_stage_one`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260719162646_initial_schema/
+    └─ migration.sql
+  └─ 20260720044928_add_invoice_model/
+    └─ migration.sql
+  └─ 20260722030552_link_professional_user/
+    └─ migration.sql
+  └─ 20260722042926_add_customer_role/
+    └─ migration.sql
+  └─ 20260723212248_microsite_and_indexes/
+    └─ migration.sql
+  └─ 20260724023058_global_identity_membership/
+    └─ migration.sql
+  └─ 20260725215619_service_client_is_active/
+    └─ migration.sql
+  └─ 20260727010227_audit_log_user_id/
+    └─ migration.sql
+  └─ 20260811180000_booking_schedule_exclusion/
+    └─ migration.sql
+  └─ 20260812010000_professionals_backend_a1/
+    └─ migration.sql
+  └─ 20260813193000_professional_individual_availability_a2/
+    └─ migration.sql
+  └─ 20260813200000_professional_availability_tenant_fk/
+    └─ migration.sql
+  └─ 20260814190000_add_user_clerk_link_a0_1/
+    └─ migration.sql
+  └─ 20260815120000_password_nullable/
+    └─ migration.sql
+  └─ 20260820220000_audit_log_pre_tenant_security_events/
+    └─ migration.sql
+  └─ 20260821220000_team_invitations_a0_4/
+    └─ migration.sql
+  └─ 20260822150000_client_user_b2c_link_a0_6_a/
+    └─ migration.sql
+  └─ 20260825220000_facturacion_a_internal_invoices/
+    └─ migration.sql
+  └─ 20260826210000_facturacion_a_completion_service_price_guards/
+    └─ migration.sql
+  └─ 20260909120000_restore_invoice_integrity_checks/
+    └─ migration.sql
+  └─ 20260912120000_cms_editorial/
+    └─ migration.sql
+  └─ 20260914120000_booking_email_outbox/
+    └─ migration.sql
+  └─ 20260914120100_email_channel_control/
+    └─ migration.sql
+  └─ 20260915120000_email_template_version/
+    └─ migration.sql
+  └─ 20260923100000_media_promotions/
+    └─ migration.sql
+  └─ 20260925010000_security_rate_bucket/
+    └─ migration.sql
+  └─ 20260927170000_business_schedule/
+    └─ migration.sql
+  └─ 20261003120000_customer_stage_one/
+    └─ migration.sql
+      
+All migrations have been successfully applied.

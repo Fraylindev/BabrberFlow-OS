@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Concurrencia E2E y preparación de Chrome en CI — 2026-10-08
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Supertest cerraba el servidor iniciado por la primera solicitud mientras otras seguían pendientes; causa probable de los resets Linux, sin reproducción nativa en Windows. La contaminación tras Promise.all se demuestra con reset inyectado y PG18.1. Las dos suites mantienen puertos por instancia, agente explícito y esperan todo el lote antes de limpiar; cifras 35/80 y aserciones intactas. Cinco repeticiones: 125/0/0; E2E completo: 272/0/1; tipos/lint y Chrome dry-run pasan. Browser smoke instala explícitamente Chrome con dependencias. Linux/runner/PG16 pendientes del CI del PR 4; sin QA ni cambios de producto, migraciones, matriz, flags o dependencias. Un commit/push solo a ai/reserva-invitado-ci. [Informe, certeza y evidencia](docs/quality/CI_CONCURRENCIA_HTTP.md).
+
 ## Entorno sintético del CI y lectura API — 2026-10-08
 
 **CORRECTIVO CI / VALIDADO LOCALMENTE / EN REVISIÓN.** Quality #56 fallaba por JWT_SECRET ausente al cargar autenticación API. Solo quality.yml genera/enmascara claves efímeras en los dos pasos que la necesitan; no faltó otra variable. Checkout sin dotenv ni env del arnés anterior: PG18.1, Prisma/runtime/tipos/lint y builds originales pasan; unitarias API 836/0/41, web 158+130, E2E API 272/0/1, browser 21/0/1. Omisiones preexistentes, sin cambiar flags/aserciones. PG16 y runner GitHub no reproducibles aquí; ejecución del PR nuevo pendiente.
