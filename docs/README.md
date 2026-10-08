@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## Correctivo Retry-After, CI y evidencia — 2026-10-07
+
+Gate único local sobre base `58f536f`: restante de bloqueo/expiración calculado en el mismo upsert y reloj PostgreSQL; 30/min, bloqueo 60 s, fail-closed y HMAC preservados. Caso original intacto; 20/20 clústeres fríos pasan con header 60. Solo dos separadores Jest retirados de quality.yml y una regla whitespace para evidencia .txt, con 40 hashes existentes idénticos. Unitarias API 877/0/0, e2e 272/0/1 y browser 21/0/1, exit 0; implementado/en revisión. Resultado final de suites y P4b en [informe del correctivo](quality/CORRECTIVO_RETRY_AFTER_CI_WHITESPACE.md). Tres commits locales separados, sin push/proveedores/QA/producción/dependencias ni contratos nuevos. Ningún gate posterior abierto.
+
 ## Preparación del candidato QA — sólo plan, 2026-10-07
 
 Revisión preparatoria local y plan de commit/P4b/push/pareja API-web/rollback/fixtures entregados. Referencia remota sólo local `9f04dba`: 20 commits previos no publicados requieren auditoría del rango completo antes de push. Sin staging, commit, fetch, proveedores, POST, despliegue ni cambios QA/producción/Clerk/variables/servicios/DB. C3 permanece incompleto; ninguna autorización de ejecución inferida. [Plan, inventario y matriz de autorizaciones](features/RESERVA_INVITADO_PREPARACION_QA.md).

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Correctivo Retry-After, CI y evidencia — 2026-10-07
+
+Gate único local sobre base `58f536f`: restante de bloqueo/expiración calculado en el mismo upsert y reloj PostgreSQL; 30/min, bloqueo 60 s, fail-closed y HMAC preservados. Caso original intacto; 20/20 clústeres fríos pasan con header 60. Solo dos separadores Jest retirados de quality.yml y una regla whitespace para evidencia .txt, con 40 hashes existentes idénticos. Unitarias API 877/0/0, e2e 272/0/1 y browser 21/0/1, exit 0; implementado/en revisión. Resultado final de suites y P4b en [informe del correctivo](docs/quality/CORRECTIVO_RETRY_AFTER_CI_WHITESPACE.md). Tres commits locales separados, sin push/proveedores/QA/producción/dependencias ni contratos nuevos. Ningún gate posterior abierto.
+
 ## Fixtures de reserva invitada y Retry-After — 2026-10-07
 
 Horarios semanales CONFIRMED por organización en Servicios/Notificaciones, firma local sintética para medios M1 y citas de fixture sin solapamiento. Expectativa estricta de factura en GET /bookings actualizada según F0-B por autorización expresa adicional. Las 37 fallas anteriores pasan; API previa al commit 263/1/1, browser 21/0/1. Diez muestras frías de Retry-After: 7 headers 60/3 headers 61; diagnóstico de producto por dos relojes, sin modificar producto ni test de ese límite. Atributos .patch/.log autorizados en commit local separado, conservando bytes; no eliminan siete diagnósticos .txt. [Informe y evidencia](docs/quality/CORRECTIVO_FIXTURES_RETRY_RESERVA_INVITADA.md). Sin push, QA/proveedores/bases reales o aprobación funcional.

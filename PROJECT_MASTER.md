@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Correctivo Retry-After, CI y evidencia — 2026-10-07
+
+Gate único local sobre base `58f536f`: restante de bloqueo/expiración calculado en el mismo upsert y reloj PostgreSQL; 30/min, bloqueo 60 s, fail-closed y HMAC preservados. Caso original intacto; 20/20 clústeres fríos pasan con header 60. Solo dos separadores Jest retirados de quality.yml y una regla whitespace para evidencia .txt, con 40 hashes existentes idénticos. Unitarias API 877/0/0, e2e 272/0/1 y browser 21/0/1, exit 0; implementado/en revisión. Resultado final de suites y P4b en [informe del correctivo](docs/quality/CORRECTIVO_RETRY_AFTER_CI_WHITESPACE.md). Tres commits locales separados, sin push/proveedores/QA/producción/dependencias ni contratos nuevos. Ningún gate posterior abierto.
+
 ## Correctivo local de fixtures y diagnóstico Retry-After — 2026-10-07
 
 Gate único autorizado sobre `c904148`, sin publicación: horarios confirmados por organización, firma sintética de medios y ventanas independientes de Notificaciones; expectativa exacta de Servicios alineada con F0-B por autorización posterior del propietario. Las 37 fallas anteriores pasan individualmente en el ensayo final previo al commit; API 263/1/1, browser 21/0/1. Retry-After es defecto de producto: diez muestras frías, 7 headers 60 y 3 headers 61, por cálculo entre relojes PostgreSQL/Node; producto y caso original intactos. Atributos limitados a evidencias .patch/.log quedan aplicados en commit local separado, sin normalizar bytes; siete diagnósticos históricos .txt permanecen. [Informe, evidencia, workflow, propuesta y límites](docs/quality/CORRECTIVO_FIXTURES_RETRY_RESERVA_INVITADA.md). **IMPLEMENTADO / EN REVISIÓN; QA funcional sigue roja, sin aprobación**. Producción y bases reales intactas; sin push/proveedores/dependencias/contratos nuevos.

@@ -6,8 +6,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 interface BucketRow {
   count: number;
-  expiresAt: Date;
-  blockedUntil: Date | null;
+  timeToExpire: number;
+  timeToBlockExpire: number;
 }
 
 interface ThrottleResult {
@@ -68,7 +68,13 @@ export class PostgresThrottlerStorage implements ThrottlerStorage {
             WHEN "SecurityRateBucket"."count" + 1 > ${maxHits}
             THEN NOW() + ${blockMs} * INTERVAL '1 millisecond'
             ELSE NULL END
-        RETURNING "count", "expiresAt", "blockedUntil"
+        RETURNING "count",
+          CEIL(LEAST(${ttlMs}::numeric, GREATEST(0,
+            EXTRACT(EPOCH FROM ("expiresAt" - NOW())) * 1000
+          )) / 1000)::integer AS "timeToExpire",
+          CEIL(LEAST(${blockMs}::numeric, GREATEST(0,
+            COALESCE(EXTRACT(EPOCH FROM ("blockedUntil" - NOW())) * 1000, 0)
+          )) / 1000)::integer AS "timeToBlockExpire"
       `);
       if (!row) throw new Error('rate bucket returned no row');
 
@@ -100,18 +106,14 @@ export class PostgresThrottlerStorage implements ThrottlerStorage {
         }
       }
 
-      const timeToExpire = Math.max(
-        0,
-        Math.ceil((row.expiresAt.getTime() - now) / 1000),
-      );
-      const timeToBlockExpire = row.blockedUntil
-        ? Math.max(0, Math.ceil((row.blockedUntil.getTime() - now) / 1000))
-        : 0;
+      // NOW() is identical throughout the atomic statement. SQL also caps the
+      // remainder when a concurrent writer started after this transaction's NOW().
+      // The Node clock above schedules cleanup only; it cannot affect the budget.
       return {
         totalHits: row.count,
-        timeToExpire,
-        isBlocked: timeToBlockExpire > 0,
-        timeToBlockExpire,
+        timeToExpire: row.timeToExpire,
+        isBlocked: row.timeToBlockExpire > 0,
+        timeToBlockExpire: row.timeToBlockExpire,
       };
     } catch {
       // Sensitive mutations fail closed when the shared budget is unavailable.
