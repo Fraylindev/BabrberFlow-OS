@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Clave Clerk rotada en API QA — 2026-10-08
+
+Actualizada únicamente `CLERK_SECRET_KEY` desde archivo local ignorado mediante stdin SSH seguro; publishable key intacta, copia previa root:root 0600 y conservación de bytes ajenos. Editor adaptado autorizado y ensayado, 8 positivos/8 negativos. Reiniciado solo API QA, release/imagen b318ca5 intactos; ocho GET/CORS pasan, cero 5xx y coincidencias de errores Clerk en la ventana observada. Worker sin variables Clerk, intacto. Rollback no ejecutado. Alias web sigue en `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`, READY/b318ca5; nuevo deployment de rollback no confirmado, sin assign_alias. [Informe, hashes y límites](docs/quality/CLERK_ROTACION_API_QA_2026_10_08.md). Sin código/dependencias, bases ni producción; sin valores secretos versionados. Único commit documental/push solo a `ai/reserva-invitado-ci`.
+
 ## Cierre documental de reserva invitada en QA — 2026-10-08
 
 C3 **ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada**: pruebas manuales satisfactorias declaradas en iPhone con `b318ca5`, sin inventar casos. Estado vigente de reserva invitada activa en QA (API `sha256:8ba1b6c8…`, web `dpl_KEKT6X12…`), M2 retirada, reservas residuales conservadas y limpieza transaccional excluida por decisión del propietario. Rollback no ejecutado y pareja anterior retenida, con advertencia de reexposición B2C. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no verificados. [Registro y pendientes por riesgo](docs/features/RESERVA_INVITADO_C3_CIERRE_QA.md). Solo documentación, un commit local y push autorizado exclusivamente a `ai/reserva-invitado-ci`, sin force; sin QA/proveedores/bases/producción, código ni dependencias modificados. Los estados previos fechados conservan su contexto histórico.

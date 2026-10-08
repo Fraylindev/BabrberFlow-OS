@@ -1,5 +1,11 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Clave Clerk rotada en API QA — 2026-10-08
+
+**CLERK_SECRET_KEY ACTUALIZADA EN API QA.** Comparación de hashes con el archivo local ignorado identifica solo la secret key rotada; publishable key intacta. Copia previa protegida root:root 0600 retenida, editor adaptado autorizado y ensayado (8 positivos/8 negativos), valor por stdin seguro y bytes ajenos conservados. Reiniciado solo API: active/running, NRestarts=0, release/imagen b318ca5 exactos; ocho GET/CORS pasan, 0 HTTP 5xx y 0 coincidencias de errores Clerk en la ventana observada. Worker sin variables Clerk, sin cambios ni reinicio. Rollback no ejecutado; restaurar el entorno previo devolvería la clave vieja revocada.
+
+Web: alias QA sigue en `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`, READY y b318ca5; **deployment nuevo de rollback no confirmado**, sin assign_alias. No se probó login real ni se da por aplicada la clave nueva en ese deployment. [Inventario, hashes, comandos/resultados y límites](docs/quality/CLERK_ROTACION_API_QA_2026_10_08.md). Solo publicación documental a `ai/reserva-invitado-ci`; no main/antigravity-qa, producción, bases, imagen/selectores, código de producto ni dependencias. La declaración C3 anterior conserva su alcance propio.
+
 ## Cierre documental de reserva invitada en QA — 2026-10-08
 
 **C3: ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada.** El propietario declara pruebas manuales satisfactorias en su iPhone sobre `qa.booking.kortek.cloud`, candidato `b318ca5`; no aporta capturas, evidencia automática ni casos concretos. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no están verificados por este cierre. Las reservas C3 permanecen como filas residuales en QA, sin limpieza; la limpieza transaccional queda fuera de alcance por decisión del propietario.

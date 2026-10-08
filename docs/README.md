@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## Clave Clerk rotada en API QA — 2026-10-08
+
+[Registro de actualización, hashes y verificaciones](quality/CLERK_ROTACION_API_QA_2026_10_08.md): solo `CLERK_SECRET_KEY` sustituida, editor adaptado autorizado/ensayado, copia protegida y reinicio exclusivo del API. Release/imagen b318ca5 preservados, GET/CORS aprobados, cero 5xx y coincidencias de errores Clerk en la ventana observada; worker intacto. Alias QA sigue en `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`, READY/b318ca5; nuevo deployment de rollback no confirmado, sin reasignación. Sin sesión real probada ni cambios de producción/bases/Clerk/Vercel. Commit/push documental solo a `ai/reserva-invitado-ci`.
+
 ## Cierre documental de reserva invitada en QA — 2026-10-08
 
 **C3: ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada.** Pruebas manuales satisfactorias declaradas en iPhone sobre `qa.booking.kortek.cloud`, sin casos enumerados. Reserva invitada activa en QA con pareja `b318ca5`, API `sha256:8ba1b6c8…` y web `dpl_KEKT6X12…`; M2 retirada. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no verificados. Reservas residuales conservadas; limpieza transaccional fuera de alcance por decisión del propietario. Rollback no ejecutado, artefactos anteriores retenidos; restaurarlos reexpone B2C. [Registro vigente y pendientes por riesgo, sin ejecución](features/RESERVA_INVITADO_C3_CIERRE_QA.md). Este cierre sustituye los estados previos de C3 pendiente/detenido conservados debajo como historia. Solo documentación, un commit y push a `ai/reserva-invitado-ci`; prohibidos `ai/antigravity-qa` y main. Producción cerrada; sin consultas ni cambios de proveedores/bases en este gate.

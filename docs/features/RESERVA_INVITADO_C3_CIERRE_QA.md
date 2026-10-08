@@ -1,5 +1,7 @@
 # Reserva invitada — cierre documental de C3 en QA
 
+Seguimiento posterior del pendiente 1, 2026-10-08: [secret key actualizada en API QA, hashes y verificaciones](../quality/CLERK_ROTACION_API_QA_2026_10_08.md). Worker intacto; publishable key sin cambio. Alias web sigue en el deployment anterior READY/b318ca5; nuevo deployment de rollback no confirmado. La lista inferior conserva el estado y alcance del cierre documental original, sin ampliar su declaración C3.
+
 Fecha: 2026-10-08. Gate único documental sobre `b318ca591d1ca6681269a6d25e29ca106d824df9`, con árbol inicial limpio en `ai/reserva-invitado-ci`.
 
 ## Declaración y alcance de la aceptación
