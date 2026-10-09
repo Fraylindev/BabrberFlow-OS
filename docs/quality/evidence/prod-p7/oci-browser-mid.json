@@ -1,0 +1,13 @@
+{
+  "source": "Chrome / OCI Alarm Status; refreshed page",
+  "observedUtc": "2026-10-09T17:17:35Z",
+  "url": "https://cloud.oracle.com/monitoring/alarms/status?region=us-ashburn-1",
+  "compartment": "root",
+  "critical": 0,
+  "error": 0,
+  "warning": 0,
+  "informational": 0,
+  "firing": [],
+  "uiMessage": "No alarms are firing in compartment fraylinfiguereo053 (root).",
+  "restoreStaleCause": "not verified"
+}

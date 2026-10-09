@@ -1,0 +1,18 @@
+{
+  "source": "Chrome / OCI Alarm Status",
+  "url": "https://cloud.oracle.com/monitoring/alarms/status?region=us-ashburn-1",
+  "observedUtc": "2026-10-09T17:10:00Z",
+  "precision": "minute approximate; UI read before activation",
+  "definitions": 8,
+  "firing": [
+    {
+      "name": "kortek-prod-restore-stale",
+      "severity": "Critical",
+      "triggeredUtc": "2026-10-09T16:52:00Z"
+    }
+  ],
+  "critical": 1,
+  "error": 0,
+  "warning": 0,
+  "informational": 0
+}

@@ -1,0 +1,56 @@
+{
+  "source": "kortek_migrator; BEGIN READ ONLY; psql exit 0",
+  "before": {
+    "ledger_rows": 32,
+    "active": 28,
+    "in_progress": 0,
+    "reverted": 4,
+    "Booking": 0,
+    "Client": 0,
+    "User": 2,
+    "ungranted_locks": 0,
+    "foreign_strong_public_locks": 0
+  },
+  "after": {
+    "ledger_rows": 32,
+    "active": 28,
+    "in_progress": 0,
+    "reverted": 4,
+    "Booking": 0,
+    "Client": 0,
+    "User": 2,
+    "ungranted_locks": 0,
+    "foreign_strong_public_locks": 0
+  },
+  "owner_admin_activity": {
+    "source": "Owner pasted SQL Editor administrative view; not executed by agent",
+    "sessions": 4,
+    "roles": [
+      "kortek_runtime"
+    ],
+    "states": [
+      "idle"
+    ],
+    "all_xact_age_null": true,
+    "wait_event_types": [
+      "Client"
+    ],
+    "wait_events": [
+      "ClientRead"
+    ]
+  },
+  "vercel": {
+    "source": "Vercel connector read only",
+    "public_alias": "booking.kortek.cloud",
+    "deploymentId": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+    "production_env_names": [
+      "DEPLOY_ENV",
+      "WEB_PUBLIC_ORIGIN",
+      "NEXT_PUBLIC_API_URL",
+      "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+      "CLERK_SECRET_KEY"
+    ],
+    "hiddenProductionEnvCount": 0,
+    "missing_required_names": []
+  }
+}

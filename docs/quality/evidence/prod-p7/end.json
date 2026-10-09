@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-09T17:28:22.200344+00:00",
+  "copies": {
+    "kortek-api.service": {
+      "sha256": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+      "uid": 0,
+      "mode": "0o600"
+    },
+    "kortek-api-run.sh": {
+      "sha256": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+      "uid": 0,
+      "mode": "0o600"
+    },
+    "runtime-env": {
+      "sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+      "uid": 0,
+      "mode": "0o600"
+    }
+  },
+  "backup_uid": 0,
+  "backup_mode": "0o700",
+  "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "pid": 1735374,
+  "started": "2026-10-09T17:12:04.999949373Z",
+  "public_booking_closed": "true",
+  "notifications_email_enabled": "false",
+  "runtime_env_sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+  "runtime_env_uid": 0,
+  "runtime_env_mode": "0o600",
+  "retained_images": 3,
+  "service": "MainPID=1735342\nNRestarts=0\nActiveState=active\nSubState=running\n"
+}

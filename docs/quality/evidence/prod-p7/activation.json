@@ -1,0 +1,37 @@
+{
+  "backup": "/var/backups/kortek-api/p7-20261009T171143Z",
+  "copies": {
+    "kortek-api.service": {
+      "sha256": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+      "original_mode": 420
+    },
+    "kortek-api-run.sh": {
+      "sha256": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+      "original_mode": 493
+    },
+    "runtime-env": {
+      "sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+      "original_mode": 384
+    }
+  },
+  "operator_commit": "323fef48594c903f876bb0cb2a6e3cbd31e3737c",
+  "activation_restart_count": 1,
+  "rollback_restart_count": 0,
+  "startup_drill": {
+    "exit_code": 0,
+    "cases": 23
+  },
+  "activation_start_utc": "2026-10-09T17:12:04.521638+00:00",
+  "service": {
+    "NRestarts": "0",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "new_image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "runtime_env_sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+  "wrapper_sha256": "7bfe37be39267b8015a288ac9b5cc83724590ca30ef3f01ce0317b01cc442f6f",
+  "unit_sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+  "activation_ready_utc": "2026-10-09T17:12:07.330230+00:00",
+  "status": "ACTIVATED_PENDING_VERIFICATION"
+}
