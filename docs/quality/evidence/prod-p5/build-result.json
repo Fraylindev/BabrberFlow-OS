@@ -1,0 +1,18 @@
+{
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "base_documentary": "92716cfff6752e23611f4c872136f8c142dcced3",
+  "start_utc": "2026-10-09T06:05:51Z",
+  "end_utc": "2026-10-09T06:08:20Z",
+  "exit_code": 0,
+  "command": "nice -n 19 ionice -c 2 -n 7 podman build --network host --cpu-period 100000 --cpu-quota 150000 --memory 3g --env APP_RELEASE=\"$release\" --label org.opencontainers.image.revision=\"$release\" -f ops/oci-api/api.Containerfile -t \"$tag\" .",
+  "context_file_count": 268,
+  "context_archive_sha256": "6b28065dc61bf50e3e7e15064462c489f7a6e6b8d8148a086583fabee04002d4",
+  "containerfile_sha256": "1f7b57a4a1856b41098cf252d2e522ac58889948fa5baa0e1ebcec92e51389fe",
+  "build_log_sha256": "1a837ebe6cb9394a1e8fc073c8142990cb83b1f56dfaa7beaae0ee76982d40cb",
+  "source_manifest_sha256": "622fe30d962e79c276911e5e059527fc6138803969d36569b27336825c3417cf",
+  "new_tag": "localhost/kortek-api:p5-8e1501e-20261009",
+  "image_id": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+  "remote_context": "/home/opc/kortek-build-p5-8e1501e-20261009",
+  "new_image_started": false,
+  "new_image_connected_to_database": false
+}

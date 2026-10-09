@@ -1,0 +1,52 @@
+{
+  "utc": "2026-10-09T06:11:08.993745+00:00",
+  "id": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+  "tags": [
+    "localhost/kortek-api:p5-8e1501e-20261009"
+  ],
+  "size": 1778986963,
+  "architecture": "arm64",
+  "created": "2026-10-09T06:08:18.152218264Z",
+  "labels": {
+    "io.buildah.version": "1.43.1",
+    "org.opencontainers.image.revision": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800"
+  },
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "env_names": [
+    "APP_RELEASE",
+    "NODE_VERSION",
+    "PATH",
+    "YARN_VERSION"
+  ],
+  "user": "node",
+  "cmd": [
+    "node",
+    "dist/main.js"
+  ],
+  "archive_sha256": "6b28065dc61bf50e3e7e15064462c489f7a6e6b8d8148a086583fabee04002d4",
+  "schema_sha256": "b8f4dc32085bac898ff9ef40e9794d1d40b61a68b33c4d84946d9ffad4296f30",
+  "generated_client_schemas": [
+    {
+      "path": "srv/kortek/node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/schema.prisma",
+      "sha256": "fd8829521909c300e08b6cac110268b4f220f4b891c8aef09087541dd90b50df",
+      "tokens_equal_source": false,
+      "canonical_tokens_equal_source": true,
+      "canonical_source_sha256": "aef0873e48088b42d3d1ef6bd39aa5026dd8e88ddcad2f5d260533ee0a9522f2",
+      "canonical_generated_sha256": "aef0873e48088b42d3d1ef6bd39aa5026dd8e88ddcad2f5d260533ee0a9522f2",
+      "index_js_sha256": "12f12774ba7d5a4a47f5ffcd53461cee55ea5f6cb782385b5da4df6ea40afce5",
+      "inline_schema_found": true,
+      "inline_schema_sha256": "fd8829521909c300e08b6cac110268b4f220f4b891c8aef09087541dd90b50df",
+      "inline_schema_equal_generated": true,
+      "token_difference_count": 6
+    }
+  ],
+  "dist_main_present": true,
+  "prisma_packages": {
+    "@prisma/client": "6.19.3",
+    "prisma": "6.19.3"
+  },
+  "old_images_present": {
+    "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2": true,
+    "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec": true
+  }
+}
