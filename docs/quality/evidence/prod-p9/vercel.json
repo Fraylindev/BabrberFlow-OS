@@ -1,0 +1,36 @@
+{
+  "booking": {
+    "id": "dpl_A5G1gZA8q2KFrDLg6UFsceL3mmQu",
+    "alias": "booking.kortek.cloud",
+    "deploymentId": "dpl_A5G1gZA8q2KFrDLg6UFsceL3mmQu"
+  },
+  "default": {
+    "id": "dpl_A5G1gZA8q2KFrDLg6UFsceL3mmQu",
+    "alias": "kortek-booking.vercel.app",
+    "deploymentId": "dpl_A5G1gZA8q2KFrDLg6UFsceL3mmQu"
+  },
+  "qa": {
+    "id": "dpl_3WyqcfwaKgpsnQzLaMmgifuB3mHg",
+    "alias": "qa.booking.kortek.cloud",
+    "deploymentId": "dpl_3WyqcfwaKgpsnQzLaMmgifuB3mHg"
+  },
+  "new": {
+    "id": "dpl_A5G1gZA8q2KFrDLg6UFsceL3mmQu",
+    "state": "READY",
+    "target": "production",
+    "sha": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800"
+  },
+  "old": {
+    "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+    "state": "READY",
+    "target": "production",
+    "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6"
+  },
+  "project": {
+    "id": "prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p",
+    "accountId": "team_BBm9XjRsZkjh2iZdqZ0909Q8",
+    "fields": [
+      "domains"
+    ]
+  }
+}

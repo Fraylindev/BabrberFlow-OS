@@ -1,0 +1,8 @@
+{
+  "bookingAliasAssignedUtc": "2026-10-09T17:44:06.030Z",
+  "defaultAliasAssignedUtc": "2026-10-09T17:44:06.031Z",
+  "bookingAliasAssignedSantoDomingo": "2026-10-09 13:44:06.030 UTC-04:00",
+  "defaultAliasAssignedSantoDomingo": "2026-10-09 13:44:06.031 UTC-04:00",
+  "timeSource": "Vercel alias updatedAt; assignment timestamps accepted by owner as promotion evidence",
+  "logWindowStart": "2026-10-09T17:44:06.030Z"
+}

@@ -1,0 +1,64 @@
+{
+  "utc": "2026-10-09T18:19:38.730028+00:00",
+  "kortek-api": {
+    "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+    "running": true,
+    "pid": 1735374,
+    "started": "2026-10-09T17:12:04.999949373Z",
+    "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "public_booking_closed": "true",
+    "email_enabled": "false",
+    "env_sha256": "edd37b5f6f609d01a3dc1dcd25afed7d057174af875a986b42151cb3fa70bdfd",
+    "service": "MainPID=1735342\nNRestarts=0\nActiveState=active\nSubState=running\n",
+    "runtime_env_sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+    "last15m_errors": {
+      "prisma": 0,
+      "connection": 0,
+      "startup": 0,
+      "http5xx": 0
+    }
+  },
+  "public_verification_events": [
+    {
+      "timestamp": "2026-10-09T18:18:10.486Z",
+      "requestId": "33019142-59f3-4357-bc75-1c1784efbc5a",
+      "method": "GET",
+      "route": "/public/:slug/booking-data",
+      "status": 404,
+      "errorClass": "NotFoundException"
+    },
+    {
+      "timestamp": "2026-10-09T18:19:12.665Z",
+      "requestId": "841fd674-f3ec-4a59-9fe8-b3a90c731109",
+      "method": "GET",
+      "route": "/public/:slug/booking-data",
+      "status": 404,
+      "errorClass": "NotFoundException"
+    }
+  ],
+  "kortek-api-staging": {
+    "image": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+    "running": true,
+    "pid": 1523029,
+    "started": "2026-10-08T04:47:16.500690063Z",
+    "release": "b318ca591d1ca6681269a6d25e29ca106d824df9",
+    "public_booking_closed": "false",
+    "email_enabled": "true",
+    "env_sha256": "8dc966eb0e9d439120fba375a4c507a0bad089b82856b0649913e16dc4f891d1",
+    "service": "MainPID=1523015\nNRestarts=0\nActiveState=active\nSubState=running\n",
+    "runtime_env_sha256": "d6a94be929feb44056e3c64020127f6543de3d356fdac09e275c0362c64a57f6",
+    "last15m_errors": {
+      "prisma": 0,
+      "connection": 0,
+      "startup": 0,
+      "http5xx": 0
+    }
+  },
+  "backup_timer": "TimersCalendar={ OnCalendar=*-*-* 05:17:00 UTC ; next_elapse=Sat 2026-10-10 05:17:00 GMT }\nNextElapseUSecRealtime=Sat 2026-10-10 05:20:21 GMT\nLastTriggerUSec=Fri 2026-10-09 05:19:33 GMT\nRandomizedDelayUSec=5min\nActiveState=active\nSubState=waiting\n",
+  "backup_service": "Result=success\nExecMainExitTimestamp=Fri 2026-10-09 05:19:42 GMT\nExecMainStatus=0\n",
+  "backup_calendar_lines": [
+    "OnCalendar=*-*-* 05:17:00 UTC",
+    "Persistent=true",
+    "RandomizedDelaySec=300"
+  ]
+}

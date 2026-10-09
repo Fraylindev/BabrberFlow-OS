@@ -1,0 +1,35 @@
+{
+  "vercel_production_settings": {
+    "url": "https://vercel.com/fraylindev/kortek-booking/settings/environments/production",
+    "auto_assign_custom_production_domains_checked": false,
+    "save_disabled": true,
+    "setting_changes": 0
+  },
+  "public_pages": {
+    "business_path": "/dental-ross",
+    "missing_path": "/p9-ruta-inexistente-20261009",
+    "business_h1": "Esta página no está disponible",
+    "missing_h1": "Esta página no está disponible",
+    "business_body": "KO Kortek. Esta página no está disponible. Revisa el enlace o comunícate directamente con el negocio.",
+    "missing_body": "KO Kortek. Esta página no está disponible. Revisa el enlace o comunícate directamente con el negocio.",
+    "equal_visible_content": true,
+    "tested_business_exists_in_db": true,
+    "tested_missing_absent_in_db": true,
+    "existence_reader": "kortek_migrator READ ONLY; psql exit 0",
+    "browser_document_gets": 2,
+    "booking_data_gets_in_api_telemetry": 2,
+    "api_statuses": [404, 404],
+    "verification_requests_total": 8,
+    "assets_excluded_with_explicit_owner_authorization": true,
+    "authenticated_actions": 0
+  },
+  "oci": {
+    "source": "Chrome / OCI Alarm Status; owner authenticated provider session",
+    "critical": 1,
+    "error": 0,
+    "warning": 0,
+    "informational": 0,
+    "firing": [{"name":"kortek-prod-restore-stale","triggeredUtc":"2026-10-09T18:16:00Z"}],
+    "provider_changes": 0
+  }
+}

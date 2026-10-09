@@ -1,0 +1,24 @@
+{
+  "windowStart": "2026-10-09T17:44:06.030Z",
+  "queriedAtUtc": "2026-10-09 18:22:51 UTC",
+  "until": "now",
+  "consoleGroups": [
+    "## Runtime Log Counts\n\n**Project:** prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p\n**Grouped by:** level\n**Showing:** Top 25 groups by log count; this may omit other groups.\n\n| level | count |\n|---|---|"
+  ],
+  "errorClusters": [
+    "## Runtime Errors\n\n**Project:** prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p\n\nNo runtime errors found in the selected time range."
+  ],
+  "uiRequestCodes": {
+    "source": "Chrome Vercel Logs; Last hour, all project environments",
+    "windowIncludesEntirePromotionWindow": true,
+    "statusCounts": {
+      "200": 84,
+      "304": 1
+    },
+    "otherStatusesShown": [],
+    "consoleWarning": 0,
+    "consoleError": 0,
+    "consoleFatal": 0,
+    "limitations": "Request-code facet covers the selected hour and all environments, broader than exact production promotion window. Zero 5xx in this superset covers that narrower window."
+  }
+}

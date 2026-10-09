@@ -1,0 +1,109 @@
+{
+  "utc": "2026-10-09T18:17:32.125692+00:00",
+  "document_gets": 4,
+  "redirects_followed": 0,
+  "javascript_executed": false,
+  "rows": [
+    {
+      "url": "https://booking.kortek.cloud/",
+      "http_status": 200,
+      "headers": {
+        "Content-Security-Policy": null,
+        "Content-Security-Policy-Report-Only": null,
+        "X-Frame-Options": null,
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": null,
+        "Referrer-Policy": null,
+        "Location": null,
+        "Content-Type": "text/html; charset=utf-8"
+      },
+      "html_sha256": "2fca62021ceb890430c8747206676398450c83ce50fff3e9f219ed1b1d286aaa",
+      "bytes": 171656,
+      "secret_pattern_findings": {
+        "secret_key": 0,
+        "database_url": 0,
+        "secret_assignments": 0,
+        "private_key": 0
+      },
+      "html_contains_unavailable": false,
+      "html_contains_loading": false,
+      "html_contains_public_key": true
+    },
+    {
+      "url": "https://booking.kortek.cloud/login",
+      "http_status": 200,
+      "headers": {
+        "Content-Security-Policy": null,
+        "Content-Security-Policy-Report-Only": null,
+        "X-Frame-Options": null,
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": null,
+        "Referrer-Policy": null,
+        "Location": null,
+        "Content-Type": "text/html; charset=utf-8"
+      },
+      "html_sha256": "763f7bec67aed064081d314992a720853380a73143810f792abbccbb74fdf6d5",
+      "bytes": 93231,
+      "secret_pattern_findings": {
+        "secret_key": 0,
+        "database_url": 0,
+        "secret_assignments": 0,
+        "private_key": 0
+      },
+      "html_contains_unavailable": false,
+      "html_contains_loading": false,
+      "html_contains_public_key": true
+    },
+    {
+      "url": "https://booking.kortek.cloud/dental-ross",
+      "http_status": 200,
+      "headers": {
+        "Content-Security-Policy": null,
+        "Content-Security-Policy-Report-Only": null,
+        "X-Frame-Options": null,
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": null,
+        "Referrer-Policy": null,
+        "Location": null,
+        "Content-Type": "text/html; charset=utf-8"
+      },
+      "html_sha256": "207c65601f6a401f67026014173d7a2d033060c8a7a90aa44ca5004aabc618f1",
+      "bytes": 92120,
+      "secret_pattern_findings": {
+        "secret_key": 0,
+        "database_url": 0,
+        "secret_assignments": 0,
+        "private_key": 0
+      },
+      "html_contains_unavailable": false,
+      "html_contains_loading": true,
+      "html_contains_public_key": true
+    },
+    {
+      "url": "https://booking.kortek.cloud/p9-ruta-inexistente-20261009",
+      "http_status": 200,
+      "headers": {
+        "Content-Security-Policy": null,
+        "Content-Security-Policy-Report-Only": null,
+        "X-Frame-Options": null,
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": null,
+        "Referrer-Policy": null,
+        "Location": null,
+        "Content-Type": "text/html; charset=utf-8"
+      },
+      "html_sha256": "4dbaa57634ae95e8d38aceef527ea87ac6bd13e13794d8928c7800de65cd0110",
+      "bytes": 92188,
+      "secret_pattern_findings": {
+        "secret_key": 0,
+        "database_url": 0,
+        "secret_assignments": 0,
+        "private_key": 0
+      },
+      "html_contains_unavailable": false,
+      "html_contains_loading": true,
+      "html_contains_public_key": true
+    }
+  ],
+  "scope_limit": "Pattern scan only; public Clerk keys are not secrets; arbitrary environment value absence is not proved"
+}

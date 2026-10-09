@@ -1,0 +1,42 @@
+{
+  "reader": "kortek_migrator",
+  "transaction": "READ ONLY",
+  "exit_code": 0,
+  "results": [
+    {
+      "current_user": "kortek_migrator",
+      "session_user": "kortek_migrator",
+      "read_only": "on"
+    },
+    {
+      "ledger_rows": 32,
+      "active": 28,
+      "in_progress": 0,
+      "reverted": 4
+    },
+    {
+      "public_tables": 37,
+      "Booking": 1,
+      "Client": 1,
+      "User": 3,
+      "Organization": 3
+    },
+    {
+      "schedule_rows": 3,
+      "confirmed": 1,
+      "zone_confirmed": 1,
+      "states": [
+        "CONFIRMED",
+        "LEGACY_UNCONFIRMED",
+        "LEGACY_UNCONFIRMED"
+      ]
+    },
+    {
+      "days": 7,
+      "windows": 7,
+      "closures": 0,
+      "revisions": 3,
+      "organization_fingerprint": "d34686e050be2f08c97ae4d591fdc9e6"
+    }
+  ]
+}
