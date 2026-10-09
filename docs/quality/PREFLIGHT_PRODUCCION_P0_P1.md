@@ -1,5 +1,103 @@
 # Preflight producción P0, respaldo P1 y ensayo P1b
 
+## P1c vigente — 2026-10-08, 23:23 America/Santo_Domingo
+
+**COMPATIBILIDAD PARCIAL OBSERVADA; PAUSADO / INCOMPLETO EN COBERTURA P1c; NO-GO GLOBAL PARA PROMOCIÓN/APERTURA.** Base `1eac35294b2ad5cc26c83faeb327cdbf10c7402c`, rama `ai/reserva-invitado-ci`. El ensayo solicitado terminó y sus recursos temporales se retiraron. Hay resultados idénticos entre esquemas 26 y 28, pero ninguna de las tres suites completas termina exit 0 con permisos runtime; sus casos no cubiertos impiden declarar compatibilidad completa de todos los triggers/invariantes. No se autorizó ni ejecutó promoción.
+
+El propietario **declara** que guardó la clave P1 en su gestor y completó la copia externa. Se registra como declaración del propietario, **sin evidencia capturada** del gestor/destino ni restore desde esa copia externa. Sustituye el pendiente de custodia/copia externa del checkpoint inferior, conservado como historia.
+
+### P1c.1 — dos restores y esquema final
+
+`docker version --format '{{.Server.Version}}'`: exit 0, Server 29.6.1; sin nuevo pull. Se reutilizó `postgres:17.6` y los clientes PG17.6 de la imagen documentada en P1: **pg_restore/psql 17.6 (Debian 17.6-2.pgdg13+1)**, sin cliente PG18. No hubo nuevo pg_dump productivo.
+
+Artefacto P1 usado: `C:\KortekBackups\prod-pre-promocion\kortek-prod-20261009T021816Z.p1.aes256gcm`, **280667 bytes**, SHA-256 recomprobado **`a72353911e5c47c6db8ab2a529c686de538dce48b7d7081b26c2a5121fefc297`**. Descifrado AES256-GCM autenticado directamente hacia pg_restore; clave leída por el helper local mediante su ruta protegida, nunca su valor en argv/env/logs/chat/repo. Sin dump plano en disco ni artefacto en Git.
+
+Clones `kortek-p1c-schema26` y `kortek-p1c-schema28`: cada uno en red Docker internal propia y tmpfs 512 MiB. Bootstrap administrativo local; ambos roles Kortek recreados desde los atributos respaldados, **sin superusuario ni BYPASSRLS**. ACL suplementarias btree_gist restauradas; política TEMP/CREATE de base restringida como en P1b. Proxy binario temporal solo loopback, puertos 55476/55477 → docker exec → PostgreSQL del respectivo clon. Prisma/Jest no recibieron credenciales de producción/QA/proveedores.
+
+`python .tmp/prod-p1c-restore.py`: exit 0. pg_restore con transacción única/exit-on-error y TOC de P1b que omite solamente CREATE SCHEMA public ya existente, preservando owners/ACL. Cada pg_restore y descifrado terminó **exit 0**: esquema26 **3.400 s**, segundo clon **3.377 s**. Ambos parten de **31 tablas, ledger30/26 activas/4 revertidas**. Siete cotejos nuevos por clon: relaciones/ACL, constraints, índices, funciones/ACL, triggers, ledger y conteos **exactos** frente a la referencia P1; solo se normaliza orden de colecciones. Evidencia: `.tmp/prod-p1c/schema26/` y `schema28/`, stdout/stderr/resultados guardados antes de parsear.
+
+`git fetch origin`: exit 0; remoto QA confirmado `523d993cfa0c797f356c224d5cc026d6c9ad4c7b`. Worktree S detached desde ese SHA. `python .tmp/prod-p1c-migrate.py` y `prod-p1c-verify.py`: exit 0 como arneses. Solo el segundo clon recibió migraciones 27/28, con **current_user=session_user=kortek_migrator**, sin SET ROLE. Prisma6.19.3: migrate status exit **1** por las dos pendientes; migrate deploy exit **0**, pese al checksum histórico de add_invoice_model, sin resolve ni edición de SQL/ledger. El esquema26 permaneció sin migrar.
+
+| Comprobación del clon28 | Resultado |
+| --- | --- |
+| Ledger final | **32 filas, 28 activas, 4 revertidas; 37 tablas** |
+| Checksum Invoice histórico | Conservado `3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a`; blob S `39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b` |
+| Checksum27 | `82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82`, exacto |
+| Checksum28 | `6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee`, exacto |
+| customer_access_relink / customer_booking_revision | Dos funciones sin argumentos, trigger, SECURITY INVOKER, owner kortek_migrator; ACL solo migrador/runtime EXECUTE, sin PUBLIC; search_path `pg_catalog, public, pg_temp` |
+| customer-stage-one-runtime-grants.sql | exit 0 como migrador, solo clon28 |
+| verify-runtime-role.sql | exit 0 como runtime, gate37 |
+| verify-integrity.cli.ts de S | exit 0 como runtime; constraints/índices suplementarios OK |
+| DDL27 / DDL28 | Intervalos ledger **25.170 ms / 9.710 ms**; deploy completo **9.863 s** |
+| Bloqueos | 3 muestras: 0 locks pendientes/0 sesiones bloqueadas; muestreo espaciado ~3.3 s por transporte Docker, no descarta bloqueos breves ni estima tiempos productivos |
+
+### P1c.2 — código productivo anterior y comparación real
+
+Worktree detached exacto **`b5615869dcbec4bd174608f2373e73ff618fae26`**, release confirmada por preflight SSH final. Se ejecutaron las mismas suites de sus archivos inmutados en los dos clones, **kortek_runtime efectivo y session_user, no superusuario/no BYPASSRLS**. Node22.22.3, Jest30.4.2, ts-jest29.4.12 y Prisma/client6.19.3 locales existentes. No build API/web ni instalación completada. El lockfile histórico no se reinstaló: la conclusión corresponde a este entorno de dependencias, no a reproducir byte por byte la imagen productiva.
+
+Se generó exclusivamente el cliente Prisma del schema anterior en una ruta ignorada, copiando el schema y cambiando solo el output del generator; modelos y SQL permanecieron idénticos. Esto evita que el cliente S seleccione columnas28 en el baseline26. Una resolución local inicial de @prisma/client falló e intentó auto-install, que falló sin instalar ni cambiar archivos versionados. Se corrigió la resolución local mediante junction ignorado y `PRISMA_GENERATE_SKIP_AUTOINSTALL=1`; generación del cliente exit 0. Ninguna conexión productiva estaba implicada.
+
+La configuración E2E estándar se intentó en ambos clones y dio **exit1 antes de ejecutar casos**: exige contraseña, base `_test`, usuario distinto del primario, owner no privilegiado y luego migrate deploy en global-setup. Eso no corresponde al clon restaurado con runtime no propietario. Para el ensayo comparativo se usó configuración Jest ignorada, preparación ya hecha aparte e identidad/aislamiento comprobados antes de los casos; se omitió únicamente ese global-setup migratorio. Tests, código y assertions no se editaron; no se concedieron permisos adicionales. ts-jest transpila en memoria, sin diagnóstico de compilación: no constituye gate TypeScript/build. Flags locales de ejecución de tests/correo solo en los procesos de ensayo; ningún flag de proveedor/producción/QA cambió. Credenciales de proveedores ausentes, sin consultar Clerk ni enviar correo desde las suites.
+
+Comando común: `node apps/api/node_modules/jest/bin/jest.js --config <config ignorada> --runInBand --forceExit --json --outputFile <resultado ignorado> --runTestsByPath <suite b561586>`, con cwd del worktree anterior. La URL de cada proceso apuntó solo a su proxy loopback y rol runtime. Referencias por suite: stdout, stderr, result.json y jest.json en `.tmp/prod-p1c/schema26/` y `schema28/`.
+
+| Suite anterior, casos sin modificar | Esquema26 | Esquema28 | Causa demostrada / conclusión |
+| --- | --- | --- | --- |
+| test/invoices.e2e-spec.ts | exit1: **21 pasan, 1 falla, 0 omitidos** | exit1: **21 pasan, 1 falla, 0 omitidos** | El mismo caso de filtro por días actualiza Invoice.createdAt; SQLSTATE42501, `permission denied for table Invoice`. Preexistente respecto de 27/28 |
+| src/bookings/booking-concurrency.integration.spec.ts | exit1: **0 pasan, 9 fallan, 0 omitidos** | exit1: **0 pasan, 9 fallan, 0 omitidos** | Los nueve resultados reportan42501 al DELETE EmailWebhookReceipt en cleanup. El finally puede enmascarar el resultado del cuerpo: **no se cuentan sus invariantes/concurrencia como aprobados** |
+| test/invoice-integrity-migration.e2e-spec.ts | exit1: **0 pasan, 6 fallan, 0 omitidos** | exit1: **0 pasan, 6 fallan, 0 omitidos** |42501, `must be owner of table Invoice`: suite requiere DDL/reparar constraints, incompatible con runtime. No se elevó el rol |
+
+La comparación de **cada uno de los 37 casos** por nombre/status fue exacta: `.tmp/prod-p1c/test-status-comparison.json`, tres checks true. **21 casos aprobados y 16 fallidos por esquema; ninguna regresión nueva en status observada**, sin convertir fallos preexistentes en aprobación. El primer parseo del JSON Jest26 falló por lectura cp1252; stdout/stderr/jest.json ya estaban guardados. Corrección offline UTF-8 y continuación sin repetir casos/fixtures ya ejecutados; el exit del primer invoices26 se reconstruyó de `success=false` y stderr, explícito en result.json. Para ejecuciones restantes se guarda también exit antes del parseo.
+
+Cobertura observada de los 21 casos: creación Client/Booking por fixtures reales, estados/tenant de Booking, emisión/cobro/idempotencia, aislamiento financiero Invoice/Payment, permisos por rol, proyecciones/analytics y rollback ante fallo de AuditLog. PostgreSQL real ejecuta constraints y triggers existentes. Censo final idéntico en ambos: **Client13, Booking23, Invoice11, Payment7**; ledger26 sigue30/26 y ledger28 sigue32/28. En28: **8 Client con customerBookingRevision>0, suma25**, evidencia del efecto de Booking_customer_revision al escribir con el código anterior; en origen Client/Booking estaban vacíos.
+
+**Sin cubrir:** API CRUD/archivo/relink de Client e invariantes completas de Client_customer_access_relink. La release anterior tiene pruebas Client con mocks, no una suite de integración PostgreSQL dedicada; no se presentan como evidencia del clon. Tampoco están aprobados los nueve criterios de concurrencia ni seis de reparación DDL, ni el filtro que exige alterar createdAt. Verificar firma/owner/ACL de ambos triggers/funciones y observar revisiones no sustituye esos casos. No se escribió una nueva suite, no se modificó el código anterior, no se relajaron assertions ni se concedió DELETE/ownership para hacerlas pasar.
+
+### P1c.3 — schemas gestionados de Supabase, solo conteos
+
+Única lectura nueva de producción: `pwsh -NoProfile -File .tmp/prod-p1c-managed.ps1`, **exit0/stderr vacío**. psqlPG17.6, misma credencial migrador local/CA montada readonly, session pooler5432, **verify-full**, `BEGIN READ ONLY`; current_user=session_user=kortek_migrator, read_only=on, server17.6. Sin otros usuarios/SET ROLE ni escrituras. Evidencia cruda previa a parseo: `.tmp/prod-p1c/managed-production.stdout`, `.stderr` y `.result.json`.
+
+| Schema gestionado | Relaciones (tablas/vistas/materializadas/foreign) | Relaciones propiedad de roles Kortek | Funciones propiedad de roles Kortek | FKs hacia public |
+| --- | ---: | ---: | ---: | ---: |
+| auth |27|0|0|0|
+| storage |8|0|0|0|
+| realtime |3|0|0|0|
+| vault |2|0|0|0|
+| extensions |2|0|0|0|
+| graphql |0|0|0|0|
+| graphql_public |0|0|0|0|
+
+**Ningún objeto de relación/función propiedad de kortek_migrator/runtime ni FK de esos schemas hacia public detectado.** Es un censo de catálogo bajo criterios explícitos, no prueba de que cualquier objeto creado por otra identidad sea ajeno a la aplicación. Las **39 tablas** gestionadas tienen `can_count=false` para este rol (USAGE+SELECT); por eso **no se obtuvo ningún conteo de filas**, ni se exportaron datos ni se consultaron secretos vault. Auth.users, storage.buckets/objects y realtime.messages/subscription no pueden declararse vacíos. El alcance public del respaldo sigue siendo delimitado, y la ausencia de datos de aplicación fuera de public **queda sin confirmar** con las credenciales autorizadas; no se buscaron otras.
+
+### P0(c) adicional — consola OCI y recepción de alertas
+
+Sesión Chrome existente, región **US East (Ashburn)**, compartment **fraylinfiguereo053(root)**. La pestaña inicialmente estaba en login; el propietario autenticó la sesión. Se leyó **Monitoring → Alarm Definitions**: ocho definiciones, todas **Active**, severidad Critical, namespace kortek_booking, destino Notifications, **Not suppressed**: kortek-prod-backup-capacity, backup-stale, database-capacity, database-down, monitor-silent, operational-errors, restore-stale y worker-down (todos con prefijo kortek-prod-).
+
+Detalle restore-stale: umbral restore_age_hours mean()>192, intervalo1m/demora5min; tema **kortek-booking-operations Active**, **1 suscripción Email Active a vps@kortek.cloud**. La página Alarm Status mostró **1 alarma Critical FIRING**, restore-stale, triggered **2026-10-09 03:16:00 UTC**; otras severidades0 y solo esa fila. Un detalle anterior mostró Current state Ok, por lo que se conserva ese cambio/discrepancia temporal y se usa la lectura posterior de Alarm Status como estado final observado. No se infiere que las otras siete hayan tenido prueba de disparo. Fuentes observadas: [Alarm Definitions](https://cloud.oracle.com/monitoring/alarms), [Alarm Status](https://cloud.oracle.com/monitoring/alarms/status) y pestaña Subscriptions del [tema](https://cloud.oracle.com/notification/topics/ocid1.onstopic.oc1.iad.amaaaaaa5jqpcuqady63njr4zv6c4hxmq6tk4aatjzq7fhzzenrigkmqjhva).
+
+El propietario respondió **«Sí, recibí ese correo»** a la consulta específica sobre «Kortek Booking: restore semanal vencido» en ese buzón. **Recepción declarada por propietario, sin evidencia capturada del buzón**; suscripción/destino/FIRING sí observados en consola. No se disparó alarma de prueba, envió correo, editó definición/suscripción, ejecutó restore semanal ni guardó configuración. Este FIRING refuerza el pendiente de restore operativo; no demuestra la causa del exit1 histórico.
+
+### Retiro, aislamiento y veredicto por criterio
+
+`docker stop` de ambos clones, `docker network rm` de ambas redes y `git worktree remove` de ambos detached: exit0. Worktrees limpios antes de retirarlos. Docker final conserva solo el contenedor preexistente **barberflow-postgres**; git worktree list contiene solo el checkout principal. Proxies terminados en finally. El respaldo/clave protegida y evidencias sanitizadas ignoradas permanecen locales; datos del clon se eliminaron con tmpfs. No hubo writes productivos/QA, jobs OCI, cambios de proveedores/IAM, builds/deploy ni flags remotos.
+
+Preflight SSH sanitizado final **exit0**, `.tmp/prod-p1c/oci-after.json`: release productiva b561586, imagen8caacd85…, PID151158, envHash21829184…, PUBLIC_BOOKING_CLOSED=true, correo=false. API QA b318ca5/imagen8ba1b6c8…, PID1523029, envHash72872e93…, flags false/true. Los cuatro contenedores API/worker conservan imagen/PID/release/envHash/running/flags y los hashes/ACL de archivos protegidos frente a la referencia previa `.tmp/prod-p0/oci.json`. No se afirma inmovilidad de métricas/timers: el FIRING nuevo es lectura de actividad operativa autónoma.
+
+| Criterio del plan | Veredicto actualizado |
+| --- | --- |
+| P1 restore public y suplemento/roles/ACL, PG17.6 | **GO técnico acotado**: dos restores/cotejos exactos; no plataforma completa |
+| P1 custodia y copia externa | **Completadas por declaración del propietario**; sin verificación independiente del destino/restore externo/RPO-RTO |
+| P1b checksum/migración27-28/ledger/functions/grants/runtime37/integridad | **GO técnico del clon**; no autoriza ejecutar P3 en producción |
+| P1c código anterior contra28 | **Compatibilidad parcial observada, NO-GO para cierre completo**: mismos status37casos/21pasan;16fallan y cobertura Client/relink pendiente |
+| Ausencia de datos/objetos de aplicación fuera de public | **INCOMPLETO**: censo owner/FK0; conteos de filas inaccesibles39tablas |
+| P0(c) existencia/activación/destino de alarmas | **GO de lectura/configuración**:8Active, tema/suscriptorEmailActive; recepción declarada; restore-staleFIRING |
+| D10 restore semanal/cobertura37/retención | **NO-GO operativo**: FIRING y limitaciones ya documentadas; no corregido/ejecutado |
+| P0 restante/P2–P10/apertura | **NO-GO global**: decisiones/gates del plan siguen pendientes; producción permanece cerrada |
+
+Referencias Git comprobadas sin mover main/QA: main local `01113ef0be7d8abcd74e3e7297f7989b359c76c0`, remoto `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6` (0/2); QA local `36061fc3c978758642b5a79ed6cb0e5ff25c003f`, remoto `523d993cfa0c797f356c224d5cc026d6c9ad4c7b` (0/6). Remotos y locales no cambiaron durante P1c. Playbook ajeno untracked preservado, SHA256 `3c3f2fe57e0888ccf3e814262bc9ab965f59d5ad60db74f0f2c5fefa71924090`. Publicación autorizada: un único commit documental de informe/controles en ai/reserva-invitado-ci; SHA y igualdad con remoto se entregan después del push, sin autosha circular en el documento.
+
+## Registro histórico — P1/P1b anterior a P1c
+
 ## Continuación vigente — 2026-10-08, 22:34 America/Santo_Domingo
 
 **P1 RESTORE Y COTEJOS DE PUBLIC APROBADOS TÉCNICAMENTE; P1b MIGRACIÓN/GATES APROBADOS TÉCNICAMENTE. NO-GO GLOBAL PARA PROMOCIÓN/APERTURA.** Base `ab5a0171c8fb162015936ac4ffe025fb03784687`, rama `ai/reserva-invitado-ci`. La nueva orden autoriza reparar el arnés y hasta dos intentos por paso para fallos locales posteriores a conexión exitosa; TLS/autenticación/conexión siguen limitados a uno. Copia externa del nuevo respaldo y ejecución real del código productivo anterior siguen pendientes. La cobertura del respaldo se delimita abajo: aplicación en public más suplemento de catálogo, no copia integral de la plataforma Supabase.
