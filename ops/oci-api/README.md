@@ -53,6 +53,18 @@ los 23 negativos deben rechazarse antes de Nest. Instalar la CA y wrapper en
 Configurar `KORTEK_API_IMAGE` con ID inmutable en la credencial y
 `KORTEK_CADDY_IMAGE` con ID inmutable oficial en `/etc/kortek-caddy/image.conf`.
 
+P7: el propietario autorizó seleccionar la imagen P5 y su release desde la
+unidad sin editar la credencial. `KORTEK_API_IMAGE_OVERRIDE` y
+`APP_RELEASE_OVERRIDE` se capturan antes de cargar runtime-env y se aplican
+después. El wrapper acepta exclusivamente el par P5 fijado en el código;
+una selección incompleta, vacía o distinta termina antes de Podman. Sin ambos
+overrides, conserva la selección de la credencial para rollback. Los flags,
+secretos y argumentos Podman no cambian. Antes de instalar este selector,
+completar los prechecks P7 y respaldar unidad, wrapper y credencial con hashes;
+instalar solo los dos archivos operativos y reiniciar la API una vez. Ante
+fallo, restaurar unidad y wrapper anteriores y reiniciar una vez, preservando
+runtime-env y la base de datos. [Informe P7](../../docs/quality/ACTIVACION_API_PRODUCCION_P7.md).
+
 Verificar servicios y consumo con `systemctl` y `podman stats`. Desde un equipo
 externo, sin `--insecure` ni override DNS: HTTPS raíz debe entregar 404 JSON y
 X-Request-Id UUID; ruta privada sin token 401; preflight productivo autoriza solo

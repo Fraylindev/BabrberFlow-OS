@@ -11,6 +11,8 @@ User=opc
 Group=opc
 Environment=XDG_RUNTIME_DIR=/run/user/1000
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+Environment=KORTEK_API_IMAGE_OVERRIDE=sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775
+Environment=APP_RELEASE_OVERRIDE=8e1501e89a132e1b01d3633b1b3f896a8cbe5800
 LoadCredential=runtime-env:/etc/kortek-api/runtime-env
 ExecStart=/usr/local/libexec/kortek-api-run.sh
 ExecStop=/usr/bin/podman stop --time 30 --ignore kortek-api

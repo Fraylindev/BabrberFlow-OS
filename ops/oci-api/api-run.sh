@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+# Only the owner-approved P5 pair may override the credential's selectors.
+selector_requested=${KORTEK_API_IMAGE_OVERRIDE+x}${APP_RELEASE_OVERRIDE+x}
+image_override=${KORTEK_API_IMAGE_OVERRIDE-}
+release_override=${APP_RELEASE_OVERRIDE-}
 credentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials required}
 test -r "$credentials_dir/runtime-env"
 # Root-owned credential file, never a repository dotenv or a log/argument.
 set -a
 source "$credentials_dir/runtime-env"
 set +a
+if [[ -n "$selector_requested" ]]; then
+  if [[ "$image_override" != 'sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775' ||
+        "$release_override" != '8e1501e89a132e1b01d3633b1b3f896a8cbe5800' ]]; then
+    printf '%s\n' 'KORTEK_API_SELECTOR_INVALID' >&2
+    exit 64
+  fi
+  export KORTEK_API_IMAGE="$image_override" APP_RELEASE="$release_override"
+fi
 exec podman run --rm --replace --name kortek-api \
   --network host --read-only --cap-drop ALL --security-opt no-new-privileges \
   --cpus 1.5 --memory 2g --memory-swap 2g --pids-limit 128 \
