@@ -1,5 +1,147 @@
 # Preflight producción P0, respaldo P1 y ensayo P1b
 
+## Continuación vigente — 2026-10-08, 22:34 America/Santo_Domingo
+
+**P1 RESTORE Y COTEJOS DE PUBLIC APROBADOS TÉCNICAMENTE; P1b MIGRACIÓN/GATES APROBADOS TÉCNICAMENTE. NO-GO GLOBAL PARA PROMOCIÓN/APERTURA.** Base `ab5a0171c8fb162015936ac4ffe025fb03784687`, rama `ai/reserva-invitado-ci`. La nueva orden autoriza reparar el arnés y hasta dos intentos por paso para fallos locales posteriores a conexión exitosa; TLS/autenticación/conexión siguen limitados a uno. Copia externa del nuevo respaldo y ejecución real del código productivo anterior siguen pendientes. La cobertura del respaldo se delimita abajo: aplicación en public más suplemento de catálogo, no copia integral de la plataforma Supabase.
+
+Vercel no se reconsultó ni modificó: se conserva la lectura previa Disabled. Docker se comprobó solo mediante `docker version --format '{{.Server.Version}}'`: exit 0, Server 29.6.1. Sin nuevo pull ni repetición de las comprobaciones completas PG17.6; se reutilizó la imagen exacta documentada en el checkpoint anterior.
+
+### Arnés y referencia preservada
+
+Archivos modificados/creados únicamente en `.tmp`, ignorados. Ensayo offline exit 0: documentos JSON consecutivos y multilínea, y fallo de parseo inyectado con archivo conservado. El arnés escribe stdout/stderr redactados **antes** de decodificar JSON, usando un decoder sobre documentos completos; conserva resultados y nombres por intento. Toda salida psql del clone/gates también se guarda antes de parsear/asertar. Stderr de pg_dump se conserva; su stdout binario se conserva cifrado en flujo antes de cualquier TOC/parseo, sin dump plano en disco.
+
+Lectura repetida: `pwsh -NoProfile -File .tmp/prod-p1-run.ps1 catalog`, **exit 0**. Referencia cruda `.tmp/prod-p0/p1-catalog-20261009T021531Z.stdout.txt`, stderr correspondiente vacío; referencia parseada `.tmp/prod-p0/p1-source.json`. Estos archivos son evidencia local ignorada, no contenido del commit. Misma credencial DPAPI local migrador, stdin hacia el arnés y PGPASSFILE en `/dev/shm` del cliente temporal; no contraseña en argv/env/logs/chat/repo. Pooler de sesión `aws-0-us-east-1.pooler.supabase.com:5432`, usuario de conexión `kortek_migrator.ilaoolpcrlmqkftirjog`, `verify-full`, CA local absoluta con `/` montada readonly. Sin otras credenciales, postgres o SET ROLE en producción.
+
+`current_user=session_user=kortek_migrator`, transaction_read_only=on, servidor 17.6, BEGIN READ ONLY/COMMIT. **31 tablas, 30 filas del ledger, 26 activas y 4 revertidas**. Booking=0, Client=0, User=2; no se imprimieron filas de negocio. Roles migrador/runtime: LOGIN, NOINHERIT, NOSUPERUSER, NOCREATEROLE, NOCREATEDB, NOREPLICATION, NOBYPASSRLS, connection limit -1, valid until/rolconfig null. Owners de relaciones public: kortek_migrator. Btree_gist 1.7 en public, owner supabase_admin.
+
+La causa del parseo anterior queda confirmada con la referencia nueva: el agregado contiene documentos JSON multilínea; el lector anterior cortaba por líneas. No se atribuye a TLS/SQL. En esta continuación no hizo falta reintentar esa lectura.
+
+### P1: respaldo cifrado, cobertura y custodia
+
+Antes de iniciar pg_dump se detectó offline un error de formato SID en icacls (1332). Se corrigió el literal SID con `*` y se validaron permisos locales. No había comenzado pg_dump/conexión ni se había creado clave; esto no fue un reintento de login/dump. **Primer y único pg_dump real exit 0**, cifrado exit 0, 8.920 s de flujo completo. Cliente **pg_dump 17.6 (Debian 17.6-2.pgdg13+1)** desde `postgres:17.6`, digest previamente verificado `sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929`. Sin cliente PG18.
+
+`pg_dump --format=custom --schema=public --verbose`, conservando owners y ACL; mismo migrador/session pooler/verify-full, default_transaction_read_only=on. Stderr redactado persistido en `.tmp/prod-p0/p1-dump-20261009T021816Z.stderr.txt`: progreso normal, sin error. El dump se conectó directamente al cifrador AES-256-GCM; nunca se escribió plaintext del dump. El artefacto se cerró primero y después se validó/decodeó para restore.
+
+| Artefacto nuevo P1 | Evidencia |
+| --- | --- |
+| Ruta | `C:\KortekBackups\prod-pre-promocion\kortek-prod-20261009T021816Z.p1.aes256gcm` |
+| Tamaño | **280667 bytes** |
+| SHA-256 | **`a72353911e5c47c6db8ab2a529c686de538dce48b7d7081b26c2a5121fefc297`**; recomprobado tras el ensayo |
+| Cifrado | AES256-GCM, clave aleatoria 32 bytes, nonce aleatorio 12 bytes, tag 16 bytes; autenticación comprobada al descifrar |
+| Contenido | Frame de catálogo/roles/ACL/extensiones/referencia/conteos en JSON y dump custom íntegro de public, incluido ledger con todas sus columnas/30 filas |
+| Clave | `C:\KortekBackups\keys\kortek-prod-20261009T021816Z.key.txt`; una línea base64, sin valor en este informe |
+| Protección de clave | ACL Windows solo usuario Fraylin, heredada de directorio protegido; clave fuera de argv/env/logs/chat/repo |
+| Decodificador portable | `C:\KortekBackups\prod-pre-promocion\kortek-p1-aes256gcm.cjs`, SHA `8a74ad1c58f97ffca71964ddf64692d89e3479bb93b21fecf742ae2ebe5cb0a0`; sin clave embebida, usa Node estándar |
+| Copia externa | **Pendiente del propietario**, artefacto y decodificador listos; no se transfirieron a otro destino |
+
+Formato explícito para recuperación: ASCII `KORTEKP1` (8 bytes), nonce (12), ciphertext y tag final (16). Plaintext autenticado: longitud uint64 big-endian del JSON, JSON UTF-8 y bytes PGDMP. El decodificador verifica GCM antes de entregar contenido y permite modos metadata/dump; recibe **ruta** de clave, nunca su valor en argv. Se conservó junto al artefacto para no depender del archivo ignorado del repo. No es formato GPG ni un dump legible directamente por pg_restore.
+
+**Custodia del propietario:** abre localmente `C:\KortekBackups\keys\kortek-prod-20261009T021816Z.key.txt` en una sesión privada y copia su única línea al campo secreto de una entrada de tu gestor, titulada «Kortek producción P1 20261009T021816Z». Anota nombre y SHA del artefacto en esa entrada; verifica que puedes recuperar la clave y vacía el portapapeles. No pegues la clave en el chat ni la guardes junto a la copia externa del cifrado. Conserva la copia local protegida hasta validar la recuperación desde tu gestor. El operador no abrió/imprimió la línea como evidencia.
+
+**Cobertura frente a pg_dump public:** el frame suplementario conserva atributos de todos los roles no pg_, schemas/owners/ACL, default ACL, inventario de seis extensiones, relaciones/constraints/índices/funciones/triggers public y 39 tablas gestionadas fuera de public. Roles/default ACL y btree_gist no se suponen incluidos por el filtro public. Se recrearon roles y schemas necesarios del catálogo; en particular ambos roles de aplicación conservan exactamente sus atributos. No se respaldaron contraseñas/hashes de roles ni filas de auth/realtime/storage/vault, blobs de Storage o configuración de la plataforma. Supabase_vault y las otras extensiones gestionadas se **inventariaron**, no se clonó la plataforma. Esta limitación impide declarar «respaldo integral de toda Supabase» y requiere decisión de cobertura antes de promoción; no se buscaron otras credenciales ni se ampliaron permisos.
+
+### P1: restore aislado y comparación
+
+Clon `kortek-p1-20261009`, PG17.6, datos en tmpfs de 512 MiB, red Docker internal sin acceso externo. La publicación solicitada 127.0.0.1:55476 no quedó enlazada en esa red; Prisma usó un proxy temporal ligado exclusivamente a loopback, con transporte binario por docker exec/STDIO hacia PostgreSQL **del clon**. Ningún proceso de Prisma recibió credenciales productivas. El administrador de bootstrap del clon fue supabase_admin; no se usó para ejecutar las migraciones. Ambos roles Kortek permanecieron sin superusuario/BYPASSRLS/membresías administrativas.
+
+Clientes **pg_restore y psql 17.6 (Debian 17.6-2.pgdg13+1)** desde la misma imagen, nunca PG18. Primera restauración conectó correctamente y falló al CREATE SCHEMA public porque ya existía; pg_restore exit 1, descifrado exit 0. Raw stdout/stderr/resultados conservados bajo prefijo attempt1. La transacción única no dejó una restauración parcial aplicada.
+
+Segundo y último pg_restore: lista TOC que omite **solo** la entrada de creación de SCHEMA public; no omite ACL/owners ni cambia SQL/ledger. `--exit-on-error --single-transaction`, **pg_restore exit 0, descifrado exit 0**, restore **3.394 s**. No hubo nuevo dump o conexión productiva para ese reintento local.
+
+El suplemento respaldado reconstruyó ACL explícitas de 188 funciones miembro de btree_gist, no restauradas por pg_dump public: 1128 grants exclusivamente en el clon. El primer comparador detectó además orden de colecciones distinto por locale y orden ACL; el comparador final ordena colecciones/ACL conservando **todos** los campos y valores, sin omitir diferencias semánticas. Las referencias de ambos cotejos quedaron guardadas.
+
+| Cotejo fuente → clon antes de migrar | Resultado |
+| --- | --- |
+| 31 tablas y conteos | Exactos |
+| Ledger: entradas/metadatos/checksums | 30 filas/26 activas/4 revertidas, exactos; dump conserva también logs |
+| Relations/owners/ACL/RLS | Exactos |
+| Constraints e índices | Exactos |
+| Funciones: firma, retorno, owner, cuerpo MD5, seguridad, ACL/config | 195 funciones, exactos |
+| Triggers | Exactos |
+| Migrador/runtime: atributos reales | Exactos, no superusuario/no BYPASSRLS |
+| Btree_gist: versión/schema/owner | 1.7/public/supabase_admin, exactos |
+| ACL de schema public y default ACL public | Exactas, normalizado solo el orden |
+
+Los once checks finales son true en `.tmp/prod-p0/p1-compare-complete.json`. Este Go de restore corresponde a la cobertura de aplicación y suplemento descritos, no a schemas gestionados completos ni recuperación de proveedores.
+
+### P1b: S exacto y comportamiento real de Prisma
+
+`git fetch origin ai/antigravity-qa`, exit 0; FETCH_HEAD/remoto **`523d993cfa0c797f356c224d5cc026d6c9ad4c7b`**. Worktree detached creado desde ese SHA, limpio antes/después; código, SQL y ledger no editados. Las migraciones se comprobaron contra los hashes de sus bytes LF del worktree. Dependencias locales existentes Prisma **6.19.3**, coincidentes con S, sin instalación ni builds. CLI local ejecutada con cwd/schema del worktree S y URL exclusivamente del clon; conexión efectiva kortek_migrator/current_user=session_user, superuser=false, bypassrls=false, sin SET ROLE.
+
+| Comando en el clon | Resultado observado |
+| --- | --- |
+| prisma migrate status | **exit 1**, stderr vacío; lista únicamente 27 business_schedule y 28 customer_stage_one pendientes. Ese exit no se cuenta como gate aprobado ni como fallo TLS |
+| prisma migrate deploy | **exit 0**, stderr vacío; aplica 27 y 28, «All migrations have been successfully applied» |
+
+**Checksum histórico ensayado sin corregirlo:** Invoice conserva en ledger `3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a`; blob/worktree S `39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b`. En este ensayo Prisma 6.19.3 **no bloqueó deploy por esa discrepancia**; el ledger de Invoice quedó con el hash original. No se generaliza a otras versiones/comandos ni se usa migrate resolve. Los cuatro intentos revertidos se conservaron.
+
+Resultado después de migrar y aplicar el suplemento:
+
+- **32 filas de ledger / 28 activas / 4 revertidas**, 37 tablas.
+- 27 `20260927170000_business_schedule`: checksum **`82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82`** exacto al archivo S.
+- 28 `20261003120000_customer_stage_one`: checksum **`6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee`** exacto al archivo S.
+- `customer_access_relink()` y `customer_booking_revision()`: cero argumentos, retorno trigger, SECURITY INVOKER, owner kortek_migrator, ACL únicamente kortek_migrator/kortek_runtime EXECUTE, **sin PUBLIC**, config exacta `search_path=pg_catalog, public, pg_temp`.
+- `customer-stage-one-runtime-grants.sql` de S aplicado **como migrador** en el clon, exit 0; funciones/ACL verificadas después de ese apply, sin afirmar que la migración sola fijó su search_path.
+- `verify-runtime-role.sql` íntegro de S **como runtime**, exit 0, matriz **37 tablas**. `verify-integrity.cli.ts` de S **como runtime**, ejecución TS en memoria con dependencias existentes, exit 0: `Supplemental PostgreSQL constraints and indexes: OK`. Sin build ni reparación del esquema.
+
+Adaptación explícita del entorno aislado: PostgreSQL estándar no incluye supabase_vault y el verificador permite TEMP únicamente bajo esa excepción de Supabase. Se revocaron CREATE/TEMP de PUBLIC **solo en la DB del clon** y se confirmó CONNECT de ambos roles; no se modificaron el verificador, migraciones, attrs de roles o ACL public. El gate se ensayó con restricción de TEMP más fuerte; no acredita igualdad de privilegios de DB/plataforma gestionada que no se respaldaron en P1.
+
+**Duración y bloqueos:** migrate deploy completo **9.928 s**, incluido proceso/proxy/transporte; ledger Prisma registra 27 **22.965 ms** y 28 **11.695 ms** entre started_at/finished_at. Son intervalos de ejecución/contabilidad de migración, no cronometría individual de cada sentencia DDL. Muestreo del clon durante deploy: **3 muestras**, waiting_locks=0, blocked_sessions=0, AccessExclusiveLock concedidos observados=0. El transporte produjo muestras separadas unos 3.3 s y puede omitir locks de milisegundos; no se afirma ausencia total de locks ni se extrapola duración/bloqueo a producción con carga. Raw de status/deploy/muestreo y postledger se conservan ignorados.
+
+### Client/Booking y código anterior: límite del ensayo adicional
+
+Se ejecutó SQL temporal como runtime con fixtures sintéticas y columnas anteriores a 28: defaults de Client, relink/ambigüedad y revisión por INSERT/UPDATE/movimiento de Booking. El comando completo terminó **exit 3** al intentar DELETE Booking, permiso excluido del runtime; **no se cuenta como ensayo aprobado completo**. No se amplió ese permiso ni se cambió una aserción para convertirlo en éxito.
+
+Una lectura posterior exit 0 confirma `has_table_privilege(Booking, DELETE)=false` y **cero fixtures Client/Booking restantes**, tras aborto/rollback de la transacción al cerrar conexión. Este resultado concuerda con la matriz de privilegios; no es evidencia de un fallo del trigger DELETE. Se detuvo el ensayo adicional en ese punto, sin repetirlo. **La ejecución del artefacto/API productivo anterior sobre schema28 sigue pendiente**: el ensayo SQL no ejecutó ese código ni acredita rollback de código, tenant HTTP o comportamiento del ORM anterior. No se reutilizó el dist actual como prueba de la versión histórica.
+
+### OCI restore semanal: logs propios, persistencia y salidas 1
+
+SSH sanitizado de solo lectura, exit 0, evidencia cruda redactada guardada antes del parseo. Se releen unidades/scripts/backup y se amplía journal de `kortek-restore-drill.service` **2026-09-25 → 2026-10-09 23:59:59 UTC**, máximo 200 entradas: **`-- No entries --`**, exit 0. Estado sigue failed/exit-code/ExecMainStatus=1 del **2026-10-04 06:32:08 UTC**. No se ejecutó/corrigió el job.
+
+La unidad usa StandardOutput=journal, StandardError=inherit, WorkingDirectory vacío, StateDirectory=kortek-backup y PrivateTmp=yes. El script crea `kortek-restore.XXXXXX` bajo STATE_DIRECTORY (o /tmp de fallback), escribe allí `bucket.json`, `restore.list`, `decrypt.stderr`, `restore.stderr` y `counts.txt`; `cleanup` elimina **todo el workdir al salir**. Solo instala `/var/lib/kortek-backup/latest-restore-counts.txt` **tras éxito completo**. Ese archivo existe y contiene 31 tablas/30 filas ledger/25 Booking, referencia de un éxito previo sin fecha acreditada aquí, no log del fallo del 4 ni conteo actual. Búsqueda dirigida en /var/log, /var/lib/kortek-backup y /var/lib/kortek-restore no encontró log propio de fallo retenido. No se leyeron claves ni archivos secretos para esta investigación.
+
+Journald **persistente demostrado**: drop-in `/etc/systemd/journald.conf.d/60-kortek-retention.conf`, Storage=persistent, SystemMaxUse=100M, RuntimeMaxUse=50M, MaxRetentionSec=7day; `/var/log/journal` existe, `/run/log/journal` vacío. Journal ocupa **95.9M**; `journalctl --list-boots` solo conserva el boot actual, primera entrada **2026-10-07 06:28:30 UTC**. El fallo del día 4 está fuera del intervalo retenido observado. **Hipótesis:** la cota de tamaño eliminó registros anteriores; no se demuestra qué mecanismo concreto los retiró. Siete días es máximo, no garantía mínima.
+
+Rutas de salida no cero del script instalado actual (set -Eeuo pipefail):
+
+| Etapa | Rutas que pueden producir exit 1 / límite de diagnóstico |
+| --- | --- |
+| listing | OCI list/parseo fallidos o `test -n "$name"` con lista vacía |
+| download | get del dump/sha fallido o `sha256sum --check` distinto |
+| isolated_postgres | run/readiness/CREATE EXTENSION fallidos; exit real depende del comando |
+| restore | gpg/pg_restore list o grep de SCHEMA fallidos; pipeline de restore captura PIPESTATUS y ejecuta **exit 1** explícito |
+| verification | `test tables -eq 31`, `test migrations -ge 26`, **`test bookings -ge 1`**, o instalación del conteo fallida |
+| cleanup | Conserva status, emite RESTORE_DRILL_FAILED stage/status y elimina stderr propios; no conserva causa detallada |
+
+**Causa del incidente aún no demostrada.** Booking=0 en la referencia P1 actual y el test ≥1 demostrarían un fallo de verificación **si el objeto usado contuviera cero Booking**; no se conoce el contenido de aquel objeto ni la etapa real. Se conserva como hipótesis, junto con fallos posibles de descarga/descifrado/restore. No se atribuye el incidente al test sin evidencia histórica.
+
+### Backup programado: lectura confirmada y carencias frente al plan
+
+Unidad/script/timer releídos sin ejecutar. Script instalado equivale al repo normalizando CRLF/LF. `public --no-owner --no-acl`, rol operativo kortek_backup, pooler sesión verify-full, clientes `postgres:17` sin pin menor; **no se usó esa credencial**. Cifrado GPG AES256 en flujo, daily a bucket privado `kortek-booking-encrypted-backups`/namespace idujavz2hijf/us-ashburn-1 y sidecar SHA. Diario 05:17 UTC con hasta 300 s de variación; último éxito registrado 2026-10-08 05:20:45 UTC. Journal conserva BACKUP_OK, 21417 bytes, SHA `0e84441285a6ed61a086479f2eecabd37a4b1375c7c46d84a076a5f5ddac062d`; no se confunde con el artefacto P1 nuevo.
+
+GET de lifecycle vuelve a devolver **LifecyclePolicyNotFound**, 404 específico: no política ni purga automática; script sin borrado, tope preventivo bucket 8 GB y objeto 450 MB, sin retención temporal garantizada. Le faltan frente a este plan: owners/ACL/roles y suplemento de extensiones, cobertura explícita fuera de public, pin menor PG17.6, restore vigente de 37 tablas y fixtures válidas para base sin reservas, logs de fallo durables, retención/lifecycle decididos y custodia/copia independiente verificadas. Solo se documentan; no se editaron scripts/jobs/IAM/políticas.
+
+### Veredicto por criterio, limpieza y Git
+
+| Criterio | Veredicto de esta continuación |
+| --- | --- |
+| Referencia migrador READ ONLY / TLS / ledger30/26 | **Go técnico**, capturada y conservada |
+| Respaldo cifrado de aplicación + suplemento | **Go técnico** para cobertura declarada, tamaño/SHA/clave protegida; no backup integral de plataforma |
+| Restore/cotejos public/roles/btree_gist/ACL | **Go técnico**, once checks exactos tras suplemento |
+| Copia externa y recuperación independiente de laptop | **Pendiente / No-Go de continuidad**, destino/clave en gestor a cargo del propietario |
+| Cobertura de schemas/datos/plataforma gestionada | **Incompleta**, solo inventario; decisión/verificación adicional pendiente |
+| Prisma checksum histórico / deploy27/28 / ledger / funciones / runtime37 / integridad | **Go técnico del clon** con S/Prisma/PG exactos y adaptación TEMP documentada |
+| Medición DDL/bloqueos | Intervalos y muestras capturados; **limitado**, sin perfil por sentencia ni prueba de carga productiva |
+| Código anterior sobre schema28 / rollback funcional | **Pendiente**; SQL adicional exit3, no se declara aprobado |
+| Restore semanal / retención / logs / alertas y demás criterios P0 pendientes | **No-Go operativo**, causa no demostrada, jobs intactos; sin nuevas consultas Clerk/IAM/Vercel |
+| Integración M/artefactos/QA live/Piloto/Paso8/promoción/apertura | **No-Go global**, gates posteriores no autorizados ni ejecutados |
+
+Limpieza exit 0: se retiraron únicamente clon tmpfs, red internal, proxy temporal y worktree limpio creados por esta tarea; respaldo/clave/decodificador quedan locales. No se descartó trabajo ajeno. Comparación final SSH: **4/4 contenedores producción/QA idénticos** en campos comunes (ID/imagen/PID/running/release/entorno/envHash/flags/presencia de RATE_LIMIT_SECRET); producción PUBLIC_BOOKING_CLOSED=true y correo false. Sin escrituras productivas/QA, cambios de proveedores/IAM, builds, despliegues ni flags.
+
+Locales main `01113ef0be7d8abcd74e3e7297f7989b359c76c0` y QA `36061fc3c978758642b5a79ed6cb0e5ff25c003f` intactas; remotos main `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6` y QA `523d993cfa0c797f356c224d5cc026d6c9ad4c7b`, sin mover ramas (locales atrasadas 2/6). Vercel no reconsultado por instrucción; ninguna acción de alias/configuración. Playbook ajeno sigue sin seguimiento y conserva SHA `3c3f2fe57e0888ccf3e814262bc9ab965f59d5ad60db74f0f2c5fefa71924090`. Solo informe y tres entradas de control documental en el único commit/push autorizado; artefacto/clave no entran al repo. SHA publicado, local=remoto y status final se reportan en la entrega.
+
+## Registro histórico — continuación publicada en ab5a017
+
 ## Continuación vigente — 2026-10-08, 22:05 America/Santo_Domingo
 
 **NO-GO GLOBAL / PAUSADO / INCOMPLETO EN P1: PROCESAMIENTO LOCAL DEL CATÁLOGO.** Base exacta `be90fd4812ff08a6d8f0a2fa69133a23e565e8f2`, rama `ai/reserva-invitado-ci`. Esta sección sustituye solo el estado vigente de los criterios revalidados; las secciones inferiores son historia fechada. El propietario habilitó Docker y declaró haber desactivado la autoasignación; ambas condiciones se comprobaron. Las lecturas independientes autorizadas se conservan pese a la parada de P1.
