@@ -1,5 +1,23 @@
 # P9 — Pareja nueva en producción, reserva cerrada
 
+## Cierre documental y reclasificación — 2026-10-09
+
+**Veredicto vigente de P9: GO TÉCNICO.** Esta orden documental sustituye el No-Go por censo del informe original, conservado debajo como evidencia histórica. Base de esta entrega: ai/reserva-invitado-ci en `3b3dafd40b15bca2bb83c6e18e9c836153fa589e`. No se realizaron nuevas lecturas ni cambios en producción; las comprobaciones técnicas citadas son las capturadas en P9, no una revalidación actual.
+
+El propietario declara que conoce los tres usuarios de producción y los tres son él; que la reserva, el cliente y el horario confirmado son pruebas suyas realizadas tras la promoción; y que trata el ambiente productivo como QA mientras no haya terceros reales. **Atribución por declaración del propietario, sin evidencia independiente capturada de identidad o autoría.** La coherencia temporal ya observada —censo presente después de la promoción y antes de los GET de P9, igual después— es compatible con esa declaración, pero no prueba quién creó cada dato ni cuándo se creó. La ausencia de terceros reales también es una declaración, no un censo independiente de identidades.
+
+Se acepta como baseline documental de P9 **1 reserva, 1 cliente, 3 usuarios y 1 horario confirmado**. Las 3 organizaciones y los demás conteos capturados permanecen en la evidencia original sin modificación. No se cambia P3/P4 retrospectivamente ni se eliminan datos para recuperar su censo anterior. El Go técnico se apoya en la pareja y los controles observados en P9, junto con esta aceptación explícita del nuevo baseline; no acredita preparación para atender a terceros ni autoriza apertura pública.
+
+### Pendientes antes de la primera persona ajena
+
+- **Paso 8:** decisión del plan de Supabase y respaldo recuperable; restore semanal de OCI y revisión de sus umbrales `bookings >= 1` y `tables == 31`; lifecycle del bucket; sondas públicas; MFA; correo. Los umbrales se registran tal como están pendientes: P9 capturó 37 tablas, por lo que el umbral de 31 requiere resolución explícita antes de considerar aprobado el restore. Esta entrega no cambia scripts, umbrales, planes, alarmas ni proveedores y no declara ejecutado un restore nuevo. Véase el [plan productivo](PLAN_PRODUCCION_RESERVA_INVITADA.md).
+- **Restricción del registro en Clerk:** respuesta pendiente; no se configura ni se presume resuelta.
+- **Cabeceras web CSP y X-Frame-Options:** pendientes; P9 registró su ausencia. El Go técnico no las presenta como implementadas ni sustituye su resolución antes de terceros.
+
+La reserva permanece cerrada según la última evidencia P9. No se autoriza aquí abrirla, activar correo, incorporar terceros ni ejecutar los pendientes. El cierre es exclusivamente documental: este informe y las referencias de estado, un único commit y push sin force a ai/reserva-invitado-ci. SHA final, local=remoto y git status se reportan tras publicar; el Playbook ajeno sigue fuera del commit.
+
+## Informe original P9 — histórico, veredicto por censo sustituido
+
 Fecha: 2026-10-09. **NO-GO frente a los criterios escritos de P9. Verificación completada; sin apertura ni correcciones operativas.** La pareja web/API nueva coincide y sus comprobaciones técnicas pasan, pero el estado de negocio no coincide con el censo exigido ni con P3/P4: hay 1 reserva, 1 cliente, 3 usuarios, 3 organizaciones y 1 horario confirmado. Estos datos ya estaban presentes en la lectura anterior a los GET de P9; no se atribuye su origen o autoría. No se limpió ni modificó negocio, horarios o ledger.
 
 ## Alcance y base

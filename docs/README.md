@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## Cierre documental P9 — 2026-10-09
+
+**P9: GO TÉCNICO por reclasificación autorizada del censo.** Baseline: 1 reserva, 1 cliente, 3 usuarios y 1 horario confirmado; atribuidos a pruebas del propietario por su declaración, sin verificación independiente de autoría. [Informe vigente y límites](quality/VERIFICACION_PAREJA_PRODUCCION_P9.md): pendientes antes de terceros, Paso 8 (Supabase/respaldo recuperable, restore semanal OCI y umbrales bookings >= 1 / tables == 31 frente a 37 capturadas, lifecycle, sondas, MFA y correo), restricción del registro Clerk con respuesta pendiente, CSP y X-Frame-Options. Sin nuevas lecturas ni cambios productivos; no autoriza apertura. Los registros inferiores conservan sus estados históricos.
+
 ## P1c: release anterior contra esquema28 — 2026-10-08
 
 **PAUSADO / INCOMPLETO EN COBERTURA P1c; NO-GO GLOBAL.** [Informe vigente](quality/PREFLIGHT_PRODUCCION_P0_P1.md): dos clones PG17.6 desde P1, restores/cotejos exactos y segundo clon migrado con S523d993 a ledger32/28activas/37tablas, hashes/funciones/grants/runtime/integridad correctos. Código productivo b561586 inmutado como runtime: mismos37status en26/28,21casos pasan y16fallan por permisos/ownership; sin regresión nueva observada, cobertura Client/relink y suites completas pendientes. Censo productivo READ ONLY:0objetos ownerKortek/FKs a public en schemas gestionados;39tablas sin permiso para conteos de filas, ausencia de datos fuera de public no confirmada. OCI consola:8alarmasActive, tema/suscripciónEmailActive; restore-staleFIRING03:16UTC y recepción del correo declarada por propietario. Custodia/copia externa completadas por declaración, sin evidencia capturada. Clones/redes/proxies/worktrees retirados; producción cerrada y QA intacta, main/QA locales y remotos sin mover. Solo commit/push documental ai/reserva-invitado-ci; sin builds/deploy/jobs/proveedores/flags.
