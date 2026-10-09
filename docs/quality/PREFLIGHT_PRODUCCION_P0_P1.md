@@ -1,5 +1,110 @@
 # Preflight producción P0, respaldo P1 y ensayo P1b
 
+## Continuación vigente — 2026-10-08, 22:05 America/Santo_Domingo
+
+**NO-GO GLOBAL / PAUSADO / INCOMPLETO EN P1: PROCESAMIENTO LOCAL DEL CATÁLOGO.** Base exacta `be90fd4812ff08a6d8f0a2fa69133a23e565e8f2`, rama `ai/reserva-invitado-ci`. Esta sección sustituye solo el estado vigente de los criterios revalidados; las secciones inferiores son historia fechada. El propietario habilitó Docker y declaró haber desactivado la autoasignación; ambas condiciones se comprobaron. Las lecturas independientes autorizadas se conservan pese a la parada de P1.
+
+### 1(a): Vercel, autoasignación desactivada
+
+Sesión Chrome existente, pestaña del propietario en [Production de kortek-booking](https://vercel.com/fraylindev/kortek-booking/settings/environments/production): Branch Tracking **main**; Auto-assign Custom Production Domains muestra **Disabled**, checkbox sin marcar, nota «Production deployments will need to be manually promoted», botón **Save deshabilitado**. No se accionó el checkbox ni Save, no se cambiaron variables, dominios o despliegues. **Go técnico para este prerrequisito**, sin autorización de promoción.
+
+Conector de lectura `get_deployment(withGitRepoInfo=true)` confirma aliases sin cambios frente al checkpoint previo:
+
+| Alias | Deployment / estado | SHA |
+| --- | --- | --- |
+| booking.kortek.cloud | `dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm` / READY | `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6` / main |
+| qa.booking.kortek.cloud | `dpl_3WyqcfwaKgpsnQzLaMmgifuB3mHg` / READY | `523d993cfa0c797f356c224d5cc026d6c9ad4c7b` / ai/antigravity-qa |
+
+### 1(b): diagnóstico de restore semanal y cobertura del backup
+
+SSH de solo lectura con la misma clave y known-hosts locales del preflight sanitizado, `BatchMode=yes`, `StrictHostKeyChecking=yes`, `sudo -n python3 -`. Lectura de `systemctl cat/show`, scripts por ruta ExecStart y `journalctl -u ... -n 70 --no-pager -o short-iso`; **SSH exit 0**. Redacción antes de transmitir: sustitución de secretos de entorno en memoria, URIs PostgreSQL y asignaciones de contraseña/token/secret. No se leyó el contenido de la frase de cifrado ni se ejecutaron los scripts, reinicios, cambios de permisos o correcciones.
+
+Restore: unidad `/etc/systemd/system/kortek-restore-drill.service`, User/Group opc, oneshot, `LoadCredential=encryption-passphrase:/etc/kortek-backup/encryption-passphrase`, StateDirectory kortek-backup, PrivateTmp true, timeout 900 s; ExecStart `/usr/local/libexec/kortek-restore-drill.sh`. Timer domingos 06:30 UTC, Persistent true y variación hasta 300 s. Estado **failed / Result exit-code / ExecMainStatus 1**, última salida **2026-10-04 06:32:08 UTC**. Journal devuelve literalmente **`-- No entries --`**: no existe stderr histórico recuperable en esta lectura.
+
+**Demostrado:** el fallo registrado y la ausencia actual de entradas del journal. La etapa y causa concreta del fallo siguen **no demostradas**. El script descarga el último `.dump.gpg`, comprueba SHA, restaura en contenedor `postgres:17` con red none y exige exactamente 31 tablas, al menos 26 filas de ledger y **Booking ≥1**. Ese último requisito es incompatible con una copia que contenga cero reservas. **Hipótesis:** pudo fallar ese test, dada la lectura histórica de producción con Booking=0; no se conoce el conteo del objeto usado el 4 de octubre ni se conservó la lectura nueva de P1. También pueden fallar descarga, descifrado o restore; sin journal no se elige una causa. La exigencia de 31 tablas tampoco cubre el futuro esquema de 37. No se corrigió ni ejecutó el restore semanal.
+
+Comparación de scripts instalados con los archivos actuales del repo:
+
+| Script | SHA-256 OCI (bytes) | SHA-256 repo (bytes) | Comparación |
+| --- | --- | --- | --- |
+| restore-drill.sh | `cfdf9313235a52fbbc7d705dee1ee4eaa353dba5d76a3b91c8683c1c663cb90c` | `6699fbfebf2afa4893828be1526bc69293b357c9d25f2882cdae4c5a29f31956` | Bytes distintos; contenido igual al normalizar CRLF/LF |
+| backup.sh | `21cdd60b21f3cc62183600463c4896464d9cd5ac7ad9d89e39e761d9e96136f1` | `6a681613626e6060639e7b34fbcc3ce4937a9e1263533937222bda4566c6089c` | Bytes distintos; contenido igual al normalizar CRLF/LF |
+
+No se normalizó ni escribió ninguno de los archivos originales. Comparación normalizada en memoria, antes de la redacción de su contenido.
+
+Backup: unidad `/etc/systemd/system/kortek-backup.service`, oneshot/opc, LoadCredential para contraseña DB y frase de cifrado, StateDirectory kortek-backup, PrivateTmp true, timeout 900 s; ExecStart `/usr/local/libexec/kortek-backup.sh`. Diario 05:17 UTC, Persistent true y variación hasta 300 s. Estado inactive / Result success / ExecMainStatus 0, salida **2026-10-08 05:20:45 UTC**. Journal acredita:
+
+```text
+BACKUP_OK object=daily/20261008T052037Z-637ea479-382d-4a1e-8329-e16d9bad492d.dump.gpg
+bytes=21417
+sha256=0e84441285a6ed61a086479f2eecabd37a4b1375c7c46d84a076a5f5ddac062d
+```
+
+Cobertura y límites demostrados por script instalado: `pg_dump --format=custom --schema=public --no-owner --no-acl`, cliente imagen `postgres:17` sin pin menor, usuario operativo `kortek_backup` y pooler sesión 5432/TLS verify-full. **No se usó esa credencial en esta tarea.** Dump en flujo hacia GPG `--symmetric --cipher-algo AES256`; no dump plano en disco. Objeto cifrado y `.sha256` en bucket privado `kortek-booking-encrypted-backups`, namespace `idujavz2hijf`, región us-ashburn-1, prefijo daily. Valida TOC, tamaño ≤450000000 bytes, tope preventivo bucket <8000000000 bytes y longitud tras subida. No respalda globals/roles ni conserva owners/ACL; no sustituye el respaldo ampliado P1 solicitado. El BACKUP_OK observado no acredita un restore actual exitoso.
+
+**Retención actual:** el script no elimina objetos. GET OCI `object-lifecycle-policy get`, misma identidad instance_principal, devuelve exit 1 / HTTP 404 **LifecyclePolicyNotFound**, mensaje específico «does not define a lifecycle policy». Aquí sí demuestra ausencia de política lifecycle, a diferencia del 404 ambiguo de alarmas del checkpoint anterior. Sin plazo/purga automática configurada; revisión manual pendiente. No se descargaron objetos ni se consultaron/cambiaron IAM, claves o políticas.
+
+### 1(c): Docker y clientes autorizados
+
+`docker version --format '{{json .}}'`: **exit 0**, Client y Server **29.6.1**, API 1.55, contexto desktop-linux, Docker Desktop **4.82.0 (233772)**, servidor Linux amd64. Prerrequisito antes bloqueado resuelto.
+
+`docker pull postgres:17.6`: **exit 0**. Tag exacta disponible; no fallback. Digest **`sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929`**. Lectura de versiones en contenedor temporal con `--network none`, exit 0:
+
+```text
+pg_dump (PostgreSQL) 17.6 (Debian 17.6-2.pgdg13+1)
+pg_restore (PostgreSQL) 17.6 (Debian 17.6-2.pgdg13+1)
+psql (PostgreSQL) 17.6 (Debian 17.6-2.pgdg13+1)
+```
+
+Solo se ejecutaron `--version` de pg_dump/pg_restore; no un dump/restore. El único psql de conexión DB de esta continuación se ejecutó desde esa imagen. **Sin cliente PG18 del host.** La imagen descargada queda local; los contenedores de clientes usaron `--rm`.
+
+### P1: fallo local tras una lectura SQL exitosa; parada exacta
+
+Se prepararon arneses ignorados `.tmp/prod-p1-run.ps1`, `.tmp/prod-p1.py` y `.tmp/prod-p1-catalog.sql`. **Un solo intento** `pwsh -NoProfile -File .tmp/prod-p1-run.ps1 catalog`. Misma credencial migrador DPAPI local, enviada al arnés por stdin; dentro del contenedor PGPASSFILE en `/dev/shm`, sin contraseña en argv/logs/chat/repo. Misma conexión `kortek_migrator.ilaoolpcrlmqkftirjog`, pooler `aws-0-us-east-1.pooler.supabase.com:5432`, `sslmode=verify-full`, CA local absoluta con `/` montada readonly en `/ca.crt`. Sin postgres, otra credencial ni SET ROLE en producción.
+
+SQL: `BEGIN READ ONLY`, SELECT de identidad, catálogo de roles/ACL/extensiones/relaciones/constraints/índices/funciones/triggers/default ACL, ledger completo sin columna logs, inventario de tablas fuera de public y conteos de public; COMMIT. `default_transaction_read_only=on`, ON_ERROR_STOP=1. **Proceso psql exit 0; stderr vacío.** A continuación el proceso Python y el comando completo terminaron **exit 1**:
+
+```text
+catalog_exit 0 stderr [vacío]
+json.decoder.JSONDecodeError: Expecting value: line 1 column 250 (char 249)
+```
+
+**Causa demostrada de la parada P1:** excepción del procesamiento local JSON, posterior al éxito del cliente. El arnés usa `json.loads(x)` sobre cada línea que comienza por `{` de `stdout.splitlines()`, en vez de conservar/procesar documentos JSON completos. El traceback señala esa comprensión. **Hipótesis de detalle:** el agregado JSON multilínea quedó fragmentado; no se conserva el stdout bruto para probar qué contenido ocupaba exactamente la columna 250. Error evitable del arnés, no fallo de login/TLS ni de SQL demostrado. No se suprime ni sustituye el stderr del cliente: estaba vacío; se reporta por separado la excepción local.
+
+La salida completa quedó solo en memoria y no se escribió antes del parseo. Por ello **no se verifican ahora identidad/atributos mediante aserción, ledger 30/26, conteos, ACL ni catálogo**: el archivo `p1-source.json` nunca llegó a crearse. La identidad/atributos del login P0 anterior siguen como evidencia fechada, no como comparación P1 nueva. No se inventan resultados a partir del exit 0 SQL. Conforme a «si P1 falla en un paso, detente en ese paso», no se repitió el login/lectura, no se reparó y reejecutó el arnés ni se avanzó al dump.
+
+**Sin respaldo nuevo:** no artefacto ni clave nueva en `C:\KortekBackups\prod-pre-promocion`; tamaño y SHA P1 no disponibles. El hash del backup OCI anterior no es un hash P1. No se generó una clave que el propietario deba importar al gestor. Copia externa P1 pendiente y todavía sin artefacto listo. No se recrearon roles, extensiones o ACL en un clon, no hubo pg_restore ni comparación.
+
+**P1b no ejecutado:** no fetch/worktree de S ni Prisma status/deploy/resolve, cambios SQL/ledger, grants o verificación runtime37/integrity. Comportamiento de Prisma frente a add_invoice_model, ledger final 28 activas, checksums exactos de 27/28, funciones/owners/ACL/search_path, duración DDL/bloqueos e invariantes Client/Booking permanecen pendientes. No hay DDL cuya duración medir.
+
+### Veredicto por criterio y siguiente paso
+
+| Criterio | Resultado vigente |
+| --- | --- |
+| Autoasignación de dominios antes de integrar | **Go técnico:** desactivada, lectura Chrome; rama main |
+| Docker / disponibilidad PG17.6 / versiones clientes | **Go técnico:** Server presente, imagen exacta descargada, tres clientes 17.6 |
+| TLS/login P0 y atributos migrador | Go técnico anterior conservado; lectura SQL PG17 actual exit 0, aserciones/catálogo P1 no completados |
+| Restore semanal / causa | **No-Go:** failed/exit1; journal vacío, etapa/causa no demostrada; incompatibilidades del verificador documentadas sin corrección |
+| Backup operativo / cobertura / retención | Cifrado y ejecución exitosa observados; cobertura limitada a public sin owners/ACL, sin lifecycle; **no satisface P1 ni prueba recuperabilidad actual** |
+| P1 respaldo ampliado, clave, restore/comparación/copia externa | **No-Go:** excepción local en lectura de referencia, sin respaldo/clon ni clave nueva |
+| P1b checksum / migraciones / ledger28 / matriz37 / integridad / DDL | **No-Go:** no ejecutado |
+| Alertas, sondas públicas, secret Clerk Vercel, MFA/OWNER y demás gates del plan | Pendientes previos conservados; no revalidados ni ampliados en esta orden |
+| Promoción / apertura | **No-Go global**, no autorizadas por esta evidencia |
+
+Siguiente paso preciso, bajo continuación autorizada: corregir y ensayar offline el manejo de JSON multilínea y la conservación segura de evidencia **antes** de otra lectura productiva; luego obtener referencia P1 verificable, cifrar el respaldo ampliado en flujo y registrar ruta/tamaño/SHA/ubicación protegida de clave. Restore/clientes PG17.6; comparar fuente y clon antes de P1b con S exacto desde remoto tras fetch. La causa del restore semanal seguirá pendiente sin logs del incidente; no corregirlo/ejecutarlo por inferencia. Esta parada no requiere cambios productivos ni IAM.
+
+### Git y preservación
+
+Rama/base comprobadas; único archivo ajeno sin seguimiento, `docs/Playbook Kortek Booking_ del 29 de septiembre al MVP.md`, preservado con SHA-256 `3c3f2fe57e0888ccf3e814262bc9ab965f59d5ad60db74f0f2c5fefa71924090`. Solo este informe y entradas de control documental se publican en el único commit autorizado; arneses/evidencia ignorados, imagen local y ningún artefacto de respaldo en repo.
+
+Remotos main `fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6` y QA `523d993cfa0c797f356c224d5cc026d6c9ad4c7b`; locales main `01113ef0be7d8abcd74e3e7297f7989b359c76c0` y QA `36061fc3c978758642b5a79ed6cb0e5ff25c003f`, sin moverlas (atrasadas 2/6). SHA del commit documental/local=remoto/status final se entregan después del push.
+
+OCI API producción conserva release `b5615869dcbec4bd174608f2373e73ff618fae26`, imagen `8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2`, cierre true/correo false. API QA conserva b318ca5/imagen `8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec`. Contenedores/entornos/flags se cotejan al cierre; aliases ya iguales al checkpoint previo. Sin escrituras productivas/QA, reinicios, cambios de proveedores, IAM, builds, despliegues ni flags. La desactivación de autoasignación fue realizada por el propietario antes de esta ejecución.
+
+Verificación final antes de publicar: **4/4 contenedores iguales** en los campos comunes del preflight inicial/final (ID, imagen, PID, running, release, entorno, envHash, cierre/correo y presencia de RATE_LIMIT_SECRET); no se comparan como diferencias los campos añadidos por el preflight ampliado. `docker ps` solo muestra el contenedor local preexistente barberflow-postgres, que no se usó ni modificó. Código/SQL/ops/config/lockfile/workflows sin diff frente a be90fd4; arneses ignorados comprobados por Git; `git diff --check` exit 0. Sin builds o pruebas de producto ajenas al alcance.
+
+## Registro histórico — continuación publicada en be90fd4
+
 ## Continuación vigente — 2026-10-08, 21:30 America/Santo_Domingo
 
 **P0(a) LOGIN APROBADO TÉCNICAMENTE; P0(b) LEÍDO; P0(c–d) CON LÍMITES DE ACCESO; P1 DETENIDO ANTES DEL RESPALDO; P1b NO EJECUTADO. NO-GO GLOBAL / PAUSADO / INCOMPLETO.** Esta continuación parte de `515a1062b75f1b80cee78aa8f44830da33b6e2c9`. La orden actual establece que P0(a–d) son independientes: un fallo en (a) solo bloquea P1/P1b. Se completaron las lecturas independientes disponibles; los datos inaccesibles se identifican debajo. La parada anterior no describe el resultado vigente del login.
