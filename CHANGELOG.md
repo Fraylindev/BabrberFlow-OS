@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Continuación P0: TLS resuelto, P1 detenido — 2026-10-08
+
+**NO-GO / PAUSADO / INCOMPLETO.** [Evidencia actualizada](docs/quality/PREFLIGHT_PRODUCCION_P0_P1.md): libpq eliminaba barras de la ruta CA; parseo local sin credenciales lo reproduce, CA oficial idéntica y handshake hostname/cadena exit 0. Único reintento verify-full: migrador efectivo/session_user y READ ONLY correctos, PG17.6, atributos reales, stderr vacío. P0 independiente: Vercel main/autoasignación productiva activada/cinco variables presentes; API OCI cerrado/correo false, claves live y heartbeat; publishable web live, secret Vercel no legible. Restore semanal OCI failed/exit1 y alertas GET 404 NotAuthorizedOrNotFound; sondas públicas false. P1 se detiene antes del respaldo por motor Docker local no disponible; P1b no ejecutado, sin clientes PG18 para restore. Sin cambios producción/QA/proveedores; único commit/push documental solo ai/reserva-invitado-ci. Main local atrasada 2 y QA local 6 frente a remotos, sin moverlas; Playbook preservado. El login fallido inferior es historia superada.
+
 ## Preflight productivo P0/P1/P1b detenido — 2026-10-08
 
 **NO-GO / PAUSADO / INCOMPLETO en P0(a).** [Evidencia y relevo](docs/quality/PREFLIGHT_PRODUCCION_P0_P1.md): base f043260 exacta; Supabase producción ACTIVE_HEALTHY y organización free/tier_free comprobados. Credencial migrador DPAPI local disponible, pero login por pooler de sesión 5432/TLS verify-full falló en TLS (psql exit 2); sin current_user/atributos SQL. Parada ordenada: Vercel/OCI/Clerk, respaldo/restore P1 y Prisma/checksum P1b no ejecutados. Sin cambios productivos/QA ni apertura; cierre vivo no revalidado. Un único commit/push documental solo ai/reserva-invitado-ci; Playbook ajeno preservado. No satisface promoción ni Paso 8; la historia inferior conserva sus lecturas fechadas.
