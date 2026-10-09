@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-09T23:52:55.767013+00:00",
+  "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+  "running": true,
+  "public_booking_closed": "true",
+  "email_enabled": "false",
+  "service": "NRestarts=0\nActiveState=active\nSubState=running\n",
+  "gets": [
+    {
+      "slug": "jhonatan",
+      "status": 404,
+      "expected": 200,
+      "body_sha256": "5e135a67495bf864b342410a4764019e76460b0525da078a759728ad2fa6051e",
+      "private_fields": [],
+      "secret_patterns": false,
+      "top_level_fields": [
+        "error",
+        "message",
+        "statusCode"
+      ]
+    }
+  ],
+  "failed": true,
+  "web_headers": {
+    "Strict-Transport-Security": "max-age=63072000",
+    "Content-Security-Policy": null,
+    "X-Frame-Options": null,
+    "X-Content-Type-Options": null,
+    "Referrer-Policy": null
+  },
+  "web_status": 200,
+  "passed": false
+}

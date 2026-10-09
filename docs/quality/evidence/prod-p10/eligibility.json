@@ -1,0 +1,44 @@
+[
+  {
+    "current_user": "kortek_migrator",
+    "session_user": "kortek_migrator",
+    "read_only": "on"
+  },
+  {
+    "organization_candidates": [
+      {
+        "slug": "dental-ross",
+        "isActive": true,
+        "not_deleted": true,
+        "cms_snapshot": false,
+        "cms_published": false,
+        "zoneConfirmed": false,
+        "schedule_state": "LEGACY_UNCONFIRMED",
+        "active_services": 0,
+        "active_public_professionals": 0
+      },
+      {
+        "slug": "prueba-de-oro",
+        "isActive": true,
+        "not_deleted": true,
+        "cms_snapshot": false,
+        "cms_published": false,
+        "zoneConfirmed": false,
+        "schedule_state": "LEGACY_UNCONFIRMED",
+        "active_services": 0,
+        "active_public_professionals": 0
+      },
+      {
+        "slug": "jhonatan",
+        "isActive": true,
+        "not_deleted": true,
+        "cms_snapshot": true,
+        "cms_published": true,
+        "zoneConfirmed": true,
+        "schedule_state": "CONFIRMED",
+        "active_services": 1,
+        "active_public_professionals": 1
+      }
+    ]
+  }
+]

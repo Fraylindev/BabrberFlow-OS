@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## P10 sin activación — 2026-10-09
+
+**NO-GO / PAUSADO / INCOMPLETO.** Clerk restringido confirmado por el propietario; prechecks READ ONLY con exactamente un negocio elegible. [Informe y relevo](quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md): correo incompleto y sondas sin condiciones para alinear; editor falló en aserción de formato antes de copia/edición/reinicio. Verificación lanzada prematuramente recibió404 por cierre intacto; 15min abierta pendientes. Cero cambios operativos, únicamente efecto del limitador del GET autorizado. Único checkpoint documental; P9 conserva su Go técnico histórico.
+
 ## Cierre documental P9 — 2026-10-09
 
 **P9: GO TÉCNICO por reclasificación autorizada del censo.** Baseline: 1 reserva, 1 cliente, 3 usuarios y 1 horario confirmado; atribuidos a pruebas del propietario por su declaración, sin verificación independiente de autoría. [Informe vigente y límites](quality/VERIFICACION_PAREJA_PRODUCCION_P9.md): pendientes antes de terceros, Paso 8 (Supabase/respaldo recuperable, restore semanal OCI y umbrales bookings >= 1 / tables == 31 frente a 37 capturadas, lifecycle, sondas, MFA y correo), restricción del registro Clerk con respuesta pendiente, CSP y X-Frame-Options. Sin nuevas lecturas ni cambios productivos; no autoriza apertura. Los registros inferiores conservan sus estados históricos.

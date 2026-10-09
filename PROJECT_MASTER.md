@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## P10 sin activación — 2026-10-09
+
+**NO-GO / PAUSADO / INCOMPLETO.** Declaración Clerk SÍ recibida, un negocio elegible confirmado por migrador READ ONLY. [Informe P10](docs/quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md): faltan variables de correo; sondas no alineables con condiciones actuales. Editor falló en formato literal antes de crear copia/editar/reiniciar. Verificación prematura recibió404 porque PUBLIC_BOOKING_CLOSED sigue true; hash original intacto, correo false, active/running/NRestarts0. Dos GET, solo efecto técnico de limitador autorizado, sin negocio ni QA modificados. Apertura/paridad y observación15min pendientes; P9 conserva su Go técnico histórico.
+
 ## Cierre documental P9 — 2026-10-09
 
 **P9: GO TÉCNICO por reclasificación autorizada del censo.** Baseline: 1 reserva, 1 cliente, 3 usuarios y 1 horario confirmado. El propietario declara que los tres usuarios son él y que los datos son pruebas suyas tras la promoción; trata producción como QA mientras no haya terceros reales. No hay verificación independiente de esa atribución más allá de la coherencia temporal observada. [Informe vigente](docs/quality/VERIFICACION_PAREJA_PRODUCCION_P9.md): pendientes antes de la primera persona ajena, Paso 8 (plan Supabase y respaldo recuperable, restore semanal OCI y umbrales bookings >= 1 / tables == 31 frente a 37 capturadas, lifecycle del bucket, sondas públicas, MFA y correo), restricción del registro Clerk con respuesta pendiente, CSP y X-Frame-Options. Solo documentación, sin nuevas lecturas ni cambios productivos ni autorización de apertura; historia y evidencias anteriores preservadas.
