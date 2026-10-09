@@ -5,6 +5,7 @@ import * as React from "react";
 import ts from "typescript";
 import { api, ApiError, configureApiAuth } from "./api.ts";
 import { runAuthOperation } from './auth-operation.ts';
+import { hasDefinitiveAccessError, isTransientQueryError, retryQuery } from './query-recovery.ts';
 
 const compiled = ts.transpileModule(
   readFileSync(new URL("./auth-context.tsx", import.meta.url), "utf8"),
@@ -45,6 +46,7 @@ function coldBootstrap(getToken: () => Promise<string | null>) {
     },
     "./api": { api, ApiError, configureApiAuth },
     './auth-operation': { runAuthOperation },
+    './query-recovery': { hasDefinitiveAccessError, isTransientQueryError, retryQuery },
   };
   const exports: { AuthProvider?: (props: { children: null }) => unknown } = {};
   new Function("exports", "require", compiled)(exports, (name: string) => {

@@ -1,0 +1,8 @@
+{
+  "preAppendBytes": 207608,
+  "preAppendSha256": "7071b0941a493908f7651eab1266d111575ac31a5da4d54a23618c2326c1a84a",
+  "postAppendSha256": "ec19e9611a12475029e2ac3bbd4b4fe6334a8d3df97ca7745eba70216f04af8d",
+  "prefixPreserved": true,
+  "section": "20",
+  "initialHead": "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef"
+}

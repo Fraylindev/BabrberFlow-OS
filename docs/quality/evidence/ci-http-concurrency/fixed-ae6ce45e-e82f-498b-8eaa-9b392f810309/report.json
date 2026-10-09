@@ -1,0 +1,236 @@
+{
+  "id": "ae6ce45e-e82f-498b-8eaa-9b392f810309",
+  "cleanCheckout": "[workspace]",
+  "variables": [
+    "DATABASE_URL",
+    "E2E_PRIMARY_DATABASE_NAME",
+    "E2E_PRIMARY_DATABASE_USER",
+    "NODE_ENV",
+    "DEPLOY_ENV",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY"
+  ],
+  "systemVariables": [
+    "APPDATA",
+    "ComSpec",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "OS",
+    "Path",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "ProgramW6432",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "commands": [
+    {
+      "label": "version",
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "exitCode": 0
+    },
+    {
+      "label": "bootstrap",
+      "exitCode": 0
+    },
+    {
+      "label": "e2e-1",
+      "exitCode": 0
+    },
+    {
+      "label": "e2e-2",
+      "exitCode": 0
+    },
+    {
+      "label": "e2e-3",
+      "exitCode": 0
+    },
+    {
+      "label": "e2e-4",
+      "exitCode": 0
+    },
+    {
+      "label": "e2e-5",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": true,
+  "steps": [
+    {
+      "iteration": 1,
+      "mode": "fixed",
+      "names": [
+        "APPDATA",
+        "ComSpec",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "Path",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "windir",
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "NODE_OPTIONS"
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "fixed",
+      "names": [
+        "APPDATA",
+        "ComSpec",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "Path",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "windir",
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "NODE_OPTIONS"
+      ]
+    },
+    {
+      "iteration": 3,
+      "mode": "fixed",
+      "names": [
+        "APPDATA",
+        "ComSpec",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "Path",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "windir",
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "NODE_OPTIONS"
+      ]
+    },
+    {
+      "iteration": 4,
+      "mode": "fixed",
+      "names": [
+        "APPDATA",
+        "ComSpec",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "Path",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "windir",
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "NODE_OPTIONS"
+      ]
+    },
+    {
+      "iteration": 5,
+      "mode": "fixed",
+      "names": [
+        "APPDATA",
+        "ComSpec",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "Path",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "windir",
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "NODE_OPTIONS"
+      ]
+    }
+  ],
+  "version": "postgres (PostgreSQL) 18.1",
+  "port": 50423,
+  "stopExit": 0
+}

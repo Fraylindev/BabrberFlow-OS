@@ -1,0 +1,28 @@
+{
+  "sourceReportMapping": {
+    "a-gate.json": "gate-A.json",
+    "a-complete.json": "attempt-f3b4fcf4/case-recorrido-completo/result.json",
+    "a-before-dump.json": "attempt-f3b4fcf4/case-fallo-antes-dump/result.json",
+    "a-wrong-phrase.json": "attempt-f3b4fcf4/case-frase-mal-repetida/result.json",
+    "a-corruption.json": "attempt-f3b4fcf4/case-restore-alterado/result.json",
+    "a-errors.json": "attempt-9596449d/case-persistencia-error/result.json",
+    "a-targeted.json": "attempt-9596449d/harness-result.json",
+    "a-units.json": "attempt-9596449d/units/result.json",
+    "a-fallback.json": "attempt-9596449d/units/failure-fallback.json",
+    "bc-first.json": "real-attempt-01.json",
+    "c-verified.json": "result.json",
+    "image-rollback.json": "real-image-drill/remote-result.json",
+    "image-driver.json": "real-image-drill/result.json",
+    "final-audit.json": "final-audit-refreshed/result.json",
+    "restore-version.json": "restore-version.json",
+    "controller-final.json": "controller-state.json"
+  },
+  "originalExecutorSha256": "f7cd5fb44503508d70706ebf962ce1f6816c0c24aec15c7e20ceb4c5a5dbf4dc",
+  "originalAAndFirstBackupSourceBytesRetained": false,
+  "originalSourceReconstructionRejected": "All candidate hashes differed; none is labeled as the executed original. Current C-resume code and full operational comparisons are retained.",
+  "currentExecutorSha256": "b44ea1f54f940e8fe176f13e7a7ead78a1999c04f2f1f926bd2c58140b3ac476",
+  "technicalSchemaOnly": true,
+  "businessRowsExportedInEvidence": false,
+  "secretValuesExported": false,
+  "categoryDeduplication": "Full snapshot/restore SQL and full diff retained; category arrays replaced by block counts and original equal flag."
+}

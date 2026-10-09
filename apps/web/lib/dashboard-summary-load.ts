@@ -1,4 +1,5 @@
 import type { AnalyticsDashboard, DashboardOperationalSummary } from './api';
+import { formatBusinessInstant } from './business-time.ts';
 import type { DashboardSummaryData } from './dashboard-summary-state';
 
 // Both HTTP operations are bounded by the central client's deadline. Failure
@@ -19,9 +20,7 @@ export async function loadDashboardSummary(
 }
 
 export function summaryDateLabel(generatedAt: string, timeZone: string) {
-  return new Date(generatedAt).toLocaleDateString('es-DO', {
-    timeZone, weekday: 'long', day: 'numeric', month: 'long',
-  });
+  return formatBusinessInstant(generatedAt, timeZone);
 }
 
 export function summaryGreeting(generatedAt: string, timeZone: string) {

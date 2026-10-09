@@ -1,4 +1,5 @@
 import { Prisma, ProfessionalStatus } from '@prisma/client';
+import { lockOrganizationSchedule } from './organization-schedule-lock';
 
 export interface LockedProfessional {
   id: string;
@@ -17,6 +18,7 @@ export async function lockProfessionalForBookingIntegrity(
   professionalId: string,
   organizationId: string,
 ): Promise<LockedProfessional | null> {
+  await lockOrganizationSchedule(transaction, organizationId);
   const rows = await transaction.$queryRaw<LockedProfessional[]>(Prisma.sql`
     SELECT "id", "status", "isPublic"
     FROM "Professional"

@@ -48,6 +48,24 @@ describe('editorial promotion policy', () => {
 });
 
 describe('authoritative business day interval', () => {
+  it('supports midnight transitions without moving or rewriting sealed intervals', () => {
+    const interval = promotionIntervalForBusinessDays(
+      '2018-11-04',
+      '2018-11-04',
+      'America/Sao_Paulo',
+    );
+    expect(interval?.startsAtUtc.toISOString()).toBe(
+      '2018-11-04T03:00:00.000Z',
+    );
+    expect(interval?.endsAtUtc.toISOString()).toBe('2018-11-05T02:00:00.000Z');
+    expect(
+      promotionIntervalForBusinessDays(
+        '2011-12-30',
+        '2011-12-30',
+        'Pacific/Apia',
+      ),
+    ).toBeNull();
+  });
   it('uses the business zone and an exclusive UTC end', () => {
     const interval = promotionIntervalForBusinessDays(
       '2026-10-14',

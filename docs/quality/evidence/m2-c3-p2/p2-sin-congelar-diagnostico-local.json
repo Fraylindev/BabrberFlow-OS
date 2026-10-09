@@ -1,0 +1,111 @@
+{
+  "base": "25fbdd3241b926925a3af435d8ecb5c4ddd99fad",
+  "scope": "solo-local-P2-sin-congelamiento",
+  "formalHarnessRuns": 1,
+  "formalHarnessExitCode": 1,
+  "AComplete": false,
+  "BStarted": false,
+  "CStarted": false,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "custodyQaAccess": false,
+  "prepIntermediateError": {
+    "phase": "preparacion-estatica-generador-antes-A",
+    "exceptionClass": "SyntaxError",
+    "messageSanitized": "unterminated string literal (detected at line 60)",
+    "tracebackSanitized": [
+      {
+        "file": "preparar.py",
+        "line": 267,
+        "function": "module"
+      },
+      {
+        "file": "ast.py",
+        "line": 52,
+        "function": "parse"
+      },
+      {
+        "file": "<unknown>",
+        "line": 60,
+        "function": "generated-source"
+      }
+    ],
+    "cause": "comillas simples sin escape dentro del patron regex generado",
+    "correctedBeforeA": true,
+    "executorOrQaExecutedDuringPreparation": false
+  },
+  "executorFailure": {
+    "event": "parada",
+    "phase": "snapshot-censo-dump-cifrado",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "gpg-cifrar-dump; exit=2; gpg: keybox [literal omitido] created",
+    "queryLabel": "censo-roles",
+    "tracebackSanitized": [
+      {
+        "file": "run.py",
+        "line": 698,
+        "function": "main"
+      },
+      {
+        "file": "harness.py",
+        "line": 167,
+        "function": "stream_encrypt"
+      },
+      {
+        "file": "run.py",
+        "line": 464,
+        "function": "stream_encrypt"
+      },
+      {
+        "file": "run.py",
+        "line": 99,
+        "function": "command_failure"
+      }
+    ]
+  },
+  "harnessFailure": {
+    "event": "parada",
+    "phase": "arnes-A",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "recorrido-local-completo-fallo",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "harness.py",
+        "line": 253,
+        "function": "main"
+      },
+      {
+        "file": "harness.py",
+        "line": 212,
+        "function": "scenario"
+      }
+    ]
+  },
+  "observedDumpExit": 0,
+  "observedGpgExit": 2,
+  "acceptedBackup": false,
+  "gpgCauseSpecific": "no determinada: el selector de stderr retuvo informacion de keybox en lugar del diagnostico causal",
+  "gpgStderrCompleteRetained": false,
+  "gpgStderrRawPrinted": false,
+  "unitErrorPersistencePassed": true,
+  "externalCommandErrorRetentionComplete": false,
+  "correctionAfterHarnessFailure": false,
+  "retryAfterHarnessFailure": false,
+  "nextStepRequiresNewOrder": "conservar todos los diagnosticos GPG causales sanitizados, diagnosticar cifrado local y repetir A desde cero",
+  "notVerified": [
+    "descifrado",
+    "restore-segundo-contenedor-TOC",
+    "cotejo-restaurado",
+    "rollback-aislado",
+    "cuatro-fallos-inyectados-del-ejecutor",
+    "TLS-QA",
+    "destino-escritores-ledger-release-QA",
+    "PID-imagen-release-servicios-QA",
+    "reserva-publica-HTTP-QA",
+    "respaldo-hash-censo-QA"
+  ],
+  "P3bRequiresFreshFrozenDumpHashCensusVerifiedRestore": true
+}

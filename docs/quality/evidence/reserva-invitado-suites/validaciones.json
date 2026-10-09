@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-07",
+  "checks": [
+    {
+      "name": "api-types",
+      "args": [
+        "--filter",
+        "api",
+        "exec",
+        "tsc",
+        "--noEmit"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "api-spec-lint",
+      "args": [
+        "--filter",
+        "api",
+        "exec",
+        "eslint",
+        "test/invoices.e2e-spec.ts"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "web-types",
+      "args": [
+        "--filter",
+        "web",
+        "exec",
+        "tsc",
+        "--noEmit"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "web-spec-lint",
+      "args": [
+        "--filter",
+        "web",
+        "exec",
+        "eslint",
+        "e2e/whatsapp-c2.spec.ts",
+        "e2e/media-c2.spec.ts",
+        "e2e/public-landing.spec.ts",
+        "e2e/fixtures/public-browser.ts"
+      ],
+      "exit": 0
+    }
+  ],
+  "syntaxChecks": {
+    "guest-suites-run.cjs": 0,
+    "guest-network-guard.cjs": 0,
+    "offline-fonts.cjs": 0
+  },
+  "buildWebpackOfflineExit": 0,
+  "noDotenv": true,
+  "noNewDependencies": true,
+  "unexpectedAutomaticReconstructionDocumented": true
+}

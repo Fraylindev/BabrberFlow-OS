@@ -12,6 +12,8 @@ import { BookingStatus, ProfessionalStatus, type Prisma } from '@prisma/client';
 import { isBookingScheduleConflictError } from '../common/prisma-error.util';
 import { lockProfessionalForBookingIntegrity } from '../common/professional-booking-lock';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import { lockOrganizationSchedule } from '../common/organization-schedule-lock';
+import { hasExplicitTimeZone } from '../professionals/professional-availability.util';
 import {
   lockEmailBooking,
   lockEmailClient,
@@ -40,6 +42,7 @@ export const bookingListResponseSelect = {
   client: { select: bookingClientResponseSelect },
   professional: { select: { id: true, name: true } },
   service: { select: { id: true, name: true, duration: true } },
+  Invoice: { select: { id: true, payment: { select: { id: true } } } },
 } satisfies Prisma.BookingSelect;
 
 type BookingMutationResponse = Prisma.BookingGetPayload<{
@@ -112,6 +115,7 @@ export class BookingsService {
     requirePublicProfessional: boolean,
   ): Promise<BookingMutationResponse> {
     const db = transaction;
+    await lockOrganizationSchedule(transaction, organizationId);
     const { clientId, professionalId, serviceId, startTime } = createBookingDto;
 
     try {
@@ -159,6 +163,13 @@ export class BookingsService {
     // individual y para futura restricción opcional por profesional.
 
     const startDate = new Date(startTime);
+    if (
+      !hasExplicitTimeZone(startTime) ||
+      !Number.isFinite(startDate.getTime())
+    )
+      throw new BadRequestException(
+        'Indica una fecha y hora válidas del negocio.',
+      );
     if (startDate.getTime() < Date.now()) {
       throw new BadRequestException(
         'No se puede reservar una cita en una fecha u hora que ya pasó',
@@ -254,7 +265,7 @@ export class BookingsService {
     to?: Date,
     status?: BookingStatus,
   ) {
-    return await this.prisma.db.booking.findMany({
+    const bookings = await this.prisma.db.booking.findMany({
       where: {
         organizationId,
         ...(professionalId ? { professionalId } : {}),
@@ -265,6 +276,15 @@ export class BookingsService {
       select: bookingListResponseSelect,
       orderBy: { startTime: 'asc' },
     });
+    return bookings.map(({ Invoice, ...booking }) => ({
+      ...booking,
+      invoice: Invoice
+        ? {
+            id: Invoice.id,
+            state: Invoice.payment ? ('PAID' as const) : ('ISSUED' as const),
+          }
+        : null,
+    }));
   }
 
   // Reutilizado por PublicBookingService para calcular disponibilidad:
@@ -277,8 +297,9 @@ export class BookingsService {
     professionalIds: string[],
     rangeStart: Date,
     rangeEnd: Date,
+    transaction: Prisma.TransactionClient = this.prisma.db,
   ) {
-    return await this.prisma.db.booking.findMany({
+    return await transaction.booking.findMany({
       where: {
         organizationId,
         professionalId: { in: professionalIds },
@@ -352,6 +373,14 @@ export class BookingsService {
     const startDate = dto.startTime
       ? new Date(dto.startTime)
       : booking.startTime;
+    if (
+      dto.startTime &&
+      (!hasExplicitTimeZone(dto.startTime) ||
+        !Number.isFinite(startDate.getTime()))
+    )
+      throw new BadRequestException(
+        'Indica una fecha y hora válidas del negocio.',
+      );
     if (startDate.getTime() < Date.now()) {
       throw new BadRequestException(
         'No se puede reprogramar una cita a una fecha u hora que ya pasó',
@@ -438,7 +467,6 @@ export class BookingsService {
     }
 
     if (booking.status === updateBookingStatusDto.status) {
-      this.assertServiceEndedForCompletion(booking, updateBookingStatusDto);
       return booking;
     }
 
@@ -453,12 +481,10 @@ export class BookingsService {
       );
     }
 
-    this.assertServiceEndedForCompletion(booking, updateBookingStatusDto);
-
     const reactivatesFutureSchedule =
       booking.status === BookingStatus.CANCELLED &&
       FUTURE_OPERATIONAL_STATUSES.includes(updateBookingStatusDto.status) &&
-      booking.startTime.getTime() > Date.now();
+      booking.endTime.getTime() > Date.now();
     if (reactivatesFutureSchedule) {
       const lockedProfessional = await lockProfessionalForBookingIntegrity(
         transaction,
@@ -498,20 +524,6 @@ export class BookingsService {
       return updated;
     } catch (error) {
       this.rethrowScheduleConflict(error);
-    }
-  }
-
-  private assertServiceEndedForCompletion(
-    booking: Pick<BookingMutationResponse, 'endTime'>,
-    updateBookingStatusDto: UpdateBookingStatusDto,
-  ): void {
-    if (
-      updateBookingStatusDto.status === BookingStatus.COMPLETED &&
-      booking.endTime.getTime() > Date.now()
-    ) {
-      throw new ConflictException(
-        'No se puede completar una reserva antes de que termine el servicio',
-      );
     }
   }
 

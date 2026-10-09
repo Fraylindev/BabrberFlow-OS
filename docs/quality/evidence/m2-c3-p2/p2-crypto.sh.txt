@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -uo pipefail
+export MSYS_NO_PATHCONV=1
+mode=$1
+file=$2
+key_file=/c/KortekBackups/Clave.txt
+IFS= read -r keyline < "$key_file" || [[ -n ${keyline:-} ]] || exit 81
+keyline=${keyline#$'\xef\xbb\xbf'}
+keyline=${keyline%$'\r'}
+[[ $keyline == Clave=\'*\' ]] || exit 82
+phrase=${keyline:7:${#keyline}-8}
+[[ -n $phrase ]] || exit 83
+gpg_args=(--no-options --homedir "$P2_GPG_HOME" --no-symkey-cache --batch --pinentry-mode loopback --passphrase-fd 3)
+case "$mode" in
+  encrypt)
+    gpg "${gpg_args[@]}" --symmetric --cipher-algo AES256 --output "$file" 3<<< "$phrase"
+    ;;
+  decrypt)
+    gpg "${gpg_args[@]}" --decrypt "$file" 3<<< "$phrase"
+    ;;
+  dump)
+    docker --context desktop-linux exec -e PGPASSWORD -e PGHOST -e PGPORT -e PGUSER -e PGDATABASE -e PGSSLMODE -e PGSSLROOTCERT -e PGOPTIONS -e PGAPPNAME "$P2_CLIENT" pg_dump --schema=public --format=custom --no-owner --no-privileges --snapshot="$P2_SNAPSHOT" |
+      gpg "${gpg_args[@]}" --symmetric --cipher-algo AES256 --output "$file" 3<<< "$phrase"
+    codes=("${PIPESTATUS[@]}")
+    printf '{"dumpExit":%d,"encryptExit":%d}\n' "${codes[0]}" "${codes[1]}"
+    [[ ${codes[0]} == 0 && ${codes[1]} == 0 ]]
+    ;;
+  restore)
+    gpg "${gpg_args[@]}" --decrypt "$file" 3<<< "$phrase" |
+      docker --context desktop-linux exec -i "$P2_RESTORE" pg_restore -U postgres -d postgres --single-transaction --exit-on-error --no-owner --no-privileges --use-list=/tmp/p2-restore.list
+    codes=("${PIPESTATUS[@]}")
+    printf '{"decryptExit":%d,"restoreExit":%d}\n' "${codes[0]}" "${codes[1]}"
+    [[ ${codes[0]} == 0 && ${codes[1]} == 0 ]]
+    ;;
+  toc)
+    gpg "${gpg_args[@]}" --decrypt "$file" 3<<< "$phrase" |
+      docker --context desktop-linux exec -i "$P2_RESTORE" pg_restore --list
+    codes=("${PIPESTATUS[@]}")
+    [[ ${codes[0]} == 0 && ${codes[1]} == 0 ]]
+    ;;
+  *) exit 84 ;;
+esac

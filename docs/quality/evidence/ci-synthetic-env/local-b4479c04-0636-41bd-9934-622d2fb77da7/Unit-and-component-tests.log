@@ -1,0 +1,1136 @@
+::add-mask::[omitted]
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:41 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:41 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:41 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed status=429 code=rate_limit[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:41 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_accepted[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:49 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:41 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_revoked[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:41 a. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation failed with an unknown error[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: claims_mismatch[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: Error[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk no disponible: Error[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 24736  - [39m08/10/2026, 2:05:54 a. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+TAP version 13
+# (node:16900) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F0-A conserva el UUID del servidor en errores JSON y de gateway
+ok 1 - F0-A conserva el UUID del servidor en errores JSON y de gateway
+  ---
+  duration_ms: 80.7886
+  type: 'test'
+  ...
+# Subtest: serves only signed media locators through the same-origin image path
+ok 2 - serves only signed media locators through the same-origin image path
+  ---
+  duration_ms: 0.5283
+  type: 'test'
+  ...
+# Subtest: F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP
+ok 3 - F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP
+  ---
+  duration_ms: 2.8094
+  type: 'test'
+  ...
+# Subtest: preserves non-JSON HTTP errors and real Retry-After without exposing the body
+ok 4 - preserves non-JSON HTTP errors and real Retry-After without exposing the body
+  ---
+  duration_ms: 3.8559
+  type: 'test'
+  ...
+# Subtest: does not misrepresent a malformed successful response as empty data
+ok 5 - does not misrepresent a malformed successful response as empty data
+  ---
+  duration_ms: 3.1842
+  type: 'test'
+  ...
+# Subtest: keeps JSON validation, body retry delay and pagination headers
+ok 6 - keeps JSON validation, body retry delay and pagination headers
+  ---
+  duration_ms: 4.4329
+  type: 'test'
+  ...
+# Subtest: cancels before sending a mutation when identity or tenant changes during token resolution
+ok 7 - cancels before sending a mutation when identity or tenant changes during token resolution
+  ---
+  duration_ms: 5.4266
+  type: 'test'
+  ...
+# Subtest: aborts a request and ignores late content after an explicit caller cancellation
+ok 8 - aborts a request and ignores late content after an explicit caller cancellation
+  ---
+  duration_ms: 1.9338
+  type: 'test'
+  ...
+# Subtest: bounds token lookup and never sends a late mutation after the deadline
+ok 9 - bounds token lookup and never sends a late mutation after the deadline
+  ---
+  duration_ms: 3.4386
+  type: 'test'
+  ...
+# Subtest: bounds a fetch that does not settle and aborts its signal
+ok 10 - bounds a fetch that does not settle and aborts its signal
+  ---
+  duration_ms: 1.0604
+  type: 'test'
+  ...
+# Subtest: renews a rejected Clerk token once, preserving the captured tenant
+ok 11 - renews a rejected Clerk token once, preserving the captured tenant
+  ---
+  duration_ms: 3.2659
+  type: 'test'
+  ...
+# Subtest: a definitive authentication rejection can recover a write, but ambiguous failures never repeat it
+ok 12 - a definitive authentication rejection can recover a write, but ambiguous failures never repeat it
+  ---
+  duration_ms: 3.4587
+  type: 'test'
+  ...
+# Subtest: a revoked session stops after one renewal and refreshes access without a retry loop
+ok 13 - a revoked session stops after one renewal and refreshes access without a retry loop
+  ---
+  duration_ms: 3.6304
+  type: 'test'
+  ...
+# Subtest: changing scope during renewal cancels a late write before it is repeated
+ok 14 - changing scope during renewal cancels a late write before it is repeated
+  ---
+  duration_ms: 1.8385
+  type: 'test'
+  ...
+# Subtest: cold bootstrap sends the current session before the auth layout effect, without tenant
+ok 15 - cold bootstrap sends the current session before the auth layout effect, without tenant
+  ---
+  duration_ms: 34.2615
+  type: 'test'
+  ...
+# Subtest: missing Clerk token fails without sending an anonymous bootstrap request
+ok 16 - missing Clerk token fails without sending an anonymous bootstrap request
+  ---
+  duration_ms: 2.169
+  type: 'test'
+  ...
+# Subtest: business requests keep the existing tenant/session resolver
+ok 17 - business requests keep the existing tenant/session resolver
+  ---
+  duration_ms: 1.5796
+  type: 'test'
+  ...
+# Subtest: legacy continue waits only for Clerk and then opens the requested dashboard
+ok 18 - legacy continue waits only for Clerk and then opens the requested dashboard
+  ---
+  duration_ms: 5.8083
+  type: 'test'
+  ...
+# Subtest: legacy continue sends unsigned sessions to Clerk login
+ok 19 - legacy continue sends unsigned sessions to Clerk login
+  ---
+  duration_ms: 0.8677
+  type: 'test'
+  ...
+# Subtest: business onboarding no longer lives in the authentication bridge
+ok 20 - business onboarding no longer lives in the authentication bridge
+  ---
+  duration_ms: 0.3559
+  type: 'test'
+  ...
+# Subtest: normal Clerk login enters the requested dashboard directly
+ok 21 - normal Clerk login enters the requested dashboard directly
+  ---
+  duration_ms: 2.2958
+  type: 'test'
+  ...
+# Subtest: Clerk registration enters the protected dashboard setup
+ok 22 - Clerk registration enters the protected dashboard setup
+  ---
+  duration_ms: 0.3191
+  type: 'test'
+  ...
+# Subtest: an existing session must be closed before processing an invitation
+ok 23 - an existing session must be closed before processing an invitation
+  ---
+  duration_ms: 0.2947
+  type: 'test'
+  ...
+# Subtest: Next and Nest use the same bounded Clerk clock tolerance
+ok 24 - Next and Nest use the same bounded Clerk clock tolerance
+  ---
+  duration_ms: 0.3064
+  type: 'test'
+  ...
+# Subtest: an unavailable identity dependency reaches a terminal error and aborts its request
+ok 25 - an unavailable identity dependency reaches a terminal error and aborts its request
+  ---
+  duration_ms: 15.7363
+  type: 'test'
+  ...
+# Subtest: changing identity aborts the previous request; a late response cannot replace the result
+ok 26 - changing identity aborts the previous request; a late response cannot replace the result
+  ---
+  duration_ms: 1.6468
+  type: 'test'
+  ...
+# Subtest: keeps the invitation sign-in flow on fixed internal routes
+ok 27 - keeps the invitation sign-in flow on fixed internal routes
+  ---
+  duration_ms: 2.1896
+  type: 'test'
+  ...
+# Subtest: allows only the dashboard and its descendants after normal login
+ok 28 - allows only the dashboard and its descendants after normal login
+  ---
+  duration_ms: 0.4496
+  type: 'test'
+  ...
+# Subtest: rejects external, ambiguous, and missing normal-login destinations
+ok 29 - rejects external, ambiguous, and missing normal-login destinations
+  ---
+  duration_ms: 0.3445
+  type: 'test'
+  ...
+# Subtest: routes authenticated accounts to the correct dashboard gate
+ok 30 - routes authenticated accounts to the correct dashboard gate
+  ---
+  duration_ms: 0.3833
+  type: 'test'
+  ...
+# Subtest: una transición rechazada de Pendiente a Completada pide confirmar primero
+ok 31 - una transición rechazada de Pendiente a Completada pide confirmar primero
+  ---
+  duration_ms: 4.6514
+  type: 'test'
+  ...
+# Subtest: distingue conflictos reales, recurso inexistente, permiso, sesión y fallo desconocido
+ok 32 - distingue conflictos reales, recurso inexistente, permiso, sesión y fallo desconocido
+  ---
+  duration_ms: 0.8744
+  type: 'test'
+  ...
+# Subtest: no fabrica códigos; descarta cabeceras arbitrarias y conserva UUID completo sin logs
+ok 33 - no fabrica códigos; descarta cabeceras arbitrarias y conserva UUID completo sin logs
+  ---
+  duration_ms: 0.8858
+  type: 'test'
+  ...
+# Subtest: los formateadores de guardado conservan sus mensajes y decoran el código recibido
+ok 34 - los formateadores de guardado conservan sus mensajes y decoran el código recibido
+  ---
+  duration_ms: 1.3498
+  type: 'test'
+  ...
+# Subtest: oculta códigos en reglas claras y los conserva en fallos sin causa traducida
+ok 35 - oculta códigos en reglas claras y los conserva en fallos sin causa traducida
+  ---
+  duration_ms: 0.8902
+  type: 'test'
+  ...
+# Subtest: F0-D: formato relativo exacto, sin semana ni año redundante
+ok 36 - F0-D: formato relativo exacto, sin semana ni año redundante
+  ---
+  duration_ms: 70.0131
+  type: 'test'
+  ...
+# Subtest: F0-D: la medianoche y el año se deciden en el negocio
+ok 37 - F0-D: la medianoche y el año se deciden en el negocio
+  ---
+  duration_ms: 1.3484
+  type: 'test'
+  ...
+# Subtest: F0-D: dispositivo distinto, DST y horas de mediodía/medianoche
+ok 38 - F0-D: dispositivo distinto, DST y horas de mediodía/medianoche
+  ---
+  duration_ms: 2.0672
+  type: 'test'
+  ...
+# Subtest: business time does not inherit the browser zone; creation and rescheduling round-trip
+ok 39 - business time does not inherit the browser zone; creation and rescheduling round-trip
+  ---
+  duration_ms: 78.7237
+  type: 'test'
+  ...
+# Subtest: nonexistent and repeated hours, including half-hour transitions, fail closed
+ok 40 - nonexistent and repeated hours, including half-hour transitions, fail closed
+  ---
+  duration_ms: 10.3117
+  type: 'test'
+  ...
+# Subtest: calendar ranges preserve real 23/25 and 23.5/24.5 hour days
+ok 41 - calendar ranges preserve real 23/25 and 23.5/24.5 hour days
+  ---
+  duration_ms: 10.2878
+  type: 'test'
+  ...
+# Subtest: strict dates, years below 100 and supported boundaries have no rollover
+ok 42 - strict dates, years below 100 and supported boundaries have no rollover
+  ---
+  duration_ms: 2.0397
+  type: 'test'
+  ...
+# Subtest: seven explicit days accept closure and contiguous windows, reject overlaps and duplicates
+ok 43 - seven explicit days accept closure and contiguous windows, reject overlaps and duplicates
+  ---
+  duration_ms: 3.0471
+  type: 'test'
+  ...
+# Subtest: closures distinguish full inclusive ranges from single-day partial closures
+ok 44 - closures distinguish full inclusive ranges from single-day partial closures
+  ---
+  duration_ms: 0.4885
+  type: 'test'
+  ...
+# Subtest: CMS normaliza opcionales sin copiar propiedades ajenas
+ok 45 - CMS normaliza opcionales sin copiar propiedades ajenas
+  ---
+  duration_ms: 4.5486
+  type: 'test'
+  ...
+# Subtest: CMS no crea enlaces activos con URL ajena o maliciosa
+ok 46 - CMS no crea enlaces activos con URL ajena o maliciosa
+  ---
+  duration_ms: 1.1663
+  type: 'test'
+  ...
+# Subtest: horario de lectura no inventa fallback ni muestra detalles de zona
+ok 47 - horario de lectura no inventa fallback ni muestra detalles de zona
+  ---
+  duration_ms: 0.9222
+  type: 'test'
+  ...
+# Subtest: financial dependency failure preserves agenda and complete server totals
+ok 48 - financial dependency failure preserves agenda and complete server totals
+  ---
+  duration_ms: 3.4992
+  type: 'test'
+  ...
+# Subtest: operational dependency failure preserves real financial data and never fabricates a zero agenda
+ok 49 - operational dependency failure preserves real financial data and never fabricates a zero agenda
+  ---
+  duration_ms: 0.6205
+  type: 'test'
+  ...
+# Subtest: both failures are terminal and a later retry can succeed
+ok 50 - both failures are terminal and a later retry can succeed
+  ---
+  duration_ms: 0.5148
+  type: 'test'
+  ...
+# Subtest: BARBER does not need financial data to settle successfully
+ok 51 - BARBER does not need financial data to settle successfully
+  ---
+  duration_ms: 0.612
+  type: 'test'
+  ...
+# Subtest: date and greeting use server instant in business timezone instead of browser timezone
+ok 52 - date and greeting use server instant in business timezone instead of browser timezone
+  ---
+  duration_ms: 71.4933
+  type: 'test'
+  ...
+# Subtest: the business scope includes user, organization, and role
+ok 53 - the business scope includes user, organization, and role
+  ---
+  duration_ms: 10.0563
+  type: 'test'
+  ...
+# Subtest: changing organization clears the previous summary immediately
+ok 54 - changing organization clears the previous summary immediately
+  ---
+  duration_ms: 0.7263
+  type: 'test'
+  ...
+# Subtest: a late response from the previous organization is ignored
+ok 55 - a late response from the previous organization is ignored
+  ---
+  duration_ms: 0.485
+  type: 'test'
+  ...
+# Subtest: an old A response cannot overwrite a newer A request after A to B to A
+ok 56 - an old A response cannot overwrite a newer A request after A to B to A
+  ---
+  duration_ms: 0.7053
+  type: 'test'
+  ...
+# Subtest: a late error from another role does not replace the current state
+ok 57 - a late error from another role does not replace the current state
+  ---
+  duration_ms: 0.3636
+  type: 'test'
+  ...
+# Subtest: a current error reaches a terminal state without retaining tenant data
+ok 58 - a current error reaches a terminal state without retaining tenant data
+  ---
+  duration_ms: 0.4257
+  type: 'test'
+  ...
+# Subtest: refreshes access only after acceptance and returns READY
+ok 59 - refreshes access only after acceptance and returns READY
+  ---
+  duration_ms: 5.8629
+  type: 'test'
+  ...
+# Subtest: a late acceptance after leaving or changing identity cannot refresh current access
+ok 60 - a late acceptance after leaving or changing identity cannot refresh current access
+  ---
+  duration_ms: 1.9066
+  type: 'test'
+  ...
+# Subtest: a late bootstrap cannot navigate a discarded visit; a fresh retry can succeed
+ok 61 - a late bootstrap cannot navigate a discarded visit; a fresh retry can succeed
+  ---
+  duration_ms: 1.4432
+  type: 'test'
+  ...
+# Subtest: does not navigate if acceptance succeeded but membership bootstrap is unavailable
+ok 62 - does not navigate if acceptance succeeded but membership bootstrap is unavailable
+  ---
+  duration_ms: 1.2011
+  type: 'test'
+  ...
+# Subtest: keeps the local invitation locator on fixed internal routes
+ok 63 - keeps the local invitation locator on fixed internal routes
+  ---
+  duration_ms: 3.5105
+  type: 'test'
+  ...
+# Subtest: accepts only one valid UUID locator and ignores all authority-like input
+ok 64 - accepts only one valid UUID locator and ignores all authority-like input
+  ---
+  duration_ms: 1.2092
+  type: 'test'
+  ...
+# Subtest: retains the invitation locator when Clerk rewrites the URL
+ok 65 - retains the invitation locator when Clerk rewrites the URL
+  ---
+  duration_ms: 0.3276
+  type: 'test'
+  ...
+# Subtest: keeps invitation acceptance gated until the profile name is persisted
+ok 66 - keeps invitation acceptance gated until the profile name is persisted
+  ---
+  duration_ms: 0.3379
+  type: 'test'
+  ...
+# Subtest: terminal invitation failures never offer a useless retry
+ok 67 - terminal invitation failures never offer a useless retry
+  ---
+  duration_ms: 0.8003
+  type: 'test'
+  ...
+# Subtest: transient invitation failures keep a real retry action
+ok 68 - transient invitation failures keep a real retry action
+  ---
+  duration_ms: 2.4296
+  type: 'test'
+  ...
+# Subtest: invoice scope includes user, organization, and role
+ok 69 - invoice scope includes user, organization, and role
+  ---
+  duration_ms: 7.2843
+  type: 'test'
+  ...
+# Subtest: financial payloads contain only client-authorized fields
+ok 70 - financial payloads contain only client-authorized fields
+  ---
+  duration_ms: 1.913
+  type: 'test'
+  ...
+# Subtest: invoice issue date range validates both inclusive local endpoints
+ok 71 - invoice issue date range validates both inclusive local endpoints
+  ---
+  duration_ms: 0.3765
+  type: 'test'
+  ...
+# Subtest: DOP formatting preserves decimal strings without floating point
+ok 72 - DOP formatting preserves decimal strings without floating point
+  ---
+  duration_ms: 0.9139
+  type: 'test'
+  ...
+# Subtest: pagination requires all authoritative response headers
+ok 73 - pagination requires all authoritative response headers
+  ---
+  duration_ms: 67.1547
+  type: 'test'
+  ...
+# Subtest: dates are formatted in the business zone without exposing its identifier
+ok 74 - dates are formatted in the business zone without exposing its identifier
+  ---
+  duration_ms: 94.7928
+  type: 'test'
+  ...
+# Subtest: expected API errors become task-oriented messages
+ok 75 - expected API errors become task-oriented messages
+  ---
+  duration_ms: 1.1852
+  type: 'test'
+  ...
+# Subtest: la cuota o error de moderación se explica y no promete publicación
+ok 76 - la cuota o error de moderación se explica y no promete publicación
+  ---
+  duration_ms: 2.658
+  type: 'test'
+  ...
+# Subtest: el archivo inválido se detiene antes de solicitar moderación
+ok 77 - el archivo inválido se detiene antes de solicitar moderación
+  ---
+  duration_ms: 6.6965
+  type: 'test'
+  ...
+# Subtest: C1 maps five events and nine distinct results without provider text
+ok 78 - C1 maps five events and nine distinct results without provider text
+  ---
+  duration_ms: 2.8436
+  type: 'test'
+  ...
+# Subtest: notifications format timestamps using business timezone rather than browser timezone
+ok 79 - notifications format timestamps using business timezone rather than browser timezone
+  ---
+  duration_ms: 80.4425
+  type: 'test'
+  ...
+# Subtest: all expected errors use safe actionable text regardless of backend body
+ok 80 - all expected errors use safe actionable text regardless of backend body
+  ---
+  duration_ms: 1.082
+  type: 'test'
+  ...
+# Subtest: dashboard onboarding derives a safe editable public slug
+ok 81 - dashboard onboarding derives a safe editable public slug
+  ---
+  duration_ms: 3.0178
+  type: 'test'
+  ...
+# Subtest: dashboard onboarding sends only the approved normalized contract
+ok 82 - dashboard onboarding sends only the approved normalized contract
+  ---
+  duration_ms: 2.0595
+  type: 'test'
+  ...
+# Subtest: profile form sends only editable fields and normalizes optional values
+ok 83 - profile form sends only editable fields and normalizes optional values
+  ---
+  duration_ms: 4.6057
+  type: 'test'
+  ...
+# Subtest: professionals scope changes with user, organization, or role
+ok 84 - professionals scope changes with user, organization, or role
+  ---
+  duration_ms: 0.9669
+  type: 'test'
+  ...
+# Subtest: returning A to B to A does not revive late mutation effects from the first A
+ok 85 - returning A to B to A does not revive late mutation effects from the first A
+  ---
+  duration_ms: 0.395
+  type: 'test'
+  ...
+# Subtest: availability copy does not expose technical time-zone identifiers
+ok 86 - availability copy does not expose technical time-zone identifiers
+  ---
+  duration_ms: 0.8849
+  type: 'test'
+  ...
+# Subtest: rangos civiles recortan hoy, bisiestos y extremo representable de C1
+ok 87 - rangos civiles recortan hoy, bisiestos y extremo representable de C1
+  ---
+  duration_ms: 10.9098
+  type: 'test'
+  ...
+# Subtest: datos invitados admiten correo vacío y validan correo opcional y teléfono
+ok 88 - datos invitados admiten correo vacío y validan correo opcional y teléfono
+  ---
+  duration_ms: 2.5182
+  type: 'test'
+  ...
+# Subtest: semana cruza meses/años, respeta fecha mínima y extremo representable
+ok 89 - semana cruza meses/años, respeta fecha mínima y extremo representable
+  ---
+  duration_ms: 1.0881
+  type: 'test'
+  ...
+# Subtest: franjas cubren medianoche y límites de tarde/noche sin huecos
+ok 90 - franjas cubren medianoche y límites de tarde/noche sin huecos
+  ---
+  duration_ms: 0.7778
+  type: 'test'
+  ...
+# Subtest: calendario pendiente preserva instantes, pliega UTF8 y no permite inyección ni IDs operativos
+ok 91 - calendario pendiente preserva instantes, pliega UTF8 y no permite inyección ni IDs operativos
+  ---
+  duration_ms: 2.919
+  type: 'test'
+  ...
+# Subtest: RD: máscara de diez dígitos y prefijo único al pegar formato local/completo
+ok 92 - RD: máscara de diez dígitos y prefijo único al pegar formato local/completo
+  ---
+  duration_ms: 3.9202
+  type: 'test'
+  ...
+# Subtest: países que comparten +1 conservan elección y los demás conservan su longitud
+ok 93 - países que comparten +1 conservan elección y los demás conservan su longitud
+  ---
+  duration_ms: 1.9546
+  type: 'test'
+  ...
+# Subtest: otro prefijo conserva números desconocidos completos y admite prefijo manual
+ok 94 - otro prefijo conserva números desconocidos completos y admite prefijo manual
+  ---
+  duration_ms: 1.162
+  type: 'test'
+  ...
+# Subtest: entrada inválida y números largos no se limpian ni truncan silenciosamente
+ok 95 - entrada inválida y números largos no se limpian ni truncan silenciosamente
+  ---
+  duration_ms: 0.6573
+  type: 'test'
+  ...
+# Subtest: services scope changes with user, organization, and role
+ok 96 - services scope changes with user, organization, and role
+  ---
+  duration_ms: 2.9394
+  type: 'test'
+  ...
+# Subtest: returning A to B to A does not revive effects from the first visit
+ok 97 - returning A to B to A does not revive effects from the first visit
+  ---
+  duration_ms: 0.551
+  type: 'test'
+  ...
+# Subtest: service form sends only contract fields and trims text
+ok 98 - service form sends only contract fields and trims text
+  ---
+  duration_ms: 2.4235
+  type: 'test'
+  ...
+# Subtest: service form enforces published limits and monetary precision
+ok 99 - service form enforces published limits and monetary precision
+  ---
+  duration_ms: 1.0868
+  type: 'test'
+  ...
+# Subtest: service money input accepts a decimal amount without exponent or signs
+ok 100 - service money input accepts a decimal amount without exponent or signs
+  ---
+  duration_ms: 0.6026
+  type: 'test'
+  ...
+# Subtest: service duration input is whole minutes and formats naturally
+ok 101 - service duration input is whole minutes and formats naturally
+  ---
+  duration_ms: 0.5307
+  type: 'test'
+  ...
+# Subtest: state filter maps to the real backend query and supports all
+ok 102 - state filter maps to the real backend query and supports all
+  ---
+  duration_ms: 1.709
+  type: 'test'
+  ...
+# Subtest: service messages are safe and do not expose backend details
+ok 103 - service messages are safe and do not expose backend details
+  ---
+  duration_ms: 61.6958
+  type: 'test'
+  ...
+# Subtest: team scope changes with user, organization, and role
+ok 104 - team scope changes with user, organization, and role
+  ---
+  duration_ms: 4.0644
+  type: 'test'
+  ...
+# Subtest: returning A to B to A does not revive effects from the first team visit
+ok 105 - returning A to B to A does not revive effects from the first team visit
+  ---
+  duration_ms: 0.4103
+  type: 'test'
+  ...
+# Subtest: only owner and admin manage team, and admin cannot manage an owner
+ok 106 - only owner and admin manage team, and admin cannot manage an owner
+  ---
+  duration_ms: 0.5561
+  type: 'test'
+  ...
+# Subtest: member mutations send only normalized contract fields
+ok 107 - member mutations send only normalized contract fields
+  ---
+  duration_ms: 2.5916
+  type: 'test'
+  ...
+# Subtest: invitation revocation only yields an API id after final confirmation
+ok 108 - invitation revocation only yields an API id after final confirmation
+  ---
+  duration_ms: 1.069
+  type: 'test'
+  ...
+# Subtest: team errors use safe task language
+ok 109 - team errors use safe task language
+  ---
+  duration_ms: 2.8674
+  type: 'test'
+  ...
+# Subtest: accepts declared production configuration during phase-production-build
+ok 110 - accepts declared production configuration during phase-production-build
+  ---
+  duration_ms: 3.451
+  type: 'test'
+  ...
+# Subtest: rejects missing DEPLOY_ENV during phase-production-build
+ok 111 - rejects missing DEPLOY_ENV during phase-production-build
+  ---
+  duration_ms: 0.8754
+  type: 'test'
+  ...
+# Subtest: rejects missing WEB_PUBLIC_ORIGIN during phase-production-build
+ok 112 - rejects missing WEB_PUBLIC_ORIGIN during phase-production-build
+  ---
+  duration_ms: 0.3493
+  type: 'test'
+  ...
+# Subtest: rejects missing NEXT_PUBLIC_API_URL during phase-production-build
+ok 113 - rejects missing NEXT_PUBLIC_API_URL during phase-production-build
+  ---
+  duration_ms: 0.4834
+  type: 'test'
+  ...
+# Subtest: rejects missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY during phase-production-build
+ok 114 - rejects missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY during phase-production-build
+  ---
+  duration_ms: 0.4577
+  type: 'test'
+  ...
+# Subtest: rejects missing CLERK_SECRET_KEY during phase-production-build
+ok 115 - rejects missing CLERK_SECRET_KEY during phase-production-build
+  ---
+  duration_ms: 0.5508
+  type: 'test'
+  ...
+# Subtest: accepts declared production configuration during phase-production-server
+ok 116 - accepts declared production configuration during phase-production-server
+  ---
+  duration_ms: 0.5329
+  type: 'test'
+  ...
+# Subtest: rejects missing DEPLOY_ENV during phase-production-server
+ok 117 - rejects missing DEPLOY_ENV during phase-production-server
+  ---
+  duration_ms: 0.477
+  type: 'test'
+  ...
+# Subtest: rejects missing WEB_PUBLIC_ORIGIN during phase-production-server
+ok 118 - rejects missing WEB_PUBLIC_ORIGIN during phase-production-server
+  ---
+  duration_ms: 1.0028
+  type: 'test'
+  ...
+# Subtest: rejects missing NEXT_PUBLIC_API_URL during phase-production-server
+ok 119 - rejects missing NEXT_PUBLIC_API_URL during phase-production-server
+  ---
+  duration_ms: 0.9945
+  type: 'test'
+  ...
+# Subtest: rejects missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY during phase-production-server
+ok 120 - rejects missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY during phase-production-server
+  ---
+  duration_ms: 0.6012
+  type: 'test'
+  ...
+# Subtest: rejects missing CLERK_SECRET_KEY during phase-production-server
+ok 121 - rejects missing CLERK_SECRET_KEY during phase-production-server
+  ---
+  duration_ms: 0.3161
+  type: 'test'
+  ...
+# Subtest: rejects local, insecure, wildcard and unexpected deployment origins
+ok 122 - rejects local, insecure, wildcard and unexpected deployment origins
+  ---
+  duration_ms: 3.4393
+  type: 'test'
+  ...
+# Subtest: rejects development keys and mismatched production credentials without exposing values
+ok 123 - rejects development keys and mismatched production credentials without exposing values
+  ---
+  duration_ms: 0.7047
+  type: 'test'
+  ...
+# Subtest: accepts explicit development artifacts only with local API and test keys
+ok 124 - accepts explicit development artifacts only with local API and test keys
+  ---
+  duration_ms: 0.6355
+  type: 'test'
+  ...
+# Subtest: validates staging against its separate declared origins
+ok 125 - validates staging against its separate declared origins
+  ---
+  duration_ms: 0.6304
+  type: 'test'
+  ...
+# Subtest: keeps local dev fallback but refuses it in production code
+ok 126 - keeps local dev fallback but refuses it in production code
+  ---
+  duration_ms: 0.4557
+  type: 'test'
+  ...
+# Subtest: C1 §4 accepts "+1234567"
+ok 127 - C1 §4 accepts "+1234567"
+  ---
+  duration_ms: 5.0979
+  type: 'test'
+  ...
+# Subtest: C1 §4 accepts "+123456789012345"
+ok 128 - C1 §4 accepts "+123456789012345"
+  ---
+  duration_ms: 0.5991
+  type: 'test'
+  ...
+# Subtest: C1 §4 accepts " +1 (809) 555-1234 "
+ok 129 - C1 §4 accepts " +1 (809) 555-1234 "
+  ---
+  duration_ms: 0.5596
+  type: 'test'
+  ...
+# Subtest: C1 §4 accepts "+34.912.345.678"
+ok 130 - C1 §4 accepts "+34.912.345.678"
+  ---
+  duration_ms: 0.3975
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects null
+ok 131 - C1 §4 rejects null
+  ---
+  duration_ms: 0.518
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects undefined
+ok 132 - C1 §4 rejects undefined
+  ---
+  duration_ms: 2.2593
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects ""
+ok 133 - C1 §4 rejects ""
+  ---
+  duration_ms: 0.2968
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "   "
+ok 134 - C1 §4 rejects "   "
+  ---
+  duration_ms: 0.1414
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "8095551234"
+ok 135 - C1 §4 rejects "8095551234"
+  ---
+  duration_ms: 0.4607
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "18095551234"
+ok 136 - C1 §4 rejects "18095551234"
+  ---
+  duration_ms: 0.6429
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "0018095551234"
+ok 137 - C1 §4 rejects "0018095551234"
+  ---
+  duration_ms: 0.351
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+01234567"
+ok 138 - C1 §4 rejects "+01234567"
+  ---
+  duration_ms: 0.1852
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+123456"
+ok 139 - C1 §4 rejects "+123456"
+  ---
+  duration_ms: 0.1512
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+1234567890123456"
+ok 140 - C1 §4 rejects "+1234567890123456"
+  ---
+  duration_ms: 0.1439
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "++18095551234"
+ok 141 - C1 §4 rejects "++18095551234"
+  ---
+  duration_ms: 0.1399
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "1809+5551234"
+ok 142 - C1 §4 rejects "1809+5551234"
+  ---
+  duration_ms: 0.1393
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234 ext 2"
+ok 143 - C1 §4 rejects "+18095551234 ext 2"
+  ---
+  duration_ms: 0.1336
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234x2"
+ok 144 - C1 §4 rejects "+18095551234x2"
+  ---
+  duration_ms: 0.149
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "tel:+18095551234"
+ok 145 - C1 §4 rejects "tel:+18095551234"
+  ---
+  duration_ms: 0.2329
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "https://wa.me/18095551234"
+ok 146 - C1 §4 rejects "https://wa.me/18095551234"
+  ---
+  duration_ms: 0.2381
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234?text=hola"
+ok 147 - C1 §4 rejects "+18095551234?text=hola"
+  ---
+  duration_ms: 0.1354
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234&text=hola"
+ok 148 - C1 §4 rejects "+18095551234&text=hola"
+  ---
+  duration_ms: 0.1517
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234\#fragment"
+ok 149 - C1 §4 rejects "+18095551234\#fragment"
+  ---
+  duration_ms: 0.1244
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234\\r"
+ok 150 - C1 §4 rejects "+18095551234\\r"
+  ---
+  duration_ms: 0.1196
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234\\n"
+ok 151 - C1 §4 rejects "+18095551234\\n"
+  ---
+  duration_ms: 0.1276
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+18095551234\\r\\n"
+ok 152 - C1 §4 rejects "+18095551234\\r\\n"
+  ---
+  duration_ms: 0.1567
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+1809\\t5551234"
+ok 153 - C1 §4 rejects "+1809\\t5551234"
+  ---
+  duration_ms: 0.217
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+1809 5551234"
+ok 154 - C1 §4 rejects "+1809 5551234"
+  ---
+  duration_ms: 0.1534
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+1809​5551234"
+ok 155 - C1 §4 rejects "+1809​5551234"
+  ---
+  duration_ms: 0.2047
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+١٨٠٩٥٥٥١٢٣٤"
+ok 156 - C1 §4 rejects "+١٨٠٩٥٥٥١٢٣٤"
+  ---
+  duration_ms: 0.1435
+  type: 'test'
+  ...
+# Subtest: C1 §4 rejects "+１８０９５５５１２３４"
+ok 157 - C1 §4 rejects "+１８０９５５５１２３４"
+  ---
+  duration_ms: 0.119
+  type: 'test'
+  ...
+# Subtest: D4 is the exact generic message, without interpolation
+ok 158 - D4 is the exact generic message, without interpolation
+  ---
+  duration_ms: 0.1899
+  type: 'test'
+  ...
+1..158
+# tests 158
+# suites 0
+# pass 158
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1524.8442
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/Users/Fraylin/Desktop/Kortek-Booking/.tmp/ci-synthetic-clean/apps/web[39m
+
+ [32m✓[39m components/notifications/InternalEmailOptIn.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1940[2mms[22m[39m
+   [33m[2m✓[22m[39m records no consent by default and requires explicit contact review for opted-in creation [33m 730[2mms[22m[39m
+   [33m[2m✓[22m[39m changing the client clears the earlier choice and contact review [33m 421[2mms[22m[39m
+   [33m[2m✓[22m[39m BARBER creation never adds the email extension [33m 307[2mms[22m[39m
+   [33m[2m✓[22m[39m discards a late creation callback after leaving and returning to the tenant [33m 479[2mms[22m[39m
+ [32m✓[39m components/booking/F0A.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1037[2mms[22m[39m
+ [32m✓[39m components/booking/F0B.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 1330[2mms[22m[39m
+   [33m[2m✓[22m[39m F0-B: acciones móviles y factura autoritativa[2m > [22men escritorio la factura ISSUED tiene consulta visible sin repetir emisión [33m 457[2mms[22m[39m
+ [32m✓[39m components/public/PublicMiniSite.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1266[2mms[22m[39m
+   [33m[2m✓[22m[39m Mini-sitio público C3[2m > [22mmuestra únicamente el perfil publicado y enlaces seguros [33m 472[2mms[22m[39m
+ [32m✓[39m components/notifications/NotificationsView.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1765[2mms[22m[39m
+   [33m[2m✓[22m[39m reception can read only booking history and cannot retry even if a stale row says true [33m 367[2mms[22m[39m
+   [33m[2m✓[22m[39m requires choice and contact review, then sends the exact versioned contract without authority fields [33m 338[2mms[22m[39m
+ [32m✓[39m components/public/BookingPolish.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1831[2mms[22m[39m
+   [33m[2m✓[22m[39m precarga la siguiente semana y conserva día/slot al navegar con flechas y volver [33m 1275[2mms[22m[39m
+ [32m✓[39m components/cms/CmsSettings.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 3756[2mms[22m[39m
+   [33m[2m✓[22m[39m Configuración C2[2m > [22mdistingue carga/error de vacío y recupera con lectura privada [33m 426[2mms[22m[39m
+   [33m[2m✓[22m[39m Configuración C2[2m > [22mguarda exclusivamente los cinco campos y controles; preview usa el borrador releído [33m 607[2mms[22m[39m
+   [33m[2m✓[22m[39m Configuración C2[2m > [22mconserva texto en conflicto y exige comparación y confirmación antes de usar la versión nueva [33m 638[2mms[22m[39m
+   [33m[2m✓[22m[39m Configuración C2[2m > [22mtras resultado incierto reintenta la misma clave/cuerpo y consulta después del recibo histórico [33m 422[2mms[22m[39m
+   [33m[2m✓[22m[39m Configuración C2[2m > [22mdesmonta formulario y descarta efectos tardíos de guardado en A → B → A [33m 559[2mms[22m[39m
+ [32m✓[39m components/public/BookingLight.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 3924[2mms[22m[39m
+   [33m[2m✓[22m[39m calendario genera una descarga TENTATIVE con instantes del servidor y sin datos de contacto [33m 950[2mms[22m[39m
+   [33m[2m✓[22m[39m un rango fallido se muestra como error y reintento, sin habilitar días ni ocultarlo como vacío [33m 323[2mms[22m[39m
+   [33m[2m✓[22m[39m semana entre meses consulta siete días reales y escoger desde el mes lo cierra [33m 1995[2mms[22m[39m
+   [33m[2m✓[22m[39m país/prefijo usa búsqueda accesible, Escape y conserva número al cambiar país [33m 366[2mms[22m[39m
+ [32m✓[39m components/schedule/BusinessScheduleSettings.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 9236[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mADMIN can edit the week but cannot confirm a region [33m 721[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mrequires impact review, invalidates it after editing and saves the exact reviewed revision [33m 1608[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mconflicts prevent saving and show the actual interval in business time [33m 773[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mkeeps edits after service failure and does not display raw diagnostics [33m 463[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mconfirms the region without discarding a draft week [33m 625[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mpreserves a separate draft week when a closure is create [33m 1007[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mpreserves a separate draft week when a closure is cancel [33m 578[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mrequires reconciliation after a write succeeds but the fresh read fails [33m 1035[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mignores late impact from A after a complete A → B → A visit change [33m 662[2mms[22m[39m
+   [33m[2m✓[22m[39m Horario D14/C2[2m > [22mrequires new impact after adopting a concurrent revision while retaining the draft [33m 902[2mms[22m[39m
+ [32m✓[39m components/notifications/BookingEmailOptIn.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2839[2mms[22m[39m
+   [33m[2m✓[22m[39m public opt-in starts unchecked, is independent of account creation and preserves the authoritative instant [33m 1303[2mms[22m[39m
+   [33m[2m✓[22m[39m changing email clears the earlier choice; no inferred consent is posted [33m 705[2mms[22m[39m
+   [33m[2m✓[22m[39m a choice without an email does not block a valid reservation or expose omission details [33m 826[2mms[22m[39m
+ [32m✓[39m components/team/InvitationDates.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 500[2mms[22m[39m
+   [33m[2m✓[22m[39m no afirma Enviada para FAILED o PENDING; muestra vencimiento y conserva Reenviar [33m 489[2mms[22m[39m
+ [32m✓[39m components/public/WhatsAppSuccess.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 624[2mms[22m[39m
+   [33m[2m✓[22m[39m WhatsApp C2 SuccessView[2m > [22muses one native accessible link, generic text and no automatic or click-driven JS popup [33m 413[2mms[22m[39m
+ [32m✓[39m components/media/MediaEditor.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 566[2mms[22m[39m
+   [33m[2m✓[22m[39m explica cuota o error de moderación, conserva el archivo y no anuncia publicación [33m 563[2mms[22m[39m
+ [32m✓[39m components/booking/AuthRecovery.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 647[2mms[22m[39m
+ [32m✓[39m components/schedule/ProfessionalAvailabilityModal.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 889[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects ambiguous or missing A2 wall time 2026-11-01T01:30 without an API write [33m 586[2mms[22m[39m
+ [32m✓[39m components/dashboard/SummaryPagination.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 389[2mms[22m[39m
+ [32m✓[39m components/public/PublicDates.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 365[2mms[22m[39m
+ [32m✓[39m components/schedule/SettingsScreen.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 880[2mms[22m[39m
+   [33m[2m✓[22m[39m loads new observers after auth clears the prior scope cache, also A → B → A [33m 875[2mms[22m[39m
+ [32m✓[39m components/public/M1C2.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 12389[2mms[22m[39m
+   [33m[2m✓[22m[39m consume rango real, deshabilita días y no ofrece hora libre ni preseleccionada [33m 1963[2mms[22m[39m
+   [33m[2m✓[22m[39m invitado registra el instante/candidato, solo una vez, sin contraseña ni zona [33m 1015[2mms[22m[39m
+   [33m[2m✓[22m[39m correo/teléfono inválidos se explican; no existe un paso de cuenta [33m 868[2mms[22m[39m
+   [33m[2m✓[22m[39m D11 vuelve a datos conservando todo el borrador y sin revelar existencia ni constraints [33m 801[2mms[22m[39m
+   [33m[2m✓[22m[39m rechazo 404 retira la página o exige otra hora sin repetir el envío [33m 665[2mms[22m[39m
+   [33m[2m✓[22m[39m rechazo 409 retira la página o exige otra hora sin repetir el envío [33m 769[2mms[22m[39m
+   [33m[2m✓[22m[39m timeout/5xx terminal no ofrece reenvío y solo permite regreso al negocio [33m 689[2mms[22m[39m
+   [33m[2m✓[22m[39m cambio de usuario, rol u organización descarta el borrador incluso A → B → A [33m 1272[2mms[22m[39m
+   [33m[2m✓[22m[39m ignora un POST tardío al salir y volver al mismo slug [33m 982[2mms[22m[39m
+   [33m[2m✓[22m[39m revisión y éxito usan la zona del negocio y reenvían el mismo instante, incluso en otro día del dispositivo [33m 659[2mms[22m[39m
+   [33m[2m✓[22m[39m 429 conserva datos, permite corregirlos y espera el plazo sin repetir el POST [33m 787[2mms[22m[39m
+   [33m[2m✓[22m[39m un candidato que falta en el catálogo exige revisar profesional antes de avanzar [33m 450[2mms[22m[39m
+   [33m[2m✓[22m[39m renovar identidad de sesión descarta datos aunque usuario y tenant coincidan [33m 1280[2mms[22m[39m
+ [32m✓[39m components/ui/BusinessTime.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+ [32m✓[39m components/booking/BookingList.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m21 passed[39m[22m[90m (21)[39m
+[2m      Tests [22m [1m[32m130 passed[39m[22m[90m (130)[39m
+[2m   Start at [22m 02:06:24
+[2m   Duration [22m 47.41s[2m (transform 9.60s, setup 91.50s, collect 41.50s, tests 46.29s, environment 264.46s, prepare 17.11s)[22m
+
+$ jest "--runInBand"
+PASS src/bookings/bookings.service.spec.ts (11.171 s)
+PASS src/auth/team-invitations.service.spec.ts
+PASS src/public-booking/public-booking.service.spec.ts
+PASS src/professionals/professionals.service.spec.ts
+PASS src/auth/clerk-onboarding.service.spec.ts
+PASS src/auth/auth.service.spec.ts
+PASS src/invoices/invoices.service.spec.ts
+PASS src/notifications/notification-policy.spec.ts
+PASS src/public-booking/whatsapp-contract.spec.ts
+PASS src/notifications/resend.adapter.spec.ts
+PASS src/professionals/professional-availability.service.spec.ts
+PASS src/business-schedule/business-schedule.policy.spec.ts
+PASS src/services/services.service.spec.ts
+PASS src/organizations/organizations.service.spec.ts
+PASS src/auth/clerk/clerk-session-verifier.service.spec.ts
+PASS src/clients/clients.service.spec.ts
+PASS src/public-booking/public-booking-days.spec.ts
+PASS src/professionals/dto/professionals.dto.spec.ts
+PASS src/public-booking/guest-retirement.spec.ts
+PASS src/professionals/professionals.controller.spec.ts
+[31m[Nest] 24736  - [39m08/10/2026, 2:06:05 a. m. [31m  ERROR[39m [38;5;3m[ClerkAuthGuard] [39m[31mError inesperado en ClerkAuthGuard: Error[39m
+PASS src/auth/guards/clerk-auth.guard.spec.ts
+PASS src/cms/cms.service.spec.ts
+PASS src/analytics/dashboard-summary.service.spec.ts
+PASS src/auth/clerk/clerk-auth.config.spec.ts
+PASS src/clients/clients.controller.spec.ts
+PASS src/common/assert-isolated-database-url.spec.ts
+PASS src/auth/guards/b2b-auth.guard.spec.ts
+PASS src/common/production-config.spec.ts
+PASS src/prisma/database-integrity.spec.ts
+PASS src/auth/team.service.spec.ts
+PASS src/bookings/bookings.controller.spec.ts
+PASS src/services/dto/services.dto.spec.ts
+PASS src/auth/clerk-onboarding.controller.spec.ts
+PASS src/analytics/analytics.service.spec.ts
+PASS src/cms/cms.dto.spec.ts
+PASS src/media/media-policy.spec.ts
+PASS src/invoices/invoices.controller.spec.ts
+PASS src/professionals/professional-availability.util.spec.ts
+PASS src/common/http-telemetry.spec.ts
+PASS src/auth/clerk-bootstrap.service.spec.ts
+PASS src/security/postgres-throttler.storage.spec.ts
+[31m[Nest] 24736  - [39m08/10/2026, 2:06:11 a. m. [31m  ERROR[39m [38;5;3m[ClerkOnboardingGuard] [39m[31mError inesperado en ClerkOnboardingGuard: Error[39m
+PASS src/auth/guards/clerk-onboarding.guard.spec.ts
+PASS src/public-booking/availability.util.spec.ts
+PASS src/media/media-image.spec.ts
+PASS src/auth/guards/roles.guard.spec.ts
+PASS src/common/proxy-trust.spec.ts
+PASS src/common/find-owned-or-throw.util.spec.ts
+PASS src/auth/strategies/jwt.strategy.spec.ts
+PASS src/auth/clerk-bootstrap.controller.spec.ts
+PASS src/cms/cms.projection.spec.ts
+PASS src/clients/dto/clients-dto.spec.ts
+PASS src/common/prisma-error.util.spec.ts
+PASS src/auth/clerk/to-web-request.spec.ts
+PASS src/auth/internal-mfa-policy.spec.ts
+PASS src/auth/organization-slug.spec.ts
+PASS src/organizations/organizations.controller.spec.ts
+PASS src/auth/clerk-me.controller.spec.ts
+PASS src/media/media-cloudinary.spec.ts
+PASS src/auth/team-invitation-redirect.spec.ts
+PASS src/auth/team-invitations.controller.spec.ts
+PASS src/app.controller.spec.ts
+PASS src/prisma/prisma.service.spec.ts
+
+Test Suites: 4 skipped, 62 passed, 62 of 66 total
+Tests:       41 skipped, 836 passed, 877 total
+Snapshots:   0 total
+Time:        54.967 s
+Ran all test suites.
+$ pnpm test:unit && pnpm test:components
+$ node --test lib/*.test.ts
+$ vitest run

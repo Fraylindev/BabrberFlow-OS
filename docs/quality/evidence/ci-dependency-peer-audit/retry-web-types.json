@@ -1,0 +1,11 @@
+[
+  {
+    "label": "web-types",
+    "args": [
+      "--filter",
+      "web",
+      "type-check:clean"
+    ],
+    "exitCode": 0
+  }
+]

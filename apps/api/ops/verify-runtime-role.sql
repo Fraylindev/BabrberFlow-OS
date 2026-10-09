@@ -55,7 +55,7 @@ BEGIN
     RAISE EXCEPTION 'Runtime exceeds media contract privileges';
   END IF;
 
-  -- Exact 26-migration baseline. New tables fail this gate until their
+  -- Exact 28-migration baseline. New tables fail this gate until their
   -- migration declares grants and the reviewed matrix is updated.
   FOR object_record IN
     SELECT c.oid, c.relname, m.allowed
@@ -63,8 +63,12 @@ BEGIN
     JOIN pg_namespace n ON n.oid = c.relnamespace
     LEFT JOIN (VALUES
       ('AuditLog','SI'), ('Booking','SIU'), ('BookingEmailEvent','SI'),
+      ('BusinessSchedule','SIU'), ('BusinessClosure','SIU'),
+      ('BusinessScheduleDay','SID'), ('BusinessScheduleWindow','SID'),
+      ('BusinessScheduleRevision','SI'),
       ('BookingEmailPreference','SIU'), ('Client','SIU'),
-      ('CmsOperation','SI'), ('CmsPage','SIU'), ('EmailAbuseBucket','SIUD'),
+      ('CmsOperation','SI'), ('CmsPage','SIU'), ('CustomerOperation','SID'),
+      ('EmailAbuseBucket','SIUD'),
       ('EmailChannelControl','SIU'), ('EmailOutbox','SIU'),
       ('EmailWebhookReceipt','SI'), ('GalleryImage','S'), ('Invoice','SI'),
       ('MediaAsset','SIU'), ('MediaGalleryOrder','SIU'),
@@ -105,7 +109,7 @@ BEGIN
   END LOOP;
 
   IF (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
-      WHERE n.nspname='public' AND c.relkind IN ('r','p')) <> 31 THEN
+      WHERE n.nspname='public' AND c.relkind IN ('r','p')) <> 37 THEN
     RAISE EXCEPTION 'Public table matrix is incomplete';
   END IF;
   IF EXISTS (
@@ -115,6 +119,40 @@ BEGIN
       AND acl.grantee IN (0, 'kortek_runtime'::regrole)
   ) THEN
     RAISE EXCEPTION 'Runtime or PUBLIC has default table privileges';
+  END IF;
+  IF NOT has_table_privilege('public."Client"', 'UPDATE') THEN
+    RAISE EXCEPTION 'Invoker customer triggers require Client UPDATE';
+  END IF;
+  IF (SELECT relowner FROM pg_class WHERE oid = 'public."CustomerOperation"'::regclass)
+      <> 'kortek_migrator'::regrole
+    OR EXISTS (SELECT 1 FROM pg_class c,
+      aclexplode(coalesce(c.relacl, acldefault('r', c.relowner))) acl
+      WHERE c.oid = 'public."CustomerOperation"'::regclass AND acl.grantee = 0) THEN
+    RAISE EXCEPTION 'CustomerOperation requires migrator ownership and no PUBLIC ACL';
+  END IF;
+  IF (SELECT count(*) FROM pg_proc p WHERE p.oid IN
+      ('public.customer_access_relink()'::regprocedure,
+       'public.customer_booking_revision()'::regprocedure)
+      AND NOT p.prosecdef AND p.prorettype = 'trigger'::regtype
+      AND p.pronargs = 0 AND p.proowner = 'kortek_migrator'::regrole
+      AND p.proconfig = ARRAY['search_path=pg_catalog, public, pg_temp']
+      AND has_function_privilege(p.oid, 'EXECUTE')
+      AND NOT EXISTS (SELECT 1 FROM aclexplode(coalesce(p.proacl,
+        acldefault('f', p.proowner))) acl WHERE acl.grantee = 0
+          AND acl.privilege_type = 'EXECUTE')) <> 2 THEN
+    RAISE EXCEPTION 'Customer trigger function privileges or search_path are unsafe';
+  END IF;
+  IF (SELECT count(*) FROM pg_trigger t WHERE NOT t.tgisinternal
+      AND t.tgenabled = 'O' AND (
+        (t.tgrelid = 'public."Client"'::regclass
+          AND t.tgname = 'Client_customer_access_relink'
+          AND t.tgfoid = 'public.customer_access_relink()'::regprocedure
+          AND t.tgtype = 19)
+        OR (t.tgrelid = 'public."Booking"'::regclass
+          AND t.tgname = 'Booking_customer_revision'
+          AND t.tgfoid = 'public.customer_booking_revision()'::regprocedure
+          AND t.tgtype = 29))) <> 2 THEN
+    RAISE EXCEPTION 'Customer triggers are missing, disabled or altered';
   END IF;
 END $$;
 COMMIT;

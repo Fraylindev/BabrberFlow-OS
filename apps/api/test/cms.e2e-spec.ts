@@ -72,6 +72,18 @@ describe('CMS C1 (PostgreSQL aislado, HTTP y guards reales)', () => {
         heroImageUrl: 'https://private.example.test/photo',
         socialLinks: { private: true },
         businessHours: { open: '09:00', close: '19:00' },
+        businessSchedule: {
+          create: {
+            state: 'CONFIRMED',
+            zoneConfirmed: true,
+            days: {
+              create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                dayOfWeek,
+                windows: { create: [{ startMinute: 540, endMinute: 1140 }] },
+              })),
+            },
+          },
+        },
       },
     });
   }
@@ -717,6 +729,11 @@ describe('CMS C1 (PostgreSQL aislado, HTTP y guards reales)', () => {
         data: { businessHours: hours ?? Prisma.DbNull },
       });
       await publish();
+      // Existing published legacy tenant: preserve the frozen D4 reader.
+      await prisma.db.businessSchedule.update({
+        where: { organizationId: tenant.id },
+        data: { state: 'LEGACY_UNCONFIRMED', legacyPublicAllowed: true },
+      });
       const url = `/public/${tenant.slug}/availability`;
       const query = { date: '2099-01-05', serviceId: body.serviceId };
       const before = await requestApp(app).get(url).query(query).expect(200);

@@ -71,6 +71,11 @@ export function isPublicMedia(value: unknown): value is PublicMedia {
 }
 
 export function mediaError(error: unknown, action: 'upload' | 'publish' | 'save' | 'retire' | 'load'): string {
+  const message = mediaErrorText(error, action);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function mediaErrorText(error: unknown, action: 'upload' | 'publish' | 'save' | 'retire' | 'load'): string {
   if (error instanceof ApiError) {
     if (error.status === 503 && (action === 'upload' || action === 'publish'))
       return 'La revisión automática de imágenes no está disponible o agotó su cuota. La imagen no se publicó. Espera a que se restablezca el servicio y vuelve a intentarlo; no se hará ningún cargo automático.';

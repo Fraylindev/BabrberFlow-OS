@@ -1,0 +1,59 @@
+{
+  "base": "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef",
+  "startedUtc": "2026-10-04T16:36:54.930679+00:00",
+  "commands": [],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "mode": "local",
+  "case": "frase-mal-repetida",
+  "event": "terminado",
+  "success": false,
+  "errors": [
+    {
+      "event": "parada",
+      "phase": "frase-previa-a-operaciones",
+      "exceptionClass": "RuntimeError",
+      "messageSanitized": "frases-no-coinciden-antes-dump",
+      "queryLabel": null,
+      "tracebackSanitized": [
+        {
+          "file": "run.py",
+          "line": 962,
+          "function": "main"
+        },
+        {
+          "file": "run.py",
+          "line": 330,
+          "function": "request_phrase"
+        }
+      ]
+    }
+  ],
+  "failure": {
+    "event": "parada",
+    "phase": "frase-previa-a-operaciones",
+    "exceptionClass": "RuntimeError",
+    "messageSanitized": "frases-no-coinciden-antes-dump",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "run.py",
+        "line": 962,
+        "function": "main"
+      },
+      {
+        "file": "run.py",
+        "line": 330,
+        "function": "request_phrase"
+      }
+    ]
+  },
+  "remainingOwnedContainers": [],
+  "finishedUtc": "2026-10-04T16:36:54.939831+00:00"
+}

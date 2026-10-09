@@ -1,0 +1,124 @@
+{
+  "base": "768d898e27685216b40b699cf5ad9e3f7c1cfd76",
+  "localOnly": true,
+  "qaAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "commands": [
+    {
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-7ce24c",
+        "--launch",
+        "gpg-agent"
+      ],
+      "label": "launch-home-corto",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-7ce24c",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/p2-a/cifrado-trivial-falso.gpg"
+      ],
+      "label": "cifrar-home-corto",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "gpg: keybox [literal omitido] created\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-7ce24c",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--decrypt",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/p2-a/cifrado-trivial-falso.gpg"
+      ],
+      "label": "descifrar-home-corto",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "gpg: AES256.CFB encrypted data\ngpg: encrypted with 1 passphrase\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpg-connect-agent.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-7ce24c",
+        "--no-autostart",
+        "/bye"
+      ],
+      "label": "estado-home-corto-sin-autostart",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-7ce24c",
+        "--kill",
+        "gpg-agent"
+      ],
+      "label": "cerrar-agente-propio",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    }
+  ],
+  "complete": true,
+  "longProbeRecorderIncident": {
+    "exceptionClass": "RuntimeError",
+    "phase": "diagnostico-GPG",
+    "messageSanitized": "estado-agente-home-largo-sin-autostart; exit=0; gpg-connect-agent: can't connect to the gpg-agent: File name too long\ngpg-connect-agent: no gpg-agent running in this session\n",
+    "tracebackSanitized": [
+      {
+        "file": "diagnosticar.py",
+        "line": 65,
+        "function": "<module>"
+      },
+      {
+        "file": "diagnosticar.py",
+        "line": 36,
+        "function": "execute"
+      }
+    ]
+  },
+  "longProbeWasNotRepeated": true,
+  "socketHypothesisConfirmed": true,
+  "shortPaths": {
+    "homedir": "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/kh-7ce24c",
+    "socketCharacters": 66,
+    "maximumAllowed": 90
+  },
+  "agentConnected": true,
+  "trivialEncryptDecryptEqual": true,
+  "ownedRootsRemoved": true
+}

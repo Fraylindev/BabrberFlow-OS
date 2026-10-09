@@ -22,6 +22,7 @@ import {
   projectContent,
   projectReceipt,
 } from './cms.projection';
+import { loadBusinessPolicy } from '../business-schedule/business-schedule.policy';
 
 type Operation = 'SAVE_DRAFT' | 'PUBLISH' | 'UNPUBLISH';
 
@@ -66,6 +67,7 @@ export class CmsService {
           });
           if (!page || !organization)
             throw new NotFoundException('Información no disponible.');
+          const operational = await loadBusinessPolicy(tx, organizationId);
           const content = projectContent(page.draft);
           if (preview)
             return {
@@ -82,7 +84,23 @@ export class CmsService {
               page.publishedSnapshot === null
                 ? null
                 : projectContent(page.publishedSnapshot),
-            readOnly: organization,
+            readOnly: {
+              ...organization,
+              operationalSchedule: {
+                revision: operational.revision,
+                state: operational.state,
+                zoneConfirmed: operational.zoneConfirmed,
+                week: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                  dayOfWeek,
+                  windows: operational.windows
+                    .filter((w) => w.dayOfWeek === dayOfWeek)
+                    .map((w) => ({
+                      startMinute: w.startMinute,
+                      endMinute: w.endMinute,
+                    })),
+                })),
+              },
+            },
           };
         },
         { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
@@ -174,6 +192,14 @@ export class CmsService {
             saved = true;
           } else {
             if (operation === 'PUBLISH') {
+              if (
+                !page.isPublished &&
+                (await loadBusinessPolicy(tx, organizationId)).state !==
+                  'CONFIRMED'
+              )
+                throw new ConflictException(
+                  'Confirma el horario y la región antes de abrir las reservas del negocio.',
+                );
               const org = await tx.organization.findUnique({
                 where: { id: organizationId },
                 select: { isActive: true, deletedAt: true },

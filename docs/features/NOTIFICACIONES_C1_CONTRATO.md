@@ -2,6 +2,8 @@
 
 Actualizado: 2026-09-15. **CERRADO / APROBADO por el propietario sobre la base c7d43ad03a65a900a930a1a0d69dd258b8516a1e.** Autorización explícita del propietario: implementar C1 con D1–D10 de [C0](NOTIFICACIONES_C0_AUDITORIA.md), incluida reprogramación y COMPLETED. Este documento define el contrato implementado y su evidencia backend en §10. La aprobación explícita posterior autoriza frontend C2 según D1–D10; no autoriza activación C3.
 
+**Adenda de comportamiento vigente (2026-09-28):** por solicitud expresa del propietario, una Booking `CONFIRMED` puede pasar a `COMPLETED` aunque su `endTime` sea futuro. Se mantienen roles y transiciones; solo se retiró la barrera temporal de la mutación. La elegibilidad del correo `COMPLETED` conserva su regla actual vinculada al fin programado, por lo que completar anticipadamente no envía ese correo antes de `endTime`. Los permisos de Facturación permanecen separados. Las filas y pruebas históricas de esta entrega describen el comportamiento anterior y quedan supersedidas en el punto de la mutación.
+
 ## 1. Alcance y compatibilidad
 
 Correo automático transaccional para clientes de reservas internas/públicas. Resend con remitente central, cinco textos fijos, opt-in por reserva, historial privado y outbox PostgreSQL con worker. Sin Redis, campañas, recordatorios ejecutables, editor, frontend C2 ni activación C3. D3-A queda exclusivamente diseñado en C0 para la segunda entrega; no hay rutas ni código nuevo de WhatsApp.

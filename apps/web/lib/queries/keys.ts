@@ -12,6 +12,7 @@ export const queryKeys = {
   },
   bookings: {
     all: ["bookings"] as const,
+    scope: (scopeKey: string) => ['bookings', scopeKey] as const,
   },
   clients: {
     all: ["clients"] as const,

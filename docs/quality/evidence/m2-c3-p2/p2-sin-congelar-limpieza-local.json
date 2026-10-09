@@ -1,0 +1,20 @@
+{
+  "base": "25fbdd3241b926925a3af435d8ecb5c4ddd99fad",
+  "localOnly": true,
+  "ownContainers": [
+    "kortek-m2-c3-p2-client-real-9f7122e5b645"
+  ],
+  "dockerRmForceVolumesExit": 0,
+  "containerAbsenceQueryExit": 0,
+  "remainingOwnContainers": [],
+  "pgDataTmpfs": true,
+  "noPublishedPorts": true,
+  "ownGpgAgentKillExit": 0,
+  "partialFilesRemaining": 0,
+  "qaCustodyAccess": false,
+  "rootResolved": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\m2-c3-p2-sin-congelar",
+  "reparsePoints": 0,
+  "sourceFilesArchived": true,
+  "tempRootRemoved": true,
+  "foreignObjectsTouched": false
+}

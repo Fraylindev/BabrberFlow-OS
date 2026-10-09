@@ -16,7 +16,10 @@ export interface CmsEditor extends CmsReceipt {
   draftRevision: number;
   draft: CmsContent;
   publishedSnapshot: CmsContent | null;
-  readOnly: { slug: string; businessHours: unknown; timeZone: string };
+  readOnly: {
+    slug: string; businessHours: unknown; timeZone: string;
+    operationalSchedule: { revision: number; state: 'UNCONFIRMED' | 'LEGACY_UNCONFIRMED' | 'CONFIRMED'; zoneConfirmed: boolean; week: { dayOfWeek: number; windows: { startMinute: number; endMinute: number }[] }[] };
+  };
 }
 
 export interface CmsPreview {

@@ -14,6 +14,7 @@ import {
 import { useAuth as useClerkAuth } from '@clerk/nextjs';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { runAuthOperation } from './auth-operation';
+import { hasDefinitiveAccessError, isTransientQueryError, retryQuery } from './query-recovery';
 import {
   api,
   ApiError,
@@ -30,6 +31,7 @@ interface AuthContextValue {
   isSignedIn: boolean;
   state: ClerkBootstrapState | null;
   error: string | null;
+  isRecovering: boolean;
   user: AuthUser | null;
   organization: ClerkMembership['organization'] | null;
   memberships: ClerkMembership[];
@@ -47,6 +49,11 @@ function clearLegacySession() {
 }
 
 function friendlyBootstrapError(error: unknown): string {
+  const message = friendlyBootstrapErrorText(error);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function friendlyBootstrapErrorText(error: unknown): string {
   if (error instanceof ApiError && error.status === 401) {
     return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
   }
@@ -66,6 +73,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useClerkAuth();
   const queryClient = useQueryClient();
   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null);
+  const renewalRef = useRef<{ userId: typeof userId; getToken: typeof getToken; promise: Promise<string | null> } | null>(null);
+  const resolveToken = useCallback((forceRefresh = false) => {
+    if (!clerkSignedIn) return Promise.resolve(null);
+    if (!forceRefresh) return getToken();
+    const renewal = renewalRef.current;
+    if (renewal?.userId === userId && renewal.getToken === getToken) return renewal.promise;
+    // Share one Clerk renewal across simultaneous 401s in this identity.
+    const promise = getToken({ skipCache: true }).finally(() => {
+      if (renewalRef.current?.promise === promise) renewalRef.current = null;
+    });
+    renewalRef.current = { userId, getToken, promise };
+    return promise;
+  }, [getToken, userId, clerkSignedIn]);
 
   const bootstrapQuery = useQuery({
     queryKey: ['auth', 'clerk-bootstrap', userId],
@@ -73,19 +93,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       runAuthOperation(async (requestSignal) => {
         // The query can start before the layout effect registers business auth.
         // Bootstrap needs only the current Clerk session, never a previous tenant.
-        const token = await getToken();
-        if (!token) throw new ApiError(401, 'Sesión no válida');
         return api.get<ClerkBootstrapResponse>('/auth/clerk/bootstrap', undefined, {
           signal: requestSignal,
-          authContext: { token, organizationId: null },
+          cache: 'no-store',
+          authResolver: async (forceRefresh) => {
+            const token = await resolveToken(forceRefresh);
+            if (!token) throw new ApiError(401, 'Sesión no válida');
+            return { token, organizationId: null };
+          },
         });
       }, signal),
     enabled: clerkLoaded && clerkSignedIn,
-    retry: false,
-    staleTime: 0,
+    retry: retryQuery,
+    staleTime: 30_000,
   });
 
-  const bootstrap = clerkSignedIn ? (bootstrapQuery.data ?? null) : null;
+  const accessDenied = hasDefinitiveAccessError(bootstrapQuery.error);
+  const bootstrap = clerkSignedIn && !accessDenied ? (bootstrapQuery.data ?? null) : null;
   const memberships = useMemo(() => bootstrap?.memberships ?? [], [bootstrap?.memberships]);
   const selectedMembership = useMemo(() => {
     const selected = memberships.find(
@@ -98,21 +122,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return preferred ?? memberships[0] ?? null;
   }, [bootstrap?.preferredOrganizationId, memberships, selectedOrganizationId]);
 
+  const refetchBootstrap = bootstrapQuery.refetch;
   useLayoutEffect(() => {
     clearLegacySession();
-    return configureApiAuth(async () => ({
-      token: await getToken(),
+    return configureApiAuth(async (forceRefresh) => ({
+      token: await resolveToken(forceRefresh),
       organizationId: selectedMembership?.organization.id ?? null,
-    }));
+    }), () => { void refetchBootstrap({ cancelRefetch: false }); });
   }, [
-    getToken,
+    resolveToken,
+    refetchBootstrap,
     userId,
     clerkSignedIn,
     selectedMembership?.organization.id,
     selectedMembership?.role,
   ]);
 
-  const refetchBootstrap = bootstrapQuery.refetch;
   const refresh = useCallback(async () => {
     if (!clerkLoaded || !clerkSignedIn) return null;
     const result = await refetchBootstrap();
@@ -134,7 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const previous = previousBusinessScope.current;
-    if (previous && businessScope && previous !== businessScope) {
+    if (previous && previous !== businessScope) {
       queryClient.removeQueries({
         predicate: (query) => query.queryKey[0] !== 'auth',
       });
@@ -160,7 +185,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isLoaded = clerkLoaded && (!clerkSignedIn || !bootstrapQuery.isLoading);
   const isReady = Boolean(isLoaded && clerkSignedIn && user);
-  const error = bootstrapQuery.error ? friendlyBootstrapError(bootstrapQuery.error) : null;
+  // A background outage must not unmount a previously loaded workspace.
+  // Definitive access rejection clears the authority even with cached data.
+  const error = bootstrapQuery.error && (!bootstrap || accessDenied)
+    ? friendlyBootstrapError(bootstrapQuery.error) : null;
+  const isRecovering = isTransientQueryError(bootstrapQuery.error);
 
   return (
     <AuthContext.Provider
@@ -170,6 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isSignedIn: Boolean(clerkSignedIn),
         state: bootstrap?.state ?? null,
         error,
+        isRecovering,
         user,
         organization: selectedMembership?.organization ?? null,
         memberships,

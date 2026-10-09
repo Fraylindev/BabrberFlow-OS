@@ -1,0 +1,115 @@
+{
+  "base": "c0d9fd5d30a4acd984c4a92b0d198ce23de55822",
+  "scope": "P2; lecturas QA antes de congelar",
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "project": {
+    "tool": "mcp__codex_apps__supabase_get_project",
+    "argsSanitized": {"id": "<ref QA de P0>"},
+    "sanitizedResult": {"name": "Kortek Booking Cutover QA", "status": "ACTIVE_HEALTHY", "targetMatchesP0": true, "postgresVersion": "17.6.1.166"}
+  },
+  "previewQuery": {
+    "tool": "mcp__codex_apps__vercel_get_deployment",
+    "args": {"idOrUrl": "qa.booking.kortek.cloud", "withGitRepoInfo": "true"}
+  },
+  "metadata": {
+    "tool": "mcp__codex_apps__supabase_execute_sql",
+    "project_id_sanitized": "<ref QA de P0>",
+    "sql": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY; SET LOCAL statement_timeout='30s'; SELECT json_build_object('version',current_setting('server_version'),'applied',(SELECT count(*) FROM public._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),'unfinished',(SELECT count(*) FROM public._prisma_migrations WHERE finished_at IS NULL AND rolled_back_at IS NULL),'stage28',(SELECT count(*) FROM public._prisma_migrations WHERE migration_name LIKE '%customer_stage_one%'),'tables',(SELECT count(*) FROM pg_tables WHERE schemaname='public'),'migratorMissingSelect',(SELECT coalesce(json_agg(tablename ORDER BY tablename),'[]'::json) FROM pg_tables WHERE schemaname='public' AND NOT has_table_privilege('kortek_migrator',format('%I.%I',schemaname,tablename),'SELECT')),'sessions',(SELECT json_agg(x) FROM (SELECT usename,state,count(*) AS sessions,count(xact_start) AS transactions FROM pg_stat_activity WHERE pid<>pg_backend_pid() AND backend_type='client backend' GROUP BY usename,state ORDER BY usename,state) x),'prepared',(SELECT count(*) FROM pg_prepared_xacts),'cronInstalled',EXISTS(SELECT 1 FROM pg_extension WHERE extname='pg_cron'),'roles',(SELECT json_agg(x) FROM (SELECT rolname,rolsuper,rolcreatedb,rolcreaterole,rolreplication,rolbypassrls,rolinherit FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator','kortek_backup') ORDER BY rolname) x)); COMMIT;",
+    "result": [
+      {
+        "json_build_object": {
+          "version": "17.6",
+          "applied": 27,
+          "unfinished": 0,
+          "stage28": 0,
+          "tables": 36,
+          "migratorMissingSelect": [],
+          "sessions": [
+            {
+              "usename": "authenticator",
+              "state": "idle",
+              "sessions": 1,
+              "transactions": 0
+            },
+            {
+              "usename": "kortek_runtime",
+              "state": "idle",
+              "sessions": 4,
+              "transactions": 0
+            },
+            {
+              "usename": "pgbouncer",
+              "state": "idle",
+              "sessions": 2,
+              "transactions": 0
+            },
+            {
+              "usename": "supabase_admin",
+              "state": "idle",
+              "sessions": 2,
+              "transactions": 0
+            }
+          ],
+          "prepared": 0,
+          "cronInstalled": false,
+          "roles": [
+            {
+              "rolname": "kortek_backup",
+              "rolsuper": false,
+              "rolcreatedb": false,
+              "rolcreaterole": false,
+              "rolreplication": false,
+              "rolbypassrls": false,
+              "rolinherit": false
+            },
+            {
+              "rolname": "kortek_migrator",
+              "rolsuper": false,
+              "rolcreatedb": false,
+              "rolcreaterole": false,
+              "rolreplication": false,
+              "rolbypassrls": false,
+              "rolinherit": false
+            },
+            {
+              "rolname": "kortek_runtime",
+              "rolsuper": false,
+              "rolcreatedb": false,
+              "rolcreaterole": false,
+              "rolreplication": false,
+              "rolbypassrls": false,
+              "rolinherit": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "queue": {
+    "tool": "mcp__codex_apps__supabase_execute_sql",
+    "project_id_sanitized": "<ref QA de P0>",
+    "sql": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY; SET LOCAL statement_timeout='30s'; SELECT json_build_object('outboxOpen',(SELECT count(*) FROM public.\"EmailOutbox\" WHERE \"closedAt\" IS NULL),'openNonSyntheticRecipients',(SELECT count(*) FROM public.\"EmailOutbox\" WHERE \"closedAt\" IS NULL AND (recipient IS NULL OR lower(recipient) NOT LIKE '%.invalid')),'leased',(SELECT count(*) FROM public.\"EmailOutbox\" WHERE \"leaseToken\" IS NOT NULL AND \"leaseExpiresAt\">now())); COMMIT;",
+    "result": [
+      {
+        "json_build_object": {
+          "outboxOpen": 0,
+          "openNonSyntheticRecipients": 0,
+          "leased": 0
+        }
+      }
+    ]
+  },
+  "preview": {
+    "id": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+    "readyState": "READY",
+    "alias": [
+      "qa.booking.kortek.cloud",
+      "kortek-booking-git-ai-antigravity-qa-fraylindev.vercel.app"
+    ],
+    "sha": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "branch": "ai/antigravity-qa"
+  },
+  "interpretation": "Conteos y metadatos previos; no snapshot de respaldo y no comparación completa de ledger."
+}

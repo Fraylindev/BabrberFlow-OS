@@ -1,0 +1,7 @@
+{
+  "authorization": "Owner authorized continuation from HEAD 75955bb, READ ONLY R1 first, stop on any CR/difference, R2 and R4 only after prerequisite success; no new phrase or backup",
+  "receivedInThisTurn": true,
+  "noAdditionalQAAuthorizationInferred": true,
+  "newWindowMinutesIfLaterActivated": 30,
+  "stopInvoked": "R1 differences; no correction authorized by this message"
+}

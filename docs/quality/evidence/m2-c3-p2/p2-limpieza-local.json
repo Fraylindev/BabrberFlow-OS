@@ -1,0 +1,91 @@
+{
+  "caPublicaIntacta": true,
+  "qaConsultado": false,
+  "fechaUtc": "2026-10-04T00:23:06.3021021Z",
+  "objetos": [
+    {
+      "ausente": true,
+      "nombre": "kortek-m2-c3-p2-diag-b90cf13ef341",
+      "tipo": "contenedor"
+    },
+    {
+      "ausente": true,
+      "nombre": "d195c5347da9ca8e0cc892ed8f314f91e7e5be2a79a43e9b5a6dff8f30a7be9d",
+      "tipo": "volumen-anonimo"
+    },
+    {
+      "ausente": true,
+      "nombre": "kortek-m2-c3-p2-bind-9d301f960152",
+      "tipo": "contenedor"
+    },
+    {
+      "ausente": true,
+      "nombre": "5a97cdc9f4fd3c8fb7afb8e2f3c8f603228111e02f9c376504ad05b4dc3f1d90",
+      "tipo": "volumen-anonimo"
+    },
+    {
+      "ausente": true,
+      "nombre": "kortek-m2-c3-p2-bind-935a01e38f3b",
+      "tipo": "contenedor"
+    },
+    {
+      "ausente": true,
+      "nombre": "8ff9a7e40139d0987dfb2187f22bf662404b8b21370c10938732423b7301057f",
+      "tipo": "volumen-anonimo"
+    },
+    {
+      "ausente": true,
+      "nombre": "kortek-m2-c3-p2-bind-9f647a627c52",
+      "tipo": "contenedor"
+    },
+    {
+      "ausente": true,
+      "nombre": "92bf92cc1a94eab328da050955e3130527124c7b28265eef60af947bed318442",
+      "tipo": "volumen-anonimo"
+    }
+  ],
+  "comandos": [
+    "docker --context desktop-linux ps -a --filter name=kortek-m2-c3-p2-diag-b90cf13ef341 --format '{{.Names}}'",
+    "docker --context desktop-linux volume ls --filter name=d195c5347da9ca8e0cc892ed8f314f91e7e5be2a79a43e9b5a6dff8f30a7be9d --format '{{.Name}}'",
+    "docker --context desktop-linux ps -a --filter name=kortek-m2-c3-p2-bind-9d301f960152 --format '{{.Names}}'",
+    "docker --context desktop-linux volume ls --filter name=5a97cdc9f4fd3c8fb7afb8e2f3c8f603228111e02f9c376504ad05b4dc3f1d90 --format '{{.Name}}'",
+    "docker --context desktop-linux ps -a --filter name=kortek-m2-c3-p2-bind-935a01e38f3b --format '{{.Names}}'",
+    "docker --context desktop-linux volume ls --filter name=8ff9a7e40139d0987dfb2187f22bf662404b8b21370c10938732423b7301057f --format '{{.Name}}'",
+    "docker --context desktop-linux ps -a --filter name=kortek-m2-c3-p2-bind-9f647a627c52 --format '{{.Names}}'",
+    "docker --context desktop-linux volume ls --filter name=92bf92cc1a94eab328da050955e3130527124c7b28265eef60af947bed318442 --format '{{.Name}}'",
+    "Test-Path -LiteralPath 'C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-9d301f960152-0oi_91o4'",
+    "Test-Path -LiteralPath 'C:\\KortekBackups\\qa-m2-c3\\p2-local-write-probe-9d301f960152.tmp'",
+    "Test-Path -LiteralPath 'C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-935a01e38f3b-p0o5d1sb'",
+    "Test-Path -LiteralPath 'C:\\KortekBackups\\qa-m2-c3\\p2-local-write-probe-935a01e38f3b.tmp'",
+    "Test-Path -LiteralPath 'C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-9f647a627c52-ka2zvl5v'",
+    "Test-Path -LiteralPath 'C:\\KortekBackups\\qa-m2-c3\\p2-local-write-probe-9f647a627c52.tmp'",
+    "Get-FileHash -LiteralPath ops/oci-free-backup/prod-ca-2021.crt -Algorithm SHA256"
+  ],
+  "produccionConsultada": false,
+  "archivosYDirectoriosPropios": [
+    {
+      "ausente": true,
+      "ruta": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-9d301f960152-0oi_91o4"
+    },
+    {
+      "ausente": true,
+      "ruta": "C:\\KortekBackups\\qa-m2-c3\\p2-local-write-probe-9d301f960152.tmp"
+    },
+    {
+      "ausente": true,
+      "ruta": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-935a01e38f3b-p0o5d1sb"
+    },
+    {
+      "ausente": true,
+      "ruta": "C:\\KortekBackups\\qa-m2-c3\\p2-local-write-probe-935a01e38f3b.tmp"
+    },
+    {
+      "ausente": true,
+      "ruta": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-9f647a627c52-ka2zvl5v"
+    },
+    {
+      "ausente": true,
+      "ruta": "C:\\KortekBackups\\qa-m2-c3\\p2-local-write-probe-9f647a627c52.tmp"
+    }
+  ]
+}

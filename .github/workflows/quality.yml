@@ -84,9 +84,17 @@ jobs:
         env:
           PGPASSWORD: ci-postgres-only
         run: |
-          # A separate clone preserves the E2E runner's ownership/permissions.
+          # Migrate a separate database as the required function owner.
+          # The E2E runner's database and ownership remain unchanged.
+          KORTEK_CI_MIGRATOR_PASSWORD="$(openssl rand -hex 32)"
+          printf '::add-mask::%s\n' "$KORTEK_CI_MIGRATOR_PASSWORD"
+          printf "CREATE ROLE kortek_migrator LOGIN PASSWORD '%s' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS;\n" "$KORTEK_CI_MIGRATOR_PASSWORD" \
+            | psql -h 127.0.0.1 -U postgres -d postgres -X -v ON_ERROR_STOP=1
           psql -h 127.0.0.1 -U postgres -d postgres -X -v ON_ERROR_STOP=1 \
-            -c 'CREATE DATABASE kortek_ci_grants_test TEMPLATE kortek_ci_test OWNER postgres'
+            -c 'CREATE DATABASE kortek_ci_grants_test OWNER kortek_migrator'
+          DATABASE_URL="postgresql://kortek_migrator:${KORTEK_CI_MIGRATOR_PASSWORD}@127.0.0.1:5432/kortek_ci_grants_test?schema=public" \
+            pnpm --filter api exec prisma migrate deploy
+          unset KORTEK_CI_MIGRATOR_PASSWORD
           psql -h 127.0.0.1 -U postgres -d kortek_ci_grants_test -X -v ON_ERROR_STOP=1 \
             -f apps/api/ops/provision-database-roles.sql
           KORTEK_CI_RUNTIME_PASSWORD="$(openssl rand -hex 32)"
@@ -107,8 +115,12 @@ jobs:
 
       - name: Unit and component tests
         run: |
-          pnpm --filter api test -- --runInBand
+          JWT_SECRET="$(openssl rand -hex 32)"
+          printf '::add-mask::%s\n' "$JWT_SECRET"
+          export JWT_SECRET
+          pnpm --filter api test --runInBand
           pnpm --filter web test
+          unset JWT_SECRET
 
       - name: Production builds
         run: |
@@ -117,8 +129,15 @@ jobs:
 
       - name: PostgreSQL integrity and isolated E2E
         run: |
+          JWT_SECRET="$(openssl rand -hex 32)"
+          printf '::add-mask::%s\n' "$JWT_SECRET"
+          export JWT_SECRET
           node apps/api/dist/prisma/verify-integrity.cli.js
-          pnpm --filter api test:e2e -- --runInBand
+          pnpm --filter api test:e2e --runInBand
+          unset JWT_SECRET
 
       - name: Browser smoke tests
-        run: pnpm --filter web test:browser
+        run: |
+          # Both projects select the branded Chrome channel, not Chromium.
+          pnpm --filter web exec playwright install --with-deps chrome
+          pnpm --filter web test:browser

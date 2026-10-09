@@ -1,0 +1,218 @@
+{
+  "base": "75955bb44eb2ba86da7d2c5f30ec947373e5099e",
+  "startedUtc": "2026-10-05T00:01:38.663741+00:00",
+  "phase": "P3-continuation-R1-readonly-mandatory-check",
+  "commands": [
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts\nXDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts\nXDG_RUNTIME_DIR=/run/user/1000 podman inspect --format [literal omitido] kortek-api-staging kortek-email-worker-staging"
+      ],
+      "exitCode": 0,
+      "label": "READONLY-starting-QA-old-services-images",
+      "phase": "P3-continuation-R1-readonly-mandatory-check",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "commandSanitized": [
+        "ssh",
+        "-i",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-kortek-ed25519-user",
+        "-o",
+        "UserKnownHostsFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\base-preprod-c1\\oci-known-hosts",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "opc@150.136.7.19",
+        "XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node"
+      ],
+      "exitCode": 0,
+      "label": "destino-release-efectivo-RO",
+      "phase": "P3-continuation-R1-readonly-mandatory-check",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaAccess": true,
+  "productionAccess": false,
+  "qaMutation": false,
+  "apiStopped": false,
+  "runtimeGateExecuted": false,
+  "noBusinessRowsRead": true,
+  "migratorReadOnly": true,
+  "phraseNeeded": false,
+  "initialInfra": "MainPID=1084550\nNRestarts=0\nId=kortek-api-staging.service\nActiveState=active\nSubState=running\n\nMainPID=1084553\nNRestarts=0\nId=kortek-email-worker-staging.service\nActiveState=active\nSubState=running\nkortek-api-staging 701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031 running\nkortek-email-worker-staging 7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1 running\n",
+  "initialEffective": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "releaseMatchesP0": true,
+    "databaseRoleMatches": true,
+    "databaseMatches": true,
+    "postgresVersion": "17.6",
+    "qaUserMatches": true,
+    "qaEndpointMatches": true,
+    "effectiveServerMatchesQaDns": true,
+    "deployEnvironmentMatches": true,
+    "publicBookingOpen": true
+  },
+  "success": false,
+  "errors": [
+    {
+      "event": "parada",
+      "phase": "P3-continuation-R1-readonly-mandatory-check",
+      "exceptionClass": "error",
+      "messageSanitized": "bad escape \\i at position 1",
+      "queryLabel": null,
+      "tracebackSanitized": [
+        {
+          "file": "catalog.py",
+          "line": 33,
+          "function": "<module>"
+        },
+        {
+          "file": "__init__.py",
+          "line": 186,
+          "function": "sub"
+        },
+        {
+          "file": "__init__.py",
+          "line": 307,
+          "function": "_compile"
+        },
+        {
+          "file": "_compiler.py",
+          "line": 750,
+          "function": "compile"
+        },
+        {
+          "file": "_parser.py",
+          "line": 979,
+          "function": "parse"
+        },
+        {
+          "file": "_parser.py",
+          "line": 460,
+          "function": "_parse_sub"
+        },
+        {
+          "file": "_parser.py",
+          "line": 544,
+          "function": "_parse"
+        },
+        {
+          "file": "_parser.py",
+          "line": 443,
+          "function": "_escape"
+        }
+      ]
+    }
+  ],
+  "failure": {
+    "event": "parada",
+    "phase": "P3-continuation-R1-readonly-mandatory-check",
+    "exceptionClass": "error",
+    "messageSanitized": "bad escape \\i at position 1",
+    "queryLabel": null,
+    "tracebackSanitized": [
+      {
+        "file": "catalog.py",
+        "line": 33,
+        "function": "<module>"
+      },
+      {
+        "file": "__init__.py",
+        "line": 186,
+        "function": "sub"
+      },
+      {
+        "file": "__init__.py",
+        "line": 307,
+        "function": "_compile"
+      },
+      {
+        "file": "_compiler.py",
+        "line": 750,
+        "function": "compile"
+      },
+      {
+        "file": "_parser.py",
+        "line": 979,
+        "function": "parse"
+      },
+      {
+        "file": "_parser.py",
+        "line": 460,
+        "function": "_parse_sub"
+      },
+      {
+        "file": "_parser.py",
+        "line": 544,
+        "function": "_parse"
+      },
+      {
+        "file": "_parser.py",
+        "line": 443,
+        "function": "_escape"
+      }
+    ]
+  },
+  "event": "R1-readonly-executor-failed",
+  "remainingOwnedContainers": [],
+  "finishedUtc": "2026-10-05T00:01:41.287185+00:00",
+  "supervisorExitCode": 1,
+  "supervisorStderrCompleteRedacted": "",
+  "failureResolution": "Replace fragile regex include removal with exact binary line-prefix removal; tested expected matrix hash before retry"
+}

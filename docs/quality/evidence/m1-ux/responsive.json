@@ -1,0 +1,2602 @@
+[
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 116,
+        "label": "Servicio extenso Norte240 min · RD$1,000.00",
+        "width": 271
+      },
+      {
+        "height": 88,
+        "label": "Corte Norte30 min · RD$500.00",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "Ver descripción de Corte Norte",
+        "width": 255
+      },
+      {
+        "height": 88,
+        "label": "Barba QA30 min · RD$300.00",
+        "width": 271
+      },
+      {
+        "height": 88,
+        "label": "Lavado QA15 min · RD$200.00",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "Elegir profesional",
+        "width": 155
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 303,
+    "phase": "servicios",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 104,
+        "label": "Servicio extenso Norte240 min · RD$1,000.00",
+        "width": 327
+      },
+      {
+        "height": 104,
+        "label": "Corte Norte30 min · RD$500.00",
+        "width": 327
+      },
+      {
+        "height": 44,
+        "label": "Ver descripción de Corte Norte",
+        "width": 311
+      },
+      {
+        "height": 104,
+        "label": "Barba QA30 min · RD$300.00",
+        "width": 327
+      },
+      {
+        "height": 104,
+        "label": "Lavado QA15 min · RD$200.00",
+        "width": 327
+      },
+      {
+        "height": 44,
+        "label": "Elegir profesional",
+        "width": 155
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 358,
+    "phase": "servicios",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 104,
+        "label": "Servicio extenso Norte240 min · RD$1,000.00",
+        "width": 341
+      },
+      {
+        "height": 104,
+        "label": "Corte Norte30 min · RD$500.00",
+        "width": 341
+      },
+      {
+        "height": 44,
+        "label": "Ver descripción de Corte Norte",
+        "width": 325
+      },
+      {
+        "height": 104,
+        "label": "Barba QA30 min · RD$300.00",
+        "width": 341
+      },
+      {
+        "height": 104,
+        "label": "Lavado QA15 min · RD$200.00",
+        "width": 341
+      },
+      {
+        "height": 44,
+        "label": "Elegir profesional",
+        "width": 155
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "servicios",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 104,
+        "label": "Servicio extenso Norte240 min · RD$1,000.00",
+        "width": 592
+      },
+      {
+        "height": 104,
+        "label": "Corte Norte30 min · RD$500.00",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Ver descripción de Corte Norte",
+        "width": 576
+      },
+      {
+        "height": 104,
+        "label": "Barba QA30 min · RD$300.00",
+        "width": 592
+      },
+      {
+        "height": 104,
+        "label": "Lavado QA15 min · RD$200.00",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Elegir profesional",
+        "width": 155
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 752,
+    "phase": "servicios",
+    "width": 768
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 104,
+        "label": "Servicio extenso Norte240 min · RD$1,000.00",
+        "width": 341
+      },
+      {
+        "height": 104,
+        "label": "Corte Norte30 min · RD$500.00",
+        "width": 341
+      },
+      {
+        "height": 44,
+        "label": "Ver descripción de Corte Norte",
+        "width": 325
+      },
+      {
+        "height": 104,
+        "label": "Barba QA30 min · RD$300.00",
+        "width": 341
+      },
+      {
+        "height": 104,
+        "label": "Lavado QA15 min · RD$200.00",
+        "width": 341
+      },
+      {
+        "height": 44,
+        "label": "Elegir profesional",
+        "width": 155
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "servicios",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 92,
+        "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+        "width": 288
+      },
+      {
+        "height": 88,
+        "label": "Alex Norte",
+        "width": 288
+      },
+      {
+        "height": 44,
+        "label": "Ver detalles de Alex Norte",
+        "width": 272
+      },
+      {
+        "height": 88,
+        "label": "Bea Norte",
+        "width": 288
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Ver fechas y horas",
+        "width": 163
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 320,
+    "phase": "profesionales",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 72,
+        "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+        "width": 344
+      },
+      {
+        "height": 104,
+        "label": "Alex Norte",
+        "width": 344
+      },
+      {
+        "height": 44,
+        "label": "Ver detalles de Alex Norte",
+        "width": 328
+      },
+      {
+        "height": 104,
+        "label": "Bea Norte",
+        "width": 344
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Ver fechas y horas",
+        "width": 163
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 375,
+    "phase": "profesionales",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 72,
+        "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+        "width": 358
+      },
+      {
+        "height": 104,
+        "label": "Alex Norte",
+        "width": 358
+      },
+      {
+        "height": 44,
+        "label": "Ver detalles de Alex Norte",
+        "width": 342
+      },
+      {
+        "height": 104,
+        "label": "Bea Norte",
+        "width": 358
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Ver fechas y horas",
+        "width": 163
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 390,
+    "phase": "profesionales",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 72,
+        "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+        "width": 592
+      },
+      {
+        "height": 104,
+        "label": "Alex Norte",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Ver detalles de Alex Norte",
+        "width": 576
+      },
+      {
+        "height": 104,
+        "label": "Bea Norte",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Ver fechas y horas",
+        "width": 163
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 768,
+    "phase": "profesionales",
+    "width": 768
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 72,
+        "label": "Sin preferenciaVerás quién te atenderá antes de registrar.",
+        "width": 592
+      },
+      {
+        "height": 104,
+        "label": "Alex Norte",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Ver detalles de Alex Norte",
+        "width": 576
+      },
+      {
+        "height": 104,
+        "label": "Bea Norte",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Ver fechas y horas",
+        "width": 163
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 1280,
+    "phase": "profesionales",
+    "width": 1280
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Cerrar calendario",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Mes anterior",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Mes siguiente",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 320,
+    "phase": "calendario",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Cerrar calendario",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Mes anterior",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Mes siguiente",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "1 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "2 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "3 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "4 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "5 de octubre de 2026, sin horarios disponibles",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "6 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "7 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "8 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "9 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "10 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "11 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "12 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "13 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "14 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "15 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "16 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "17 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "18 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "19 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "20 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "21 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "22 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "23 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "24 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "25 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "26 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "27 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "28 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "29 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "30 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "31 de octubre de 2026",
+        "width": 49
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 375,
+    "phase": "calendario",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Cerrar calendario",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Mes anterior",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Mes siguiente",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "1 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "2 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "3 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "4 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "5 de octubre de 2026, sin horarios disponibles",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "6 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "7 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "8 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "9 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "10 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "11 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "12 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "13 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "14 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "15 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "16 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "17 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "18 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "19 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "20 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "21 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "22 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "23 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "24 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "25 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "26 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "27 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "28 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "29 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "30 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "31 de octubre de 2026",
+        "width": 51
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 390,
+    "phase": "calendario",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Cerrar calendario",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Mes anterior",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Mes siguiente",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "1 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "2 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "3 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "4 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "5 de octubre de 2026, sin horarios disponibles",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "6 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "7 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "8 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "9 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "10 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "11 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "12 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "13 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "14 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "15 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "16 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "17 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "18 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "19 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "20 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "21 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "22 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "23 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "24 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "25 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "26 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "27 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "28 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "29 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "30 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "31 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 752,
+    "phase": "calendario",
+    "width": 768
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Cerrar calendario",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Mes anterior",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Mes siguiente",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "1 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "2 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "3 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "4 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "5 de octubre de 2026, sin horarios disponibles",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "6 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "7 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "8 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "9 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "10 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "11 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "12 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "13 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "14 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "15 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "16 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "17 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "18 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "19 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "20 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "21 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "22 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "23 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "24 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "25 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "26 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "27 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "28 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "29 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "30 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "31 de octubre de 2026",
+        "width": 85
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 1263,
+    "phase": "calendario",
+    "width": 1280
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Ver calendario",
+        "width": 96
+      },
+      {
+        "height": 44,
+        "label": "Siete días anteriores",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Siete días siguientes",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "31 de octubre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "1 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "2 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "3 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "4 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "5 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "6 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Todos",
+        "width": 65
+      },
+      {
+        "height": 44,
+        "label": "Mañana",
+        "width": 77
+      },
+      {
+        "height": 44,
+        "label": "Tarde",
+        "width": 62
+      },
+      {
+        "height": 44,
+        "label": "Noche",
+        "width": 67
+      },
+      {
+        "height": 46,
+        "label": "6:00 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "6:30 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "7:00 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "7:30 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "8:00 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "8:30 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "9:00 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "9:30 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "10:00 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "10:30 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "11:00 p. m.",
+        "width": 132
+      },
+      {
+        "height": 46,
+        "label": "11:30 p. m.",
+        "width": 132
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 303,
+    "phase": "fecha-hora",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Ver calendario",
+        "width": 96
+      },
+      {
+        "height": 44,
+        "label": "Siete días anteriores",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Siete días siguientes",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "31 de octubre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "1 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "2 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "3 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "4 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "5 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "6 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Todos",
+        "width": 65
+      },
+      {
+        "height": 44,
+        "label": "Mañana",
+        "width": 77
+      },
+      {
+        "height": 44,
+        "label": "Tarde",
+        "width": 62
+      },
+      {
+        "height": 44,
+        "label": "Noche",
+        "width": 67
+      },
+      {
+        "height": 46,
+        "label": "6:00 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "6:30 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "7:00 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "7:30 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "8:00 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "8:30 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "9:00 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "9:30 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "10:00 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "10:30 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "11:00 p. m.",
+        "width": 104
+      },
+      {
+        "height": 46,
+        "label": "11:30 p. m.",
+        "width": 104
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 358,
+    "phase": "fecha-hora",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Ver calendario",
+        "width": 96
+      },
+      {
+        "height": 44,
+        "label": "Siete días anteriores",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Siete días siguientes",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "31 de octubre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "1 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "2 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "3 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "4 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "5 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "6 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Todos",
+        "width": 65
+      },
+      {
+        "height": 44,
+        "label": "Mañana",
+        "width": 77
+      },
+      {
+        "height": 44,
+        "label": "Tarde",
+        "width": 62
+      },
+      {
+        "height": 44,
+        "label": "Noche",
+        "width": 67
+      },
+      {
+        "height": 46,
+        "label": "6:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "6:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "7:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "7:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "8:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "8:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "9:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "9:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "10:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "10:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "11:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "11:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "fecha-hora",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Ver calendario",
+        "width": 96
+      },
+      {
+        "height": 44,
+        "label": "Siete días anteriores",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Siete días siguientes",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "31 de octubre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "1 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "2 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "3 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "4 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "5 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "6 de noviembre de 2026",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Todos",
+        "width": 65
+      },
+      {
+        "height": 44,
+        "label": "Mañana",
+        "width": 77
+      },
+      {
+        "height": 44,
+        "label": "Tarde",
+        "width": 62
+      },
+      {
+        "height": 44,
+        "label": "Noche",
+        "width": 67
+      },
+      {
+        "height": 46,
+        "label": "6:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "6:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "7:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "7:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "8:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "8:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "9:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "9:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "10:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "10:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "11:00 p. m.",
+        "width": 108
+      },
+      {
+        "height": 46,
+        "label": "11:30 p. m.",
+        "width": 108
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "fecha-hora",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Ver calendario",
+        "width": 96
+      },
+      {
+        "height": 44,
+        "label": "Siete días anteriores",
+        "width": 44
+      },
+      {
+        "height": 44,
+        "label": "Siete días siguientes",
+        "width": 44
+      },
+      {
+        "height": 46,
+        "label": "31 de octubre de 2026",
+        "width": 77
+      },
+      {
+        "height": 46,
+        "label": "1 de noviembre de 2026",
+        "width": 77
+      },
+      {
+        "height": 46,
+        "label": "2 de noviembre de 2026",
+        "width": 77
+      },
+      {
+        "height": 46,
+        "label": "3 de noviembre de 2026",
+        "width": 77
+      },
+      {
+        "height": 46,
+        "label": "4 de noviembre de 2026",
+        "width": 77
+      },
+      {
+        "height": 46,
+        "label": "5 de noviembre de 2026",
+        "width": 77
+      },
+      {
+        "height": 46,
+        "label": "6 de noviembre de 2026",
+        "width": 77
+      },
+      {
+        "height": 44,
+        "label": "Todos",
+        "width": 65
+      },
+      {
+        "height": 44,
+        "label": "Mañana",
+        "width": 77
+      },
+      {
+        "height": 44,
+        "label": "Tarde",
+        "width": 62
+      },
+      {
+        "height": 44,
+        "label": "Noche",
+        "width": 67
+      },
+      {
+        "height": 46,
+        "label": "6:00 p. m.",
+        "width": 92
+      },
+      {
+        "height": 46,
+        "label": "6:30 p. m.",
+        "width": 92
+      },
+      {
+        "height": 46,
+        "label": "7:00 p. m.",
+        "width": 92
+      },
+      {
+        "height": 46,
+        "label": "7:30 p. m.",
+        "width": 92
+      },
+      {
+        "height": 46,
+        "label": "8:00 p. m.",
+        "width": 92
+      },
+      {
+        "height": 46,
+        "label": "8:30 p. m.",
+        "width": 92
+      },
+      {
+        "height": 60,
+        "label": "9:00 p. m.",
+        "width": 92
+      },
+      {
+        "height": 60,
+        "label": "9:30 p. m.",
+        "width": 92
+      },
+      {
+        "height": 60,
+        "label": "10:00 p. m.",
+        "width": 92
+      },
+      {
+        "height": 60,
+        "label": "10:30 p. m.",
+        "width": 92
+      },
+      {
+        "height": 60,
+        "label": "11:00 p. m.",
+        "width": 92
+      },
+      {
+        "height": 60,
+        "label": "11:30 p. m.",
+        "width": 92
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Continuar con tus datos",
+        "width": 200
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 1263,
+    "phase": "fecha-hora",
+    "width": 1280
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "País y prefijo: República Dominicana +1",
+        "width": 81
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Revisar reserva",
+        "width": 141
+      }
+    ],
+    "inputs": [
+      {
+        "font": "16px",
+        "name": "clientName"
+      },
+      {
+        "font": "16px",
+        "name": "nationalPhone"
+      },
+      {
+        "font": "16px",
+        "name": "clientEmail"
+      }
+    ],
+    "overflow": false,
+    "pageWidth": 303,
+    "phase": "contacto-vacio",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "País y prefijo: República Dominicana +1",
+        "width": 81
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Revisar reserva",
+        "width": 141
+      }
+    ],
+    "inputs": [
+      {
+        "font": "16px",
+        "name": "clientName"
+      },
+      {
+        "font": "16px",
+        "name": "nationalPhone"
+      },
+      {
+        "font": "16px",
+        "name": "clientEmail"
+      }
+    ],
+    "overflow": false,
+    "pageWidth": 358,
+    "phase": "contacto-vacio",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "País y prefijo: República Dominicana +1",
+        "width": 81
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Revisar reserva",
+        "width": 141
+      }
+    ],
+    "inputs": [
+      {
+        "font": "16px",
+        "name": "clientName"
+      },
+      {
+        "font": "16px",
+        "name": "nationalPhone"
+      },
+      {
+        "font": "16px",
+        "name": "clientEmail"
+      }
+    ],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "contacto-vacio",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "País y prefijo: República Dominicana +1",
+        "width": 81
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Revisar reserva",
+        "width": 141
+      }
+    ],
+    "inputs": [
+      {
+        "font": "16px",
+        "name": "clientName"
+      },
+      {
+        "font": "16px",
+        "name": "nationalPhone"
+      },
+      {
+        "font": "16px",
+        "name": "clientEmail"
+      }
+    ],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "contacto-vacio",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "País y prefijo: República Dominicana +1",
+        "width": 81
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Revisar reserva",
+        "width": 141
+      }
+    ],
+    "inputs": [
+      {
+        "font": "16px",
+        "name": "clientName"
+      },
+      {
+        "font": "16px",
+        "name": "nationalPhone"
+      },
+      {
+        "font": "16px",
+        "name": "clientEmail"
+      }
+    ],
+    "overflow": false,
+    "pageWidth": 1263,
+    "phase": "contacto-vacio",
+    "width": 1280
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar fecha y hora",
+        "width": 165
+      },
+      {
+        "height": 44,
+        "label": "Editar servicio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar profesional",
+        "width": 156
+      },
+      {
+        "height": 44,
+        "label": "Editar datos",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Registrar reserva",
+        "width": 153
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 303,
+    "phase": "revision",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar fecha y hora",
+        "width": 165
+      },
+      {
+        "height": 44,
+        "label": "Editar servicio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar profesional",
+        "width": 156
+      },
+      {
+        "height": 44,
+        "label": "Editar datos",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Registrar reserva",
+        "width": 153
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 358,
+    "phase": "revision",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar fecha y hora",
+        "width": 165
+      },
+      {
+        "height": 44,
+        "label": "Editar servicio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar profesional",
+        "width": 156
+      },
+      {
+        "height": 44,
+        "label": "Editar datos",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Registrar reserva",
+        "width": 153
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "revision",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar fecha y hora",
+        "width": 165
+      },
+      {
+        "height": 44,
+        "label": "Editar servicio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar profesional",
+        "width": 156
+      },
+      {
+        "height": 44,
+        "label": "Editar datos",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Registrar reserva",
+        "width": 153
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "revision",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar fecha y hora",
+        "width": 165
+      },
+      {
+        "height": 44,
+        "label": "Editar servicio",
+        "width": 133
+      },
+      {
+        "height": 44,
+        "label": "Editar profesional",
+        "width": 156
+      },
+      {
+        "height": 44,
+        "label": "Editar datos",
+        "width": 116
+      },
+      {
+        "height": 44,
+        "label": "Atrás",
+        "width": 69
+      },
+      {
+        "height": 44,
+        "label": "Registrar reserva",
+        "width": 153
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 1263,
+    "phase": "revision",
+    "width": 1280
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Cómo llegar (se abre en una pestaña nueva)",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "Agregar al calendario",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "Abrir WhatsApp (se abre en una pestaña nueva)",
+        "width": 149
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 303,
+    "phase": "resultado",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Cómo llegar (se abre en una pestaña nueva)",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "Agregar al calendario",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 271
+      },
+      {
+        "height": 44,
+        "label": "Abrir WhatsApp (se abre en una pestaña nueva)",
+        "width": 149
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 303,
+    "phase": "resultado",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Cómo llegar (se abre en una pestaña nueva)",
+        "width": 327
+      },
+      {
+        "height": 44,
+        "label": "Agregar al calendario",
+        "width": 327
+      },
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 327
+      },
+      {
+        "height": 44,
+        "label": "Abrir WhatsApp (se abre en una pestaña nueva)",
+        "width": 149
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 358,
+    "phase": "resultado",
+    "width": 375
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "Cómo llegar (se abre en una pestaña nueva)",
+        "width": 334
+      },
+      {
+        "height": 44,
+        "label": "Agregar al calendario",
+        "width": 341
+      },
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 341
+      },
+      {
+        "height": 44,
+        "label": "Abrir WhatsApp (se abre en una pestaña nueva)",
+        "width": 149
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 373,
+    "phase": "resultado",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 44,
+        "label": "Cómo llegar (se abre en una pestaña nueva)",
+        "width": 334
+      },
+      {
+        "height": 44,
+        "label": "Agregar al calendario",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "← Volver al negocio",
+        "width": 592
+      },
+      {
+        "height": 44,
+        "label": "Abrir WhatsApp (se abre en una pestaña nueva)",
+        "width": 149
+      }
+    ],
+    "inputs": [],
+    "overflow": false,
+    "pageWidth": 1263,
+    "phase": "resultado",
+    "width": 1280
+  }
+]

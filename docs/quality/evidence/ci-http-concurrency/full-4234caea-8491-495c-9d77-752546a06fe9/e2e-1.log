@@ -1,0 +1,228 @@
+::add-mask::[omitted]
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "kortek_ci_test", schema "public" at "127.0.0.1:64024"
+
+28 migrations found in prisma/migrations
+
+Applying migration `20260719162646_initial_schema`
+Applying migration `20260720044928_add_invoice_model`
+Applying migration `20260722030552_link_professional_user`
+Applying migration `20260722042926_add_customer_role`
+Applying migration `20260723212248_microsite_and_indexes`
+Applying migration `20260724023058_global_identity_membership`
+Applying migration `20260725215619_service_client_is_active`
+Applying migration `20260727010227_audit_log_user_id`
+Applying migration `20260811180000_booking_schedule_exclusion`
+Applying migration `20260812010000_professionals_backend_a1`
+Applying migration `20260813193000_professional_individual_availability_a2`
+Applying migration `20260813200000_professional_availability_tenant_fk`
+Applying migration `20260814190000_add_user_clerk_link_a0_1`
+Applying migration `20260815120000_password_nullable`
+Applying migration `20260820220000_audit_log_pre_tenant_security_events`
+Applying migration `20260821220000_team_invitations_a0_4`
+Applying migration `20260822150000_client_user_b2c_link_a0_6_a`
+Applying migration `20260825220000_facturacion_a_internal_invoices`
+Applying migration `20260826210000_facturacion_a_completion_service_price_guards`
+Applying migration `20260909120000_restore_invoice_integrity_checks`
+Applying migration `20260912120000_cms_editorial`
+Applying migration `20260914120000_booking_email_outbox`
+Applying migration `20260914120100_email_channel_control`
+Applying migration `20260915120000_email_template_version`
+Applying migration `20260923100000_media_promotions`
+Applying migration `20260925010000_security_rate_bucket`
+Applying migration `20260927170000_business_schedule`
+Applying migration `20261003120000_customer_stage_one`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260719162646_initial_schema/
+    └─ migration.sql
+  └─ 20260720044928_add_invoice_model/
+    └─ migration.sql
+  └─ 20260722030552_link_professional_user/
+    └─ migration.sql
+  └─ 20260722042926_add_customer_role/
+    └─ migration.sql
+  └─ 20260723212248_microsite_and_indexes/
+    └─ migration.sql
+  └─ 20260724023058_global_identity_membership/
+    └─ migration.sql
+  └─ 20260725215619_service_client_is_active/
+    └─ migration.sql
+  └─ 20260727010227_audit_log_user_id/
+    └─ migration.sql
+  └─ 20260811180000_booking_schedule_exclusion/
+    └─ migration.sql
+  └─ 20260812010000_professionals_backend_a1/
+    └─ migration.sql
+  └─ 20260813193000_professional_individual_availability_a2/
+    └─ migration.sql
+  └─ 20260813200000_professional_availability_tenant_fk/
+    └─ migration.sql
+  └─ 20260814190000_add_user_clerk_link_a0_1/
+    └─ migration.sql
+  └─ 20260815120000_password_nullable/
+    └─ migration.sql
+  └─ 20260820220000_audit_log_pre_tenant_security_events/
+    └─ migration.sql
+  └─ 20260821220000_team_invitations_a0_4/
+    └─ migration.sql
+  └─ 20260822150000_client_user_b2c_link_a0_6_a/
+    └─ migration.sql
+  └─ 20260825220000_facturacion_a_internal_invoices/
+    └─ migration.sql
+  └─ 20260826210000_facturacion_a_completion_service_price_guards/
+    └─ migration.sql
+  └─ 20260909120000_restore_invoice_integrity_checks/
+    └─ migration.sql
+  └─ 20260912120000_cms_editorial/
+    └─ migration.sql
+  └─ 20260914120000_booking_email_outbox/
+    └─ migration.sql
+  └─ 20260914120100_email_channel_control/
+    └─ migration.sql
+  └─ 20260915120000_email_template_version/
+    └─ migration.sql
+  └─ 20260923100000_media_promotions/
+    └─ migration.sql
+  └─ 20260925010000_security_rate_bucket/
+    └─ migration.sql
+  └─ 20260927170000_business_schedule/
+    └─ migration.sql
+  └─ 20261003120000_customer_stage_one/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+$ jest --config ./test/jest-e2e.json "--runInBand"
+PASS test/public-booking-m1.e2e-spec.ts (7.165 s)
+  ● Console
+
+    console.log
+      M1_BUDGET {"professionals":1,"duration":30,"blocks":0,"samplesMs":[112,81,88],"queries":19,"cpuMs":343}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+    console.log
+      M1_BUDGET {"professionals":10,"duration":60,"blocks":0,"samplesMs":[106,87,80],"queries":19,"cpuMs":329}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+    console.log
+      M1_BUDGET {"professionals":40,"duration":15,"blocks":1240,"samplesMs":[250,256,251],"queries":19,"cpuMs":890}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+    console.log
+      M1_BUDGET {"professionals":40,"duration":360,"blocks":1240,"samplesMs":[213,200,201],"queries":19,"cpuMs":626}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+PASS test/postgres-throttler-retry.e2e-spec.ts
+PASS test/media.e2e-spec.ts
+[31m[Nest] 33656  - [39m08/10/2026, 2:59:14 a. m. [31m  ERROR[39m [38;5;3m[AuditService] [39m[31mNo se pudo registrar auditoría: SAVE_DRAFT CmsPage (ab9aa815-1fd4-4cc5-8e22-e9f8847eac0c)[39m
+PrismaClientUnknownRequestError: 
+Invalid `this.prisma.db.auditLog.create()` invocation in
+[workspace]\apps\api\src\audit\audit.service.ts:43:37
+
+  40 
+  41 async log(entry: AuditLogEntry): Promise<void> {
+  42   try {
+→ 43     await this.prisma.db.auditLog.create(
+Error occurred during query execution:
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "P0001", message: "Synthetic audit outage", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+    at ei.handleRequestError ([workspace]\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\RequestHandler.ts:237:13)
+    at ei.handleAndLogRequestError ([workspace]\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request ([workspace]\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a ([workspace]\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at AuditService.log ([workspace]\apps\api\src\audit\audit.service.ts:43:7)
+    at CmsService.mutate ([workspace]\apps\api\src\cms\cms.service.ts:282:11)
+    at [workspace]\node_modules\.pnpm\@nestjs+core@11.1.28_@nestj_b1105a74c7a8287c4b52730207d5bfc0\node_modules\@nestjs\core\router\router-execution-context.js:47:62
+    at [workspace]\node_modules\.pnpm\@nestjs+core@11.1.28_@nestj_b1105a74c7a8287c4b52730207d5bfc0\node_modules\@nestjs\core\router\router-proxy.js:9:17
+PASS test/cms.e2e-spec.ts
+[31m[Nest] 33656  - [39m08/10/2026, 2:59:18 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90m[workspace]\apps\api\[39mtest\invoices.e2e-spec.ts:1097:30
+    at createE2eApp [90m([workspace]\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m([workspace]\apps\api\[39mtest\invoices.e2e-spec.ts:1092:29[90m)[39m
+    at Promise.finally.completed ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+[31m[Nest] 33656  - [39m08/10/2026, 2:59:18 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90m[workspace]\apps\api\[39mtest\invoices.e2e-spec.ts:1097:30
+    at createE2eApp [90m([workspace]\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m([workspace]\apps\api\[39mtest\invoices.e2e-spec.ts:1092:29[90m)[39m
+    at Promise.finally.completed ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+PASS test/invoices.e2e-spec.ts
+PASS test/notifications-http.e2e-spec.ts
+PASS test/notifications-producer.e2e-spec.ts
+PASS test/business-schedule.e2e-spec.ts
+[31m[Nest] 33656  - [39m08/10/2026, 2:59:27 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90m[workspace]\apps\api\[39mtest\clerk-onboarding.e2e-spec.ts:904:32
+    at createE2eApp [90m([workspace]\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m([workspace]\apps\api\[39mtest\clerk-onboarding.e2e-spec.ts:893:29[90m)[39m
+    at Promise.finally.completed ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+PASS test/clerk-onboarding.e2e-spec.ts
+PASS test/team-members.e2e-spec.ts
+PASS test/team-invitations.e2e-spec.ts
+[31m[Nest] 33656  - [39m08/10/2026, 2:59:33 a. m. [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mError: forced audit failure
+    at [90m[workspace]\apps\api\[39mtest\auth.e2e-spec.ts:164:30
+    at createE2eApp [90m([workspace]\apps\api\[39mtest\create-e2e-app.ts:19:15[90m)[39m
+    at Object.<anonymous> [90m([workspace]\apps\api\[39mtest\auth.e2e-spec.ts:159:29[90m)[39m
+    at Promise.finally.completed ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1561:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1501:10)
+    at _callCircusHook ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:980:40)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:804:7)
+    at _runTestsForDescribeBlock ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:861:11)
+    at run ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:765:3)
+    at runAndTransformResultsToJestFormat ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\jestAdapterInit.js:1993:21)
+    at jestAdapter ([workspace]\node_modules\[4m.pnpm[24m\jest-circus@30.4.2_supports-color@8.1.1\node_modules\[4mjest-circus[24m\build\runner.js:111:19)
+    at runTestInternal ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:276:16)
+    at runTest ([workspace]\node_modules\[4m.pnpm[24m\jest-runner@30.4.2_supports-color@8.1.1\node_modules\[4mjest-runner[24m\build\index.js:344:7)
+PASS test/auth.e2e-spec.ts
+PASS test/dashboard-summary.e2e-spec.ts
+PASS test/services.e2e-spec.ts
+PASS test/clerk-me.e2e-spec.ts
+PASS test/professionals.e2e-spec.ts
+PASS test/clerk-bootstrap.e2e-spec.ts
+PASS test/organizations.e2e-spec.ts
+PASS test/invoice-integrity-migration.e2e-spec.ts
+PASS test/cms-migration.e2e-spec.ts
+
+Test Suites: 1 skipped, 20 passed, 20 of 21 total
+Tests:       1 skipped, 272 passed, 273 total
+Snapshots:   0 total
+Time:        55.203 s, estimated 74 s
+Ran all test suites.

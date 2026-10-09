@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "utc": "2026-10-04T22:04:53.9480914Z",
+  "target": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-goal",
+  "resolvedWithinWorkspace": true,
+  "reparsePoints": 0,
+  "ownGpgHomesAbsent": 11,
+  "controllerPid": 24356,
+  "controllerAbsent": true,
+  "filesRemoved": 1272,
+  "temporaryDirectoryAbsent": true,
+  "realEncryptedBackupRetained": true,
+  "otherTemporaryDirectoriesNotTouched": true,
+  "command": "Remove-Item -LiteralPath C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-goal -Recurse -Force"
+}

@@ -130,6 +130,7 @@ describePostgres('Booking PostgreSQL concurrency guarantee', () => {
         name: `Integrity ${label}`,
         slug: `integrity-${label}-${suffix}`,
         email: `integrity-${label}-${suffix}@example.com`,
+        businessSchedule: { create: { state: 'LEGACY_UNCONFIRMED' } },
       },
     });
     const professional = await prisma.professional.create({
@@ -161,6 +162,7 @@ describePostgres('Booking PostgreSQL concurrency guarantee', () => {
     await prisma.service.deleteMany({ where: { organizationId } });
     await prisma.professional.deleteMany({ where: { organizationId } });
     await prisma.cmsPage.deleteMany({ where: { organizationId } });
+    await prisma.businessSchedule.deleteMany({ where: { organizationId } });
     await prisma.organization.delete({ where: { id: organizationId } });
   }
 

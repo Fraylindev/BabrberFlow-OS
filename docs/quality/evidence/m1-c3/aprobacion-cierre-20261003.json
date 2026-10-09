@@ -1,0 +1,18 @@
+{
+  "approvalDate": "2026-10-03",
+  "approvalSource": "Explicit owner message in the Codex task",
+  "approvedScopes": [
+    "M1",
+    "Public booking confirmation UX adjustment"
+  ],
+  "backupCleanup": {
+    "backupRelativePath": ".tmp/m1-c3/qa-before.dump.gpg",
+    "checksumRelativePath": ".tmp/m1-c3/qa-before.dump.gpg.sha256",
+    "sha256VerifiedBeforeRemoval": "21c7341b396773468f112733043ed5f2b8f5d844233969cb77d886af8f557e41",
+    "backupRemoved": true,
+    "checksumRemoved": true,
+    "absenceVerified": true,
+    "databaseRestoredOrModified": false
+  },
+  "qaEvidenceNote": "The owner approved M1 and the UX adjustment. The owner did not provide device model, OS version, or per-case measurements in the approval message; this record makes no device-specific test claims."
+}

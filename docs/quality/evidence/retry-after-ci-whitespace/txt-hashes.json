@@ -1,0 +1,162 @@
+[
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-cliente-local.py.txt",
+    "sha256": "d8bff864f3857740da4423a07c7157a605e20b78088adc04111e5b973223a23f"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-crypto.sh.txt",
+    "sha256": "6823e63f254a87869bed107df72086746ee05f134680398118564e3eef3286d2"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004-postcommit/post-commit-audit.py.txt",
+    "sha256": "5b5554b008548b0cec6a9f5ba3da8a82e20996e2716fe87ebb2a3cef1b31d6f1"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/controller.ps1.txt",
+    "sha256": "bc151ab64c74e7767739c35f10de62c02b1b3e48eb7b6714a7d1eb76fbdc21d9"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/executor.py.txt",
+    "sha256": "b087406ca04610e9c439ea0c8a0f6a21117a4a38e0de62061927c6e51f1922fa"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/final-audit.py.txt",
+    "sha256": "c2fd432f9c7741627ac694197a2aa02892f471679cf157f87b6e6de9a42747fb"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/harness.py.txt",
+    "sha256": "646c13d8d82193b3935a6b92b9e7f3005eaf3ffe3d828b9932cd80d69fe2322a"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/image-drill.py.txt",
+    "sha256": "ad5a19fad65a76068909652f3c737c12da8ee1ef95264dfe4ffeb1da0367103d"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validate.py.txt",
+    "sha256": "b54934ef499d998766883027c2bde97fa03db9b2c97e0695eb8b786d019f9128"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-gpg-arnes.py.txt",
+    "sha256": "21628159d8123480e40f64749da6890690667826a733db600d2c2b7679cadebd"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico.py.txt",
+    "sha256": "9697566530f448b081762d3264b0cc18422ef1073e290a9a4cf43fbc43895d7d"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-gpg-ejecutor.py.txt",
+    "sha256": "4a431d1d8800ceecc22e9ee769093d6d8711a0c06e7e67e68b75219f74aeed31"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-gpg-home-corto.py.txt",
+    "sha256": "44a6a2f34844fcdc3dce54032cbd446bc077c7ee075acd0eabec9ce2443e73dc"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-1-arnes.py.txt",
+    "sha256": "9d7fb4607738356833fc51becc6e22ab196a56934402a335fc4fb29c2bafec84"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-1-ejecutor.py.txt",
+    "sha256": "c8de8cb965fce18e788a21d02ef42a5fa89c866c452fc298abd991e867baba40"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-arnes.py.txt",
+    "sha256": "ea399d0915e810c6b7994a9fc65544b78d8fdb30ffe7069a8026b7dc4398964c"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-ejecutor.py.txt",
+    "sha256": "55d263550cfabf901b7d948110af60bf70864a13cdc19ded373b272458b3948c"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-restore.sql.txt",
+    "sha256": "60430158df9e2591f2fc438e8be5b015c702270d4dfb5f837056f9add62f13be"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt",
+    "sha256": "bd4e257edb10863e156955539c45a5b557c40f02e3048427a3e0cf21e80095c8"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-snapshot.sql.txt",
+    "sha256": "6ed4d4694e04ffb412fc9179704342dc1f510bbcc0c210c5874864493d10de69"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-preparacion.py.txt",
+    "sha256": "59c311f6583942692abea8c42f94e92e9794ac8d48122d293aac69bfcb3b3511"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-real-correccion-ledger.diff.txt",
+    "sha256": "d12324d9bdbe50ed352bedf9acdd45297de6bf40a6661cf48694e0a79a5b0dd1"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt",
+    "sha256": "269f624aac7f08d757af98352b280085f8834241ee3ebc138e56c0f8fd7d8e21"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-real-supervisor.ps1.txt",
+    "sha256": "c0bf2d9b504ba55dd52fdb01cee9a1955add9d42275f9955e34cff88d6217213"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-reintento-arnes.py.txt",
+    "sha256": "172c37de211e3f5f38742da3925676a13e8015495402fea147c673e0bf465b0b"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt",
+    "sha256": "d60f9b7601fa6de2408540b3c9d474874ce4df71774cdb5ef531be8406635ec6"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-reintento-supervisor.ps1.txt",
+    "sha256": "5fc0d28d19277b767a34746ee4da033dfa51a064084ba271008a1b93ed71fdc5"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-arnes.py.txt",
+    "sha256": "79554f6143d31c52557e8202d57c47a199fb9ee628b36520e8a4705748ef1a94"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt",
+    "sha256": "4ab88dacbb9adf3d939951a438d157a244dc59a40c5a1640ab65b400e4480eb0"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-supervisor.ps1.txt",
+    "sha256": "a2f44ce1814a0c13fb4ba3d2db86bdad174976aa8a2e212970f27083bf069cf0"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p2/p2-wrapper.ps1.txt",
+    "sha256": "16be36c5bd4d2ba4497356eedad8265b96b5b68b26db3118eb02219998deae1a"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/runtime-gate-corrected.sh.txt",
+    "sha256": "13d628eda974c6518313f547ff6e5ab1ba64a71db4988f2ec0a23e559afae027"
+  },
+  {
+    "path": "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/watchdog-corrected.sh.txt",
+    "sha256": "7c437ba44e45f81a086b12c66fbf64d21a3b71102a2ee7912041207cf8fa48ce"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-c2/consumer-search.txt",
+    "sha256": "f020761644e4344314f262a69d5ce26cc3ff78bd91cbf94d1b40badedfa667e9"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-c2/final-git-status.txt",
+    "sha256": "8a69b730f760d3dc6ccce481c9e89a3be023d573873594ee79522bbfdb40f7ef"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-c3/consumer-search.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-c3/final-git-status.txt",
+    "sha256": "9b963f67fef0a1ba477aa779f2341abda86dac4cbbbd8d3ae073f1ab642161eb"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-preparacion/candidate-paths.txt",
+    "sha256": "f7c309896ccfb97b5d1e4beb210098b242db76d7f147e8104f120a9b0bb0863f"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-preparacion/git-status.txt",
+    "sha256": "f6cd1f45a3a50f5775be1d4278d9ea2d10797074a117c6979050ba2e139bac0e"
+  },
+  {
+    "path": "docs/quality/evidence/reserva-invitado-preparacion/unpublished-range-paths.txt",
+    "sha256": "f4aa88be1b7a88f69385991cd6d100cd4cb234689e28363bfb57a9c763f1aed7"
+  }
+]

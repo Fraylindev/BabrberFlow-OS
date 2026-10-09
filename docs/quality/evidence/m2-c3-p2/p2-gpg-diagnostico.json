@@ -1,0 +1,100 @@
+{
+  "base": "768d898e27685216b40b699cf5ad9e3f7c1cfd76",
+  "localOnly": true,
+  "qaAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "commands": [
+    {
+      "commandSanitized": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/custody/qa-m2-c3-p2-20261004T034618Z-9f7122e5b645.dump.gpg.partial"
+      ],
+      "label": "reproducir-linea-exacta-exit2",
+      "exitCode": 2,
+      "stderrCompleteRedacted": "gpg: keybox [literal omitido] created\ngpg: error running [literal omitido]: exit status 2\ngpg: failed to start gpg-agent [literal omitido]: General error\ngpg: can't connect to the gpg-agent: General error\ngpg: problem with the agent: No agent running\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home",
+        "--launch",
+        "gpg-agent"
+      ],
+      "label": "launch-agente-home-largo",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "gpgconf: error running [literal omitido]: exit status 1\ngpgconf: error running [literal omitido]: General error\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpg-connect-agent.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home",
+        "--no-autostart",
+        "/bye"
+      ],
+      "label": "estado-agente-home-largo-sin-autostart",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "gpg-connect-agent: can't connect to the gpg-agent: File name too long\ngpg-connect-agent: no gpg-agent running in this session\n",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    },
+    {
+      "commandSanitized": [
+        "C:\\Program Files\\Git\\usr\\bin\\gpgconf.exe",
+        "--homedir",
+        "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home",
+        "--kill",
+        "gpg-agent"
+      ],
+      "label": "cerrar-agente-propio",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192
+    }
+  ],
+  "complete": false,
+  "longPaths": {
+    "homedir": "/c/Users/Fraylin/Desktop/Kortek-Booking/.tmp/m2-c3-p2-sin-congelar/case-recorrido-completo/gpg-home",
+    "homedirCharacters": 99,
+    "socketCharacters": 111,
+    "limitHypothesis": 108
+  },
+  "failure": {
+    "exceptionClass": "RuntimeError",
+    "phase": "diagnostico-GPG",
+    "messageSanitized": "estado-agente-home-largo-sin-autostart; exit=0; gpg-connect-agent: can't connect to the gpg-agent: File name too long\ngpg-connect-agent: no gpg-agent running in this session\n",
+    "tracebackSanitized": [
+      {
+        "file": "diagnosticar.py",
+        "line": 65,
+        "function": "<module>"
+      },
+      {
+        "file": "diagnosticar.py",
+        "line": 36,
+        "function": "execute"
+      }
+    ]
+  },
+  "ownedRootsRemoved": true
+}

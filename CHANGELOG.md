@@ -1,5 +1,234 @@
 # CHANGELOG
 
+## Concurrencia E2E y preparación de Chrome en CI — 2026-10-08
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Supertest cerraba el servidor iniciado por la primera solicitud mientras otras seguían pendientes; causa probable de los resets Linux, sin reproducción nativa en Windows. La contaminación tras Promise.all se demuestra con reset inyectado y PG18.1. Las dos suites mantienen puertos por instancia, agente explícito y esperan todo el lote antes de limpiar; cifras 35/80 y aserciones intactas. Cinco repeticiones: 125/0/0; E2E completo: 272/0/1; tipos/lint y Chrome dry-run pasan. Browser smoke instala explícitamente Chrome con dependencias. Linux/runner/PG16 pendientes del CI del PR 4; sin QA ni cambios de producto, migraciones, matriz, flags o dependencias. Un commit/push solo a ai/reserva-invitado-ci. [Informe, certeza y evidencia](docs/quality/CI_CONCURRENCIA_HTTP.md).
+
+## Entorno sintético del CI y lectura API — 2026-10-08
+
+Añadida únicamente JWT_SECRET efímera/enmascarada a los pasos unitarias/componentes e integridad/E2E de quality.yml. PG18.1 y checkout limpio sin dotenv/env del arnés anterior: Prisma/runtime/tipos/lint/builds originales pasan; API unitarias 836/0/41, web 158+130, API E2E 272/0/1 y browser 21/0/1. No faltó otra variable ni se cambiaron omisiones/aserciones. PG16/runner GitHub no reproducibles aquí. Lectura mínima autorizada confirma API active/PID 1523015/NRestarts 0/imagen 8ba1b6c8…/release b318ca5; sin cambios remotos. [Inventario, evidencia y límites](docs/quality/CI_ENTORNO_SINTETICO.md). Implementado/en revisión; un commit/push solo a rama temporal, PR nuevo pendiente; producto, contratos, migraciones, SQL, flags y dependencias intactos.
+
+## Diagnóstico Runtime privilege matrix gate y deployment web — 2026-10-08
+
+Error de b318ca5 clasificado **(a), preparación CI**: las funciones trigger INVOKER conservaban ownership del runner en el clon; la guardia exige migrator. Solo quality.yml prepara ahora base independiente y aplica migraciones como `kortek_migrator`, sin tocar SQL/migraciones/producto ni relajar aserciones. PG18.1 reproduce el fallo y pasa el bloque Bash corregido/gate íntegro; `9f04dba` falla por otra causa histórica (CustomerOperation no revisada). PG16 no disponible aquí; CI remoto pendiente. Lectura Vercel confirma alias en **dpl_8iqUtQ6XMYgPv1wF3FcnpbczoaWe, READY, b318ca5**, distinto de dpl_KEKT6X12; sin reasignación/redeploy ni variables/login verificados. [Informe y evidencia](docs/quality/DIAGNOSTICO_RUNTIME_PRIVILEGE_GATE.md). Implementado/en revisión; un commit/push solo `ai/reserva-invitado-ci`, sin QA, OCI/SSH/Clerk/bases reales ni producción.
+
+## Clave Clerk rotada en API QA — 2026-10-08
+
+Actualizada únicamente `CLERK_SECRET_KEY` desde archivo local ignorado mediante stdin SSH seguro; publishable key intacta, copia previa root:root 0600 y conservación de bytes ajenos. Editor adaptado autorizado y ensayado, 8 positivos/8 negativos. Reiniciado solo API QA, release/imagen b318ca5 intactos; ocho GET/CORS pasan, cero 5xx y coincidencias de errores Clerk en la ventana observada. Worker sin variables Clerk, intacto. Rollback no ejecutado. Alias web sigue en `dpl_KEKT6X12exUWoReFRPtxxTXGuo9K`, READY/b318ca5; nuevo deployment de rollback no confirmado, sin assign_alias. [Informe, hashes y límites](docs/quality/CLERK_ROTACION_API_QA_2026_10_08.md). Sin código/dependencias, bases ni producción; sin valores secretos versionados. Único commit documental/push solo a `ai/reserva-invitado-ci`.
+
+## Cierre documental de reserva invitada en QA — 2026-10-08
+
+C3 **ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada**: pruebas manuales satisfactorias declaradas en iPhone con `b318ca5`, sin inventar casos. Estado vigente de reserva invitada activa en QA (API `sha256:8ba1b6c8…`, web `dpl_KEKT6X12…`), M2 retirada, reservas residuales conservadas y limpieza transaccional excluida por decisión del propietario. Rollback no ejecutado y pareja anterior retenida, con advertencia de reexposición B2C. Otros dispositivos/navegadores, correo real, WhatsApp real y concurrencia no verificados. [Registro y pendientes por riesgo](docs/features/RESERVA_INVITADO_C3_CIERRE_QA.md). Solo documentación, un commit local y push autorizado exclusivamente a `ai/reserva-invitado-ci`, sin force; sin QA/proveedores/bases/producción, código ni dependencias modificados. Los estados previos fechados conservan su contexto histórico.
+
+## Correctivo Dependency and peer audit — 2026-10-07
+
+Gate único sobre `36061fc`, rama temporal `ai/reserva-invitado-ci`. Audit local pnpm 11.18.0: 11 avisos en versiones idénticas a la base, corregidos mediante parches/minor de Next, sharp, multer, proxy-addr y source-map-js; pins exactos autorizados después por el propietario. Audit y peers estrictos exit 0. Tipos/lint y builds API/web pasan; PG18.1 nuevo: 877/0/0 unitarias API, 272/0/1 e2e API; web 158+130 pruebas y browser 21/0/1, exit 0. Clúster propio eliminado. Validado localmente/en revisión; commit/push autorizados solo a la rama temporal, sin merge, workflows, contratos, proveedores, QA desplegada ni producción. CI remoto posterior no verificado. [Informe y evidencia](docs/quality/CORRECTIVO_CI_DEPENDENCY_PEER_AUDIT.md).
+
+
+## Correctivo Retry-After, CI y evidencia — 2026-10-07
+
+Gate único local sobre base `58f536f`: restante de bloqueo/expiración calculado en el mismo upsert y reloj PostgreSQL; 30/min, bloqueo 60 s, fail-closed y HMAC preservados. Caso original intacto; 20/20 clústeres fríos pasan con header 60. Solo dos separadores Jest retirados de quality.yml y una regla whitespace para evidencia .txt, con 40 hashes existentes idénticos. Unitarias API 877/0/0, e2e 272/0/1 y browser 21/0/1, exit 0; implementado/en revisión. Resultado final de suites y P4b en [informe del correctivo](docs/quality/CORRECTIVO_RETRY_AFTER_CI_WHITESPACE.md). Tres commits locales separados, sin push/proveedores/QA/producción/dependencias ni contratos nuevos. Ningún gate posterior abierto.
+
+## Fixtures de reserva invitada y Retry-After — 2026-10-07
+
+Horarios semanales CONFIRMED por organización en Servicios/Notificaciones, firma local sintética para medios M1 y citas de fixture sin solapamiento. Expectativa estricta de factura en GET /bookings actualizada según F0-B por autorización expresa adicional. Las 37 fallas anteriores pasan; API previa al commit 263/1/1, browser 21/0/1. Diez muestras frías de Retry-After: 7 headers 60/3 headers 61; diagnóstico de producto por dos relojes, sin modificar producto ni test de ese límite. Atributos .patch/.log autorizados en commit local separado, conservando bytes; no eliminan siete diagnósticos .txt. [Informe y evidencia](docs/quality/CORRECTIVO_FIXTURES_RETRY_RESERVA_INVITADA.md). Sin push, QA/proveedores/bases reales o aprobación funcional.
+
+## Diagnóstico de suites de reserva invitada — 2026-10-07
+
+Línea base externa `c4625ef` en PG18 desechable; worktree eliminado. Cuatro rechazos JWT CUSTOMER de Facturación esperan ahora 401 según C1. Nuevo arnés reproduce las suites completas en PG18 nuevo y bloquea dotenv/red externa/instalación automática; fixtures browser sirven SDK/UI Clerk anónimos y banderas neutras sin filtrar errores de consola. Se conservan las 37 fallas API preexistentes y se registra una falla temporal adicional de Retry-After. Browser previo al commit: 21 aprobadas/0 fallidas/1 omisión prevista; no acredita proveedor ni recursos visuales finales. Cabeceras documentales de enmienda/cancelación M2, clasificación de 43 fallas y conciliación de P4b 624/633 según corte. [Informe y límites](docs/quality/DIAGNOSTICO_SUITES_RESERVA_INVITADA.md). Sin push ni aprobación/cierre funcional.
+
+## C2 reserva invitada — validado localmente / en revisión, 2026-10-07
+
+Autorización posterior de C2 local: retirado el portal B2C exclusivo, navegación, proveedor, hooks, páginas y paso de cuenta. `POST /public/:slug/bookings` responde sólo `{booking}` después de migrar los consumidores ejecutables conocidos de `accountCreated`/`accountCreationError`; quedan únicamente assertions negativas e historia. Client operativo y roles internos/Clerk preservados. 871 pruebas API (0 omitidas), 37 integraciones anteriores + 4 HTTP PostgreSQL y 288 pruebas web aprobadas; tipos/lint/build de ambas apps pasan. Nueve escenarios locales Chrome de flujo, foco/teclado/campos/overflow/consola aprobados, con transporte y Clerk controlados; no equivalen a QA/proveedor/dispositivo físico. C2 implementado y validado localmente, en revisión del propietario; **C3 NO EJECUTADO**. Sin commit/push/PR/despliegue, cambios de QA/producción, Prisma/migraciones ni P4b. Los checkpoints inferiores conservan sus estados fechados; las menciones C2 pendiente y campos deprecated quedaron superadas por este registro.
+
+[Informe C2, inventario, contrato, resultados, diff y rollback](docs/features/RESERVA_INVITADO_C2_LOCAL.md).
+
+
+## C1 reserva invitada — cierre técnico local en revisión, 2026-10-07
+
+PostgreSQL 18.1 en clúster nuevo: 28 migraciones intactas, roles separados y gate runtime exit 0; 37/37 integraciones y 2/2 pruebas HTTP claim con/sin bearer, sin cambios User/Membership/Client/AuditLog; 0 omitidas. Una assertion H5 obsoleta se alinea al contrato aprobado F0-D/2A, exigiendo timeZone exacta en raíz y ausencia de America/ en toda otra proyección; fallo inicial conservado. No cambia API ni contrato. Clúster propio detenido/eliminado. C1 validado localmente/candidato a cierre técnico en revisión del propietario, no declarado cerrado/aprobado ni autorizado para commit. C2/C3 detenidos; sin commit/push/despliegue, QA, Clerk, Prisma ni auditoría P4b modificados. [Informe, casos, comandos exactos y límites](docs/features/RESERVA_INVITADO_C1_CIERRE_TECNICO.md).
+
+## Correctivo de consistencia B2C — 2026-10-07
+
+Autorizado tras el checkpoint documental: retirados dos positivos de claim de tests web; orquestador P1 y helpers de compatibilidad/rollback/probe conservados como .txt históricos no ejecutables; rate-limit drill exige 404 de la ruta retirada, sin ejecutar QA. Datos, migraciones, SQL y Clerk intactos; UI B2C pendiente de C2. 308 pruebas web, tipos/lint/build y 22 HTTP API pasan; 37 integraciones PostgreSQL pendientes. C0 aprobado; C1 parcialmente validado local/en revisión; C2/C3 pendientes; sin commit/push/despliegue. [Informe actualizado](docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md).
+
+## 2026-10-07 — Retiro funcional B2C, solo C0/C1 local
+
+- Cuenta de cliente final fuera del producto/MVP; reserva de invitado oficial y Client como contacto operativo. [Contrato, evidencia y límites](docs/features/RESERVA_INVITADO_C0_C1.md).
+- C1 retira rutas/customer y claims, alta secundaria legacy y campos de entrada de cuenta. Bloquea JWT CUSTOMER sin cambiar los roles internos ni Clerk. Campos de salida de cuenta deprecated hasta retirar tipos web en C2.
+- Sin C2/C3, datos, Prisma/migraciones, dependencias instaladas, P4b, commit/push/despliegue o cambios QA. Implementación local validada/en revisión; no aprobación inferida.
+
+## 2026-10-03 — Consolidación documental local de M1 y M2 C1
+
+- Siete rutas pendientes reunidas en un único commit local sobre `d222115f7d624b5698b67a24e22486625fec22b2`, sin incorporar cambios nuevos de código o contratos. El commit C2 y `cierre-documental-20261003.json` permanecen intactos. **Sin push ni despliegue**: [alcance y motivo](PROJECT_MASTER.md).
+- Se conserva la aprobación M1 ya registrada abajo; el [ajuste UX aprobado](docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md#aprobación-posterior-del-propietario--2026-10-03) y el [antecedente de aprobación/limpieza](docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md#antecedente-de-aprobación-y-limpieza--2026-10-03) se enlazan sin repetir su detalle. La eliminación con SHA previo y la constatación posterior de ausencia corresponden a ejecuciones distintas; no se realizan borrados, restore ni QA nuevos.
+- Se incorpora la [aprobación expresa de M2 C1](docs/quality/M2_C1_CIERRE.md#aprobación-explícita-del-backend-c1-y-bloqueo-de-producción--2026-10-03) y se mantiene [D4 aceptado solo para QA, bloqueante en Paso 8](docs/quality/M2_C1_CIERRE.md#riesgo-residual-d4-aceptado-solo-para-qa-bloqueante-en-paso-8). No resuelve el riesgo ni abre producción.
+- Los textos históricos fechados y toda la evidencia se preservan. Las contradicciones de estado se explican en los controles y cierres correspondientes; las pruebas sin resultado específico, modelo/versiones y mediciones conservan sus límites. Validación exclusivamente documental y Git; sin API, bases reales, flags ni variables.
+
+## 2026-10-03 — Cierre documental final de M1
+
+- **M1 (Reserva pública) CERRADO / APROBADO** por autorización escrita del propietario, incluida la revisión física en iPhone/Safari. Se conservan los textos históricos y sus límites; no se inventan resultados por caso, modelo ni versión de iOS.
+- Respaldo de Cutover QA identificado por el informe C3: `.tmp/m1-c3/qa-before.dump.gpg`. El respaldo y su checksum ya estaban ausentes al comenzar esta comprobación; se verifica de nuevo su ausencia, sin borrar otro archivo ni leer contenido o claves. La eliminación previa consta en los cambios preexistentes; esta ejecución no puede repetir su hash previo.
+- Deuda para la **Puerta de producción (Paso 8)**: «Por atender» y «Todas» filtran y ordenan en el cliente sobre `GET /bookings` sin paginación ni tope. Con volumen real habrá que paginar o filtrar en el servidor; no se corrige ahora.
+- Cierre exclusivamente documental sobre `ddcb7aba8ab324ac3e3c03a288ac34508bc6e998`; commit/push autorizados solo a `origin/ai/antigravity-qa`. Cambios preexistentes aislados y preservados fuera del commit. Sin código nuevo, despliegues, cambios de flags/variables ni acceso a bases reales. [Estado M1](docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md) y [validación de esta ejecución](docs/quality/evidence/m1-c3/cierre-documental-20261003.json).
+
+## 2026-10-03 — Confirmación pública de reserva y pies
+
+- Ubicación del negocio bajo el resumen de servicio y profesional; calendario y acciones de WhatsApp/Maps quedan después.
+- Recomendación para conservar la confirmación sin tarjeta y con jerarquía tipográfica centrada.
+- Pie común y centrado en mini-sitio y flujo de reserva: «slug · Reservas gestionadas con Kortek.».
+- Desplegado solo en web QA: commit `62d4f934519670a80aad1029cf12a40659b144a2`, Vercel Preview **Ready** en `ai/antigravity-qa`. [Preview](https://kortek-booking-nkvopdi3h-fraylindev.vercel.app) y dominio QA [qa.booking.kortek.cloud](https://qa.booking.kortek.cloud). Sin contrato, backend, persistencia o dependencias nuevas. TypeScript/lint y build webpack pasan; build Turbopack falla por módulo interno de fuentes. El slug local probado devuelve 404 porque no está publicado localmente; el API QA conserva evidencia previa `200/200` para el slug sintético publicado. No se enviaron reservas ni se alteró configuración. QA visual del propietario sigue pendiente. [Alcance y evidencia](docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md).
+
+## 2026-10-02 — Atención pendiente, acciones desktop y contacto público
+
+- Las completadas sin factura permanecen en Por atender; Todas prioriza atención y ordena cada grupo por fecha descendente.
+- Desktop muestra reprogramación/consulta financiera junto a la acción principal y conserva restantes en menú; móvil conserva su presentación. Fotos redondeadas iguales, Listo legible y mapa/WhatsApp con estilo secundario reforzado.
+- Mini-sitio sustituye llamada por WhatsApp al número publicado, con mensaje genérico previo a reservar y validación estricta.
+- 290 pruebas, tipos/lint/build y 123 registros de navegador pasan. Código/evidencia `68fd3c0`; Preview `dpl_GbsN4Gr91MsaLsgQcQFe4J3FM1pg` Ready y alias QA comprobados. API QA GET `200/200`; infraestructura y producción sin cambios. [Informe y publicación](docs/quality/CORRECTIVO_F0E_AJUSTE.md). M1 y QA física en revisión. Resultados documentales F0-E anteriores preservados e incorporados.
+
+## 2026-10-02 — F0-E publicado y desplegado solo web QA
+
+- Reservas desktop: estado de factura bajo Estado, una acción principal y menú con Facturación/avisos, nombres con tooltip accesible; límite ampliado solo en la ruta de Reservas. Tarjetas conservadas.
+- Fechas vacías y Por atender inicial, conteos según rango y limpieza al estado inicial. Proyección local sobre contrato sin límite; propuestas de estados/paginación pendientes.
+- Revisión/éxito: fotos compactas iguales, duración/precio juntos, calendario → WhatsApp → ubicación → nota → Listo y safe-area. WhatsApp de negocio/mensaje genérico conservados.
+- Tipos/lint/build y 283 pruebas pasan; 95 registros Chrome controlado en ocho anchos. Facturación tiene scroll interno menor en 1280; se reporta sin editar. [Informe, evidencia, límites y D/E](docs/quality/CORRECTIVO_F0E.md). Enmiendas 22–24 añaden las direcciones aprobadas D1-A/D2-A/E-A para módulos posteriores. Publicados `26cfc42`/`ea912d9`; web QA Ready en `dpl_G9RGGb5W9qedEGXZbNMAyUTfsHNi` y SHA exacto. API GET C1 y comparación de producción pasan; SSO preservado. Norte/Sur sin teléfono publicado, sin cambios de datos. Sin backend, bases reales, `.env`, flags ni dependencias; M1, QA física y panel autenticado desplegado pendientes. Resultados finales locales en cuatro documentos, sin tercer commit.
+
+## 2026-10-02 — Correctivo visual y navegación de reserva pública M1
+
+- Títulos sin contorno de foco visual; iniciales estables al faltar/fallar foto; filtros de hora sólidos con indicador y fechas en minúscula. Carrusel semanal nativo con precarga adyacente, flechas y conservación de fecha/hora.
+- Duración, monto y teléfono legibles; revisión en una columna, éxito con marca animada y pendiente visible; ojo accesible dentro de PasswordField y mínimo único.
+- Tipos/lint/build y 281 pruebas pasan; QA local en cuatro anchos con 28 mediciones y una PENDING sintética. Código `843996e` publicado a `origin/ai/antigravity-qa`, web QA READY y cuatro mediciones desplegadas sin overflow ni POST. [Hashes y evidencia](docs/quality/RESERVA_PUBLICA_M1_UX_CORRECTIVO_QA.md). Backend/producción/configuración/protección intactos; timestamp del backup diario auditado como ejecución programada independiente. Pruebas físicas y aprobación final pendientes; M1 en revisión.
+
+## 2026-10-01 — UX ligera publicada y desplegada solo web QA
+
+Publicación ejecutada — 2026-10-01: **UX LIGERA PUBLICADA Y DESPLEGADA SOLO WEB QA / EN REVISIÓN; M1 NO CERRADO, QA FÍSICA PENDIENTE**. Commits `dc82a4f` y `9d2eb47` en `origin/ai/antigravity-qa`, publicación al repositorio público confirmada explícitamente. Web QA READY en `9d2eb47`, API C1 existente verificada (availability-days/D11 neutro sin crear reservas). [Hashes, evidencia, límites y guía iPhone](docs/quality/RESERVA_PUBLICA_M1_UX_LIGERA.md). Producción/main `fe4b117`, imagen/PID/API, variables, flags, SSO y proveedores intactos. Banderas cargan en navegador; cabecera CSP del documento autenticado no expuesta por la herramienta, sin relajar protección. Respaldo cifrado C3 ignorado y retenido. Enmiendas 16–21 exactas, tipos/lint/build y 275 pruebas con exit `0`. Tercer commit documental registra el resultado; las entradas inferiores preservan el contexto histórico y no revocan esta publicación.
+
+## 2026-10-01 — Reserva pública más ligera, correctivo frontend local
+
+- Plan autorizado sobre C1 aprobado: encabezado/filas compactos, semana/mes desplegable, horas con franjas, teléfono por país/prefijo y resumen sin marco exterior. Calendario TENTATIVE con descripción breve; WhatsApp conservado.
+- Tipos/lint/build y 275 pruebas web pasan; 35 mediciones de siete vistas en cinco anchos, teclado/foco y recorrido contra PostgreSQL/API locales aislados. Tres PENDING sintéticas, una hasta medianoche; 400 recuperable y página 404 reales. [Evidencia y límites](docs/quality/RESERVA_PUBLICA_M1_UX_LIGERA.md).
+- Implementado localmente/en revisión, QA de cierre incompleto: físicos, zoom real 200 %, importación, auditoría y aprobación pendientes. Sin backend/contratos/dependencias nuevos, staging, commit, push o despliegue. Trabajo documental C3 preexistente preservado.
+
+## 2026-10-01 — M1 C3 activado exclusivamente en QA / en revisión
+
+- Autorización posterior explícita de respaldo/restore local resuelve el rechazo inicial. [Informe C3 y guía iPhone](docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md): once evidencias C2 limpias; export READ ONLY/TLS verificado, AES256, restore sin red/tmpfs y 36/36 conteos/huellas iguales, incluidas 27 migraciones. Plano y contenedores eliminados; copia cifrada retenida solo en este equipo hasta aprobación M1, con eliminación/reportado posterior pendiente. Sin modificar grants del backup rutinario, que aún carece de lectura de cinco tablas de horario.
+- Imagen API del SHA aprobado `791569b` construida, Nest/Prisma generate y 23 drills negativos pasan; API QA activada, imagen anterior retenida y solo imagen/release QA cambiados. Después se reasocia el Preview READY existente exacto al alias QA. Worker QA y producción conservan procesos, imágenes, hashes de configuración; Vercel producción/main iguales antes/después. Sin migración, dependencia, rol, grant, flag, proveedor, commit ni push.
+- Controles §5 pasan: 200/401/204, CORS/RequestId, rango 31/rechazo 32, límite compartido 30/min y 429, D11 exacto sin parcial, 201/PENDING y reutilización válida según opción A elegida. Dos tenants dedicados sintéticos, tres PENDING (dos HTTP/una UI), cero opt-in/dispatch. Navegador contra API/base reales verifica D11 con retorno/preservación y éxito/recarga. Guía iPhone entregada con enlaces operativos y límites de cobertura; QA física, otros casos indicados y aprobación global pendientes. **M1 no aprobado ni cerrado.**
+
+## 2026-10-01 — Frontend M1 C2 aprobado; commit/push autorizados sin despliegue
+
+- El propietario aprueba expresamente el frontend C2 y aclara «No hay condiciones, sigue adelante». Commit/push autorizados exclusivamente a `origin/ai/antigravity-qa`, sin despliegue. Se sincroniza la aprobación en los cinco documentos de control del checkpoint; la igualdad de SHA local/remoto y el árbol final se verifican al publicar. C3/QA física y producción conservan sus gates separados.
+- Preparación: auditoría de alcance/evidencia, tipos y lint limpios; 152 pruebas de lógica y 110 de componentes aprobadas, exit `0`. Sin cambios de código, build o QA adicional. [Registro de aprobación y publicación](docs/quality/RESERVA_PUBLICA_M1_C2_CIERRE.md). La entrada siguiente describe la entrega original.
+
+## 2026-10-01 — Reserva pública M1 C2 frontend implementado / en revisión
+
+- C2 expresamente autorizado sobre C1 aprobado `d9b508f8317bf128fb409c0a22098895f24ea5fb`. CTA del mini-sitio enlaza `/{slug}/reservar`, con regreso y carga directa; cinco pasos, profesional concreto antes del POST y preselección visible si hay uno solo. Calendario reutilizable D6-B, rango inclusivo ≤31 y select nativo con slots autoritativos; sin pago ni paso obligatorio de cuenta.
+- Validación de contacto internacional junto al campo, correo opcional y contraseña ≥8 solo si opta; aviso QA exacto. D11 conserva todo el borrador. POST protegido de doble clic/reintento; 409 exige otra selección, 429 respeta espera permitiendo editar, timeout informa incertidumbre. Éxito PENDING completo con BusinessTime, fotos elegibles/respaldo, próximos pasos, Maps/WhatsApp condicionados y calendario local TENTATIVE; sin persistencia de PII ni eventos de conversión.
+- Tipos/lint/build y pruebas web; Chrome 320/375/390/1280 px y 200 %; datos/HTTP PostgreSQL desechables y sesiones Clerk reales de cuatro roles en dos negocios. Regresiones de fecha, avisos y WhatsApp migradas al nuevo consumidor. [Cierre y evidencia](docs/quality/RESERVA_PUBLICA_M1_C2_CIERRE.md). Pendientes revisión/aprobación del propietario y QA física/C3: el API QA debe desplegarse primero. Sin backend/contrato/dependencias nuevos, staging, commit, push, despliegue, .env/flags operativos ni acceso a bases reales; producción intacta.
+
+## 2026-10-01 — Reserva pública M1 C1 backend aprobado; commit/push autorizados sin despliegue
+
+- C0 aprobado posteriormente por el propietario con D6-B y las demás recomendaciones. Solo backend C1: availability-days inclusivo ≤31 con snapshot y motor diario compartido; fotos públicas ya existentes; presupuesto PostgreSQL 30/min medido y probado entre instancias. Sin migración ni frontend.
+- El propietario elige expresamente error genérico conservando rechazo D11: colisiones devuelven 400/cuerpo idéntico a rechazo sin contacto existente; rollback real, carrera de unicidad y reutilización válida probados. Alta válida conserva 201/PENDING. [Entrega y evidencia](docs/quality/RESERVA_PUBLICA_M1_C1_CIERRE.md). Identidad secundaria legacy conserva su riesgo separado.
+- Aprobación posterior expresa del propietario el 2026-10-01: backend C1 aprobado con sus riesgos residuales documentados; staging por las 15 rutas exactas y commit/push a `origin/ai/antigravity-qa` autorizados. Se sincronizan PROJECT_MASTER, este historial, BACKEND_CHANGES, README y cierre C1 en el mismo checkpoint. No autoriza C2/C3 ni despliegue; sin cambios operativos ni acceso a bases reales. Producción cerrada e intacta. Se conservan las entradas y cambios documentales previos.
+
+## 2026-10-01 — Reserva pública M1: C0 documental
+
+- [C0 de M1](docs/quality/RESERVA_PUBLICA_M1_C0.md) preparado sobre `ad90bf52890ea2e2ba309ad5a87d1dcafcdde9f7`, con árbol inicial limpio: ruta separada, fotos elegibles, calendario/hora compacta, éxito PENDING, casilla de cuenta sin promesa de continuidad inexistente, privacidad, contrato propuesto, amenazas y QA de dos negocios sintéticos/móvil físico.
+- Decisiones anteriores FIJADAS; D5–D13 propuestas para revisión. Necesita C1 para días disponibles por rango antes de C2; solo C0 de M1 abierto. Sin cambios de API/contratos aprobados, código, configuración o datos; sin staging, commit, push, despliegue ni apertura productiva. README y PROJECT_MASTER enlazan la entrega documental, no una capacidad implementada.
+
+## 2026-10-01 — Ajuste visual de filtros de Reservas y Facturación
+
+- Por capturas y autorización de cambio/commit/push del propietario: «Todos» pasa a «Todas» en Reservas. Desde/Hasta en ambas pantallas limitan ancho a la columna, mantienen 44 px de alto y ajustan el control nativo de fecha para Safari, con estilo solo en esos cuatro campos.
+- Tipos limpios, lint, 251 pruebas y build web pasan. Chrome local en 320/375/390/844/1280 px verifica márgenes, fechas vacías/pobladas, filtros/reset, foco y consola. Safari físico pendiente; sin cambio de backend, contrato, zona, permisos o datos. Implementado/en revisión, publicación QA autorizada. [Evidencia](docs/quality/CORRECTIVO_F0D.md).
+
+## 2026-10-01 — F0-D publicado y desplegado exclusivamente en QA
+
+- Publicación autorizada expresamente por el propietario: código `92f6127` en origin/ai/antigravity-qa, API/worker QA con imagen inmutable `7eafd5c9232a`; 23 controles de arranque pasan y rollback anterior conservado. Configuración funcional, flags y secretos intactos; únicamente cambian los selectores operativos de imagen/release QA. Sin migraciones ni cambios de datos.
+- Preview Ready `dpl_Erb4T1Cri2GpGjm6rxkRsoH41bux` ya asociado automáticamente a qa.booking.kortek.cloud. API HTTPS, zona del negocio pública, autenticación/CORS y producción protegida verificados. Navegador remoto sin sesión llega al SSO de Vercel, conservado; QA autenticada y aprobación final pendientes. Tipos/lint/tests/build previos pasan en ambos proyectos (251 web, 781 API/37 omitidas). [Informe operativo y checklist del propietario](docs/quality/CORRECTIVO_F0D.md).
+
+## 2026-10-01 — F0-D local: fechas comunes y estados de invitación sin promesa de envío
+
+- Propietario confirma que el correo sí llegó y estaba en spam, y elige expresamente **3A**: acepta para QA la UI «La entrega del correo no está confirmada», con Reenviar y sin señal automática de aceptación ESP. Se resuelve la observación de no recepción de ese mensaje; no se investiga ni afirma la regla que lo clasificó como spam. SDK 3.16.5 sin get/list de recibos asociados a invitación; no se cambia código, configuración ni proveedor para esta confirmación. Entrega local validada/en revisión final, sin cierre global o publicación.
+
+- Decisión **1A** autorizada: default/fallback de creación y reenvío pasan a siete días; rango explícito 1–30 y fechas existentes preservados. Backend mínimo aprobado expresamente por el propietario tras validar; cinco regresiones fallan antes, 25 pruebas dirigidas pasan después. Tipos/lint/build y 781 pruebas API pasan (37 omitidas). No cambia aceptación, permisos ni estado de correo; web no requiere nuevo consumidor. La aprobación no cierra F0-D ni autoriza publicación o correo real.
+- Después de aprobar 1A: comprobación Chrome local de crear/reenvío con el servicio API compilado y almacenamiento controlado, web real en 375/1280 px y dispositivo Tokio/negocio Santo Domingo. Siete días, renovación, creación original, PENDING a dos minutos y restricción BARBER pasan. Formulario deja de prometer recepción; tipos/lint/build web y 251 pruebas pasan de nuevo. Sin conexión a base ni proveedor.
+
+- Continuación autorizada **2A**, backend validado/aprobado e integración web autorizada explícitamente: timeZone técnico en raíz de booking-data, confirmación/éxito con relativos y año del negocio usando el instante autoritativo. Regresiones de medianoche, privacidad, overrides, año y A → B → A; API 767 pruebas (37 omitidas), web 251 pruebas y tipos/lint/build pasan; Chrome controlado público en 375/1280 px pasa. Esa aprobación no comprendía la decisión 1, autorizada después por separado.
+
+- Formateador único y time accesible para fechas visibles; Hoy/Ayer/Mañana y año en zona del negocio, reloj de 12 horas y actualización al cambiar de día. La primera etapa conservó valores públicos absolutos; 2A completa los relativos públicos tras aprobación explícita. Plantillas de correo y payload de creación intactos.
+- Equipo usa Creada/Vence el, mantiene Reenviar y explica la entrega no confirmada; FAILED comunica fallo de acción porque también puede venir de revocar. Lectura QA acredita Clerk Development, pending y treinta días de vigencia; no demuestra entrega ni reproduce dos minutos.
+- Primera etapa compatible implementada localmente/en revisión; siete días, señal de envío y zona pública se detuvieron por contratos aprobados. 2A y luego 1A autorizan zona pública y plazo siete; el propietario acepta la limitación de señal mediante 3A y confirma el mensaje en spam. Sin cambios de datos, .env, flags, proveedores, producción ni publicación Git. [Informe F0-D y validación](docs/quality/CORRECTIVO_F0D.md).
+
+## 2026-09-30 — F0-C: operación anticipada y controles de formularios
+
+- Se permite emitir y cobrar una reserva completada incluso antes de su horario, conservando permisos y garantías financieras. Backend validado con 764 pruebas unitarias y 25 HTTP/PostgreSQL; el propietario aprobó backend e integración frontend.
+- Campos editables del panel alcanzan 16 px en móvil/pantalla táctil, incluidas biografía, notas, descripción y correo opcional de reserva. Desde/Hasta conservan formato nativo sin ejemplos inferiores. Filtros de Facturación comparten altura y acciones desktop de Equipo no parten palabras.
+- Implementado en revisión; commit/push y despliegue QA F0-C autorizados expresamente, con verificación operativa desde el commit. El informe F0-A se incorpora en un commit documental separado. El resultado comunicado de F0-B comprende exclusivamente las validaciones ejecutadas por el propietario. [Informe F0-C](docs/quality/CORRECTIVO_F0C.md).
+
+## 2026-09-30 — Correctivo F0-B publicado y desplegado en QA, en revisión
+
+- Reservas recibe estado financiero mínimo, distingue factura emitida/pagada y sincroniza caché al emitir/cobrar. Backend aprobado explícitamente; sin migraciones ni ampliación de permisos. Menú móvil con una acción principal y tres puntos, incluyendo avisos por correo.
+- Renovación automática acotada del token tras 401, relectura de acceso, recuperación de consultas transitorias y retención de borradores. Rechazos definitivos retiran acceso; escrituras ambiguas no se repiten. Logs QA del código reportado corroboran rechazo de autenticación, sin demostrar el motivo criptográfico exacto.
+- API: tipos/lint y 764 pruebas pasan. Web: tipos limpios/lint/build y 235 pruebas pasan; Chrome controlado 320/375/390/1280 px pasa. Commit `33de07a` publicado en ai/antigravity-qa; imagen API/worker QA `24e38719c511` y Preview web Ready en QA. HTTPS/X-Request-Id/CORS pasan, producción intacta. QA con Clerk real y aprobación final pendientes. [Informe F0-B](docs/quality/CORRECTIVO_F0B.md).
+
+## 2026-09-30 — Publicación y despliegue QA de F0-A autorizados
+
+- El propietario aprobó Gate 4 y commit/push de los 34 archivos de F0-A. Commit `6752e95e580b41670b6369adfc6bfb240f4c8509` en `origin/ai/antigravity-qa`, con SHA local/remoto iguales. Autorización posterior de QA: Preview Ready en el dominio QA y `X-Request-Id`/exposición CORS verificados. Su informe conserva el cambio documental de despliegue sin commit por instrucción expresa. Esta continuación actualiza el estado de la entrada histórica inferior; el testing del propietario dio origen a F0-B, sin cierre de QA integrado. [Informe F0-A](docs/quality/CORRECTIVO_F0A.md).
+
+## 2026-09-30 — Correctivo F0-A local, sin publicación
+
+- Ajustados los seis puntos autorizados: contraseña pública de ocho caracteres con ayuda junto al campo, entradas móviles de 16 px, mensajes de cambio de estado según causa, UUID de petición recibido del API, fecha/hora natural del negocio y ejemplos visibles de filtros, y etiquetas del rol Profesional manteniendo `BARBER` interno.
+- API: tipos, lint, 763 pruebas y build con exit code 0. Web: tipos, lint y pruebas con exit code 0; comparación aislada Chrome en 320/375/390/1280 px. Build web y regeneración limpia de tipos no pasan por `DEPLOY_ENV`; no se cambiaron variables, flags, contratos ni dependencias. Gate 4 abierto, validación incompleta y aprobación pendiente. Sin commit, push, despliegue ni acceso a bases reales. [Informe F0-A](docs/quality/CORRECTIVO_F0A.md).
+
+## 2026-09-29 — Worker de correo independiente en Cutover QA
+
+- Instalados `kortek-email-worker-staging.service` y su wrapper con `LoadCredential` de staging, guardas de proyecto/orígenes QA e imagen ARM ya desplegada. Unidad habilitada/activa, contenedor rootless de solo lectura sin capacidades efectivas ni puerto público, límites 0,25 CPU/384 MiB/64 procesos y dos heartbeats observados. La fila global `EMAIL` faltaba en Cutover QA; se creó solo allí, sin pausa, tras comprobar cero intenciones pendientes/inciertas. No se hizo envío de prueba ni se acredita entrega.
+- API y worker productivos conservaron contenedores/PID, configuración y correo desactivado; API pública productiva siguió devolviendo 404. [Evidencia operativa](docs/quality/STAGING_QA_2026-09-28.md).
+
+## 2026-09-29 — Reserva pública abierta solo en Cutover QA
+
+- Por autorización del propietario, `kortek-api-staging` carga `PUBLIC_BOOKING_CLOSED=false` y los valores QA separados de Resend/Cloudinary. Los diez valores coinciden entre archivos locales, credencial root:root/0600 y entorno efectivo del contenedor, sin exponerlos. `NOTIFICATIONS_EMAIL_ENABLED=true` está cargado en la API; no se instaló un worker QA ni se acredita envío.
+- HTTPS externo: `GET /public/qa-horario-norte/booking-data` en API QA 200 con `no-store`; página web QA 200; rutas privadas 401 y raíz 404. CORS solo admite el origen web QA en staging. La API productiva conserva reserva pública 404, ruta privada 401, raíz 404 y CORS exclusivo productivo. Hashes de credencial, wrapper, unidad y Caddy; PID, ID e imagen del contenedor productivo coinciden con la línea base anterior al cambio. [Evidencia](docs/quality/STAGING_QA_2026-09-28.md).
+- El propietario usará QA durante varios días y sus cambios posteriores de contenido, profesionales, promociones y reservas no deben revertirse ni cuestionarse por inferencia. Producción no recibió escrituras, reinicios ni cambios de configuración en esta operación.
+
+## 2026-09-29 — Horario y zona C2 cerrado en Preview QA
+
+- El propietario cerró C2 funcionalmente sobre Cutover QA `prirlabbnlcuvnzuaczp` y datos sintéticos. Aceptó D9 con dependencias persistidas, la intersección A2 del horario profesional y global, la proyección CMS y la emisión de factura con fecha de negocio 2026-09-28. La evidencia distingue el bloqueo visible D9 en Preview del `409` cubierto por integración C1; el horario CMS se confirmó, aunque la página pública no mostró una lista visual de franjas.
+- Correo/promociones se aceptan con la integración C1 de promoción sellada y las pruebas end-to-end previas de Notificaciones y Medios/Promociones; no se reactivó el worker ni se envió correo en este QA. El test de componente cubre «Confirmar región» deshabilitado por `zoneChangeAllowed=false`.
+- Quedan como pendientes separados «Gestionar perfil» en tarjeta responsive y conservar cerrados los grants `anon`/`authenticated` de Cutover QA. El ítem 4 espera que el propietario elija los horarios reales de Dental Ross y Prueba de oro. Migración y confirmación productivas no están autorizadas. [Evidencia](docs/quality/STAGING_QA_2026-09-28.md).
+
+## 2026-09-28 — Completar reservas antes del fin programado
+
+- OWNER, ADMIN, RECEPTIONIST y BARBER pueden completar una reserva confirmada sin esperar a la hora de inicio/fin ni a la duración del servicio. Se retiró el guard temporal del backend y se actualizaron las pruebas de servicio y HTTP.
+- El correo de «gracias por tu visita» conserva la elegibilidad vinculada al fin programado: completar antes no lo envía anticipadamente. Facturación mantiene su propia validación temporal.
+- Implementado en el árbol local; unitarias API/web, tipos y lint pasaron. El flujo funcional de Preview aún no está validado; sin publicación ni cambios en producción.
+
+## 2026-09-28 — Cutover QA y API OCI de staging
+
+- Cutover QA `prirlabbnlcuvnzuaczp` vaciada de `barberflow`, migrada a C1 y poblada inicialmente solo con dos organizaciones sintéticas sin Membership ni dependencias. Sin copiar Dental Ross o Prueba de oro.
+- API C1 `b0357af6` separada en la VM OCI existente, puerto loopback 3001, límites 0,5 CPU/1 GiB, rol/credenciales QA, Clerk test y correo desactivado. DNS/TLS real en `api.staging.booking.kortek.cloud`; CORS exacto al alias web QA existente. Producción conservó su smoke externo; sus tres variables Cloudinary se corrigieron a la cuenta productiva con autorización específica.
+- Vercel Preview tenía `NEXT_PUBLIC_API_URL` y `DEPLOY_ENV` correctos; `WEB_PUBLIC_ORIGIN=https://qa.booking.kortek.cloud`. El checkpoint `1dafcbe` quedó Ready en el alias QA. Se crearon cuatro usuarios Clerk Development y cuatro User/cinco Membership en Cutover QA. Después, el propietario probó como OWNER la edición/restauración de semana, creación/cancelación de cierre y creación/reprogramación de una cita sintética. Confirmó consola limpia durante edición semanal, creación de cierre y reprogramación; también comprobó el cambio de contexto entre Norte y Sur. El impacto de la semana y cierres se revisó antes de guardar; la reserva permaneció fuera del cierre parcial. **C2 aprobado funcionalmente por el propietario en Preview QA, exclusivamente sobre Cutover QA y datos sintéticos.** No autoriza migrar ni confirmar horario en producción, desplegar la web productiva, abrir reservas públicas o activar correo. [Evidencia, resultados y límites](docs/quality/STAGING_QA_2026-09-28.md).
+
+## 2026-09-27 — Horario y zona del negocio D14/C2 local
+
+**IMPLEMENTADO / EN REVISIÓN LOCAL**, con D14-A autorizado sobre backend aprobado `b0357af`. Configuración incorpora editor de región/semana/cierres, revisión de impacto, concurrencia y recuperación que conserva borradores; cuatro roles y motivos privados solo para gestión. Agenda crea/reprograma/filtra/muestra en hora del negocio, A2 rechaza horas repetidas/inexistentes y conserva precisión existente, CMS lee el agregado operativo vigente. H5, Facturación/Resumen, correo y promociones conservan los contratos C1.
+
+Tipos, lint y build web; 135 pruebas de lógica, 65 de componentes, 26 integraciones C1 y 110 de consumidores API pasan. Chrome real local cubre cuatro roles, dos negocios sintéticos, escritorio/375 px, Los Ángeles/Tokio frente a Santo Domingo/Nueva York, 25 horas de día, 409 y reconciliación, impacto protegido, teclado, precisión A2 y emisión financiera en el día del negocio. Corregida carga permanente al limpiar caché tras cambiar contexto; A → B → A con lecturas nuevas. [Alcance, evidencia y límites](docs/features/HORARIO_ZONA_C2_FRONTEND.md).
+
+Inventario productivo previo de Dental Ross y Prueba de oro: SQL_NULL, America/Santo_Domingo, cero citas de cualquier estado/fecha y dependencias D9 existentes; cierres no aplicable por modelo ausente. Lectura única consistente y ROLLBACK, sin escrituras. C2 migró/confirmó únicamente fixtures locales dedicados; no fue necesario usar la autorización condicional de migrar ambos tenants productivos. El checkpoint publicado en Preview QA no concede aprobación final, despliegue web productivo, apertura pública o activación de correo. Detenido antes de QA frontend en producción real, pendiente de autorización expresa.
+
+## 2026-09-27 — Horario y zona del negocio C1
+
+**BACKEND C1 APROBADO / INTEGRADO EN PROYECTO LOCAL**. D1–D15 A autorizadas; agregado relacional, semana/cierres/impacto/revisión y confirmación de zona, roles y lock Organization compartido por Booking/A2/correo/claims. Nuevas altas sin confirmar, legacy fiel hasta transición; tenant productivo SQL_NULL sin confirmar. Tipos/lint/build, 763 unitarias, 26 integraciones C1, 9 concurrencias, 75 HTTP y 26 productor/worker pasaron; migración 26→27, grants/integridad y restore 35/35 verificados. [Contrato](docs/features/HORARIO_ZONA_C1_CONTRATO.md) · [Evidencia](docs/features/HORARIO_ZONA_C1_EVIDENCIA.md). Lógica backend aprobada expresamente por el propietario y cambio integrado en su proyecto local; 763 unitarias, tipos/lint/build y Prisma vuelven a pasar allí. [Integración local](docs/features/HORARIO_ZONA_C1_INTEGRACION_LOCAL.md). El propietario autorizó expresamente commit/push C1 a origin/ai/antigravity-qa. Sin aplicar migraciones a bases, frontend o implantación. La aprobación C1 no cierra el módulo ni autoriza C2.
+
+
+## 2026-09-27 — Horario y zona del negocio: C0 documental entregado
+
+- Autorizado únicamente el C0 del ítem 4 del roadmap. [Informe](docs/features/HORARIO_ZONA_C0_AUDITORIA.md) con el formato de Base previa a producción: evidencia, hallazgos, D1–D15 con opciones/trade-offs/recomendaciones y gates futuros. Decisiones pendientes de elección del propietario; C0 no aprobado y C1 no autorizado.
+- Auditados JSON legacy/fallback, ausencia de semana/cierres globales, zona autoritativa, reservas futuras/en curso, herencia y bloqueos individuales, locks, permisos, consumidores y pruebas existentes. Registradas discrepancias del comentario legacy, lectura RECEPTIONIST y hora del navegador en agenda interna, sin alterar código ni contratos.
+- Solo informe y sincronización de índice/PROJECT_MASTER/historial. Sin PATCH libre del JSON propuesto, acceso a bases, cambios de datos/configuración, tests/builds o QA funcional nuevo; verificación documental de enlaces, estados y diff. Sin staging, commit ni push.
+
 ## 2026-09-27 — API desplegada en Oracle Always Free
 
 - Verificados cuenta Free Tier, cuota de prueba y beneficio Always Free vigente 2 OCPU/12 GB. Medidos worker, monitor, backup cifrado y restore aislado antes de dimensionar; ambos trabajos terminaron exit 0.

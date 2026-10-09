@@ -168,6 +168,26 @@ describe('DashboardSummaryService', () => {
     expect(db.booking.findMany).not.toHaveBeenCalled();
   });
 
+  it('uses the actual day start when local midnight is skipped', async () => {
+    jest.setSystemTime(new Date('2018-11-04T16:00:00Z'));
+    const { db, service } = harness();
+    db.organization.findUnique.mockResolvedValue({
+      timeZone: 'America/Sao_Paulo',
+    });
+    await service.getSummary(user, new SummaryQueryDto());
+    expect(db.booking.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          organizationId: 'tenant',
+          startTime: {
+            gte: new Date('2018-11-04T03:00:00Z'),
+            lt: new Date('2018-11-05T02:00:00Z'),
+          },
+        },
+      }),
+    );
+  });
+
   it('does not turn timeouts or database errors into successful empty data or expose internals', async () => {
     const { db, service } = harness();
     db.$transaction.mockRejectedValue(new Error('private database detail'));

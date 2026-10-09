@@ -42,6 +42,12 @@ lerna-debug.log*
 .env.production.local
 .env.local
 .env.migrations.local
+.env.resend.qa
+.env.resend.prod
+.env.cloudinary.qa
+.env.cloudinary.prod
+.env.clerk.qa
+.env.clerk.prod
 
 # temp directory
 .temp

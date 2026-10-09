@@ -1,0 +1,503 @@
+{
+  "date": "2026-10-07",
+  "results": [
+    {
+      "phase": "baseline",
+      "id": "90970ef6417a40cc9637f390b4f095f6",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "api-e2e-pnpm11",
+          "exit": 1
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": null
+    },
+    {
+      "phase": "baseline",
+      "id": "a430f279c4f446f687794b047297e1ac",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "api-e2e-pnpm11",
+          "exit": 1
+        },
+        {
+          "label": "web-build",
+          "exit": 0
+        },
+        {
+          "label": "web-browser",
+          "exit": 1
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": null
+    },
+    {
+      "phase": "before",
+      "id": "02f829ee1dc54bcd96b33db9f6691f65",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "web-browser",
+          "exit": 1
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": {
+        "passed": 227,
+        "failed": 37,
+        "pending": 1,
+        "total": 265
+      }
+    },
+    {
+      "phase": "before",
+      "id": "22b2b0201d6c4b84aa5acf8ec84871c7",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "web-browser",
+          "exit": 0
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": {
+        "passed": 227,
+        "failed": 37,
+        "pending": 1,
+        "total": 265
+      }
+    },
+    {
+      "phase": "before",
+      "id": "8e35f3c2002e42819e3125dc9258d9f2",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "web-build",
+          "exit": 0
+        },
+        {
+          "label": "web-browser",
+          "exit": 1
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": {
+        "passed": 227,
+        "failed": 37,
+        "pending": 1,
+        "total": 265
+      }
+    },
+    {
+      "phase": "before",
+      "id": "9778ce5ee20d4555bc3fdb23adf950ac",
+      "postgres": "postgres (PostgreSQL) 18.1",
+      "bind": "127.0.0.1",
+      "migrations": 0,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": null
+    },
+    {
+      "phase": "before",
+      "id": "dde806f2a8a142f2ae290d16dd2f410a",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "web-browser",
+          "exit": 1
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": {
+        "passed": 227,
+        "failed": 37,
+        "pending": 1,
+        "total": 265
+      }
+    },
+    {
+      "phase": "before",
+      "id": "f1297d8db4344ca9a3ff4831c2c3d18e",
+      "postgres": "18.1",
+      "bind": "127.0.0.1",
+      "migrations": 28,
+      "stopped": true,
+      "cleanup": true,
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1
+        },
+        {
+          "label": "web-browser",
+          "exit": 0
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "api": {
+        "passed": 226,
+        "failed": 38,
+        "pending": 1,
+        "total": 265
+      }
+    }
+  ],
+  "finalBeforeBrowser": {
+    "startTime": "2026-10-07T20:30:38.669Z",
+    "duration": 40236.686,
+    "expected": 21,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "postcommitValidation": "Pendiente de la ejecución posterior al commit; se entrega por evidencia Git/JSON local, sin reescribir el commit."
+}

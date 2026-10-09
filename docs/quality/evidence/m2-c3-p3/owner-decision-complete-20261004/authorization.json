@@ -1,0 +1,12 @@
+{
+  "base": "adb36cb02330e9f00c84ecce7d0e2d119af9731a",
+  "ownerAcceptedChecksumCRLFVariantAndMatrix30CR": true,
+  "ledgerMustRemainUnchanged": true,
+  "referenceMustUseRealP2RestoreAndLFGitMigration": true,
+  "runtimeGateInsideExistingAPIWithoutExtractingCredentials": true,
+  "activationWindowMinutes": 30,
+  "noDatabaseFreezeOrNewBackup": true,
+  "ownerAuthorizedSeparateLocalP2PhrasePrompt": true,
+  "ownerAuthorizedSeparateGitattributesCommitAfterP3": true,
+  "noPushClerkWebProduction": true
+}

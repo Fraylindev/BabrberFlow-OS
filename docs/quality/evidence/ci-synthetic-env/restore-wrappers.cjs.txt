@@ -1,0 +1,4 @@
+const fs=require('fs'),path=require('path');const root=process.cwd(),clean=path.join(root,'.tmp/ci-synthetic-clean');let changed=0;
+const files=['node_modules/.modules.yaml','node_modules/.package-map.json','node_modules/.pnpm-workspace-state-v1.json'];for(const rel of ['node_modules/.bin','apps/api/node_modules/.bin','apps/web/node_modules/.bin'])for(const f of fs.readdirSync(path.join(root,rel)))if(fs.lstatSync(path.join(root,rel,f)).isFile())files.push(path.join(rel,f));
+for(const rel of files){const f=path.join(root,rel);if(!fs.existsSync(f))continue;const before=fs.readFileSync(f,'utf8');let after=before.replaceAll(clean.replaceAll('\\','/'),root.replaceAll('\\','/')).replaceAll(clean.replaceAll('\\','\\\\'),root.replaceAll('\\','\\\\')).replaceAll(clean,root);if(after!==before){fs.writeFileSync(f,after);changed++;}}
+console.log('Restored local tool wrappers/metadata: '+changed);

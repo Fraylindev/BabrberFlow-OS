@@ -1,0 +1,2400 @@
+{
+  "base": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac",
+  "branch": "ai/antigravity-qa",
+  "cachedRemote": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+  "remoteLiveChecked": false,
+  "indexEmpty": true,
+  "forbiddenCandidatePaths": [],
+  "changedPriorAuditPaths": [],
+  "highConfidenceSecretFindings": [],
+  "candidateInventory": [
+    {
+      "status": "M",
+      "path": "BACKEND_CHANGES.md",
+      "bytes": 144176,
+      "sha256": "eb30e9120a0d1552daf0e1ffced1a38e08a0576b85a55a2a41d79e84fb98aa55",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "CHANGELOG.md",
+      "bytes": 190410,
+      "sha256": "485a1a4978184f616fbd5d28f727c921b82ce46667a2492530418e04c2b1e4af",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "PROJECT_MASTER.md",
+      "bytes": 113874,
+      "sha256": "4fbb4ba70aa0d817262fe555f1403dbd5f9a6c564b76e0482ffd26d81321c301",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/ops/README.md",
+      "bytes": 14304,
+      "sha256": "cc66db6449aca56f4b3771a8f1c3ba71c8a48bbf036ed0d6490290c961b0cf2f",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/ops/rate-limit-http-drill.cjs",
+      "bytes": 4459,
+      "sha256": "4fa9ce50db961b7fcb45f8de6e48fc6399d6569dc2971e7561d74c259d6b4806",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/app.module.ts",
+      "bytes": 3221,
+      "sha256": "62d24aee42a4ed5c656f21782c0390110c642e66e8087a9805b000b269edc493",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/auth.module.ts",
+      "bytes": 2482,
+      "sha256": "aaa27cc53ec003105fcd26b5c8ebd746c5cacf6abe1d66d5f90a498b3fba5f63",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/auth.service.spec.ts",
+      "bytes": 16597,
+      "sha256": "e64060ffb8ed701a83609683e18f3a87abb1385736305595aa7823f977db608f",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/auth.service.ts",
+      "bytes": 11099,
+      "sha256": "2d94e2c9e744d24a4c9bb7bf05273f18b1dc7a022d6545e4cbdf6644cfdb6818",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.spec.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/auth/clerk-customer-claims.service.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/auth/dto/clerk-customer-claim.dto.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.spec.ts",
+      "bytes": 4531,
+      "sha256": "7e064652836a1999f51a18c403e0ff9c9409213c1b130d5f8477b7dcccb035a9",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.ts",
+      "bytes": 3424,
+      "sha256": "122c7edd6168ea8b9c3b6118e57b1bc00204a1bf378e9e042dafae75d9558dc9",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/roles.constants.ts",
+      "bytes": 875,
+      "sha256": "41836f55f39b894b6c638b7f75dae9921d4287fd9915daeef01bbca46f8c5bd1",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/auth/strategies/jwt.strategy.ts",
+      "bytes": 1811,
+      "sha256": "a56a9fa7fac4c6ed5266a28c9a1d217c27fda936857df49bd9ad37453033e1bc",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/business-schedule/business-schedule.integration.spec.ts",
+      "bytes": 28470,
+      "sha256": "3d713d1428af6c5c97a07ce8f398d07b68e00b34aa1adb67fb18998a8121172a",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer-budget.guard.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer-crypto.spec.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer-crypto.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer.controller.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer.dto.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer.module.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/src/customer/customer.service.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/public-booking/dto/create-public-booking.dto.ts",
+      "bytes": 1470,
+      "sha256": "7831ba86d4148354b4fa937130d5497b59fd01c7c8abddf76a39be8a24fef347",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+      "bytes": 298,
+      "sha256": "159b4d9900678571b5c056dd8d10893a65bece9033062daa3e6f29736a75965d",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "bytes": 20618,
+      "sha256": "742683499664316b5f091458ee7231d8ce74d0817c34aa9d92abac03628f82c4",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "bytes": 18028,
+      "sha256": "089e42462e0981017c9b6b048f03d2ff7ad982f1d9b93342793cf2c9973af6c6",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/public-booking/whatsapp-contract.spec.ts",
+      "bytes": 12046,
+      "sha256": "3e5ef8f286c0c440dc2886099175440dc04d8e00d65fa3cd9cdc7a6b3263eba3",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/test/clerk-customer-claims.e2e-spec.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/test/customer-code-rollback.cjs",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/test/customer-runtime-compat.cjs",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/test/customer-runtime-grants-drill.cjs",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/api/test/customer.e2e-spec.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/test/dashboard-summary.e2e-spec.ts",
+      "bytes": 7696,
+      "sha256": "e4fc69dac7b5d50588e55faee301180efae3e209dd3349bf790717b968600cf3",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/test/invoices.e2e-spec.ts",
+      "bytes": 39167,
+      "sha256": "a9648af0d17e7ead4a8293e32daa9136a3280eb640ec1f3693a0c7c8aae9a998",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/test/public-booking-m1.e2e-spec.ts",
+      "bytes": 29424,
+      "sha256": "5e147a381c777e11ee172a29869932434ef737d954078627e89c6be8102dbd64",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/test/services.e2e-spec.ts",
+      "bytes": 21278,
+      "sha256": "3c18a1062313c0adb964a0847de00222b3a9bb3a4c945b2c9c1b6b88c17ddff8",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/_components/AccountStep.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/app/[slug]/_components/ContactStep.tsx",
+      "bytes": 3338,
+      "sha256": "e6626728ece040f62fb7bf9591ef392e7ad23b28d23bebb72fd9ba13c5c26903",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/_components/StepRouter.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/layout.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/mi-perfil/page.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/app/[slug]/mis-reservas/page.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/booking/F0A.test.tsx",
+      "bytes": 6205,
+      "sha256": "3fffbc0c4e325b76392b4f876e64e34e4168994ce2a82fb6f3534e632284609b",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/Customer.test.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerAuth.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerBookingDetail.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerBookings.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerClaim.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerEntryLinks.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerProfile.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerProvider.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/CustomerShell.tsx",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/components/customer/customer.css",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+      "bytes": 4698,
+      "sha256": "ad2ef93949438005a0e3cf2a568903e0c4877040adfb6c7e407c00c74f3a8a46",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/BookingLight.test.tsx",
+      "bytes": 10709,
+      "sha256": "05971b2fd5d7e49b3719ee1c9ab1a9bcf500482df552e0e43f748913b43b8478",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/BookingPolish.test.tsx",
+      "bytes": 6325,
+      "sha256": "e7460715d6efa4df7e47903cac7a15f658a8fd12cc85e707bc38663888ca28f2",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/M1C2.test.tsx",
+      "bytes": 14726,
+      "sha256": "0a2ef324a632519257c581379ade856bdb40b9c0aba351ab9b51c487fc120225",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/PublicBookingScreen.tsx",
+      "bytes": 18528,
+      "sha256": "74c89d3621e1d0a60d764d984de309bed4a6cbafa92e017944c07f724c251dd2",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/PublicDates.test.tsx",
+      "bytes": 2960,
+      "sha256": "5c67e1ff4329d37bfab69df3eb31a1119a667b79377b51d97af7cfde01615b73",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/PublicMiniSite.tsx",
+      "bytes": 11847,
+      "sha256": "3b32421e1e356fca2f2457b031ce108941b986af8a6ec9aba2fb1b48f17b4bab",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/components/public/WhatsAppSuccess.test.tsx",
+      "bytes": 3186,
+      "sha256": "0225f0ab42f7b7d3f26042c55a4d744da63ac685dad6ac57239cef796561cd84",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/e2e/whatsapp-c2.spec.ts",
+      "bytes": 14763,
+      "sha256": "67f6141011b7aedd6e08fcf11600dccc8be6528d8af27442f280b9b56553571b",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/lib/api.ts",
+      "bytes": 16300,
+      "sha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/lib/customer-routes.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/lib/customer-ui.test.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/lib/customer-ui.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/lib/public-booking-ui.test.ts",
+      "bytes": 2817,
+      "sha256": "4279e9a0463654ae69c2161cb0137a02971ae426d085122b5a8bff00914c817c",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/lib/public-booking-ui.ts",
+      "bytes": 5162,
+      "sha256": "2046e0ea862da980e7d101cfa7974367b75647016b95a3ac32955e6d0a5c8b9c",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/lib/queries/customer.ts",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/next.config.ts",
+      "bytes": 2665,
+      "sha256": "ac8acfd731197e6b8c05d912b928baa29196e8502b734645f64b846965935938",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/proxy.ts",
+      "bytes": 1467,
+      "sha256": "b5938b83664d475e32585df9551ade6e435a84d5540ffd876231088009010df3",
+      "category": "source/test"
+    },
+    {
+      "status": "D",
+      "path": "apps/web/scripts/f0a-browser.mjs",
+      "bytes": 0,
+      "sha256": null,
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/scripts/f0e-ajuste-browser.mjs",
+      "bytes": 26609,
+      "sha256": "bb665b1fc4c663055acf800f88673bfbfd704ab7a41de8bc024b1bfcf4014b24",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/scripts/f0e-browser.mjs",
+      "bytes": 22443,
+      "sha256": "1bffb4b154d4fe6185e152dd6017a2bf41395bccfe5071787ee3383fe87ebf62",
+      "category": "source/test"
+    },
+    {
+      "status": "M",
+      "path": "docs/README.md",
+      "bytes": 24681,
+      "sha256": "2794752776b127ad49e03ebf9c2460c0b694542fb8f7cf7fc54a2d844ad999f0",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "docs/architecture/DATA_MODEL.md",
+      "bytes": 7198,
+      "sha256": "af70bb9368a75c5db16091ea526b2f6ea8cf080fcaabb95bfa8a36a97a7f34bf",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "docs/architecture/TRD.md",
+      "bytes": 9415,
+      "sha256": "96061052c46a9eb65ac3458d11c1899e8e2a03cba613f961985a9d05f58353db",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "docs/product/APP_FLOWS.md",
+      "bytes": 13772,
+      "sha256": "23b7544403b3fbcb0dc43657317b554cd696a33ce8ca09d4686eb9b929506026",
+      "category": "documentation"
+    },
+    {
+      "status": "M",
+      "path": "docs/product/PRD.md",
+      "bytes": 8288,
+      "sha256": "0e2ffca04dc94c4d4de3d5045e26063ef307a1a7e243ca75c1081d9aeb3d6464",
+      "category": "documentation"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/src/auth/strategies/jwt.strategy.spec.ts",
+      "bytes": 1699,
+      "sha256": "92410db0b017626b9a8601a0fdf5a22d638579093d2b26de4886e9fa5497077d",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/src/public-booking/guest-claim-retirement.integration.spec.ts",
+      "bytes": 9874,
+      "sha256": "9dbe7dcb6d302dc1b2aa20768145a6e7efa9c58375dd529546d5f293245b201c",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/src/public-booking/guest-retirement.spec.ts",
+      "bytes": 7169,
+      "sha256": "18adf793e503e4dbe371e0decfe85afbc29484cfa8b3e80bf15c9f68ae4c9bed",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/test/guest-postgres-no-dotenv.cjs",
+      "bytes": 1564,
+      "sha256": "394a48b121e60178b60ff51da95c61b5ae77d71b51461dd339e944415265e910",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/test/guest-postgres-run.cjs",
+      "bytes": 10768,
+      "sha256": "5c849ae9fa121a4c751d6fdfcd33d1823c666049c775269c412c75520372c855",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/test/guest-retirement-run.cjs",
+      "bytes": 1275,
+      "sha256": "941ed49dca53e9bf7bbbb60fb7a213300d6274df7d50da6b039b3f909c2dfee3",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "apps/web/scripts/guest-c2-browser.mjs",
+      "bytes": 12423,
+      "sha256": "9d901ecdbaeb52f40581eb209369556d2fa736eafcd43af887e0a4fb8a5dabcc",
+      "category": "source/test"
+    },
+    {
+      "status": "A",
+      "path": "docs/features/RESERVA_INVITADO_C0_C1.md",
+      "bytes": 13400,
+      "sha256": "dc7134906b0823f06d77f44756ded2ccaa99c2bb908ecd9fc0c9986b05cf75d8",
+      "category": "documentation"
+    },
+    {
+      "status": "A",
+      "path": "docs/features/RESERVA_INVITADO_C1_CIERRE_TECNICO.md",
+      "bytes": 16188,
+      "sha256": "9317a3a6e6fc4d5790dfcf86981f1a11779b95e39b76423be83fff4c7048ade4",
+      "category": "documentation"
+    },
+    {
+      "status": "A",
+      "path": "docs/features/RESERVA_INVITADO_C2_LOCAL.md",
+      "bytes": 11280,
+      "sha256": "0e717845e6bdb4f0c21a0e8fb6d341ccf2ca88115895d3d426a07a43093b4252",
+      "category": "documentation"
+    },
+    {
+      "status": "A",
+      "path": "docs/features/RESERVA_INVITADO_C3_PREFLIGHT.md",
+      "bytes": 6488,
+      "sha256": "79798e9053aa30ecd469387e1a95ae9b45416b8134d959ad1da8bc85426eba76",
+      "category": "documentation"
+    },
+    {
+      "status": "A",
+      "path": "docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md",
+      "bytes": 19684,
+      "sha256": "638de2a8dfe44b60b006bdc21edc028ddb86ab7b29c27d395ae43c36f5f24f30",
+      "category": "documentation"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/CONSISTENCIA_ANTES_CORRECTIVO.md",
+      "bytes": 21768,
+      "sha256": "7cd5277f32c2354129753e7746bbc0da88ab984c94263243ae7ec8eec3193a2a",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/Customer.test.tsx.txt",
+      "bytes": 16370,
+      "sha256": "c0f1f2f491675e138ea53db4586e419c3ceb09e11d410f88ccce04625bad02db",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/README.md",
+      "bytes": 1442,
+      "sha256": "2a292812f44580347b480988525a588d27f0d69dd356f42c35bf5c35c4a09077",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]___components__AccountStep.tsx.txt",
+      "bytes": 1869,
+      "sha256": "0e9bf47223c011bd28cc29c1d1862f81ebee292d8706d41ec23472d4d39778b6",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]___components__StepRouter.tsx.txt",
+      "bytes": 4125,
+      "sha256": "bbd0feac2798d43ec9b6d490eca2b6e63cfc73f6bcac21488a88aabfd5e7fbfe",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__cuenta__[action]__page.tsx.txt",
+      "bytes": 630,
+      "sha256": "7a482b6505006c70509f3d406918a22a6aec74180938c2eaf4a996a2f900f7a1",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__layout.tsx.txt",
+      "bytes": 371,
+      "sha256": "cdfc7af5b0cca9abc81f3df819923e191064eeaed1f74d95129e9c5b36bb9bfb",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mi-perfil__page.tsx.txt",
+      "bytes": 183,
+      "sha256": "f1a29b4fcdb9c0bfb701c30ee8996dcf86fd2d1d8f7b86767a011327ee8a5db3",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__[id]__page.tsx.txt",
+      "bytes": 306,
+      "sha256": "6c2a4929e72c3101872fb5d3798c1ada7bc50aad568fc3213afeab367c1bb27b",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__[id]__repetir__page.tsx.txt",
+      "bytes": 299,
+      "sha256": "79b08fdf61efc6c617f017f381b949ca86b47c2458e5d547a4a9c448e90d0603",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__page.tsx.txt",
+      "bytes": 364,
+      "sha256": "043f39d859b01cf6c484cf3d51f2c64cf0f3daebd74dd7b1ca44e18c7bf7c79c",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__Customer.test.tsx.txt",
+      "bytes": 14787,
+      "sha256": "6f4bd84031b997631b0c6a4b16bd607017f1b89a9bf3ec02ed7eabb12e124ba8",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerAuth.tsx.txt",
+      "bytes": 8735,
+      "sha256": "1aad2ad2d29c2563ab4488b0def29aa18e90c36a1013f09bf9d1b78bdbfd99c6",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerBookingDetail.tsx.txt",
+      "bytes": 3287,
+      "sha256": "1c72611fc816b50b2bff286d279a07ba80c36fd4772bc803af08d44c5dd9ad2b",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerBookings.tsx.txt",
+      "bytes": 7871,
+      "sha256": "c00b0d0a99dfa940cff120a610b75a634e281d560d0bfca0b880d02a57c66292",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerClaim.tsx.txt",
+      "bytes": 4263,
+      "sha256": "e3284eae08ad3756daea94fce95b783bc173775ce4fad71e9b11116b4df6b00e",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerEntryLinks.tsx.txt",
+      "bytes": 996,
+      "sha256": "5823cca5c005f1905e91284729634c082048b863f6ae8e944c66ce071529a17c",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerProfile.tsx.txt",
+      "bytes": 6986,
+      "sha256": "dff07305ca90fac9398aa11b23df8585e7f1d495906f60e6a0685eaa2df4b1d1",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerProvider.tsx.txt",
+      "bytes": 5058,
+      "sha256": "2705083caa7badf37f83ac4dbd89ce4d64dc1b7ed82d51748435d1bf272dae92",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerRepeatBooking.tsx.txt",
+      "bytes": 10820,
+      "sha256": "6bcfd441224aabc61c789056a323524e1d42c0aefa53281f6bf672e57b249c7d",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerShell.tsx.txt",
+      "bytes": 2292,
+      "sha256": "c80dd8e757000004a2f732cf4d73527aaf2b0a2d3b124caf6651ea87fc633ddb",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__components__customer__customer.css.txt",
+      "bytes": 4170,
+      "sha256": "5fe6b1a86a21475183c71009e17501035a18c53fbdbe0f65c760b30031f9f5e8",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__lib__customer-routes.ts.txt",
+      "bytes": 857,
+      "sha256": "12ba0ee29ac04c04e92f009808c3a6734d2ba957810450593c8bdb841d090957",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__lib__customer-ui.test.ts.txt",
+      "bytes": 2106,
+      "sha256": "057077308d0edfecd21c9a0fd8a5709167d9b4ad2f1197ec3a457f7da7b3bc67",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__lib__customer-ui.ts.txt",
+      "bytes": 2815,
+      "sha256": "c9cc2a314a79a97aea3738e1615218f5de21900958837b24d078bdf1b60a69a4",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__lib__queries__customer.ts.txt",
+      "bytes": 2386,
+      "sha256": "c842b2c67e4086cf27ec67f0c157da992136a5a20159fa01114948d9da52de71",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/c2/apps__web__scripts__f0a-browser.mjs.txt",
+      "bytes": 18620,
+      "sha256": "1e0dbf6c61cd0cb6f4731928136452cf3a867b3000dbd3a0d1a115ab73eeb045",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/helpers/customer-code-rollback.cjs.txt",
+      "bytes": 3987,
+      "sha256": "e39cf8afda8456fa1ef3712be9418174cb44cf38a9074012a17240b85f30a9f6",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/helpers/customer-runtime-compat.cjs.txt",
+      "bytes": 5784,
+      "sha256": "28ff1b4e0ac4ee0bdb845282cf077affca9a4cfd9ded88d27b50e13b41778388",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/helpers/customer-runtime-grants-drill.cjs.txt",
+      "bytes": 23846,
+      "sha256": "5a83fbc75361011e72cdf2d889a7ecd5956f72bc941a980f153a667086ab42e4",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/history/reserva-invitado/helpers/m2-d4-probe.cjs.txt",
+      "bytes": 3446,
+      "sha256": "7d7c364b4329e53a3254b3ec247a91903e044ab11a758a09716bca6a09e347d1",
+      "category": "archive"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/c0-c1-con-correctivo.patch",
+      "bytes": 319833,
+      "sha256": "c245bdf408de6491e3beea165202681fa5b74b9ccba8343eac4ce86c1588f5d0",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/c0-c1.patch",
+      "bytes": 179189,
+      "sha256": "d9bbdd43d25d3a222893ddb5417bddf1d29d77b74b85e763673a3019a5d19ce2",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/consistencia-omitidas.json",
+      "bytes": 18271,
+      "sha256": "af708fdd0f2d4a70f8d26b2dbfc3e69afabb840d835e20d24de482f6b3fe0b72",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/consistencia-referencias.json",
+      "bytes": 159603,
+      "sha256": "da677326c3bc85c331edfc2c4012104847d82b8fccb65e556323199240967f67",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/consistencia-rutas.json",
+      "bytes": 10308,
+      "sha256": "3041c2d87501bf70fba853dc73eb2d6f586f4ee72c8ba7615812ce89c540c87d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/correctivo-helpers-archivo.json",
+      "bytes": 1232,
+      "sha256": "a3f5ec21dbcaf48962a46873361387b44ef8d5bb9249b844185be27df0b951df",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/correctivo-referencias.json",
+      "bytes": 154321,
+      "sha256": "add24e9414328be7675689284a28571ec71518aad8b896ead7fe90587a709292",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/correctivo-rutas.json",
+      "bytes": 10307,
+      "sha256": "223a1ba763c30f744ebd9e08dbb06181dfcb47f5af7a860c017ee6541e674636",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/correctivo-validacion.json",
+      "bytes": 9827,
+      "sha256": "8e811bf133755235edb074e6c068d9a72e3c195d1ea3714d03a046be3e8cea90",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/bootstrap.log",
+      "bytes": 58,
+      "sha256": "616089683726992b11dbcd8adbba480f9e5e356ea07ffb50efceaa30c5bce1d9",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/business-schedule.json",
+      "bytes": 16228,
+      "sha256": "3435ad9aed2d673579907cacadcd841acf614436342d97db0119906f4461875d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/business-schedule.log",
+      "bytes": 1975,
+      "sha256": "c42827d3d03ddaa998966f5de5aa37f9547b94dd5cfe18359f4cf644f75e327b",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/clerk-user-link.json",
+      "bytes": 1656,
+      "sha256": "a8df7553922f488b3cebd54bc88ee224c67014101303bf514ef3e68ce307b8b2",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/clerk-user-link.log",
+      "bytes": 321,
+      "sha256": "3e2408b3d5840624cef1fdb4b08dab0c2c6a84ac8b8178f975d49e40e959fdd4",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/initdb.log",
+      "bytes": 1029,
+      "sha256": "f548b8745a5a79884a02025a6504fbfbb94695c94e60449261617395ceeb3a90",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/migrate-deploy.log",
+      "bytes": 4116,
+      "sha256": "d60bdd0ba5f34c07b08d86300d30dad8a1b40f10d563bfa82335a370bf02ec46",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/migration-ledger.log",
+      "bytes": 1138,
+      "sha256": "3323a68e198232898673709f3dfa09782941d57988221bbf479c34a5304cde39",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/provision-runtime.log",
+      "bytes": 302,
+      "sha256": "0bf5c1398b84d493b6ece05c702b7b3b7fbf4179dd91817a33345a02e6498ae0",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/run.json",
+      "bytes": 12270,
+      "sha256": "dfd04831757c4cf0886e5b01a62eacc1d1dee7469959d8aa647e615dfdc3da13",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/runtime-gate.log",
+      "bytes": 19,
+      "sha256": "7fcbe437eed57be0b636df7254aff4a8e98cf8e02e5e57b53361f069d43bf5de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/server-version.log",
+      "bytes": 6,
+      "sha256": "58b8e92c81f98112e038e70a658cd95986a2641e9b7fda93ff81769905ce471d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/start.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/4d6169ae7ddc489eab58e85799bf1eb3/stop.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/booking-concurrency.json",
+      "bytes": 4718,
+      "sha256": "3b5f6ed61c0574d4a4b58d09ec8289638e2a524158b4bac9468b60c4bdf282a4",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/booking-concurrency.log",
+      "bytes": 333,
+      "sha256": "2d30493f72d3b3de2f85d83a646cca1907660f4c781d14baf2dc9faba75ab42d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/bootstrap.log",
+      "bytes": 58,
+      "sha256": "616089683726992b11dbcd8adbba480f9e5e356ea07ffb50efceaa30c5bce1d9",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/business-schedule.json",
+      "bytes": 12866,
+      "sha256": "4e47aaaca17b057831743c144ffde82953e8943d1a49192b09a37aa98bb587e6",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/business-schedule.log",
+      "bytes": 506,
+      "sha256": "424eb0cf9cd62560eaf3fd59192ae37bb1b079bb8e9570a9a2ac5d644158220f",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/clerk-user-link.json",
+      "bytes": 1657,
+      "sha256": "95a8eb742124bd84e7c506eb8a874080277d9a9878b276a784c0b8cd65b3fdc1",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/clerk-user-link.log",
+      "bytes": 321,
+      "sha256": "6908364ecfaa31ac13c81bf8618d3a4ba54dc891c52fad82d01dc5c94bf532fb",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/guest-claim-retirement.json",
+      "bytes": 1808,
+      "sha256": "7b78bf5cba036446ef926c2e45dd6e98bfd94cfab4a6d06618b67cf6b29001bd",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/guest-claim-retirement.log",
+      "bytes": 360,
+      "sha256": "6d438628c7413673a0d0684ee89bde350b31fa368ec21c70796ab2f1e6aad595",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/initdb.log",
+      "bytes": 1029,
+      "sha256": "c19633560176415820df6aa39ba1df3154828bcc540593549174b9d6b4b9a2b8",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/migrate-deploy.log",
+      "bytes": 4116,
+      "sha256": "b1b616fa25babbaf4dfc7f90b4ca5f76ffcddfb15c85359bf280ba16e1f67dd6",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/migration-ledger.log",
+      "bytes": 1138,
+      "sha256": "3323a68e198232898673709f3dfa09782941d57988221bbf479c34a5304cde39",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/provision-runtime.log",
+      "bytes": 302,
+      "sha256": "0bf5c1398b84d493b6ece05c702b7b3b7fbf4179dd91817a33345a02e6498ae0",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/run.json",
+      "bytes": 14301,
+      "sha256": "941970cd5bfa6e06a2dbcf9a2be9f03bfd02b878444aa6c4767172c05fb007da",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/runtime-gate.log",
+      "bytes": 19,
+      "sha256": "7fcbe437eed57be0b636df7254aff4a8e98cf8e02e5e57b53361f069d43bf5de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/server-version.log",
+      "bytes": 6,
+      "sha256": "58b8e92c81f98112e038e70a658cd95986a2641e9b7fda93ff81769905ce471d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/start.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/54e4c2049d35470da1dc299671c064e1/stop.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/65deab5f99a54b84bf25fe1d7f783ee4/cleanup.json",
+      "bytes": 81,
+      "sha256": "00fc002794847b99f007008aab365e10434459a515a71db9a20d918e6f04f8d8",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/65deab5f99a54b84bf25fe1d7f783ee4/initdb.log",
+      "bytes": 1029,
+      "sha256": "b3c4a6fc3eaf1cf4508e43ed851af200232185874eb4971e36c20c73a32fcf25",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/65deab5f99a54b84bf25fe1d7f783ee4/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/65deab5f99a54b84bf25fe1d7f783ee4/run.json",
+      "bytes": 2043,
+      "sha256": "09d62ad15531678dc65aa252a4adff48d97a8cd766e5277c8aaab15483dd3d28",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/65deab5f99a54b84bf25fe1d7f783ee4/start.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/65deab5f99a54b84bf25fe1d7f783ee4/stop.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/booking-concurrency.json",
+      "bytes": 4712,
+      "sha256": "83dd9b553bfe2ff368125f659d4584890b7411e4b1c2bc01b3691f8904caabf2",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/booking-concurrency.log",
+      "bytes": 348,
+      "sha256": "cd3f9537f5df8ac17d0d3319b99a697db5b2030f63e2aacdd3f7cedc0c78aea5",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/bootstrap.log",
+      "bytes": 58,
+      "sha256": "616089683726992b11dbcd8adbba480f9e5e356ea07ffb50efceaa30c5bce1d9",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/business-schedule.json",
+      "bytes": 12863,
+      "sha256": "c0ec57d6a28348e7252caba49e2e015829b35d5ca5160952d22385924e962cc4",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/business-schedule.log",
+      "bytes": 507,
+      "sha256": "6653e5063daafd03f686bededf87f4d529bb75a775586f52b1d1dabe10ce2814",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/clerk-user-link.json",
+      "bytes": 1656,
+      "sha256": "0b38207214809eebdafe8110e70044601d0b6211b8aaf83c01d03b76203c152e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/clerk-user-link.log",
+      "bytes": 336,
+      "sha256": "2351c8c2479807366c51315d6e21d2983818c60377229ef34f74b781f3219e92",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/guest-claim-retirement.json",
+      "bytes": 8578,
+      "sha256": "c3af2b418775a7f47ba09421b1a36c71a5ad6c71ffa2f9e92c04d17b05469dfe",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/guest-claim-retirement.log",
+      "bytes": 3260,
+      "sha256": "14e39215a94ec8ea2cbfbd65e2bab6e5da94ecd60cbc60b4b9f6a715d99b257e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/initdb.log",
+      "bytes": 1029,
+      "sha256": "81fa3b2bd2f0d2849e65e7963c0d5806d44bdc8644df35de93b53253e18b626b",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/migrate-deploy.log",
+      "bytes": 4116,
+      "sha256": "297ef183fb7e75f9b48e2eacce75b5c67b326352ce95e02f3f0d8f177e9112be",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/migration-ledger.log",
+      "bytes": 1138,
+      "sha256": "3323a68e198232898673709f3dfa09782941d57988221bbf479c34a5304cde39",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/provision-runtime.log",
+      "bytes": 302,
+      "sha256": "0bf5c1398b84d493b6ece05c702b7b3b7fbf4179dd91817a33345a02e6498ae0",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/run.json",
+      "bytes": 14369,
+      "sha256": "ee2d5edec4302f6baaa3af2e9dc74378ab4f92ecf5241f445abf705b6d08ea6b",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/runtime-gate.log",
+      "bytes": 19,
+      "sha256": "7fcbe437eed57be0b636df7254aff4a8e98cf8e02e5e57b53361f069d43bf5de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/server-version.log",
+      "bytes": 6,
+      "sha256": "58b8e92c81f98112e038e70a658cd95986a2641e9b7fda93ff81769905ce471d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/start.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/84dca0f1d6664f56a51d1b31b5e25474/stop.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/booking-concurrency.json",
+      "bytes": 4712,
+      "sha256": "488913aff7fc2fa82dd6dc897d52651fdaaba6248186afe7de9d7df20ae14129",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/booking-concurrency.log",
+      "bytes": 333,
+      "sha256": "4316cd66d3bc8c328511e9a2d81dd370940b4ac1f0197797ed963cf7e20df0b6",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/bootstrap.log",
+      "bytes": 58,
+      "sha256": "616089683726992b11dbcd8adbba480f9e5e356ea07ffb50efceaa30c5bce1d9",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/business-schedule.json",
+      "bytes": 12862,
+      "sha256": "cc0eab9da59c5893c387a93736ada4ab1987177671584a96eda1a4915ef38dda",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/business-schedule.log",
+      "bytes": 522,
+      "sha256": "dc6a1b4e326602d49c1952a1bb9999c1344ad7b807bf0a64602ba5a8ddb79848",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/clerk-user-link.json",
+      "bytes": 1656,
+      "sha256": "74ab53c6fe7ef40aa6915e995f102d2c20ec76993aeb062b6a5cb77bd9fcad4c",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/clerk-user-link.log",
+      "bytes": 336,
+      "sha256": "ac483a5261852d51c8ed86fad66c48d4e2a73b03f5af541de476b4efafcd0066",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/guest-claim-retirement.json",
+      "bytes": 1809,
+      "sha256": "8d3304870196005db14a7c14b97352ba584900960cc55921584e1218d214ec90",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/guest-claim-retirement.log",
+      "bytes": 345,
+      "sha256": "46d83b2f690a6cff7c7955e62ba54439dad3b4cc26819cc2a8e932abe399cb9d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/initdb.log",
+      "bytes": 1029,
+      "sha256": "acb485e5157d7cc06ab5905fb0808849e4ba6c03ae68bd606ba7f14691c279ca",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/migrate-deploy.log",
+      "bytes": 4984,
+      "sha256": "daae6189c3cc0d20705f040f7b9d764dbf05e8e2fab06643149add8531ff50a5",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/migration-ledger.log",
+      "bytes": 1138,
+      "sha256": "3323a68e198232898673709f3dfa09782941d57988221bbf479c34a5304cde39",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/provision-runtime.log",
+      "bytes": 302,
+      "sha256": "0bf5c1398b84d493b6ece05c702b7b3b7fbf4179dd91817a33345a02e6498ae0",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/run.json",
+      "bytes": 14301,
+      "sha256": "0bd3424fb1a5dab0c2a27b6d7589124b0a2b3ccf3ebe53bced02e3751ce60b04",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/runtime-gate.log",
+      "bytes": 19,
+      "sha256": "7fcbe437eed57be0b636df7254aff4a8e98cf8e02e5e57b53361f069d43bf5de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/server-version.log",
+      "bytes": 6,
+      "sha256": "58b8e92c81f98112e038e70a658cd95986a2641e9b7fda93ff81769905ce471d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/start.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/bdeb165b559b43efbbda355eedf51804/stop.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/c030b848012a4f27af97e3c4c2842e47/initdb.log",
+      "bytes": 1029,
+      "sha256": "2ceb2410dc435489ed5b355782dd1349fc0f790565ba1937242c93d73e344c6f",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/c030b848012a4f27af97e3c4c2842e47/interrupted.json",
+      "bytes": 303,
+      "sha256": "02bf3bf623e2d7491455018a76fde8c895984aefd708f2cddb57710c43c3bfe5",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/c030b848012a4f27af97e3c4c2842e47/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/c030b848012a4f27af97e3c4c2842e47/startup.log",
+      "bytes": 406,
+      "sha256": "bbec75700655e94cb7418d569a8b386c4ff424bfb41aa9a37864eddf48f1e438",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/c1-validado.patch",
+      "bytes": 361365,
+      "sha256": "38617301502f37389bbbcaba07bf45822b63b378a688f2636cfafa78f9478cee",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/cierre-c1.json",
+      "bytes": 1266,
+      "sha256": "fa2c8c144778ad5076377ed2362dc037aaed39b474828d8fb1c914bca700953c",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/booking-concurrency.json",
+      "bytes": 4717,
+      "sha256": "f6b9014b9761a412baa8932365d41c9322a973055114144e91ee933fb05489ab",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/booking-concurrency.log",
+      "bytes": 333,
+      "sha256": "e56b956f3eff4933ea3eebd34226db6858d216315fccb47d66f54954ce8d7753",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/bootstrap.log",
+      "bytes": 58,
+      "sha256": "616089683726992b11dbcd8adbba480f9e5e356ea07ffb50efceaa30c5bce1d9",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/business-schedule.json",
+      "bytes": 12868,
+      "sha256": "ae8adba2a97efe87d703b1962044226499a8c77f16524419e751206cc8900e4f",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/business-schedule.log",
+      "bytes": 507,
+      "sha256": "f2c844707f739f243a76657e8eb176302ad1012367f5735fa59bbbd708bf7805",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/clerk-user-link.json",
+      "bytes": 1657,
+      "sha256": "8fa61d592d66a40070839634c284242dca147c7804dfaeb86d170f68c6a8d008",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/clerk-user-link.log",
+      "bytes": 321,
+      "sha256": "2f5e920cc39493bbd58878fffd6a64147bee8a7295d9c32aa8541252ea0da20e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/full-api.json",
+      "bytes": 390974,
+      "sha256": "c39bd808f729b56169ed280c8a3bbf6e6f9b95d63519e8790fbdb49a83ce5d8a",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/full-api.log",
+      "bytes": 3408,
+      "sha256": "87778d2119a90b1f15a8eacad8809ab594c09ba199c5bf60acc1e0c9347ae37a",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/guest-claim-retirement.json",
+      "bytes": 2835,
+      "sha256": "90d2d2a096e5f244cad0c2a0a64e6018d8c10293cb80d946eeb95261f5763849",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/guest-claim-retirement.log",
+      "bytes": 345,
+      "sha256": "65f4b5cc3c48ed30b6f6124e5144ea472d71cfb44dfc0c297fc379571b260f1f",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/initdb.log",
+      "bytes": 1029,
+      "sha256": "047bdd325e6ce1b015dd6e6a977604915711594bf9705602efd291c06398d795",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/migrate-deploy.log",
+      "bytes": 4116,
+      "sha256": "e2262954bcd5f596dc64cfcf285b452d82dd0330469d681a0cbad6b0055a8348",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/migration-ledger.log",
+      "bytes": 1138,
+      "sha256": "3323a68e198232898673709f3dfa09782941d57988221bbf479c34a5304cde39",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/postgres-version.log",
+      "bytes": 28,
+      "sha256": "21e8dd0f2768e0765d069e2a498551a5dce82fe071e157acd98f8f495ad6cce7",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/provision-runtime.log",
+      "bytes": 302,
+      "sha256": "0bf5c1398b84d493b6ece05c702b7b3b7fbf4179dd91817a33345a02e6498ae0",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/run.json",
+      "bytes": 15042,
+      "sha256": "1731c978a2d579bbe4c969ba90baab3c5a9efa582deb5143cb8beb85ceb03a37",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/runtime-gate.log",
+      "bytes": 19,
+      "sha256": "7fcbe437eed57be0b636df7254aff4a8e98cf8e02e5e57b53361f069d43bf5de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/server-version.log",
+      "bytes": 6,
+      "sha256": "58b8e92c81f98112e038e70a658cd95986a2641e9b7fda93ff81769905ce471d",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/start.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/stop.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c1/validacion.json",
+      "bytes": 10786,
+      "sha256": "5b4558a46439c99235f5162eb61044eb18351133f6528333c5a6d49a8bb6a013",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/authorization.md",
+      "bytes": 4126,
+      "sha256": "6b882fef4e6609d6130facea3ffb6aa681adffb466229696f1c72ce733b23f52",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-1280.png",
+      "bytes": 34683,
+      "sha256": "fb8ce11a7e36679e4cd7cf31be07a8382487260ac32d6a10a5fd717f5b92d77b",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-320.png",
+      "bytes": 30191,
+      "sha256": "5de5b8a1916a5fed644013a1b4047d6c1d627621f98a59d25cf853530cec64f1",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-375.png",
+      "bytes": 30148,
+      "sha256": "bd12f8ec9f84325dcb1fc68ebc4153fd974c41f03ad8d71e0dd98e2308a59d3c",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-390.png",
+      "bytes": 30254,
+      "sha256": "e8ecf98dfd7bcfd8e0b90c94237ea96016317d6b9a1ea3a73f347d17ef053e07",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-768.png",
+      "bytes": 32629,
+      "sha256": "0b8416d30271b0c051e3183afb672d8b8ceaa96ac23ce45cf217e4d912d98bba",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-1280-ADMIN.png",
+      "bytes": 48008,
+      "sha256": "62af4c61c4dfec4522f691da8acbc9d10b9f30a3ffb8f4683be1181c40df4807",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-1280-BARBER.png",
+      "bytes": 48008,
+      "sha256": "62af4c61c4dfec4522f691da8acbc9d10b9f30a3ffb8f4683be1181c40df4807",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-1280-OWNER.png",
+      "bytes": 48008,
+      "sha256": "62af4c61c4dfec4522f691da8acbc9d10b9f30a3ffb8f4683be1181c40df4807",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-1280-RECEPTIONIST.png",
+      "bytes": 48008,
+      "sha256": "62af4c61c4dfec4522f691da8acbc9d10b9f30a3ffb8f4683be1181c40df4807",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-1280-guest.png",
+      "bytes": 48008,
+      "sha256": "62af4c61c4dfec4522f691da8acbc9d10b9f30a3ffb8f4683be1181c40df4807",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-320-guest.png",
+      "bytes": 43126,
+      "sha256": "b6c9174c423988b9fa8e2f024b97c49ae432e7636c68fa0ac4c7356796433e4b",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-375-guest.png",
+      "bytes": 44154,
+      "sha256": "1b7eded6ebb0a653429ce26d4ab1d2f0290527cc830a05e7eeffa4330afa56de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-390-guest.png",
+      "bytes": 44175,
+      "sha256": "ba55da47849f7076792ae2cfea58eb3682907974eaf957e5d8d8c492d7d2f799",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/failure-768-guest.png",
+      "bytes": 45435,
+      "sha256": "b6344f1d50b9b6c76c8805ab0f0c6b09f9004633759dbbae5b6d9a9ab883f92e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/initial-failure.json",
+      "bytes": 16409,
+      "sha256": "9565d1d795cf6e86c294ff9d9a783f3caf6a750ecc799761ccdbd789d2794e3c",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/results.json",
+      "bytes": 25301,
+      "sha256": "8bbbf085db063853332e00d8896508fb1dc5dc78da88928990689501cffdc267",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/success-1280.png",
+      "bytes": 48008,
+      "sha256": "62af4c61c4dfec4522f691da8acbc9d10b9f30a3ffb8f4683be1181c40df4807",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/success-320.png",
+      "bytes": 43126,
+      "sha256": "b6c9174c423988b9fa8e2f024b97c49ae432e7636c68fa0ac4c7356796433e4b",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/success-375.png",
+      "bytes": 44154,
+      "sha256": "1b7eded6ebb0a653429ce26d4ab1d2f0290527cc830a05e7eeffa4330afa56de",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/success-390.png",
+      "bytes": 44175,
+      "sha256": "ba55da47849f7076792ae2cfea58eb3682907974eaf957e5d8d8c492d7d2f799",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/success-768.png",
+      "bytes": 45435,
+      "sha256": "b6344f1d50b9b6c76c8805ab0f0c6b09f9004633759dbbae5b6d9a9ab883f92e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/consumer-search.txt",
+      "bytes": 2464,
+      "sha256": "f020761644e4344314f262a69d5ce26cc3ff78bd91cbf94d1b40badedfa667e9",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/diff-validation.json",
+      "bytes": 246,
+      "sha256": "09125a98c84224601eb844abde7e95960df77f724321d556a1703582f56f9463",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/final-git-status.txt",
+      "bytes": 4558,
+      "sha256": "8a69b730f760d3dc6ccce481c9e89a3be023d573873594ee79522bbfdb40f7ef",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/full.patch",
+      "bytes": 656985,
+      "sha256": "6a520c48fcf4493f089a2ada95afe81727cf4ee677572a6459a2c03abec02e33",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/retirados.json",
+      "bytes": 6222,
+      "sha256": "7cef7f9517e0264b65be0c1ddc7bea5948f59c789c0f07e9c914c77a29f8cf7e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/validation.json",
+      "bytes": 56712,
+      "sha256": "ec4f9b27036ad25d7221af8b4e6759d1f3395c4fddd49c96fe79845977cf3173",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/web-routes.json",
+      "bytes": 1644,
+      "sha256": "9305611786e76fb265979d5c5876ac9326f85595dd7bedb3bcea307f6828f9e1",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/web-tests.log",
+      "bytes": 39001,
+      "sha256": "626bcc2d6c3739090883cb42a0d754ca7440754b9f9e5463474a08b46a5fa1fb",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c2/web-types.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/consumer-search.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/final-git-status.txt",
+      "bytes": 4654,
+      "sha256": "9b963f67fef0a1ba477aa779f2341abda86dac4cbbbd8d3ae073f1ab642161eb",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/git-preflight.json",
+      "bytes": 5240,
+      "sha256": "322752b09293ed2ba288197382a6f6297fa711ccf35dcba1f48ea2bd38b5c221",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/known-web-consumer.json",
+      "bytes": 3184,
+      "sha256": "bb9a03cb73ee3fcd1f04b979c2e38836d4053401d9ef11e4256bd6ad54dcf55e",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/preflight.json",
+      "bytes": 2111,
+      "sha256": "825e1c7fbdc672e3ae539730307e82535f52fc647dc91e81b3f98592209efd68",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/recheck-2.json",
+      "bytes": 705,
+      "sha256": "58c643f13d84f8b47bef560f0615c7efde85222f0bdb920c3e49a723b56e0c0c",
+      "category": "evidence"
+    },
+    {
+      "status": "A",
+      "path": "docs/quality/evidence/reserva-invitado-c3/recheck-3.json",
+      "bytes": 733,
+      "sha256": "74763c99d522c4e0354b4e1e933941e4f58ce42f8b5f1dc87d3f26a95610a45a",
+      "category": "evidence"
+    }
+  ],
+  "candidateCounts": {
+    "M": 46,
+    "D": 41,
+    "A": 196
+  },
+  "archives": [
+    {
+      "source": "apps/web/components/customer/customer.css",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__customer.css.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/Customer.test.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__Customer.test.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": false
+    },
+    {
+      "source": "apps/web/components/customer/CustomerAuth.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerAuth.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerBookingDetail.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerBookingDetail.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerBookings.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerBookings.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerClaim.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerClaim.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerEntryLinks.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerEntryLinks.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerProfile.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerProfile.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerProvider.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerProvider.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerRepeatBooking.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerRepeatBooking.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/components/customer/CustomerShell.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__components__customer__CustomerShell.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/lib/customer-routes.ts",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__lib__customer-routes.ts.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/lib/customer-ui.ts",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__lib__customer-ui.ts.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/lib/customer-ui.test.ts",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__lib__customer-ui.test.ts.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/lib/queries/customer.ts",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__lib__queries__customer.ts.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/layout.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__layout.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/_components/AccountStep.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]___components__AccountStep.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/_components/StepRouter.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]___components__StepRouter.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/scripts/f0a-browser.mjs",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__scripts__f0a-browser.mjs.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__cuenta__[action]__page.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/mis-reservas/page.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__page.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__[id]__page.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mis-reservas__[id]__repetir__page.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    },
+    {
+      "source": "apps/web/app/[slug]/mi-perfil/page.tsx",
+      "archive": "docs/history/reserva-invitado/c2/apps__web__app__[slug]__mi-perfil__page.tsx.txt",
+      "manifestMatch": true,
+      "equalsHeadNormalized": true
+    }
+  ],
+  "unpublishedCommits": [
+    "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac docs(m2): preparar checklist P4 de Clerk Development",
+    "230bd7b3753df815effd8593623d68b3114daebe chore: fijar LF para migraciones y SQL operativo",
+    "3507117d52f2abf4e8ac138e7ad0d63a9b80f861 docs: cerrar P3 QA tras cotejo y gate runtime real",
+    "adb36cb02330e9f00c84ecce7d0e2d119af9731a docs: registrar ensayo local y parada R1 de P3",
+    "75955bb44eb2ba86da7d2c5f30ec947373e5099e docs: conciliar hash canonico del manifiesto P3",
+    "8fd74477f027fba4c2c3c28d8a73eb9dcffaec3f docs: registrar P3 incompleto y rollback seguro de QA",
+    "bc1d559e42928ca0deb60319b33cf98b3cd69291 docs(m2): registrar continuidad QA final de P2",
+    "0dd4ba7c0e42ac18617029a7e0f3f990cf38995c docs(m2): completar respaldo P2 y recuperacion verificada",
+    "5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef docs(m2): registrar iteraciones locales de A y diferencias de esquema",
+    "3a154df5bc606ea0a31f4a47e92b7eb8fbf50aff docs(m2): registrar diagnostico GPG y parada local de A",
+    "768d898e27685216b40b699cf5ad9e3f7c1cfd76 docs(m2): documentar arnes P2 sin congelamiento detenido",
+    "25fbdd3241b926925a3af435d8ecb5c4ddd99fad docs(m2): registrar parada del arnes local P2",
+    "a19fdedfca5cda1f327e7182bbd037ecaedcdd54 docs(m2): registrar parada P2 antes de congelar QA",
+    "c0d9fd5d30a4acd984c4a92b0d198ce23de55822 docs(m2): corregir preparación local Docker de P2",
+    "1690a1eae692064c4058358bca2f38aa541c9bba docs(m2): diagnosticar parada condicionada de P2",
+    "03537c2b0647734f22c601fc25baf208df957603 docs(m2): registrar revalidación P2 y fallo de preparación",
+    "827e635939b23d1131f5c6e57c2066c1823a1b33 docs(m2): registrar parada previa de P2 sin congelar QA",
+    "339ae92ff142bb47708a54b7333e20da66f3f203 Corregir permisos runtime de M2 C3 P1 y registrar aprobación C2",
+    "2bb43ff2e297662c72e0a07f3ad5e4aba9beb891 Consolidar documentación de M1 y aprobación C1 sin publicación",
+    "d222115f7d624b5698b67a24e22486625fec22b2 Implementar C2 de cuenta de cliente y corregir su revisión visual"
+  ],
+  "unpublishedRangeFiles": [
+    ".gitattributes",
+    "CHANGELOG.md",
+    "PROJECT_MASTER.md",
+    "apps/api/ops/README.md",
+    "apps/api/ops/apply-runtime-grants.sql",
+    "apps/api/ops/customer-stage-one-runtime-grants.sql",
+    "apps/api/ops/verify-runtime-role.sql",
+    "apps/api/test/customer-no-dotenv.cjs",
+    "apps/api/test/customer-runtime-compat.cjs",
+    "apps/api/test/customer-runtime-grants-drill.cjs",
+    "apps/web/app/[slug]/_components/ConfirmStep.tsx",
+    "apps/web/app/[slug]/_components/ContactStep.tsx",
+    "apps/web/app/[slug]/_components/SuccessView.tsx",
+    "apps/web/app/[slug]/cuenta/[action]/page.tsx",
+    "apps/web/app/[slug]/layout.tsx",
+    "apps/web/app/[slug]/mi-perfil/page.tsx",
+    "apps/web/app/[slug]/mis-reservas/[id]/page.tsx",
+    "apps/web/app/[slug]/mis-reservas/[id]/repetir/page.tsx",
+    "apps/web/app/[slug]/mis-reservas/page.tsx",
+    "apps/web/components/customer/Customer.test.tsx",
+    "apps/web/components/customer/CustomerAuth.tsx",
+    "apps/web/components/customer/CustomerBookingDetail.tsx",
+    "apps/web/components/customer/CustomerBookings.tsx",
+    "apps/web/components/customer/CustomerClaim.tsx",
+    "apps/web/components/customer/CustomerEntryLinks.tsx",
+    "apps/web/components/customer/CustomerProfile.tsx",
+    "apps/web/components/customer/CustomerProvider.tsx",
+    "apps/web/components/customer/CustomerRepeatBooking.tsx",
+    "apps/web/components/customer/CustomerShell.tsx",
+    "apps/web/components/customer/customer.css",
+    "apps/web/components/notifications/BookingEmailOptIn.test.tsx",
+    "apps/web/components/public/BookingPolish.test.tsx",
+    "apps/web/components/public/M1C2.test.tsx",
+    "apps/web/components/public/PublicBookingScreen.tsx",
+    "apps/web/components/public/PublicMiniSite.test.tsx",
+    "apps/web/components/public/PublicMiniSite.tsx",
+    "apps/web/components/ui/Button.tsx",
+    "apps/web/lib/customer-routes.ts",
+    "apps/web/lib/customer-ui.test.ts",
+    "apps/web/lib/customer-ui.ts",
+    "apps/web/lib/public-booking-ui.test.ts",
+    "apps/web/lib/public-booking-ui.ts",
+    "apps/web/lib/queries/customer.ts",
+    "apps/web/lib/queries/public-booking.ts",
+    "apps/web/next.config.ts",
+    "apps/web/proxy.ts",
+    "docs/README.md",
+    "docs/product/APP_FLOWS.md",
+    "docs/quality/M2_C1_CIERRE.md",
+    "docs/quality/M2_C2_CIERRE.md",
+    "docs/quality/M2_C3_P4_CLERK_CHECKLIST.md",
+    "docs/quality/M2_C3_PREFLIGHT.md",
+    "docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+    "docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+    "docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json",
+    "docs/quality/evidence/m2-c2/account-errors-390.png",
+    "docs/quality/evidence/m2-c2/claim-success-390.png",
+    "docs/quality/evidence/m2-c2/profile-390.png",
+    "docs/quality/evidence/m2-c2/profile-errors-390.png",
+    "docs/quality/evidence/m2-c2/repeat-success-390.png",
+    "docs/quality/evidence/m2-c2/review-crear-reflow-200.png",
+    "docs/quality/evidence/m2-c2/review-entrar-reflow-200.png",
+    "docs/quality/evidence/m2-c2/review-mi-perfil-reflow-200.png",
+    "docs/quality/evidence/m2-c2/review-mis-reservas-reflow-200.png",
+    "docs/quality/evidence/m2-c2/validation.json",
+    "docs/quality/evidence/m2-c2/zoom-reflow-200.png",
+    "docs/quality/evidence/m2-c3-p1/p0-read-only.json",
+    "docs/quality/evidence/m2-c3-p1/p1-validation.json",
+    "docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo1.json",
+    "docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local-fallo2.json",
+    "docs/quality/evidence/m2-c3-p2/p2-cliente-ensayo-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-cliente-local.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-crypto.sh.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-diagnostico-reanudacion.json",
+    "docs/quality/evidence/m2-c3-p2/p2-docker-reproduccion.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004-postcommit/manifest.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004-postcommit/post-commit-audit.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004-postcommit/post-commit-audit.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004-postcommit/validation.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-before-dump.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-complete.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-corruption.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-errors.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-fallback.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-gate.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-impediments.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-targeted.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-units.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/a-wrong-phrase.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/archive-map.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/bc-first.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/c-verified.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/cleanup.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/controller-final.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/controller.ps1.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/document-prefix.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/executed-sources.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/executor.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/final-audit-earlier.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/final-audit-sandbox-failure.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/final-audit.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/final-audit.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/harness.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/image-drill.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/image-driver.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/image-rollback.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/local-probes.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/manifest.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/restore-version.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/session-notes.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validate.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validation-impediment.json",
+    "docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validation.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-arnes.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-arnes.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico-restauracion.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-diagnostico.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-ejecutor.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-fallback.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-home-corto.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-home-corto.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-limpieza-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-preparacion-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-recorrido-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-gpg-unidades.json",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-1-arnes.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-1-ejecutor.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-arnes.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-ejecutor.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-fallback.json",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-restore.sql.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-snapshot.sql.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-unidades.json",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-diagnostico.json",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-limpieza.json",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-registro.json",
+    "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-validacion.json",
+    "docs/quality/evidence/m2-c3-p2/p2-limpieza-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-parada-previa.json",
+    "docs/quality/evidence/m2-c3-p2/p2-preparacion.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-real-correccion-ledger.diff.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-real-ejecutor-intento.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-real-limpieza-paso0.json",
+    "docs/quality/evidence/m2-c3-p2/p2-real-parada-paso0.json",
+    "docs/quality/evidence/m2-c3-p2/p2-real-paso0-proveedores.json",
+    "docs/quality/evidence/m2-c3-p2/p2-real-prueba-comparador-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-real-supervisor.ps1.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-arnes.json",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-arnes.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-diagnostico-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-ejecutor.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-limpieza-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-recorrido-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-reintento-supervisor.ps1.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-arnes.json",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-arnes.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-diagnostico-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-ejecutor.py.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-fallback.json",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-limpieza-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-recorrido-local.json",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-supervisor.ps1.txt",
+    "docs/quality/evidence/m2-c3-p2/p2-sin-congelar-unidades.json",
+    "docs/quality/evidence/m2-c3-p2/p2-wrapper-corregido.ps1",
+    "docs/quality/evidence/m2-c3-p2/p2-wrapper.ps1.txt",
+    "docs/quality/evidence/m2-c3-p3/local-gate-correction-20261004/executed-sources.json",
+    "docs/quality/evidence/m2-c3-p3/local-gate-correction-20261004/impediments.json",
+    "docs/quality/evidence/m2-c3-p3/local-gate-correction-20261004/manifest.json",
+    "docs/quality/evidence/m2-c3-p3/local-gate-correction-20261004/result.json",
+    "docs/quality/evidence/m2-c3-p3/local-gate-correction-20261004/verification.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/authorization.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/checksum-equivalence.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/completion-audit.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/executed-sources.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/final-audit.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/gate-source-identity.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/impediments.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/manifest.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/p0-checksum-precedent.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r1-live-readonly.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r1-real-p2-reference.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r2-runtime-gate.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r3-preactivation.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/r4-activation.json",
+    "docs/quality/evidence/m2-c3-p3/owner-decision-complete-20261004/watchdog-local-verification.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/api-test-preparation.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/artifact-build-result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/artifact-preparation.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/authorization.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/catalog-result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/clarifications.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/crlf-correction-local-only.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/document-prefix.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/executed-and-corrected-sources.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/executor-static-review.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/freeze--result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/freeze-controller-state.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/image-identity.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/image-stage-attempt-1.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/image-stage-verified--result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/impediments.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/initial-state.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/local-bash-correction--result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/local-bash-correction-attempt-1.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/manifest.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/postcommit-manifest-audit.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/rehearsal-attempt-1.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/rehearsal-attempt-2.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/rollback-final--result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/runtime-gate-adaptation.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/runtime-gate-corrected.sh.txt",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/startup-drill-attempt-1.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/startup-retry--result.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/startup-verification.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/status.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/validation.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/watchdog-corrected.sh.txt",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/worker-image-decision.json",
+    "docs/quality/evidence/m2-c3-p3/p3-goal-20261004/worker-image-proposal.diff",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/assessment.json",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/attempt-1.json",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/authorization.json",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/executed-sources.json",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/impediments.json",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/manifest.json",
+    "docs/quality/evidence/m2-c3-p3/r1-continuation-stop-20261005/result.json",
+    "docs/quality/evidence/m2-c3-p3/sql-eol-lf-20261004/manifest.json",
+    "docs/quality/evidence/m2-c3-p3/sql-eol-lf-20261004/verification.json"
+  ],
+  "boundary": "Preparation review only; P4b full publication audit not executed"
+}

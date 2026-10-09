@@ -1,0 +1,10 @@
+{
+  "hashBasis": "canonical LF JSON Git blob",
+  "files": [
+    {
+      "path": "verification.json",
+      "bytes": 26835,
+      "sha256": "6c0f8c9d5cee800c92adf581676c93e8c1cb0cb2624bc8ab2e934be27a2ac21e"
+    }
+  ]
+}

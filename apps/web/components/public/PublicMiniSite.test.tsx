@@ -3,6 +3,7 @@ import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError, api, PublicBookingData } from "@/lib/api";
 import { PublicMiniSite } from "./PublicMiniSite";
+vi.mock('@clerk/nextjs', () => ({ useAuth: () => ({ isLoaded: true, isSignedIn: false }) }));
 
 vi.mock('@/lib/queries/media', () => ({
   usePublicMedia: () => ({ data: null, isError: false, error: null, isFetching: false, refetch: vi.fn() }),
@@ -10,6 +11,7 @@ vi.mock('@/lib/queries/media', () => ({
 
 const published: PublicBookingData = {
   minimumBookingDate: "2026-09-13",
+  timeZone: 'America/Santo_Domingo',
   organization: {
     name: "Estudio Norte",
     slug: "estudio-norte",
@@ -67,10 +69,14 @@ describe("Mini-sitio público C3", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Estudio Norte" })).toBeVisible();
     expect(screen.getByText("Cortes cuidados y atención con cita.")).toBeVisible();
     expect(screen.getByText("Calle Principal 10")).toBeVisible();
-    expect(screen.getByRole("link", { name: "Llamar al +18095551234" })).toHaveAttribute(
-      "href",
-      "tel:+18095551234",
-    );
+    const contact = screen.getByRole('link', { name: 'Contactar por WhatsApp (se abre en una pestaña nueva)' });
+    const href = new URL(contact.getAttribute('href')!);
+    expect(href.origin).toBe('https://wa.me');
+    expect(href.pathname).toBe('/18095551234');
+    expect(href.searchParams.get('text')).toBe('Hola. Quisiera consultar sobre sus servicios y reservar una cita.');
+    expect(contact).toHaveAttribute('target', '_blank');
+    expect(contact).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.queryByText(published.organization.phone!)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Abrir en Google Maps" })).toHaveAttribute(
       "href",
       published.organization.googleMapsUrl,
@@ -78,24 +84,11 @@ describe("Mini-sitio público C3", () => {
     expect(document.body.textContent).not.toMatch(/organizationId|private@example|tenant-/);
   });
 
-  it("revalida la publicación antes de abrir el asistente y mueve el foco", async () => {
+  it("ofrece enlace directo al flujo separado y no monta un asistente", async () => {
     mount();
-    await screen.findByRole("button", { name: "Reservar cita" });
-
-    fireEvent.click(screen.getByRole("button", { name: "Reservar cita" }));
-
-    const heading = await screen.findByRole("heading", {
-      level: 2,
-      name: "Reserva tu cita en Estudio Norte",
-    });
-    await waitFor(() => expect(api.get).toHaveBeenCalledTimes(2));
-    expect(api.get).toHaveBeenLastCalledWith("/public/estudio-norte/booking-data");
-    expect(heading).toHaveFocus();
-    expect(screen.getByRole("progressbar", { name: "Progreso de la reserva" })).toHaveAttribute(
-      "aria-valuenow",
-      "17",
-    );
-    expect(screen.getByText("Corte clásico")).toBeVisible();
+    expect(await screen.findByRole('link', { name: 'Reservar cita' })).toHaveAttribute('href', '/estudio-norte/reservar');
+    expect(screen.queryByText('Selecciona el servicio')).not.toBeInTheDocument();
+    expect(api.get).toHaveBeenCalledTimes(1);
   });
 
   it("revalida al recuperar foco aunque los datos aún estén frescos", async () => {
@@ -109,18 +102,13 @@ describe("Mini-sitio público C3", () => {
     await waitFor(() => expect(api.get).toHaveBeenCalledTimes(2));
   });
 
-  it("reemplaza contenido previo por la presentación neutra si se retira al iniciar", async () => {
+  it("retira el contenido previo al recuperar foco tras un 404", async () => {
     mount();
-    await screen.findByRole("button", { name: "Reservar cita" });
-    vi.mocked(api.get).mockRejectedValueOnce(new ApiError(404, "Información no disponible."));
-
-    fireEvent.click(screen.getByRole("button", { name: "Reservar cita" }));
-
-    expect(
-      await screen.findByRole("heading", { level: 1, name: "Esta página no está disponible" }),
-    ).toBeVisible();
-    expect(screen.queryByText("Estudio Norte")).not.toBeInTheDocument();
-    expect(screen.queryByText("Información no disponible.")).not.toBeInTheDocument();
+    await screen.findByRole('link', { name: 'Reservar cita' });
+    vi.mocked(api.get).mockRejectedValueOnce(new ApiError(404, 'Información no disponible.'));
+    focusManager.setFocused(false); focusManager.setFocused(true);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Esta página no está disponible' })).toBeVisible();
+    expect(screen.queryByText('Estudio Norte')).not.toBeInTheDocument();
   });
 
   it("distingue un fallo recuperable de una página retirada", async () => {
@@ -141,7 +129,7 @@ describe("Mini-sitio público C3", () => {
 
     expect(await screen.findByRole("heading", { level: 1, name: "Estudio Norte" })).toBeVisible();
     expect(screen.getByText("Las reservas en línea no están disponibles por ahora.")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Reservar cita" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Reservar cita" })).not.toBeInTheDocument();
   });
 
   it("omite limpiamente las secciones editoriales opcionales vacías", async () => {
@@ -159,74 +147,15 @@ describe("Mini-sitio público C3", () => {
 
     expect(await screen.findByRole("heading", { level: 1, name: "Estudio Norte" })).toBeVisible();
     expect(screen.queryByText("Nuestra ubicación")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /Llamar/ })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Reservar cita" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: /WhatsApp/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Reservar cita" })).toBeVisible();
   });
 
-  it("usa la fecha mínima y el instante UTC autoritativos del backend", async () => {
-    vi.mocked(api.get)
-      .mockReset()
-      .mockResolvedValueOnce(published)
-      .mockResolvedValueOnce(published)
-      .mockResolvedValueOnce({
-        date: "2099-01-05",
-        serviceId: "service-1",
-        slots: [
-          {
-            time: "10:00",
-            professionalId: "professional-1",
-            startTime: "2099-01-05T14:00:00.000Z",
-          },
-        ],
-      });
-    vi.mocked(api.post).mockResolvedValueOnce({
-      booking: {
-        id: "booking-1",
-        serviceId: "service-1",
-        professionalId: "professional-1",
-        startTime: "2099-01-05T14:00:00.000Z",
-        endTime: "2099-01-05T14:30:00.000Z",
-        status: "PENDING",
-      },
-      accountCreated: false,
-      accountCreationError: null,
-    });
-    vi.spyOn(window, "open").mockImplementation(() => null);
+  it.each(['8095551234', '+18095551234\n', 'javascript:alert(1)'])('omite WhatsApp con teléfono inválido', async phone => {
+    vi.mocked(api.get).mockResolvedValueOnce({ ...published, organization: { ...published.organization, phone } });
     mount();
-
-    fireEvent.click(await screen.findByRole("button", { name: "Reservar cita" }));
-    fireEvent.click(await screen.findByRole("button", { name: /Corte clásico/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-    fireEvent.click(screen.getByRole("button", { name: /Alex/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-
-    const dateInput = screen.getByLabelText("Fecha");
-    expect(dateInput).toHaveAttribute("min", published.minimumBookingDate);
-    fireEvent.change(dateInput, { target: { value: "2099-01-05" } });
-    fireEvent.click(await screen.findByRole("button", { name: "10:00" }));
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-
-    fireEvent.change(screen.getByLabelText("Nombre completo"), {
-      target: { value: "Cliente QA" },
-    });
-    fireEvent.change(screen.getByLabelText("Teléfono"), {
-      target: { value: "8095551234" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar reserva" }));
-
-    await waitFor(() =>
-      expect(api.post).toHaveBeenCalledWith("/public/estudio-norte/bookings", {
-        serviceId: "service-1",
-        professionalId: "professional-1",
-        startTime: "2099-01-05T14:00:00.000Z",
-        clientName: "Cliente QA",
-        clientPhone: "8095551234",
-        clientEmail: undefined,
-        createAccount: false,
-        password: undefined,
-      }),
-    );
+    await screen.findByRole('link', { name: 'Reservar cita' });
+    expect(screen.queryByRole('link', { name: /WhatsApp/ })).not.toBeInTheDocument();
   });
+
 });

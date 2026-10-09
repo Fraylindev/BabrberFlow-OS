@@ -1,0 +1,17 @@
+const path=require('node:path'),{createRequire}=require('node:module'),{Agent}=require('node:http'),assert=require('node:assert/strict');
+const api=path.resolve('apps/api'),load=createRequire(path.join(api,'package.json'));
+load('ts-node').register({transpileOnly:true,project:path.join(api,'tsconfig.json')});
+const {Controller,Get,UseGuards}=load('@nestjs/common'),{Test}=load('@nestjs/testing'),{ThrottlerModule,ThrottlerGuard}=load('@nestjs/throttler'),{PrismaClient}=load('@prisma/client'),request=load('supertest');
+const {PostgresThrottlerStorage}=load(path.join(api,'src/security/postgres-throttler.storage.ts'));
+class Fixture{read(){return {ok:true}}}Controller('cascade-probe')(Fixture);Get()(Fixture.prototype,'read',Object.getOwnPropertyDescriptor(Fixture.prototype,'read'));UseGuards(ThrottlerGuard)(Fixture);
+(async()=>{const clients=[new PrismaClient(),new PrismaClient()],apps=[],agent=new Agent({keepAlive:false,maxSockets:Infinity}),records=[];try{
+ for(const db of clients){const module=await Test.createTestingModule({imports:[ThrottlerModule.forRoot({throttlers:[{name:'default',ttl:60000,limit:30,blockDuration:60000}],storage:new PostgresThrottlerStorage({db},'synthetic-cascade-probe-secret-32bytes')})],controllers:[Fixture]}).compile();const app=module.createNestApplication();app.use((req,res,next)=>{if(req.headers['x-probe-fail']){req.socket.destroy();return;}setTimeout(next,100);});await app.listen(0,'127.0.0.1');apps.push(app);}
+ const hit=(i,fail=false)=>{const r=request(apps[i%2].getHttpServer()).get('/cascade-probe').agent(agent);return fail?r.set('x-probe-fail','1'):r;};
+ for(const drain of [false,true]){
+  await clients[0].securityRateBucket.deleteMany();const calls=Array.from({length:80},(_,i)=>Promise.resolve(hit(i,i===0)));let code;
+  if(drain){const settled=await Promise.allSettled(calls);code=settled.find(x=>x.status==='rejected').reason.code;await clients[0].securityRateBucket.deleteMany();}
+  else{try{await Promise.all(calls)}catch(e){code=e.code;}await clients[0].securityRateBucket.deleteMany();await Promise.allSettled(calls);}
+  const before=(await clients[0].securityRateBucket.findMany()).map(x=>x.count);const next=await hit(0);records.push({drain,injectedError:code,bucketCountsAfterCleanupAndDrain:before,nextStatus:next.status});
+ }
+ assert.equal(records[0].injectedError,'ECONNRESET');assert.equal(records[0].nextStatus,429);assert.equal(records[1].nextStatus,200);console.log(JSON.stringify({injected:true,records}));
+}finally{agent.destroy();try{await Promise.all(apps.map(a=>a.close()));}finally{await Promise.all(clients.map(d=>d.$disconnect()));}}})().catch(e=>{console.error(e);process.exitCode=1;});

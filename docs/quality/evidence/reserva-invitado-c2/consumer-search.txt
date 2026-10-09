@@ -1,0 +1,21 @@
+apps/api/src\public-booking\public-booking.service.spec.ts:284:    expect(result).not.toHaveProperty('accountCreated');
+apps/api/src\public-booking\public-booking.service.spec.ts:285:    expect(result).not.toHaveProperty('accountCreationError');
+apps/api/src\public-booking\guest-retirement.spec.ts:101:    ['get', '/customer/businesses'],
+apps/api/src\public-booking\guest-retirement.spec.ts:102:    ['get', '/customer/demo/bookings'],
+apps/api/src\public-booking\guest-retirement.spec.ts:103:    ['get', `/customer/demo/bookings/${id}`],
+apps/api/src\public-booking\guest-retirement.spec.ts:104:    ['get', '/customer/demo/profile'],
+apps/api/src\public-booking\guest-retirement.spec.ts:105:    ['patch', '/customer/demo/profile'],
+apps/api/src\public-booking\guest-retirement.spec.ts:106:    ['post', '/customer/demo/bookings'],
+apps/api/src\public-booking\guest-retirement.spec.ts:107:    ['post', '/auth/clerk/customer/claims'],
+apps/api/src\public-booking\guest-retirement.spec.ts:122:    { createAccount: true },
+apps/api/src\public-booking\guest-retirement.spec.ts:123:    { createAccount: false },
+apps/api/src\public-booking\guest-retirement.spec.ts:125:    { createAccount: true, password: 'Synthetic-password-123!' },
+apps/api/src\public-booking\guest-retirement.spec.ts:154:      expect(response.body).not.toHaveProperty('accountCreated');
+apps/api/src\public-booking\guest-retirement.spec.ts:155:      expect(response.body).not.toHaveProperty('accountCreationError');
+apps/api/src\public-booking\guest-claim-retirement.integration.spec.ts:193:          '/auth/clerk/customer/claims',
+apps/api/src\public-booking\guest-claim-retirement.integration.spec.ts:200:          message: 'Cannot POST /auth/clerk/customer/claims',
+apps/api/src\public-booking\guest-claim-retirement.integration.spec.ts:235:        expect(response.body).not.toHaveProperty('accountCreated');
+apps/api/src\public-booking\guest-claim-retirement.integration.spec.ts:236:        expect(response.body).not.toHaveProperty('accountCreationError');
+apps/web\components\public\M1C2.test.tsx:72:  expect(payload).not.toHaveProperty('createAccount');
+apps/web\scripts\guest-c2-browser.mjs:89:      assert.equal(await page.locator('a[href*="/cuenta"],a[href*="/mis-reservas"],a[href*="/mi-perfil"]').count(),0);
+apps/web\scripts\guest-c2-browser.mjs:127:      for(const key of ['createAccount','password','userId','organizationId']) assert(!(key in posts[0].payload));

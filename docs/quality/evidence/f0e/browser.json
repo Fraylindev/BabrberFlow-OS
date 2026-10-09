@@ -1,0 +1,1255 @@
+{
+  "environment": "Chrome local headless, componentes reales, transporte HTTP controlado, sin DB/Clerk/proveedores reales, reloj de negocio Santo Domingo y dispositivo Tokio",
+  "reports": [
+    {
+      "width": 320,
+      "name": "reservas-inicial",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reservas-tarjetas",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reservas-vacio",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reservas-error",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reserva-error-transicion",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 320,
+      "scrollWidth": 320
+    },
+    {
+      "width": 320,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 320,
+      "scrollWidth": 320,
+      "invoice": {
+        "visible": false,
+        "tableWidth": 0,
+        "containerWidth": 0,
+        "scrollWidth": 0
+      }
+    },
+    {
+      "width": 320,
+      "name": "revision-business",
+      "innerWidth": 320,
+      "scrollWidth": 320,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "name": "whatsapp-contraste",
+      "color": "rgb(250, 250, 250)",
+      "border": "rgb(163, 163, 163)",
+      "background": "rgb(10, 10, 10)",
+      "height": 52,
+      "targetWidth": 288,
+      "contrast": 18.96800669384249
+    },
+    {
+      "width": 320,
+      "name": "exito-business",
+      "innerWidth": 320,
+      "scrollWidth": 320,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ],
+      "paddingBottom": "96px",
+      "order": [
+        "Agregar al calendario",
+        "Contactar por WhatsApp",
+        "Cómo llegar",
+        "Listo"
+      ]
+    },
+    {
+      "width": 320,
+      "name": "revision-none",
+      "innerWidth": 320,
+      "scrollWidth": 320,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "name": "exito-none",
+      "innerWidth": 320,
+      "scrollWidth": 320,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ],
+      "paddingBottom": "96px",
+      "order": [
+        "Agregar al calendario",
+        "Cómo llegar",
+        "Listo"
+      ]
+    },
+    {
+      "width": 320,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 375,
+      "name": "reservas-inicial",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reservas-tarjetas",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reservas-vacio",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reservas-error",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reserva-error-transicion",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    {
+      "width": 375,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 375,
+      "scrollWidth": 375,
+      "invoice": {
+        "visible": false,
+        "tableWidth": 0,
+        "containerWidth": 0,
+        "scrollWidth": 0
+      }
+    },
+    {
+      "width": 375,
+      "name": "revision-business",
+      "innerWidth": 375,
+      "scrollWidth": 375,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "name": "whatsapp-contraste",
+      "color": "rgb(250, 250, 250)",
+      "border": "rgb(163, 163, 163)",
+      "background": "rgb(10, 10, 10)",
+      "height": 52,
+      "targetWidth": 343,
+      "contrast": 18.96800669384249
+    },
+    {
+      "width": 375,
+      "name": "exito-business",
+      "innerWidth": 375,
+      "scrollWidth": 375,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ],
+      "paddingBottom": "96px",
+      "order": [
+        "Agregar al calendario",
+        "Contactar por WhatsApp",
+        "Cómo llegar",
+        "Listo"
+      ]
+    },
+    {
+      "width": 375,
+      "name": "revision-none",
+      "innerWidth": 375,
+      "scrollWidth": 375,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "name": "exito-none",
+      "innerWidth": 375,
+      "scrollWidth": 375,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ],
+      "paddingBottom": "96px",
+      "order": [
+        "Agregar al calendario",
+        "Cómo llegar",
+        "Listo"
+      ]
+    },
+    {
+      "width": 375,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 390,
+      "name": "reservas-inicial",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reservas-tarjetas",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reservas-vacio",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reservas-error",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reserva-error-transicion",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "invoice": {
+        "visible": false,
+        "tableWidth": 0,
+        "containerWidth": 0,
+        "scrollWidth": 0
+      }
+    },
+    {
+      "width": 390,
+      "name": "revision-business",
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "name": "whatsapp-contraste",
+      "color": "rgb(250, 250, 250)",
+      "border": "rgb(163, 163, 163)",
+      "background": "rgb(10, 10, 10)",
+      "height": 52,
+      "targetWidth": 358,
+      "contrast": 18.96800669384249
+    },
+    {
+      "width": 390,
+      "name": "exito-business",
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ],
+      "paddingBottom": "96px",
+      "order": [
+        "Agregar al calendario",
+        "Contactar por WhatsApp",
+        "Cómo llegar",
+        "Listo"
+      ]
+    },
+    {
+      "width": 390,
+      "name": "revision-none",
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "name": "exito-none",
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "photos": [
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        },
+        {
+          "width": 64,
+          "height": 64,
+          "radius": "8px"
+        }
+      ],
+      "paddingBottom": "96px",
+      "order": [
+        "Agregar al calendario",
+        "Cómo llegar",
+        "Listo"
+      ]
+    },
+    {
+      "width": 390,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 768,
+      "name": "reservas-inicial",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reservas-tarjetas",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reservas-vacio",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reservas-error",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reserva-error-transicion",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 768,
+      "scrollWidth": 768
+    },
+    {
+      "width": 768,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "invoice": {
+        "visible": false,
+        "tableWidth": 0,
+        "containerWidth": 0,
+        "scrollWidth": 0
+      }
+    },
+    {
+      "width": 768,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 1024,
+      "name": "reservas-inicial",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "reservas-todas-acciones",
+      "innerWidth": 1024,
+      "scrollWidth": 1024,
+      "bounds": [
+        {
+          "text": "Confirmar⋯",
+          "buttons": [
+            {
+              "text": "Confirmar",
+              "right": 912.828125,
+              "cellRight": 991
+            },
+            {
+              "text": "⋯",
+              "right": 962.828125,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        {
+          "text": "Completar⋯",
+          "buttons": [
+            {
+              "text": "Completar",
+              "right": 915.1875,
+              "cellRight": 991
+            },
+            {
+              "text": "⋯",
+              "right": 965.1875,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        {
+          "text": "Emitir factura⋯",
+          "buttons": [
+            {
+              "text": "Emitir factura",
+              "right": 932.9375,
+              "cellRight": 991
+            },
+            {
+              "text": "⋯",
+              "right": 982.9375,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 867.453125,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 867.453125,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 867.453125,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 867.453125,
+              "cellRight": 991
+            }
+          ],
+          "scrollWidth": 176,
+          "clientWidth": 176
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "name": "reservas-vacio",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "reservas-error",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "reserva-error-transicion",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 1024,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 1024,
+      "scrollWidth": 1024,
+      "invoice": {
+        "visible": false,
+        "tableWidth": 0,
+        "containerWidth": 0,
+        "scrollWidth": 0
+      }
+    },
+    {
+      "width": 1024,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "name": "reservas-inicial",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "reservas-todas-acciones",
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "bounds": [
+        {
+          "text": "Confirmar⋯",
+          "buttons": [
+            {
+              "text": "Confirmar",
+              "right": 1112.828125,
+              "cellRight": 1247
+            },
+            {
+              "text": "⋯",
+              "right": 1162.828125,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        },
+        {
+          "text": "Completar⋯",
+          "buttons": [
+            {
+              "text": "Completar",
+              "right": 1115.1875,
+              "cellRight": 1247
+            },
+            {
+              "text": "⋯",
+              "right": 1165.1875,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        },
+        {
+          "text": "Emitir factura⋯",
+          "buttons": [
+            {
+              "text": "Emitir factura",
+              "right": 1132.9375,
+              "cellRight": 1247
+            },
+            {
+              "text": "⋯",
+              "right": 1182.9375,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1067.453125,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1067.453125,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1067.453125,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1067.453125,
+              "cellRight": 1247
+            }
+          ],
+          "scrollWidth": 240,
+          "clientWidth": 240
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "name": "reservas-vacio",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "reservas-error",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "reserva-error-transicion",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 1280,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "invoice": {
+        "visible": true,
+        "tableWidth": 963.109375,
+        "containerWidth": 958,
+        "scrollWidth": 963
+      }
+    },
+    {
+      "width": 1280,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 1440,
+      "name": "reservas-inicial",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "reservas-todas-acciones",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "bounds": [
+        {
+          "text": "Confirmar⋯",
+          "buttons": [
+            {
+              "text": "Confirmar",
+              "right": 1232.84375,
+              "cellRight": 1407
+            },
+            {
+              "text": "⋯",
+              "right": 1282.84375,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        },
+        {
+          "text": "Completar⋯",
+          "buttons": [
+            {
+              "text": "Completar",
+              "right": 1235.203125,
+              "cellRight": 1407
+            },
+            {
+              "text": "⋯",
+              "right": 1285.203125,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        },
+        {
+          "text": "Emitir factura⋯",
+          "buttons": [
+            {
+              "text": "Emitir factura",
+              "right": 1252.953125,
+              "cellRight": 1407
+            },
+            {
+              "text": "⋯",
+              "right": 1302.953125,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1187.46875,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1187.46875,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1187.46875,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1187.46875,
+              "cellRight": 1407
+            }
+          ],
+          "scrollWidth": 280,
+          "clientWidth": 280
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "name": "reservas-vacio",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "reservas-error",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "reserva-error-transicion",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 1440,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "invoice": {
+        "visible": true,
+        "tableWidth": 1118,
+        "containerWidth": 1118,
+        "scrollWidth": 1118
+      }
+    },
+    {
+      "width": 1440,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    },
+    {
+      "width": 1920,
+      "name": "reservas-inicial",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "reservas-todas-acciones",
+      "innerWidth": 1920,
+      "scrollWidth": 1920,
+      "bounds": [
+        {
+          "text": "Confirmar⋯",
+          "buttons": [
+            {
+              "text": "Confirmar",
+              "right": 1552.84375,
+              "cellRight": 1807
+            },
+            {
+              "text": "⋯",
+              "right": 1602.84375,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "text": "Completar⋯",
+          "buttons": [
+            {
+              "text": "Completar",
+              "right": 1555.203125,
+              "cellRight": 1807
+            },
+            {
+              "text": "⋯",
+              "right": 1605.203125,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "text": "Emitir factura⋯",
+          "buttons": [
+            {
+              "text": "Emitir factura",
+              "right": 1572.953125,
+              "cellRight": 1807
+            },
+            {
+              "text": "⋯",
+              "right": 1622.953125,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1507.46875,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1507.46875,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1507.46875,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "text": "⋯",
+          "buttons": [
+            {
+              "text": "⋯",
+              "right": 1507.46875,
+              "cellRight": 1807
+            }
+          ],
+          "scrollWidth": 360,
+          "clientWidth": 360
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "name": "reservas-vacio",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "reservas-error",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "reserva-error-transicion",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "reservas-rol-ADMIN",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "reservas-rol-RECEPTIONIST",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "reservas-rol-BARBER",
+      "innerWidth": 1920,
+      "scrollWidth": 1920
+    },
+    {
+      "width": 1920,
+      "name": "facturacion-diagnostico",
+      "innerWidth": 1920,
+      "scrollWidth": 1920,
+      "invoice": {
+        "visible": true,
+        "tableWidth": 1150,
+        "containerWidth": 1150,
+        "scrollWidth": 1150
+      }
+    },
+    {
+      "width": 1920,
+      "name": "consola-transporte",
+      "errors": [],
+      "expectedResourceErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "unexpected": []
+    }
+  ],
+  "failures": []
+}

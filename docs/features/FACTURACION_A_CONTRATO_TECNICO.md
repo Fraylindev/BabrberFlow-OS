@@ -16,6 +16,8 @@ Este documento define el contrato de producto, arquitectura y seguridad implemen
 
 ## 1. Resultado de producto
 
+Actualización F0-C, 2026-09-30 — **BACKEND APROBADO E INTEGRACIÓN AUTORIZADA / IMPLEMENTADO, EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA**. El propietario aprobó el backend validado que permite completar una reserva CONFIRMED, emitir para COMPLETED y registrar su cobro en cualquier momento, incluso antes de startTime/endTime. Sustituye todas las restricciones temporales históricas de este documento, sus algoritmos y criterios de prueba: no se exige `endTime <= now` en completar, emitir o cobrar. HTTP, DTO, respuestas, roles/tenant/ownership, precio server-side, unicidad y auditoría permanecen iguales; emisión/paidAt se asignan con el reloj real del servidor. La información inferior conserva el contexto aprobado de agosto. QA ejecuta F0-B hasta desplegar F0-C, cuyo commit/push y despliegue QA fueron autorizados expresamente; no hay migración nueva ni modificación de migraciones históricas. [Alcance y evidencia vigente](../quality/CORRECTIVO_F0C.md).
+
 Facturación-A permite registrar internamente la obligación de cobro de una reserva completada y un único cobro completo asociado. No genera comprobantes fiscales, e-CF ni documentos con validez tributaria.
 
 Resultados por rol:

@@ -1,0 +1,62 @@
+{
+  "failures": [
+    {
+      "class": "AssertionError",
+      "phase": "documentary-validation",
+      "commandSanitized": "bundled-python docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validate.py.txt",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\r\n  File \"C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3-p2\\p2-goal-20261004\\validate.py.txt\", line 28, in <module>\r\n    check('no private-key payload: '+p.name,'-----BEGIN PRIVATE KEY-----' not in text and '-----BEGIN OPENSSH PRIVATE KEY-----' not in text)\r\n  File \"C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3-p2\\p2-goal-20261004\\validate.py.txt\", line 14, in check\r\n    assert condition,label\r\n           ^^^^^^^^^\r\nAssertionError: no private-key payload: validate.py.txt\r\n",
+      "stderrCapBytes": 8192,
+      "stderrTruncated": false,
+      "traceLine": 839,
+      "traceCallId": "call_ltsCOOmIu3wfBVUNOFdSgMjB",
+      "comparisonBothSides": {
+        "expected": "No actual standalone private-key PEM header in evidence",
+        "observed": "Literal header examples in validator source; no key material"
+      },
+      "cause": "Substring scan matched its own source-code string literal",
+      "resolution": "Anchor the header detection to complete standalone lines",
+      "proof": "Revised validation exits zero and does not accept standalone headers",
+      "exceptionClass": "AssertionError"
+    },
+    {
+      "class": "AssertionError",
+      "phase": "documentary-validation-schema",
+      "commandSanitized": "bundled-python docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validate.py.txt",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\r\n  File \"C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3-p2\\p2-goal-20261004\\validate.py.txt\", line 57, in <module>\r\n    if x['label']=='restore-snapshot':check('full schema SQL/diff retained',x['snapshot'] and x['restore'] and x['equal'] and x['diffComplete']=='')\r\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3-p2\\p2-goal-20261004\\validate.py.txt\", line 14, in check\r\n    assert condition,label\r\n           ^^^^^^^^^\r\nAssertionError: full schema SQL/diff retained\r\n",
+      "stderrCapBytes": 8192,
+      "stderrTruncated": false,
+      "traceLine": 847,
+      "traceCallId": "call_AlFSsfdpldeRv4rYkKwtqEu7",
+      "cause": "New documentary assertion required empty raw diff, contrary to the authorized, PostgreSQL-proven E5 AND regrouping",
+      "resolution": "Recompute full schema equality from retained SQL with only the exact E5 terms; require original PostgreSQL truth results and identical term order/text",
+      "proof": "Full SQL equality recomputed; no normalization or exception widened",
+      "comparisonBothSides": {
+        "expectedByFaultyAssertion": "empty raw schema diff",
+        "observedCompleteRawDiff": "--- snapshot-schema.sql\n+++ restore-schema.sql\n@@ -483,7 +483,7 @@\n     \"dayOfWeek\" integer NOT NULL,\n     \"startMinute\" integer NOT NULL,\n     \"endMinute\" integer NOT NULL,\n-    CONSTRAINT \"BusinessScheduleWindow_minutes_check\" CHECK ((((\"startMinute\" >= 0) AND (\"startMinute\" <= 1439)) AND ((\"endMinute\" >= 1) AND (\"endMinute\" <= 1440)) AND (\"startMinute\" < \"endMinute\")))\n+    CONSTRAINT \"BusinessScheduleWindow_minutes_check\" CHECK (((\"startMinute\" >= 0) AND (\"startMinute\" <= 1439) AND ((\"endMinute\" >= 1) AND (\"endMinute\" <= 1440)) AND (\"startMinute\" < \"endMinute\")))\n );\n \n \n",
+        "correctExpectation": "Full SQL equality after only original proved E5 substitution"
+      },
+      "exceptionClass": "AssertionError"
+    },
+    {
+      "exceptionClass": "AssertionError",
+      "phase": "documentary-validation-metadata",
+      "commandSanitized": "bundled-python docs/quality/evidence/m2-c3-p2/p2-goal-20261004/validate.py.txt",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\r\n  File \"C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3-p2\\p2-goal-20261004\\validate.py.txt\", line 84, in <module>\r\n    check('process error metadata',all(k in x for k in ['exitCode','commandSanitized','phase','exceptionClass']) if 'commandSanitized' in x else True)\r\n  File \"C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\docs\\quality\\evidence\\m2-c3-p2\\p2-goal-20261004\\validate.py.txt\", line 14, in check\r\n    assert condition,label\r\n           ^^^^^^^^^\r\nAssertionError: process error metadata\r\n",
+      "stderrCapBytes": 8192,
+      "stderrTruncated": false,
+      "traceCallId": "call_kUkzN7WN4pbZzhWGFRiuY9li",
+      "traceLine": 875,
+      "comparisonBothSides": {
+        "expectedClassField": "exceptionClass",
+        "observedClassField": "class",
+        "affectedRecords": "Only the two new closure validation errors; operational records already use exceptionClass"
+      },
+      "cause": "Closure writer used a different field name",
+      "resolution": "Add the uniform exceptionClass field to both retained records, preserving class and full errors",
+      "proof": "Strict error-metadata validation unchanged and passes"
+    }
+  ]
+}

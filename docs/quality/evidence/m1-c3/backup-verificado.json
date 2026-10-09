@@ -1,0 +1,23 @@
+{
+  "timestampUtc": "2026-10-01T22:59:00Z",
+  "project": "prirlabbnlcuvnzuaczp",
+  "sourceReadOnly": true,
+  "tlsVerified": true,
+  "exportedSnapshot": true,
+  "comparisonSource": "fresh read-only snapshot after export; identical fingerprints",
+  "schema": "public",
+  "tables": 36,
+  "matchedFingerprints": 36,
+  "migrations": 27,
+  "migrationFingerprintMatched": true,
+  "encrypted": true,
+  "sha256": "21c7341b396773468f112733043ed5f2b8f5d844233969cb77d886af8f557e41",
+  "bytes": 37253,
+  "restoredFromEncryptedCopy": true,
+  "isolatedNetwork": "none",
+  "restoreData": "tmpfs",
+  "businessRowsPrinted": false,
+  "isolatedContainerRemoved": true,
+  "plaintextRemoved": true,
+  "encryptedCopyRetained": true
+}

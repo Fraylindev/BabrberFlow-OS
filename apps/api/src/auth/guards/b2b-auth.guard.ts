@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { isUUID } from 'class-validator';
+import { UserRole } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { AuthenticatedRequest } from '../types/authenticated-request';
 import type { JwtPayload } from '../strategies/jwt.strategy';
@@ -70,7 +71,7 @@ export class B2bAuthGuard implements CanActivate {
         },
       });
 
-      if (!membership) {
+      if (!membership || membership.role === UserRole.CUSTOMER) {
         throw this.unauthorized();
       }
 

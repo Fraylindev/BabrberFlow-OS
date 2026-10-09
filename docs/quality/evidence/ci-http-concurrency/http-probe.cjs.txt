@@ -1,0 +1,12 @@
+const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
+const root=process.cwd(),request=require(require.resolve('supertest',{paths:[path.join(root,'apps/api')]}));
+async function probe(stable,keepAlive,size,round){
+ let received=0,closingWithPending=0,completed=0;const agents=[new http.Agent({keepAlive,maxSockets:Infinity}),new http.Agent({keepAlive,maxSockets:Infinity})];
+ const servers=agents.map(()=>{const s=http.createServer((req,res)=>{received++;const n=Number(req.url.slice(1));setTimeout(()=>{res.end('ok');completed++;},n<2?0:10+n%9);});const close=s.close.bind(s);s.close=function(...args){if(completed<size)closingWithPending++;return close(...args)};return s;});
+ if(stable)for(const s of servers)await new Promise(resolve=>s.listen(0,'127.0.0.1',resolve));
+ const calls=Array.from({length:size},(_,i)=>{const r=request(servers[i%2]).get('/'+i).timeout({response:1000,deadline:1500});return keepAlive?r.agent(agents[i%2]):r;});
+ const settled=await Promise.allSettled(calls);const failures=settled.filter(x=>x.status==='rejected').map(x=>({code:x.reason.code,syscall:x.reason.syscall,address:x.reason.address,port:x.reason.port,message:x.reason.message}));
+ for(const a of agents)a.destroy();for(const s of servers)if(s.listening)await new Promise(resolve=>s.close(resolve));
+ return {stable,keepAlive,size,round,received,completed,closingWithPending,failures};
+}
+(async()=>{const records=[];for(const size of [35,80])for(const keepAlive of [false,true])for(const stable of [false,true])for(let i=0;i<10;i++)records.push(await probe(stable,keepAlive,size,i));const result={node:process.version,platform:process.platform,globalKeepAlive:http.globalAgent.options.keepAlive,superagentDefaultAgent:request(http.createServer()).get('/').agent(),records};fs.mkdirSync(path.join(root,'docs/quality/evidence/ci-http-concurrency'),{recursive:true});fs.writeFileSync(path.join(root,'docs/quality/evidence/ci-http-concurrency/http-probe.json'),JSON.stringify({...result,superagentDefaultAgent:false},null,2));console.log(JSON.stringify({rounds:records.length,errors:records.flatMap(x=>x.failures).length,earlyCloses:records.reduce((n,r)=>n+r.closingWithPending,0)}));process.exit(0);})().catch(e=>{console.error(e);process.exit(1)});

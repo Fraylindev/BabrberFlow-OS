@@ -1,60 +1,48 @@
-import { InputField } from "@/components/ui/Field";
+'use client';
+
+import { useState } from 'react';
+import { InputField } from '@/components/ui/Field';
 import { EmailConsent } from '@/components/notifications/EmailConsent';
-import { NavButtons, StepWrapper } from "./shared";
+import { Button } from '@/components/ui/Button';
+import { contactErrors } from '@/lib/public-booking-ui';
+import { StepWrapper } from './shared';
+import { PhoneField } from '@/components/public/PhoneField';
+import { EMPTY_PHONE, changePhoneNumber, phonePrefixError, phoneValue, type PhoneDraft } from '@/lib/public-phone';
 
-interface ContactStepProps {
-  clientName: string;
-  clientPhone: string;
-  clientEmail: string;
-  emailOptedIn: boolean;
+export function ContactStep({ clientName, clientPhone, clientEmail, emailOptedIn,
+  onNameChange, onPhoneChange, onEmailChange, onEmailOptInChange, onBack, onNext, phone: suppliedPhone, onPhoneDraftChange,
+}: {
+  clientName: string; clientPhone: string; clientEmail: string; emailOptedIn: boolean;
+  onNameChange: (value: string) => void; onPhoneChange: (value: string) => void; onEmailChange: (value: string) => void;
   onEmailOptInChange: (value: boolean) => void;
-  onNameChange: (v: string) => void;
-  onPhoneChange: (v: string) => void;
-  onEmailChange: (v: string) => void;
-  onBack: () => void;
-  onNext: () => void;
-}
-
-export function ContactStep({
-  clientName,
-  clientPhone,
-  clientEmail,
-  emailOptedIn,
-  onEmailOptInChange,
-  onNameChange,
-  onPhoneChange,
-  onEmailChange,
-  onBack,
-  onNext,
-}: ContactStepProps) {
-  return (
-    <StepWrapper title="Tus datos">
-      <div className="flex flex-col gap-4">
-        <InputField
-          label="Nombre completo"
-          value={clientName}
-          onChange={(e) => onNameChange(e.target.value)}
-        />
-        <InputField
-          label="Teléfono"
-          value={clientPhone}
-          maxLength={11}
-          placeholder="8091234567"
-          onChange={(e) => onPhoneChange(e.target.value.replace(/[^\d]/g, ""))}
-        />
-        <InputField
-          label="Correo (opcional)"
-          type="email"
-          value={clientEmail}
-          onChange={(e) => onEmailChange(e.target.value)}
-        />
+  onBack: () => void; onNext: () => void;
+  phone?: PhoneDraft; onPhoneDraftChange?: (value: PhoneDraft) => void;
+}) {
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const phone = suppliedPhone ?? changePhoneNumber(EMPTY_PHONE, clientPhone);
+  const errors = contactErrors({ clientName, clientPhone, clientEmail, emailOptedIn });
+  const prefixError = phonePrefixError(phone);
+  if (prefixError) errors.clientPhone = prefixError;
+  const error = (field: keyof typeof errors) => touched[field] ? errors[field] : undefined;
+  return <StepWrapper title="Tus datos">
+    <form noValidate onSubmit={event => {
+      event.preventDefault();
+      setTouched({ clientName: true, clientPhone: true, clientEmail: true });
+      const first = Object.keys(errors)[0];
+      if (first) document.getElementById(`public-${first}`)?.focus();
+      else onNext();
+    }}>
+      <div className="space-y-5">
+        <InputField id="public-clientName" name="clientName" label="Nombre" className="booking-input" autoComplete="name" required maxLength={120}
+          value={clientName} error={error('clientName')} onChange={event => onNameChange(event.target.value)} onBlur={() => setTouched(value => ({ ...value, clientName: true }))} />
+        <PhoneField draft={phone} error={error('clientPhone')} onChange={value => { onPhoneDraftChange?.(value); onPhoneChange(phoneValue(value)); }} onBlur={() => setTouched(value => ({ ...value, clientPhone: true }))} />
+        <InputField id="public-clientEmail" name="clientEmail" label="Correo (opcional)" className="booking-input" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} maxLength={254}
+          value={clientEmail} error={error('clientEmail')} onChange={event => onEmailChange(event.target.value)} onBlur={() => setTouched(value => ({ ...value, clientEmail: true }))} />
+        <p className="text-sm leading-6 text-[var(--color-muted)]">El negocio usará tus datos para gestionar tu reserva.</p>
         <EmailConsent tone="dark" checked={emailOptedIn} onChange={onEmailOptInChange} />
+
       </div>
-      <NavButtons
-        onBack={onBack}
-        onNext={onNext}
-        nextDisabled={!clientName.trim() || clientPhone.trim().length < 7}
-      />
-    </StepWrapper>
-  );
+      <div className="booking-nav"><Button type="button" variant="ghost" onClick={onBack}>Atrás</Button><Button type="submit" className="booking-primary">Revisar reserva</Button></div>
+    </form>
+  </StepWrapper>;
 }

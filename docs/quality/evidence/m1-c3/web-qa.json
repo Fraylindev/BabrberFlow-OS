@@ -1,0 +1,12 @@
+{
+  "timestampUtc": "2026-10-01T23:06:30.454652+00:00",
+  "qaAliasVerified": true,
+  "reassociatedExistingPreviewAfterApi": true,
+  "qaDeploymentId": "dpl_ErRZTRYFZHeocGCrfBMvXDM3jMY9",
+  "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "ready": true,
+  "newWebBuildTriggered": false,
+  "productionDeploymentUnchanged": true,
+  "protectionModified": false,
+  "variablesModified": false
+}

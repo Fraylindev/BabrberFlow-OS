@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { ApiError } from "./api";
+import { isTransientQueryError, retryQuery } from './query-recovery';
 
 /**
  * Fábrica de QueryClient. Se crea una instancia nueva por render en el
@@ -15,13 +15,10 @@ export function createQueryClient() {
         // (otro usuario del mismo local puede crear/mover una cita) — 30s
         // de "fresh" evita refetch en cada click de UI sin volverse obsoleto.
         staleTime: 30 * 1000,
-        // 401/403/404 no se resuelven reintentando la misma petición.
-        retry: (failureCount, error) => {
-          if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
-            return false;
-          }
-          return failureCount < 2;
-        },
+        retry: retryQuery,
+        // After a bounded burst, keep recovering reads while the view is open.
+        // TanStack pauses offline requests and resumes on reconnect.
+        refetchInterval: (query) => isTransientQueryError(query.state.error) ? 15_000 : false,
         refetchOnWindowFocus: true,
       },
       mutations: {

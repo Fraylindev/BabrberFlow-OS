@@ -1,0 +1,49 @@
+{
+  "phase": "validacion-documental-posterior",
+  "harnessIteration": false,
+  "failure": {
+    "exceptionClass": "AssertionError",
+    "messageSanitized": "El verificador offline exigia CREATE EXTENSION WITH SCHEMA public en el dump. --schema=public omite el DDL de extensiones; ambas categorias extensions estan vacias. Limite real de cobertura, no nueva ejecucion del arnes.",
+    "tracebackSanitized": [
+      {
+        "file": "stdin",
+        "line": 31,
+        "function": "module"
+      }
+    ]
+  },
+  "externalCommand": {
+    "commandSanitized": [
+      "C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+      "-"
+    ],
+    "exitCode": 1,
+    "wrapperExitCode": 0,
+    "stderrCompleteRedacted": "Traceback (most recent call last):\n  File [literal omitido], line 31, in <module>\nAssertionError\n",
+    "stderrCapBytes": 8192,
+    "stderrTruncated": false
+  },
+  "correction": "No se cambia ejecutor ni criterio tras la parada. Se documenta la cobertura faltante; el verificador offline distingue estado public consultado del DDL de extension no cubierto por dump parcial.",
+  "extensionDumpCoverageIncomplete": true,
+  "gitWhitespaceReview": {
+    "commandSanitized": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exitCode": 2,
+    "phase": "revision-staged-evidencia",
+    "exceptionClass": "ExternalCommandExit",
+    "tracebackSanitized": [],
+    "tracebackAvailable": false,
+    "stderrCapBytes": 8192,
+    "stderrTruncated": false,
+    "cause": "Volcados completos retienen linea vacia final; diff completo retiene espacio de prefijo en lineas de contexto vacias. No se modifica evidencia ni comparador.",
+    "resolution": "Chequeo estandar para documento/fuentes/JSON; solo tres artefactos exactos revisados con -c core.whitespace=-blank-at-eof,-blank-at-eol por invocacion, sin configuracion global.",
+    "initialCombinedOutputRedacted": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-restore.sql.txt:2091: new blank line at EOF.\ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:10: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:11: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:28: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:29: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:28: new blank line at EOF.\ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-snapshot.sql.txt:2091: new blank line at EOF.\n",
+    "stderrCompleteRedacted": "",
+    "stdoutCompleteRedacted": "docs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-restore.sql.txt:2091: new blank line at EOF.\ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:10: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:11: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:28: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:29: trailing whitespace.\n+ \ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-schema.diff.txt:28: new blank line at EOF.\ndocs/quality/evidence/m2-c3-p2/p2-iteracion-local-2-snapshot.sql.txt:2091: new blank line at EOF.\n",
+    "streamSeparatedReadOnlyRecheck": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "imageId": "sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14",
+  "first20AssertionsPass": [
+    "missing-production-node-mode",
+    "production-in-development-mode",
+    "production-in-test-mode",
+    "staging-in-development-mode",
+    "missing-cors",
+    "localhost-cors",
+    "wildcard-cors",
+    "padded-booking-closure",
+    "padded-mfa",
+    "leading-space-mfa",
+    "padded-email-enabled",
+    "padded-email-domain",
+    "missing-rate-secret",
+    "missing-clerk-secret",
+    "development-clerk-secret",
+    "development-clerk-publishable",
+    "migrator-role",
+    "administrative-role",
+    "implicit-certificate-policy",
+    "invalid-certificates"
+  ],
+  "remaining3AssertionsPass": [
+    "PRODUCTION_FAIL_CLOSED_OK case=socket-override",
+    "PRODUCTION_FAIL_CLOSED_OK case=duplicate-certificate-policy",
+    "PRODUCTION_FAIL_CLOSED_OK case=wrong-database-protocol"
+  ],
+  "all23CasesPass": true,
+  "timeoutRetrySeconds": 90,
+  "unchangedAssertionExit1BeforeNest": true,
+  "imageBytesChanged": false,
+  "onlyLocal": true,
+  "qaAccess": false,
+  "productionAccess": false
+}

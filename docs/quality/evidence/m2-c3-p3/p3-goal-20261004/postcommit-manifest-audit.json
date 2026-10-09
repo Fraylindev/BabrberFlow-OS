@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-04T23:44:02.227514+00:00",
+  "auditedCommit": "8fd74477f027fba4c2c3c28d8a73eb9dcffaec3f",
+  "failureClass": "AssertionError",
+  "phase": "postcommit-manifest-hash-audit",
+  "commandSanitized": "bundled-python compare manifest hashes against git show HEAD:explicit-evidence-path",
+  "exitCode": 1,
+  "stderrCompleteRedacted": "Traceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\nAssertionError: worker-image-proposal.diff\n",
+  "stderrCapBytes": 8192,
+  "stderrTruncated": false,
+  "comparisons": [
+    {
+      "file": "worker-image-proposal.diff",
+      "expectedWorkingBytesSha256": "026b2efd06794649d459a2357515b54379075eaa2898bc1a0ef1ecf06f24a2b2",
+      "actualCommittedBlobSha256": "78a8fd21505d6f967331825e83a87d4b2709f13469d0bf525f8cb779645b528b",
+      "expectedWorkingBytes": 505,
+      "actualCommittedBytes": 496,
+      "cause": "Git canonical LF normalization of CRLF review-only diff",
+      "allContentIdenticalAfterCrLfNormalization": true,
+      "scope": "evidence representation only; no QA change"
+    }
+  ],
+  "resolution": "Use committed canonical Git blob hash for the review diff; retain original working bytes/hash and exact base64 executed sources",
+  "qaTouchedByCorrection": false,
+  "allOther31ManifestHashesMatched": true,
+  "ownTemporaryDirectoryRemoved": true
+}

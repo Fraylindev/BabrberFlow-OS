@@ -1,0 +1,605 @@
+{
+  "reference": "P0 \u00a711.2, p0-read-only.json: original working file or LF variant",
+  "comparisons": [
+    {
+      "name": "20260719162646_initial_schema",
+      "ledgerChecksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "currentWorkingOriginal",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+        "currentWorkingOriginal": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+        "LF": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+        "CRLF": "de270bc144c9e10510f7ac66874d3b7e7233a821b3f03b88a53045996a713120"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 0
+    },
+    {
+      "name": "20260720044928_add_invoice_model",
+      "ledgerChecksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "currentWorkingOriginal",
+        "CRLF"
+      ],
+      "hashes": {
+        "versioned": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+        "currentWorkingOriginal": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+        "LF": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+        "CRLF": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 24
+    },
+    {
+      "name": "20260722030552_link_professional_user",
+      "ledgerChecksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+        "currentWorkingOriginal": "414258e70298c3ac39b8bee9a0bd9553a7a7fec2f33640d30c62e6cfa228da0e",
+        "LF": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+        "CRLF": "414258e70298c3ac39b8bee9a0bd9553a7a7fec2f33640d30c62e6cfa228da0e"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 8
+    },
+    {
+      "name": "20260722042926_add_customer_role",
+      "ledgerChecksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+        "currentWorkingOriginal": "94a19e2e28aa233ca2e351aeaee47bc5e0dfb45540aac75fcc2325bb6f49c2c7",
+        "LF": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+        "CRLF": "94a19e2e28aa233ca2e351aeaee47bc5e0dfb45540aac75fcc2325bb6f49c2c7"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 2
+    },
+    {
+      "name": "20260723212248_microsite_and_indexes",
+      "ledgerChecksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+        "currentWorkingOriginal": "39296547cf6785dfa8166c0347711fa9780753ce2a49034eda4a8e88dbc5702f",
+        "LF": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+        "CRLF": "39296547cf6785dfa8166c0347711fa9780753ce2a49034eda4a8e88dbc5702f"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 32
+    },
+    {
+      "name": "20260724023058_global_identity_membership",
+      "ledgerChecksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+        "currentWorkingOriginal": "50fe26872f073d38d87b774aa46c61010e9ac723b6416b6a450e7aa869153426",
+        "LF": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+        "CRLF": "50fe26872f073d38d87b774aa46c61010e9ac723b6416b6a450e7aa869153426"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 46
+    },
+    {
+      "name": "20260725215619_service_client_is_active",
+      "ledgerChecksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+        "currentWorkingOriginal": "89641664faa78a35965e361ac254a34931b3474eb32ae667fcd27640617bd801",
+        "LF": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+        "CRLF": "89641664faa78a35965e361ac254a34931b3474eb32ae667fcd27640617bd801"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 5
+    },
+    {
+      "name": "20260727010227_audit_log_user_id",
+      "ledgerChecksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+        "currentWorkingOriginal": "3d165e560c47e1aec19a8c16256e5f8db01111e96f44dad95e3b7d461ecb57c4",
+        "LF": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+        "CRLF": "3d165e560c47e1aec19a8c16256e5f8db01111e96f44dad95e3b7d461ecb57c4"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 4
+    },
+    {
+      "name": "20260811180000_booking_schedule_exclusion",
+      "ledgerChecksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+        "currentWorkingOriginal": "0414cded28e146b31aba040cfe6ffc476215ad8d5ef76d42242029d5368694fb",
+        "LF": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+        "CRLF": "0414cded28e146b31aba040cfe6ffc476215ad8d5ef76d42242029d5368694fb"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 12
+    },
+    {
+      "name": "20260812010000_professionals_backend_a1",
+      "ledgerChecksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+        "currentWorkingOriginal": "d02d2d6156be83891312f4b59e991261be1be21abfb5610f59e9524763486df4",
+        "LF": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+        "CRLF": "d02d2d6156be83891312f4b59e991261be1be21abfb5610f59e9524763486df4"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 24
+    },
+    {
+      "name": "20260813193000_professional_individual_availability_a2",
+      "ledgerChecksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+        "currentWorkingOriginal": "8c9caf88b79bc68aa55aa4eb724b441612f2edfc8a210485d9c709a999aebe9c",
+        "LF": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+        "CRLF": "8c9caf88b79bc68aa55aa4eb724b441612f2edfc8a210485d9c709a999aebe9c"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 77
+    },
+    {
+      "name": "20260813200000_professional_availability_tenant_fk",
+      "ledgerChecksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+        "currentWorkingOriginal": "4d54419874d12490be228118b3dffbc1eee871b7ebf18d8dc6207d84593d6119",
+        "LF": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+        "CRLF": "4d54419874d12490be228118b3dffbc1eee871b7ebf18d8dc6207d84593d6119"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 19
+    },
+    {
+      "name": "20260814190000_add_user_clerk_link_a0_1",
+      "ledgerChecksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+        "currentWorkingOriginal": "a71c1a7d52fab1863266df08e3dfc7a8f07a8248ae8ca1507e117225ea3b244e",
+        "LF": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+        "CRLF": "a71c1a7d52fab1863266df08e3dfc7a8f07a8248ae8ca1507e117225ea3b244e"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 6
+    },
+    {
+      "name": "20260815120000_password_nullable",
+      "ledgerChecksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+        "currentWorkingOriginal": "adb3773bebd292f2cb7f674a10d850d41fe4a4e303a820eb1c76fc1de7fbe8e2",
+        "LF": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+        "CRLF": "adb3773bebd292f2cb7f674a10d850d41fe4a4e303a820eb1c76fc1de7fbe8e2"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 1
+    },
+    {
+      "name": "20260820220000_audit_log_pre_tenant_security_events",
+      "ledgerChecksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+        "currentWorkingOriginal": "01daa7839e861642c3f3b6bdcb6732e8a8d5ef6404cca08a312f8507e2656bae",
+        "LF": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+        "CRLF": "01daa7839e861642c3f3b6bdcb6732e8a8d5ef6404cca08a312f8507e2656bae"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 18
+    },
+    {
+      "name": "20260821220000_team_invitations_a0_4",
+      "ledgerChecksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "finished": false,
+      "rolledBack": true,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "currentWorkingOriginal": "8c6069d1f0ef4f02c228b03ff6d30ac3ca481f1b1ffa6899e452dbe4ed0c59a3",
+        "LF": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "CRLF": "8c6069d1f0ef4f02c228b03ff6d30ac3ca481f1b1ffa6899e452dbe4ed0c59a3"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 67
+    },
+    {
+      "name": "20260821220000_team_invitations_a0_4",
+      "ledgerChecksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "finished": false,
+      "rolledBack": true,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "currentWorkingOriginal": "8c6069d1f0ef4f02c228b03ff6d30ac3ca481f1b1ffa6899e452dbe4ed0c59a3",
+        "LF": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "CRLF": "8c6069d1f0ef4f02c228b03ff6d30ac3ca481f1b1ffa6899e452dbe4ed0c59a3"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 67
+    },
+    {
+      "name": "20260821220000_team_invitations_a0_4",
+      "ledgerChecksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "currentWorkingOriginal": "8c6069d1f0ef4f02c228b03ff6d30ac3ca481f1b1ffa6899e452dbe4ed0c59a3",
+        "LF": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "CRLF": "8c6069d1f0ef4f02c228b03ff6d30ac3ca481f1b1ffa6899e452dbe4ed0c59a3"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 67
+    },
+    {
+      "name": "20260822150000_client_user_b2c_link_a0_6_a",
+      "ledgerChecksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "finished": false,
+      "rolledBack": true,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "currentWorkingOriginal": "0e1db6148950b9ae6b487646027d73615c7aedeb59766a329769007fe04cfe43",
+        "LF": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "CRLF": "0e1db6148950b9ae6b487646027d73615c7aedeb59766a329769007fe04cfe43"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 13
+    },
+    {
+      "name": "20260822150000_client_user_b2c_link_a0_6_a",
+      "ledgerChecksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "currentWorkingOriginal": "0e1db6148950b9ae6b487646027d73615c7aedeb59766a329769007fe04cfe43",
+        "LF": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "CRLF": "0e1db6148950b9ae6b487646027d73615c7aedeb59766a329769007fe04cfe43"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 13
+    },
+    {
+      "name": "20260825220000_facturacion_a_internal_invoices",
+      "ledgerChecksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "finished": false,
+      "rolledBack": true,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "currentWorkingOriginal": "90a46acc990e94eaa91d5369120ce204b6b9379bf068d3258c0806dce7a9bd5f",
+        "LF": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "CRLF": "90a46acc990e94eaa91d5369120ce204b6b9379bf068d3258c0806dce7a9bd5f"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 107
+    },
+    {
+      "name": "20260825220000_facturacion_a_internal_invoices",
+      "ledgerChecksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "currentWorkingOriginal": "90a46acc990e94eaa91d5369120ce204b6b9379bf068d3258c0806dce7a9bd5f",
+        "LF": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "CRLF": "90a46acc990e94eaa91d5369120ce204b6b9379bf068d3258c0806dce7a9bd5f"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 107
+    },
+    {
+      "name": "20260826210000_facturacion_a_completion_service_price_guards",
+      "ledgerChecksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+        "currentWorkingOriginal": "2761e6498a4092a9819d4278b27144dd85e8bbde3259ea2097ba9c623623de08",
+        "LF": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+        "CRLF": "2761e6498a4092a9819d4278b27144dd85e8bbde3259ea2097ba9c623623de08"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 34
+    },
+    {
+      "name": "20260909120000_restore_invoice_integrity_checks",
+      "ledgerChecksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+        "currentWorkingOriginal": "4fb41dba02af9bea6b686f2e814d7faaaa520f22997ea21fcff0c7cb405956ce",
+        "LF": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+        "CRLF": "4fb41dba02af9bea6b686f2e814d7faaaa520f22997ea21fcff0c7cb405956ce"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 46
+    },
+    {
+      "name": "20260912120000_cms_editorial",
+      "ledgerChecksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+        "currentWorkingOriginal": "ba1036a28c504e43d131a8b162047a5b0a73a60049d854a86be0bca05752afe0",
+        "LF": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+        "CRLF": "ba1036a28c504e43d131a8b162047a5b0a73a60049d854a86be0bca05752afe0"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 56
+    },
+    {
+      "name": "20260914120000_booking_email_outbox",
+      "ledgerChecksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+        "currentWorkingOriginal": "46d81ed6d383d6903bcb342186e90c3cb1a28769c8dfa4448971bf3469f07b47",
+        "LF": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+        "CRLF": "46d81ed6d383d6903bcb342186e90c3cb1a28769c8dfa4448971bf3469f07b47"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 176
+    },
+    {
+      "name": "20260914120100_email_channel_control",
+      "ledgerChecksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+        "currentWorkingOriginal": "3c8440e92a90b94761198764c932c13a76f00165da8e3b969b265bca2dda2f64",
+        "LF": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+        "CRLF": "3c8440e92a90b94761198764c932c13a76f00165da8e3b969b265bca2dda2f64"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 9
+    },
+    {
+      "name": "20260915120000_email_template_version",
+      "ledgerChecksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+        "currentWorkingOriginal": "b79ad6f58903cab623a1f43761c720e1ef55f219c615cdfb8b2beb0a3a6013fd",
+        "LF": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+        "CRLF": "b79ad6f58903cab623a1f43761c720e1ef55f219c615cdfb8b2beb0a3a6013fd"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 3
+    },
+    {
+      "name": "20260923100000_media_promotions",
+      "ledgerChecksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+        "currentWorkingOriginal": "589ad3fe2a826115d753e0f68e98c888f65ae989c2def3ff410110fc589e3a49",
+        "LF": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+        "CRLF": "589ad3fe2a826115d753e0f68e98c888f65ae989c2def3ff410110fc589e3a49"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 275
+    },
+    {
+      "name": "20260925010000_security_rate_bucket",
+      "ledgerChecksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+        "currentWorkingOriginal": "fd1404ad72ac53dc7855d49493bd3d49fb0889ffda4217b43572e260cea8db5a",
+        "LF": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+        "CRLF": "fd1404ad72ac53dc7855d49493bd3d49fb0889ffda4217b43572e260cea8db5a"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 16
+    },
+    {
+      "name": "20260927170000_business_schedule",
+      "ledgerChecksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+      "finished": true,
+      "rolledBack": false,
+      "matchesOriginalOrLF": true,
+      "matchingForms": [
+        "versioned",
+        "LF"
+      ],
+      "hashes": {
+        "versioned": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+        "currentWorkingOriginal": "00f4e28db1d58b8bd32e3e26f2f6ba3531689b08941ea0765911af5ff4f95b44",
+        "LF": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+        "CRLF": "00f4e28db1d58b8bd32e3e26f2f6ba3531689b08941ea0765911af5ff4f95b44"
+      },
+      "versionedCRcount": 0,
+      "workingCRcount": 94
+    }
+  ],
+  "active27MatchingOriginalOrLF": true,
+  "priorAuditError": {
+    "class": "AssertionError",
+    "phase": "local-P0-hash-precedent",
+    "commandSanitized": "Python assert every historical checksum equals Git blob or LF",
+    "exitCode": 1,
+    "stderrCompleteRedacted": "Traceback (most recent call last):\n  File \"<stdin>\", line 6, in <module>\nAssertionError\n",
+    "cause": "Misread P0 original as Git blob; P0 original includes working CRLF form. One historical active row matches CRLF original.",
+    "resolution": "Compare actual original working bytes and LF, preserve all variants and both sides."
+  }
+}

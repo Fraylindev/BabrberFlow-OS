@@ -1,3 +1,4 @@
+import { formatBusinessInstant } from './business-time.ts';
 import {
   ApiError,
   type AuthUser,
@@ -73,18 +74,15 @@ export function formatBusinessDateTime(
   value: string,
   timeZone: string,
 ): string {
-  return new Intl.DateTimeFormat("es-DO", {
-    timeZone,
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value));
+  return formatBusinessInstant(value, timeZone);
 }
 
-export function invoiceErrorMessage(
+export function invoiceErrorMessage(error: unknown, operation: InvoiceOperation): string {
+  const message = invoiceErrorMessageText(error, operation);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function invoiceErrorMessageText(
   error: unknown,
   operation: InvoiceOperation,
 ): string {
@@ -96,14 +94,14 @@ export function invoiceErrorMessage(
     }
     if (error.status === 409) {
       if (operation === "issue") {
-        return "No pudimos emitir la factura. Confirma que el servicio terminó y la reserva está completada.";
+        return "No pudimos emitir la factura. Comprueba que la reserva esté completada y que el precio del servicio sea válido.";
       }
       if (operation === "payment") {
         return "No pudimos registrar el cobro. Actualiza la factura y verifica su estado.";
       }
     }
     if (error.status === 401 || error.status === 403) {
-      return "Tu acceso cambió. Actualiza la página e inténtalo de nuevo.";
+      return "No tienes acceso a esta operación con tu sesión actual.";
     }
   }
   return operation === "list"

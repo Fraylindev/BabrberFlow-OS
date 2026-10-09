@@ -1,5 +1,9 @@
 # PRD — Kortek Booking
 
+Estado posterior 2026-10-08: reserva invitada **ACTIVA EN QA** con pareja `b318ca5`; C3 **ACEPTADO POR DECLARACIÓN DEL PROPIETARIO, sin evidencia capturada**. M2 retirada por decisión del propietario. [Cierre, límites y pendientes](../features/RESERVA_INVITADO_C3_CIERRE_QA.md). Los checkpoints inferiores conservan su contexto histórico; producción sigue cerrada.
+
+C2 posterior, 2026-10-07: web local exclusivamente de invitado, portal B2C retirado y respuesta pública sólo `{booking}`; campos de cuenta eliminados coordinadamente de API/web. Validado localmente/en revisión; C3 no ejecutado. [Contrato, evidencia y límites](../features/RESERVA_INVITADO_C2_LOCAL.md). Los checkpoints anteriores se conservan como historia.
+
 Estado: definición vigente. El estado de entregas y checkpoints vive en [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 
 ## Visión
@@ -14,20 +18,26 @@ Kortek Booking es un SaaS multi-tenant para que barberías y salones administren
 | ADMIN | Gestión delegada | Operar capacidades autorizadas con controles equivalentes de seguridad |
 | RECEPTIONIST | Atención y agenda | Gestionar el trabajo permitido sin privilegios administrativos innecesarios |
 | BARBER | Profesional vinculado | Consultar y operar únicamente sus reservas y datos autorizados |
-| CUSTOMER | Flujo público B2C | Reservar con mínima fricción y mínima exposición de datos |
+| Invitado | Visitante del negocio | Reservar sin registro, autenticación ni cuenta; solicitar cambios al negocio |
 
-`CUSTOMER` no accede al dashboard interno. Roles y permisos efectivos se verifican en backend y en el contrato vigente de cada módulo.
+`Client` es la ficha operativa del negocio, no una cuenta. `CUSTOMER` se conserva únicamente como valor histórico de persistencia y no habilita acceso. Roles y permisos efectivos se verifican en backend y en el contrato vigente de cada módulo.
+
+## Reserva oficial y MVP — decisión 2026-10-07
+
+Reserva de invitado con nombre/teléfono y correo opcional. Sin registro, login, perfil ni historial/autoservicio B2C. Cambios y cancelaciones se solicitan al negocio; el personal los opera bajo contratos existentes. Client, reservas y registros financieros se conservan. [C0/C1 de retiro](../features/RESERVA_INVITADO_C0_C1.md) no autoriza C2/C3 ni activación.
+
+El objetivo comercial mantiene calendario operativo día/semana, pago presencial y transferencia con comprobante privado revisable. Carga de evidencia no equivale a Payment. La autorización segura de carga sin cuenta requiere C0 financiero propio; no basta un ID de reserva. Analytics/Resumen siguen después, con sus gates. La web local todavía contiene B2C hasta C2.
 
 ## Capacidades y estado
 
 - Reservas y Clientes están cerrados según [`PROJECT_MASTER.md`](../../PROJECT_MASTER.md).
 - Profesionales, Servicios, Facturación interna y Equipo están cerrados/aprobados según sus checkpoints vigentes.
-- Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados; cualquier pago anticipado, transferencia, reembolso o propina requiere contrato posterior.
+- Facturación-A Backend y Facturación-B Frontend están cerrados/aprobados. [F0-C](../quality/CORRECTIVO_F0C.md), backend aprobado y publicación/despliegue QA autorizados, permite al personal completar/emitir/cobrar antes del horario conservando el pago completo único; el flujo público de pago anticipado, verificación de transferencias, reembolso o propina requiere contrato posterior.
 - El Resumen sigue congelado como agregador, aunque sus correctivos transversales de aislamiento y estabilidad tienen estado propio.
 - Configuración/CMS C1, C2 y C3 están cerrados/aprobados. Cualquier ampliación posterior requiere autorización modular propia.
 - WhatsApp público manual C1–C3 y Notificaciones transaccionales C1–C3 están cerrados/aprobados; el canal de correo permanece pausado y no hay activación productiva.
 - Medios y promociones editoriales C1–C3 están cerrados/aprobados. La cuota de moderación observada en QA quedó agotada hasta un nuevo ciclo comprobado; no hay activación productiva.
-- Security A0.5 y A0.6-A están cerrados/aprobados. A0.6-B/C/D y el retiro legacy siguen pendientes de autorización.
+- Security A0.5 conserva su estado aprobado. A0.6-A de claims es antecedente retirado funcionalmente por C1; A0.6-B/C/D quedan fuera del producto actual. El retiro general de autenticación interna legacy sigue siendo una entrega distinta.
 
 Este documento no convierte una visión futura o una pantalla existente en una capacidad aprobada.
 
@@ -66,7 +76,7 @@ Esta visión no cambia el contrato Invoice–Payment ni el estado **CERRADO / AP
 ## No-alcance vigente
 
 - No reabrir ni ampliar módulos cerrados por inferencia.
-- No iniciar A0.6-B/C/D, retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
+- La cuenta de cliente final y A0.6-B/C/D quedan fuera del producto/MVP. No iniciar retiro legacy A0.7, Supabase, reembolsos, anulaciones, comisiones o fiscalidad sin autorización propia.
 - No publicar precios, límites de planes, testimonios o cifras comerciales sin decisión y evidencia del propietario.
 - No crear un flujo de organizaciones adicionales hasta definir su contrato atómico, permisos, límites, auditoría y UX.
 - No ampliar Configuración/CMS, Medios/Promociones o Notificaciones más allá de sus alcances aprobados, ni activar canales productivos, cuentas bancarias, transferencias, comprobantes, propinas, descuentos ejecutables o nuevos estados de Booking por inferencia. Cada ampliación exige plan, contrato y aprobación propios.
@@ -79,3 +89,7 @@ Producto y UX → contrato/arquitectura/seguridad → backend → aprobación ba
 ```
 
 Usar [`FEATURE_BRIEF_TEMPLATE.md`](../features/FEATURE_BRIEF_TEMPLATE.md) y cumplir [`DELIVERY_GATES.md`](../quality/DELIVERY_GATES.md).
+
+## Enmienda 2026-10-07
+
+La cuenta B2C tampoco es requisito de Piloto 1. [Enmienda vinculante](../quality/DECISIONES_PROPIETARIO_2026_09_29.md). M2 C3/P4/P5 cancelados; auth interna preservada.

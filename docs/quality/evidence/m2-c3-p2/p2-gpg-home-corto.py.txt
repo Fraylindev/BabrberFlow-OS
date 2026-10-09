@@ -1,0 +1,50 @@
+from pathlib import Path
+import json
+W=Path(__file__).resolve().parent
+# Reutilizar solo definiciones del registrador; no volver a ejecutar la prueba larga.
+source=(W/'diagnosticar.py').read_text(encoding='utf-8').split('\ntry:\n',1)[0]
+exec(compile(source,str(W/'diagnosticar.py'),'exec'),globals())
+long_result=json.loads((W/'gpg-diagnostico.json').read_text(encoding='utf-8'))
+REPORT['longProbeRecorderIncident']=long_result['failure']
+REPORT['longProbeWasNotRepeated']=True
+REPORT['socketHypothesisConfirmed']=any('File name too long' in c['stderrCompleteRedacted'] for c in long_result['commands'])
+def save():
+    (W/'gpg-corto.json').write_text(json.dumps(REPORT,indent=2,ensure_ascii=True)+'\n',encoding='utf-8')
+try:
+    if not REPORT['socketHypothesisConfirmed']: raise RuntimeError('hipotesis-no-confirmada')
+    home=ROOT/'.tmp'/('kh-'+secrets.token_hex(3))
+    if home.exists(): raise RuntimeError('home-propio-corto-colision')
+    home.mkdir();OWNED.append(home);HOMES[home]=home
+    socket=m.msys(home)+'/S.gpg-agent'
+    if len(socket)>90: raise RuntimeError('socket-supera90')
+    REPORT['shortPaths']={'homedir':m.msys(home),'socketCharacters':len(socket),'maximumAllowed':90}
+    cipher=W/'cifrado-trivial-falso.gpg'
+    key=bytearray(secrets.token_urlsafe(32).encode('utf-8'));PRIVATE.append(bytes(key).decode('utf-8'))
+    args=[m.GPG,'--no-options','--homedir',m.msys(home),'--no-symkey-cache','--batch',
+          '--pinentry-mode','loopback','--passphrase-fd','0']
+    execute([str(Path(m.GPG).with_name('gpgconf.exe')),'--homedir',m.msys(home),'--launch','gpg-agent'],'launch-home-corto')
+    execute(args+['--symmetric','--cipher-algo','AES256','--output',m.msys(cipher)],
+            'cifrar-home-corto',data=bytes(key)+b'\nARCHIVO TRIVIAL LOCAL\n')
+    decoded,_=execute(args+['--decrypt',m.msys(cipher)],'descifrar-home-corto',data=bytes(key)+b'\n')
+    if decoded!=b'ARCHIVO TRIVIAL LOCAL\n': raise RuntimeError('trivial-descifrado-desigual')
+    execute([str(Path(m.GPG).with_name('gpg-connect-agent.exe')),'--homedir',m.msys(home),'--no-autostart','/bye'],
+            'estado-home-corto-sin-autostart')
+    if REPORT['commands'][-1]['stderrCompleteRedacted']: raise RuntimeError('agente-corto-estado-con-diagnostico')
+    REPORT['agentConnected']=True
+    REPORT['trivialEncryptDecryptEqual']=True;REPORT['complete']=True
+except Exception as error:
+    REPORT['complete']=False
+    REPORT['failure']={'exceptionClass':type(error).__name__,'phase':'validacion-home-corto',
+        'messageSanitized':redact(error)['text'],
+        'tracebackSanitized':[{'file':Path(f.filename).name,'line':f.lineno,'function':f.name}
+            for f in traceback.extract_tb(error.__traceback__)]}
+finally:
+    if 'cipher' in globals() and cipher.exists(): cipher.unlink()
+    try: cleanup()
+    except Exception as error:
+        REPORT['complete']=False
+        REPORT['cleanupFailure']={'exceptionClass':type(error).__name__,'messageSanitized':redact(error)['text']}
+    if 'key' in globals(): m.erase(key)
+    PRIVATE.clear();save()
+    print(json.dumps(REPORT,ensure_ascii=True))
+    raise SystemExit(0 if REPORT['complete'] else 1)

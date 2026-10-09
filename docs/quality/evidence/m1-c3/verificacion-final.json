@@ -1,0 +1,16 @@
+{
+  "timestampUtc": "2026-10-01T23:11:13.796846+00:00",
+  "syntheticCounts": {
+    "bookings": 3,
+    "pending": 3,
+    "dispatchAttempts": 0,
+    "optedIn": 0,
+    "migrationCount": 27,
+    "publicTables": 36
+  },
+  "rangeRecovered200WithoutBucketReset": true,
+  "encryptedBackupRetained": true,
+  "checksumUnchanged": true,
+  "plaintextAbsent": true,
+  "restoreContainersAbsent": true
+}

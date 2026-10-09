@@ -3,7 +3,7 @@
 Alcance autorizado el 2026-09-27: API en `kortek-free-services`, con Supabase
 Free productivo y HTTPS en `api.booking.kortek.cloud`. La URL de Vercel confirmada
 por el propietario es `https://booking.kortek.cloud`; es el único origen CORS y
-Clerk autorizado. EMAIL sigue pausado y la reserva pública conserva su cierre.
+Clerk autorizado. En producción, EMAIL sigue pausado y la reserva pública conserva su cierre.
 
 ## Diseño operativo
 
@@ -78,3 +78,35 @@ smoke externo. Cambios de datos posteriores exigen el protocolo de conciliación
 de C1; no restaurar sobre producción como parte de un rollback de contenedor.
 
 Estado/evidencia real: [despliegue API](../../docs/quality/API_OCI_DESPLIEGUE.md).
+
+## API de staging en la misma VM
+
+Staging usa el commit C1 `b0357af6`, imagen Podman inmutable y servicio
+`kortek-api-staging` separado de `kortek-api`. El wrapper
+[`api-staging-run.sh`](api-staging-run.sh) exige Cutover QA, Clerk de prueba,
+`WEB_PUBLIC_ORIGIN=https://qa.booking.kortek.cloud`, CORS/authorized parties
+exactos, `PUBLIC_BOOKING_CLOSED=false`, configuración Resend QA activa en la API
+y listener `127.0.0.1:3001`. El worker QA independiente está definido en
+[`kortek-email-worker-staging.service`](kortek-email-worker-staging.service) y
+[`kortek-worker-staging-run.sh`](kortek-worker-staging-run.sh). Usa la misma
+credencial e imagen inmutable de staging, comprueba proyecto QA/orígenes/canal
+antes de iniciar y corre sin puerto público, con FS de solo lectura y límites
+0,25 CPU/384 MiB/64 procesos. El worker anterior permanece conectado a
+producción con correo desactivado. La unidad API
+[`kortek-api-staging.service`](kortek-api-staging.service) recibe
+`/etc/kortek-api-staging/runtime-env` root:root/0600 mediante LoadCredential.
+Los valores locales de `.env.resend.qa` y `.env.cloudinary.qa` se instalaron
+solo en esa credencial; esos archivos locales no son cargados directamente por
+systemd. No reutilizar el archivo de producción ni incluir secretos en el build.
+
+Caddy atiende `api.staging.booking.kortek.cloud` hacia el puerto 3001 y
+`api.booking.kortek.cloud` hacia 3000. Validar un Caddyfile candidato antes
+de reemplazarlo y comprobar el smoke externo productivo antes y después de
+reiniciar el proxy. Para staging, comprobar DNS/TLS público, 404 de raíz,
+401 privada, ACAO exclusivo de `https://qa.booking.kortek.cloud`, DB QA y
+puertos privados cerrados. `systemctl status kortek-api-staging` y
+`podman inspect kortek-api-staging` acreditan servicio y límites; root 404 no
+acredita un flujo autenticado. Ante fallo de staging, detener solo su unidad
+y restaurar su wrapper/env protegidos; conservar API/Caddy productivos.
+
+[Alcance, ejecución y pendientes de Preview](../../docs/quality/STAGING_QA_2026-09-28.md).

@@ -14,10 +14,9 @@ import {
 } from '../common/prisma-error.util';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  addDaysToIsoDate,
   isValidIsoDate,
   isValidTimeZone,
-  zonedLocalDateTimeToUtc,
+  utcRangeForLocalDate,
 } from '../professionals/professional-availability.util';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import {
@@ -33,13 +32,11 @@ import { RecordInvoicePaymentDto } from './dto/record-invoice-payment.dto';
 interface LockedBookingForInvoice {
   id: string;
   status: BookingStatus;
-  endTime: Date;
   servicePrice: string;
 }
 
 interface LockedInvoiceForPayment {
   id: string;
-  endTime: Date;
   paymentId: string | null;
   paymentMethod: PaymentMethod | null;
 }
@@ -134,11 +131,10 @@ export class InvoicesService {
     }
 
     const from = query.from
-      ? zonedLocalDateTimeToUtc(query.from, '00:00', organization.timeZone)
+      ? utcRangeForLocalDate(query.from, organization.timeZone)?.start
       : null;
-    const dayAfterTo = query.to ? addDaysToIsoDate(query.to, 1) : null;
-    const exclusiveTo = dayAfterTo
-      ? zonedLocalDateTimeToUtc(dayAfterTo, '00:00', organization.timeZone)
+    const exclusiveTo = query.to
+      ? utcRangeForLocalDate(query.to, organization.timeZone)?.end
       : null;
     if ((query.from && !from) || (query.to && !exclusiveTo)) {
       throw new BadRequestException('El rango de fechas no es válido');
@@ -218,7 +214,6 @@ export class InvoicesService {
       SELECT
         b."id",
         b."status",
-        b."endTime",
         s."price"::text AS "servicePrice"
       FROM "Booking" b
       INNER JOIN "Service" s
@@ -241,7 +236,6 @@ export class InvoicesService {
         'Solo se puede emitir una factura para una reserva completada',
       );
     }
-    this.assertServiceEnded(booking.endTime);
 
     const existing = await tx.invoice.findFirst({
       where: this.authorizedWhere(user, { bookingId }),
@@ -288,7 +282,6 @@ export class InvoicesService {
     const rows = await tx.$queryRaw<LockedInvoiceForPayment[]>(Prisma.sql`
       SELECT
         i."id",
-        b."endTime",
         pay."id" AS "paymentId",
         pay."method" AS "paymentMethod"
       FROM "Invoice" i
@@ -312,7 +305,6 @@ export class InvoicesService {
     if (!locked) {
       throw new NotFoundException(InvoicesService.NOT_FOUND_MESSAGE);
     }
-    this.assertServiceEnded(locked.endTime);
 
     if (locked.paymentId) {
       if (locked.paymentMethod !== method) {
@@ -414,14 +406,6 @@ export class InvoicesService {
       );
     }
     return amount;
-  }
-
-  private assertServiceEnded(endTime: Date): void {
-    if (endTime.getTime() > Date.now()) {
-      throw new ConflictException(
-        'No se puede operar la facturación antes de que termine el servicio',
-      );
-    }
   }
 
   private async runSerializable<T>(

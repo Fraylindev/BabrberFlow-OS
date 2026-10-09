@@ -21,7 +21,7 @@ function editor(name = 'Nombre A', version = 0): CmsEditor {
     draftRevision: version,
     draft: { publicName: name, description: null, phone: null, address: null, googleMapsUrl: null },
     publishedSnapshot: null,
-    readOnly: { slug: 'negocio-a', businessHours: null, timeZone: 'America/Santo_Domingo' },
+    readOnly: { slug: 'negocio-a', businessHours: null, timeZone: 'America/Santo_Domingo', operationalSchedule: { revision: 0, state: 'UNCONFIRMED', zoneConfirmed: false, week: [] } },
   };
 }
 function preview(data: CmsEditor): CmsPreview {

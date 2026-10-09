@@ -14,8 +14,14 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { InputField } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { ErrorText } from '@/components/ui/ErrorText';
 
 function onboardingError(error: unknown): string {
+  const message = onboardingErrorText(error);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function onboardingErrorText(error: unknown): string {
   if (error instanceof ApiError && error.status === 409) {
     return 'No pudimos crear el negocio con esos datos. Revisa la información o usa otra cuenta.';
   }
@@ -154,7 +160,7 @@ export default function DashboardSetupPage() {
               role="alert"
               className="rounded-sm bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]"
             >
-              {submitError}
+              <ErrorText message={submitError} />
             </p>
           )}
 

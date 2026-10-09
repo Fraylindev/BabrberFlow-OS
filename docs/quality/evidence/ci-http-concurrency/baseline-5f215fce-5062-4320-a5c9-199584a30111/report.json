@@ -1,0 +1,92 @@
+{
+  "id": "5f215fce-5062-4320-a5c9-199584a30111",
+  "cleanCheckout": "[workspace]",
+  "variables": [
+    "DATABASE_URL",
+    "E2E_PRIMARY_DATABASE_NAME",
+    "E2E_PRIMARY_DATABASE_USER",
+    "NODE_ENV",
+    "DEPLOY_ENV",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY"
+  ],
+  "systemVariables": [
+    "APPDATA",
+    "ComSpec",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "OS",
+    "Path",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "ProgramW6432",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "commands": [
+    {
+      "label": "version",
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "exitCode": 0
+    },
+    {
+      "label": "bootstrap",
+      "exitCode": 0
+    },
+    {
+      "label": "e2e-1",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": true,
+  "steps": [
+    {
+      "iteration": 1,
+      "mode": "baseline",
+      "names": [
+        "APPDATA",
+        "ComSpec",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "Path",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "windir",
+        "DATABASE_URL",
+        "E2E_PRIMARY_DATABASE_NAME",
+        "E2E_PRIMARY_DATABASE_USER",
+        "NODE_ENV",
+        "DEPLOY_ENV",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CI",
+        "NODE_OPTIONS"
+      ]
+    }
+  ],
+  "version": "postgres (PostgreSQL) 18.1",
+  "port": 62372,
+  "stopExit": 0
+}

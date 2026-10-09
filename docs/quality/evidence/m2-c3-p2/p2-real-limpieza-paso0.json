@@ -1,0 +1,20 @@
+{
+  "localOnly": true,
+  "containerName": "kortek-m2-c3-p2-client-real-429cba5c86ee",
+  "containerAbsent": true,
+  "containerDataInTmpfs": true,
+  "anonymousVolumeCreated": false,
+  "gpgOwnAgentKilled": true,
+  "cleanupRoot": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\m2-c3-p2-real",
+  "temporaryFiles": [
+    "prompt.ps1",
+    "result.json",
+    "run.py",
+    "gpg-home\\pubring.kbx",
+    "gpg-home\\random_seed",
+    "__pycache__\\run.cpython-312.pyc"
+  ],
+  "noNewBackupCreated": true,
+  "custodyDirectoryNotInspected": true,
+  "productionAccess": false
+}

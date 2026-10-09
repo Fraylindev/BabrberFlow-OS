@@ -1,0 +1,82 @@
+{
+  "failures": [
+    {
+      "exceptionClass": "ItemNotFound",
+      "phase": "targeted-file-discovery",
+      "commandSanitized": "Get-Content -LiteralPath ops/oci-api/Containerfile -Raw",
+      "exitCode": 0,
+      "exitCodeScope": "enclosing PowerShell block; missing file read failed",
+      "stderrCompleteRedacted": "Get-Content:\nLine |\n   4 |  Get-Content -LiteralPath 'ops/oci-api/Containerfile' -Raw\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Cannot find path 'ops/oci-api/Containerfile' because it does not exist.\n",
+      "stderrCapBytes": 8192,
+      "stderrTruncated": false,
+      "cause": "Wrong guessed filename",
+      "resolution": "Used exact documented ops/oci-api/api.Containerfile",
+      "proof": "File read successfully; no file added or dependency changed"
+    },
+    {
+      "exceptionClass": "SupervisorFailureUnclassified",
+      "phase": "preliminary-local-phrase-supervisor",
+      "commandSanitized": "Start-Process pwsh -NoProfile -File .tmp/p3-goal/rehearsal-prompt.ps1",
+      "exitCode": 1,
+      "stderrCompleteRedacted": null,
+      "captureLimitation": "First supervisor swallowed exception; exact underlying stderr unavailable, retained failure state instead",
+      "state": {
+        "freezeAuthorized": false,
+        "state": "fallo-supervisor",
+        "qaAccess": false,
+        "exitCode": 1,
+        "pid": 31144,
+        "utc": "2026-10-04T22:55:54.6384027Z"
+      },
+      "cause": "Not yet established; no Python child or rehearsal result existed",
+      "resolution": "Added redacted exception capture; retry visible prompt without QA access",
+      "proof": "Pending retry"
+    },
+    {
+      "exceptionClass": "SyntaxError",
+      "phase": "new-image-stage-script-static-validation",
+      "commandSanitized": "bundled-python ast.parse(stage-image.py)",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "SyntaxError: unterminated string literal (detected at line 20)",
+      "stderrCapBytes": 8192,
+      "stderrTruncated": false,
+      "cause": "Missing terminating quote in generated own executor; never executed",
+      "resolution": "Closed string; changed helper to actual command_record API; AST passes",
+      "proof": "Corrected script parsed before execution",
+      "qaFrozen": false
+    },
+    {
+      "exceptionClass": "ItemNotFound",
+      "phase": "code-discovery",
+      "commandSanitized": "Get-Content -LiteralPath apps/api/src/public/public.controller.ts -Raw",
+      "exitCodeScope": "enclosing mixed PowerShell block; not an accepted validation",
+      "stderrObservedCore": "Cannot find path apps/api/src/public/public.controller.ts because it does not exist.",
+      "fullCaptureLocation": "original tool output in conversation; no exact full standalone stderr reconstructed",
+      "cause": "Guessed path instead of exact Git inventory",
+      "resolution": "git ls-files identified exact versioned path; subsequently read successfully",
+      "noQaMutation": true
+    },
+    {
+      "exceptionClass": "ItemNotFound",
+      "phase": "rate-storage-discovery",
+      "commandSanitized": "Get-Content -LiteralPath apps/api/src/common/postgres-throttler.storage.ts -Raw",
+      "exitCodeScope": "enclosing mixed PowerShell block; not an accepted validation",
+      "stderrObservedCore": "Cannot find path apps/api/src/common/postgres-throttler.storage.ts because it does not exist.",
+      "fullCaptureLocation": "original tool output in conversation; no exact full standalone stderr reconstructed",
+      "cause": "Guessed path instead of exact Git inventory",
+      "resolution": "git ls-files identified exact versioned path; subsequently read successfully",
+      "noQaMutation": true
+    },
+    {
+      "exceptionClass": "ItemNotFound",
+      "phase": "wrapper-discovery",
+      "commandSanitized": "Get-Content -LiteralPath ops/oci-api/run-api-staging.sh -Raw",
+      "exitCodeScope": "enclosing mixed PowerShell block; not an accepted validation",
+      "stderrObservedCore": "Cannot find path ops/oci-api/run-api-staging.sh because it does not exist.",
+      "fullCaptureLocation": "original tool output in conversation; no exact full standalone stderr reconstructed",
+      "cause": "Guessed path instead of exact Git inventory",
+      "resolution": "git ls-files identified exact versioned path; subsequently read successfully",
+      "noQaMutation": true
+    }
+  ]
+}

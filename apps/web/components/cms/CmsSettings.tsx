@@ -7,7 +7,6 @@ import { useAuth } from '@/lib/auth-context';
 import {
   cmsFields,
   cmsForm,
-  cmsHours,
   cmsInput,
   cmsStatus,
   validateCmsForm,
@@ -22,6 +21,8 @@ import { FieldWrapper, InputField } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { ErrorText } from '@/components/ui/ErrorText';
+import { clockLabel, WEEKDAY_LABELS } from '@/lib/business-schedule';
 
 const focusClass =
   'min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-accent)]';
@@ -39,7 +40,16 @@ function denied(error: unknown) {
   return error instanceof ApiError && (error.status === 401 || error.status === 403);
 }
 
-function friendlyError(error: unknown) {
+function minuteLabel(minute: number) {
+  return clockLabel(`${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`);
+}
+
+function friendlyError(error: unknown): string {
+  const message = friendlyErrorText(error);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function friendlyErrorText(error: unknown) {
   if (error instanceof ApiError) {
     if (error.status === 401) return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
     if (error.status === 403)
@@ -73,7 +83,7 @@ export function CmsSettings() {
     <section className="min-w-0 space-y-6 text-[var(--dash-text)]">
       <PageHeader
         tone="light"
-        title="Configuración del negocio"
+        title="Página pública"
         description="Prepara y revisa la información pública de tu negocio."
       />
       {!isReady ? (
@@ -102,7 +112,7 @@ function Workspace({ scope, owner }: { scope: string; owner: boolean }) {
   if (denied(error))
     return (
       <Card tone="light" className="space-y-4 p-5">
-        <p role="alert">{friendlyError(error)}</p>
+        <p role="alert"><ErrorText message={friendlyError(error)} /></p>
         <Button tone="light" className={focusClass} onClick={() => window.location.reload()}>
           Actualizar mi acceso
         </Button>
@@ -113,7 +123,7 @@ function Workspace({ scope, owner }: { scope: string; owner: boolean }) {
       <Loading />
     ) : (
       <Card tone="light" className="space-y-4 p-5">
-        <p role="alert">{friendlyError(query.error)}</p>
+        <p role="alert"><ErrorText message={friendlyError(query.error)} /></p>
         <Button
           tone="light"
           className={focusClass}
@@ -358,7 +368,7 @@ function Editor({
       </div>
       {(failure || query.error) && (
         <p role="alert" className="text-sm text-[var(--dash-danger)]">
-          {failure || friendlyError(query.error)}
+          <ErrorText message={failure || friendlyError(query.error)} />
         </p>
       )}
       {!!query.error && (
@@ -575,15 +585,25 @@ function Editor({
               </div>
               <div>
                 <dt className="font-medium">Horario global</dt>
-                <dd className="mt-1">{cmsHours(latest.readOnly.businessHours)}</dd>
+                <dd className="mt-1 space-y-2">
+                  {latest.readOnly.operationalSchedule?.state === 'CONFIRMED' ? (
+                    latest.readOnly.operationalSchedule.week.map(day => (
+                      <p key={day.dayOfWeek}>
+                        {WEEKDAY_LABELS[day.dayOfWeek]}: {day.windows.length
+                          ? day.windows.map(window => `${minuteLabel(window.startMinute)} a ${minuteLabel(window.endMinute)}`).join(' · ')
+                          : 'Cerrado'}
+                      </p>
+                    ))
+                  ) : <p>Horario todavía sin confirmar. Revísalo en Horario y zona.</p>}
+                </dd>
               </div>
               <div>
                 <dt className="font-medium">Referencia horaria</dt>
-                <dd className="mt-1">Hora del negocio. Se conserva la configuración actual.</dd>
+                <dd className="mt-1">Hora del negocio. La atención usa el horario operativo vigente.</dd>
               </div>
             </dl>
             <p className="text-xs text-[var(--dash-text-muted)]">
-              Estos datos no se editan desde esta pantalla.
+              La publicación de la página no cambia el horario operativo.
             </p>
           </Card>
           {latest.publishedSnapshot && (
@@ -726,7 +746,7 @@ function Preview({
         <p role="status">Cargando vista previa…</p>
       ) : query.error ? (
         <div className="space-y-4">
-          <p role="alert">{friendlyError(query.error)}</p>
+          <p role="alert"><ErrorText message={friendlyError(query.error)} /></p>
           <Button tone="light" className={focusClass} onClick={() => void query.refetch()}>
             Reintentar vista previa
           </Button>

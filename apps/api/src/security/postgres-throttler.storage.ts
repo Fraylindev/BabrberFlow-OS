@@ -6,8 +6,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 interface BucketRow {
   count: number;
-  expiresAt: Date;
-  blockedUntil: Date | null;
+  timeToExpire: number;
+  timeToBlockExpire: number;
 }
 
 interface ThrottleResult {
@@ -24,6 +24,7 @@ export class PostgresThrottlerStorage implements ThrottlerStorage {
   constructor(
     private readonly prisma: PrismaService,
     private readonly secret: string,
+    private readonly cleanupLimit?: number,
   ) {
     if (secret.length < 32) {
       throw new Error('RATE_LIMIT_SECRET must contain at least 32 characters');
@@ -67,38 +68,52 @@ export class PostgresThrottlerStorage implements ThrottlerStorage {
             WHEN "SecurityRateBucket"."count" + 1 > ${maxHits}
             THEN NOW() + ${blockMs} * INTERVAL '1 millisecond'
             ELSE NULL END
-        RETURNING "count", "expiresAt", "blockedUntil"
+        RETURNING "count",
+          CEIL(LEAST(${ttlMs}::numeric, GREATEST(0,
+            EXTRACT(EPOCH FROM ("expiresAt" - NOW())) * 1000
+          )) / 1000)::integer AS "timeToExpire",
+          CEIL(LEAST(${blockMs}::numeric, GREATEST(0,
+            COALESCE(EXTRACT(EPOCH FROM ("blockedUntil" - NOW())) * 1000, 0)
+          )) / 1000)::integer AS "timeToBlockExpire"
       `);
       if (!row) throw new Error('rate bucket returned no row');
 
       const now = Date.now();
       if (now - this.lastCleanup > 3_600_000) {
         this.lastCleanup = now;
-        void this.prisma.db.securityRateBucket
-          .deleteMany({
-            where: {
-              expiresAt: { lt: new Date(now - 86_400_000) },
-              OR: [
-                { blockedUntil: null },
-                { blockedUntil: { lt: new Date(now - 86_400_000) } },
-              ],
-            },
-          })
-          .catch(() => undefined);
+        if (this.cleanupLimit !== undefined) {
+          const limit = Math.max(1, Math.trunc(this.cleanupLimit));
+          void this.prisma.db.$executeRaw`
+            DELETE FROM "SecurityRateBucket" WHERE "key" IN (
+              SELECT "key" FROM "SecurityRateBucket"
+              WHERE "expiresAt" < NOW() - INTERVAL '24 hours'
+                AND ("blockedUntil" IS NULL OR "blockedUntil" < NOW() - INTERVAL '24 hours')
+              ORDER BY "expiresAt" LIMIT ${limit}
+            )
+          `.catch(() => undefined);
+        } else {
+          void this.prisma.db.securityRateBucket
+            .deleteMany({
+              where: {
+                expiresAt: { lt: new Date(now - 86_400_000) },
+                OR: [
+                  { blockedUntil: null },
+                  { blockedUntil: { lt: new Date(now - 86_400_000) } },
+                ],
+              },
+            })
+            .catch(() => undefined);
+        }
       }
 
-      const timeToExpire = Math.max(
-        0,
-        Math.ceil((row.expiresAt.getTime() - now) / 1000),
-      );
-      const timeToBlockExpire = row.blockedUntil
-        ? Math.max(0, Math.ceil((row.blockedUntil.getTime() - now) / 1000))
-        : 0;
+      // NOW() is identical throughout the atomic statement. SQL also caps the
+      // remainder when a concurrent writer started after this transaction's NOW().
+      // The Node clock above schedules cleanup only; it cannot affect the budget.
       return {
         totalHits: row.count,
-        timeToExpire,
-        isBlocked: timeToBlockExpire > 0,
-        timeToBlockExpire,
+        timeToExpire: row.timeToExpire,
+        isBlocked: row.timeToBlockExpire > 0,
+        timeToBlockExpire: row.timeToBlockExpire,
       };
     } catch {
       // Sensitive mutations fail closed when the shared budget is unavailable.

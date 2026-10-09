@@ -1,11 +1,15 @@
-import { BadRequestException, ConflictException, Logger } from '@nestjs/common';
-import { BookingStatus, ProfessionalStatus } from '@prisma/client';
+import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BookingStatus, Prisma, ProfessionalStatus } from '@prisma/client';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { PublicBookingService } from './public-booking.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { AuditService } from '../audit/audit.service';
 import { ProfessionalAvailabilityService } from '../professionals/professional-availability.service';
+import {
+  policyFromOrganization,
+  type BusinessPolicyOrganization,
+} from '../business-schedule/business-schedule.policy';
 
 const ORGANIZATION = {
   id: '00000000-0000-4000-8000-000000000001',
@@ -14,6 +18,14 @@ const ORGANIZATION = {
   phone: null,
   isActive: true,
   businessHours: null,
+  businessSchedule: {
+    state: 'LEGACY_UNCONFIRMED',
+    zoneConfirmed: false,
+    legacyPublicAllowed: true,
+    days: [],
+    closures: [],
+    revision: 0,
+  },
   timeZone: 'America/Santo_Domingo',
   deletedAt: null,
   cmsPage: {
@@ -84,7 +96,12 @@ function createDependencies() {
       start: new Date('2099-01-01T04:00:00.000Z'),
       end: new Date('2099-01-02T04:00:00.000Z'),
     }),
-    getPublicContext: jest.fn().mockResolvedValue({}),
+    getPublicContext: jest.fn().mockResolvedValue({
+      timeZone: ORGANIZATION.timeZone,
+      policy: policyFromOrganization(
+        ORGANIZATION as unknown as BusinessPolicyOrganization,
+      ),
+    }),
     isAvailableInContext: jest.fn().mockReturnValue(true),
   };
   return { transaction, prisma, bookings, audit, availability };
@@ -191,8 +208,57 @@ describe('PublicBookingService - secure public creation', () => {
       .mockResolvedValueOnce({ id: 'email-client', isActive: true });
 
     await expect(service.createBooking('demo', DTO)).rejects.toBeInstanceOf(
-      ConflictException,
+      BadRequestException,
     );
+    expect(dependencies.bookings.create).not.toHaveBeenCalled();
+    expect(dependencies.transaction.client.create).not.toHaveBeenCalled();
+    expect(dependencies.audit.log).not.toHaveBeenCalled();
+  });
+
+  it('returns identical safe contact rejection for ambiguous matches, unique email and invalid phone', async () => {
+    const responses: unknown[] = [];
+    const capture = async (input = DTO) => {
+      try {
+        await service.createBooking('demo', input);
+        throw new Error('Expected contact rejection');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        if (!(error instanceof BadRequestException)) throw error;
+        expect(error.getStatus()).toBe(400);
+        responses.push(error.getResponse());
+      }
+    };
+    dependencies.transaction.client.findFirst
+      .mockResolvedValueOnce({ id: 'phone-client', isActive: true })
+      .mockResolvedValueOnce({ id: 'email-client', isActive: true });
+    await capture();
+    dependencies.transaction.client.findFirst.mockResolvedValue(null);
+    dependencies.transaction.client.create.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('synthetic-private-constraint', {
+        code: 'P2002',
+        clientVersion: 'test',
+        meta: { target: ['organizationId', 'email'] },
+      }),
+    );
+    await capture();
+    await capture({ ...DTO, clientPhone: '123' });
+    expect(responses).toEqual(
+      Array(3).fill({
+        statusCode: 400,
+        error: 'Bad Request',
+        message:
+          'No pudimos registrar la reserva con esos datos. Revísalos o contacta al negocio.',
+      }),
+    );
+    expect(dependencies.bookings.create).not.toHaveBeenCalled();
+    expect(dependencies.audit.log).not.toHaveBeenCalled();
+  });
+
+  it('propagates unrelated persistence errors instead of labeling them contact rejection', async () => {
+    dependencies.transaction.client.findFirst.mockResolvedValue(null);
+    const outage = new Error('controlled outage');
+    dependencies.transaction.client.create.mockRejectedValue(outage);
+    await expect(service.createBooking('demo', DTO)).rejects.toBe(outage);
     expect(dependencies.bookings.create).not.toHaveBeenCalled();
   });
 
@@ -210,30 +276,28 @@ describe('PublicBookingService - secure public creation', () => {
     expect(dependencies.audit.log).not.toHaveBeenCalled();
   });
 
-  it('keeps booking success when secondary CUSTOMER account creation fails', async () => {
-    const log = jest.spyOn(Logger.prototype, 'error').mockImplementation();
+  it('creates only an operational contact and booking, never an identity', async () => {
     dependencies.transaction.client.findFirst.mockResolvedValue(null);
     dependencies.transaction.client.create.mockResolvedValue({ id: CLIENT_ID });
-    dependencies.prisma.db.user.findFirst.mockRejectedValue(
-      new Error('ana@example.com: private database detail'),
-    );
-    try {
-      const result = await service.createBooking('demo', {
-        ...DTO,
-        createAccount: true,
-        password: 'ValidPassword123!',
-      });
-
-      expect(result.booking.id).toBe(BOOKING.id);
-      expect(result.accountCreated).toBe(false);
-      expect(result.accountCreationError).toBe('ACCOUNT_CREATION_FAILED');
-      expect(log).toHaveBeenCalledTimes(1);
-      expect(log).toHaveBeenCalledWith(
-        'No se pudo crear la cuenta CUSTOMER secundaria; la reserva permanece válida.',
-      );
-    } finally {
-      log.mockRestore();
-    }
+    const result = await service.createBooking('demo', DTO);
+    expect(result.booking.status).toBe(BookingStatus.PENDING);
+    expect(result).not.toHaveProperty('accountCreated');
+    expect(result).not.toHaveProperty('accountCreationError');
+    expect(dependencies.prisma.db.user.findFirst).not.toHaveBeenCalled();
+    expect(dependencies.transaction.user.create).not.toHaveBeenCalled();
+    expect(dependencies.transaction.membership.create).not.toHaveBeenCalled();
+    expect(dependencies.prisma.db.$transaction).toHaveBeenCalledTimes(1);
+    expect(dependencies.transaction.client.create.mock.calls[0]).toEqual([
+      {
+        data: {
+          organizationId: ORGANIZATION.id,
+          name: 'Ana Pérez',
+          phone: '+18095551234',
+          email: 'ana@example.com',
+        },
+        select: { id: true },
+      },
+    ]);
   });
 });
 
@@ -279,27 +343,39 @@ describe('PublicBookingService - active public catalog', () => {
     );
   });
 
-  it('derives the minimum booking date from the business zone without exposing it', async () => {
-    jest.useFakeTimers().setSystemTime(new Date('2026-09-14T02:00:00.000Z'));
-    try {
-      const dependencies = createDependencies();
-      const service = new PublicBookingService(
-        dependencies.prisma as unknown as PrismaService,
-        dependencies.bookings as unknown as BookingsService,
-        dependencies.audit as unknown as AuditService,
-        dependencies.availability as unknown as ProfessionalAvailabilityService,
-      );
-      dependencies.prisma.db.service.findMany.mockResolvedValue([]);
-      dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+  it.each([
+    ['America/Santo_Domingo', '2026-09-13'],
+    ['Asia/Tokyo', '2026-09-14'],
+    ['America/New_York', '2026-09-13'],
+  ])(
+    'returns the authoritative zone %s with minimum date %s',
+    async (timeZone, minimumDate) => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-09-14T02:00:00.000Z'));
+      try {
+        const dependencies = createDependencies();
+        const service = new PublicBookingService(
+          dependencies.prisma as unknown as PrismaService,
+          dependencies.bookings as unknown as BookingsService,
+          dependencies.audit as unknown as AuditService,
+          dependencies.availability as unknown as ProfessionalAvailabilityService,
+        );
+        dependencies.prisma.db.service.findMany.mockResolvedValue([]);
+        dependencies.prisma.db.professional.findMany.mockResolvedValue([]);
+        dependencies.prisma.db.organization.findUnique.mockResolvedValue({
+          ...ORGANIZATION,
+          timeZone,
+        });
 
-      const result = await service.getBookingData(ORGANIZATION.slug);
+        const result = await service.getBookingData(ORGANIZATION.slug);
 
-      expect(result.minimumBookingDate).toBe('2026-09-13');
-      expect(JSON.stringify(result)).not.toContain(ORGANIZATION.timeZone);
-    } finally {
-      jest.useRealTimers();
-    }
-  });
+        expect(result.minimumBookingDate).toBe(minimumDate);
+        expect(result).toHaveProperty('timeZone', timeZone);
+        expect(result.organization).not.toHaveProperty('timeZone');
+      } finally {
+        jest.useRealTimers();
+      }
+    },
+  );
 
   it('fails availability safely when the stored business zone is invalid', async () => {
     const dependencies = createDependencies();

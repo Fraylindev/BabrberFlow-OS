@@ -17,6 +17,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MediaModule } from './media/media.module';
 import { PostgresThrottlerStorage } from './security/postgres-throttler.storage';
 import { PrismaService } from './prisma/prisma.service';
+import { BusinessScheduleModule } from './business-schedule/business-schedule.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { PrismaService } from './prisma/prisma.service';
     }),
     PrismaModule,
     OrganizationsModule,
+    BusinessScheduleModule,
     AuthModule,
     ProfessionalsModule,
     ServicesModule, // <-- Registrado

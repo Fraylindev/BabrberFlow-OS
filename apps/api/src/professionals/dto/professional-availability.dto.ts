@@ -30,7 +30,7 @@ export class WeeklyShiftDto {
   startTime!: string;
 
   @IsString()
-  @Matches(HH_MM_PATTERN)
+  @Matches(/^(([01]\d|2[0-3]):[0-5]\d|24:00)$/)
   endTime!: string;
 }
 

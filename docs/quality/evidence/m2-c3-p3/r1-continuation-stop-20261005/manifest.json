@@ -1,0 +1,35 @@
+{
+  "hashBasis": "canonical LF JSON Git bytes",
+  "files": [
+    {
+      "path": "assessment.json",
+      "bytes": 2727,
+      "sha256": "7dce8675d5f381a4e303efd340bcead7a95b6bf4dae8f65f19522148084b1baa"
+    },
+    {
+      "path": "attempt-1.json",
+      "bytes": 6937,
+      "sha256": "82ac2bf1fc020961c84a4cac6dccdfe832375627f4dcc09ff286264ef3f36bbf"
+    },
+    {
+      "path": "authorization.json",
+      "bytes": 384,
+      "sha256": "5cdd3b41a35253347d634981cae8bbcc778e8869e98a067defe50cbfba7d26ef"
+    },
+    {
+      "path": "executed-sources.json",
+      "bytes": 30502,
+      "sha256": "11162f4864e8931437064a4452d1fce609dd7908d5c2c2cdc61d1d22f26f0978"
+    },
+    {
+      "path": "impediments.json",
+      "bytes": 1890,
+      "sha256": "04cefa3b60f1de5766e6e86864557e29ef4ecfe40d56df257f6b67e5561baeff"
+    },
+    {
+      "path": "result.json",
+      "bytes": 292803,
+      "sha256": "82020365a78c4447945d603bafaf6540cf6cc44acb38919364885c45f97a8d10"
+    }
+  ]
+}

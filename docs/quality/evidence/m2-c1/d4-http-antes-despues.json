@@ -1,0 +1,27 @@
+{
+  "base": "Desechable aislada",
+  "intervencionOperadorEntreReservaClaimLectura": false,
+  "postgresqlReal": true,
+  "proveedorClerk": "Sintético controlado; guard, verificación de perfil y servicio de claim reales de aplicación",
+  "antes": {
+    "phase": "before",
+    "guestStatus": 201,
+    "claimStatus": 201,
+    "claimed": true,
+    "listStatus": 404,
+    "containsBooking": false,
+    "customerAccessBlocked": true
+  },
+  "httpReal": true,
+  "sourceAfter": "Manifest en d4-validation.json",
+  "sourceBefore": "Checkpoint C1 previo a D4, manifest en validation.json",
+  "despues": {
+    "phase": "after",
+    "guestStatus": 201,
+    "claimStatus": 201,
+    "claimed": true,
+    "listStatus": 200,
+    "containsBooking": true,
+    "customerAccessBlocked": false
+  }
+}

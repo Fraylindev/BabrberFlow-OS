@@ -1,0 +1,169 @@
+import sys, os, json, subprocess, time, hashlib, secrets, re, threading, queue, shutil
+from pathlib import Path
+from datetime import datetime, timezone
+
+ROOT = Path(__file__).resolve().parents[2]
+WORK = ROOT / '.tmp/m2-c3-p2'
+BACKUP_DIR = Path('C:/KortekBackups/qa-m2-c3')
+IMAGE = 'sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f'
+OLD_IMAGE = '701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031'
+RELEASE = '791569b110f9fd59cb10e6d248546bdae3996e14'
+SSH = ['ssh', '-i', str(ROOT/'.tmp/base-preprod-c1/oci-kortek-ed25519-user'), '-o', 'UserKnownHostsFile='+str(ROOT/'.tmp/base-preprod-c1/oci-known-hosts'), '-o', 'StrictHostKeyChecking=yes', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=15', 'opc@150.136.7.19']
+DOCKER = ['docker', '--context', 'desktop-linux']
+BASH = 'C:/Program Files/Git/bin/bash.exe'
+RUN = secrets.token_hex(6)
+BASE_ENV = {k:v for k,v in os.environ.items() if not re.search('DATABASE|POSTGRES|PGPASSWORD|CLERK|JWT|CLOUDINARY|RESEND|NOTIFICATION|EMAIL|E2E',k)}
+PG_ENV = dict(BASE_ENV, PGPASSWORD=os.environ['PGPASSWORD'], PGHOST='aws-0-us-east-1.pooler.supabase.com', PGPORT='5432', PGUSER='kortek_migrator.prirlabbnlcuvnzuaczp', PGDATABASE='postgres', PGSSLMODE='verify-full', PGSSLROOTCERT='/tmp/qa-ca.crt', PGOPTIONS='-c default_transaction_read_only=on -c statement_timeout=120000', PGAPPNAME='kortek-m2-c3-p2-readonly')
+GPG_HOME = WORK/'gpg-home'
+GPG_HOME.mkdir(exist_ok=True)
+CRYPTO_ENV = dict(BASE_ENV, P2_GPG_HOME=str(GPG_HOME).replace('\\','/'))
+REPORT = {'timestampUtc':datetime.now(timezone.utc).isoformat(), 'base':subprocess.run(['git','rev-parse','HEAD'],cwd=ROOT,capture_output=True,text=True).stdout.strip(), 'commands':[], 'failures':[], 'checks':[], 'createdContainers':[], 'removedContainers':[]}
+OWNED=[]
+STAGE='init'
+FREEZE_AT=None
+SOURCE=None
+
+def emit(event, **fields):
+    print(json.dumps({'stage':event, **fields}),flush=True)
+
+def mark(label, **fields):
+    REPORT['checks'].append({'label':label, **fields}); emit(label, **fields)
+
+def run(args, input=None, env=None, timeout=120, expected=0, label=None, record=True):
+    start=time.monotonic()
+    p=subprocess.run(args,cwd=ROOT,input=input,capture_output=True,env=env or BASE_ENV,timeout=timeout)
+    if record:
+        REPORT['commands'].append({'command':args,'exitCode':p.returncode,'durationSeconds':round(time.monotonic()-start,3),'label':label})
+    if p.returncode != expected:
+        raise RuntimeError(label or 'command-failed')
+    return p.stdout
+
+def docker(*args, **kwargs): return run(DOCKER+list(args), **kwargs)
+def ssh(command, **kwargs): return run(SSH+[command], **kwargs)
+def local_sql(container, sql, database='postgres', role='postgres', expected=0):
+    return docker('exec','-i',container,'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U',role,'-d',database,input=sql.encode(),expected=expected,label='isolated-sql').decode().strip()
+def own_run(name, network='none', server=True):
+    args=['run','--detach','--rm','--name',name,'--network',network,'--read-only','--cpus','1','--memory','768m','--pids-limit','128','--tmpfs','/tmp:rw,size=64m','--tmpfs','/var/run/postgresql:rw,size=16m']
+    if server: args+=['--tmpfs','/var/lib/postgresql/data:rw,size=512m','--env','POSTGRES_HOST_AUTH_METHOD=trust',IMAGE,'postgres','-c','listen_addresses=127.0.0.1']
+    else: args+=['--entrypoint','sleep',IMAGE,'infinity']
+    docker(*args); OWNED.append(name); REPORT['createdContainers'].append(name)
+    if server:
+        for i in range(60):
+            p=subprocess.run(DOCKER+['exec',name,'pg_isready','-U','postgres'],capture_output=True,env=BASE_ENV)
+            if p.returncode==0: break
+            time.sleep(.5)
+        else: raise RuntimeError('PG17-not-ready')
+    return name
+def remove(name):
+    if name in OWNED:
+        docker('stop','--time','15',name,label='cleanup-owned-container'); OWNED.remove(name); REPORT['removedContainers'].append(name)
+def crypto(mode, file, input=None, env=None, timeout=150):
+    return run([BASH,str(WORK/'crypto.sh').replace('\\','/'),mode,str(file).replace('\\','/')],input=input,env=dict(CRYPTO_ENV,**(env or {})),timeout=timeout,label='crypto-'+mode)
+
+class Reader:
+    def __init__(self, client):
+        env_args=[]
+        for k in ['PGPASSWORD','PGHOST','PGPORT','PGUSER','PGDATABASE','PGSSLMODE','PGSSLROOTCERT','PGOPTIONS','PGAPPNAME']: env_args+=['-e',k]
+        self.proc=subprocess.Popen(DOCKER+['exec','-i']+env_args+[client,'psql','-X','-qAt','-v','ON_ERROR_STOP=1'],cwd=ROOT,env=PG_ENV,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        self.lines=queue.Queue()
+        def pump():
+            for line in self.proc.stdout: self.lines.put(line.rstrip('\r\n'))
+            self.lines.put(None)
+        threading.Thread(target=pump,daemon=True).start()
+        threading.Thread(target=lambda:self.proc.stderr.read(),daemon=True).start()
+    def q(self, sql):
+        token='P2_END_'+secrets.token_hex(8)
+        self.proc.stdin.write(sql+';\nSELECT \''+token+'\';\n'); self.proc.stdin.flush()
+        lines=[]
+        while True:
+            line=self.lines.get(timeout=150)
+            if line is None: raise RuntimeError('source-reader-failed')
+            if line==token: return lines
+            if line: lines.append(line)
+    def close(self, commit=True):
+        if self.proc.poll() is None:
+            if commit: self.q('COMMIT')
+            self.proc.stdin.close()
+            code=self.proc.wait(timeout=15)
+            if code!=0: raise RuntimeError('source-reader-exit')
+    def kill(self):
+        if self.proc.poll() is None: self.proc.kill(); self.proc.wait(timeout=15)
+
+def prepare():
+    global STAGE, SOURCE
+    STAGE='prepare-client'
+    client=own_run('kortek-m2-c3-p2-client-'+RUN,network='bridge',server=False)
+    docker('cp',str(ROOT/'ops/oci-free-backup/prod-ca-2021.crt'),client+':/tmp/qa-ca.crt')
+    version=docker('exec',client,'pg_dump','--version').decode().strip()
+    assert '17.' in version
+    SOURCE=Reader(client)
+    SOURCE.q('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
+    result=SOURCE.q("SELECT json_build_object('migratorRole',current_user='kortek_migrator','database',current_database()='postgres','readOnly',current_setting('transaction_read_only')='on','pg17',split_part(current_setting('server_version'),'.',1)='17','allTablesSelectable',NOT EXISTS(SELECT 1 FROM pg_tables WHERE schemaname='public' AND NOT has_table_privilege(current_user,format('%I.%I',schemaname,tablename),'SELECT')))" )
+    checks=json.loads(result[0]); assert all(checks.values()); SOURCE.close(); SOURCE=None
+    mark('qa-migrator-readonly-TLS-client17',version=version,**checks)
+    STAGE='prepare-crypto-restore'
+    probe=own_run('kortek-m2-c3-p2-probe-'+RUN)
+    testfile=WORK/('crypto-probe-'+RUN+'.gpg')
+    value=('P2_SYNTHETIC_'+RUN).encode()
+    crypto('encrypt',testfile,input=value)
+    assert crypto('decrypt',testfile)==value
+    testfile.unlink()
+    local_sql(probe,'CREATE EXTENSION btree_gist WITH SCHEMA public; CREATE TABLE public.p2_synthetic_probe(id integer PRIMARY KEY, value text); INSERT INTO public.p2_synthetic_probe VALUES(1,\'synthetic\');')
+    dump=docker('exec',probe,'pg_dump','-U','postgres','-d','postgres','--schema=public','--format=custom','--no-owner','--no-privileges')
+    toc=docker('exec','-i',probe,'pg_restore','--list',input=dump).decode()
+    # public already exists with its required extension; omit only schema/extension bootstrap entries.
+    filtered=filter_toc(toc)
+    docker('exec','-i',probe,'tee','/tmp/p2-restore.list',input=filtered.encode())
+    local_sql(probe,'DROP TABLE public.p2_synthetic_probe;')
+    docker('exec','-i',probe,'pg_restore','-U','postgres','-d','postgres','--single-transaction','--exit-on-error','--no-owner','--no-privileges','--use-list=/tmp/p2-restore.list',input=dump)
+    assert local_sql(probe,'SELECT count(*)=1 FROM public.p2_synthetic_probe;')=='t'
+    mark('synthetic-binary-dump-toc-public-btree-restore-tested',tocExcluded=REPORT.get('tocExcluded'))
+    remove(probe)
+    STAGE='prepare-real-previous-image'
+    before=subprocess.run(DOCKER+['image','inspect','--format','{{.Id}}',OLD_IMAGE],capture_output=True,env=BASE_ENV)
+    imported=before.returncode!=0
+    if imported:
+        export=subprocess.Popen(SSH+['XDG_RUNTIME_DIR=/run/user/1000 podman save --format docker-archive '+OLD_IMAGE],cwd=ROOT,env=BASE_ENV,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        threading.Thread(target=lambda:export.stderr.read(),daemon=True).start()
+        start=time.monotonic()
+        loaded=subprocess.run(DOCKER+['load'],stdin=export.stdout,capture_output=True,env=BASE_ENV,timeout=600)
+        export.stdout.close(); export_code=export.wait(timeout=30)
+        REPORT['commands'].append({'command':SSH+['XDG_RUNTIME_DIR=/run/user/1000 podman save --format docker-archive '+OLD_IMAGE],'exitCode':export_code,'pipeTo':DOCKER+['load'],'pipeExitCode':loaded.returncode,'durationSeconds':round(time.monotonic()-start,3)})
+        assert export_code==0 and loaded.returncode==0
+    actual=json.loads(docker('image','inspect','--format','{"Id":"{{.Id}}","Architecture":"{{.Architecture}}"}',OLD_IMAGE))
+    assert actual['Id']=='sha256:'+OLD_IMAGE
+    # Do not expose full image configuration; only immutable identity and architecture.
+    arch=docker('run','--rm','--name','kortek-m2-c3-p2-arch-'+RUN,'--network','none','--read-only','--entrypoint','node',OLD_IMAGE,'-e','process.stdout.write(process.arch)').decode()
+    assert arch in ('arm64','x64')
+    mark('real-P0-image-local-executable',image=actual['Id'],architecture=arch,importedForDrill=imported)
+    REPORT['client']=client; REPORT['previousImageImported']=imported; REPORT['prepared']=True
+    REPORT['image17']=IMAGE; REPORT['pgClientVersion']=version
+    (WORK/'preparation.json').write_text(json.dumps(REPORT,indent=2)+'\n')
+    OWNED.remove(client) # Deliberately retained for the next authorized phase; identity recorded.
+
+def filter_toc(toc):
+    lines=[]; excluded=[]
+    for line in toc.splitlines():
+        if line.startswith(';') or not line.strip(): lines.append(line); continue
+        if re.search(r'\bSCHEMA - public\b|\bEXTENSION - btree_gist\b|\bCOMMENT - EXTENSION btree_gist\b|\bCOMMENT - SCHEMA public\b',line): excluded.append(line)
+        else: lines.append(line)
+    assert all('TABLE DATA' not in x for x in excluded)
+    REPORT['tocExcluded']=excluded
+    return '\n'.join(lines)+'\n'
+
+def main():
+    if sys.argv[1]=='prepare': prepare()
+    else: raise RuntimeError('mode-not-implemented')
+
+try:
+    main(); REPORT['success']=True
+except Exception as error:
+    REPORT['success']=False; REPORT['failures'].append({'stage':STAGE,'errorClass':type(error).__name__,'rawErrorOmitted':True})
+    emit('failed',operationStage=STAGE,errorClass=type(error).__name__)
+finally:
+    if SOURCE: SOURCE.kill()
+    for name in list(OWNED):
+        try: remove(name)
+        except Exception as error: REPORT['failures'].append({'stage':'cleanup','errorClass':type(error).__name__}); REPORT['success']=False
+    (WORK/('last-'+sys.argv[1]+'.json')).write_text(json.dumps(REPORT,indent=2)+'\n')
+sys.exit(0 if REPORT.get('success') else 1)

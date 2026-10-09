@@ -1,5 +1,6 @@
 'use client';
 
+import { BusinessTime } from '@/components/ui/BusinessTime';
 import Link from 'next/link';
 import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,7 +8,7 @@ import { api, type Organization } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import {
   canManageEmails, canReadBookingEmails, EMAIL_EVENTS, EMAIL_NOTICE_VERSION, EMAIL_STATES,
-  formatNotificationDate, notificationError, notificationReason, notificationScope,
+  notificationError, notificationReason, notificationScope,
   type EmailHistoryPage, type EmailHistoryRow, type EmailPreference, type EmailPreferenceInput,
 } from '@/lib/notification-ui';
 import { Button } from '@/components/ui/Button';
@@ -167,7 +168,7 @@ function ScopedNotifications({ scope, bookingId, mayRetry }: {
                       <h3 className="font-semibold">{EMAIL_EVENTS[row.event] ?? 'Aviso de reserva'}</h3>
                       <span className="rounded-md bg-[var(--dash-surface-raised)] px-2 py-1 text-sm">{EMAIL_STATES[row.status] ?? 'Estado no disponible'}</span>
                     </div>
-                    <p className="mt-2 text-sm text-[var(--dash-text-muted)]">{formatNotificationDate(row.createdAt, zone.data!)} · hora del negocio</p>
+                    <p className="mt-2 text-sm text-[var(--dash-text-muted)]"><BusinessTime value={row.createdAt} zone={zone.data!} /> · hora del negocio</p>
                     <p className="mt-1 text-sm">Correo · {row.recipientMasked === '***@***' ? 'Destinatario protegido' : 'Sin destinatario conservado'} · Intentos: {row.attempts}</p>
                     {notificationReason(row.reason) && <p className="mt-2 text-sm">{notificationReason(row.reason)}</p>}
                     {row.status === 'UNCERTAIN' && <p className="mt-2 text-sm">El envío necesita revisión. No se puede reintentar desde aquí.</p>}

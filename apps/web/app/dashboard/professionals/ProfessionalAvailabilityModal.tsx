@@ -22,6 +22,9 @@ import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { PROFESSIONAL_BUSINESS_TIME_COPY } from "@/lib/professional-ui";
+import { businessLocalToIso as zonedLocalToIso, businessLocalInput as isoToLocalInput } from "@/lib/business-time";
+import { scheduleError } from "@/lib/business-schedule";
+import { BusinessTime } from '@/components/ui/BusinessTime';
 
 const DAYS = [
   "Domingo",
@@ -41,82 +44,7 @@ const TEXTAREA_CLASS =
 type EditableShift = WeeklyShiftInput & { key: string };
 
 function errorMessage(error: unknown, fallback: string) {
-  return error instanceof ApiError ? error.message : fallback;
-}
-
-function localDateTimeParts(value: string) {
-  const match =
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
-  if (!match) return null;
-  return {
-    year: Number(match[1]),
-    month: Number(match[2]),
-    day: Number(match[3]),
-    hour: Number(match[4]),
-    minute: Number(match[5]),
-  };
-}
-
-function zonedParts(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-  const read = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(parts.find((part) => part.type === type)?.value);
-  return {
-    year: read("year"),
-    month: read("month"),
-    day: read("day"),
-    hour: read("hour"),
-    minute: read("minute"),
-  };
-}
-
-function partsAsUtc(parts: ReturnType<typeof zonedParts>) {
-  return Date.UTC(
-    parts.year,
-    parts.month - 1,
-    parts.day,
-    parts.hour,
-    parts.minute,
-  );
-}
-
-function zonedLocalToIso(value: string, timeZone: string) {
-  const desired = localDateTimeParts(value);
-  if (!desired) return null;
-  const desiredEpoch = partsAsUtc(desired);
-  let candidate = desiredEpoch;
-
-  for (let iteration = 0; iteration < 3; iteration += 1) {
-    const representedEpoch = partsAsUtc(zonedParts(new Date(candidate), timeZone));
-    candidate += desiredEpoch - representedEpoch;
-  }
-
-  const result = new Date(candidate);
-  const roundTrip = zonedParts(result, timeZone);
-  if (partsAsUtc(roundTrip) !== desiredEpoch) return null;
-  return result.toISOString();
-}
-
-function isoToLocalInput(value: string, timeZone: string) {
-  const parts = zonedParts(new Date(value), timeZone);
-  const pad = (number: number) => String(number).padStart(2, "0");
-  return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}T${pad(parts.hour)}:${pad(parts.minute)}`;
-}
-
-function formatBlockDate(value: string, timeZone: string) {
-  return new Intl.DateTimeFormat("es-DO", {
-    timeZone,
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return error instanceof ApiError ? scheduleError(error) : fallback;
 }
 
 function initialShifts(shifts: ProfessionalWeeklyShift[]): EditableShift[] {
@@ -550,7 +478,7 @@ function AvailabilityEditor({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-medium text-[var(--dash-text)]">
-                        {formatBlockDate(block.startTime, availability.timeZone)}
+                        <BusinessTime value={block.startTime} zone={availability.timeZone} />
                       </p>
                       <span
                         className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
@@ -563,7 +491,7 @@ function AvailabilityEditor({
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
-                      Hasta {formatBlockDate(block.endTime, availability.timeZone)}
+                      Hasta <BusinessTime value={block.endTime} zone={availability.timeZone} />
                     </p>
                     {block.note && (
                       <p className="mt-2 break-words text-sm text-[var(--dash-text-muted)]">
@@ -637,10 +565,12 @@ function BlockForm({
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError(null);
-    const startIso = zonedLocalToIso(startTime, timeZone);
-    const endIso = zonedLocalToIso(endTime, timeZone);
+    const startIso = block && startTime === isoToLocalInput(block.startTime, timeZone)
+      ? block.startTime : zonedLocalToIso(startTime, timeZone);
+    const endIso = block && endTime === isoToLocalInput(block.endTime, timeZone)
+      ? block.endTime : zonedLocalToIso(endTime, timeZone);
     if (!startIso || !endIso) {
-      setError(PROFESSIONAL_BUSINESS_TIME_COPY.invalid);
+      setError("Revisa las fechas y horas. Si esa hora no existe o se repite en el negocio, elige otra.");
       return;
     }
     if (new Date(startIso) >= new Date(endIso)) {

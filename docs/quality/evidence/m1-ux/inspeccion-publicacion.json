@@ -1,0 +1,287 @@
+{
+  "timestampUtc": "2026-10-02T03:21:07.558305+00:00",
+  "scope": "Inspección previa a publicación UX ligera y evidencia C3; 12 JSON y 15 capturas",
+  "files": [
+    {
+      "file": "docs/quality/evidence/m1-ux/calendario-375.png",
+      "result": "limpio",
+      "sha256": "04e080ff071383d70ef6a73341231459e08f294d117354161b9d048ef4c09832",
+      "findings": [],
+      "image": {
+        "width": 1403,
+        "height": 914,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/contacto-vacio-375.png",
+      "result": "limpio",
+      "sha256": "5c7b6c6419697ae4ea7b90005d068d79bca2f928aca2fae1fb2aaae7e138aa1e",
+      "findings": [],
+      "image": {
+        "width": 1403,
+        "height": 1049,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/fecha-hora-1280.png",
+      "result": "limpio",
+      "sha256": "fbbbfa42c2f0064f9b3c3b7905bd87177ddd463b5e5697801be3539a460549f1",
+      "findings": [],
+      "image": {
+        "width": 1403,
+        "height": 911,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/fecha-hora-320.png",
+      "result": "limpio",
+      "sha256": "ff59242fcb732e9e87d9550ba1c927e4418d8ebf8f2d627bfce364f1f3f30f57",
+      "findings": [],
+      "image": {
+        "width": 337,
+        "height": 1282,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/fecha-hora-375.png",
+      "result": "limpio",
+      "sha256": "9ba4df07d4aa9713d447b0020cc1c6dc3a4044d03280a6fd01cd81f0cf2662fd",
+      "findings": [],
+      "image": {
+        "width": 398,
+        "height": 1020,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/fecha-hora-390.png",
+      "result": "limpio",
+      "sha256": "a5c26ee9ecd7c0c3515a6b3d9e75fa42e2f751dad05c9c44585d9c76239d5ae2",
+      "findings": [],
+      "image": {
+        "width": 414,
+        "height": 1020,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/fecha-hora-768.png",
+      "result": "limpio",
+      "sha256": "88de0f050ef9051fd428e13dccada5ba4578cd967fb1510556de04c37500d68b",
+      "findings": [],
+      "image": {
+        "width": 834,
+        "height": 911,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/horas-sin-filtros-375.png",
+      "result": "limpio",
+      "sha256": "f924fb1f4da614e6b359650ec00ad13893555741a607b748d2199624a628757f",
+      "findings": [],
+      "image": {
+        "width": 417,
+        "height": 902,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/profesionales-375.png",
+      "result": "limpio",
+      "sha256": "1354b4244f0e664033edf32decdf9560c1656b3ae8463f38ad13236e6a0aa904",
+      "findings": [],
+      "image": {
+        "width": 1422,
+        "height": 902,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/regreso-desde-otro-mes.json",
+      "result": "limpio",
+      "sha256": "eba1910fea2f6f80a276b861c7b54c30d50f22e54cf7f121829e7a4e43fb1296",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/responsive.json",
+      "result": "limpio",
+      "sha256": "06bc6397822bd77510e714ee17cfca87674c7eedf3b18f12d4fd940247403060",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/resultado-375.png",
+      "result": "limpio",
+      "sha256": "c7004b6f827a014213ae6055ddce2ddede7e4f341179cad940d085038a669256",
+      "findings": [],
+      "image": {
+        "width": 398,
+        "height": 1023,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/revision-375.png",
+      "result": "limpio",
+      "sha256": "d55e10f2c73ad48e834aa93a7911b8af5f4788a6570bb6bddc749516075d80e0",
+      "findings": [],
+      "image": {
+        "width": 398,
+        "height": 1001,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/semana-entre-meses-375.png",
+      "result": "limpio",
+      "sha256": "bd6e1cfd11742f5a7af90d223e4c9399d627a034535f958dfd291999db603c47",
+      "findings": [],
+      "image": {
+        "width": 398,
+        "height": 1336,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/servicios-375.png",
+      "result": "limpio",
+      "sha256": "09bc847c277aa9fef625628f2ac1f5caf5f4766b79ab2f8d72951d05fbe23d41",
+      "findings": [],
+      "image": {
+        "width": 398,
+        "height": 933,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-ux/validacion.json",
+      "result": "limpio",
+      "sha256": "70621b894851e402161f51677aad48050b8250c6a11c06d8c733642f2cfe32bf",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/activacion-api.json",
+      "result": "limpio",
+      "sha256": "dfb9d7592c087b3fc49f1f25475da44986a2d65e1aa1ce4d844bdd6cba304c3c",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/backup-verificado.json",
+      "result": "limpio",
+      "sha256": "38341f773088e87338af5fdae2675c8b6f4651b15dd0dc83fc80a67ca2355ab8",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/calendario-qa.jpg",
+      "result": "limpio",
+      "sha256": "94c2afddce83fe22693acb234d618bd7539751783201fe806f5da03e242d3027",
+      "findings": [],
+      "image": {
+        "width": 444,
+        "height": 1149,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/controles-http.json",
+      "result": "limpio",
+      "sha256": "e68abb368f846256c3ef202cf84b4cb25bdaf8501822c1ed4a645a0bc4f4586f",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/exito-qa.jpg",
+      "result": "limpio",
+      "sha256": "cb8718e90e05ecf5b00b787690e3e8311296ebdf66f8481d2d1a96c9b63cd55c",
+      "findings": [],
+      "image": {
+        "width": 444,
+        "height": 1261,
+        "metadataSensitive": false,
+        "visuallyReviewed": true,
+        "content": "Solo fixtures sintéticos del ensayo documentado"
+      }
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/inspeccion-previa.json",
+      "result": "limpio",
+      "sha256": "4f77138e353872a5fd63efe378909d39d2b3920185f9657d9eed26f3dd4bdeb0",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/navegador-qa.json",
+      "result": "limpio",
+      "sha256": "7ee03747beaf18a2d55e7e6b2393bbf4176629f82b906d593be04e39217d2a43",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/produccion-comparacion.json",
+      "result": "limpio",
+      "sha256": "88b240054b77988a01f3b830f1f874d9936ec2784fc0dba3b5df40e2f86c7e0e",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/validacion-entrega.json",
+      "result": "limpio",
+      "sha256": "df926315e28a4c35c14246e264b3774c28b23f4f538d094510516f5f84729f8e",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/verificacion-final.json",
+      "result": "limpio",
+      "sha256": "72ef32b9cfaccc629bb95ce369a2c5a817651c71e5d7c883dcd4d0d1ae30e334",
+      "findings": []
+    },
+    {
+      "file": "docs/quality/evidence/m1-c3/web-qa.json",
+      "result": "limpio",
+      "sha256": "ee4acff9e28c865e8d408c2141cf38be5465f3b1abac5a1be2bd2cfeefa2a49e",
+      "findings": []
+    }
+  ],
+  "sensitiveFilesExcluded": [],
+  "backupIgnored": true,
+  "indexEmptyAtStart": true,
+  "envTrackedOnlyExampleTemplates": true,
+  "webValidation": {
+    "typeCheckExit": 0,
+    "lintExit": 0,
+    "unitPassed": 158,
+    "componentsPassed": 117,
+    "testsExit": 0,
+    "buildExit": 0,
+    "buildInitialSandboxFailureExit": 1
+  },
+  "physicalPhoneTest": "Pendiente, no se declara cierre M1"
+}

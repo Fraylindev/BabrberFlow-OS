@@ -40,6 +40,8 @@ interface BookingActionsProps {
   onStatusChange: (status: BookingStatus) => void;
   onReschedule: () => void;
   onIssueInvoice: () => void;
+  onViewInvoices: () => void;
+  onNotifications?: () => void;
 }
 
 interface ContextAction {
@@ -63,7 +65,7 @@ function ContextActionsMenu({
   function closeMenu({ restoreFocus = false } = {}) {
     setOpen(false);
     setPosition(null);
-    if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus(), 0);
+    if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus({ preventScroll: true }), 0);
   }
 
   function toggleMenu() {
@@ -120,12 +122,16 @@ function ContextActionsMenu({
 
   useEffect(() => {
     if (!open || !position) return;
-
-    menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+    // Terminar la activación nativa de Enter antes de mover el foco al portal.
+    const frame = requestAnimationFrame(() => {
+      menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [open, position]);
 
   useEffect(() => {
     if (!open) return;
+    const anchorAtOpen = triggerRef.current?.getBoundingClientRect();
 
     function handlePointerDown(event: MouseEvent) {
       const target = event.target as Node;
@@ -141,7 +147,14 @@ function ContextActionsMenu({
       }
     }
 
-    function handleViewportChange() {
+    function handleViewportChange(event: Event) {
+      // Scrolling an overflowing menu must not close that same menu.
+      if (event.type === 'scroll' && event.target instanceof Node && menuRef.current?.contains(event.target)) return;
+      // Ignore a scroll queued before opening if the anchor has not moved.
+      if (event.type === 'scroll' && anchorAtOpen) {
+        const anchor = triggerRef.current?.getBoundingClientRect();
+        if (anchor && anchor.top === anchorAtOpen.top && anchor.left === anchorAtOpen.left) return;
+      }
       closeMenu({ restoreFocus: menuRef.current?.contains(document.activeElement) ?? false });
     }
 
@@ -175,7 +188,7 @@ function ContextActionsMenu({
           : event.key === 'ArrowDown'
             ? (currentIndex + 1) % items.length
             : (currentIndex - 1 + items.length) % items.length;
-    items[nextIndex]?.focus();
+    items[nextIndex]?.focus({ preventScroll: true });
   }
 
   const portalTarget =
@@ -193,7 +206,7 @@ function ContextActionsMenu({
         aria-expanded={open}
         aria-label="Más acciones de la reserva"
         onClick={toggleMenu}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] text-lg font-semibold leading-none text-[var(--dash-text-muted)] outline-none transition-[border-color,background-color,color,box-shadow] hover:border-[var(--dash-accent)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)] disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] text-lg font-semibold leading-none text-[var(--dash-text-muted)] outline-none transition-[border-color,background-color,color,box-shadow] hover:border-[var(--dash-accent)] hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)] disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span aria-hidden="true">⋯</span>
       </button>
@@ -210,6 +223,7 @@ function ContextActionsMenu({
               top: position?.top ?? 0,
               left: position?.left ?? 0,
               visibility: position ? 'visible' : 'hidden',
+              transition: 'none',
               backgroundColor: 'var(--dash-surface, #ffffff)',
               borderColor: 'var(--dash-border-strong, #d4d4d8)',
               boxShadow:
@@ -226,7 +240,7 @@ function ContextActionsMenu({
                   closeMenu({ restoreFocus: true });
                   action.onSelect();
                 }}
-                className={`block w-full rounded-md px-3 py-2 text-left text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dash-accent)] ${
+                className={`block min-h-11 w-full rounded-md px-3 py-2 text-left text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dash-accent)] ${
                   action.danger
                     ? 'text-[var(--dash-danger)] hover:bg-[var(--dash-danger-bg)]'
                     : 'text-[var(--dash-text)] hover:bg-[var(--dash-surface-raised)]'
@@ -251,58 +265,18 @@ export function BookingActions({
   onStatusChange,
   onReschedule,
   onIssueInvoice,
+  onViewInvoices,
+  onNotifications,
 }: BookingActionsProps) {
   const actions = (isBarber ? BARBER_ACTIONS : STAFF_ACTIONS)[booking.status] ?? [];
   const canReschedule =
     !isBarber && (booking.status === 'PENDING' || booking.status === 'CONFIRMED');
-  const canIssueInvoice = booking.status === 'COMPLETED';
+  const canIssueInvoice = booking.status === 'COMPLETED' && booking.invoice === null;
+  const showFinancialState = booking.status === 'COMPLETED';
   const isBusy = isUpdating || isIssuing;
 
-  if (actions.length === 0 && !canReschedule && !canIssueInvoice) {
+  if (actions.length === 0 && !canReschedule && !showFinancialState && !onNotifications) {
     return <span className="text-xs text-[var(--dash-text-faint)]">Sin acciones disponibles</span>;
-  }
-
-  if (layout === 'mobile') {
-    return (
-      <div className="grid grid-cols-2 gap-2">
-        {actions.map((action) => (
-          <Button
-            key={action.to}
-            type="button"
-            tone="light"
-            variant={action.variant}
-            disabled={isBusy}
-            onClick={() => onStatusChange(action.to)}
-            className="min-h-10 w-full px-3 py-2 text-xs"
-          >
-            {action.label}
-          </Button>
-        ))}
-        {canReschedule && (
-          <Button
-            type="button"
-            tone="light"
-            variant="secondary"
-            disabled={isBusy}
-            onClick={onReschedule}
-            className="min-h-10 w-full px-3 py-2 text-xs"
-          >
-            Reprogramar
-          </Button>
-        )}
-        {canIssueInvoice && (
-          <Button
-            type="button"
-            tone="light"
-            disabled={isBusy}
-            onClick={onIssueInvoice}
-            className="col-span-2 min-h-11 w-full px-3 py-2 text-xs"
-          >
-            {isIssuing ? 'Emitiendo…' : 'Emitir factura'}
-          </Button>
-        )}
-      </div>
-    );
   }
 
   const primaryAction = actions[0];
@@ -313,10 +287,22 @@ export function BookingActions({
       danger: action.to === 'CANCELLED',
       onSelect: () => onStatusChange(action.to),
     })),
+    ...(layout === 'table' && showFinancialState
+      ? [{ label: 'Ver facturación', onSelect: onViewInvoices }] : []),
+    ...(onNotifications ? [{ label: 'Avisos por correo', onSelect: onNotifications }] : []),
   ];
+  // En desktop, reprogramación y consulta financiera quedan a un clic.
+  const directAction = layout === 'table' ? secondaryActions.find(action =>
+    action.label === 'Reprogramar' || action.label === 'Ver facturación') : undefined;
+  const menuActions = secondaryActions.filter(action => action !== directAction);
 
   return (
-    <div className="flex items-center gap-1.5 whitespace-nowrap">
+    <div className={layout === 'mobile' ? 'flex flex-wrap items-center gap-2' : 'flex flex-wrap items-center gap-1.5'}>
+      {layout === 'mobile' && booking.invoice && (
+        <span className="text-xs font-medium text-[var(--dash-text-muted)]">
+          {booking.invoice.state === 'PAID' ? 'Factura pagada' : 'Pendiente de cobro'}
+        </span>
+      )}
       {primaryAction && (
         <Button
           type="button"
@@ -324,7 +310,7 @@ export function BookingActions({
           variant="primary"
           disabled={isBusy}
           onClick={() => onStatusChange(primaryAction.to)}
-          className="min-h-9 px-3 py-1.5 text-xs"
+          className={layout === 'mobile' ? 'min-h-11 flex-1 px-3 py-2 text-sm' : 'min-h-9 px-3 py-1.5 text-xs'}
         >
           {primaryAction.label}
         </Button>
@@ -335,13 +321,23 @@ export function BookingActions({
           tone="light"
           disabled={isBusy}
           onClick={onIssueInvoice}
-          className="min-h-9 px-3 py-1.5 text-xs"
+          className={layout === 'mobile' ? 'min-h-11 flex-1 px-3 py-2 text-sm' : 'min-h-9 px-3 py-1.5 text-xs'}
         >
           {isIssuing ? 'Emitiendo…' : 'Emitir factura'}
         </Button>
       )}
-      {secondaryActions.length > 0 && (
-        <ContextActionsMenu actions={secondaryActions} disabled={isBusy} />
+      {layout === 'mobile' && showFinancialState && !canIssueInvoice && (
+        <Button type="button" tone="light" variant="secondary" disabled={isBusy} onClick={onViewInvoices}
+          className={layout === 'mobile' ? 'min-h-11 flex-1 px-3 py-2 text-sm' : 'min-h-9 px-3 py-1.5 text-xs'}>
+          Ver facturación
+        </Button>
+      )}
+      {directAction && <Button type="button" tone="light" variant="secondary" disabled={isBusy}
+        onClick={directAction.onSelect} className="min-h-9 px-3 py-1.5 text-xs">
+        {directAction.label}
+      </Button>}
+      {menuActions.length > 0 && (
+        <ContextActionsMenu actions={menuActions} disabled={isBusy} />
       )}
     </div>
   );

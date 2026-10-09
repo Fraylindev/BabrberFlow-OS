@@ -1,0 +1,9 @@
+--- /usr/local/libexec/kortek-worker-staging-run.sh (actual)
++++ /usr/local/libexec/kortek-worker-staging-run.sh (propuesta)
+@@ -29,5 +29,5 @@
+   -e NODE_OPTIONS=--max-old-space-size=256 \
+   -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \
+   --entrypoint node \
+-  "${KORTEK_API_IMAGE:?immutable staging image required}" \
++  "sha256:7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1" \
+   dist/notifications/email-worker.cli.js

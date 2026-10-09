@@ -1,0 +1,29 @@
+const fs=require('node:fs'),path=require('node:path'),net=require('node:net');
+const {spawnSync}=require('node:child_process');const {randomUUID,randomBytes}=require('node:crypto');
+const root=process.cwd(),clean=path.join(root,'.tmp/ci-synthetic-clean'),bin='C:/Program Files/PostgreSQL/18/bin';
+const yaml=require(path.join(root,'node_modules/.pnpm/js-yaml@4.3.0/node_modules/js-yaml'));
+const workflow=yaml.load(fs.readFileSync(path.join(clean,'.github/workflows/quality.yml'),'utf8'));
+const id=randomUUID(),own=path.join(root,'.tmp','ci-synthetic-pg-'+id),data=path.join(own,'data');
+const output=path.join(root,'docs/quality/evidence/ci-synthetic-env/local-'+id);
+fs.mkdirSync(own);fs.mkdirSync(output,{recursive:true});
+const sysNames=['PATH','SystemRoot','WINDIR','COMSPEC','TEMP','TMP','USERPROFILE','APPDATA','LOCALAPPDATA','ProgramFiles','ProgramFiles(x86)','ProgramW6432','PATHEXT','OS','NUMBER_OF_PROCESSORS','PROCESSOR_ARCHITECTURE'];
+const sys=Object.fromEntries(Object.entries(process.env).filter(([k])=>sysNames.some(n=>n.toLowerCase()===k.toLowerCase())));
+const admin=randomBytes(32).toString('hex'),report={id,cleanCheckout:clean,variables:Object.keys(workflow.jobs.verify.env),systemVariables:Object.keys(sys),commands:[],cleanup:false,steps:[]};
+let port,started=false;const secrets=[admin];
+function sanitize(t){for(const m of t.matchAll(/::add-mask::([^\r\n]+)/g))if(!secrets.includes(m[1]))secrets.push(m[1]);for(const s of secrets)t=t.replaceAll(s,'[omitted]');return t.replace(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g,'[JWT omitted]').replace(/postgres(?:ql)?:\/\/[^\s"']+/gi,'[database URL omitted]');}
+function run(command,args,label,env=sys,options={}){const r=spawnSync(command,args,{cwd:clean,env,windowsHide:true,encoding:'utf8',timeout:900000,maxBuffer:30e6,...options});const log=sanitize((r.stdout||'')+(r.stderr||'')+(r.error?.message||''));fs.writeFileSync(path.join(output,label+'.log'),log);report.commands.push({label,exitCode:r.status});console.log(label+': '+r.status);if(r.status!==0)throw Error(label+' failed; see sanitized log');return log;}
+function psql(label,db,sql){return run(path.join(bin,'psql.exe'),['-X','-h','127.0.0.1','-p',String(port),'-U','postgres','-d',db,'-v','ON_ERROR_STOP=1'],label,{...sys,PGPASSWORD:admin},{input:sql});}
+async function main(){
+ report.version=run(path.join(bin,'postgres.exe'),['--version'],'version').trim();
+ const pw=path.join(own,'pw');fs.writeFileSync(pw,admin);try{run(path.join(bin,'initdb.exe'),['-D',data,'-U','postgres','--auth-host=scram-sha-256','--auth-local=trust','--locale=C','--encoding=UTF8','--pwfile='+pw],'initdb');}finally{fs.unlinkSync(pw);}
+ const s=net.createServer();await new Promise(res=>s.listen(0,'127.0.0.1',res));port=s.address().port;await new Promise(res=>s.close(res));report.port=port;
+ run(path.join(bin,'pg_ctl.exe'),['-D',data,'-l',path.join(own,'postgres.log'),'-o',`-h 127.0.0.1 -p ${port}`,'-w','start'],'start',sys,{stdio:'ignore'});started=true;
+ psql('bootstrap','postgres',`REVOKE CONNECT ON DATABASE postgres FROM PUBLIC; CREATE ROLE kortek_ci_runner LOGIN PASSWORD 'ci-runner-only' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION; CREATE DATABASE kortek_ci_test OWNER kortek_ci_runner;`);
+ const base={...sys,...workflow.jobs.verify.env,CI:'true'};
+ base.DATABASE_URL=base.DATABASE_URL.replace(':5432/',`:${port}/`);
+ // No dotenv in this Git checkout, no GUEST_* / C1_* / RUN_* or application env inherited.
+ for(const p of ['.env','.env.local','apps/api/.env','apps/web/.env','apps/web/.env.local','apps/web/.env.test'])if(fs.existsSync(path.join(clean,p)))throw Error('Dotenv exists in clean checkout');
+ const selected=process.argv[2]?process.argv[2].split('|'):['Prisma contract and generated client','Runtime privilege matrix gate','TypeScript and lint','Unit and component tests','Production builds','PostgreSQL integrity and isolated E2E','Browser smoke tests'];
+ for(const name of selected){const step=workflow.jobs.verify.steps.find(s=>s.name===name);let body=step.run.replaceAll(':5432/',`:${port}/`);const shell=path.join(own,name.replaceAll(/[^a-z0-9]/gi,'-')+'.sh');fs.writeFileSync(shell,'set -euo pipefail\nexport PATH="/c/Program Files/PostgreSQL/18/bin:$PATH"\n'+body+'\n');const env={...base,...step.env};if(step.env?.PGPASSWORD)env.PGPASSWORD=admin;env.PGPORT=String(port);report.steps.push({name,environmentNames:Object.keys(env).filter(k=>!Object.keys(sys).includes(k)),adaptations:['ephemeral PG port','administrative password for own cluster','Windows shell PATH']});run('C:/Program Files/Git/bin/bash.exe',['--noprofile','--norc',shell],name.replaceAll(/[^a-z0-9]/gi,'-'),env);}
+}
+main().catch(e=>{report.error=e.message;console.error(e.message);process.exitCode=1;}).finally(()=>{if(started){const r=spawnSync(path.join(bin,'pg_ctl.exe'),['-D',data,'-m','fast','-w','stop'],{windowsHide:true,encoding:'utf8',timeout:60000});report.stopExit=r.status;if(r.status===0){if(path.dirname(path.resolve(own))!==path.resolve(root,'.tmp')||path.basename(own)!=='ci-synthetic-pg-'+id)throw Error('Cleanup boundary');fs.rmSync(own,{recursive:true});report.cleanup=!fs.existsSync(own);}}fs.writeFileSync(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');});

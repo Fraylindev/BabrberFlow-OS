@@ -1,0 +1,241 @@
+{
+  "timestampUtc": "2026-10-04T00:20:36.460297+00:00",
+  "image": "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+  "commands": [
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=kortek-m2-c3-p2-client-d15070d4fd9f",
+        "--format",
+        "{{.Names}} {{.State}}"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "image",
+        "inspect",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "--format",
+        "{\"id\":{{json .Id}},\"user\":{{json (index .Config \"User\")}},\"os\":{{json .Os}},\"architecture\":{{json .Architecture}}}"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "git",
+        "show",
+        "HEAD:ops/oci-free-backup/prod-ca-2021.crt"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--detach",
+        "--rm",
+        "--name",
+        "kortek-m2-c3-p2-bind-935a01e38f3b",
+        "--network",
+        "none",
+        "--read-only",
+        "--cpus",
+        "1",
+        "--memory",
+        "768m",
+        "--pids-limit",
+        "128",
+        "--tmpfs",
+        "/tmp:rw,size=64m",
+        "--tmpfs",
+        "/var/run/postgresql:rw,size=16m",
+        "--mount",
+        "type=bind,source=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt,target=/tmp/qa-ca.crt,readonly",
+        "--entrypoint",
+        "sleep",
+        "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+        "infinity"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "inspect",
+        "--format",
+        "{\"running\":{{json .State.Running}},\"readonly\":{{json .HostConfig.ReadonlyRootfs}},\"tmpfs\":{{json .HostConfig.Tmpfs}},\"network\":{{json .HostConfig.NetworkMode}},\"user\":{{json (index .Config \"User\")}},\"mounts\":{{json .Mounts}}}",
+        "kortek-m2-c3-p2-bind-935a01e38f3b"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-bind-935a01e38f3b",
+        "pg_dump",
+        "--version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-bind-935a01e38f3b",
+        "sha256sum",
+        "/tmp/qa-ca.crt"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-bind-935a01e38f3b",
+        "test",
+        "-r",
+        "/tmp/qa-ca.crt"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "exec",
+        "kortek-m2-c3-p2-bind-935a01e38f3b",
+        "sh",
+        "-c",
+        "test ! -w /tmp/qa-ca.crt"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "stop",
+        "--time",
+        "1",
+        "kortek-m2-c3-p2-bind-935a01e38f3b"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "C:/Program Files/Git/usr/bin/gpg.exe",
+        "--no-options",
+        "--homedir",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-935a01e38f3b-p0o5d1sb\\gpg-home",
+        "--no-symkey-cache",
+        "--batch",
+        "--pinentry-mode",
+        "loopback",
+        "--passphrase-fd",
+        "0",
+        "--symmetric",
+        "--cipher-algo",
+        "AES256",
+        "--output",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-935a01e38f3b-p0o5d1sb\\trivial.gpg",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-local-935a01e38f3b-p0o5d1sb\\trivial.txt"
+      ],
+      "exitCode": 2,
+      "stderrSanitized": "gpg: keybox 'C:\\\\Users\\\\Fraylin\\\\Desktop\\\\Kortek-Booking\\\\.tmp\\\\p2-local-935a01e38f3b-p0o5d1sb\\\\gpg-home/pubring.kbx' created\ngpg: error running '/usr/bin/gpg-agent': exit status 2\ngpg: failed to start gpg-agent '/usr/bin/gpg-agent': General error\ngpg: can't connect to the gpg-agent: General error\ngpg: problem with the agent: No agent running"
+    }
+  ],
+  "createdContainers": [
+    "kortek-m2-c3-p2-bind-935a01e38f3b"
+  ],
+  "removedContainers": [
+    "kortek-m2-c3-p2-bind-935a01e38f3b"
+  ],
+  "qaConnections": false,
+  "credentialFilesRead": false,
+  "realPhraseUsed": false,
+  "previousContainerPresent": false,
+  "imageMetadata": {
+    "id": "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+    "user": null,
+    "os": "linux",
+    "architecture": "amd64"
+  },
+  "ca": {
+    "path": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt",
+    "bytes": 1390,
+    "sha256": "1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a",
+    "matchesTrackedHEADAfterLineEndingNormalization": true,
+    "readable": true
+  },
+  "syntheticPromptReceived": true,
+  "correctedConfiguration": {
+    "running": true,
+    "readonly": true,
+    "tmpfs": {
+      "/tmp": "rw,size=64m",
+      "/var/run/postgresql": "rw,size=16m"
+    },
+    "network": "none",
+    "user": "",
+    "mounts": [
+      {
+        "Destination": "/tmp/qa-ca.crt",
+        "Mode": "",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/var/lib/postgresql/data",
+        "Driver": "local",
+        "Mode": "",
+        "Name": "8ff9a7e40139d0987dfb2187f22bf662404b8b21370c10938732423b7301057f",
+        "Propagation": "",
+        "RW": true,
+        "Source": "/var/lib/docker/volumes/8ff9a7e40139d0987dfb2187f22bf662404b8b21370c10938732423b7301057f/_data",
+        "Type": "volume"
+      }
+    ]
+  },
+  "pgDumpVersion": "pg_dump (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2)",
+  "containerCaHashMatches": true,
+  "caReadableAndReadOnly": true,
+  "custodyWritable": true,
+  "custodyProbeRemoved": true,
+  "gpgVersion": "gpg (GnuPG) 2.4.5-unknown",
+  "cryptoTemporaryFilesRemoved": true,
+  "success": false,
+  "errorClass": "RuntimeError",
+  "errorLabel": "local-command-exit-2",
+  "remainingOwnedContainers": []
+}

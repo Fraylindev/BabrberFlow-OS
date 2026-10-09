@@ -1,0 +1,75 @@
+{
+  "hashBasis": "canonical LF JSON Git blobs",
+  "files": [
+    {
+      "path": "authorization.json",
+      "bytes": 500,
+      "sha256": "846c2363fb920c8a90aadc3c5deef238f8ec542622101f10b34057436d9767aa"
+    },
+    {
+      "path": "checksum-equivalence.json",
+      "bytes": 1056,
+      "sha256": "b361e383e5a8e3574f5420746c5656595b53ac5cdd093c064453a1293c21fb1c"
+    },
+    {
+      "path": "completion-audit.json",
+      "bytes": 1614,
+      "sha256": "0b60c0fd96807c702ee6d30713e5339afe4bc3f424a54222fdb9d4418c5d2a3f"
+    },
+    {
+      "path": "executed-sources.json",
+      "bytes": 355156,
+      "sha256": "d4d9b895a63a211fd643c83e0531f463da67e184e8ff99154eb6580a68dbec0d"
+    },
+    {
+      "path": "final-audit.json",
+      "bytes": 22297,
+      "sha256": "a886d11a7dc3e6c944cced9e771123583473117439c7ae6b9492c2a0a045a53c"
+    },
+    {
+      "path": "gate-source-identity.json",
+      "bytes": 470,
+      "sha256": "d8ac9db9cc49964d811cba54aaa76b6ebd80f8d5e411a7cbe917a2ea23039dd2"
+    },
+    {
+      "path": "impediments.json",
+      "bytes": 2080,
+      "sha256": "122e2fea64260269499ea2852900b701dab1726e9e01c7f7e08650e6e0634eee"
+    },
+    {
+      "path": "p0-checksum-precedent.json",
+      "bytes": 24179,
+      "sha256": "1a88e10e13b179af6542a8fcacc37c308e47dbbf7fed8838e18d26899e187e33"
+    },
+    {
+      "path": "r1-live-readonly.json",
+      "bytes": 338153,
+      "sha256": "ae18594f257d1929f9f079b541821dc9fd0024b03f4e2c79b58fc936fe9664b7"
+    },
+    {
+      "path": "r1-real-p2-reference.json",
+      "bytes": 923578,
+      "sha256": "5571f2477c3c77bd41743b878a75b9376cc79312add3c7f5fd3bfb0668435ba2"
+    },
+    {
+      "path": "r2-runtime-gate.json",
+      "bytes": 2616,
+      "sha256": "5e8bbb1bb7ed3764ece169f6125b40d36b4cb39fd3c09b77247dfc05376d68f9"
+    },
+    {
+      "path": "r3-preactivation.json",
+      "bytes": 336753,
+      "sha256": "714bdfd4affda35e094732b54270d04e6a0a8401e92b9d06316e34f8c9896d76"
+    },
+    {
+      "path": "r4-activation.json",
+      "bytes": 312172,
+      "sha256": "3eefe7b132e87a64414a60a5e3ef1eab4b16f9bf4b68757277b149f19da38db0"
+    },
+    {
+      "path": "watchdog-local-verification.json",
+      "bytes": 734,
+      "sha256": "d2ca0b0fa424fcbfd29e1893bac7abe43510aecd5004c06e4abc9f4155f24b0f"
+    }
+  ]
+}

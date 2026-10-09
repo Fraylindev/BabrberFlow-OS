@@ -1,0 +1,755 @@
+import os, sys, json, re, time, hashlib, secrets, subprocess, threading, queue, shutil, traceback
+from pathlib import Path
+from datetime import datetime, timezone
+
+ROOT = Path(__file__).resolve().parents[2]
+WORK = Path(__file__).resolve().parent
+IMAGE = 'sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f'
+API_IMAGE = '701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031'
+WORKER_IMAGE = '7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1'
+RELEASE = '791569b110f9fd59cb10e6d248546bdae3996e14'
+REF = 'prirlabbnlcuvnzuaczp'
+DOCKER = ['docker','--context','desktop-linux']
+SSH = ['ssh','-i',str(ROOT/'.tmp/base-preprod-c1/oci-kortek-ed25519-user'),
+       '-o','UserKnownHostsFile='+str(ROOT/'.tmp/base-preprod-c1/oci-known-hosts'),
+       '-o','StrictHostKeyChecking=yes','-o','BatchMode=yes','-o','ConnectTimeout=15',
+       'opc@150.136.7.19']
+GPG = 'C:/Program Files/Git/usr/bin/gpg.exe'
+BASE_ENV = {k:v for k,v in os.environ.items() if not re.search(
+    r'DATABASE|POSTGRES|^PG|CLERK|JWT|CLOUDINARY|RESEND|NOTIFICATION|EMAIL|E2E|TOKEN|SECRET|PASSWORD',k,re.I)}
+RUN = secrets.token_hex(6)
+REPORT = {'base':'25fbdd3241b926925a3af435d8ecb5c4ddd99fad',
+          'startedUtc':datetime.now(timezone.utc).isoformat(),'commands':[],'checks':[],
+          'ownedContainers':[],'removedContainers':[],'qaFrozen':False,'qaResumed':False,
+          'productionAccess':False,'push':False,'p3':False}
+STAGE = 'preparacion'
+OWNED = []
+SOURCE = None
+PG_ENV = None
+PHRASE = None
+DECRYPT_PHRASE = None
+MODE = 'qa'
+BASELINE_LEDGER = None
+EXPECTED_VERSION_NUM = 170006
+CUSTODY = Path('C:/KortekBackups/qa-m2-c3')
+LOCAL_ROLLBACK_ARTIFACT = False
+LAST_QUERY = None
+PRIVATE_VALUES = []
+
+def save():
+    destination=WORK/'result.json'
+    temporary=WORK/'result.json.tmp'
+    temporary.write_text(json.dumps(REPORT,indent=2,ensure_ascii=True)+'\n',encoding='utf-8')
+    temporary.replace(destination)
+
+def emit(event, **fields):
+    print(json.dumps({'event':event,**fields},ensure_ascii=True),flush=True)
+    REPORT['event']=event
+    save()
+
+def sanitize_message(value):
+    # No payloads, SQL DETAIL/CONTEXT, literals, credential values or command argv.
+    text=str(value).splitlines()[0] if str(value).splitlines() else '(mensaje vacio)'
+    for secret in PRIVATE_VALUES:
+        if secret: text=text.replace(secret,'[privado]')
+    if PG_ENV and PG_ENV.get('PGPASSWORD'): text=text.replace(PG_ENV['PGPASSWORD'],'[privado]')
+    for secret in [PHRASE,DECRYPT_PHRASE]:
+        if secret: text=text.replace(bytes(secret).decode('utf-8',errors='replace'),'[privado]')
+    text=re.sub(r'(?:postgres(?:ql)?|https?|ssh)://[^\s]+','[direccion omitida]',text,flags=re.I)
+    text=re.sub(r'(?i)(password|passphrase|token|secret|clave)\s*[:=]\s*[^\s,;]+',r'\1=[privado]',text)
+    text=re.sub(r'"[^"\r\n]*"','[literal omitido]',text)
+    text=re.sub("'[^'\r\n]*'",'[literal omitido]',text)
+    return text[:1200]
+
+def failure_info(error, phase=None, event='parada'):
+    frames=[{'file':Path(f.filename).name,'line':f.lineno,'function':f.name}
+            for f in traceback.extract_tb(error.__traceback__)]
+    message=sanitize_message(error)
+    if isinstance(error,subprocess.TimeoutExpired): message='comando supero el timeout: '+str(error.timeout)+' s'
+    if isinstance(error,subprocess.CalledProcessError): message='comando devolvio exit '+str(error.returncode)
+    return {'event':event,'phase':phase or STAGE,'exceptionClass':type(error).__name__,
+            'messageSanitized':message,'queryLabel':LAST_QUERY,'tracebackSanitized':frames}
+
+def retain_failure(error, phase=None, event='parada'):
+    item=failure_info(error,phase,event)
+    REPORT['success']=False
+    REPORT.setdefault('errors',[]).append(item)
+    REPORT.setdefault('failure',item)
+    try: save()
+    except Exception as handler_error:
+        REPORT['errors'].append(failure_info(handler_error,'persistencia-error','fallo-manejador'))
+        # Fallback separado: no depende de save ni del emisor fallido.
+        (WORK/'failure-fallback.json').write_text(json.dumps(REPORT,indent=2,ensure_ascii=True)+'\n',encoding='utf-8')
+    return item
+
+def report_failure(error):
+    item=retain_failure(error)
+    try: emit('parada',failure=item)
+    except Exception as handler_error: retain_failure(handler_error,'manejador-error','fallo-manejador')
+
+def safe_stderr(data):
+    lines=data.decode('utf-8',errors='replace').splitlines()
+    # First diagnostic only, omit DETAIL, CONTEXT, row contents and SQL text.
+    candidates=[x for x in lines if re.search(r'(ERROR:|FATAL:|pg_dump: error:|pg_restore: error:|gpg:)',x)
+                and not re.search(r'(DETAIL:|CONTEXT:|QUERY:|STATEMENT:)',x)]
+    return sanitize_message(candidates[0]) if candidates else '(sin diagnostico seguro)'
+
+def command_failure(label, code, stderr):
+    REPORT['failureCommand']={'label':label,'exitCode':code,'messageSanitized':safe_stderr(stderr)}
+    raise RuntimeError(str(label or 'comando-fallido')+'; exit='+str(code)+'; '+safe_stderr(stderr))
+
+def spawn_pipe(args, **kwargs):
+    process=subprocess.Popen(args,cwd=ROOT,stderr=subprocess.PIPE,**kwargs)
+    errors=[]
+    def drain():
+        while True:
+            part=process.stderr.read(8192)
+            if not part: break
+            if sum(map(len,errors))<262144: errors.append(part)
+    worker=threading.Thread(target=drain,daemon=True); worker.start()
+    process.p2_errors=errors; process.p2_error_worker=worker
+    return process
+
+def pipe_error(process):
+    process.p2_error_worker.join(timeout=5)
+    return b''.join(process.p2_errors)
+
+def check(label, **fields):
+    REPORT['checks'].append({'label':label,**fields})
+    emit(label,**fields)
+
+def run(args, data=None, env=None, timeout=120, expected=0, label=None, record=True):
+    p = subprocess.run(args,cwd=ROOT,input=data,capture_output=True,
+                       env=env or BASE_ENV,timeout=timeout)
+    if record:
+        safe = ['--snapshot=<snapshot-en-memoria>' if x.startswith('--snapshot=') else x for x in args]
+        REPORT['commands'].append({'args':safe,'exitCode':p.returncode,'label':label})
+    if p.returncode != expected:
+        command_failure(label,p.returncode,p.stderr)
+    return p.stdout
+
+def docker(*args, **kwargs): return run(DOCKER+list(args),**kwargs)
+def ssh(command, **kwargs): return run(SSH+[command],**kwargs)
+def ident(value): return '"'+value.replace('"','""')+'"'
+def literal(value): return "'"+str(value).replace("'","''")+"'"
+def msys(path):
+    s=Path(path).resolve().as_posix()
+    if not re.match(r'^[A-Za-z]:/',s): raise RuntimeError('ruta-msys')
+    return '/'+s[0].lower()+s[2:]
+def erase(value):
+    if isinstance(value,bytearray): value[:]=b'\0'*len(value)
+
+def start(name, server=False, ca=False):
+    args=['run','--detach','--rm','--name',name,'--network','none' if server else 'bridge',
+          '--read-only','--cpus','1','--memory','1536m' if server else '768m',
+          '--pids-limit','128','--tmpfs','/tmp:rw,size=64m',
+          '--tmpfs','/var/run/postgresql:rw,size=16m',
+          '--tmpfs','/var/lib/postgresql/data:rw,size=1024m']
+    if ca:
+        args+=['--mount','type=bind,source='+str(ROOT/'ops/oci-free-backup/prod-ca-2021.crt')+
+               ',target=/tmp/qa-ca.crt,readonly']
+    if server:
+        args+=['--env','POSTGRES_HOST_AUTH_METHOD=trust',IMAGE,'postgres','-c','listen_addresses=127.0.0.1']
+    else: args+=['--entrypoint','sleep',IMAGE,'infinity']
+    docker(*args,label='crear-contenedor-propio')
+    OWNED.append(name); REPORT['ownedContainers'].append(name)
+    if server:
+        for _ in range(60):
+            p=subprocess.run(DOCKER+['exec',name,'pg_isready','-U','postgres'],
+                             capture_output=True,env=BASE_ENV)
+            if p.returncode==0: break
+            time.sleep(.5)
+        else: raise RuntimeError('PG17-aislado-no-listo')
+    return name
+
+def local_sql(container, sql, database='postgres', role='postgres', expected=0):
+    if container not in OWNED: raise RuntimeError('destino-local-no-propio')
+    return docker('exec','-i','-e','PGCLIENTENCODING=UTF8',container,'psql','-X','-qAt','-v','ON_ERROR_STOP=1',
+                  '-U',role,'-d',database,data=sql.encode('utf-8'),expected=expected,
+                  label='sql-aislado').decode('utf-8').strip()
+
+class Reader:
+    def __init__(self, client):
+        keys=['PGPASSWORD','PGHOST','PGPORT','PGUSER','PGDATABASE','PGSSLMODE','PGSSLROOTCERT','PGOPTIONS','PGAPPNAME','PGCLIENTENCODING']
+        opts=sum((['-e',k] for k in keys),[])
+        args=DOCKER+['exec','-i']+opts+[client,'psql','-X','-qAt','-v','ON_ERROR_STOP=1']
+        self.proc=subprocess.Popen(args,cwd=ROOT,env=PG_ENV,stdin=subprocess.PIPE,
+                                   stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,encoding='utf-8',errors='strict')
+        self.lines=queue.Queue()
+        self.stderr=[]
+        def error_pump():
+            for line in self.proc.stderr:
+                if len(self.stderr)<100: self.stderr.append(line)
+        threading.Thread(target=error_pump,daemon=True).start()
+        def pump():
+            for line in self.proc.stdout: self.lines.put(line.rstrip('\r\n'))
+            self.lines.put(None)
+        threading.Thread(target=pump,daemon=True).start()
+        REPORT['commands'].append({'args':args,'label':'reader-fuente-RR-RO'})
+        self.q("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY; SET LOCAL statement_timeout='120s'")
+    def q(self, sql, label='consulta-scalar'):
+        global LAST_QUERY
+        LAST_QUERY=label
+        end='P2_END_'+secrets.token_hex(8)
+        self.proc.stdin.write(sql+";\nSELECT '"+end+"';\n"); self.proc.stdin.flush()
+        rows=[]
+        while True:
+            line=self.lines.get(timeout=150)
+            if line is None: raise RuntimeError('reader-fuente-fallo; '+safe_stderr(''.join(self.stderr).encode('utf-8')))
+            if line==end: return rows
+            if line: rows.append(line)
+    def json(self, sql, label=None):
+        label=label or {LEDGER_SQL:'ledger-tecnico',CATALOG_SQL:'catalogo',ROLE_SQL:'roles',COUNTS_SQL:'conteos'}.get(sql,'login-readonly')
+        return json.loads('\n'.join(self.q(sql,label=label)))
+    def close(self):
+        if self.proc.poll() is None:
+            self.q('COMMIT'); self.proc.stdin.close()
+            if self.proc.wait(timeout=15)!=0: raise RuntimeError('reader-QA-exit')
+    def kill(self):
+        if self.proc.poll() is None: self.proc.kill(); self.proc.wait(timeout=15)
+
+def dump_args(client, snapshot, *extra):
+    keys=['PGPASSWORD','PGHOST','PGPORT','PGUSER','PGDATABASE','PGSSLMODE','PGSSLROOTCERT','PGOPTIONS','PGAPPNAME','PGCLIENTENCODING']
+    return DOCKER+['exec']+sum((['-e',k] for k in keys),[])+[
+        client,'pg_dump','--schema=public','--format=custom','--no-owner','--no-privileges',
+        '--encoding=UTF8','--snapshot='+snapshot]+list(extra)
+
+def infra():
+    cmd='systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format "{{.Name}} {{.Image}} {{.State.Status}}" kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service'
+    value=ssh(cmd,label='estado-seguro-QA').decode('utf-8')
+    if API_IMAGE not in value or WORKER_IMAGE not in value or value.count('ActiveState=active')!=2 or value.count('SubState=running')!=2:
+        raise RuntimeError('servicios-imagenes-difieren-P0')
+    if value.count('NRestarts=0')!=2: raise RuntimeError('reinicios-inesperados')
+    prior=json.loads((ROOT/'docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json').read_text(encoding='utf-8'))
+    observed=dict((path,digest) for digest,path in re.findall(r'^([0-9a-f]{64})\s+(\S+)$',value,re.M))
+    if observed!=prior['hashesArchivosQa']: raise RuntimeError('archivos-QA-difieren-baseline')
+    return value
+
+def effective():
+    prior=json.loads((ROOT/'docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json').read_text(encoding='utf-8'))
+    code=prior['effectiveReaderCode']
+    value=json.loads(ssh('XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node',
+                         data=code.encode('utf-8'),label='destino-release-efectivo-RO').decode('utf-8'))
+    for key in ['releaseMatchesP0','databaseRoleMatches','databaseMatches','qaUserMatches','qaEndpointMatches','effectiveServerMatchesQaDns','deployEnvironmentMatches','publicBookingOpen']:
+        if value.get(key) is not True: raise RuntimeError('destino-release-QA-no-coincide')
+    return value
+
+def request_phrase(kind):
+    emit('prompt-frase',kind=kind)
+    line=sys.stdin.buffer.readline()
+    if not line: raise RuntimeError('prompt-cerrado')
+    value=bytearray(line.rstrip(b'\r\n')); line=None
+    if not value: raise RuntimeError('frase-vacia')
+    if kind=='cifrar-doble-confirmacion':
+        second_line=sys.stdin.buffer.readline()
+        second=bytearray(second_line.rstrip(b'\r\n')); second_line=None
+        same=bool(second) and secrets.compare_digest(value,second)
+        erase(second); second=None
+        if not same:
+            erase(value)
+            raise RuntimeError('frases-no-coinciden-antes-dump')
+    PRIVATE_VALUES.append(bytes(value).decode('utf-8'))
+    return value
+
+def gpg_args(phrase, path, encrypt=True):
+    home=WORK/'gpg-home'; home.mkdir(exist_ok=True)
+    args=[GPG,'--no-options','--homedir',msys(home),'--no-symkey-cache','--batch',
+          '--pinentry-mode','loopback','--passphrase-fd','0']
+    return args+(['--symmetric','--cipher-algo','AES256','--output',msys(path)] if encrypt else ['--decrypt',msys(path)])
+
+def encrypt_data(phrase, data, dest):
+    # GPG consume la primera línea del stdin como frase; el resto es el payload.
+    temporary=dest.with_suffix(dest.suffix+'.partial')
+    try:
+        run(gpg_args(phrase,temporary),data=bytes(phrase)+b'\n'+data,label='cifrado-AES256-stdin-anonimo')
+        temporary.replace(dest)
+    finally:
+        if temporary.exists(): temporary.unlink()
+
+def decrypt_data(phrase, path):
+    return run(gpg_args(phrase,path,False),data=bytes(phrase)+b'\n',label='descifrado-stdin-anonimo')
+
+CATALOG_SQL = r"""SELECT json_build_object(
+ 'tables',(SELECT coalesce(json_agg(x ORDER BY x.name),'[]') FROM
+   (SELECT c.relname AS name,pg_get_userbyid(c.relowner) AS owner FROM pg_class c
+    WHERE c.relnamespace='public'::regnamespace AND c.relkind IN ('r','p')) x),
+ 'columns',(SELECT coalesce(json_agg(x ORDER BY x.table_name,x.position),'[]') FROM
+   (SELECT c.relname AS table_name,a.attname AS name,a.attnum AS position,
+     format_type(a.atttypid,a.atttypmod) AS type,a.attnotnull AS not_null,
+     a.attidentity AS identity,a.attgenerated AS generated,
+     pg_get_expr(d.adbin,d.adrelid) AS default_expr
+    FROM pg_attribute a JOIN pg_class c ON c.oid=a.attrelid
+    LEFT JOIN pg_attrdef d ON d.adrelid=a.attrelid AND d.adnum=a.attnum
+    WHERE c.relnamespace='public'::regnamespace AND c.relkind IN ('r','p')
+      AND a.attnum>0 AND NOT a.attisdropped) x),
+ 'constraints',(SELECT coalesce(json_agg(x ORDER BY x.table_name,x.name),'[]') FROM
+   (SELECT c.relname AS table_name,k.conname AS name,k.contype AS type,k.convalidated AS validated,
+      pg_get_constraintdef(k.oid,true) AS definition FROM pg_constraint k
+    JOIN pg_class c ON c.oid=k.conrelid WHERE c.relnamespace='public'::regnamespace) x),
+ 'indexes',(SELECT coalesce(json_agg(x ORDER BY x.table_name,x.name),'[]') FROM
+   (SELECT tablename AS table_name,indexname AS name,indexdef AS definition
+      FROM pg_indexes WHERE schemaname='public') x),
+ 'triggers',(SELECT coalesce(json_agg(x ORDER BY x.table_name,x.name),'[]') FROM
+   (SELECT c.relname AS table_name,t.tgname AS name,t.tgenabled AS enabled,
+      pg_get_triggerdef(t.oid,true) AS definition FROM pg_trigger t
+    JOIN pg_class c ON c.oid=t.tgrelid
+    WHERE c.relnamespace='public'::regnamespace AND NOT t.tgisinternal) x),
+ 'functions',(SELECT coalesce(json_agg(x ORDER BY x.signature),'[]') FROM
+   (SELECT format('%I.%I(%s)',n.nspname,p.proname,pg_get_function_identity_arguments(p.oid)) AS signature,
+       pg_get_userbyid(p.proowner) AS owner,pg_get_functiondef(p.oid) AS definition
+    FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND NOT EXISTS(SELECT 1 FROM pg_depend d
+      WHERE d.classid='pg_proc'::regclass AND d.objid=p.oid AND d.deptype='e')) x),
+ 'types',(SELECT coalesce(json_agg(x ORDER BY x.name),'[]') FROM
+   (SELECT t.typname AS name,pg_get_userbyid(t.typowner) AS owner,
+       (SELECT json_agg(e.enumlabel ORDER BY e.enumsortorder) FROM pg_enum e WHERE e.enumtypid=t.oid) AS labels
+    FROM pg_type t WHERE t.typnamespace='public'::regnamespace AND t.typtype='e') x),
+ 'schemaOwner',(SELECT pg_get_userbyid(nspowner) FROM pg_namespace WHERE nspname='public'),
+ 'extensions',(SELECT json_agg(json_build_object('name',e.extname,'version',e.extversion) ORDER BY e.extname)
+    FROM pg_extension e WHERE e.extnamespace='public'::regnamespace)
+)"""
+
+ROLE_SQL = r"""SELECT json_build_object(
+ 'attributes',(SELECT json_agg(x ORDER BY x.rolname) FROM
+   (SELECT rolname,rolcanlogin,rolinherit,rolsuper,rolcreatedb,rolcreaterole,rolreplication,rolbypassrls
+      FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator','kortek_backup')) x),
+ 'memberships',(SELECT coalesce(json_agg(x ORDER BY x.member,x.role),'[]') FROM
+   (SELECT pg_get_userbyid(member) AS member,pg_get_userbyid(roleid) AS role,admin_option
+     FROM pg_auth_members WHERE member IN
+       (SELECT oid FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator','kortek_backup'))) x),
+ 'tablePrivileges',(SELECT json_agg(x ORDER BY x.role,x.table_name,x.privilege) FROM
+   (SELECT r.rolname AS role,t.tablename AS table_name,p.privilege,
+        has_table_privilege(r.oid,format('%I.%I','public',t.tablename),p.privilege) AS allowed
+      FROM pg_roles r CROSS JOIN pg_tables t
+      CROSS JOIN (VALUES ('SELECT'),('INSERT'),('UPDATE'),('DELETE'),('TRUNCATE'),('REFERENCES'),('TRIGGER'),('MAINTAIN')) p(privilege)
+      WHERE r.rolname IN ('kortek_runtime','kortek_migrator','kortek_backup') AND t.schemaname='public') x),
+ 'schemaPrivileges',(SELECT json_agg(x ORDER BY x.role,x.privilege) FROM
+   (SELECT r.rolname AS role,p.privilege,has_schema_privilege(r.oid,'public',p.privilege) AS allowed
+     FROM pg_roles r CROSS JOIN (VALUES ('USAGE'),('CREATE')) p(privilege)
+     WHERE r.rolname IN ('kortek_runtime','kortek_migrator','kortek_backup')) x),
+ 'functionPrivileges',(SELECT coalesce(json_agg(x ORDER BY x.role,x.signature),'[]') FROM
+   (SELECT r.rolname AS role,format('%I.%I(%s)',n.nspname,p.proname,pg_get_function_identity_arguments(p.oid)) AS signature,
+      has_function_privilege(r.oid,p.oid,'EXECUTE') AS allowed
+    FROM pg_roles r CROSS JOIN pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND r.rolname IN ('kortek_runtime','kortek_migrator','kortek_backup')
+      AND NOT EXISTS(SELECT 1 FROM pg_depend d WHERE d.classid='pg_proc'::regclass AND d.objid=p.oid AND d.deptype='e')) x),
+ 'defaults',(SELECT coalesce(json_agg(x ORDER BY x.owner,x.namespace,x.kind,x.grantee,x.privilege),'[]') FROM
+   (SELECT pg_get_userbyid(d.defaclrole) AS owner,
+      CASE WHEN d.defaclnamespace=0 THEN '' ELSE (SELECT nspname FROM pg_namespace WHERE oid=d.defaclnamespace) END AS namespace,
+      d.defaclobjtype AS kind,CASE WHEN a.grantee=0 THEN 'PUBLIC' ELSE pg_get_userbyid(a.grantee) END AS grantee,
+      a.privilege_type AS privilege,a.is_grantable AS grantable
+    FROM pg_default_acl d CROSS JOIN LATERAL aclexplode(d.defaclacl) a
+    WHERE d.defaclrole IN (SELECT oid FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator','kortek_backup'))
+      AND (d.defaclnamespace=0 OR d.defaclnamespace='public'::regnamespace)) x)
+)"""
+
+LEDGER_SQL = """SELECT json_agg(json_build_object('name',migration_name,'checksum',checksum,
+ 'finished',finished_at IS NOT NULL,'rolledBack',rolled_back_at IS NOT NULL)
+ ORDER BY migration_name COLLATE "C",checksum COLLATE "C",finished_at IS NOT NULL,rolled_back_at IS NOT NULL)
+ FROM public._prisma_migrations"""
+COUNTS_SQL = """SELECT json_build_object('clients',(SELECT count(*) FROM public."Client"),
+ 'bookings',(SELECT count(*) FROM public."Booking"),'linked',(SELECT count(*) FROM public."Client" WHERE "userId" IS NOT NULL),
+ 'outboxOpen',(SELECT count(*) FROM public."EmailOutbox" WHERE "closedAt" IS NULL),
+ 'leased',(SELECT count(*) FROM public."EmailOutbox" WHERE "leaseToken" IS NOT NULL AND "leaseExpiresAt">now()))"""
+
+def canonical_ledger(rows):
+    # Multiconjunto técnico: conserva cada entrada, checksum y estado histórico.
+    return sorted((r['name'],r['checksum'],r['finished'],r['rolledBack']) for r in rows)
+
+def ledger_equal(left, right):
+    return canonical_ledger(left)==canonical_ledger(right)
+
+def baseline_ledger():
+    if BASELINE_LEDGER is not None: return BASELINE_LEDGER
+    return json.loads((ROOT/'docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json').read_text(encoding='utf-8'))['precheck']['ledger']
+
+def observe_ledger(phase, rows):
+    from collections import Counter
+    baseline=baseline_ledger()
+    actual=Counter(canonical_ledger(rows)); expected=Counter(canonical_ledger(baseline))
+    def differences(values):
+        return [dict(zip(['name','checksum','finished','rolledBack'],key),multiplicity=count)
+                for key,count in sorted(values.items())]
+    delta={'missing':differences(expected-actual),'extra':differences(actual-expected)}
+    REPORT.setdefault('ledgerComparisons',[]).append({'phase':phase,'observed':rows,
+        'baseline':baseline,'delta':delta,'equal':not delta['missing'] and not delta['extra']})
+    save()
+    if delta['missing'] or delta['extra']: raise RuntimeError('ledger-difiere-P0')
+
+def census(query, catalog=None):
+    global LAST_QUERY
+    def read_json(sql,label):
+        global LAST_QUERY
+        LAST_QUERY=label
+        return json.loads(query(sql))
+    catalog=catalog or read_json(CATALOG_SQL,'censo-catalogo')
+    values={}
+    for table in catalog['tables']:
+        name=table['name']
+        cols=[c['name'] for c in catalog['columns'] if c['table_name']==name]
+        select=','.join(ident(c) for c in cols)
+        sql="SELECT json_build_object('count',count(*),'fingerprint',coalesce(md5(string_agg(md5(to_jsonb(t)::text),'' ORDER BY md5(to_jsonb(t)::text) COLLATE \"C\")),md5(''))) FROM (SELECT "+select+" FROM public."+ident(name)+") t"
+        values[name]=read_json(sql,'censo-tabla:'+name)
+    return {'catalog':catalog,'tables':values,'ledger':read_json(LEDGER_SQL,'censo-ledger'),
+            'counts':read_json(COUNTS_SQL,'censo-conteos'),'roles':read_json(ROLE_SQL,'censo-roles')}
+
+def roles_prepare(container, catalog, roles, database='postgres'):
+    if roles['memberships']: raise RuntimeError('membresias-de-interes-no-vacias')
+    owners={x['owner'] for kind in ['tables','types','functions'] for x in catalog[kind]}
+    owners.add(catalog['schemaOwner'])
+    attrs={x['rolname']:x for x in roles['attributes']}
+    for name in sorted(owners|set(attrs)):
+        if name=='postgres': continue
+        flags=attrs.get(name)
+        if flags:
+            options=' '.join(yes if flags[key] else no for key,yes,no in [
+                ('rolcanlogin','LOGIN','NOLOGIN'),('rolinherit','INHERIT','NOINHERIT'),
+                ('rolsuper','SUPERUSER','NOSUPERUSER'),('rolcreatedb','CREATEDB','NOCREATEDB'),
+                ('rolcreaterole','CREATEROLE','NOCREATEROLE'),('rolreplication','REPLICATION','NOREPLICATION'),
+                ('rolbypassrls','BYPASSRLS','NOBYPASSRLS')])
+        else: options='NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS NOINHERIT'
+        local_sql(container,'CREATE ROLE '+ident(name)+' '+options+';',database)
+
+def roles_apply(container, catalog, roles, database='postgres'):
+    commands=['ALTER SCHEMA public OWNER TO '+ident(catalog['schemaOwner'])+';',
+              'REVOKE ALL ON SCHEMA public FROM PUBLIC,kortek_runtime,kortek_migrator,kortek_backup;',
+              'REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC,kortek_runtime,kortek_migrator,kortek_backup;']
+    for table in catalog['tables']:
+        commands.append('ALTER TABLE public.'+ident(table['name'])+' OWNER TO '+ident(table['owner'])+';')
+    for t in catalog['types']:
+        commands.append('ALTER TYPE public.'+ident(t['name'])+' OWNER TO '+ident(t['owner'])+';')
+    for f in catalog['functions']:
+        commands+=['ALTER FUNCTION '+f['signature']+' OWNER TO '+ident(f['owner'])+';',
+                   'REVOKE ALL ON FUNCTION '+f['signature']+' FROM PUBLIC,kortek_runtime,kortek_migrator,kortek_backup;']
+    for p in roles['tablePrivileges']:
+        if p['allowed']: commands.append('GRANT '+p['privilege']+' ON TABLE public.'+ident(p['table_name'])+' TO '+ident(p['role'])+';')
+    for p in roles['schemaPrivileges']:
+        if p['allowed']: commands.append('GRANT '+p['privilege']+' ON SCHEMA public TO '+ident(p['role'])+';')
+    for p in roles['functionPrivileges']:
+        if p['allowed']: commands.append('GRANT EXECUTE ON FUNCTION '+p['signature']+' TO '+ident(p['role'])+';')
+    kinds={'r':'TABLES','S':'SEQUENCES','f':'FUNCTIONS','T':'TYPES','n':'SCHEMAS'}
+    for p in roles['defaults']:
+        prefix='ALTER DEFAULT PRIVILEGES FOR ROLE '+ident(p['owner'])
+        if p['namespace']: prefix+=' IN SCHEMA '+ident(p['namespace'])
+        target='PUBLIC' if p['grantee']=='PUBLIC' else ident(p['grantee'])
+        commands.append(prefix+' GRANT '+p['privilege']+' ON '+kinds[p['kind']]+' TO '+target+(' WITH GRANT OPTION' if p['grantable'] else '')+';')
+    local_sql(container,'BEGIN;\n'+'\n'.join(commands)+'\nCOMMIT;',database)
+
+def filter_toc(toc):
+    selected=[]; removed=[]
+    for line in toc.splitlines():
+        if line.startswith(';') or not line.strip(): selected.append(line); continue
+        if re.search(r'\bSCHEMA - public\b|\bEXTENSION - btree_gist\b|\bCOMMENT - EXTENSION btree_gist\b|\bCOMMENT - SCHEMA public\b',line):
+            removed.append(line)
+        else: selected.append(line)
+    if any('TABLE DATA' in x for x in removed): raise RuntimeError('TOC-omite-tablas')
+    REPORT['tocBootstrapEntriesExcluded']=len(removed)
+    return ('\n'.join(selected)+'\n').encode('utf-8')
+
+def stream_encrypt(client, snapshot, phrase, dest):
+    args=dump_args(client,snapshot)
+    temporary=dest.with_suffix(dest.suffix+'.partial')
+    src=enc=None
+    try:
+        src=spawn_pipe(args,env=PG_ENV,stdout=subprocess.PIPE)
+        enc_args=gpg_args(phrase,temporary)
+        enc=spawn_pipe(enc_args,env=BASE_ENV,stdin=subprocess.PIPE,stdout=subprocess.DEVNULL)
+        enc.stdin.write(bytes(phrase)+b'\n'); enc.stdin.flush()
+        shutil.copyfileobj(src.stdout,enc.stdin,1024*1024)
+        enc.stdin.close(); src.stdout.close()
+        src_code=src.wait(timeout=150); enc_code=enc.wait(timeout=150)
+        REPORT['commands'].append({'args':['--snapshot=<snapshot-en-memoria>' if x.startswith('--snapshot=') else x for x in args],
+                                   'exitCode':src_code,'pipeArgs':enc_args,'pipeExitCode':enc_code})
+        if src_code: command_failure('pg-dump-snapshot',src_code,pipe_error(src))
+        if enc_code: command_failure('gpg-cifrar-dump',enc_code,pipe_error(enc))
+        temporary.replace(dest)
+    finally:
+        for process in [src,enc]:
+            if process and process.poll() is None: process.kill(); process.wait(timeout=15)
+        if temporary.exists(): temporary.unlink()
+
+def stream_decrypt_restore(container, phrase, path, database='postgres'):
+    args=gpg_args(phrase,path,False)
+    dec=spawn_pipe(args,env=BASE_ENV,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    restore_args=DOCKER+['exec','-i','-e','PGCLIENTENCODING=UTF8',container,'pg_restore','-U','postgres','-d',database,
+                        '--single-transaction','--exit-on-error','--no-owner','--no-privileges','--use-list=/tmp/p2-restore.list']
+    proc=spawn_pipe(restore_args,env=BASE_ENV,stdin=dec.stdout,stdout=subprocess.DEVNULL)
+    dec.stdout.close()
+    try:
+        dec.stdin.write(bytes(phrase)+b'\n'); dec.stdin.close()
+        b=proc.wait(timeout=300); a=dec.wait(timeout=30)
+        REPORT['commands'].append({'args':args,'exitCode':a,'pipeArgs':restore_args,'pipeExitCode':b})
+        if a: command_failure('gpg-descifrar-restore',a,pipe_error(dec))
+        if b: command_failure('pg-restore',b,pipe_error(proc))
+    finally:
+        for p in [dec,proc]:
+            if p.poll() is None: p.kill(); p.wait(timeout=15)
+
+def decrypt_toc(container, phrase, path):
+    args=gpg_args(phrase,path,False)
+    dec=spawn_pipe(args,env=BASE_ENV,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    proc=spawn_pipe(DOCKER+['exec','-i',container,'pg_restore','--list'],env=BASE_ENV,stdin=dec.stdout,stdout=subprocess.PIPE)
+    dec.stdout.close()
+    try:
+        dec.stdin.write(bytes(phrase)+b'\n'); dec.stdin.close()
+        listing=proc.communicate(timeout=180)[0]; a=dec.wait(timeout=30)
+        REPORT['commands'].append({'args':args,'exitCode':a,'pipeTo':'pg_restore --list','pipeExitCode':proc.returncode})
+        if a: command_failure('gpg-descifrar-TOC',a,pipe_error(dec))
+        if proc.returncode: command_failure('pg-restore-list',proc.returncode,pipe_error(proc))
+        docker('exec','-i',container,'sh','-c','cat > /tmp/p2-restore.list',
+               data=filter_toc(listing.decode('utf-8')),label='TOC-public-btree-tmpfs')
+    finally:
+        for p in [dec,proc]:
+            if p.poll() is None: p.kill(); p.wait(timeout=15)
+
+def restore_cipher(container, cipher, phrase, baseline):
+    roles_prepare(container,baseline['catalog'],baseline['roles'])
+    local_sql(container,'CREATE EXTENSION btree_gist WITH SCHEMA public;')
+    decrypt_toc(container,phrase,cipher)
+    stream_decrypt_restore(container,phrase,cipher)
+    roles_apply(container,baseline['catalog'],baseline['roles'])
+    result=census(lambda sql:local_sql(container,sql))
+    equal={k:(ledger_equal(result[k],baseline[k]) if k=='ledger' else result[k]==baseline[k]) for k in ['catalog','tables','ledger','counts','roles']}
+    check('cotejo-restore-snapshot',**equal,tableCount=len(result['tables']))
+    if not all(equal.values()): raise RuntimeError('restore-desigualdad:'+','.join(k for k,v in equal.items() if not v))
+    return result
+
+def expand_sql(path):
+    text=path.read_text(encoding='utf-8')
+    return re.sub(r'^\\ir ([^\r\n]+)$',lambda m:expand_sql(path.parent/m[1].strip()),text,flags=re.M)
+
+def rollback_drills(restored, baseline, cipher, phrase):
+    local_sql(restored,'CREATE DATABASE p2_upgrade TEMPLATE postgres;')
+    migration=ROOT/'apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql'
+    checksum=hashlib.sha256(migration.read_bytes()).hexdigest()
+    if checksum!='6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee':
+        raise RuntimeError('migracion-28-cambio')
+    local_sql(restored,migration.read_text(encoding='utf-8'),database='p2_upgrade',role='kortek_migrator')
+    local_sql(restored,expand_sql(ROOT/'apps/api/ops/apply-runtime-grants.sql'),database='p2_upgrade')
+    local_sql(restored,expand_sql(ROOT/'apps/api/ops/verify-runtime-role.sql'),database='p2_upgrade',role='kortek_runtime')
+    after=census(lambda sql:local_sql(restored,sql,database='p2_upgrade'),catalog=baseline['catalog'])
+    if after['tables']!=baseline['tables'] or after['ledger']!=baseline['ledger']:
+        raise RuntimeError('upgrade-aislado-altero-datos-previos')
+    # El SQL local no simula registros Prisma aplicados: el ledger de recuperación queda 27.
+    local_sql(restored,'BEGIN; CREATE TABLE public."P2RollbackFault"(id integer PRIMARY KEY); INSERT INTO public."P2RollbackFault" VALUES(1); INSERT INTO public."P2RollbackFault" VALUES(1); COMMIT;',
+              database='p2_upgrade',expected=1)
+    if local_sql(restored,"SELECT to_regclass('public.\"P2RollbackFault\"') IS NULL;",database='p2_upgrade')!='t':
+        raise RuntimeError('fallo-transaccional-no-revertido')
+    check('rollback-fallo-constraint-transaccion-aislada-sin-cambio-ledger')
+    # La inversa solo se ensaya en este clon, nunca como rollback operativo QA.
+    inverse=ROOT/'apps/api/prisma/rollback/customer-stage-one.disposable.sql'
+    local_sql(restored,inverse.read_text(encoding='utf-8'),database='p2_upgrade')
+    reverted=census(lambda sql:local_sql(restored,sql,database='p2_upgrade'))
+    for key in ['catalog','tables','ledger','counts']:
+        if reverted[key]!=baseline[key]: raise RuntimeError('inversa-desechable-no-coincide')
+    check('inversa-desechable-reproduce-schema27-y-datos',operationalQaUse=False)
+    # Ensayo de detección de corrupción de catálogo y recuperación en contenedor nuevo.
+    local_sql(restored,'CREATE DATABASE p2_corrupt TEMPLATE postgres;')
+    trigger=baseline['catalog']['triggers'][0] if baseline['catalog']['triggers'] else None
+    if trigger:
+        fault='ALTER TABLE public.'+ident(trigger['table_name'])+' DISABLE TRIGGER '+ident(trigger['name'])+';'
+    else:
+        constraint=baseline['catalog']['constraints'][0]
+        fault='ALTER TABLE public.'+ident(constraint['table_name'])+' DROP CONSTRAINT '+ident(constraint['name'])+';'
+    local_sql(restored,fault,database='p2_corrupt')
+    corrupted=json.loads(local_sql(restored,CATALOG_SQL,database='p2_corrupt'))
+    if corrupted==baseline['catalog']: raise RuntimeError('corrupcion-no-detectada')
+    recovery=start('kortek-m2-c3-p2-recovery-'+RUN,server=True)
+    restore_cipher(recovery,cipher,phrase,baseline)
+    check('corrupcion-local-detectada-y-restaurada-en-contenedor-nuevo')
+    REPORT['rollbackCases']=[
+        {'case':'backup-restore-censo','response':'P2 sin congelamiento: parar ejecutor, conservar evidencia, no tocar servicios ni schema','tested':'restore aislado; P2 no controla servicios'},
+        {'case':'migracion-lock-constraint','response':'mantener parada si ledger necesita conciliacion; nunca resolve automatico','tested':'fallo transaccional de constraint en clon, ledger sin cambio; sin Prisma fallido real'},
+        {'case':'API-schema28-integro','response':'revertir solo codigo conservando schema y datos','tested':'artefacto anterior real sobre schema QA27->28, fixtures, recibos y vinculos preservados en ensayo previo'},
+        {'case':'web','response':'alias QA al Preview anterior','tested':'solo baseline y decision documentada; no cambio de alias'},
+        {'case':'Clerk','response':'propietario repone opciones anteriores','tested':'no ejecutado; prohibidos cambios Clerk'},
+        {'case':'corrupcion','response':'copia cifrada del fallo y restore autorizado en destino nuevo; conciliar deltas','tested':'corrupcion de trigger en clon y restore de backup cifrado en contenedor nuevo; sin corrupcion/deltas QA reales'}]
+
+def public_get():
+    import urllib.request
+    with urllib.request.urlopen('https://api.staging.booking.kortek.cloud/public/qa-horario-norte/booking-data',timeout=20) as r:
+        body=r.read()
+        if r.status!=200 or not body: raise RuntimeError('reserva-publica-no-responde')
+        return {'status':r.status,'bodyNotPrinted':True,'nonEmpty':True}
+
+def pre0(client):
+    global SOURCE,STAGE
+    STAGE='paso0'
+    REPORT['initialInfra']=infra()
+    REPORT['initialEffective']=effective()
+    version=docker('exec',client,'pg_dump','--version',label='cliente-PG17').decode('utf-8').strip()
+    if '17.' not in version: raise RuntimeError('cliente-no-PG17')
+    expected_ca='1dcaafbf6fda7f21e34ff35825c1a1354408ea11e5839157e690af851c73453a'
+    ca_hash=docker('exec',client,'sha256sum','/tmp/qa-ca.crt',label='CA-bind-hash').decode('utf-8').split()[0]
+    if ca_hash!=expected_ca: raise RuntimeError('CA-hash-difiere')
+    REPORT['pgDumpVersion']=version; REPORT['caHash']=ca_hash
+    SOURCE=Reader(client)
+    REPORT['writersValidation']=verify_writers(SOURCE)
+    query="""SELECT json_build_object('role',current_user='kortek_migrator','database',current_database()='postgres',
+      'readonly',current_setting('transaction_read_only')='on','repeatableRead',current_setting('transaction_isolation')='repeatable read',
+      'version',current_setting('server_version_num')::int="""+str(EXPECTED_VERSION_NUM)+""",
+      'allSelect',NOT EXISTS(SELECT 1 FROM pg_tables WHERE schemaname='public'
+        AND NOT has_table_privilege(current_user,format('%I.%I',schemaname,tablename),'SELECT')))"""
+    login=SOURCE.json(query)
+    if not all(login.values()): raise RuntimeError('login-TLS-RR-RO-SELECT-no-pasa')
+    ledger=SOURCE.json(LEDGER_SQL)
+    REPORT['loginValidation']=login
+    observe_ledger('paso0',ledger)
+    catalog=SOURCE.json(CATALOG_SQL); roles=SOURCE.json(ROLE_SQL); counts=SOURCE.json(COUNTS_SQL)
+    if len(catalog['tables'])!=36 or counts['clients']!=20 or counts['bookings']!=28 or counts['linked']!=0:
+        raise RuntimeError('censo-difiere-P0')
+    if counts['outboxOpen'] or counts['leased']: raise RuntimeError('cola-no-vacia')
+    snap=SOURCE.q('SELECT pg_export_snapshot()',label='snapshot-prueba-schema')[0]
+    run(dump_args(client,snap,'--schema-only','--file=/tmp/p2-schema-probe.dump'),
+        env=PG_ENV,label='pg-dump-schema-only-TLS-RR-RO')
+    docker('exec',client,'rm','/tmp/p2-schema-probe.dump',label='retirar-schema-probe-tmpfs')
+    SOURCE.close(); SOURCE=None
+    REPORT['pre0']={'loginTLSVerifyFull':MODE=='qa','transactionRepeatableReadReadOnly':True,
+                    'statementTimeoutSeconds':120,'allPublicTablesSelect':True,'scheduleTablesSelect':5,
+                    'schemaOnlyDumpExit':0,'ledgerEqualsP0':True,'stage28Absent':True,
+                    'counts':counts,'tables':36,'sourceVersionNum':EXPECTED_VERSION_NUM,'mode':MODE}
+    check('paso0-completo-sin-congelar',**REPORT['pre0'])
+
+def verify_writers(reader):
+    # Lectura agregada: nunca query, conexiones, credenciales ni filas de negocio.
+    # La falta de visibilidad sobre otras sesiones es condicion de parada.
+    sql="""SELECT json_build_object(
+      'roles',(SELECT json_agg(x ORDER BY x.role) FROM
+        (SELECT rolname AS role,rolcanlogin AS login,rolsuper AS super,rolinherit AS inherit,
+          rolcreatedb AS \"createDb\",rolbypassrls AS \"bypassRls\",rolcreaterole AS \"createRole\",
+          rolreplication AS replication FROM pg_roles
+          WHERE rolname IN ('kortek_migrator','kortek_runtime')) x),
+      'otherRoleDml',(SELECT json_agg(x ORDER BY x.role) FROM
+        (SELECT r.rolname AS role,count(*) FILTER (WHERE
+          has_table_privilege(r.oid,c.oid,'INSERT,UPDATE,DELETE,TRUNCATE')) AS \"writeTables\"
+          FROM pg_roles r CROSS JOIN pg_class c
+          WHERE r.rolname IN ('anon','authenticated','authenticator','pgbouncer','service_role')
+          AND c.relnamespace='public'::regnamespace AND c.relkind IN ('r','p') GROUP BY r.rolname) x),
+      'membershipCount',(SELECT count(*) FROM pg_auth_members WHERE member IN
+        (SELECT oid FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator'))),
+      'pgCronInstalled',EXISTS(SELECT 1 FROM pg_extension WHERE extname='pg_cron'),
+      'preparedTransactions',(SELECT count(*) FROM pg_prepared_xacts WHERE database=current_database()),
+      'uncontrolledWriters',(SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()
+        AND backend_type='client backend' AND pid<>pg_backend_pid() AND usename NOT IN
+        ('kortek_runtime','authenticator','pgbouncer','supabase_admin','postgres')),
+      'invisibleSessions',(SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()
+        AND backend_type='client backend' AND pid<>pg_backend_pid() AND state IS NULL),
+      'activeClientTransactions',(SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()
+        AND backend_type='client backend' AND pid<>pg_backend_pid() AND xact_start IS NOT NULL)
+    )"""
+    observed=reader.json(sql,label='escritores-RO-agregado')
+    prior=json.loads((ROOT/'docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json').read_text(encoding='utf-8'))['writers']
+    stable=['roles','otherRoleDml','membershipCount','pgCronInstalled']
+    equal={key:observed[key]==prior[key] for key in stable}
+    REPORT.setdefault('writersComparisons',[]).append({'baseline':{key:prior[key] for key in stable},
+        'observed':observed,'equal':equal})
+    save()
+    if not all(equal.values()) or any(observed[key] for key in
+        ['preparedTransactions','uncontrolledWriters','invisibleSessions']):
+        raise RuntimeError('escritores-difieren-P0-o-visibilidad-incompleta')
+    return observed
+
+def cleanup():
+    for name in list(OWNED):
+        try:
+            docker('rm','--force','--volumes',name,label='retirar-contenedor-propio')
+            OWNED.remove(name); REPORT['removedContainers'].append(name)
+        except Exception as error:
+            REPORT.setdefault('cleanupFailures',[]).append(name)
+            retain_failure(error,'limpieza-contenedor')
+    if (WORK/'gpg-home').exists():
+        run([str(Path(GPG).with_name('gpgconf.exe')),'--homedir',msys(WORK/'gpg-home'),'--kill','gpg-agent'],
+            label='retirar-agente-GPG-propio')
+    REPORT['remainingOwnedContainers']=list(OWNED)
+
+def main():
+    global PG_ENV,SOURCE,STAGE,PHRASE,DECRYPT_PHRASE
+    password=None
+    try:
+        STAGE='frase-previa-a-operaciones'
+        PHRASE=request_phrase('cifrar-doble-confirmacion')
+        emit('solicitar-credencial-DPAPI-QA')
+        password_line=sys.stdin.buffer.readline()
+        password=bytearray(password_line.rstrip(b'\r\n')); password_line=None
+        if not password: raise RuntimeError('credencial-fuente-vacia')
+        PG_ENV=dict(BASE_ENV,PGPASSWORD=password.decode('utf-8'),PGHOST='aws-0-us-east-1.pooler.supabase.com',
+            PGPORT='5432',PGUSER='kortek_migrator.'+REF,PGDATABASE='postgres',PGSSLMODE='verify-full',
+            PGSSLROOTCERT='/tmp/qa-ca.crt',PGOPTIONS='-c default_transaction_read_only=on -c statement_timeout=120000',
+            PGCLIENTENCODING='UTF8',PGAPPNAME='kortek-m2-c3-p2-readonly')
+        erase(password); password=None
+        client=start('kortek-m2-c3-p2-client-real-'+RUN,ca=True)
+        pre0(client)
+        if '--pre0-only' in sys.argv:
+            REPORT['success']=True
+            return
+        STAGE='snapshot-censo-dump-cifrado'
+        REPORT['beforeBackupInfra']=infra(); REPORT['beforeBackupEffective']=effective()
+        SOURCE=Reader(client)
+        REPORT['snapshotWritersValidation']=verify_writers(SOURCE)
+        snapshot=SOURCE.q('SELECT pg_export_snapshot()',label='exportar-snapshot')[0]
+        def source_query(sql):
+            return '\n'.join(SOURCE.q(sql,label=LAST_QUERY or 'censo-snapshot'))
+        baseline=census(source_query)
+        observe_ledger('snapshot',baseline['ledger'])
+        basename='qa-m2-c3-p2-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+RUN
+        cipher=CUSTODY/(basename+'.dump.gpg')
+        manifest=CUSTODY/(basename+'.censo.gpg')
+        if cipher.exists() or manifest.exists(): raise RuntimeError('custodia-colision')
+        stream_encrypt(client,snapshot,PHRASE,cipher)
+        REPORT['backupFile']=str(cipher)
+        encrypt_data(PHRASE,json.dumps(baseline,ensure_ascii=True).encode('utf-8'),manifest)
+        REPORT['censusEncryptedFile']=str(manifest)
+        erase(PHRASE); PHRASE=None
+        SOURCE.close(); SOURCE=None
+        REPORT['backupSha256']=hashlib.sha256(cipher.read_bytes()).hexdigest()
+        REPORT['censusEncryptedSha256']=hashlib.sha256(manifest.read_bytes()).hexdigest()
+        REPORT['backupBytes']=cipher.stat().st_size
+        REPORT['snapshotCensus']={name:value['count'] for name,value in baseline['tables'].items()}
+        REPORT['snapshotCounts']=baseline['counts']
+        REPORT['snapshotLedgerApplied']=27
+        check('respaldo-cifrado-y-censo-misma-snapshot',backupBytes=REPORT['backupBytes'])
+        STAGE='descifrado-independiente'
+        DECRYPT_PHRASE=request_phrase('descifrar-reintroduccion-independiente')
+        decoded=json.loads(decrypt_data(DECRYPT_PHRASE,manifest).decode('utf-8'))
+        if decoded!=baseline: raise RuntimeError('censo-cifrado-no-coincide')
+        STAGE='restore-cotejo-rollback'
+        restored=start('kortek-m2-c3-p2-restore-'+RUN,server=True)
+        restore_cipher(restored,cipher,DECRYPT_PHRASE,baseline)
+        rollback_drills(restored,baseline,cipher,DECRYPT_PHRASE)
+        erase(DECRYPT_PHRASE); DECRYPT_PHRASE=None
+        REPORT['backupAccepted']=True
+        STAGE='verificacion-final-servicios-sin-mutacion'
+        REPORT['finalInfra']=infra()
+        if REPORT['finalInfra']!=REPORT['initialInfra']:
+            raise RuntimeError('PID-imagen-release-o-archivos-QA-cambiaron')
+        REPORT['finalEffective']=effective()
+        REPORT['publicBooking']=public_get()
+        REPORT['p3bRequiresFreshFrozenVerifiedBackup']=True
+        REPORT['servicesNeverStopped']=True
+        REPORT['success']=True
+    except Exception as error:
+        report_failure(error)
+    finally:
+        erase(password); erase(PHRASE); erase(DECRYPT_PHRASE)
+        PHRASE=None; DECRYPT_PHRASE=None
+        if SOURCE:
+            try: SOURCE.close()
+            except Exception as error:
+                retain_failure(error,'cerrar-transaccion')
+                try: SOURCE.kill()
+                except Exception as kill_error: retain_failure(kill_error,'cerrar-reader')
+            SOURCE=None
+        if PG_ENV: PG_ENV['PGPASSWORD']=''; PG_ENV.clear(); PG_ENV=None
+        PRIVATE_VALUES.clear()
+        try: cleanup()
+        except Exception as error: retain_failure(error,'limpieza')
+        REPORT['finishedUtc']=datetime.now(timezone.utc).isoformat()
+        try: save(); emit('terminado',success=REPORT.get('success',False),report=str(WORK/'result.json'))
+        except Exception as error: retain_failure(error,'finalizacion','fallo-manejador')
+
+if __name__=='__main__':
+    for stream in [sys.stdin,sys.stdout,sys.stderr]:
+        if hasattr(stream,'reconfigure'): stream.reconfigure(encoding='utf-8',errors='strict')
+    try: main()
+    except BaseException as error: retain_failure(error,'excepcion-exterior')
+    sys.exit(0 if REPORT.get('success') else 1)

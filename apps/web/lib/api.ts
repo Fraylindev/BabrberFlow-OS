@@ -17,11 +17,23 @@ export const API_REQUEST_TIMEOUT_MS = 30_000;
 export class ApiError extends Error {
   status: number;
   retryAfterSeconds: number | null;
-  constructor(status: number, message: string, retryAfterSeconds: number | null = null) {
+  readonly requestId: string | null;
+  constructor(status: number, message: string, retryAfterSeconds: number | null = null, requestId: string | null = null) {
     super(message);
     this.status = status;
     this.retryAfterSeconds = retryAfterSeconds;
+    // La telemetría existente genera UUID v4. No reflejar texto arbitrario de una cabecera.
+    this.requestId = requestId && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(requestId)
+      ? requestId : null;
     this.name = 'ApiError';
+  }
+
+  withRequestCode(
+    message: string,
+    unexpected = ![400, 403, 404, 409, 413, 422, 429].includes(this.status)
+      || this.message === 'No pudimos completar la solicitud. Vuelve a intentarlo.',
+  ): string {
+    return unexpected && this.requestId ? `${message}\nCódigo de soporte: ${this.requestId}` : message;
   }
 }
 
@@ -32,25 +44,29 @@ interface ApiAuthContext {
 
 interface ApiRequestOptions extends RequestInit {
   authContext?: ApiAuthContext;
+  authResolver?: ApiAuthResolver;
 }
 
-type ApiAuthResolver = () => Promise<ApiAuthContext>;
+type ApiAuthResolver = (forceRefresh?: boolean) => Promise<ApiAuthContext>;
 
 let resolveApiAuth: ApiAuthResolver = async () => ({
   token: null,
   organizationId: null,
 });
 let authScope = new AbortController();
+let onAccessRejected: (() => void) | undefined;
 
-export function configureApiAuth(resolver: ApiAuthResolver) {
+export function configureApiAuth(resolver: ApiAuthResolver, accessRejected?: () => void) {
   authScope.abort();
   const scope = new AbortController();
   authScope = scope;
   resolveApiAuth = resolver;
+  onAccessRejected = accessRejected;
   return () => {
     scope.abort();
     if (authScope === scope) {
       resolveApiAuth = async () => ({ token: null, organizationId: null });
+      onAccessRejected = undefined;
     }
   };
 }
@@ -64,30 +80,51 @@ async function requestWithHeaders<T>(
   path: string,
   options: ApiRequestOptions = {},
 ): Promise<ApiResponse<T>> {
-  const { authContext, ...requestOptions } = options;
+  const { authContext, authResolver, ...requestOptions } = options;
   const isPublicRequest = path.startsWith('/public/');
-  const resolver = resolveApiAuth;
-  const scopeSignal = !authContext && !isPublicRequest ? authScope.signal : null;
+  const resolver = authResolver ?? resolveApiAuth;
+  const accessRejected = !authResolver && !authContext ? onAccessRejected : undefined;
+  const scopeSignal = !authResolver && !authContext && !isPublicRequest ? authScope.signal : null;
   const signals = [scopeSignal, requestOptions.signal].filter((signal): signal is AbortSignal =>
     Boolean(signal),
   );
   const parentSignal = signals.length ? AbortSignal.any(signals) : undefined;
   return runAuthOperation(
     async (signal) => {
-      const auth =
+      let auth =
         authContext ?? (isPublicRequest ? { token: null, organizationId: null } : await resolver());
       signal.throwIfAborted();
 
-      const res = await fetch(`${API_URL}${path}`, {
+      const send = (context: ApiAuthContext) => fetch(`${API_URL}${path}`, {
         ...requestOptions,
         signal,
         headers: {
           ...(!(requestOptions.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
-          ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
-          ...(auth.organizationId ? { 'x-organization-id': auth.organizationId } : {}),
+          ...(context.token ? { Authorization: `Bearer ${context.token}` } : {}),
+          ...(context.organizationId ? { 'x-organization-id': context.organizationId } : {}),
           ...requestOptions.headers,
         },
       });
+      let res = await send(auth);
+      signal.throwIfAborted();
+      // 401 is an explicit authentication rejection by the API guards, before
+      // the handler runs. Only this definitive rejection can replay a write.
+      // Network failures, timeouts and 5xx never replay a mutation here.
+      if (res.status === 401 && !isPublicRequest && !authContext) {
+        const fresh = await resolver(true);
+        signal.throwIfAborted();
+        if (fresh.organizationId !== auth.organizationId) {
+          throw new DOMException('El contexto de acceso cambió', 'AbortError');
+        }
+        if (fresh.token) {
+          await res.body?.cancel();
+          auth = fresh;
+          res = await send(auth);
+          signal.throwIfAborted();
+        }
+      }
+      if ([401, 403].includes(res.status) && !isPublicRequest) accessRejected?.();
+      const requestId = res.headers.get('X-Request-Id');
 
       // 204 No Content u otras respuestas sin cuerpo
       const text = await res.text();
@@ -97,7 +134,7 @@ async function requestWithHeaders<T>(
         data = text ? JSON.parse(text) : null;
       } catch {
         if (res.ok)
-          throw new ApiError(502, 'Recibimos una respuesta incompleta. Vuelve a intentarlo.');
+          throw new ApiError(502, 'Recibimos una respuesta incompleta. Vuelve a intentarlo.', null, requestId);
       }
 
       if (!res.ok) {
@@ -122,7 +159,7 @@ async function requestWithHeaders<T>(
                   Number.isFinite(body.retryAfterSeconds)
                 ? Math.max(0, Math.ceil(body.retryAfterSeconds))
                 : null;
-        throw new ApiError(res.status, message, retryAfterSeconds);
+        throw new ApiError(res.status, message.replace(/\bBARBER\b/g, 'Profesional'), retryAfterSeconds, requestId);
       }
 
       return { data: data as T, headers: res.headers };
@@ -345,6 +382,8 @@ export interface Booking {
   client?: ClientContact;
   professional?: Pick<Professional, 'id' | 'name'>;
   service?: Pick<Service, 'id' | 'name' | 'duration'>;
+  // Present in GET /bookings; mutation responses do not include relations.
+  invoice?: { id: string; state: InvoiceState } | null;
 }
 
 /**
@@ -402,6 +441,7 @@ export interface InvoicePage {
 
 export interface PublicBookingData {
   minimumBookingDate: string;
+  timeZone: string;
   organization: {
     name: string;
     slug: string;
@@ -423,8 +463,6 @@ export interface PublicBookingResult {
     endTime: string;
     status: BookingStatus;
   };
-  accountCreated: boolean;
-  accountCreationError: 'EMAIL_ALREADY_EXISTS' | 'ACCOUNT_CREATION_FAILED' | null;
 }
 
 export interface PublicAvailabilitySlot {

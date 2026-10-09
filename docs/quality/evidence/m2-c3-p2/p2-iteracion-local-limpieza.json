@@ -1,0 +1,151 @@
+{
+  "base": "3a154df5bc606ea0a31f4a47e92b7eb8fbf50aff",
+  "startedUtc": "2026-10-04T05:01:52.413214+00:00",
+  "commands": [
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-client-real-3e09e8003cfd$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-client-real-3e09e8003cfd$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "exitCode": 0,
+      "label": "verificar-ausencia-contenedor-propio",
+      "phase": "preparacion",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-restore-3e09e8003cfd$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-restore-3e09e8003cfd$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "exitCode": 0,
+      "label": "verificar-ausencia-contenedor-propio",
+      "phase": "preparacion",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-client-real-4bc495d4bdd9$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-client-real-4bc495d4bdd9$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "exitCode": 0,
+      "label": "verificar-ausencia-contenedor-propio",
+      "phase": "preparacion",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    },
+    {
+      "args": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-restore-4bc495d4bdd9$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "commandSanitized": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "ps",
+        "-a",
+        "--filter",
+        "name=^/kortek-m2-c3-p2-restore-4bc495d4bdd9$",
+        "--format",
+        "{{.Names}}"
+      ],
+      "exitCode": 0,
+      "label": "verificar-ausencia-contenedor-propio",
+      "phase": "preparacion",
+      "stderrCompleteRedacted": "",
+      "stderrTruncated": false,
+      "stderrCapBytes": 8192,
+      "exceptionClass": null,
+      "tracebackSanitized": []
+    }
+  ],
+  "checks": [],
+  "ownedContainers": [],
+  "removedContainers": [],
+  "qaFrozen": false,
+  "qaResumed": false,
+  "productionAccess": false,
+  "push": false,
+  "p3": false,
+  "allOwnedContainersAbsent": true,
+  "ownGpgHomesAbsent": true,
+  "ownTemporaryRootsRemoved": [
+    "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-it1",
+    "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-it2"
+  ],
+  "iterationTemporaryRegistryRemoved": true,
+  "localCipherAndCensusRemoved": true,
+  "qaCustodyNeverAccessed": true
+}

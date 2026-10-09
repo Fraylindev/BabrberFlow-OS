@@ -1,0 +1,90 @@
+[
+  {
+    "path": "apps/web/lib/api.ts",
+    "commit": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "sourceSha256": "4b5e478da73e459f7cb77570fa0ba2c1a197bf6aa54f8c45e6144e83aa257e9d",
+    "matches": [
+      {
+        "line": 466,
+        "text": "  accountCreated: boolean;"
+      },
+      {
+        "line": 467,
+        "text": "  accountCreationError: 'EMAIL_ALREADY_EXISTS' | 'ACCOUNT_CREATION_FAILED' | null;"
+      }
+    ]
+  },
+  {
+    "path": "apps/web/app/[slug]/_components/ContactStep.tsx",
+    "commit": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "sourceSha256": "58e5fad135369fd0be61ce5724af498188ee6a7c172fa6bbff4a6e52dd835536",
+    "matches": [
+      {
+        "line": 13,
+        "text": "export function ContactStep({ clientName, clientPhone, clientEmail, emailOptedIn, createAccount = false, password = '',"
+      },
+      {
+        "line": 16,
+        "text": "  clientName: string; clientPhone: string; clientEmail: string; emailOptedIn: boolean; createAccount?: boolean; password?: string;"
+      },
+      {
+        "line": 24,
+        "text": "  const errors = contactErrors({ clientName, clientPhone, clientEmail, emailOptedIn, createAccount, password });"
+      },
+      {
+        "line": 47,
+        "text": "            <input type=\"checkbox\" name=\"createAccount\" className=\"h-5 w-5 shrink-0\" checked={createAccount} aria-describedby=\"account-qa-notice\""
+      },
+      {
+        "line": 51,
+        "text": "          {createAccount && <div className=\"mt-4 space-y-2\">"
+      }
+    ]
+  },
+  {
+    "path": "apps/web/app/[slug]/_components/AccountStep.tsx",
+    "commit": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "sourceSha256": "19b6d18a04918fe22505089aa2be5de6f33005b0d76eb73bc28fd9c318ba5936",
+    "matches": [
+      {
+        "line": 6,
+        "text": "  createAccount: boolean;"
+      },
+      {
+        "line": 16,
+        "text": "  createAccount,"
+      },
+      {
+        "line": 28,
+        "text": "          checked={createAccount}"
+      },
+      {
+        "line": 37,
+        "text": "      {createAccount && ("
+      },
+      {
+        "line": 58,
+        "text": "        nextDisabled={createAccount && (!clientEmail.trim() || password.length < 8)}"
+      }
+    ]
+  },
+  {
+    "path": "apps/web/components/public/PublicBookingScreen.tsx",
+    "commit": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "sourceSha256": "212f4883c7edcbcc78dc74208bb063b94ed9b2327074eed218a3041595193d27",
+    "matches": [
+      {
+        "line": 29,
+        "text": "const emptyContact: ContactDraft = { clientName: '', clientPhone: '', clientEmail: '', password: '', createAccount: false, emailOptedIn: false };"
+      },
+      {
+        "line": 168,
+        "text": "        createAccount: contact.createAccount, ...(contact.createAccount ? { password: contact.password } : {}),"
+      },
+      {
+        "line": 232,
+        "text": "            onAccountChange={value => setContact(old => ({ ...old, createAccount: value, password: value ? old.password : '' }))} onPasswordChange={value => updateContact('password', value)}"
+      }
+    ]
+  }
+]

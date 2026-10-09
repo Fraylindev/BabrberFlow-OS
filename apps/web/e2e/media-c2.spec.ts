@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures/public-browser';
 
 const image = { id: 'image-1', url: '/public/qa-media/media/token.signature', altText: 'Interior iluminado del salón', caption: 'Nuestro espacio', decorative: false };
 const media = {
@@ -19,7 +19,7 @@ test('la proyección pública se muestra sin desbordamiento y se retira por 404'
     if (route.request().method() === 'OPTIONS') { await route.fulfill({ status: 204, headers: { ...headers, 'access-control-allow-methods': 'GET, OPTIONS', 'access-control-allow-headers': 'content-type' } }); return; }
     if (!available) { await route.fulfill({ status: 404, headers, json: { message: 'No disponible' } }); return; }
     if (url.pathname.endsWith('/booking-data')) { await route.fulfill({ headers, json: {
-      minimumBookingDate: '2026-09-23', organization: { name: 'Salón QA', slug: 'qa-media', phone: null, description: 'Prueba controlada de medios.', address: null, googleMapsUrl: null },
+      minimumBookingDate: '2026-09-23', timeZone: 'America/Santo_Domingo', organization: { name: 'Salón QA', slug: 'qa-media', phone: null, description: 'Prueba controlada de medios.', address: null, googleMapsUrl: null },
       services: [{ id: 'service-1', name: 'Corte', description: null, duration: 30, price: '500.00' }],
       professionals: [{ id: 'professional-1', name: 'Alex', bio: null, avatar: null }],
     } }); return; }

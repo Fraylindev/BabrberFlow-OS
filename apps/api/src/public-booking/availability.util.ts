@@ -2,13 +2,9 @@
  * Utilidades puras para calcular disponibilidad de horarios. Sin acceso a
  * base de datos aquí a propósito — más fácil de razonar y probar.
  *
- * LIMITACIÓN CONOCIDA (documentada, no oculta): `Organization.businessHours`
- * existe en el schema de Prisma pero hoy no lo puebla ni lo lee ningún
- * endpoint todavía — no hay pantalla de configuración de horario de
- * negocio. Mientras esa funcionalidad no exista (Fase 4/5, "Gestión del
- * negocio"), se usa un horario por defecto fijo para todos los días de la
- * semana. En cuanto exista el endpoint de configuración, basta con que
- * `resolveBusinessHours` reciba el valor real en vez del default.
+ * Adaptador legacy de solo lectura. Disponibilidad y escrituras leen el JSON
+ * únicamente para tenants LEGACY_UNCONFIRMED. El fallback nunca confirma
+ * un horario ni se usa para un agregado CONFIRMED corrupto.
  */
 
 export interface BusinessHoursWindow {

@@ -1,0 +1,37 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { bookingCalendar, calendarMonth, calendarWeek, slotPeriod, contactErrors } from './public-booking-ui.ts';
+
+test('rangos civiles recortan hoy, bisiestos y extremo representable de C1', () => {
+  assert.equal(calendarMonth('2026-10', '2026-10-12').from, '2026-10-12');
+  assert.equal(calendarMonth('2028-02', '2028-02-01').dates.length, 29);
+  assert.equal(calendarMonth('9999-12', '9999-12-01').to, '9999-12-30');
+});
+test('datos invitados admiten correo vacío y validan correo opcional y teléfono', () => {
+  const draft = { clientName: 'Visitante', clientPhone: '+44 (123) 456-7890', clientEmail: '', emailOptedIn: false };
+  assert.deepEqual(contactErrors(draft), {});
+  assert.ok(contactErrors({ ...draft, clientEmail: 'invalid' }).clientEmail);
+  assert.deepEqual(contactErrors({ ...draft, clientEmail: 'qa@test.invalid' }), {});
+  assert.ok(contactErrors({ ...draft, clientPhone: '+1 1234567890123456' }).clientPhone);
+});
+test('semana cruza meses/años, respeta fecha mínima y extremo representable', () => {
+  assert.deepEqual(calendarWeek('2026-10-29', '2026-10-01').dates, ['2026-10-29', '2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-03', '2026-11-04']);
+  assert.equal(calendarWeek('2026-12-29', '2026-10-01').to, '2027-01-04');
+  assert.equal(calendarWeek('2026-09-29', '2026-10-02').from, '2026-10-02');
+  assert.equal(calendarWeek('9999-12-28', '9999-12-01').to, '9999-12-30');
+});
+test('franjas cubren medianoche y límites de tarde/noche sin huecos', () => {
+  assert.equal(slotPeriod('00:00'), 'morning'); assert.equal(slotPeriod('11:59'), 'morning');
+  assert.equal(slotPeriod('12:00'), 'afternoon'); assert.equal(slotPeriod('17:59'), 'afternoon');
+  assert.equal(slotPeriod('18:00'), 'night'); assert.equal(slotPeriod('23:59'), 'night');
+});
+test('calendario pendiente preserva instantes, pliega UTF8 y no permite inyección ni IDs operativos', () => {
+  const text = bookingCalendar({ booking: { id: 'private-booking', serviceId: 'private-service', professionalId: 'private-professional', startTime: '2026-10-05T14:00:00Z', endTime: '2026-10-05T14:30:00Z', status: 'PENDING' } }, 'Corte\r\nATTENDEE:privado@example.test;á'.repeat(4), 'local-random', new Date('2026-10-01T00:00:00Z'))!;
+  assert.match(text, /STATUS:TENTATIVE/);
+  assert.match(text, /DESCRIPTION:Reserva pendiente de confirmación por el negocio/);
+  assert.doesNotMatch(text, /no se actualiza/);
+  assert.match(text, /DTSTART:20261005T140000Z/);
+  assert.match(text, /DTEND:20261005T143000Z/);
+  assert.doesNotMatch(text, /\r\nATTENDEE:|private-booking|private-service|private-professional/);
+  for (const line of text.split('\r\n')) assert.ok(Buffer.byteLength(line, 'utf8') <= 75);
+});

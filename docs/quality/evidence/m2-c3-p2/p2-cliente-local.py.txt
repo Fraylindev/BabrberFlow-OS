@@ -1,0 +1,227 @@
+"""Preparación local P2: sin conexiones SQL/SSH, credenciales o servicios QA."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import secrets
+import shutil
+import subprocess
+import sys
+import tempfile
+from datetime import datetime, timezone
+
+ROOT = Path(__file__).resolve().parents[4]
+IMAGE = "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f"
+CA = ROOT / "ops/oci-free-backup/prod-ca-2021.crt"
+DOCKER = ["docker", "--context", "desktop-linux"]
+GPG = "C:/Program Files/Git/usr/bin/gpg.exe"
+SAFE_ENV = {k: v for k, v in os.environ.items() if not re.search(
+    r"DATABASE|POSTGRES|^PG|CLERK|JWT|CLOUDINARY|RESEND|NOTIFICATION|EMAIL|E2E|TOKEN|SECRET|PASSWORD", k, re.I)}
+REPORT = {"timestampUtc": datetime.now(timezone.utc).isoformat(), "image": IMAGE,
+          "commands": [], "createdContainers": [], "removedContainers": [],
+          "qaConnections": False, "credentialFilesRead": False, "realPhraseUsed": False}
+OWNED = []
+
+
+def run(args, data=None, allowed=(0,), record=True):
+    p = subprocess.run(args, input=data, capture_output=True, cwd=ROOT,
+                       env=SAFE_ENV, timeout=60)
+    if record:
+        event = {"args": args, "exitCode": p.returncode}
+        if p.returncode and args[0] == GPG:
+            diagnostic = p.stderr.decode(errors="replace")
+            if data:
+                diagnostic = diagnostic.replace(data.decode(errors="replace").strip(),
+                                                "[frase omitida]")
+            event["stderrSanitized"] = diagnostic.strip()
+        REPORT["commands"].append(event)
+    if p.returncode not in allowed:
+        raise RuntimeError("local-command-exit-" + str(p.returncode))
+    return p
+
+
+def docker(*args, **kwargs):
+    return run(DOCKER + list(args), **kwargs)
+
+
+def inspect(name):
+    fmt = ('{"running":{{json .State.Running}},"readonly":{{json .HostConfig.ReadonlyRootfs}},'
+           '"tmpfs":{{json .HostConfig.Tmpfs}},"network":{{json .HostConfig.NetworkMode}},'
+           '"user":{{json (index .Config "User")}},"mounts":{{json .Mounts}}}')
+    return json.loads(docker("inspect", "--format", fmt, name).stdout)
+
+
+def start(name, mount_ca=False):
+    args = ["run", "--detach", "--rm", "--name", name, "--network",
+            "none" if mount_ca else "bridge", "--read-only", "--cpus", "1",
+            "--memory", "768m", "--pids-limit", "128", "--tmpfs",
+            "/tmp:rw,size=64m", "--tmpfs", "/var/run/postgresql:rw,size=16m"]
+    if mount_ca:
+        args += ["--mount", "type=bind,source=" + str(CA) +
+                 ",target=/tmp/qa-ca.crt,readonly"]
+    args += ["--entrypoint", "sleep", IMAGE, "infinity"]
+    docker(*args)
+    OWNED.append(name)
+    REPORT["createdContainers"].append(name)
+    return name
+
+
+def stop(name):
+    docker("stop", "--time", "1", name)
+    OWNED.remove(name)
+    REPORT["removedContainers"].append(name)
+
+
+def msys_path(path):
+    value = Path(path).resolve().as_posix()
+    if not re.match(r"^[A-Za-z]:/", value):
+        raise RuntimeError("expected-Windows-drive-path")
+    return "/" + value[0].lower() + value[2:]
+
+
+def public_ca():
+    current = CA.read_bytes()
+    committed = run(["git", "show", "HEAD:ops/oci-free-backup/prod-ca-2021.crt"]).stdout
+    # Windows checkout may use CRLF; compare canonical certificate bytes as well.
+    same = current.replace(b"\r\n", b"\n") == committed.replace(b"\r\n", b"\n")
+    if not same:
+        raise RuntimeError("public-CA-differs-from-HEAD")
+    REPORT["ca"] = {"path": str(CA), "bytes": len(current),
+                    "sha256": hashlib.sha256(current).hexdigest(),
+                    "matchesTrackedHEADAfterLineEndingNormalization": same,
+                    "readable": True}
+
+
+def common():
+    old = docker("ps", "-a", "--filter", "name=kortek-m2-c3-p2-client-d15070d4fd9f",
+                 "--format", "{{.Names}} {{.State}}").stdout.decode().strip()
+    REPORT["previousContainerPresent"] = bool(old)
+    fmt = ('{"id":{{json .Id}},"user":{{json (index .Config "User")}},'
+           '"os":{{json .Os}},"architecture":{{json .Architecture}}}')
+    REPORT["imageMetadata"] = json.loads(docker("image", "inspect", IMAGE,
+                                               "--format", fmt).stdout)
+    if REPORT["imageMetadata"]["id"] != IMAGE:
+        raise RuntimeError("image-ID-differs")
+    public_ca()
+
+
+def diagnose(run_id):
+    name = start("kortek-m2-c3-p2-diag-" + run_id)
+    REPORT["reproductionConfiguration"] = inspect(name)
+    REPORT["effectiveUser"] = docker("exec", name, "id").stdout.decode().strip()
+    docker("exec", name, "sh", "-c", "test -w /tmp && : > /tmp/p2-write-probe && rm /tmp/p2-write-probe")
+    REPORT["tmpWritableByContainerUser"] = True
+    cp = docker("cp", str(CA), name + ":/tmp/qa-ca.crt", allowed=(0, 1))
+    # Only this public-CA operation retains raw diagnostics. No env/SQL/errors with secrets.
+    stderr = cp.stderr.decode(errors="replace").strip()
+    if re.search(r"postgres(?:ql)?://|PRIVATE KEY|sk_live_|eyJ", stderr, re.I):
+        raise RuntimeError("unexpected-sensitive-diagnostic-omitted")
+    REPORT["dockerCp"] = {"exitCode": cp.returncode, "stderrSanitized": stderr}
+    REPORT["caPresentAfterCp"] = docker("exec", name, "test", "-f", "/tmp/qa-ca.crt",
+                                        allowed=(0, 1)).returncode == 0
+    stop(name)
+
+
+def dry_run(run_id, phrase):
+    name = start("kortek-m2-c3-p2-bind-" + run_id, mount_ca=True)
+    config = inspect(name)
+    REPORT["correctedConfiguration"] = config
+    assert config["running"] and config["readonly"] and config["network"] == "none"
+    bind = [m for m in config["mounts"] if m["Type"] == "bind"]
+    assert len(bind) == 1 and bind[0]["Destination"] == "/tmp/qa-ca.crt" and not bind[0]["RW"]
+    version = docker("exec", name, "pg_dump", "--version").stdout.decode().strip()
+    assert re.search(r"\b17\.", version)
+    REPORT["pgDumpVersion"] = version
+    actual = docker("exec", name, "sha256sum", "/tmp/qa-ca.crt").stdout.decode().split()[0]
+    assert actual.lower() == REPORT["ca"]["sha256"].lower()
+    REPORT["containerCaHashMatches"] = True
+    docker("exec", name, "test", "-r", "/tmp/qa-ca.crt")
+    docker("exec", name, "sh", "-c", "test ! -w /tmp/qa-ca.crt")
+    REPORT["caReadableAndReadOnly"] = True
+    stop(name)
+    custody = Path("C:/KortekBackups/qa-m2-c3")
+    if not custody.is_dir():
+        raise RuntimeError("custody-directory-not-present")
+    probe = custody / ("p2-local-write-probe-" + run_id + ".tmp")
+    try:
+        with probe.open("xb") as f:
+            f.write(b"P2 LOCAL SYNTHETIC WRITE PROBE\n")
+        assert probe.read_bytes() == b"P2 LOCAL SYNTHETIC WRITE PROBE\n"
+        REPORT["custodyWritable"] = True
+    finally:
+        if probe.exists():
+            probe.unlink()
+    REPORT["custodyProbeRemoved"] = not probe.exists()
+    REPORT["gpgVersion"] = run([GPG, "--version"]).stdout.decode().splitlines()[0]
+    parent = ROOT / ".tmp"
+    parent.mkdir(exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix="p2-local-" + run_id + "-", dir=parent))
+    try:
+        gpg_home = work / "gpg-home"
+        gpg_home.mkdir()
+        plain, cipher, recovered = work / "trivial.txt", work / "trivial.gpg", work / "recovered.txt"
+        plain.write_bytes(b"ENSAYO LOCAL P2 SIN DATOS DE NEGOCIO\n")
+        phrase_bytes = phrase.encode("utf-8") + b"\n"
+        common_args = [GPG, "--no-options", "--homedir", msys_path(gpg_home),
+                       "--no-symkey-cache", "--batch", "--pinentry-mode", "loopback",
+                       "--passphrase-fd", "0"]
+        run(common_args + ["--symmetric", "--cipher-algo", "AES256",
+                          "--output", msys_path(cipher), msys_path(plain)], data=phrase_bytes)
+        run(common_args + ["--decrypt", "--output", msys_path(recovered), msys_path(cipher)], data=phrase_bytes)
+        assert recovered.read_bytes() == plain.read_bytes()
+        REPORT["syntheticCryptoRoundTripMatches"] = True
+        REPORT["phraseTransport"] = "Prompt local sin eco -> stdin anónimo; nunca argv/env/archivo/log"
+        REPORT["cryptoWorkDir"] = str(work)
+        # GPG may create its own agent for the isolated homedir. Stop only this agent.
+        gpgconf = str(Path(GPG).with_name("gpgconf.exe"))
+        run([gpgconf, "--homedir", msys_path(gpg_home), "--kill", "gpg-agent"])
+        REPORT["gpgAgentForOwnHomeStopped"] = True
+    finally:
+        resolved = work.resolve()
+        if resolved.parent != parent.resolve() or work.is_symlink():
+            raise RuntimeError("temporary-cleanup-boundary")
+        shutil.rmtree(work)
+        REPORT["cryptoTemporaryFilesRemoved"] = not work.exists()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("mode", choices=["diagnostico", "ensayo-local"])
+    parser.add_argument("report")
+    args = parser.parse_args()
+    run_id = secrets.token_hex(6)
+    try:
+        common()
+        if args.mode == "diagnostico":
+            diagnose(run_id)
+        else:
+            phrase = sys.stdin.readline().rstrip("\r\n")
+            if not phrase or "\x00" in phrase:
+                raise RuntimeError("synthetic-prompt-empty")
+            REPORT["syntheticPromptReceived"] = True
+            dry_run(run_id, phrase)
+            phrase = None
+        REPORT["success"] = True
+    except Exception as error:
+        REPORT["success"] = False
+        REPORT["errorClass"] = type(error).__name__
+        # Only known local RuntimeError identifiers can be emitted.
+        REPORT["errorLabel"] = str(error) if isinstance(error, RuntimeError) else "details-omitted"
+    finally:
+        for name in list(OWNED):
+            try:
+                stop(name)
+            except Exception:
+                REPORT["success"] = False
+                REPORT["cleanupFailed"] = True
+        REPORT["remainingOwnedContainers"] = list(OWNED)
+        Path(args.report).write_text(json.dumps(REPORT, indent=2, ensure_ascii=True) + "\n")
+        print(json.dumps({"mode": args.mode, "success": REPORT.get("success", False),
+                          "remainingOwnedContainers": list(OWNED), "report": args.report}))
+    return 0 if REPORT.get("success") else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

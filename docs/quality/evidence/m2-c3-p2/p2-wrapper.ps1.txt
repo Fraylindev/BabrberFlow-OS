@@ -1,0 +1,17 @@
+$ErrorActionPreference = 'Stop'
+$p2Pointer = [IntPtr]::Zero
+try {
+  $p2Credential = ConvertTo-SecureString ([IO.File]::ReadAllText((Join-Path $PSScriptRoot '../base-preprod-c1/supabase-qa-migrator.dpapi')).Trim())
+  $p2Pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($p2Credential)
+  $env:PGPASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($p2Pointer)
+  & 'C:/Users/Fraylin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' (Join-Path $PSScriptRoot 'p2.py') @args
+  $p2ExitCode = $LASTEXITCODE
+} catch {
+  Write-Output '{"failed":true,"stage":"credential-wrapper","rawErrorOmitted":true}'
+  $p2ExitCode = 1
+} finally {
+  Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue
+  if ($p2Pointer -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p2Pointer) }
+  $p2Credential = $null
+}
+exit $p2ExitCode

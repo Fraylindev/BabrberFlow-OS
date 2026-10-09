@@ -1,0 +1,28 @@
+{
+  "commandSanitized": [
+    "docker",
+    "--context",
+    "desktop-linux",
+    "run",
+    "--rm",
+    "-i",
+    "--platform",
+    "linux/arm64",
+    "--network",
+    "none",
+    "--read-only",
+    "-v",
+    "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p3-owner-decision\\synthetic-python.sh:/usr/bin/python3:ro",
+    "--entrypoint",
+    "bash",
+    "sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14",
+    "-s"
+  ],
+  "exitCode": 0,
+  "stdout": "R4_SYNTHETIC_ROLLBACK_DISPATCH\n",
+  "stderrCompleteRedacted": "",
+  "qaAccess": false,
+  "sameWatchdogScriptSha256": "9ef32007382538f44667405c903c37e425b1cd7f3f42a7d4f9e7ab2e0c8dc9cd",
+  "syntheticDispatchOnly": true,
+  "realDeadlineNotExercised": true
+}

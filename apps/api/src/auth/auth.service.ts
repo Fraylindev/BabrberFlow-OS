@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 import {
   Injectable,
   BadRequestException,
@@ -21,6 +21,7 @@ import {
   normalizeAccountEmail,
   normalizeOrganizationSlug,
 } from './organization-slug';
+import { B2B_ROLES } from './roles.constants';
 
 // Ventanas y umbrales del bloqueo por cuenta contra fuerza bruta — ver
 // attempt-limiter.ts para el presupuesto compartido por cuenta. 8/10min en login: generoso para alguien que
@@ -111,6 +112,7 @@ export class AuthService {
                 name: organizationName,
                 slug: normalizedSlug,
                 email: normalizedOrganizationEmail,
+                businessSchedule: { create: {} },
               },
             });
 
@@ -231,17 +233,20 @@ export class AuthService {
         })
       : null;
 
-    if (!membership) {
+    const retiredCustomerMembership = membership?.role === UserRole.CUSTOMER;
+    if (!membership || retiredCustomerMembership) {
       // Caso legacy (o lastOrganizationId apuntando a una membresía que ya
-      // no existe): usa la primera membresía disponible y la guarda.
+      // no existe, o CUSTOMER histórico): usa la primera membresía interna.
       membership = await this.prisma.db.membership.findFirst({
-        where: { userId: user.id },
+        where: { userId: user.id, role: { in: B2B_ROLES } },
         orderBy: { createdAt: 'asc' },
       });
 
       if (!membership) {
         throw new UnauthorizedException(
-          'Esta cuenta no tiene ninguna organización asociada',
+          retiredCustomerMembership
+            ? 'Credenciales inválidas'
+            : 'Esta cuenta no tiene ninguna organización asociada',
         );
       }
 
@@ -286,7 +291,7 @@ export class AuthService {
     };
   }
 
-  // Cualquier usuario autenticado (cualquier rol, incluido CUSTOMER) puede
+  // Un usuario interno autenticado puede
   // cambiar su propia contraseña. userId sale del token, nunca del body.
   //
   // Fuerza bruta: mismo patrón que login — bloqueo por cuenta (userId)

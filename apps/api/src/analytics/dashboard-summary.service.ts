@@ -13,10 +13,9 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import type { RequestUser } from '../auth/types/authenticated-request';
 import {
-  addDaysToIsoDate,
   getZonedDateParts,
   isValidTimeZone,
-  zonedLocalDateTimeToUtc,
+  utcRangeForLocalDate,
 } from '../professionals/professional-availability.util';
 import { SummaryQueryDto } from './dto/summary-query.dto';
 
@@ -70,11 +69,9 @@ export class DashboardSummaryService {
       );
     }
     const today = getZonedDateParts(now, timeZone).date;
-    const tomorrow = addDaysToIsoDate(today, 1);
-    const from = zonedLocalDateTimeToUtc(today, '00:00', timeZone);
-    const to = tomorrow
-      ? zonedLocalDateTimeToUtc(tomorrow, '00:00', timeZone)
-      : null;
+    const range = utcRangeForLocalDate(today, timeZone);
+    const from = range?.start;
+    const to = range?.end;
     if (!from || !to) {
       throw new ServiceUnavailableException(
         'No fue posible calcular el día del negocio.',

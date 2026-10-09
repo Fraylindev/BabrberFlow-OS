@@ -1,0 +1,21 @@
+{
+  "release": "843996e374876c6869cbc398b3e3d6cbe43cc488",
+  "strictChecks": {
+    "main": true,
+    "webProduction": true,
+    "vercelConfig": true,
+    "vercelEnvs": true,
+    "sso": true,
+    "containers": true,
+    "units": false,
+    "files": true
+  },
+  "applicationUnitsExactlyUnchanged": true,
+  "backupOnlyChangedField": "ExecMainExitTimestamp",
+  "backupResult": "success",
+  "backupScheduledTimer": "05:17 UTC daily; last trigger 2026-10-02 05:18:43 UTC; completion 05:18:52 UTC",
+  "backupActionByAgent": false,
+  "operationalComparisonPassedAfterScheduledEventAudit": true,
+  "backendDeployed": false,
+  "productionChangedByAgent": false
+}

@@ -1,0 +1,272 @@
+{
+  "date": "2026-10-07",
+  "runDir": ".tmp/guest-suite-evidence/before/afdbe5aa911246babfc58c5dc39d7e94",
+  "postgres": "18.1",
+  "api": {
+    "passed": 263,
+    "failed": 1,
+    "pending": 1,
+    "total": 265,
+    "exit": 1
+  },
+  "browser": {
+    "passed": 21,
+    "failed": 0,
+    "pending": 1,
+    "flaky": 0,
+    "exit": 0
+  },
+  "originalFailures": [
+    {
+      "id": 5,
+      "test": "M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso › fotos existentes: solo publicadas/elegibles, metadata pública, revocación y tenant en entrega",
+      "status": "passed"
+    },
+    {
+      "id": 6,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › captures creation, confirmation, rescheduling and cancellation once through HTTP",
+      "status": "passed"
+    },
+    {
+      "id": 7,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › reprograms PENDING once and emits no email for only changing the professional",
+      "status": "passed"
+    },
+    {
+      "id": 8,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › captures reactivation and suppresses the pending message on NO_SHOW without a new email",
+      "status": "passed"
+    },
+    {
+      "id": 9,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › BARBER with missing professional link cannot mutate or inspect the booking notifications",
+      "status": "passed"
+    },
+    {
+      "id": 10,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › BARBER with foreign professional link cannot mutate or inspect the booking notifications",
+      "status": "passed"
+    },
+    {
+      "id": 11,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › allows early completion without early email, then captures one completion email after endTime",
+      "status": "passed"
+    },
+    {
+      "id": 12,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › OWNER reads only authorized reservation summaries without PII",
+      "status": "passed"
+    },
+    {
+      "id": 13,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › ADMIN reads only authorized reservation summaries without PII",
+      "status": "passed"
+    },
+    {
+      "id": 14,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › RECEPTIONIST reads only authorized reservation summaries without PII",
+      "status": "passed"
+    },
+    {
+      "id": 15,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › BARBER cannot read or modify notifications even for an own booking",
+      "status": "passed"
+    },
+    {
+      "id": 16,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › CUSTOMER cannot read or modify notifications even for an own booking",
+      "status": "passed"
+    },
+    {
+      "id": 17,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › rejects arbitrary tenant selection, revoked membership and foreign resource IDs",
+      "status": "passed"
+    },
+    {
+      "id": 18,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › withdraws preference, rejects a stale update and never revives the omitted event",
+      "status": "passed"
+    },
+    {
+      "id": 19,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public reused client corroboration matches=true without exposing historic email",
+      "status": "passed"
+    },
+    {
+      "id": 20,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public reused client corroboration matches=false without exposing historic email",
+      "status": "passed"
+    },
+    {
+      "id": 21,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › paginates, retries only the same eligible intent and masks storage errors",
+      "status": "passed"
+    },
+    {
+      "id": 22,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public new preserves consent/contact rules",
+      "status": "passed"
+    },
+    {
+      "id": 23,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public reactivated preserves consent/contact rules",
+      "status": "passed"
+    },
+    {
+      "id": 24,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public omitted-email preserves consent/contact rules",
+      "status": "passed"
+    },
+    {
+      "id": 25,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › public no-opt-in preserves consent/contact rules",
+      "status": "passed"
+    },
+    {
+      "id": 26,
+      "test": "Notifications C1 — HTTP, real guards and PostgreSQL › authenticates webhook bytes, deduplicates delivery and asks for retry on unknown correlation",
+      "status": "passed"
+    },
+    {
+      "id": 27,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › crea con textos normalizados, proyección mínima y AuditLog sin PII",
+      "status": "passed"
+    },
+    {
+      "id": 28,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 0",
+      "status": "passed"
+    },
+    {
+      "id": 29,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 1",
+      "status": "passed"
+    },
+    {
+      "id": 30,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 2",
+      "status": "passed"
+    },
+    {
+      "id": 31,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 3",
+      "status": "passed"
+    },
+    {
+      "id": 32,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 4",
+      "status": "passed"
+    },
+    {
+      "id": 33,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › rechaza DTO de creación inválido 5",
+      "status": "passed"
+    },
+    {
+      "id": 34,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › lista todos por defecto y filtra estado antes de responder",
+      "status": "passed"
+    },
+    {
+      "id": 35,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › ordena por reservas no canceladas sin exponer el conteo ni otro tenant",
+      "status": "passed"
+    },
+    {
+      "id": 36,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › obtiene por UUID dentro del tenant y oculta recursos ajenos",
+      "status": "passed"
+    },
+    {
+      "id": 37,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › reserva las mutaciones a OWNER/ADMIN y excluye CUSTOMER del catálogo B2B",
+      "status": "passed"
+    },
+    {
+      "id": 38,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › edita con ADMIN, audita y rechaza modificar estado por PATCH general",
+      "status": "passed"
+    },
+    {
+      "id": 39,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › desactiva sin borrar ni romper Booking, Invoice o el catálogo público",
+      "status": "passed"
+    },
+    {
+      "id": 40,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › hace la baja idempotente y permite reactivar explícitamente",
+      "status": "passed"
+    },
+    {
+      "id": 41,
+      "test": "Servicios — Entrega A Backend (e2e PostgreSQL) › protege desactivación y reactivación frente a IDOR",
+      "status": "passed"
+    }
+  ],
+  "remainingFailedTest": [
+    "M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso 30/min compartido: inválidas, dos instancias, cambio de slug, spoof IP y recreación no reinician presupuesto"
+  ],
+  "cleanup": true,
+  "stopped": true,
+  "providersContacted": false,
+  "checks": [
+    {
+      "name": "api types",
+      "exit": 0
+    },
+    {
+      "name": "eslint modified tests",
+      "exit": 0
+    }
+  ],
+  "commands": [
+    {
+      "label": "postgres-version",
+      "exit": 0
+    },
+    {
+      "label": "initdb",
+      "exit": 0
+    },
+    {
+      "label": "start",
+      "exit": 0
+    },
+    {
+      "label": "bootstrap",
+      "exit": 0
+    },
+    {
+      "label": "migrate-deploy",
+      "exit": 0
+    },
+    {
+      "label": "provision-runtime",
+      "exit": 0
+    },
+    {
+      "label": "runtime-gate",
+      "exit": 0
+    },
+    {
+      "label": "server-version",
+      "exit": 0
+    },
+    {
+      "label": "migration-ledger",
+      "exit": 0
+    },
+    {
+      "label": "api-e2e",
+      "exit": 1
+    },
+    {
+      "label": "web-browser",
+      "exit": 0
+    },
+    {
+      "label": "stop",
+      "exit": 0
+    }
+  ]
+}

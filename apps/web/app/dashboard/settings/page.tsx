@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CmsSettings } from '@/components/cms/CmsSettings';
+import { SettingsScreen } from '@/components/schedule/SettingsScreen';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function SettingsPage() {
-  return <CmsSettings />;
+  return <SettingsScreen />;
 }

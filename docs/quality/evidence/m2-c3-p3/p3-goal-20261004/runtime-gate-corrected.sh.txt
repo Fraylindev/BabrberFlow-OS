@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+credentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials required}
+set -a
+source "$credentials_dir/runtime-env"
+set +a
+[[ ${DATABASE_URL:-} =~ ^postgresql://kortek_runtime\.prirlabbnlcuvnzuaczp: ]]
+[[ ${DEPLOY_ENV:-} == staging && ${NODE_ENV:-} == production ]]
+exec /usr/bin/podman run --rm --name kortek-p3-runtime-gate-bc1d559 --network host --read-only --cap-drop ALL --security-opt no-new-privileges --cpus 0.5 --memory 512m --pids-limit 96 --tmpfs /tmp:rw,noexec,nosuid,size=64m -e DATABASE_URL -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z -v /home/opc/kortek-api-staging/p3-bc1d559/runtime-gate.cjs:/tmp/runtime-gate.cjs:ro,z --entrypoint node sha256:807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261 /tmp/runtime-gate.cjs

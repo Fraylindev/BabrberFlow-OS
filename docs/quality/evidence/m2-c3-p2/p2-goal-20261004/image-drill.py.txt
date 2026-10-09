@@ -1,0 +1,109 @@
+import run as m,json,secrets,uuid,re,sys,time
+from pathlib import Path
+m.WORK=m.WORK/'real-image-drill';m.WORK.mkdir()
+def git(path):return m.run(['git','show',m.RELEASE+':'+path],label='codigo-versionado-baseline').decode('utf-8')
+def old_sql(path):
+    return re.sub(r'^\\ir ([^\r\n]+)$',lambda a:old_sql((Path(path).parent/a[1].strip()).as_posix()),git(path),flags=re.M)
+files=m.run(['git','ls-tree','-r','--name-only',m.RELEASE,'apps/api/prisma/migrations'],label='27-migraciones-codigo').decode().splitlines()
+files=sorted(x for x in files if x.endswith('/migration.sql'));assert len(files)==27
+schema='CREATE EXTENSION btree_gist;\n'+'\n'.join(git(x) for x in files)
+schema+='''\nCREATE TABLE public._prisma_migrations (id varchar(36) PRIMARY KEY,checksum varchar(64) NOT NULL,finished_at timestamptz,migration_name varchar(255) NOT NULL,logs text,rolled_back_at timestamptz,started_at timestamptz NOT NULL DEFAULT now(),applied_steps_count integer NOT NULL DEFAULT 0);\n'''
+schema+=old_sql('apps/api/ops/provision-database-roles.sql')
+upgrade=(m.ROOT/'apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql').read_text(encoding='utf-8')
+grants=m.expand_sql(m.ROOT/'apps/api/ops/apply-runtime-grants.sql')
+ids={k:str(uuid.uuid4()) for k in ['user','organization','client','service','professional','booking','postUpgradeBooking']}
+seed='''INSERT INTO "User" (id,"clerkUserId",email,name,"updatedAt") VALUES ('{user}','p2_{user}','p2@synthetic.invalid','P2 sintético',now());
+INSERT INTO "Organization" (id,slug,email,name,"updatedAt") VALUES ('{organization}','{organization}','tenant@synthetic.invalid','P2 sintético',now());
+INSERT INTO "Client" (id,"organizationId","userId",name,email,phone,"updatedAt") VALUES ('{client}','{organization}','{user}','P2 sintético','p2@synthetic.invalid','+18095550447',now());
+INSERT INTO "Service" (id,"organizationId",name,duration,price,"updatedAt") VALUES ('{service}','{organization}','P2 sintético',30,100,now());
+INSERT INTO "Professional" (id,"organizationId",name,status,"isPublic","updatedAt") VALUES ('{professional}','{organization}','P2 sintético','ACTIVE',true,now());
+INSERT INTO "Booking" (id,"organizationId","clientId","serviceId","professionalId","startTime","endTime","updatedAt") VALUES
+('{booking}','{organization}','{client}','{service}','{professional}','2099-03-01T13:00:00Z','2099-03-01T13:30:00Z',now()),
+('{postUpgradeBooking}','{organization}','{client}','{service}','{professional}','2099-03-04T13:00:00Z','2099-03-04T13:30:00Z',now());
+UPDATE "Client" SET "customerAccessBlocked"=true WHERE id='{client}';
+INSERT INTO "CustomerOperation" (id,"organizationId","actorUserId","clientId",operation,"keyDigest","commandDigest","bookingId","expiresAt") VALUES ('{receipt}','{organization}','{user}','{client}','CREATE_BOOKING','{key}','{command}','{postUpgradeBooking}',now()+interval '1 hour');'''.format(**ids,receipt=str(uuid.uuid4()),key='a'*64,command='b'*64)
+node=(m.ROOT/'apps/api/test/customer-runtime-compat.cjs').read_text(encoding='utf-8')
+begin=node.index('const endpoint =');end=node.index('const db =')
+node=node[:begin]+'''const ids=JSON.parse(process.env.P1_FIXTURE);
+const {Test}=require('@nestjs/testing');
+const {ValidationPipe}=require('@nestjs/common');
+const {AppModule}=require('./dist/app.module');
+const {globalValidationPipeOptions}=require('./dist/common/validation.config');
+const {ClerkSessionVerifierService}=require('./dist/auth/clerk/clerk-session-verifier.service');
+const {MediaPurgeWorker}=require('./dist/media/media-purge.worker');
+async function createE2eApp(configure){
+  const builder=configure(Test.createTestingModule({imports:[AppModule]}));
+  const moduleFixture=await builder.compile();
+  const app=moduleFixture.createNestApplication({rawBody:true,logger:false});
+  app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions));
+  await app.init();return app;
+}
+''' + node[end:]
+node=node.replace('client@test.invalid','p2@synthetic.invalid')
+node=node.replace('await db.customerOperation.count()',"Number((await db.$queryRawUnsafe('SELECT count(*)::int AS n FROM public.\\\"CustomerOperation\\\"'))[0].n)")
+node=node.replace('assert.equal(client.customerAccessBlocked, true);',"assert.equal((await db.$queryRawUnsafe('SELECT \\\"customerAccessBlocked\\\" AS blocked FROM public.\\\"Client\\\" WHERE id=$1',ids.client))[0].blocked,true);")
+payload={'apiImage':m.API_IMAGE,'pgImage':'97432f980da100ebd3e419711efee84e1e97a966d62c035286a07f239ddb4d9c','schema':schema,'upgrade':upgrade,'grants':grants,'seed':seed,'node':node,'ids':ids,'run':m.RUN,'release':m.RELEASE}
+remote=r'''
+import os,sys,json,subprocess,time,re,secrets
+P=PAYLOAD
+env=dict(os.environ,XDG_RUNTIME_DIR='/run/user/1000')
+report={'commands':[],'checks':[],'owned':[],'removed':[],'realDatabaseConnections':0,'imageExported':False,'productionAccess':False}
+def command(args,data=None,expected=0):
+    start=time.monotonic()
+    proc=subprocess.run(['podman']+args,input=data,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env,timeout=240)
+    stderr=proc.stderr.decode('utf-8',errors='replace')
+    stderr=re.sub(r'postgres(?:ql)?://[^\s]+','[URL omitida]',stderr)
+    stderr=re.sub(r'"[^"\r\n]*"', '[literal omitido]',stderr)
+    report['commands'].append({'argvSanitized':['podman']+args,'exitCode':proc.returncode,'stderrCompleteRedacted':stderr[:8192],'phase':'rollback-imagen-aislada','exceptionClass':'ExternalCommandExit' if proc.returncode else None,'elapsedSeconds':round(time.monotonic()-start,3)})
+    if expected is not None and proc.returncode!=expected:raise RuntimeError('comando-aislado-exit-'+str(proc.returncode))
+    return proc.stdout.decode('utf-8')
+db='kortek-p2-image-db-'+P['run'];app='kortek-p2-image-api-'+P['run']
+def sql(text,role='postgres'):
+    return command(['exec','-i','-e','PGCLIENTENCODING=UTF8',db,'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U',role,'-d','postgres'],text.encode())
+try:
+    for key in ['apiImage','pgImage']:
+        actual=command(['image','inspect','--format','{{.Id}}',P[key]]).strip()
+        if actual.removeprefix('sha256:')!=P[key]:raise RuntimeError('imagen-no-coincide')
+    command(['run','--detach','--rm','--pull=never','--read-only','--name',db,'--network','none','--cpus','1','--memory','768m','--pids-limit','128','--tmpfs','/var/lib/postgresql/data:rw,size=512m','--tmpfs','/var/run/postgresql:rw,size=16m','--tmpfs','/tmp:rw,size=32m','-e','POSTGRES_HOST_AUTH_METHOD=trust',P['pgImage'],'postgres','-c','listen_addresses=127.0.0.1'])
+    report['owned'].append(db)
+    for _ in range(60):
+        command(['exec',db,'pg_isready','-U','postgres'],expected=None)
+        if report['commands'][-1]['exitCode']==0:break
+        time.sleep(.5)
+    else:raise RuntimeError('PG-no-listo')
+    report['postgresVersion']=sql("SELECT current_setting('server_version');").strip()
+    sql(P['schema'])
+    sql(P['upgrade'],'kortek_migrator')
+    sql(P['grants']);sql(P['seed'])
+    report['checks'].append('schema27-a28-exclusivamente-sintetico')
+    env.update(DATABASE_URL='postgresql://kortek_runtime@127.0.0.1:5432/postgres?schema=public',NODE_ENV='test',DEPLOY_ENV='local',NOTIFICATIONS_EMAIL_ENABLED='false',PUBLIC_BOOKING_CLOSED='false',REQUIRE_INTERNAL_MFA='false',JWT_SECRET=secrets.token_hex(32),CLERK_SECRET_KEY='sk_test_synthetic_local_only',CLERK_PUBLISHABLE_KEY='pk_test_c3ludGhldGljLmNsZXJrLmFjY291bnRzLmRldiQ',CLERK_AUTHORIZED_PARTIES='http://127.0.0.1:3347',P1_FIXTURE=json.dumps(P['ids']),APP_RELEASE=P['release'])
+    keys=['DATABASE_URL','NODE_ENV','DEPLOY_ENV','NOTIFICATIONS_EMAIL_ENABLED','PUBLIC_BOOKING_CLOSED','REQUIRE_INTERNAL_MFA','JWT_SECRET','CLERK_SECRET_KEY','CLERK_PUBLISHABLE_KEY','CLERK_AUTHORIZED_PARTIES','P1_FIXTURE','APP_RELEASE']
+    args=['run','--rm','--pull=never','--read-only','--name',app,'--network','container:'+db,'--cpus','1','--memory','1024m','--pids-limit','256','--tmpfs','/tmp:rw,size=64m','--workdir','/srv/kortek/apps/api','-i']
+    for key in keys:args+=['-e',key]
+    args+=['--entrypoint','node',P['apiImage']]
+    report['owned'].append(app)
+    output=command(args,P['node'].encode())
+    result=json.loads(output.strip().splitlines()[-1])
+    if not all(result.values()):raise RuntimeError('HTTP-rollback-no-pasa')
+    report['result']=result;report['apiImage']=P['apiImage'];report['pgImage']=P['pgImage'];report['success']=True
+except Exception as error:
+    report['success']=False;report['failure']={'class':type(error).__name__,'message':str(error),'phase':'rollback-imagen-aislada'}
+finally:
+    for name in reversed(report['owned']):
+        command(['rm','--force','--volumes','--ignore',name])
+        absent=command(['ps','-a','--filter','name=^'+name+'$','--format','{{.Names}}']).strip()==''
+        if not absent:report['success']=False
+        else:report['removed'].append(name)
+    print(json.dumps(report))
+sys.exit(0 if report.get('success') else 1)
+'''
+source=remote.replace('P=PAYLOAD','P=json.loads('+repr(json.dumps(payload,ensure_ascii=True))+')')
+try:
+    m.run(['C:/Program Files/nodejs/node.exe','--check'],data=node.encode(),label='sintaxis-harness-imagen')
+    raw=m.run(m.SSH+['python3 -'],data=source.encode(),expected=None,timeout=600,label='imagen-original-ensayo-en-origen-sin-exportar')
+    result=json.loads(raw.decode())
+    (m.WORK/'remote-result.json').write_text(json.dumps(result,indent=2)+'\n')
+    m.REPORT['remoteSuccess']=result.get('success',False);m.save()
+    print(json.dumps({'exactImageRollback':result.get('success'), 'result':result.get('result'), 'failure':result.get('failure')}))
+    sys.exit(0 if result.get('success') else 1)
+except Exception as error:m.retain_failure(error);raise

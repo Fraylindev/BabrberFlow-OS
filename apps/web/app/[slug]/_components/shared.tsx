@@ -2,13 +2,13 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 
 export function formatMoney(value: string | number) {
-  return `RD$${Number(value).toLocaleString("es-DO", { minimumFractionDigits: 0 })}`;
+  return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(value)).replace(/^RD\$\s*/, 'RD$ ');
 }
 
 export function StepWrapper({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h2 className="mb-5 font-[family-name:var(--font-display)] text-lg text-[var(--color-paper)]">
+      <h2 id="booking-step-title" tabIndex={-1} className="mb-4 scroll-mt-5 font-[family-name:var(--font-display)] text-2xl text-[var(--color-paper)]">
         {title}
       </h2>
       {children}
@@ -28,15 +28,15 @@ export function NavButtons({
   nextLabel?: string;
 }) {
   return (
-    <div className="mt-6 flex justify-between gap-3">
+    <div className="booking-nav mt-6 flex flex-wrap justify-between gap-3">
       {onBack ? (
-        <Button variant="ghost" onClick={onBack}>
+        <Button type="button" variant="ghost" className="min-h-11" onClick={onBack}>
           Atrás
         </Button>
       ) : (
         <span />
       )}
-      <Button onClick={onNext} disabled={nextDisabled}>
+      <Button type="button" className="booking-primary min-h-11" onClick={onNext} disabled={nextDisabled}>
         {nextLabel}
       </Button>
     </div>
@@ -48,29 +48,34 @@ export function OptionButton({
   onClick,
   title,
   subtitle,
+  trailing,
+  children,
 }: {
   selected: boolean;
   onClick: () => void;
   title: string;
   subtitle?: string;
+  trailing?: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`border px-4 py-3 text-left transition-colors ${
-        selected
-          ? "border-[var(--color-brass)] bg-[var(--color-brass)]/10"
-          : "border-[var(--color-border)] hover:border-[var(--color-border-strong)]"
-      }`}
+      aria-pressed={selected}
+      className={`booking-option ${selected ? 'booking-option-selected' : ''}`}
     >
-      <p className="text-sm text-[var(--color-paper)]">{title}</p>
-      {subtitle && <p className="text-xs text-[var(--color-muted)]">{subtitle}</p>}
+      {children}
+      <span className="min-w-0 flex-1"><span className="block text-base font-medium text-[var(--color-paper)]">{title}</span>
+        {subtitle && <span className="mt-1 block text-sm text-[var(--color-muted)]">{subtitle}</span>}</span>
+      {trailing && <span className="booking-option-price">{trailing}</span>}
+      <span className="booking-selection-mark" aria-hidden="true">{selected ? '✓' : ''}</span>
+      {selected && <span className="sr-only">Seleccionado</span>}
     </button>
   );
 }
 
-export function SummaryRow({ label, value }: { label: string; value?: string }) {
+export function SummaryRow({ label, value }: { label: string; value?: ReactNode }) {
   return (
     <div className="flex justify-between">
       <span className="text-[var(--color-muted)]">{label}</span>

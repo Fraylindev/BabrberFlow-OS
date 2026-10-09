@@ -20,6 +20,9 @@ jest.mock('../notifications/notification-producer', () => ({
   lockEmailBooking: jest.fn().mockResolvedValue(undefined),
   recordBookingEmailChange: jest.fn().mockResolvedValue(undefined),
 }));
+jest.mock('../common/organization-schedule-lock', () => ({
+  lockOrganizationSchedule: jest.fn().mockResolvedValue(undefined),
+}));
 
 function createMockAvailability() {
   return {
@@ -599,7 +602,7 @@ describe('BookingsService - BARBER status authorization', () => {
     ['BARBER', PROFESSIONAL.id],
     ['administrativo', undefined],
   ])(
-    'rechaza COMPLETED antes de endTime para rol %s',
+    'permite COMPLETED antes de endTime para rol %s',
     async (_role, professionalId) => {
       prisma.db.booking.findFirst.mockResolvedValue({
         id: 'booking-id',
@@ -607,19 +610,25 @@ describe('BookingsService - BARBER status authorization', () => {
         endTime: new Date('2099-01-01T10:30:00.000Z'),
       });
 
-      await expect(
-        service.updateStatus(
-          'booking-id',
-          ORG_ID,
-          { status: BookingStatus.COMPLETED },
-          professionalId,
-        ),
-      ).rejects.toBeInstanceOf(ConflictException);
-      expect(prisma.db.booking.update).not.toHaveBeenCalled();
+      await service.updateStatus(
+        'booking-id',
+        ORG_ID,
+        { status: BookingStatus.COMPLETED },
+        professionalId,
+      );
+      expect(prisma.db.booking.update).toHaveBeenCalledWith({
+        where: {
+          id: 'booking-id',
+          organizationId: ORG_ID,
+          ...(professionalId ? { professionalId } : {}),
+        },
+        data: { status: BookingStatus.COMPLETED },
+        select: bookingMutationResponseSelect,
+      });
     },
   );
 
-  it('rechaza repetir COMPLETED sobre una Booking futura históricamente inválida', async () => {
+  it('acepta repetir COMPLETED sobre una Booking futura sin duplicar escrituras', async () => {
     prisma.db.booking.findFirst.mockResolvedValue({
       id: 'booking-id',
       status: BookingStatus.COMPLETED,
@@ -630,7 +639,7 @@ describe('BookingsService - BARBER status authorization', () => {
       service.updateStatus('booking-id', ORG_ID, {
         status: BookingStatus.COMPLETED,
       }),
-    ).rejects.toBeInstanceOf(ConflictException);
+    ).resolves.toMatchObject({ status: BookingStatus.COMPLETED });
     expect(prisma.db.booking.update).not.toHaveBeenCalled();
   });
 
@@ -807,5 +816,44 @@ describe('BookingsService - Client security regressions', () => {
     expect(args.select).not.toHaveProperty('organizationId');
     expect(args.select).not.toHaveProperty('createdAt');
     expect(args.select).not.toHaveProperty('updatedAt');
+    expect(args.select.Invoice).toEqual({
+      select: { id: true, payment: { select: { id: true } } },
+    });
+  });
+
+  it('distinguishes no invoice, issued and paid without exposing payment records', async () => {
+    prisma.db.booking.findMany.mockResolvedValue([
+      { id: 'unbilled', status: BookingStatus.COMPLETED, Invoice: null },
+      {
+        id: 'issued',
+        status: BookingStatus.COMPLETED,
+        Invoice: { id: 'invoice-1', payment: null },
+      },
+      {
+        id: 'paid',
+        status: BookingStatus.COMPLETED,
+        Invoice: { id: 'invoice-2', payment: { id: 'payment-private' } },
+      },
+    ]);
+    const bookings = await service.findAll(ORG_ID, PROFESSIONAL.id);
+    expect(bookings).toEqual([
+      { id: 'unbilled', status: BookingStatus.COMPLETED, invoice: null },
+      {
+        id: 'issued',
+        status: BookingStatus.COMPLETED,
+        invoice: { id: 'invoice-1', state: 'ISSUED' },
+      },
+      {
+        id: 'paid',
+        status: BookingStatus.COMPLETED,
+        invoice: { id: 'invoice-2', state: 'PAID' },
+      },
+    ]);
+    expect(JSON.stringify(bookings)).not.toContain('payment-private');
+    expect(prisma.db.booking.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { organizationId: ORG_ID, professionalId: PROFESSIONAL.id },
+      }),
+    );
   });
 });

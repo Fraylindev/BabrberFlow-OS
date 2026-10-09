@@ -1,0 +1,15 @@
+{
+  "baseCommit": "75955bb44eb2ba86da7d2c5f30ec947373e5099e",
+  "branch": "ai/antigravity-qa",
+  "goalState": "OBJETIVO NO CUMPLIDO",
+  "localDrillExitCode": 0,
+  "finishedUtc": "2026-10-04T23:50:08.533265+00:00",
+  "qaAccess": false,
+  "productionAccess": false,
+  "realBackupOrCredentialRead": false,
+  "ownContainersRemoved": true,
+  "sourceIdentityVerified": true,
+  "systemdDeadlineExercised": false,
+  "qaRuntimeGateExercised": false,
+  "continuationAuthorizationPending": true
+}

@@ -1,0 +1,90 @@
+{
+  "priorApi": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "runRoot": ".tmp/m2-c3-p1/e7ab0bef-f7d2-4a27-af86-09e109fa8f84",
+  "port": 55447,
+  "commands": [
+    {
+      "label": "type-check",
+      "command": "pnpm --config.verify-deps-before-run=false --config.pm-on-fail=ignore --filter api type-check",
+      "exitCode": 0,
+      "durationMs": 14970
+    },
+    {
+      "label": "lint",
+      "command": "pnpm --config.verify-deps-before-run=false --config.pm-on-fail=ignore --filter api lint",
+      "exitCode": 0,
+      "durationMs": 27362
+    },
+    {
+      "label": "tests",
+      "command": "pnpm --config.verify-deps-before-run=false --config.pm-on-fail=ignore --filter api test --runInBand",
+      "exitCode": 0,
+      "durationMs": 28926
+    },
+    {
+      "label": "build",
+      "command": "pnpm --config.verify-deps-before-run=false --config.pm-on-fail=ignore --filter api build",
+      "exitCode": 0,
+      "durationMs": 15530
+    },
+    {
+      "label": "prisma-validate",
+      "command": "pnpm --config.verify-deps-before-run=false --config.pm-on-fail=ignore --filter api exec prisma validate",
+      "exitCode": 0,
+      "durationMs": 4984
+    }
+  ],
+  "checks": [
+    "baseline27-runtime-login-gate",
+    "before-supplement-customer-select-denied",
+    "upgrade27to28-preserves-fixture-link-and-defaults-matrix37-idempotent",
+    "runtime-tcp-login-rejects-wrong-password",
+    "customer-operation-select-insert-delete-runtime",
+    "receipt-update-denied",
+    "receipt-truncate-denied",
+    "ledger-select-denied",
+    "table-ownership-ddl-denied",
+    "function-ownership-denied",
+    "create-schema-denied",
+    "create-temporary-table-denied",
+    "invoice-delete-denied",
+    "payment-delete-denied",
+    "audit-delete-denied",
+    "trigger-create-denied",
+    "receipt-references-trigger-maintain-absent",
+    "future-table-no-default-select",
+    "invoker-without-client-update-booking-atomic-denial",
+    "booking-insert-update-reassign-delete-invoker-revisions",
+    "client-relink-blocks-and-ambiguous-quarantine-persists",
+    "gate-rejects-excess-dml-public-execute-definer-searchpath-disabled-trigger-default-dml",
+    "previous-deployed-api-public-read-claim-booking-runtime-compatible",
+    "type-check-exit0",
+    "lint-exit0",
+    "tests-exit0",
+    "build-exit0",
+    "prisma-validate-exit0",
+    "implicit-dotenv-access-blocked-in-child-processes"
+  ],
+  "cleanup": true,
+  "image": "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+  "postgresVersion": "postgres (PostgreSQL) 17.11 (Debian 17.11-1.pgdg13+2)",
+  "compatibility": {
+    "runtime": "kortek_runtime",
+    "publicRead": 200,
+    "repeatedClaim": 200,
+    "publicBooking": 201,
+    "pendingBooking": true,
+    "receiptsPreserved": true,
+    "postUpgradeBookingPreserved": true,
+    "linkPreserved": true,
+    "oldApiDoesNotUnblock": true,
+    "m2RoutesAbsent": true
+  },
+  "migration28Sha256": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+  "dotenvGuard": {
+    "processes": 15,
+    "blockedProbes": 61,
+    "blockedReads": 0
+  },
+  "complete": true
+}

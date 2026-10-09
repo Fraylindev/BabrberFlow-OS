@@ -33,6 +33,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { ErrorText } from '@/components/ui/ErrorText';
 import { FieldWrapper, InputField, SelectField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton, SkeletonListRows } from "@/components/ui/Skeleton";
@@ -61,7 +62,7 @@ type AvailabilitySelection = {
 };
 
 function errorMessage(error: unknown, fallback: string) {
-  return error instanceof ApiError ? error.message : fallback;
+  return error instanceof ApiError ? error.withRequestCode(error.message) : fallback;
 }
 
 function isManagementProfessional(
@@ -498,7 +499,7 @@ function ScopedProfessionalsPage({
           onSuccess={() => {
             if (!isCurrentScope(scopeKey)) return;
             setLinking(null);
-            toast("La cuenta BARBER fue vinculada al perfil.");
+            toast("La cuenta de profesional fue vinculada al perfil.");
           }}
         />
       )}
@@ -883,7 +884,7 @@ function ProfessionalFormModal({
             role="alert"
             className="rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]"
           >
-            {error}
+            <ErrorText message={error} />
           </p>
         )}
         <div className="flex flex-col-reverse gap-2 border-t border-[var(--dash-border)] pt-4 sm:flex-row sm:justify-end">
@@ -1002,7 +1003,7 @@ function ProfessionalDetailModal({
               </Button>
             ) : (
               <Button tone="light" variant="secondary" onClick={() => onLink(query.data)}>
-                Vincular cuenta BARBER
+                Vincular cuenta de profesional
               </Button>
             )}
             {query.data.status === "ARCHIVED" ? (
@@ -1068,15 +1069,15 @@ function LinkProfessionalModal({
   }
 
   return (
-    <Modal title="Vincular cuenta BARBER" tone="light" onClose={onClose}>
+    <Modal title="Vincular cuenta de profesional" tone="light" onClose={onClose}>
       <p className="mb-4 text-sm leading-6 text-[var(--dash-text-muted)]">
-        Selecciona una Membership BARBER sin otro perfil vinculado en esta organización.
+        Selecciona un miembro con rol Profesional sin otro perfil vinculado en esta organización.
       </p>
       {membersQuery.isLoading ? (
         <Skeleton tone="light" className="h-24 w-full" />
       ) : membersQuery.isError ? (
         <ErrorState
-          title="No pudimos cargar las cuentas BARBER"
+          title="No pudimos cargar las cuentas de profesionales"
           message={errorMessage(membersQuery.error, "No se pudo consultar el equipo.")}
           onRetry={() => void membersQuery.refetch()}
         />
@@ -1084,13 +1085,13 @@ function LinkProfessionalModal({
         <EmptyState
           tone="light"
           title="No hay cuentas disponibles"
-          description="Invita un BARBER desde Equipo o desvincula una cuenta existente."
+          description="Invita un profesional desde Equipo o desvincula una cuenta existente."
         />
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <SelectField
             tone="light"
-            label="Cuenta BARBER"
+            label="Cuenta de profesional"
             name="professional-user-link"
             required
             value={userId}
@@ -1105,7 +1106,7 @@ function LinkProfessionalModal({
           </SelectField>
           {error && (
             <p role="alert" className="text-sm text-[var(--dash-danger)]">
-              {error}
+              <ErrorText message={error} />
             </p>
           )}
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -1170,7 +1171,7 @@ const CONFIRMATION_COPY: Record<
   },
   unlink: {
     title: "Desvincular cuenta",
-    body: (name) => `La cuenta BARBER dejará de administrar el perfil de ${name}.`,
+    body: (name) => `La cuenta de profesional dejará de administrar el perfil de ${name}.`,
     button: "Desvincular",
     success: (name) => `La cuenta de ${name} fue desvinculada.`,
   },
@@ -1233,7 +1234,7 @@ function ProfessionalConfirmationModal({
           role="alert"
           className="mt-4 rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]"
         >
-          {error}
+          <ErrorText message={error} />
         </p>
       )}
       <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -1269,7 +1270,7 @@ function ErrorState({
   return (
     <Card tone="light" className={`border-[var(--dash-danger)]/25 p-6 text-center ${className}`}>
       <p className="font-semibold text-[var(--dash-danger)]">{title}</p>
-      <p className="mt-1 text-sm text-[var(--dash-text-muted)]">{message}</p>
+      <p className="mt-1 text-sm text-[var(--dash-text-muted)]"><ErrorText message={message} /></p>
       <Button tone="light" variant="secondary" className="mt-4" onClick={onRetry}>
         Reintentar
       </Button>

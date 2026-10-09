@@ -1,0 +1,12 @@
+{
+  "pythonAst": true,
+  "verifiedP2HelpersSha256": "b44ea1f54f940e8fe176f13e7a7ead78a1999c04f2f1f926bd2c58140b3ac476",
+  "freezeScriptSha256": "4920640cb11c082cb489b3b7278ec7c2d65feb22c0be40c58f4af705403dbbd6",
+  "sourceImageAndRootfsVerifiedOnQa": true,
+  "onlyThreeSeparatePsqlMigrationSteps": true,
+  "noManualLedgerSql": true,
+  "freshSnapshotRestoreMustPassBeforeMigration": true,
+  "deadlineWatchdog120MinutesAndImmediatePreferredRollback": true,
+  "phaseAfterSqlFailureNeverRetried": true,
+  "status": "prepared-not-started"
+}

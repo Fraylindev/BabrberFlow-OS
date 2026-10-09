@@ -1,0 +1,23 @@
+{
+  "localOnly": true,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "container": "kortek-m2-c3-p2-client-real-6d7e1178b4c0",
+  "containerRemoveExitCode": 0,
+  "containerAbsentQueryExitCode": 0,
+  "containerAbsent": true,
+  "sourceDataInTmpfs": true,
+  "sourceRestoreOrRecoveryContainerCreated": false,
+  "realCipherCreated": false,
+  "localCipherCreated": false,
+  "custodyDirectoryAccessed": false,
+  "temporaryRoot": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\m2-c3-p2-reintento",
+  "temporaryFiles": [
+    "harness-result.json",
+    "harness.py",
+    "prompt.ps1",
+    "run.py",
+    "case-recorrido-completo\\result.json",
+    "__pycache__\\run.cpython-312.pyc"
+  ]
+}

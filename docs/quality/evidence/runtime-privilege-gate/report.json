@@ -1,0 +1,195 @@
+{
+  "id": "97dc94ea-b85d-4fa0-bece-f07b590585cb",
+  "bind": "127.0.0.1",
+  "commands": [
+    {
+      "label": "version",
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "exitCode": 0
+    },
+    {
+      "label": "bootstrap",
+      "exitCode": 0
+    },
+    {
+      "label": "candidate-migrate",
+      "exitCode": 0
+    },
+    {
+      "label": "candidate-source-census",
+      "exitCode": 0
+    },
+    {
+      "label": "candidate-clone",
+      "exitCode": 0
+    },
+    {
+      "label": "candidate-provision",
+      "exitCode": 3
+    },
+    {
+      "label": "candidate-clone-census",
+      "exitCode": 0
+    },
+    {
+      "label": "drop-candidate-clone",
+      "exitCode": 0
+    },
+    {
+      "label": "drop-candidate-source",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-create",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-migrate",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-source-census",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-clone",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-provision",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-clone-census",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-runtime-password",
+      "exitCode": 0
+    },
+    {
+      "label": "baseline-runtime-gate",
+      "exitCode": 3
+    },
+    {
+      "label": "experiment-drop-clone",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-create",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-migrate",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-census-before",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-provision",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-runtime-password",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-runtime-gate",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-census-after",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-runner-unchanged",
+      "exitCode": 0
+    },
+    {
+      "label": "experiment-ledger",
+      "exitCode": 0
+    },
+    {
+      "label": "workflow-reset",
+      "exitCode": 0
+    },
+    {
+      "label": "workflow-runner-migrate",
+      "exitCode": 0
+    },
+    {
+      "label": "workflow-exact",
+      "exitCode": 0
+    },
+    {
+      "label": "workflow-census",
+      "exitCode": 0
+    },
+    {
+      "label": "workflow-runner-unchanged",
+      "exitCode": 0
+    }
+  ],
+  "scenarios": [
+    {
+      "label": "candidate",
+      "provisionExit": 3,
+      "ownership": "customer_access_relink|kortek_ci_runner|f|trigger|\r\ncustomer_booking_revision|kortek_ci_runner|f|trigger|"
+    },
+    {
+      "label": "baseline",
+      "provisionExit": 0,
+      "ownership": "customer_access_relink|kortek_ci_runner|f|trigger|\r\ncustomer_booking_revision|kortek_ci_runner|f|trigger|",
+      "runtimeGateExit": 3
+    }
+  ],
+  "cleanup": true,
+  "providersContacted": false,
+  "version": "postgres (PostgreSQL) 18.1",
+  "port": 59333,
+  "experimentOwnership": "customer_access_relink|kortek_migrator|f|trigger|{\"search_path=pg_catalog, public, pg_temp\"}\r\ncustomer_booking_revision|kortek_migrator|f|trigger|{\"search_path=pg_catalog, public, pg_temp\"}",
+  "runnerOwnership": "customer_access_relink|kortek_ci_runner|f|trigger|\r\ncustomer_booking_revision|kortek_ci_runner|f|trigger|",
+  "ledger": "28|0",
+  "workflowAdaptation": "Only DATABASE_URL port 5432 replaced by ephemeral local port; PGPORT for psql; no dotenv preload. Original commands, roles and assertions.",
+  "workflowOwnership": "customer_access_relink|kortek_migrator|f|trigger|{\"search_path=pg_catalog, public, pg_temp\"}\r\ncustomer_booking_revision|kortek_migrator|f|trigger|{\"search_path=pg_catalog, public, pg_temp\"}",
+  "workflowRunnerOwnership": "customer_access_relink|kortek_ci_runner|f|trigger|\r\ncustomer_booking_revision|kortek_ci_runner|f|trigger|",
+  "hashes": {
+    ".github/workflows/quality.yml": {
+      "candidate": "81b4a5e8d4900c0d05d5f8a5285a50e3e593479b6cba5a7c01ab18a81ce4245d",
+      "baseline": "fb7b308cfc071248427fa951800ca0a8734d5c22ea3d2846d5c7f501d7b207c5"
+    },
+    "apps/api/ops/provision-database-roles.sql": {
+      "candidate": "d90b743d9d1da57bffbf387654b711c0ebec80beea35f2dc680a0475d5d8bde0",
+      "baseline": "c2288a86a92295a92fc1d94dc0623c3b30c1ad148d0945ec5f531daf46145a77"
+    },
+    "apps/api/ops/apply-runtime-grants.sql": {
+      "candidate": "8916ca378c88b4ed1d1d8c357f0e1a117a17df792d229c11a6a412f9a24037ea",
+      "baseline": "d6d1d7c0f0f196b673224ec8f631a5cb4da2b2c3411e7e9de41e299c7c3e3397"
+    },
+    "apps/api/ops/customer-stage-one-runtime-grants.sql": {
+      "candidate": "293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc",
+      "baseline": null
+    },
+    "apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql": {
+      "candidate": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "baseline": "af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c"
+    }
+  },
+  "hashNote": "Raw worktree hashes can differ due to CRLF/LF; compare Git blobs for historical SQL identity.",
+  "stopExit": 0,
+  "historicalWorktreeRemoved": true,
+  "gitBlobs": {
+    "migration28": "a6c6f761dc0594afe385d3919a931c596eb6334a",
+    "provision": "aedc1e5b6081eb5ceb3771b9f35101df0564c63c",
+    "identicalInBaselineAndCandidate": true
+  }
+}

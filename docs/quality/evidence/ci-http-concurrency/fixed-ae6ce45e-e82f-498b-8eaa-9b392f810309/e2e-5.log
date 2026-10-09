@@ -1,0 +1,39 @@
+::add-mask::[omitted]
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "kortek_ci_test", schema "public" at "127.0.0.1:50423"
+
+28 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+$ jest --config ./test/jest-e2e.json "--runInBand" "--runTestsByPath" "test/public-booking-m1.e2e-spec.ts" "test/postgres-throttler-retry.e2e-spec.ts"
+PASS test/public-booking-m1.e2e-spec.ts (7.194 s)
+  ● Console
+
+    console.log
+      M1_BUDGET {"professionals":1,"duration":30,"blocks":0,"samplesMs":[68,55,55],"queries":19,"cpuMs":188}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+    console.log
+      M1_BUDGET {"professionals":10,"duration":60,"blocks":0,"samplesMs":[57,56,56],"queries":19,"cpuMs":172}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+    console.log
+      M1_BUDGET {"professionals":40,"duration":15,"blocks":1240,"samplesMs":[210,201,200],"queries":19,"cpuMs":671}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+    console.log
+      M1_BUDGET {"professionals":40,"duration":360,"blocks":1240,"samplesMs":[162,168,172],"queries":19,"cpuMs":532}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+PASS test/postgres-throttler-retry.e2e-spec.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       25 passed, 25 total
+Snapshots:   0 total
+Time:        11.299 s
+Ran all test suites within paths "test/public-booking-m1.e2e-spec.ts", "test/postgres-throttler-retry.e2e-spec.ts".

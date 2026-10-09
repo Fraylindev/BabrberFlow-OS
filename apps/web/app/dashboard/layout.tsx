@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Topbar } from '@/components/dashboard/Topbar';
 import { Button } from '@/components/ui/Button';
+import { ErrorText } from '@/components/ui/ErrorText';
 import { AUTH_ROUTES, resolveDashboardAccessRedirect } from '@/lib/auth-routes';
 
 function LoadingPanel() {
@@ -78,12 +79,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <RestrictedPanel onLogout={() => void auth.logout()}>
         <div className="mx-auto max-w-md rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-6 text-center shadow-[var(--dash-shadow-card)]">
           <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--dash-text)]">
-            No pudimos abrir tu panel
+            {auth.isRecovering ? 'Conectando con tu espacio de trabajo…' : 'Tu acceso necesita atención'}
           </h1>
-          <p className="mt-2 text-sm text-[var(--dash-text-muted)]">{auth.error}</p>
-          <Button tone="light" className="mt-5" onClick={() => void auth.refresh()}>
-            Intentar de nuevo
-          </Button>
+          {auth.isRecovering ? (
+            <p role="status" className="mt-2 text-sm text-[var(--dash-text-muted)]">La conexión se recuperará automáticamente.</p>
+          ) : (
+            <>
+              <p className="mt-2 text-sm text-[var(--dash-text-muted)]"><ErrorText message={auth.error} /></p>
+              <Button tone="light" className="mt-5" onClick={() => void auth.logout()}>Iniciar sesión</Button>
+            </>
+          )}
         </div>
       </RestrictedPanel>
     );
@@ -105,7 +110,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Topbar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
         <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">
-          <div className="mx-auto max-w-6xl">{children}</div>
+          <div className={`mx-auto ${pathname === '/dashboard/bookings' ? 'max-w-[1440px]' : 'max-w-6xl'}`}>{children}</div>
         </main>
       </div>
     </div>

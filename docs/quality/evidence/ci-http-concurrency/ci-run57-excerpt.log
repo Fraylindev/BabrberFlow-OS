@@ -1,0 +1,24 @@
+2026-10-08T06:36:40.0069775Z Ubuntu
+2026-10-08T06:36:40.0070094Z 24.04.5
+2026-10-08T06:36:40.0071590Z Image: ubuntu-24.04
+2026-10-08T06:36:40.0071940Z Version: 20260927.320.1
+2026-10-08T06:36:40.0072780Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-08T06:37:02.3499097Z node: v22.23.3
+2026-10-08T06:39:39.7794718Z FAIL test/public-booking-m1.e2e-spec.ts
+2026-10-08T06:39:39.7818831Z   ● M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso › 35 solicitudes concurrentes a dos instancias: exactamente 30 admitidas y cinco 429
+2026-10-08T06:39:39.7819649Z     read ECONNRESET
+2026-10-08T06:39:50.7925950Z FAIL test/postgres-throttler-retry.e2e-spec.ts
+2026-10-08T06:39:50.7942575Z   ● Retry-After: real PostgreSQL and HTTP with two independent clients › 80 concurrent HTTP requests share exactly 30 successes and 50 bounded blocks
+2026-10-08T06:39:50.7944405Z     read ECONNRESET
+2026-10-08T06:39:50.7945632Z   ● Retry-After: real PostgreSQL and HTTP with two independent clients › opposite simulated Node process clocks cannot shorten or extend the HTTP block
+2026-10-08T06:39:50.7946557Z     expected 200 "OK", got 429 "Too Many Requests"
+2026-10-08T06:39:50.7947947Z       94 |   it('opposite simulated Node process clocks cannot shorten or extend the HTTP block', async () => {
+2026-10-08T06:39:52.8225117Z   ● M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso › 35 solicitudes concurrentes a dos instancias: exactamente 30 admitidas y cinco 429
+2026-10-08T06:39:52.8254417Z     read ECONNRESET
+2026-10-08T06:39:52.8286028Z   ● Retry-After: real PostgreSQL and HTTP with two independent clients › 80 concurrent HTTP requests share exactly 30 successes and 50 bounded blocks
+2026-10-08T06:39:52.8286810Z     read ECONNRESET
+2026-10-08T06:39:52.8287795Z   ● Retry-After: real PostgreSQL and HTTP with two independent clients › opposite simulated Node process clocks cannot shorten or extend the HTTP block
+2026-10-08T06:39:52.8288614Z     expected 200 "OK", got 429 "Too Many Requests"
+2026-10-08T06:39:52.8290561Z       94 |   it('opposite simulated Node process clocks cannot shorten or extend the HTTP block', async () => {
+2026-10-08T06:39:52.8310197Z Test Suites: 2 failed, 1 skipped, 18 passed, 20 of 21 total
+2026-10-08T06:39:52.8321149Z Tests:       3 failed, 1 skipped, 269 passed, 273 total

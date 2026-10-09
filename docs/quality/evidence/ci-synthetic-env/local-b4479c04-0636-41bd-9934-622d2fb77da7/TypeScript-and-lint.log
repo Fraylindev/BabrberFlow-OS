@@ -1,0 +1,7 @@
+Generated Next.js types cleaned under C:\Users\Fraylin\Desktop\Kortek-Booking\.tmp\ci-synthetic-clean\apps\web\
+Generating route types...
+✓ Types generated successfully
+$ tsc --noEmit
+$ node scripts/clean-generated-types.mjs && next typegen && tsc --noEmit
+$ eslint "{src,apps,libs,test}/**/*.ts"
+$ eslint

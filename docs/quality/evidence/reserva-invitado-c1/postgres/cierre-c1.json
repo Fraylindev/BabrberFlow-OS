@@ -1,0 +1,36 @@
+{
+  "head": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac",
+  "branch": "ai/antigravity-qa",
+  "index_empty": true,
+  "final_run": "54e4c2049d35470da1dc299671c064e1",
+  "required_passed": 37,
+  "claim_passed": 2,
+  "pending": 0,
+  "exitCode": 0,
+  "postgres": "18.1",
+  "migrations": 28,
+  "protected_paths_diff_empty": true,
+  "own_clusters_absent": true,
+  "own_processes_absent_verified_by_CIM": true,
+  "types_api_exit": 0,
+  "lint_api_exit": 0,
+  "report": "docs/features/RESERVA_INVITADO_C1_CIERRE_TECNICO.md",
+  "new_or_adjusted_validation_files": [
+    {
+      "path": "apps/api/src/business-schedule/business-schedule.integration.spec.ts",
+      "sha256": "3d713d1428af6c5c97a07ce8f398d07b68e00b34aa1adb67fb18998a8121172a"
+    },
+    {
+      "path": "apps/api/src/public-booking/guest-claim-retirement.integration.spec.ts",
+      "sha256": "b4eb0207c2e23271a20452ef969dfa89954611a352ce4f5d0adb72d3569aa73e"
+    },
+    {
+      "path": "apps/api/test/guest-postgres-run.cjs",
+      "sha256": "2f4e789b82e6682886b0cf90aa74a5d9f5866db8bfd51bdafb7189a025193f8d"
+    },
+    {
+      "path": "apps/api/test/guest-postgres-no-dotenv.cjs",
+      "sha256": "394a48b121e60178b60ff51da95c61b5ae77d71b51461dd339e944415265e910"
+    }
+  ]
+}

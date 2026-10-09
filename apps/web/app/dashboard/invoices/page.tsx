@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BusinessTime } from '@/components/ui/BusinessTime';
 import { useRouter } from "next/navigation";
 import type { AuthUser, Invoice, InvoiceState, PaymentMethod } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import {
-  formatBusinessDateTime,
   formatDopAmount,
   invoiceDateRangeError,
   invoiceErrorMessage,
@@ -27,6 +27,8 @@ import { Modal } from "@/components/ui/Modal";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SkeletonListRows } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
+import { ErrorText } from '@/components/ui/ErrorText';
+import { isTransientQueryError } from '@/lib/query-recovery';
 
 const PAGE_SIZE = 20;
 type StateFilter = "ALL" | InvoiceState;
@@ -81,7 +83,8 @@ function ScopedInvoicesPage({
   const paymentMutation = useRecordInvoicePayment();
   const isBarber = user?.role === "BARBER";
   const isLoading = !rangeError && (invoicesQuery.isPending || timeZoneQuery.isPending);
-  const hasError = invoicesQuery.isError || timeZoneQuery.isError;
+  const hasError = (invoicesQuery.isError && (!invoicesQuery.data || !isTransientQueryError(invoicesQuery.error)))
+    || (timeZoneQuery.isError && (!timeZoneQuery.data || !isTransientQueryError(timeZoneQuery.error)));
   const hasActiveFilters = Boolean(fromDate || toDate || stateFilter !== "ALL");
   const items = invoicesQuery.data?.items ?? [];
   const pagination = invoicesQuery.data?.pagination;
@@ -119,11 +122,6 @@ function ScopedInvoicesPage({
     } catch {
       // El mensaje contextual se muestra dentro del diálogo.
     }
-  }
-
-  function retry() {
-    void invoicesQuery.refetch();
-    void timeZoneQuery.refetch();
   }
 
   const title = isBarber ? "Facturación de mis servicios" : "Facturación";
@@ -166,7 +164,7 @@ function ScopedInvoicesPage({
                 setFromDate(event.target.value);
                 setPage(1);
               }}
-              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="dashboard-date-filter h-11 w-full min-w-0 max-w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
           </div>
           <div className="flex min-w-0 flex-col gap-1.5">
@@ -184,7 +182,7 @@ function ScopedInvoicesPage({
                 setToDate(event.target.value);
                 setPage(1);
               }}
-              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="dashboard-date-filter h-11 w-full min-w-0 max-w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             />
           </div>
           <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
@@ -200,7 +198,7 @@ function ScopedInvoicesPage({
               onChange={(event) =>
                 changeFilter(event.target.value as StateFilter)
               }
-              className="min-h-10 w-full rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
+              className="h-11 w-full min-w-0 rounded-lg border border-[var(--dash-border-strong)] bg-[var(--dash-surface)] px-3 py-2 text-base sm:text-sm text-[var(--dash-text)] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--dash-accent)] focus-visible:ring-2 focus-visible:ring-[var(--dash-accent-soft)]"
             >
               {FILTERS.map((filter) => (
                 <option key={filter.value} value={filter.value}>
@@ -214,7 +212,7 @@ function ScopedInvoicesPage({
             tone="light"
             variant="ghost"
             disabled={!hasActiveFilters}
-            className="min-h-10 w-full self-end border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 text-xs text-[var(--dash-text-muted)] shadow-sm sm:w-auto"
+            className="h-11 w-full whitespace-nowrap self-end border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 text-xs text-[var(--dash-text-muted)] shadow-sm sm:w-auto"
             onClick={clearFilters}
           >
             Limpiar filtros
@@ -245,14 +243,11 @@ function ScopedInvoicesPage({
       ) : hasError ? (
         <Card tone="light" className="p-6 text-center">
           <p role="alert" className="text-sm font-medium text-[var(--dash-danger)]">
-            {invoiceErrorMessage(invoicesQuery.error, "list")}
+            <ErrorText message={invoiceErrorMessage(invoicesQuery.error ?? timeZoneQuery.error, "list")} />
           </p>
-          <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
-            Revisa tu conexión e inténtalo de nuevo.
-          </p>
-          <Button tone="light" variant="secondary" className="mt-4" onClick={retry}>
-            Reintentar
-          </Button>
+          {isTransientQueryError(invoicesQuery.error ?? timeZoneQuery.error) && (
+            <p className="mt-1 text-sm text-[var(--dash-text-muted)]">La consulta se actualizará automáticamente cuando el servicio esté disponible.</p>
+          )}
         </Card>
       ) : isLoading ? (
         <Card tone="light" aria-label="Cargando facturación">
@@ -424,10 +419,10 @@ function InvoiceRow({ invoice, timeZone, isBarber, onPayment }: {
       <td className="px-4 py-4">
         <p className="font-medium">{invoice.booking.clientName}</p>
         <p className="mt-0.5 text-xs text-[var(--dash-text-muted)]">
-          {formatBusinessDateTime(invoice.booking.startTime, timeZone)}
+          <BusinessTime value={invoice.booking.startTime} zone={timeZone} />
         </p>
       </td>
-      <td className="whitespace-nowrap px-4 py-4">{formatBusinessDateTime(invoice.issuedAt, timeZone)}</td>
+      <td className="whitespace-nowrap px-4 py-4"><BusinessTime value={invoice.issuedAt} zone={timeZone} /></td>
       <td className="px-4 py-4">{invoice.booking.serviceName}</td>
       {!isBarber && <td className="px-4 py-4">{invoice.booking.professionalName}</td>}
       <td className="whitespace-nowrap px-4 py-4 text-right font-semibold">{formatDopAmount(invoice.amount)}</td>
@@ -436,7 +431,7 @@ function InvoiceRow({ invoice, timeZone, isBarber, onPayment }: {
         {invoice.payment ? (
           <>
             <p>{PAYMENT_METHOD_LABELS[invoice.payment.method]}</p>
-            <p className="mt-0.5 text-xs text-[var(--dash-text-muted)]">{formatBusinessDateTime(invoice.payment.paidAt, timeZone)}</p>
+            <p className="mt-0.5 text-xs text-[var(--dash-text-muted)]"><BusinessTime value={invoice.payment.paidAt} zone={timeZone} /></p>
           </>
         ) : (
           <span className="text-[var(--dash-text-muted)]">Pendiente</span>
@@ -467,11 +462,11 @@ function InvoiceCard({ invoice, timeZone, isBarber, onPayment }: {
       <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <div className="col-span-2">
           <dt className="text-xs text-[var(--dash-text-muted)]">Fecha de emisión</dt>
-          <dd className="mt-0.5 text-[var(--dash-text)]">{formatBusinessDateTime(invoice.issuedAt, timeZone)}</dd>
+          <dd className="mt-0.5 text-[var(--dash-text)]"><BusinessTime value={invoice.issuedAt} zone={timeZone} /></dd>
         </div>
         <div className="col-span-2">
           <dt className="text-xs text-[var(--dash-text-muted)]">Reserva</dt>
-          <dd className="mt-0.5 text-[var(--dash-text)]">{formatBusinessDateTime(invoice.booking.startTime, timeZone)}</dd>
+          <dd className="mt-0.5 text-[var(--dash-text)]"><BusinessTime value={invoice.booking.startTime} zone={timeZone} /></dd>
         </div>
         {!isBarber && (
           <div>
@@ -487,7 +482,7 @@ function InvoiceCard({ invoice, timeZone, isBarber, onPayment }: {
           <div className="col-span-2">
             <dt className="text-xs text-[var(--dash-text-muted)]">Cobro</dt>
             <dd className="mt-0.5 text-[var(--dash-text)]">
-              {PAYMENT_METHOD_LABELS[invoice.payment.method]} · {formatBusinessDateTime(invoice.payment.paidAt, timeZone)}
+              {PAYMENT_METHOD_LABELS[invoice.payment.method]} · <BusinessTime value={invoice.payment.paidAt} zone={timeZone} />
             </dd>
           </div>
         )}

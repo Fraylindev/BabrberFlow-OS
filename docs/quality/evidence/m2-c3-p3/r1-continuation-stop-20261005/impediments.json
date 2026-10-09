@@ -1,0 +1,37 @@
+{
+  "records": [
+    {
+      "class": "re.error",
+      "phase": "historical-SQL-hash-reconstruction-before-DB-read",
+      "commandSanitized": "catalog-supervisor.ps1 -> catalog.py; re.sub include regex",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "",
+      "stdoutFailureReference": "attempt-1.json errors and failure",
+      "cause": "Generated regex used invalid backslash-i escape",
+      "resolution": "Exact binary include-line prefix removal; readonly attempt 2 completed exit 0"
+    },
+    {
+      "class": "AssertionError",
+      "phase": "local-matrix-hash-and-LF-audit",
+      "commandSanitized": "Python stdin: assert reconstructed matrix hash equals recorded hash; assert CR absent",
+      "exitCode": 1,
+      "stderrCompleteRedacted": "Traceback (most recent call last):\n  File \"<stdin>\", line 10, in <module>\nAssertionError\n",
+      "cause": "Hash matched but historical matrix actually contained 30 CR characters; LF assertion correctly rejected it",
+      "resolution": "Not repaired; R1 mandatory stop. Both raw and LF hashes recorded in assessment.json"
+    },
+    {
+      "class": "RequirementMismatch",
+      "phase": "R1-technical-ledger-checksum",
+      "commandSanitized": "psql READ ONLY SELECT checksum for migration 28; compare with SHA256 Git blob",
+      "exitCode": 0,
+      "stderrCompleteRedacted": "",
+      "assertionOutcome": "failed",
+      "expected": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "observed": "af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c",
+      "cause": "Supported Prisma resolve used the CRLF migration file inside previously built image; actual migration SQL sent was LF",
+      "resolution": "No ledger/image/SQL change; stop before R2/R4 and request owner decision"
+    }
+  ],
+  "fullStdErrMaxBytes": 8192,
+  "R1ExecutorExit0MeansReadsCompletedNotR1Passed": true
+}

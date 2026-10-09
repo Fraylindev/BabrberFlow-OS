@@ -1,0 +1,231 @@
+{
+  "timestampUtc": "2026-10-02T03:37:38.552Z",
+  "state": "PUBLICADO / DESPLEGADO SOLO WEB QA / EN REVISIÓN; M1 NO CERRADO",
+  "branch": "ai/antigravity-qa",
+  "commits": {
+    "ux": "dc82a4f91294011def8b9d805622ae2f82ce2906",
+    "c3Controls": "9d2eb47e32f01a504b33174a8aa735ca55c87604"
+  },
+  "pushLocalRemoteEqual": true,
+  "deployment": {
+    "timestampUtc": "2026-10-02T03:28:51.600810+00:00",
+    "release": "9d2eb47e32f01a504b33174a8aa735ca55c87604",
+    "deployment": "dpl_7aT949HTDztsYaxZRRHWfniqAuPa",
+    "url": "https://qa.booking.kortek.cloud",
+    "ready": true,
+    "source": "Build Preview generado por integración Git del push autorizado; alias verificado/reasociado después de comprobar API C1",
+    "apiDeployed": false,
+    "flagsModified": false,
+    "variablesModified": false,
+    "protectionModified": false,
+    "productionUnchanged": true,
+    "apiPrerequisitePassed": true
+  },
+  "api": {
+    "timestampUtc": "2026-10-02T03:27:48.935110+00:00",
+    "syntheticSlug": "m1-c3-norte",
+    "bookingDataStatus": 200,
+    "availabilityDaysStatus": 200,
+    "availabilityDaysCount": 5,
+    "rangeLength": 7,
+    "D11GenericStatus": 400,
+    "D11ExactGenericBody": true,
+    "invalidPhoneGuaranteesNoBooking": true,
+    "validBookingPayloadSent": false,
+    "directDatabaseConnection": false,
+    "collisionRetested": false,
+    "headers": {
+      "cache-control": "no-store",
+      "access-control-allow-origin": "https://qa.booking.kortek.cloud",
+      "access-control-allow-credentials": "true",
+      "access-control-expose-headers": "X-Total-Count,X-Page,X-Limit,X-Total-Pages,X-Request-Id"
+    },
+    "rangeNoStore": true
+  },
+  "production": {
+    "checks": {
+      "main": true,
+      "webProduction": true,
+      "vercelConfig": true,
+      "vercelEnvs": true,
+      "sso": true,
+      "containers": true,
+      "units": true,
+      "files": true
+    },
+    "main": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+    "webBefore": {
+      "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+      "url": "kortek-booking-53q0hmlip-fraylindev.vercel.app",
+      "readyState": "READY",
+      "target": "production",
+      "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+      "branch": "main"
+    },
+    "webAfter": {
+      "id": "dpl_2KmQn7pSAaHc4EbuAu37WrnVuYvm",
+      "url": "kortek-booking-53q0hmlip-fraylindev.vercel.app",
+      "readyState": "READY",
+      "target": "production",
+      "sha": "fe4b117b2ad152c74b7939d1adf358fd1fe1b5d6",
+      "branch": "main"
+    },
+    "containersUnchanged": {
+      "kortek-api": {
+        "image": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+        "pid": 151158,
+        "release": "b5615869dcbec4bd174608f2373e73ff618fae26",
+        "publicClosed": "true",
+        "emailEnabled": "false"
+      },
+      "kortek-api-staging": {
+        "image": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+        "pid": 673309,
+        "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+        "publicClosed": "false",
+        "emailEnabled": "true"
+      },
+      "kortek-email-worker": {
+        "image": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+        "pid": 6654,
+        "release": null,
+        "publicClosed": null,
+        "emailEnabled": "false"
+      },
+      "kortek-email-worker-staging": {
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "pid": 576002,
+        "release": null,
+        "publicClosed": null,
+        "emailEnabled": "true"
+      }
+    },
+    "ssoProtection": {
+      "deploymentType": "all_except_custom_domains"
+    },
+    "variablesAndConfigurationUnchanged": true
+  },
+  "http": {
+    "timestampUtc": "2026-10-02T03:37:22.951365+00:00",
+    "url": "https://qa.booking.kortek.cloud/m1-c3-norte/reservar",
+    "unauthenticatedStatus": 302,
+    "unauthenticatedHeaders": {
+      "Content-Security-Policy": null,
+      "Content-Security-Policy-Report-Only": null,
+      "Referrer-Policy": null,
+      "X-Content-Type-Options": null,
+      "X-Frame-Options": "DENY",
+      "Cross-Origin-Embedder-Policy": null,
+      "Cross-Origin-Resource-Policy": null
+    },
+    "redirectHost": "vercel.com",
+    "redirectPath": "/sso-api",
+    "productHeadersObserved": false,
+    "productHeadersLimitation": "SSO existente; no se crea bypass ni se cambia protección. La CSP de login Vercel no se atribuye al producto.",
+    "flagcdn": {
+      "status": 200,
+      "contentType": "image/png",
+      "crossOriginResourcePolicy": null
+    },
+    "tlsVerification": true
+  },
+  "browser": {
+    "timestampUtc": "2026-10-02T03:37:38.552Z",
+    "inputFontSizes": [
+      {
+        "fontSize": "16px",
+        "type": "text"
+      },
+      {
+        "fontSize": "16px",
+        "type": "tel"
+      },
+      {
+        "fontSize": "16px",
+        "type": "search"
+      },
+      {
+        "fontSize": "16px",
+        "type": "email"
+      }
+    ],
+    "metaCspCount": 0,
+    "url": "https://qa.booking.kortek.cloud/m1-c3-norte/reservar",
+    "console": {
+      "errors": 0,
+      "warnings": 1,
+      "cspBlockedFlags": 0,
+      "clerkDevelopmentWarnings": 1
+    },
+    "bookingSubmitted": false,
+    "fixtureServiceCount": 2,
+    "hoursObserved": 2,
+    "physicalIphoneTest": false,
+    "flagImages": {
+      "observedCount": 28,
+      "loadedCount": 28,
+      "uniqueUrls": [
+        "https://flagcdn.com/w40/ar.png",
+        "https://flagcdn.com/w40/bo.png",
+        "https://flagcdn.com/w40/br.png",
+        "https://flagcdn.com/w40/ca.png",
+        "https://flagcdn.com/w40/cl.png",
+        "https://flagcdn.com/w40/co.png",
+        "https://flagcdn.com/w40/cr.png",
+        "https://flagcdn.com/w40/de.png",
+        "https://flagcdn.com/w40/do.png",
+        "https://flagcdn.com/w40/ec.png",
+        "https://flagcdn.com/w40/es.png",
+        "https://flagcdn.com/w40/fr.png",
+        "https://flagcdn.com/w40/gb.png",
+        "https://flagcdn.com/w40/gt.png",
+        "https://flagcdn.com/w40/hn.png",
+        "https://flagcdn.com/w40/it.png",
+        "https://flagcdn.com/w40/mx.png",
+        "https://flagcdn.com/w40/ni.png",
+        "https://flagcdn.com/w40/pa.png",
+        "https://flagcdn.com/w40/pe.png",
+        "https://flagcdn.com/w40/pr.png",
+        "https://flagcdn.com/w40/pt.png",
+        "https://flagcdn.com/w40/py.png",
+        "https://flagcdn.com/w40/sv.png",
+        "https://flagcdn.com/w40/us.png",
+        "https://flagcdn.com/w40/uy.png",
+        "https://flagcdn.com/w40/ve.png"
+      ],
+      "naturalWidthAll": 40,
+      "referrerPolicyAll": "no-referrer"
+    }
+  },
+  "imageInspection": {
+    "file": "banderas-qa.jpg",
+    "result": "limpio",
+    "sha256": "a74b85c92913276b5b9cd14a04bc96b7946b14b7604879408bcbfaff5919f9df",
+    "size": [
+      562,
+      1084
+    ],
+    "metadataFields": [
+      "jfif",
+      "jfif_density",
+      "jfif_unit",
+      "jfif_version"
+    ],
+    "review": "Captura completa revisada visualmente; campos vacíos y negocio sintético, sin contactos ni sesión visible."
+  },
+  "physicalQaPending": [
+    "Safari/iPhone físico",
+    "Cuatro servicios visibles sin scroll y más de doce horarios: fixture actual tiene dos servicios y dos horas en el día/profesional observados",
+    "Importación/diálogo real de Calendario",
+    "Zoom al enfocar y zoom manual con dos dedos",
+    "Colisión D11 real no repetida en esta publicación; evidencia C3 anterior conservada"
+  ],
+  "directDatabaseAccess": false,
+  "bookingsCreatedDuringPublication": false,
+  "encryptedBackup": "Ignorado y conservado hasta aprobación M1; no copiado, descifrado ni eliminado.",
+  "publicRepositoryOwnerConsent": "Confirmación explícita del propietario para los dos commits al repositorio público Fraylindev/BabrberFlow-OS; respaldo/secretos excluidos. Tercer commit documental requerido por paso 10.",
+  "evidenceInspection": {
+    "publicacion-qa.json": "limpio; campo de consentimiento revisado, texto de autorización humana sin credenciales",
+    "banderas-qa.jpg": "limpio; revisión visual completa y metadata sin contactos/secretos"
+  }
+}

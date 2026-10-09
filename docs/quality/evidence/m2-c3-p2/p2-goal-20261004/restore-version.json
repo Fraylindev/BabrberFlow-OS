@@ -1,0 +1,6 @@
+{
+  "container": "kortek-m2-c3-p2-restore-a3a2369d36dc",
+  "serverVersion": "17.11 (Debian 17.11-1.pgdg13+2)",
+  "exitCode": 0,
+  "command": "docker --context desktop-linux exec <restore-propio> psql -X -qAt -U postgres -c SELECT current_setting(server_version)"
+}

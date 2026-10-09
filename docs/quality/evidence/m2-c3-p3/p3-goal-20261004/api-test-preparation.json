@@ -1,0 +1,8 @@
+{
+  "oldCodeGitRelease": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "oldCodeArchiveSha256": "ffc29e339daa39ddb198f81891f629ce54dd911546a18116be72c8ac317ca3e5",
+  "newImageCompiledModules": true,
+  "oldCodeExecution": "Exact git archive loaded by installed ts-node inside new local image; no image export from QA",
+  "realClerkUsed": false,
+  "realProvidersUsed": false
+}

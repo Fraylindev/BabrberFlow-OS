@@ -103,6 +103,6 @@ test("expected API errors become task-oriented messages", () => {
   );
   assert.equal(
     invoiceErrorMessage(new ApiError(409, "constraint"), "issue"),
-    "No pudimos emitir la factura. Confirma que el servicio terminó y la reserva está completada.",
+    "No pudimos emitir la factura. Comprueba que la reserva esté completada y que el precio del servicio sea válido.",
   );
 });

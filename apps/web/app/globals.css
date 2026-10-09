@@ -180,3 +180,32 @@ body {
   background-color: var(--dash-bg);
   color: var(--dash-text);
 }
+
+/* Native iOS focus zoom also affects custom controls and landscape phones.
+   Keep editable dashboard controls at 16px without restricting manual zoom. */
+@media (width < 48rem), (pointer: coarse) {
+  .dashboard-shell :is(
+    input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]),
+    select,
+    textarea
+  ) {
+    font-size: max(16px, 1rem);
+  }
+}
+
+/* Keep Safari's native date control inside the reservation/invoice filter column. */
+.dashboard-shell .dashboard-date-filter {
+  display: block;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.dashboard-shell .dashboard-date-filter::-webkit-date-and-time-value {
+  min-width: 0;
+  text-align: left;
+}
+
+.dashboard-shell .dashboard-date-filter::-webkit-datetime-edit {
+  padding: 0;
+}

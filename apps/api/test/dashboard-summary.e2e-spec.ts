@@ -223,7 +223,7 @@ describe('Resumen acotado (PostgreSQL aislado)', () => {
     await requestApp(app)
       .get('/analytics/summary')
       .set('Authorization', `Bearer ${tokens.get('A-customer')}`)
-      .expect(403);
+      .expect(401);
     for (const query of [
       'agendaPage=0',
       'agendaPage=1.5',

@@ -1,0 +1,40 @@
+{
+  "base": "3a154df5bc606ea0a31f4a47e92b7eb8fbf50aff",
+  "localOnly": true,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "dpapiRead": false,
+  "realPhraseUsed": false,
+  "cases": [
+    {
+      "case": "persistencia-error",
+      "passed": true,
+      "externalCalls": [],
+      "expectedFailure": true,
+      "reportRelative": ".tmp\\p2-goal\\attempt-9596449d\\case-persistencia-error\\result.json"
+    }
+  ],
+  "complete": false,
+  "serviceControlRemoved": true,
+  "units": {
+    "ledgerMultiset": true,
+    "multilineUtf8": true,
+    "errorAndHandlerPersisted": true,
+    "tracebacksRetained": true,
+    "secretRedacted": true,
+    "persistenceFallback": true,
+    "externalStderrAllFourLines": true,
+    "externalCommandExitPhaseTraceback": true,
+    "redactionBefore8192ByteCap": true
+  },
+  "expectedFailureComparisons": [
+    {
+      "case": "persistencia-error",
+      "expected": "externo-falso-inyectado; exit=7; fallo-externo-linea-1\nfallo-externo-linea-2 [privado]\nfallo-externo-linea-3\n",
+      "observed": "externo-falso-inyectado; exit=7; fallo-externo-linea-1\r\nfallo-externo-linea-2 [privado]\r\nfallo-externo-linea-3\r\n",
+      "equalIgnoringLineEndings": true
+    }
+  ],
+  "targetedOnly": true,
+  "targetedPassed": true
+}

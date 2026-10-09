@@ -1,0 +1,259 @@
+{
+  "date": "2026-10-07",
+  "base": "c904148e5d65edad8b827c1b9d945016ff3b71ea",
+  "coldRuns": 10,
+  "independentFreshClusters": true,
+  "cacheDisabled": true,
+  "unchangedAssertionBodySha256": "cdc06d661b3de69c60d48e6ca97bfa4d2d32819b6096f61b40e9e30249c8b323",
+  "distribution": {
+    "60": 7,
+    "61": 3
+  },
+  "samples": [
+    {
+      "run": 1,
+      "id": "37e29293697f40889e6ff70fda97b83f",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408118795,
+        "blockedUntilMs": 1791408178799,
+        "postgresBlockStartMs": 1791408118799,
+        "blockMs": 60000,
+        "remainingMs": 60004,
+        "headerSeconds": 61
+      },
+      "header": 61,
+      "clockDeltaMs": 4
+    },
+    {
+      "run": 2,
+      "id": "403ac462782243a1a1238d10370cc01c",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408149346,
+        "blockedUntilMs": 1791408209352,
+        "postgresBlockStartMs": 1791408149352,
+        "blockMs": 60000,
+        "remainingMs": 60006,
+        "headerSeconds": 61
+      },
+      "header": 61,
+      "clockDeltaMs": 6
+    },
+    {
+      "run": 3,
+      "id": "1bbac376ec8f4227b61bcbd14c0e4538",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408180486,
+        "blockedUntilMs": 1791408240489,
+        "postgresBlockStartMs": 1791408180489,
+        "blockMs": 60000,
+        "remainingMs": 60003,
+        "headerSeconds": 61
+      },
+      "header": 61,
+      "clockDeltaMs": 3
+    },
+    {
+      "run": 4,
+      "id": "e85391b26a9546a4866553ebbadb79a0",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408211981,
+        "blockedUntilMs": 1791408271980,
+        "postgresBlockStartMs": 1791408211980,
+        "blockMs": 60000,
+        "remainingMs": 59999,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": -1
+    },
+    {
+      "run": 5,
+      "id": "ec35a53f7967431b940d206554e959c7",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408258940,
+        "blockedUntilMs": 1791408318939,
+        "postgresBlockStartMs": 1791408258939,
+        "blockMs": 60000,
+        "remainingMs": 59999,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": -1
+    },
+    {
+      "run": 6,
+      "id": "84825b49fc5e4ba0a90f175dfa2ffd25",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408283543,
+        "blockedUntilMs": 1791408343543,
+        "postgresBlockStartMs": 1791408283543,
+        "blockMs": 60000,
+        "remainingMs": 60000,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": 0
+    },
+    {
+      "run": 7,
+      "id": "b5a34ad49f6f48658c4194051a0006dc",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408308883,
+        "blockedUntilMs": 1791408368882,
+        "postgresBlockStartMs": 1791408308882,
+        "blockMs": 60000,
+        "remainingMs": 59999,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": -1
+    },
+    {
+      "run": 8,
+      "id": "0724ebbcebb64c3e865b218336e71e78",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408335556,
+        "blockedUntilMs": 1791408395555,
+        "postgresBlockStartMs": 1791408335555,
+        "blockMs": 60000,
+        "remainingMs": 59999,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": -1
+    },
+    {
+      "run": 9,
+      "id": "086d86664610464c8ad1365d12e9c2a7",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408362518,
+        "blockedUntilMs": 1791408422517,
+        "postgresBlockStartMs": 1791408362517,
+        "blockMs": 60000,
+        "remainingMs": 59999,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": -1
+    },
+    {
+      "run": 10,
+      "id": "28781232d8904974b96b155b5be4e801",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "sample": {
+        "nodeNowMs": 1791408392081,
+        "blockedUntilMs": 1791408452080,
+        "postgresBlockStartMs": 1791408392080,
+        "blockMs": 60000,
+        "remainingMs": 59999,
+        "headerSeconds": 60
+      },
+      "header": 60,
+      "clockDeltaMs": -1
+    }
+  ],
+  "excludedAttempts": [
+    {
+      "id": "09183519bcea4808b38ee57913e6c7b2",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "24c67399d99a4fe1b3814ccad0895eaf",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "4543064ecc4846f5aa8af2241b7dd633",
+      "exit": 0,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Ensayo previo sin observación instrumentada, no cuenta para N"
+    },
+    {
+      "id": "5baea92257dc4f27b3d80860fcd70b69",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "69883a047ec44bfaa510ed08924c227f",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "7919796b364c4e5ab189692b493f4239",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "7d6a882bdcb64550923834c1000b89ec",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "d14ab20eb25a43d2bec0c9c5f6dadaa0",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "f7785b8ae3464b5286419f4c27ec96db",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    },
+    {
+      "id": "f8df9871c88147e688b4c6dda0018daa",
+      "exit": 1,
+      "cleanup": true,
+      "stopped": true,
+      "reason": "Sin observación instrumentada: preparación o ensayo previo, no cuenta para N"
+    }
+  ],
+  "diagnosis": "a: defecto de producto al calcular el tiempo restante usando dos relojes; techo de 60 violado con PostgreSQL unos ms por delante de Node",
+  "productChanged": false,
+  "retryTestChanged": false
+}

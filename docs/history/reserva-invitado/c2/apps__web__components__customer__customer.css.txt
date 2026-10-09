@@ -1,0 +1,39 @@
+.customer-page { min-height: 100dvh; width: 100%; max-width: 48rem; margin: 0 auto; padding: 1.25rem max(1rem, env(safe-area-inset-right)) calc(2rem + env(safe-area-inset-bottom)); overflow-wrap: anywhere; }
+.customer-page h1, .customer-page h2 { text-wrap: balance; }
+.customer-page h1 { font-family: var(--font-display); font-size: 2rem; margin: 1.5rem 0; }
+.customer-page h1[tabindex="-1"]:focus { outline: none; }
+.customer-page h2 { font-size: 1.25rem; font-weight: 600; }
+.customer-page a, .customer-page button { min-height: 44px; display: inline-flex; align-items: center; touch-action: manipulation; }
+.customer-page a { padding: .5rem .25rem; text-decoration: underline; text-underline-offset: .25rem; }
+.customer-page input, .customer-page select { font-size: 1rem; min-height: 48px; width: 100%; color: var(--color-paper); background: var(--color-surface); border: 1px solid var(--color-border-strong); padding: .75rem; border-radius: .25rem; }
+.customer-page :is(a, button, input, select):focus-visible { outline: 2px solid var(--color-brass); outline-offset: 4px; }
+.customer-page :is(input, select)[aria-invalid="true"] { border-color: var(--color-danger); }
+.customer-page :is(button, a) { transition: color 120ms var(--ease-out), opacity 120ms var(--ease-out); }
+.customer-page button { user-select: none; }
+.customer-page .customer-card { border: 1px solid var(--color-border-strong); border-radius: .5rem; padding: 1rem; background: var(--color-surface); }
+.customer-page nav { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+.customer-page .customer-stack { display: grid; gap: 1rem; }
+.customer-page .customer-muted { color: var(--color-muted); }
+.customer-page .customer-error { color: var(--color-danger); }
+.customer-page label { display: block; margin-bottom: .5rem; }
+.customer-page form { display: grid; gap: 1.25rem; }
+.customer-page .customer-form-block { display: grid; gap: 1.5rem; }
+.customer-page .customer-form-intro { margin: 0; }
+.customer-page .customer-error-summary { display: grid; gap: .5rem; padding: 1rem; border: 1px solid var(--color-danger); border-radius: .25rem; }
+.customer-page .customer-profile-heading { margin-bottom: .75rem; }
+.customer-page [role="tablist"] { display: flex; gap: .75rem; }
+.customer-page [role="tab"] { padding: .75rem; border-bottom: 3px solid transparent; }
+.customer-page [role="tab"][aria-selected="true"] { border-bottom-color: var(--color-paper); color: var(--color-paper); font-weight: 700; }
+.customer-page [role="tabpanel"] { margin-top: 1rem; }
+/* Scope C2 y reserva pública: no altera las variantes del panel interno. */
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"] { background: #c8172b; color: var(--color-paper); opacity: 1; filter: none; }
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"]::before { content: none; }
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"]:not(:disabled):hover { background: var(--color-brass-dim); filter: none; }
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"]:focus-visible { outline: 2px solid var(--color-paper); outline-offset: 4px; }
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"]:not(:disabled):active { background: #70101b; filter: none; }
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"]:disabled { background: var(--color-border-strong); color: var(--color-paper); opacity: 1; filter: none; border: 1px dashed var(--color-muted); }
+:is(.customer-page, .customer-claim, .booking-flow) [data-variant="primary"][aria-busy="true"] { background: var(--color-brass-dim); color: var(--color-paper); opacity: 1; filter: none; }
+.customer-page .customer-skip { position: absolute; left: -10000px; }
+.customer-page .customer-skip:focus { position: static; }
+@media (min-width: 768px) { .customer-page { padding-top: 2rem; } }
+@media (prefers-reduced-motion: reduce) { .customer-page *, .customer-page *::before, .customer-page *::after { animation: none !important; transition: none !important; transform: none !important; scroll-behavior: auto !important; } }

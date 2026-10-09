@@ -41,7 +41,7 @@ export function Proof() {
             <Stat value="Separados" label="datos de cada negocio" />
           </Reveal>
           <Reveal delay={120}>
-            <Stat value="4 roles" label="dueño, admin, recepción, barbero" />
+            <Stat value="4 roles" label="dueño, admin, recepción, profesional" />
           </Reveal>
           <Reveal delay={180}>
             <Stat value="1 panel" label="para la operación interna" />

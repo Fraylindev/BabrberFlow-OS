@@ -1,0 +1,24 @@
+{
+  "base": "768d898e27685216b40b699cf5ad9e3f7c1cfd76",
+  "localOnly": true,
+  "ownContainers": [
+    "kortek-m2-c3-p2-client-real-c51e8a798d6d",
+    "kortek-m2-c3-p2-restore-c51e8a798d6d"
+  ],
+  "containerRemovalExit": 0,
+  "containerAbsenceQueryExit": 0,
+  "remainingContainers": [],
+  "pgDataTmpfs": true,
+  "publishedPorts": 0,
+  "longGpgRootRemoved": true,
+  "shortProbeHomeRemoved": true,
+  "executorGpgHomeRemoved": true,
+  "ownGpgAgentKillExit": 0,
+  "qaCustodyAccess": false,
+  "syntheticCipherHashesBeforeRemovalMatch": true,
+  "rootResolved": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\p2-a",
+  "reparsePoints": 0,
+  "sourceAndReportsArchived": true,
+  "tempRootRemoved": true,
+  "foreignObjectsTouched": false
+}

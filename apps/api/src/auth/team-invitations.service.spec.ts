@@ -11,6 +11,9 @@ import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClerkSessionVerifierService } from './clerk/clerk-session-verifier.service';
 import { TeamInvitationsService } from './team-invitations.service';
+import { CreateTeamInvitationDto } from './dto/create-team-invitation.dto';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 
 const organizationId = '9ad7c5df-6701-48e5-bb75-bcf06fb2bd1c';
 const actorUserId = 'b248c5b1-047d-4734-a41e-85e8de81342d';
@@ -43,6 +46,8 @@ describe('TeamInvitationsService', () => {
   };
   const teamInvitation = {
     findFirst: jest.fn(),
+    findMany: jest.fn(),
+    count: jest.fn(),
     update: jest.fn(),
     updateMany: jest.fn(),
   };
@@ -89,6 +94,225 @@ describe('TeamInvitationsService', () => {
     transaction.mockImplementation((callback: (client: typeof tx) => unknown) =>
       callback(tx),
     );
+  });
+
+  // Persist the actual dates written by the service, not a preset expiry.
+  function persistedInvitation() {
+    let row: ReturnType<typeof invitation> | null = null;
+    tx.teamInvitation.create.mockImplementation(
+      (args: Prisma.TeamInvitationCreateArgs) => {
+        if (!(args.data.expiresAt instanceof Date))
+          throw new Error('Expected persisted Date');
+        row = {
+          ...invitation(TeamInvitationStatus.CREATING),
+          expiresAt: args.data.expiresAt,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        return Promise.resolve({ ...row });
+      },
+    );
+    teamInvitation.findFirst.mockImplementation(() =>
+      Promise.resolve(row && { ...row }),
+    );
+    teamInvitation.update.mockImplementation(
+      ({ data }: { data: Partial<ReturnType<typeof invitation>> }) => {
+        if (!row) throw new Error('Missing test row');
+        row = { ...row, ...data };
+        return Promise.resolve({ ...row });
+      },
+    );
+    teamInvitation.updateMany.mockImplementation(
+      ({
+        where,
+        data,
+      }: {
+        where: {
+          organizationId: string;
+          status: TeamInvitationStatus | object;
+          expiresAt?: { lte: Date };
+        };
+        data: Partial<ReturnType<typeof invitation>>;
+      }) => {
+        if (
+          row &&
+          where.organizationId === row.organizationId &&
+          where.status === row.status &&
+          (!where.expiresAt || row.expiresAt <= where.expiresAt.lte)
+        ) {
+          row = { ...row, ...data };
+          return Promise.resolve({ count: 1 });
+        }
+        return Promise.resolve({ count: 0 });
+      },
+    );
+    teamInvitation.findMany.mockImplementation(() =>
+      Promise.resolve(row ? [{ ...row }] : []),
+    );
+    teamInvitation.count.mockImplementation(() => Promise.resolve(row ? 1 : 0));
+    transaction.mockImplementation(
+      (input: ((client: typeof tx) => unknown) | Promise<unknown>[]) =>
+        Array.isArray(input) ? Promise.all(input) : input(tx),
+    );
+    createInvitation.mockResolvedValue({ id: 'inv_test' });
+    return () => row;
+  }
+
+  const defaultDto = () =>
+    plainToInstance(CreateTeamInvitationDto, {
+      email: 'barber@example.test',
+      role: UserRole.BARBER,
+      createPublicProfile: true,
+    });
+
+  it.each([undefined, 1, 30])(
+    'DTO preserves explicit %s days and defaults omitted expiry to seven',
+    async (days) => {
+      const dto = plainToInstance(CreateTeamInvitationDto, {
+        email: 'barber@example.test',
+        role: UserRole.BARBER,
+        ...(days === undefined ? {} : { expiresInDays: days }),
+      });
+      expect(await validate(dto)).toEqual([]);
+      expect(dto.expiresInDays).toBe(days ?? 7);
+    },
+  );
+
+  it.each([0, 31, 1.5])(
+    'rejects invalid expiry %s without weakening the approved range',
+    async (expiresInDays) => {
+      const dto = plainToInstance(CreateTeamInvitationDto, {
+        email: 'barber@example.test',
+        role: UserRole.BARBER,
+        expiresInDays,
+      });
+      expect(
+        (await validate(dto)).some(
+          (error) => error.property === 'expiresInDays',
+        ),
+      ).toBe(true);
+    },
+  );
+
+  it.each(['DTO default', 'service fallback'])(
+    'creates seven-day expiry with %s in Clerk and persisted result',
+    async (mode) => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-09-30T22:24:00Z'));
+      try {
+        const getRow = persistedInvitation();
+        const dto = defaultDto();
+        if (mode === 'service fallback')
+          delete (dto as Partial<CreateTeamInvitationDto>).expiresInDays;
+        const created = await service.create(organizationId, actorUserId, dto);
+        const expiresAt = new Date('2026-10-07T22:24:00Z');
+        expect(createInvitation).toHaveBeenCalledWith(
+          expect.objectContaining({ expiresInDays: 7 }),
+        );
+        expect(created.expiresAt).toEqual(expiresAt);
+        expect(getRow()?.expiresAt.getTime()).toBe(Date.now() + 604800000);
+        expect(created.status).toBe(TeamInvitationStatus.PENDING);
+      } finally {
+        jest.useRealTimers();
+      }
+    },
+  );
+
+  it.each([1, 30])(
+    'keeps an explicit %s-day lifetime on create',
+    async (expiresInDays) => {
+      persistedInvitation();
+      const before = Date.now();
+      const created = await service.create(organizationId, actorUserId, {
+        ...defaultDto(),
+        expiresInDays,
+      });
+      expect(createInvitation).toHaveBeenCalledWith(
+        expect.objectContaining({ expiresInDays }),
+      );
+      expect(created.expiresAt.getTime()).toBeGreaterThanOrEqual(
+        before + expiresInDays * 86400000,
+      );
+      expect(created.expiresAt.getTime()).toBeLessThanOrEqual(
+        Date.now() + expiresInDays * 86400000,
+      );
+    },
+  );
+
+  it('remains pending after two minutes and expires at the exact seven-day boundary', async () => {
+    const start = Date.parse('2026-09-30T22:24:00Z');
+    jest.useFakeTimers().setSystemTime(start);
+    try {
+      persistedInvitation();
+      await service.create(organizationId, actorUserId, defaultDto());
+      for (const elapsed of [120000, 604799999, 604800000]) {
+        jest.setSystemTime(start + elapsed);
+        const page = await service.list(organizationId, { page: 1, limit: 20 });
+        expect(page.items[0].status).toBe(
+          elapsed < 604800000
+            ? TeamInvitationStatus.PENDING
+            : TeamInvitationStatus.EXPIRED,
+        );
+      }
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('resend gives seven new days from resend while preserving the original creation date', async () => {
+    const start = Date.parse('2026-09-30T22:24:00Z');
+    jest.useFakeTimers().setSystemTime(start);
+    try {
+      persistedInvitation();
+      const original = await service.create(
+        organizationId,
+        actorUserId,
+        defaultDto(),
+      );
+      jest.setSystemTime(start + 2 * 86400000);
+      const resent = await service.resend(
+        organizationId,
+        actorUserId,
+        invitationId,
+      );
+      expect(resent.expiresAt.getTime()).toBe(Date.now() + 604800000);
+      expect(resent.createdAt).toEqual(original.createdAt);
+      expect(resent.expiresAt).not.toEqual(original.expiresAt);
+      expect(revokeInvitation).toHaveBeenCalledWith('inv_test');
+      expect(createInvitation).toHaveBeenLastCalledWith(
+        expect.objectContaining({ expiresInDays: 7 }),
+      );
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('creating an equivalent existing invitation leaves its thirty-day expiry intact', async () => {
+    const existing = invitation(TeamInvitationStatus.PENDING);
+    teamInvitation.findFirst.mockResolvedValue(existing);
+    const created = await service.create(
+      organizationId,
+      actorUserId,
+      defaultDto(),
+    );
+    expect(created.expiresAt).toEqual(existing.expiresAt);
+    expect(teamInvitation.update).not.toHaveBeenCalled();
+    expect(tx.teamInvitation.create).not.toHaveBeenCalled();
+    expect(createInvitation).not.toHaveBeenCalled();
+  });
+
+  it('failed resend does not persist a new lifetime or announce PENDING', async () => {
+    const getRow = persistedInvitation();
+    const original = await service.create(
+      organizationId,
+      actorUserId,
+      defaultDto(),
+    );
+    createInvitation.mockRejectedValueOnce(new Error('external failure'));
+    await expect(
+      service.resend(organizationId, actorUserId, invitationId),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    expect(getRow()?.status).toBe(TeamInvitationStatus.FAILED);
+    expect(getRow()?.expiresAt).toEqual(original.expiresAt);
   });
 
   it('termina la transacción local antes de llamar a Clerk', async () => {

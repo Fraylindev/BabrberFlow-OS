@@ -1,0 +1,68 @@
+{
+  "id": "65deab5f99a54b84bf25fe1d7f783ee4",
+  "database": "guest_c1_65deab5f99a54b84bf25fe1d7f783ee4_test",
+  "bind": "127.0.0.1",
+  "commands": [
+    {
+      "label": "postgres-version",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+      "args": [
+        "--version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "initdb",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\initdb.exe",
+      "args": [
+        "-D",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-65deab5f99a54b84bf25fe1d7f783ee4\\data",
+        "-U",
+        "guest_c1_admin",
+        "--auth-local=trust",
+        "--auth-host=scram-sha-256",
+        "--encoding=UTF8",
+        "--locale=C",
+        "--pwfile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-65deab5f99a54b84bf25fe1d7f783ee4\\init-password"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "start",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-65deab5f99a54b84bf25fe1d7f783ee4\\data",
+        "-l",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-65deab5f99a54b84bf25fe1d7f783ee4\\postgres.log",
+        "-o",
+        "-h 127.0.0.1 -p 58414",
+        "-w",
+        "start"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "stop",
+      "command": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\guest-c1-pg-65deab5f99a54b84bf25fe1d7f783ee4\\data",
+        "-m",
+        "fast",
+        "-w",
+        "stop"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "migrations": [],
+  "suites": [],
+  "cleanup": false,
+  "providersContacted": false,
+  "postgresBinary": "postgres (PostgreSQL) 18.1",
+  "port": 58414,
+  "failure": "Cannot read properties of null (reading 'trim')",
+  "cleanupFailure": "Cannot read properties of null (reading 'trim')",
+  "exitCode": 1
+}

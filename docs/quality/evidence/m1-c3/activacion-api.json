@@ -1,0 +1,26 @@
+{
+  "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "image": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+  "rollback_image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+  "checks": {
+    "previous_image_retained": true,
+    "qa_api_active": true,
+    "qa_worker_active": true,
+    "qa_api_image_matches": true,
+    "qa_worker_unchanged": true,
+    "qa_release_matches": true,
+    "qa_remaining_config_unchanged": true,
+    "qa_runtime_secrets_match": true,
+    "protected_files_unchanged": true,
+    "production_container_image_pid_unchanged": true,
+    "production_services_unchanged": true
+  },
+  "production_image": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+  "production_container": "a7ce113fa2eb8c29860c3c219aa26184ab90b8e1ac1611018b60aa3dc0bb5feb",
+  "production_pid": 151158,
+  "production_units": {
+    "kortek-api": "MainPID=151141\nActiveState=active",
+    "kortek-caddy": "MainPID=172458\nActiveState=active",
+    "kortek-email-worker": "MainPID=6618\nActiveState=active"
+  }
+}

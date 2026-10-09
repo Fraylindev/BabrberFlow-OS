@@ -1,0 +1,717 @@
+{
+  "base": "58f536f15fc49381513f327865ecaea0d7c5e121",
+  "remote": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+  "baseline": {
+    "id": "7af2a92505e7471d96c6549176133b18",
+    "api": {
+      "passed": 263,
+      "failed": 1,
+      "pending": 1,
+      "total": 265
+    },
+    "apiExit": 1,
+    "browserExit": 0,
+    "stopped": true,
+    "cleanup": true
+  },
+  "baselineUnit": [
+    {
+      "id": "38da5b79419a4fff8760a6f730319c4e",
+      "evidence": ".tmp/retry-fix-evidence/baseline-unit/38da5b79419a4fff8760a6f730319c4e",
+      "version": "18.1",
+      "unit": {
+        "passed": 845,
+        "failed": 0,
+        "pending": 0,
+        "total": 845
+      },
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-unit-baseline",
+          "exit": 1,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\node_modules\\.pnpm\\jest@30.4.2_@types+node@24._8e363def8bd01778ec0af58dd86e84ee\\node_modules\\jest\\bin\\jest.js",
+            "--config",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-baseline-unit.config.json",
+            "--runInBand",
+            "--no-cache",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\baseline-unit\\38da5b79419a4fff8760a6f730319c4e\\unit.json"
+          ]
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "unitExit": 1,
+      "stopped": true,
+      "cleanup": true,
+      "exit": 1,
+      "providersContacted": false,
+      "migrations": 28
+    },
+    {
+      "id": "865cf9b61c6a4f2181e212edff49e58d",
+      "evidence": ".tmp/retry-fix-evidence/baseline-unit/865cf9b61c6a4f2181e212edff49e58d",
+      "version": "18.1",
+      "unit": {
+        "passed": 845,
+        "failed": 0,
+        "pending": 0,
+        "total": 845
+      },
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-unit-baseline",
+          "exit": 1,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\node_modules\\.pnpm\\jest@30.4.2_@types+node@24._8e363def8bd01778ec0af58dd86e84ee\\node_modules\\jest\\bin\\jest.js",
+            "--config",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-baseline-unit.config.json",
+            "--runInBand",
+            "--no-cache",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\baseline-unit\\865cf9b61c6a4f2181e212edff49e58d\\unit.json"
+          ]
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "unitExit": 1,
+      "stopped": true,
+      "cleanup": true,
+      "exit": 1,
+      "providersContacted": false,
+      "migrations": 28
+    },
+    {
+      "id": "af1ef4f2047e4b18827526be96d219ec",
+      "evidence": ".tmp/retry-fix-evidence/baseline-unit/af1ef4f2047e4b18827526be96d219ec",
+      "version": "18.1",
+      "unit": {
+        "passed": 871,
+        "failed": 0,
+        "pending": 0,
+        "total": 871
+      },
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-unit-baseline",
+          "exit": 0,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\node_modules\\.pnpm\\jest@30.4.2_@types+node@24._8e363def8bd01778ec0af58dd86e84ee\\node_modules\\jest\\bin\\jest.js",
+            "--config",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-baseline-unit.config.json",
+            "--runInBand",
+            "--no-cache",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\baseline-unit\\af1ef4f2047e4b18827526be96d219ec\\unit.json"
+          ]
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "unitExit": 0,
+      "stopped": true,
+      "cleanup": true,
+      "exit": 0,
+      "providersContacted": false,
+      "migrations": 28
+    }
+  ],
+  "after": [
+    {
+      "id": "0507775a563e460c8601608bc62a5527",
+      "evidence": ".tmp/retry-fix-evidence/after/0507775a563e460c8601608bc62a5527",
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 2
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "stopped": true,
+      "cleanup": true,
+      "exit": 1,
+      "failure": "bootstrap failed; exit=2; inspect sanitized evidence",
+      "providersContacted": false,
+      "migrations": 0
+    },
+    {
+      "id": "579fd8f676994f88b41d22e4eec9ca12",
+      "evidence": ".tmp/retry-fix-evidence/after/579fd8f676994f88b41d22e4eec9ca12",
+      "version": "18.1",
+      "api": {
+        "passed": 270,
+        "failed": 1,
+        "pending": 1,
+        "total": 272
+      },
+      "unit": {
+        "passed": 877,
+        "failed": 0,
+        "pending": 0,
+        "total": 877
+      },
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "--filter",
+            "api",
+            "test:e2e",
+            "--runInBand",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\after\\579fd8f676994f88b41d22e4eec9ca12\\api.json"
+          ]
+        },
+        {
+          "label": "api-unit",
+          "exit": 0,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "--filter",
+            "api",
+            "test",
+            "--runInBand",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\after\\579fd8f676994f88b41d22e4eec9ca12\\unit.json"
+          ]
+        },
+        {
+          "label": "api-types",
+          "exit": 0
+        },
+        {
+          "label": "api-lint",
+          "exit": 0
+        },
+        {
+          "label": "api-build",
+          "exit": 0
+        },
+        {
+          "label": "web-unit",
+          "exit": 1
+        },
+        {
+          "label": "web-build",
+          "exit": 0
+        },
+        {
+          "label": "web-browser",
+          "exit": 0
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "apiExit": 1,
+      "unitExit": 0,
+      "browserExit": 0,
+      "buildExit": 0,
+      "stopped": true,
+      "cleanup": true,
+      "exit": 1,
+      "providersContacted": false,
+      "migrations": 28
+    },
+    {
+      "id": "dd258b9684c144758b69d827bb6fc210",
+      "evidence": ".tmp/retry-fix-evidence/after/dd258b9684c144758b69d827bb6fc210",
+      "version": "18.1",
+      "api": {
+        "passed": 271,
+        "failed": 1,
+        "pending": 1,
+        "total": 273
+      },
+      "unit": {
+        "passed": 877,
+        "failed": 0,
+        "pending": 0,
+        "total": 877
+      },
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 1,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "--filter",
+            "api",
+            "test:e2e",
+            "--runInBand",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\after\\dd258b9684c144758b69d827bb6fc210\\api.json"
+          ]
+        },
+        {
+          "label": "pnpm-version",
+          "exit": 0,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "--version"
+          ]
+        },
+        {
+          "label": "api-unit",
+          "exit": 0,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "--filter",
+            "api",
+            "test",
+            "--runInBand",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\after\\dd258b9684c144758b69d827bb6fc210\\unit.json"
+          ]
+        },
+        {
+          "label": "api-types",
+          "exit": 0
+        },
+        {
+          "label": "api-lint",
+          "exit": 0
+        },
+        {
+          "label": "api-build",
+          "exit": 0
+        },
+        {
+          "label": "web-unit",
+          "exit": 0
+        },
+        {
+          "label": "web-components",
+          "exit": 0
+        },
+        {
+          "label": "web-build",
+          "exit": 0
+        },
+        {
+          "label": "web-browser",
+          "exit": 0
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "apiExit": 1,
+      "unitExit": 0,
+      "browserExit": 0,
+      "buildExit": 0,
+      "stopped": true,
+      "cleanup": true,
+      "exit": 1,
+      "providersContacted": false,
+      "migrations": 28
+    }
+  ],
+  "final": [
+    {
+      "id": "0d91b1d5cb344c2e9c289afd517cba80",
+      "evidence": ".tmp/retry-fix-evidence/final/0d91b1d5cb344c2e9c289afd517cba80",
+      "version": "18.1",
+      "api": {
+        "passed": 272,
+        "failed": 0,
+        "pending": 1,
+        "total": 273
+      },
+      "commands": [
+        {
+          "label": "postgres-version",
+          "exit": 0
+        },
+        {
+          "label": "initdb",
+          "exit": 0
+        },
+        {
+          "label": "start",
+          "exit": 0
+        },
+        {
+          "label": "bootstrap",
+          "exit": 0
+        },
+        {
+          "label": "migrate-deploy",
+          "exit": 0
+        },
+        {
+          "label": "provision-runtime",
+          "exit": 0
+        },
+        {
+          "label": "runtime-gate",
+          "exit": 0
+        },
+        {
+          "label": "server-version",
+          "exit": 0
+        },
+        {
+          "label": "migration-ledger",
+          "exit": 0
+        },
+        {
+          "label": "api-e2e",
+          "exit": 0,
+          "args": [
+            "--require",
+            "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\apps\\api\\test\\guest-postgres-no-dotenv.cjs",
+            "C:\\Users\\Fraylin\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "--filter",
+            "api",
+            "test:e2e",
+            "--runInBand",
+            "--json",
+            "--outputFile=C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\retry-fix-evidence\\final\\0d91b1d5cb344c2e9c289afd517cba80\\api.json"
+          ]
+        },
+        {
+          "label": "web-browser",
+          "exit": 0
+        },
+        {
+          "label": "stop",
+          "exit": 0
+        }
+      ],
+      "apiExit": 0,
+      "browserExit": 0,
+      "reusesMatchingBuild": true,
+      "stopped": true,
+      "cleanup": true,
+      "exit": 0,
+      "providersContacted": false,
+      "migrations": 28
+    }
+  ],
+  "pnpm": "11.18.0",
+  "unitExpected": 877,
+  "e2eExpected": 273,
+  "newUnitTests": 6,
+  "newE2eTests": 8,
+  "txtHashesUnchanged": 40,
+  "originalRateLimitTestBlob": "847cce7a3ddf1687f118f4b26e9dce97a4c291b3",
+  "preparationFailures": [
+    {
+      "phase": "baseline suites",
+      "reason": "sandbox denies loopback psql",
+      "id": "104c677d3dff449c8e3f39498b68c0bc",
+      "cleanup": true
+    },
+    {
+      "phase": "baseline-unit adapter",
+      "reason": "marker mismatch; no cluster created"
+    },
+    {
+      "phase": "after suites",
+      "reason": "sandbox denies loopback psql",
+      "id": "0507775a563e460c8601608bc62a5527",
+      "cleanup": true
+    }
+  ],
+  "limitations": [
+    "PG16 and remote CI not executed",
+    "Cloudinary real e2e excluded by provider authorization",
+    "desktop excludes mobile navigation test",
+    "offline anonymous browser fixtures; no Clerk or physical-device proof"
+  ],
+  "providersContacted": false,
+  "finalBrowser": {
+    "stats": {
+      "startTime": "2026-10-08T00:38:42.415Z",
+      "duration": 48772.827,
+      "expected": 21,
+      "skipped": 1,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "retries": 0,
+    "projects": [
+      "desktop-chrome",
+      "mobile-chrome"
+    ]
+  },
+  "finalE2eAssertions": [
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients new block is 60 seconds and subsequent HTTP headers stay within 1..60",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients 80 concurrent HTTP requests share exactly 30 successes and 50 bounded blocks",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients opposite simulated Node process clocks cannot shorten or extend the HTTP block",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients two actual Node child processes with opposite clocks share the same PostgreSQL block",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients an expired window alone cannot clear an active block; both expired reset HTTP budget",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients rounds a positive submillisecond block up to 1 using the same transaction NOW()",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients resets at the exact PostgreSQL boundary and rounds a 1001ms expiry up to 2",
+      "status": "passed"
+    },
+    {
+      "test": "Retry-After: real PostgreSQL and HTTP with two independent clients bounds a block committed after a waiting request transaction began",
+      "status": "passed"
+    },
+    {
+      "test": "M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso 30/min compartido: inválidas, dos instancias, cambio de slug, spoof IP y recreación no reinician presupuesto",
+      "status": "passed"
+    }
+  ],
+  "verifications": {
+    "apiTypes": 0,
+    "apiLint": 0,
+    "apiBuild": 0,
+    "webUnit": {
+      "passed": 158,
+      "failed": 0,
+      "exit": 0
+    },
+    "webComponents": {
+      "passed": 130,
+      "failed": 0,
+      "exit": 0
+    },
+    "webBuild": 0,
+    "rangeWhitespace": 0
+  }
+}

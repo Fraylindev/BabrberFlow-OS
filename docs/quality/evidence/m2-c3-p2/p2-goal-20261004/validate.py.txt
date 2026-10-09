@@ -1,0 +1,106 @@
+"""Validate the complete P2 documentary evidence and its seven operational criteria."""
+import ast,base64,hashlib,json,re,subprocess,sys
+from pathlib import Path
+from datetime import datetime,timezone
+E=Path(__file__).resolve().parent;R=E.parents[4];D=R/'docs/quality/M2_C3_PREFLIGHT.md'
+def read(name):return json.loads((E/name).read_text(encoding='utf-8-sig'))
+def sha(data):return hashlib.sha256(data).hexdigest()
+def git(*args):
+ p=subprocess.run(['git',*args],cwd=R,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ assert p.returncode==0,(args,p.returncode,p.stderr.decode(errors='replace')[:8192])
+ return p.stdout
+checks=[]
+def check(label,condition):
+ assert condition,label
+ checks.append(label)
+def walk(o):
+ yield o
+ if isinstance(o,dict):
+  for v in o.values():yield from walk(v)
+ elif isinstance(o,list):
+  for v in o:yield from walk(v)
+files=sorted(x for x in E.iterdir() if x.is_file())
+parsed={p.name:read(p.name) for p in files if p.suffix=='.json'}
+check('all JSON parsed',bool(parsed))
+for p in files:
+ text=p.read_text(encoding='utf-8')
+ if p.name.endswith('.py.txt'):ast.parse(text)
+ check('no private-key payload: '+p.name,not re.search(r'^-----BEGIN (?:OPENSSH )?PRIVATE KEY-----$',text,re.M))
+ check('no real DB credential URL: '+p.name,not re.search(r'postgres(?:ql)?://[^\s\x22\x27]+@[^\s\x22\x27]*supabase',text,re.I))
+sources=read('executed-sources.json')
+for name,item in sources.items():
+ raw=base64.b64decode(item['base64'],validate=True)
+ check('exact source bytes/hash: '+name,len(raw)==item['bytes'] and sha(raw)==item['sha256'])
+ if name.endswith('.py'):ast.parse(raw.decode())
+meta=read('document-prefix.json');doc=D.read_bytes();prefix=doc[:meta['preAppendBytes']]
+check('earlier document bytes preserved',sha(prefix)==meta['preAppendSha256'])
+old=git('show','5340f97bfd4a3fbc67b491bc50ff4b34bf1f6fef:docs/quality/M2_C3_PREFLIGHT.md')
+check('earlier committed document unchanged',prefix.replace(b'\r\n',b'\n')==old.replace(b'\r\n',b'\n'))
+check('document final hash',sha(doc)==meta['postAppendSha256'])
+tail=doc[meta['preAppendBytes']:].decode()
+check('six required sections ordered',[int(x) for x in re.findall(r'^### 20\.(\d)',tail,re.M)]==list(range(1,7)))
+check('seven criteria present',len(re.findall(r'^\| [1-7]\. ',tail,re.M))==7)
+for target in re.findall(r'\]\((evidence/[^)]+)\)',tail):check('link resolves: '+target,(D.parent/target).is_file())
+check('authorized branch',git('branch','--show-current').decode().strip()=='ai/antigravity-qa')
+a=read('a-gate.json');b=read('bc-first.json');c=read('c-verified.json');f=read('final-audit.json');i=read('image-rollback.json')
+check('A complete before B/C',a['complete'] and len(a['cases'])==5 and all(x['passed'] and x['externalCalls']==[] for x in a['cases']) and a['qaConnections']==0)
+check('A targeted units complete',all(read('a-targeted.json')['units'].values()) and read('a-targeted.json')['targetedPassed'])
+check('1 real encrypted backup accepted',c['success'] and c['backupAccepted'] and c['backupBytes']==47745 and c['backupSha256']==b['backupSha256'] and len(c['snapshotCensus'])==36)
+check('2 source snapshot RR/RO TLS',all(b['pre0'][k] for k in ['loginTLSVerifyFull','transactionRepeatableReadReadOnly','ledgerEqualsP0','stage28Absent']) and b['pre0']['sourceVersionNum']==170006 and c['servicesNeverStopped'])
+for label in ['pg-dump-snapshot','gpg-cifrar-dump','cifrado-AES256-stdin-anonimo']:check('successful original pipe: '+label,any(x['label']==label and x['exitCode']==0 for x in b['commands']))
+restores=[x for x in c['checks'] if x['label']=='cotejo-restore-snapshot']
+check('3 two complete restore checks',len(restores)==2 and all(x['tableCount']==36 and all(x[k] for k in ['tables','ledger','counts','roles','catalog','extensions']) for x in restores))
+for x in c['dataComparisons']:check('both data maps match snapshot',x['equal'] and len(x['snapshot'])==36 and x['snapshot']==x['restore'] and x['countsSnapshot']==x['countsRestore'])
+for x in c['catalogComparisons']:check('both catalog maps retained',bool(x['snapshot']) and bool(x['restore']) and x['differentSubkeys']==[])
+for x in c['extensionComparisons']:check('extension maps identical',x['equal'] and x['snapshot']==x['restore'])
+# Load only four pure SQL parser functions from archived source; never import its executor.
+parser_ast=ast.parse((E/'executor.py.txt').read_text())
+pure=[n for n in parser_ast.body if isinstance(n,ast.FunctionDef) and n.name in ['ident','strip_outer','and_terms','check_lines']]
+check('pure parser closed set',len(pure)==4)
+parser={'re':re};exec(compile(ast.Module(body=pure,type_ignores=[]),'<archived pure SQL parsers>','exec'),parser)
+for x in c['schemaComparisons']:
+ left=x['snapshot'];right=x['restore'];lc=parser['check_lines'](left);rc=parser['check_lines'](right)
+ for name in x['E5ProvenChecks']:
+  l=lc[name];r=rc[name];terms=parser['and_terms'](l[1])
+  check('E5 identical ordered text terms',terms==parser['and_terms'](r[1]) and l[2]==r[2])
+  truths=[t for t in c['checkTruthTables'] if t['name']==name and t['result']['different']==0]
+  check('E5 executed PostgreSQL boundaries and NULL',bool(truths) and all(t['result']['cases']>=64 and t['result']['leftNull']>0 and t['result']['leftTrue']==t['result']['rightTrue'] and t['result']['leftFalse']==t['result']['rightFalse'] and t['result']['leftNull']==t['result']['rightNull'] for t in truths))
+  canonical='    CONSTRAINT '+parser['ident'](name)+' CHECK ('+' AND '.join('('+term+')' for term in terms)+')'+l[2]
+  left=left.replace(l[0],canonical);right=right.replace(r[0],canonical)
+ check('complete schema SQL independently recomputed',bool(x['snapshot']) and bool(x['restore']) and x['equal'] and left==right and all(v['equal'] for v in x['categories'].values()))
+check('4 independent second phrase before QA',b['secondIndependentEntryBeforeQa'] and c['secondIndependentEntryBeforeQa'] and c['resumeNoNewSourceDump'] and read('controller-final.json')['exitCode']==0)
+check('5 rollback and exact image',all(any(z in x['label'] for x in c['checks']) for z in ['codigo-anterior','fallo-constraint','inversa-desechable','corrupcion-local']) and i['success'] and i['realDatabaseConnections']==0 and not i['imageExported'] and set(i['owned'])==set(i['removed']))
+check('rollback real HTTP',[i['result'][k] for k in ['publicRead','repeatedClaim','publicBooking']]==[200,200,201] and all(i['result'][k] for k in ['pendingBooking','receiptsPreserved','postUpgradeBookingPreserved','linkPreserved','oldApiDoesNotUnblock','m2RoutesAbsent']))
+check('E5 altered logical CHECK rejected',any(x['label']=='control-negativo-CHECK-real-rechazado' for x in read('a-complete.json')['checks']) and any(x['result']['different']>0 and x['snapshotExpression']!=x['restoreExpression'] for x in read('a-complete.json')['checkTruthTables']))
+check('6 QA same baseline HTTP 200',f['success'] and f['finalInfra']==b['initialInfra']==c['finalInfra'] and f['publicBooking']['status']==200 and f['publicBooking']['nonEmpty'] and f['finalEffective']['release']=='791569b110f9fd59cb10e6d248546bdae3996e14')
+for field,key in [('backupFile','backupSha256'),('censusEncryptedFile','censusEncryptedSha256')]:
+ p=Path(c[field]);check('custody file hash: '+field,p.parent==Path(r'C:\KortekBackups\qa-m2-c3') and sha(p.read_bytes())==c[key]==f['hashes'][field]['sha256'])
+check('owned resources removed',not f['remainingOwnedContainers'] and not f['remainingOwnNetworks'] and len(f['localOwnedContainersChecked'])==33 and len(f['localOwnNetworksChecked'])==8 and read('cleanup.json')['success'])
+check('own temporary directory removed',not (R/'.tmp/p2-goal').exists())
+notes=read('session-notes.json');check('15 auxiliary error outputs recovered',notes['authoritativeRecovery']['matchedNotes']==15 and all('toolOutputCompleteRedacted' in x for x in notes['notes']))
+for obj in parsed.values():
+ for x in walk(obj):
+  if isinstance(x,dict) and 'stderrCompleteRedacted' in x:
+   check('process error metadata',all(k in x for k in ['exitCode','commandSanitized','phase','exceptionClass']) if 'commandSanitized' in x else True)
+check('no protected source changes',git('diff','--name-only','--','apps','ops','packages','package.json','pnpm-lock.yaml','PROJECT_MASTER.md')==b'')
+check('working diff whitespace',git('diff','--check')==b'')
+if '--index' in sys.argv:
+ staged=git('diff','--cached','--name-only').decode().splitlines()
+ expected=['docs/quality/M2_C3_PREFLIGHT.md']+[str(x.relative_to(R)).replace('\\','/') for x in sorted(E.iterdir()) if x.is_file()]
+ check('explicit staged paths exactly approved',sorted(staged)==sorted(expected))
+ check('staged whitespace',git('diff','--cached','--check')==b'')
+ manifest=read('manifest.json')
+ for name,record in manifest['files'].items():
+  blob=git('show',':'+str((E/name).relative_to(R)).replace('\\','/'))
+  check('staged blob matches manifest: '+name,sha(blob)==record['sha256'])
+ # Read the entire staged diff as well as every blob; no output truncation used for review.
+ complete=git('diff','--cached','--no-ext-diff','--no-color')
+ check('complete staged diff read',len(complete)>100000)
+ check('no unstaged changes',git('diff','--exit-code')==b'')
+ print(json.dumps({'indexReviewPassed':True,'paths':len(staged),'fullDiffBytesRead':len(complete),'checks':len(checks)}))
+else:
+ report={'success':True,'utc':datetime.now(timezone.utc).isoformat(),'checks':checks,'criterion7CommitLocal':'verified after commit in final handoff; local commit contains this pre-commit validation','scope':'documentation and sanitized evidence only; no product build required'}
+ (E/'validation.json').write_bytes((json.dumps(report,indent=2)+'\n').encode())
+ manifest={'sha256Basis':'canonical LF bytes of evidence files, matching staged Git blobs; exact executed bytes preserved in executed-sources.json','files':{p.name:{'sha256':sha(p.read_bytes()),'bytes':p.stat().st_size} for p in sorted(E.iterdir()) if p.is_file() and p.name!='manifest.json'}}
+ (E/'manifest.json').write_bytes((json.dumps(manifest,indent=2)+'\n').encode())
+ print(json.dumps({'documentaryValidationPassed':True,'checks':len(checks),'manifestFiles':len(manifest['files'])}))

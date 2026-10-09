@@ -20,6 +20,10 @@ import { Modal } from "@/components/ui/Modal";
 import { FieldWrapper, InputField, SelectField } from "@/components/ui/Field";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton, SkeletonListRows } from "@/components/ui/Skeleton";
+import { ErrorText } from '@/components/ui/ErrorText';
+import { BusinessTime } from '@/components/ui/BusinessTime';
+import { invoiceScopeKey } from '@/lib/invoice-ui';
+import { useOrganizationTimeZoneQuery } from '@/lib/queries/invoices';
 
 const MANAGEMENT_ROLES = ["OWNER", "ADMIN", "RECEPTIONIST"];
 const PAGE_SIZE = 20;
@@ -28,15 +32,7 @@ type ClientStatusFilter = "active" | "inactive";
 type Confirmation = { client: Client; action: "archive" | "restore" };
 
 function errorMessage(error: unknown, fallback: string) {
-  return error instanceof ApiError ? error.message : fallback;
-}
-
-function formatDate(value?: string) {
-  if (!value) return null;
-  return new Intl.DateTimeFormat("es-DO", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return error instanceof ApiError ? error.withRequestCode(error.message) : fallback;
 }
 
 function ClientStatus({ isActive }: { isActive: boolean }) {
@@ -373,7 +369,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
   return (
     <Card tone="light" className="border-[var(--dash-danger)]/25 p-6 text-center">
       <p className="font-semibold text-[var(--dash-danger)]">No pudimos mostrar los clientes</p>
-      <p className="mt-1 text-sm text-[var(--dash-text-muted)]">{message}</p>
+      <p className="mt-1 text-sm text-[var(--dash-text-muted)]"><ErrorText message={message} /></p>
       <Button tone="light" variant="secondary" className="mt-4" onClick={onRetry}>
         Reintentar
       </Button>
@@ -456,6 +452,8 @@ function ClientDetailModal({
   onToggle: (client: Client) => void;
 }) {
   const query = useClientDetailQuery(id);
+  const { user } = useAuth();
+  const zone = useOrganizationTimeZoneQuery(invoiceScopeKey(user));
   const client = query.data;
 
   return (
@@ -468,7 +466,7 @@ function ClientDetailModal({
       ) : query.isError ? (
         <div role="alert" className="rounded-lg bg-[var(--dash-danger-bg)] p-4">
           <p className="text-sm font-semibold text-[var(--dash-danger)]">
-            {errorMessage(query.error, "No se pudo cargar el detalle.")}
+            <ErrorText message={errorMessage(query.error, "No se pudo cargar el detalle.")} />
           </p>
           <Button tone="light" variant="secondary" className="mt-3" onClick={() => void query.refetch()}>
             Reintentar
@@ -487,11 +485,11 @@ function ClientDetailModal({
             <DetailRow label="Correo" value={client.email || "No registrado"} />
             <DetailRow label="Teléfono" value={client.phone || "No registrado"} />
             {showNotes && <DetailRow label="Notas" value={client.notes || "Sin notas"} multiline />}
-            {showNotes && formatDate(client.createdAt) && (
-              <DetailRow label="Creado" value={formatDate(client.createdAt) ?? ""} />
+            {showNotes && client.createdAt && (
+              <DetailRow label="Creado" value={<BusinessTime value={client.createdAt} zone={zone.data} />} />
             )}
-            {showNotes && formatDate(client.updatedAt) && (
-              <DetailRow label="Actualizado" value={formatDate(client.updatedAt) ?? ""} />
+            {showNotes && client.updatedAt && (
+              <DetailRow label="Actualizado" value={<BusinessTime value={client.updatedAt} zone={zone.data} />} />
             )}
           </dl>
           <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -525,7 +523,7 @@ function DetailRow({
   multiline = false,
 }: {
   label: string;
-  value: string;
+  value: React.ReactNode;
   multiline?: boolean;
 }) {
   return (
@@ -665,7 +663,7 @@ function ClientFormModal({
         <p className="text-right text-xs text-[var(--dash-text-faint)]">{notes.length}/2000</p>
         {error && (
           <p role="alert" className="rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]">
-            {error}
+            <ErrorText message={error} />
           </p>
         )}
         <div className="flex flex-col-reverse gap-2 border-t border-[var(--dash-border)] pt-4 sm:flex-row sm:justify-end">
@@ -724,7 +722,7 @@ function ClientStateModal({
       </p>
       {error && (
         <p role="alert" className="mt-4 rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2 text-sm text-[var(--dash-danger)]">
-          {error}
+          <ErrorText message={error} />
         </p>
       )}
       <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">

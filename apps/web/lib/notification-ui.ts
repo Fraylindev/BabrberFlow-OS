@@ -49,7 +49,12 @@ export function notificationScope(user: AuthUser | null): string | null {
 export const canReadBookingEmails = (role: string | undefined) =>
   role === 'OWNER' || role === 'ADMIN' || role === 'RECEPTIONIST';
 export const canManageEmails = (role: string | undefined) => role === 'OWNER' || role === 'ADMIN';
-export function notificationError(error: unknown, operation: 'read' | 'preference' | 'retry' = 'read') {
+export function notificationError(error: unknown, operation: 'read' | 'preference' | 'retry' = 'read'): string {
+  const message = notificationErrorText(error, operation);
+  return error instanceof ApiError ? error.withRequestCode(message) : message;
+}
+
+function notificationErrorText(error: unknown, operation: 'read' | 'preference' | 'retry' = 'read') {
   if (error instanceof ApiError) {
     if (error.status === 401) return 'Tu sesión ya no está disponible. Vuelve a iniciar sesión.';
     if (error.status === 403) return 'No tienes permiso para realizar esta operación.';
@@ -83,8 +88,4 @@ export function notificationReason(reason: string | null): string | null {
   };
   return reason ? (reasons[reason] ?? 'Consulta el estado del aviso; no cambia el estado de la reserva.') : null;
 }
-export function formatNotificationDate(value: string, timeZone: string) {
-  return new Intl.DateTimeFormat('es-DO', {
-    timeZone, day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
-  }).format(new Date(value));
-}
+export { formatBusinessInstant as formatNotificationDate } from './business-time.ts';

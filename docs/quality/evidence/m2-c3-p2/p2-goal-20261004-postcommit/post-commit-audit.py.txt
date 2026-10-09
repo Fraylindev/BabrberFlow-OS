@@ -1,0 +1,36 @@
+"""Read-only final QA continuity check using original metadata command, never sanitized replay."""
+import ast,json,subprocess,urllib.request,hashlib
+from pathlib import Path
+from datetime import datetime,timezone
+E=Path(__file__).resolve().parent;R=E.parents[4];P=E.parent/'p2-goal-20261004';D=R/'docs/quality/M2_C3_PREFLIGHT.md'
+f=json.loads((P/'final-audit.json').read_text());record=next(x for x in f['commands'] if x.get('label')=='estado-seguro-QA')
+source=(P/'executor.py.txt').read_text();fn=next(x for x in ast.parse(source).body if isinstance(x,ast.FunctionDef) and x.name=='infra')
+command=ast.literal_eval(fn.body[0].value)
+assert command.startswith('systemctl show ') and 'podman inspect' in command and 'sha256sum' in command
+args=record['args'][:-1]+[command]
+report={'phase':'post-commit-readonly-QA','baseCommit':'0dd4ba7c0e42ac18617029a7e0f3f990cf38995c','productionAccess':False,'realDatabaseConnection':False,'push':False,'p3':False,'expectedInfra':f['finalInfra'],'commandSanitized':args,'source':'original infra constant from archived executor, AST literal extraction only','executableSourceSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=40)
+report.update(exitCode=p.returncode,stderrCompleteRedacted=p.stderr.decode(errors='replace')[:8192],stderrTruncated=len(p.stderr)>8192,stderrCapBytes=8192,observedInfra=p.stdout.decode(errors='replace'),exceptionClass='ExternalCommandExit' if p.returncode else None)
+report['infraEqual']=report['observedInfra']==report['expectedInfra']
+if p.returncode==0 and report['infraEqual']:
+ with urllib.request.urlopen('https://api.staging.booking.kortek.cloud/public/m1-c3-norte/booking-data',timeout=25) as response:
+  report['publicHttp']=response.status;report['bodyNonempty']=bool(response.read());report['bodyNotPrinted']=True
+report['success']=p.returncode==0 and report['infraEqual'] and report.get('publicHttp')==200 and report.get('bodyNonempty',False)
+report['utc']=datetime.now(timezone.utc).isoformat()
+# Retain the original failed tool output and both sides from this task's transcript.
+T=Path(r'C:\Users\Fraylin\.codex\sessions\2026\10\04\rollout-2026-10-04T01-28-56-01a10562-febc-7092-84ac-2e4757b4d9b2.jsonl')
+failure=None
+for number,line in enumerate(T.open(encoding='utf-8')):
+ q=json.loads(line).get('payload',{})
+ if not q.get('type','').endswith('output'):continue
+ for block in q.get('output',[]) if isinstance(q.get('output'),list) else []:
+  try:o=json.loads(block.get('text',''))
+  except Exception:continue
+  text=o.get('output','') if isinstance(o,dict) else ''
+  if isinstance(o,dict) and o.get('exit_code')==1 and 'AssertionError: {"expected": "MainPID=673295' in text and '[literal' in text:
+   sides=json.loads(text[text.index('AssertionError: ')+len('AssertionError: '):].strip())
+   failure={'phase':'post-commit-readonly-sanitized-replay','exceptionClass':'AssertionError','commandSanitized':record['commandSanitized'],'exitCode':1,'stderrCompleteRedacted':text[:8192],'stderrTruncated':len(text.encode())>8192,'stderrCapBytes':8192,'comparisonBothSides':sides,'cause':'Sanitization replaced Go templates with markers; replay printed markers instead of image metadata','resolution':'Original constant obtained by AST from verified archived executor; no QA mutation','traceLine':number+1,'traceCallId':q['call_id'],'proof':'corrected real metadata command and HTTP both passed'}
+assert failure;report['precedingImpediment']=failure
+(E/'post-commit-audit.json').write_bytes((json.dumps(report,indent=2)+'\n').encode())
+assert report['success'],'final-QA-audit-failed'
+print(json.dumps({'postCommitQaAuditPassed':True,'publicHttp':report['publicHttp'],'samePidImagesAndHashes':True,'noRestarts':True,'utc':report['utc'],'exitCode':0}))

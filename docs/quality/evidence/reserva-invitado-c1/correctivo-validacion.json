@@ -1,0 +1,300 @@
+{
+  "branch": "ai/antigravity-qa",
+  "head": "c4625ef23a3766c5be5172dde0aea4b1cb57d7ac",
+  "index_empty": true,
+  "prior_api_changes_preserved_except_comment": true,
+  "omitted_37_rows_verified": true,
+  "archives_verified": 5,
+  "full_diff": "c0-c1-con-correctivo.patch",
+  "files": [
+    {
+      "path": "BACKEND_CHANGES.md",
+      "exists": true,
+      "sha256": "7c052d7d3d969b1be8c5f49203eb74f2ee0332a3dd0677e074865bd05bd7ffd3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "exists": true,
+      "sha256": "5fcf46ddee32601c1701526b1f08545c4903db071f22777bc1f9411a94de8e0e"
+    },
+    {
+      "path": "PROJECT_MASTER.md",
+      "exists": true,
+      "sha256": "07b0c155afbedb7e04a0b32f0434ee49393b17b1cd75e8aee84298c325a60ab0"
+    },
+    {
+      "path": "apps/api/ops/README.md",
+      "exists": true,
+      "sha256": "cc66db6449aca56f4b3771a8f1c3ba71c8a48bbf036ed0d6490290c961b0cf2f"
+    },
+    {
+      "path": "apps/api/ops/rate-limit-http-drill.cjs",
+      "exists": true,
+      "sha256": "4fa9ce50db961b7fcb45f8de6e48fc6399d6569dc2971e7561d74c259d6b4806"
+    },
+    {
+      "path": "apps/api/src/app.module.ts",
+      "exists": true,
+      "sha256": "62d24aee42a4ed5c656f21782c0390110c642e66e8087a9805b000b269edc493"
+    },
+    {
+      "path": "apps/api/src/auth/auth.module.ts",
+      "exists": true,
+      "sha256": "aaa27cc53ec003105fcd26b5c8ebd746c5cacf6abe1d66d5f90a498b3fba5f63"
+    },
+    {
+      "path": "apps/api/src/auth/auth.service.spec.ts",
+      "exists": true,
+      "sha256": "e64060ffb8ed701a83609683e18f3a87abb1385736305595aa7823f977db608f"
+    },
+    {
+      "path": "apps/api/src/auth/auth.service.ts",
+      "exists": true,
+      "sha256": "2d94e2c9e744d24a4c9bb7bf05273f18b1dc7a022d6545e4cbdf6644cfdb6818"
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.spec.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.controller.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.service.spec.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/auth/clerk-customer-claims.service.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/auth/dto/clerk-customer-claim.dto.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.spec.ts",
+      "exists": true,
+      "sha256": "7e064652836a1999f51a18c403e0ff9c9409213c1b130d5f8477b7dcccb035a9"
+    },
+    {
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.ts",
+      "exists": true,
+      "sha256": "122c7edd6168ea8b9c3b6118e57b1bc00204a1bf378e9e042dafae75d9558dc9"
+    },
+    {
+      "path": "apps/api/src/auth/roles.constants.ts",
+      "exists": true,
+      "sha256": "41836f55f39b894b6c638b7f75dae9921d4287fd9915daeef01bbca46f8c5bd1"
+    },
+    {
+      "path": "apps/api/src/auth/strategies/jwt.strategy.spec.ts",
+      "exists": true,
+      "sha256": "92410db0b017626b9a8601a0fdf5a22d638579093d2b26de4886e9fa5497077d"
+    },
+    {
+      "path": "apps/api/src/auth/strategies/jwt.strategy.ts",
+      "exists": true,
+      "sha256": "a56a9fa7fac4c6ed5266a28c9a1d217c27fda936857df49bd9ad37453033e1bc"
+    },
+    {
+      "path": "apps/api/src/customer/customer-budget.guard.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.spec.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/customer/customer-crypto.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/customer/customer.controller.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/customer/customer.dto.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/customer/customer.module.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/customer/customer.service.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/create-public-booking.dto.ts",
+      "exists": true,
+      "sha256": "7831ba86d4148354b4fa937130d5497b59fd01c7c8abddf76a39be8a24fef347"
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+      "exists": true,
+      "sha256": "d58f37c1fc161f986a69299a078bfb281c8bdd4f32c02f22d2500484295483ef"
+    },
+    {
+      "path": "apps/api/src/public-booking/guest-retirement.spec.ts",
+      "exists": true,
+      "sha256": "856fc851a2b2bbd73fd091eb93fc799298b13b2a09124176e6c34e2621d2164e"
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "exists": true,
+      "sha256": "2d34cbb9537fcff8cf94492aafffe457ddf1d6e1673df2874b30b89fd459a7f2"
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "exists": true,
+      "sha256": "168503bd23764a12df31ff5e5c5dae568b9e4922ec1181f3ef6e2509065d7726"
+    },
+    {
+      "path": "apps/api/test/clerk-customer-claims.e2e-spec.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/test/customer-code-rollback.cjs",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/test/customer-runtime-compat.cjs",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/test/customer-runtime-grants-drill.cjs",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/test/customer.e2e-spec.ts",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "apps/api/test/dashboard-summary.e2e-spec.ts",
+      "exists": true,
+      "sha256": "e4fc69dac7b5d50588e55faee301180efae3e209dd3349bf790717b968600cf3"
+    },
+    {
+      "path": "apps/api/test/guest-retirement-run.cjs",
+      "exists": true,
+      "sha256": "941ed49dca53e9bf7bbbb60fb7a213300d6274df7d50da6b039b3f909c2dfee3"
+    },
+    {
+      "path": "apps/api/test/invoices.e2e-spec.ts",
+      "exists": true,
+      "sha256": "a9648af0d17e7ead4a8293e32daa9136a3280eb640ec1f3693a0c7c8aae9a998"
+    },
+    {
+      "path": "apps/api/test/services.e2e-spec.ts",
+      "exists": true,
+      "sha256": "3c18a1062313c0adb964a0847de00222b3a9bb3a4c945b2c9c1b6b88c17ddff8"
+    },
+    {
+      "path": "apps/web/components/customer/Customer.test.tsx",
+      "exists": true,
+      "sha256": "6f4bd84031b997631b0c6a4b16bd607017f1b89a9bf3ec02ed7eabb12e124ba8"
+    },
+    {
+      "path": "docs/README.md",
+      "exists": true,
+      "sha256": "635e46717fc1616b8e5258394ff26cecdd94d3d449fdfab7e8f6c7a267d0f348"
+    },
+    {
+      "path": "docs/architecture/DATA_MODEL.md",
+      "exists": true,
+      "sha256": "4a495c89f7497b1daf3930b103418d3668e1a1fa4a1cee5a139b0039229655b3"
+    },
+    {
+      "path": "docs/architecture/TRD.md",
+      "exists": true,
+      "sha256": "aa84e1560cef252f44cd7769b609fd02728622e506d40c38e5c70a79350b0238"
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_C0_C1.md",
+      "exists": true,
+      "sha256": "65bb6cbd5065dd8bb896b25074329a68d4949a4df75d114f434c99676cd66ead"
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_CONSISTENCIA_C0_C1.md",
+      "exists": true,
+      "sha256": "fbb4e0b083bcef63f765ab474498838f1d800bb864f6abe3011c50ed8fd49e91"
+    },
+    {
+      "path": "docs/history/reserva-invitado/CONSISTENCIA_ANTES_CORRECTIVO.md",
+      "exists": true,
+      "sha256": "7cd5277f32c2354129753e7746bbc0da88ab984c94263243ae7ec8eec3193a2a"
+    },
+    {
+      "path": "docs/history/reserva-invitado/Customer.test.tsx.txt",
+      "exists": true,
+      "sha256": "c0f1f2f491675e138ea53db4586e419c3ceb09e11d410f88ccce04625bad02db"
+    },
+    {
+      "path": "docs/history/reserva-invitado/README.md",
+      "exists": true,
+      "sha256": "2a292812f44580347b480988525a588d27f0d69dd356f42c35bf5c35c4a09077"
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/customer-code-rollback.cjs.txt",
+      "exists": true,
+      "sha256": "e39cf8afda8456fa1ef3712be9418174cb44cf38a9074012a17240b85f30a9f6"
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/customer-runtime-compat.cjs.txt",
+      "exists": true,
+      "sha256": "28ff1b4e0ac4ee0bdb845282cf077affca9a4cfd9ded88d27b50e13b41778388"
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/customer-runtime-grants-drill.cjs.txt",
+      "exists": true,
+      "sha256": "5a83fbc75361011e72cdf2d889a7ecd5956f72bc941a980f153a667086ab42e4"
+    },
+    {
+      "path": "docs/history/reserva-invitado/helpers/m2-d4-probe.cjs.txt",
+      "exists": true,
+      "sha256": "7d7c364b4329e53a3254b3ec247a91903e044ab11a758a09716bca6a09e347d1"
+    },
+    {
+      "path": "docs/product/APP_FLOWS.md",
+      "exists": true,
+      "sha256": "f10ae5507e5b3079e434ed0edd94fd8b5bd85ba29a0e33d4e2042e5d2797216e"
+    },
+    {
+      "path": "docs/product/PRD.md",
+      "exists": true,
+      "sha256": "d6fdc3b3a6b33f932b0332d63ac62813128dc49982f49836b44efe4f7245ca79"
+    }
+  ],
+  "tests": {
+    "web_node_passed": 161,
+    "web_vitest_passed": 147,
+    "http_api_passed": 22,
+    "typescript_web_exit": 0,
+    "lint_web_exit": 0,
+    "build_web_initial_exit": 1,
+    "build_web_local_development_webpack_exit": 0,
+    "rate_drill_syntax_exit": 0,
+    "postgres_37": "pending; not rerun",
+    "qa": "not executed"
+  },
+  "full_diff_sha256": "c245bdf408de6491e3beea165202681fa5b74b9ccba8343eac4ce86c1588f5d0",
+  "full_diff_reverse_check_exit": 0
+}

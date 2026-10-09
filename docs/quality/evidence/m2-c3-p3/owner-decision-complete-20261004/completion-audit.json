@@ -1,0 +1,70 @@
+{
+  "P3Objective": "OBJETIVO CUMPLIDO within owner-authorized benign R1 deviations",
+  "criteria1through8": {
+    "1": {
+      "proved": true,
+      "references": [
+        "../p3-goal-20261004/rehearsal-attempt-2.json",
+        "r1-real-p2-reference.json"
+      ]
+    },
+    "2": {
+      "proved": true,
+      "references": [
+        "../p3-goal-20261004/catalog-result.json",
+        "r1-live-readonly.json"
+      ]
+    },
+    "3": {
+      "proved": true,
+      "references": [
+        "../p3-goal-20261004/artifact-build-result.json",
+        "r4-activation.json"
+      ]
+    },
+    "4": {
+      "proved": true,
+      "references": [
+        "../p3-goal-20261004/freeze--result.json",
+        "final-audit.json"
+      ]
+    },
+    "5": {
+      "proved": true,
+      "references": [
+        "../p3-goal-20261004/freeze--result.json",
+        "checksum-equivalence.json",
+        "r2-runtime-gate.json"
+      ]
+    },
+    "6": {
+      "proved": true,
+      "references": [
+        "r4-activation.json",
+        "final-audit.json"
+      ]
+    },
+    "7": {
+      "proved": true,
+      "references": [
+        "r3-preactivation.json",
+        "r4-activation.json",
+        "final-audit.json"
+      ]
+    },
+    "8": {
+      "proved": "documentation prepared; local commit verified upon handoff",
+      "references": [
+        "manifest.json",
+        "M2_C3_PREFLIGHT.md \u00a725"
+      ]
+    }
+  },
+  "R1ReferenceAllCategoriesEqual": true,
+  "R2": true,
+  "R3": true,
+  "R4": true,
+  "R5ConditionalRollbackNotNeeded": true,
+  "P5ActualQAWriteTriggerPathUnverified": true,
+  "ClerkWebProductionNotAdvanced": true
+}

@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "label": "types",
+      "exitCode": 0
+    },
+    {
+      "label": "lint",
+      "exitCode": 0
+    },
+    {
+      "label": "chrome-dry-run",
+      "exitCode": 0
+    }
+  ],
+  "existingExpectAssertionsUnchanged": true,
+  "addedRequestRetries": false,
+  "addedRequestTimeouts": false
+}

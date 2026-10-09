@@ -1,0 +1,546 @@
+{
+  "fecha": "2026-10-03",
+  "zonaHoraria": "America/Santo_Domingo",
+  "base": "827e635939b23d1131f5c6e57c2066c1823a1b33",
+  "autorizacion": "El propietario indic\u00f3 continuar y confirm\u00f3 C:/KortekBackups/Clave.txt; nunca se copia su contenido a evidencia.",
+  "estado": "P2 PAUSADO / INCOMPLETO",
+  "puntoParada": "Preparaci\u00f3n local anterior al congelamiento: docker cp de CA p\u00fablica al cliente read-only termin\u00f3 1. No hubo login SQL de ese cliente, dump ni cifrado.",
+  "proyecto": {
+    "ref": "prirlabbnlcuvnzuaczp",
+    "nombre": "Kortek Booking Cutover QA",
+    "estado": "ACTIVE_HEALTHY",
+    "endpoint": "db.prirlabbnlcuvnzuaczp.supabase.co",
+    "version": "17.6.1.166"
+  },
+  "preview": {
+    "id": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+    "estado": "READY",
+    "sha": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "branch": "ai/antigravity-qa",
+    "alias": "qa.booking.kortek.cloud",
+    "igualP0": true
+  },
+  "destinoEfectivo": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "releaseMatchesP0": true,
+    "databaseRoleMatches": true,
+    "databaseMatches": true,
+    "postgresVersion": "17.6",
+    "qaUserMatches": true,
+    "qaEndpointMatches": true,
+    "effectiveServerMatchesQaDns": true,
+    "deployEnvironmentMatches": true,
+    "publicBookingOpen": true
+  },
+  "precheck": {
+    "counts": {
+      "clients": 20,
+      "bookings": 28,
+      "linkedClients": 0
+    },
+    "ledger": [
+      {
+        "name": "20260719162646_initial_schema",
+        "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260720044928_add_invoice_model",
+        "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260722030552_link_professional_user",
+        "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260722042926_add_customer_role",
+        "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260723212248_microsite_and_indexes",
+        "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260724023058_global_identity_membership",
+        "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260725215619_service_client_is_active",
+        "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260727010227_audit_log_user_id",
+        "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260811180000_booking_schedule_exclusion",
+        "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260812010000_professionals_backend_a1",
+        "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260813193000_professional_individual_availability_a2",
+        "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260813200000_professional_availability_tenant_fk",
+        "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260814190000_add_user_clerk_link_a0_1",
+        "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260815120000_password_nullable",
+        "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260820220000_audit_log_pre_tenant_security_events",
+        "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260821220000_team_invitations_a0_4",
+        "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260822150000_client_user_b2c_link_a0_6_a",
+        "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260822150000_client_user_b2c_link_a0_6_a",
+        "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260825220000_facturacion_a_internal_invoices",
+        "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "finished": false,
+        "rolledBack": true
+      },
+      {
+        "name": "20260825220000_facturacion_a_internal_invoices",
+        "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260826210000_facturacion_a_completion_service_price_guards",
+        "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260909120000_restore_invoice_integrity_checks",
+        "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260912120000_cms_editorial",
+        "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260914120000_booking_email_outbox",
+        "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260914120100_email_channel_control",
+        "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260915120000_email_template_version",
+        "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260923100000_media_promotions",
+        "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260925010000_security_rate_bucket",
+        "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+        "finished": true,
+        "rolledBack": false
+      },
+      {
+        "name": "20260927170000_business_schedule",
+        "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+        "finished": true,
+        "rolledBack": false
+      }
+    ],
+    "metadata": {
+      "applied": 27,
+      "database": "postgres",
+      "unfinished": 0,
+      "publicTables": 36,
+      "serverVersion": "17.6",
+      "stage28Entries": 0
+    },
+    "extensions": [
+      {
+        "name": "btree_gist",
+        "schema": "public",
+        "version": "1.7"
+      },
+      {
+        "name": "pg_stat_statements",
+        "schema": "extensions",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "schema": "extensions",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "schema": "pg_catalog",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "schema": "vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "uuid-ossp",
+        "schema": "extensions",
+        "version": "1.1"
+      }
+    ],
+    "clientSessions": [
+      {
+        "state": "idle",
+        "usename": "authenticator",
+        "sessions": 1,
+        "transactions": 0,
+        "application_name": "PostgREST 14.5"
+      },
+      {
+        "state": "idle",
+        "usename": "kortek_runtime",
+        "sessions": 4,
+        "transactions": 0,
+        "application_name": "Supavisor"
+      },
+      {
+        "state": "idle",
+        "usename": "pgbouncer",
+        "sessions": 1,
+        "transactions": 0,
+        "application_name": ""
+      },
+      {
+        "state": "idle",
+        "usename": "pgbouncer",
+        "sessions": 1,
+        "transactions": 0,
+        "application_name": "Supavisor (auth_query)"
+      },
+      {
+        "state": "idle",
+        "usename": "supabase_admin",
+        "sessions": 1,
+        "transactions": 0,
+        "application_name": ""
+      },
+      {
+        "state": "idle",
+        "usename": "supabase_admin",
+        "sessions": 1,
+        "transactions": 0,
+        "application_name": "postgres_exporter"
+      }
+    ],
+    "preparedTransactions": 0
+  },
+  "writers": {
+    "roles": [
+      {
+        "role": "kortek_migrator",
+        "login": true,
+        "super": false,
+        "inherit": false,
+        "createDb": false,
+        "bypassRls": false,
+        "createRole": false,
+        "replication": false
+      },
+      {
+        "role": "kortek_runtime",
+        "login": true,
+        "super": false,
+        "inherit": false,
+        "createDb": false,
+        "bypassRls": false,
+        "createRole": false,
+        "replication": false
+      }
+    ],
+    "otherRoleDml": [
+      {
+        "role": "anon",
+        "writeTables": 0
+      },
+      {
+        "role": "authenticated",
+        "writeTables": 0
+      },
+      {
+        "role": "authenticator",
+        "writeTables": 0
+      },
+      {
+        "role": "pgbouncer",
+        "writeTables": 0
+      },
+      {
+        "role": "service_role",
+        "writeTables": 0
+      }
+    ],
+    "membershipCount": 0,
+    "pgCronInstalled": false,
+    "activeClientTransactions": 0
+  },
+  "consultas": [
+    {
+      "tool": "supabase_get_project",
+      "args": {
+        "id": "prirlabbnlcuvnzuaczp"
+      }
+    },
+    {
+      "tool": "vercel_get_deployment",
+      "args": {
+        "idOrUrl": "qa.booking.kortek.cloud",
+        "teamId": "team_BBm9XjRsZkjh2iZdqZ0909Q8",
+        "withGitRepoInfo": "true"
+      }
+    },
+    {
+      "tool": "supabase_execute_sql",
+      "project_id": "prirlabbnlcuvnzuaczp",
+      "query": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n'ledger',(SELECT jsonb_agg(jsonb_build_object('name',migration_name,'checksum',checksum,'finished',finished_at IS NOT NULL,'rolledBack',rolled_back_at IS NOT NULL) ORDER BY started_at) FROM public.\"_prisma_migrations\"),\n'metadata',jsonb_build_object('database',current_database(),'serverVersion',current_setting('server_version'),'publicTables',(SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p')),'applied',(SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),'unfinished',(SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NULL AND rolled_back_at IS NULL),'stage28Entries',(SELECT count(*) FROM public.\"_prisma_migrations\" WHERE migration_name='20261003120000_customer_stage_one')),\n'counts',jsonb_build_object('clients',(SELECT count(*) FROM public.\"Client\"),'bookings',(SELECT count(*) FROM public.\"Booking\"),'linkedClients',(SELECT count(*) FROM public.\"Client\" WHERE \"userId\" IS NOT NULL)),\n'clientSessions',(SELECT coalesce(jsonb_agg(to_jsonb(s)),'[]'::jsonb) FROM (SELECT usename,application_name,state,count(*) AS sessions,count(*) FILTER(WHERE xact_start IS NOT NULL) AS transactions FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() AND backend_type='client backend' GROUP BY usename,application_name,state ORDER BY usename,application_name,state) s),\n'preparedTransactions',(SELECT count(*) FROM pg_prepared_xacts WHERE database=current_database()),\n'extensions',(SELECT jsonb_agg(jsonb_build_object('name',e.extname,'schema',n.nspname,'version',e.extversion) ORDER BY e.extname) FROM pg_extension e JOIN pg_namespace n ON n.oid=e.extnamespace)\n) AS precheck;\nCOMMIT;"
+    },
+    {
+      "tool": "supabase_execute_sql",
+      "project_id": "prirlabbnlcuvnzuaczp",
+      "query": "BEGIN READ ONLY; SET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n'roles',(SELECT jsonb_agg(jsonb_build_object('role',rolname,'super',rolsuper,'inherit',rolinherit,'createDb',rolcreatedb,'createRole',rolcreaterole,'login',rolcanlogin,'replication',rolreplication,'bypassRls',rolbypassrls) ORDER BY rolname) FROM pg_roles WHERE rolname IN ('kortek_migrator','kortek_runtime')),\n'membershipCount',(SELECT count(*) FROM pg_auth_members WHERE member IN ('kortek_migrator'::regrole,'kortek_runtime'::regrole)),\n'otherRoleDml',(SELECT jsonb_agg(jsonb_build_object('role',r.rolname,'writeTables',(SELECT count(*) FROM pg_tables t WHERE t.schemaname='public' AND (has_table_privilege(r.rolname,format('%I.%I',t.schemaname,t.tablename),'INSERT') OR has_table_privilege(r.rolname,format('%I.%I',t.schemaname,t.tablename),'UPDATE') OR has_table_privilege(r.rolname,format('%I.%I',t.schemaname,t.tablename),'DELETE')))) ORDER BY r.rolname) FROM pg_roles r WHERE r.rolname IN ('anon','authenticated','authenticator','service_role','pgbouncer')),\n'activeClientTransactions',(SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() AND backend_type='client backend' AND (state <> 'idle' OR xact_start IS NOT NULL)),\n'pgCronInstalled',EXISTS(SELECT 1 FROM pg_extension WHERE extname='pg_cron')\n) AS writers;\nCOMMIT;"
+    }
+  ],
+  "preparacion": {
+    "timestampUtc": "2026-10-03T23:27:52.198878+00:00",
+    "base": "827e635939b23d1131f5c6e57c2066c1823a1b33",
+    "commands": [
+      {
+        "command": [
+          "docker",
+          "--context",
+          "desktop-linux",
+          "run",
+          "--detach",
+          "--rm",
+          "--name",
+          "kortek-m2-c3-p2-client-d15070d4fd9f",
+          "--network",
+          "bridge",
+          "--read-only",
+          "--cpus",
+          "1",
+          "--memory",
+          "768m",
+          "--pids-limit",
+          "128",
+          "--tmpfs",
+          "/tmp:rw,size=64m",
+          "--tmpfs",
+          "/var/run/postgresql:rw,size=16m",
+          "--entrypoint",
+          "sleep",
+          "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+          "infinity"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 0.844,
+        "label": null
+      },
+      {
+        "command": [
+          "docker",
+          "--context",
+          "desktop-linux",
+          "cp",
+          "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt",
+          "kortek-m2-c3-p2-client-d15070d4fd9f:/tmp/qa-ca.crt"
+        ],
+        "exitCode": 1,
+        "durationSeconds": 0.219,
+        "label": null
+      },
+      {
+        "command": [
+          "docker",
+          "--context",
+          "desktop-linux",
+          "stop",
+          "--time",
+          "15",
+          "kortek-m2-c3-p2-client-d15070d4fd9f"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 15.406,
+        "label": "cleanup-owned-container"
+      }
+    ],
+    "failures": [
+      {
+        "stage": "prepare-client",
+        "errorClass": "RuntimeError",
+        "rawErrorOmitted": true
+      }
+    ],
+    "checks": [],
+    "createdContainers": [
+      "kortek-m2-c3-p2-client-d15070d4fd9f"
+    ],
+    "removedContainers": [
+      "kortek-m2-c3-p2-client-d15070d4fd9f"
+    ],
+    "success": false
+  },
+  "estadoFinal": {
+    "utc": "2026-10-03T23:29:48Z",
+    "api": {
+      "active": "active",
+      "sub": "running",
+      "pid": 673295,
+      "restarts": 0,
+      "image": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031"
+    },
+    "worker": {
+      "active": "active",
+      "sub": "running",
+      "pid": 575989,
+      "restarts": 0,
+      "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1"
+    },
+    "mismosPidP0": true,
+    "mismaImagenApiP0": true,
+    "imagenesIgualesAntesDespues": true,
+    "hashesArchivosQaIgualesAntesDespues": true,
+    "publicBookingGetStatus": 200,
+    "bodyNotPrinted": true
+  },
+  "hashesArchivosQa": {
+    "/etc/kortek-api-staging/runtime-env": "c507c632a022a74e85b9480f234fd3ea89f50985e940b8b2a89652c779fb9fa4",
+    "/usr/local/libexec/kortek-api-staging-run.sh": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+    "/usr/local/libexec/kortek-worker-staging-run.sh": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+    "/etc/systemd/system/kortek-api-staging.service": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+    "/etc/systemd/system/kortek-email-worker-staging.service": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f"
+  },
+  "respaldo": {
+    "destino": "C:/KortekBackups/qa-m2-c3",
+    "archivoFrase": "C:/KortekBackups/Clave.txt",
+    "ambasRutasExisten": true,
+    "fraseLeida": false,
+    "dumpCreado": false,
+    "hash": null,
+    "censoSnapshot": null,
+    "restauracion": false,
+    "rollbackEnsayado": false
+  },
+  "limites": {
+    "stopEjecutado": false,
+    "startEjecutado": false,
+    "ventanaIniciada": false,
+    "indisponibilidadCausadaSegundos": 0,
+    "produccionLeidaOTocada": false,
+    "migracionesQA": false,
+    "despliegues": false,
+    "variablesFlagsClerkModificados": false,
+    "nuevasDependencias": false,
+    "push": false,
+    "p3": false
+  },
+  "noVerificado": [
+    "Login migrador QA/TLS real mediante PG17: la preparaci\u00f3n fall\u00f3 antes de conectarlo.",
+    "Snapshot, backup cifrado, recuperabilidad de la frase, hash y censo del respaldo.",
+    "Restauraci\u00f3n de tablas, constraints, triggers, ownership/ACL y roles; extensi\u00f3n btree_gist en public requiere TOC revisada.",
+    "Ensayo de rollback de imagen actual/schema 28; no se import\u00f3 ni ejecut\u00f3 imagen API en local.",
+    "Cola y destinatarios del worker; reanudaci\u00f3n ordenada no ensayada, unidades no se detuvieron.",
+    "Ausencia permanente de escritores: sesiones y privilegios son lecturas puntuales; controles de proveedor supabase_admin no se deshabilitaron.",
+    "Estado productivo actual no consultado."
+  ],
+  "correccionPropuestaNoEjecutada": "Sustituir docker cp al tmpfs del cliente read-only por docker exec -i <cliente_propio> sh -c 'cat > /tmp/qa-ca.crt', con bytes de la CA p\u00fablica por stdin. Mantener ra\u00edz read-only y sin mount del usuario. Revalidar preparaci\u00f3n y todas las precondiciones antes de congelar tras instrucci\u00f3n de continuar.",
+  "archivosFuenteEnsayoArchivadosComoEvidencia": [
+    "p2-preparacion.py.txt",
+    "p2-crypto.sh.txt",
+    "p2-wrapper.ps1.txt"
+  ],
+  "falloLocalAlSanitizar": "La primera extracci\u00f3n del resultado del conector tom\u00f3 su texto introductorio en vez de la etiqueta de datos; se corrigi\u00f3 el parser local y se proces\u00f3 el resultado existente, sin repetir SQL.",
+  "ledgerCompletoIgualP0": true,
+  "infraCommand": "ssh -i .tmp/base-preprod-c1/oci-kortek-ed25519-user -o UserKnownHostsFile=.tmp/base-preprod-c1/oci-known-hosts -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 opc@150.136.7.19 'systemctl show kortek-api-staging kortek-email-worker-staging --property=Id,ActiveState,SubState,MainPID,NRestarts; XDG_RUNTIME_DIR=/run/user/1000 podman inspect --format \"{{.Name}} {{.Image}} {{.State.Status}}\" kortek-api-staging kortek-email-worker-staging; sudo -n sha256sum /etc/kortek-api-staging/runtime-env /usr/local/libexec/kortek-api-staging-run.sh /usr/local/libexec/kortek-worker-staging-run.sh /etc/systemd/system/kortek-api-staging.service /etc/systemd/system/kortek-email-worker-staging.service'",
+  "effectiveReaderCommand": "$p2EffectiveReader | ssh -i .tmp/base-preprod-c1/oci-kortek-ed25519-user -o UserKnownHostsFile=.tmp/base-preprod-c1/oci-known-hosts -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 opc@150.136.7.19 'XDG_RUNTIME_DIR=/run/user/1000 podman exec -i --workdir /srv/kortek/apps/api kortek-api-staging node'",
+  "effectiveReaderCode": "const {PrismaClient}=require('@prisma/client'); const dns=require('node:dns').promises;\nconst db=new PrismaClient({log:[]});\n(async()=>{try {const u=new URL(process.env.DATABASE_URL); const expected='prirlabbnlcuvnzuaczp'; const endpoint='db.'+expected+'.supabase.co'; const addr=(await dns.lookup(endpoint,{all:true})).map(x=>x.address); const result=await db.$transaction(async tx=>{await tx.$executeRawUnsafe('SET TRANSACTION READ ONLY');await tx.$executeRawUnsafe(\"SET LOCAL statement_timeout='10s'\");return tx.$queryRawUnsafe(\"SELECT current_user AS role,current_database() AS database,inet_server_addr()::text AS server,current_setting('server_version') AS version\");});const row=result[0];const report={release:process.env.APP_RELEASE,releaseMatchesP0:process.env.APP_RELEASE==='791569b110f9fd59cb10e6d248546bdae3996e14',databaseRoleMatches:row.role==='kortek_runtime',databaseMatches:row.database==='postgres',postgresVersion:row.version,qaUserMatches:decodeURIComponent(u.username)==='kortek_runtime.'+expected,qaEndpointMatches:u.hostname===endpoint||u.hostname==='aws-0-us-east-1.pooler.supabase.com',effectiveServerMatchesQaDns:addr.includes(row.server.replace(/\\/\\d+$/,'')),deployEnvironmentMatches:process.env.DEPLOY_ENV==='staging',publicBookingOpen:process.env.PUBLIC_BOOKING_CLOSED==='false'};console.log(JSON.stringify(report));if(Object.values(report).includes(false))process.exitCode=1;}catch(e){console.log(JSON.stringify({failed:true,errorClass:e.constructor.name}));process.exitCode=1;}finally{await db.$disconnect();}})();",
+  "falloLocalAlArchivar": "Un patch que intentaba Delete+Add de la misma ruta fue rechazado sin cambios; se reemplaz\u00f3 por Update del JSON. No provoc\u00f3 operaciones QA.",
+  "incidenciaLocalCodificacion": "Se corrigieron ocho strings con codificacion alterada al reimportar stdout y el escape del regex del helper archivado; SQL/resultados tecnicos no cambiaron. JSON final ASCII con escapes Unicode y helper Node parseable."
+}

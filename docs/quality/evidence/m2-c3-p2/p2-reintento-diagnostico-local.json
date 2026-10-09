@@ -1,0 +1,55 @@
+{
+  "scope": "Diagnóstico estático de la parada del arnés; sin reintento ni conexión",
+  "localOnly": true,
+  "qaConnections": 0,
+  "productionAccess": false,
+  "observed": {
+    "harnessExitCode": 1,
+    "harnessErrorClass": "TypeError",
+    "executorErrorClass": "JSONDecodeError",
+    "executorStage": "paso0",
+    "loginLocalPassed": true,
+    "ledgerComparisonPassed": true,
+    "ledgerObservedEntries": 31,
+    "ledgerBaselineEntries": 31,
+    "ledgerMissing": [],
+    "ledgerExtra": [],
+    "serviceStubStops": 0,
+    "serviceStubStarts": 0,
+    "remainingOwnContainers": [],
+    "schemaOnlyDumpExecuted": false,
+    "snapshotExported": false
+  },
+  "codeFindings": [
+    {
+      "function": "Reader.json",
+      "executedCode": "json.loads(self.q(sql)[0])",
+      "problem": "Solo analiza la primera línea; un JSON agregado válido puede ocupar varias líneas.",
+      "underlyingPayloadPreserved": false,
+      "exactFailingAggregateIdentified": false,
+      "aggregateSequence": ["CATALOG_SQL", "ROLE_SQL", "COUNTS_SQL"],
+      "nextCorrection": "Analizar todas las líneas del único resultado JSON y etiquetar la fase sin registrar el payload."
+    },
+    {
+      "function": "emit / main",
+      "executedCode": "emit('parada', **REPORT['failure'])",
+      "signature": "emit(stage, **fields)",
+      "duplicateArgument": "stage",
+      "messageReconstructedFromCode": "emit() got multiple values for argument 'stage'",
+      "originalExceptionMessagePersisted": false,
+      "nextCorrection": "Separar el nombre del evento de la fase del fallo; preservar ambos sin colisión."
+    },
+    {
+      "function": "Reader.__init__",
+      "executedCode": "subprocess.Popen(..., text=True)",
+      "encodingSpecified": false,
+      "problem": "La lectura fuente no fija UTF-8; las consultas locales de restore sí decodifican UTF-8. Revisar antes de cotejar definiciones con caracteres no ASCII.",
+      "causedObservedFailureConfirmed": false,
+      "nextCorrection": "Fijar UTF-8 explícito en los streams de psql y mantener la misma codificación al escribir SQL."
+    }
+  ],
+  "correctedAfterStop": false,
+  "harnessRetried": false,
+  "stepBExecuted": false,
+  "stepCExecuted": false
+}

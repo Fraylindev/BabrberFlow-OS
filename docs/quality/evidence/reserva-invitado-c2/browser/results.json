@@ -1,0 +1,1076 @@
+{
+  "scope": "C2 local components; controlled transport/Clerk; fallback fonts; no QA/provider/physical evidence",
+  "reports": [
+    {
+      "width": 320,
+      "role": "guest",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "stage": "datetime",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "stage": "contact",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "stage": "review",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "stage": "success",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 375,
+      "role": "guest",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 375,
+          "scrollWidth": 375
+        },
+        {
+          "stage": "datetime",
+          "width": 375,
+          "scrollWidth": 375
+        },
+        {
+          "stage": "contact",
+          "width": 375,
+          "scrollWidth": 375
+        },
+        {
+          "stage": "review",
+          "width": 375,
+          "scrollWidth": 375
+        },
+        {
+          "stage": "success",
+          "width": 375,
+          "scrollWidth": 375
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 390,
+      "role": "guest",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "stage": "datetime",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "stage": "contact",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "stage": "review",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "stage": "success",
+          "width": 390,
+          "scrollWidth": 390
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 768,
+      "role": "guest",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "stage": "datetime",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "stage": "contact",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "stage": "review",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "stage": "success",
+          "width": 768,
+          "scrollWidth": 768
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "role": "guest",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "datetime",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "contact",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "review",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "success",
+          "width": 1280,
+          "scrollWidth": 1280
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "role": "OWNER",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "datetime",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "contact",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "review",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "success",
+          "width": 1280,
+          "scrollWidth": 1280
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "role": "ADMIN",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "datetime",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "contact",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "review",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "success",
+          "width": 1280,
+          "scrollWidth": 1280
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "role": "RECEPTIONIST",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "datetime",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "contact",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "review",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "success",
+          "width": 1280,
+          "scrollWidth": 1280
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    },
+    {
+      "width": 1280,
+      "role": "BARBER",
+      "metrics": [
+        {
+          "stage": "mini",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "datetime",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "contact",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "review",
+          "width": 1280,
+          "scrollWidth": 1280
+        },
+        {
+          "stage": "success",
+          "width": 1280,
+          "scrollWidth": 1280
+        }
+      ],
+      "fonts": [
+        {
+          "id": "public-clientName",
+          "px": 16
+        },
+        {
+          "id": "public-clientPhone",
+          "px": 16
+        },
+        {
+          "id": "public-clientEmail",
+          "px": 16
+        }
+      ],
+      "requests": [
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/auth/clerk/bootstrap",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/media",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability-days",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/booking-data",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/availability",
+          "method": "GET",
+          "payload": null
+        },
+        {
+          "path": "/public/guest-fixture/bookings",
+          "method": "POST",
+          "payload": {
+            "serviceId": "cut",
+            "professionalId": "alex",
+            "startTime": "2026-10-07T22:00:00Z",
+            "clientName": "Visitante de prueba",
+            "clientPhone": "+18095550102"
+          }
+        }
+      ],
+      "errors": [],
+      "unexpected": []
+    }
+  ],
+  "failures": []
+}

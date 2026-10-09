@@ -2,7 +2,7 @@ import {
   addDaysToIsoDate,
   isValidIsoDate,
   isValidTimeZone,
-  zonedLocalDateTimeToUtc,
+  utcRangeForLocalDate,
 } from '../professionals/professional-availability.util';
 
 export const MEDIA_MAX_BYTES = 5 * 1024 * 1024;
@@ -74,8 +74,8 @@ export function promotionIntervalForBusinessDays(
   }
   const dayAfterEnd = addDaysToIsoDate(endDate, 1);
   if (!dayAfterEnd) return null;
-  const startsAtUtc = zonedLocalDateTimeToUtc(startDate, '00:00', timeZone);
-  const endsAtUtc = zonedLocalDateTimeToUtc(dayAfterEnd, '00:00', timeZone);
+  const startsAtUtc = utcRangeForLocalDate(startDate, timeZone)?.start;
+  const endsAtUtc = utcRangeForLocalDate(endDate, timeZone)?.end;
   if (!startsAtUtc || !endsAtUtc || endsAtUtc <= startsAtUtc) return null;
   return { startsAtUtc, endsAtUtc, timeZone };
 }

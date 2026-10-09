@@ -61,6 +61,36 @@ describe('B2bAuthGuard', () => {
     });
   });
 
+  it.each([
+    UserRole.OWNER,
+    UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
+    UserRole.BARBER,
+  ])('preserva JWT del rol interno %s', async (role) => {
+    findMembership.mockResolvedValue({
+      organizationId,
+      role,
+      user: { id: userId, name: 'Interno', email: 'internal@example.test' },
+    });
+    const req = request();
+    await expect(guard.canActivate(context(req))).resolves.toBe(true);
+    expect(req.user?.role).toBe(role);
+    expect(clerkCanActivate).not.toHaveBeenCalled();
+  });
+
+  it('rechaza el JWT CUSTOMER existente sin delegarlo a Clerk', async () => {
+    findMembership.mockResolvedValue({
+      organizationId,
+      role: UserRole.CUSTOMER,
+    });
+    const req = request();
+    await expect(guard.canActivate(context(req))).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    expect(req.user).toBeUndefined();
+    expect(clerkCanActivate).not.toHaveBeenCalled();
+  });
+
   it('delega una sesión no legacy al ClerkAuthGuard autoritativo', async () => {
     verifyAsync.mockRejectedValue(new Error('invalid legacy signature'));
     clerkCanActivate.mockResolvedValue(true);

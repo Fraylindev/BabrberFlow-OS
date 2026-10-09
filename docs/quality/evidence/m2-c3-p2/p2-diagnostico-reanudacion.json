@@ -1,0 +1,116 @@
+{
+  "fechaRevisionLocal": "2026-10-03",
+  "estado": "P2 DETENIDO / INCOMPLETO",
+  "baseRevision": "03537c2b0647734f22c601fc25baf208df957603",
+  "baseAutorizada": "339ae92ff142bb47708a54b7333e20da66f3f203",
+  "rama": "ai/antigravity-qa",
+  "gitInicial": {"arbolLimpio": true, "indiceLimpio": true, "aheadReferenciaLocalOrigin": 5},
+  "comandosGitAuditoriaExit0": [
+    "git branch --show-current",
+    "git rev-parse HEAD",
+    "git status --short --branch",
+    "git log --oneline 339ae92..HEAD",
+    "git show --stat --oneline 827e635",
+    "git show --stat --oneline 03537c2",
+    "git diff --name-status 339ae92..HEAD",
+    "git diff --exit-code 339ae92..HEAD -- apps ops package.json pnpm-lock.yaml"
+  ],
+  "commitsAnteriores": [
+    {
+      "sha": "827e635939b23d1131f5c6e57c2066c1823a1b33",
+      "titulo": "docs(m2): registrar parada previa de P2 sin congelar QA",
+      "archivosInserciones": {
+        "docs/quality/M2_C3_PREFLIGHT.md": 80,
+        "docs/quality/evidence/m2-c3-p2/p2-parada-previa.json": 106
+      },
+      "totalInserciones": 186
+    },
+    {
+      "sha": "03537c2b0647734f22c601fc25baf208df957603",
+      "titulo": "docs(m2): registrar revalidación P2 y fallo de preparación",
+      "archivosInserciones": {
+        "docs/quality/M2_C3_PREFLIGHT.md": 88,
+        "docs/quality/evidence/m2-c3-p2/p2-crypto.sh.txt": 42,
+        "docs/quality/evidence/m2-c3-p2/p2-preparacion.py.txt": 169,
+        "docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json": 546,
+        "docs/quality/evidence/m2-c3-p2/p2-wrapper.ps1.txt": 17
+      },
+      "totalInserciones": 862
+    }
+  ],
+  "alcanceCommits": {
+    "soloDocumentoYEvidenciaP2": true,
+    "fuentesHelpersArchivadasComoTxt": true,
+    "cambiosCodigoProducto": false,
+    "cambiosGrants": false,
+    "cambiosMigracion28": false,
+    "ejecucionP3": false
+  },
+  "errorHistorico": {
+    "fuente": "docs/quality/evidence/m2-c3-p2/p2-segundo-intento.json",
+    "comandoExterno": "& ./.tmp/m2-c3-p2/run.ps1 prepare",
+    "comandoFallido": "docker --context desktop-linux cp C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\ops\\oci-free-backup\\prod-ca-2021.crt kortek-m2-c3-p2-client-d15070d4fd9f:/tmp/qa-ca.crt",
+    "exitCode": 1,
+    "durationSeconds": 0.219,
+    "registroSanitizadoConservado": {"stage": "prepare-client", "errorClass": "RuntimeError", "rawErrorOmitted": true},
+    "mensajeDaemonConservado": false,
+    "categoria": "v / causa detallada no clara",
+    "paso": "Preparación previa a completar paso 1 de §5.2, antes de congelar",
+    "comandoFallidoTocoQA": false,
+    "clientePg17ConectoQA": false,
+    "serviciosQaDetenidos": false,
+    "ventana90MinutosIniciada": false,
+    "ceroEscriturasGlobalesCertificable": false,
+    "motivoLimiteEscrituras": "Escritores siguieron activos; el GET público final anterior puede consumir buckets compartidos. Sin solicitudes de crear reservas, migraciones ni grants de esta tarea."
+  },
+  "decision": {
+    "fundamento": "Punto 4 de la reanudación: detenerse si causa v o no clara",
+    "reintentoCondicionadoEjecutado": false,
+    "solucionAplicada": false,
+    "excepcionMigradorActivada": false,
+    "opciones": [
+      "Autorizar diagnóstico exclusivamente local Docker/CA pública sin QA, credenciales ni frase y conservar mensaje sanitizado del daemon",
+      "Recibir del propietario el mensaje del daemon sanitizado si lo conserva"
+    ]
+  },
+  "operacionesEstaReanudacion": {
+    "qa": false,
+    "ssh": false,
+    "sql": false,
+    "http": false,
+    "docker": false,
+    "cifrado": false,
+    "lecturaArchivosCredencialesOFrase": false,
+    "produccion": false,
+    "push": false,
+    "p3": false,
+    "soloLecturasLocalesYCheckpointDocumental": true
+  },
+  "cifradoVigente": {
+    "custodia": "C:\\KortekBackups\\qa-m2-c3",
+    "frase": "Introducida por propietario en prompt local; sustituye lectura de Clave.txt",
+    "promptEjecutado": false,
+    "respaldoCreado": false,
+    "hashRespaldo": null,
+    "censoSnapshot": null
+  },
+  "estadoServicios": {
+    "lecturaActualEjecutada": false,
+    "ultimaVerificacionHistoricaUtc": "2026-10-03T23:29:48Z",
+    "resultadoHistorico": "API y worker activos, mismos PID y cero reinicios; no certifica estado actual"
+  },
+  "noVerificado": [
+    "Causa exacta daemon Docker",
+    "Destino, escritores, ledger, release y servicios QA actuales",
+    "Permisos rol de respaldo y versión ejecutada pg_dump",
+    "Prompt, cifrado, snapshot, dump y hash",
+    "Restore PG17 y cotejo completo",
+    "Rollback §5.3 y orden de reanudación"
+  ],
+  "temporalesNuevos": false,
+  "incidenciasDocumentales": [
+    "Inserción inicial de sección 14 antes de 13 corregida; diff final solo agrega sección",
+    "Patch de supuestos escapes rechazado: Failed to find expected lines; sin cambios. JSON parseado cotejado con comando y rutas literales, exit 0, correctos"
+  ],
+  "advertenciaGit": "unable to find all commit-graph files; sin reparación"
+}

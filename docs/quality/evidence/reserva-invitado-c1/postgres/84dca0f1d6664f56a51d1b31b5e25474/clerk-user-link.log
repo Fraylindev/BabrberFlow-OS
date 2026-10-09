@@ -1,0 +1,6 @@
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        1.615 s, estimated 2 s
+Ran all test suites within paths "src/auth/clerk-user-link.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\reserva-invitado-c1\postgres\84dca0f1d6664f56a51d1b31b5e25474\clerk-user-link.json

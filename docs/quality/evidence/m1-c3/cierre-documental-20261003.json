@@ -1,0 +1,96 @@
+{
+  "fecha": "2026-10-03",
+  "alcance": "Cierre exclusivamente documental de M1 (Reserva pública)",
+  "estadoM1": "CERRADO / APROBADO EXPLÍCITAMENTE POR EL PROPIETARIO",
+  "aprobacion": {
+    "fuente": "Autorización escrita del propietario en esta tarea de Codex",
+    "incluyeRevisionFisica": "iPhone/Safari",
+    "modeloYVersionIOSAportados": false,
+    "resultadosPorCasoAportados": false,
+    "otroGateAbierto": false,
+    "commitYPushAutorizados": "origin/ai/antigravity-qa",
+    "despliegueAutorizado": false
+  },
+  "git": {
+    "rama": "ai/antigravity-qa",
+    "headInicial": "ddcb7aba8ab324ac3e3c03a288ac34508bc6e998",
+    "estadoInicial": [
+      " M CHANGELOG.md",
+      " M PROJECT_MASTER.md",
+      " M docs/README.md",
+      " M docs/quality/RESERVA_PUBLICA_CONFIRMACION_UX.md",
+      " M docs/quality/RESERVA_PUBLICA_M1_C3_CIERRE.md",
+      "?? docs/quality/evidence/m1-c3/aprobacion-cierre-20261003.json"
+    ],
+    "aislamiento": "El commit incluye únicamente adiciones de esta tarea; los cinco documentos y el JSON preexistentes conservan sus cambios fuera del índice."
+  },
+  "respaldo": {
+    "rutaExacta": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\m1-c3\\qa-before.dump.gpg",
+    "rutaChecksum": "C:\\Users\\Fraylin\\Desktop\\Kortek-Booking\\.tmp\\m1-c3\\qa-before.dump.gpg.sha256",
+    "identificacion": "Destino único de Cutover QA documentado en RESERVA_PUBLICA_M1_C3_CIERRE.md §3 y evidencia backup-verificado.json",
+    "existiaEnPrimeraComprobacion": false,
+    "checksumExistiaEnPrimeraComprobacion": false,
+    "existeEnComprobacionFinal": false,
+    "checksumExisteEnComprobacionFinal": false,
+    "archivosBorradosEnEstaEjecucion": 0,
+    "contenidoOClavesLeidos": false,
+    "limite": "El borrado anterior consta en cambios preexistentes. Esta ejecución acredita ausencia; no puede repetir el hash del archivo ni observar el borrado anterior."
+  },
+  "deudaTecnica": {
+    "destino": "Puerta de producción (Paso 8)",
+    "descripcion": "«Por atender» y «Todas» filtran y ordenan en el cliente sobre GET /bookings sin paginación ni tope. Con volumen real habrá que paginar o filtrar en el servidor.",
+    "corregida": false,
+    "evidenciaCodigo": [
+      "apps/web/lib/booking-list.ts",
+      "apps/web/app/dashboard/bookings/page.tsx",
+      "apps/web/lib/queries/bookings.ts",
+      "apps/api/src/bookings/bookings.service.ts (findAll sin take/skip)"
+    ]
+  },
+  "validacionWeb": [
+    {
+      "comando": "pnpm --filter web type-check",
+      "exitCode": 0
+    },
+    {
+      "comando": "pnpm --filter web lint",
+      "exitCode": 0
+    },
+    {
+      "comando": "pnpm --filter web test",
+      "exitCode": 0,
+      "unitariasAprobadas": 158,
+      "componentesAprobadas": 132,
+      "archivosComponentes": 21,
+      "totalAprobadas": 290,
+      "fallidas": 0
+    }
+  ],
+  "intentosIniciales": {
+    "comandos": [
+      "pnpm --filter web type-check",
+      "pnpm --filter web lint",
+      "pnpm --filter web test"
+    ],
+    "exitCode": 1,
+    "motivo": "EPERM del sandbox al abrir la configuración local de pnpm",
+    "resolucion": "Revisión automática autorizó las mismas ejecuciones con acceso a la configuración local. Las tres terminaron con exit 0."
+  },
+  "controlesDocumentales": "Se verifica JSON, enlaces locales de las adiciones en árbol e índice, preservación de cambios iniciales, diff completo y git diff --check antes de publicar.",
+  "limites": [
+    "No se repitió QA física ni navegador; se registra la aprobación del propietario.",
+    "No se ejecutó build por ser una entrega documental; se ejecutaron los tres comandos web solicitados.",
+    "No se consultaron API, bases reales, proveedores ni producción; no se revalidó su estado operativo.",
+    "No se repitieron restore ni rollback.",
+    "La publicación Git y la igualdad de SHA local/remoto se comprueban después del commit y se reportan en la respuesta final."
+  ],
+  "acciones": {
+    "codigoNuevo": false,
+    "contratoModificado": false,
+    "dependenciasInstaladas": false,
+    "desplieguesEjecutados": false,
+    "flagsOVariablesModificadas": false,
+    "basesRealesConsultadasOModificadas": false,
+    "produccion": "Permanece cerrada; esta tarea no realiza operaciones sobre producción."
+  }
+}

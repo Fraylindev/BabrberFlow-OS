@@ -65,6 +65,18 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
           name: 'Negocio controlado',
           email: `${id}@example.com`,
           businessHours: { open: '09:00', close: '19:00' },
+          businessSchedule: {
+            create: {
+              state: 'CONFIRMED',
+              zoneConfirmed: true,
+              days: {
+                create: Array.from({ length: 7 }, (_, dayOfWeek) => ({
+                  dayOfWeek,
+                  windows: { create: [{ startMinute: 540, endMinute: 1140 }] },
+                })),
+              },
+            },
+          },
         },
       });
     for (const role of Object.values(UserRole)) {
@@ -119,7 +131,7 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
       'x-organization-id': organizationId,
     };
   }
-  async function create() {
+  async function create(bookingStart = startTime) {
     const response = await requestApp(app)
       .post('/bookings')
       .set(auth())
@@ -127,7 +139,7 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
         clientId,
         professionalId,
         serviceId,
-        startTime,
+        startTime: bookingStart,
         emailNotifications,
       })
       .expect((response) => {
@@ -304,38 +316,51 @@ describe('Notifications C1 — HTTP, real guards and PostgreSQL', () => {
     },
   );
 
-  it('rejects early COMPLETED and captures one real completion, including BARBER own', async () => {
-    const id = await create();
+  it('allows early completion without early email, then captures one completion email after endTime', async () => {
+    const earlyId = await create();
     await requestApp(app)
-      .patch(`/bookings/${id}/status`)
+      .patch(`/bookings/${earlyId}/status`)
       .set(auth('BARBER'))
       .send({ status: 'CONFIRMED' })
       .expect(200);
     await requestApp(app)
-      .patch(`/bookings/${id}/status`)
+      .patch(`/bookings/${earlyId}/status`)
       .set(auth('BARBER'))
       .send({ status: 'COMPLETED' })
-      .expect(409);
+      .expect(200);
+    await requestApp(app)
+      .patch(`/bookings/${earlyId}/status`)
+      .set(auth('BARBER'))
+      .send({ status: 'COMPLETED' })
+      .expect(200);
+    expect(
+      await prisma.db.bookingEmailEvent.count({
+        where: { bookingId: earlyId, kind: 'COMPLETED' },
+      }),
+    ).toBe(0);
+
+    // Otra ventana del fixture: COMPLETED también conserva la ocupación original.
+    const endedId = await create('2030-01-02T16:00:00Z');
+    await requestApp(app)
+      .patch(`/bookings/${endedId}/status`)
+      .set(auth('BARBER'))
+      .send({ status: 'CONFIRMED' })
+      .expect(200);
     await prisma.db.booking.update({
-      where: { id },
+      where: { id: endedId },
       data: {
         startTime: new Date('2020-01-02T15:00:00Z'),
         endTime: new Date('2020-01-02T15:30:00Z'),
       },
     });
     await requestApp(app)
-      .patch(`/bookings/${id}/status`)
-      .set(auth('BARBER'))
-      .send({ status: 'COMPLETED' })
-      .expect(200);
-    await requestApp(app)
-      .patch(`/bookings/${id}/status`)
+      .patch(`/bookings/${endedId}/status`)
       .set(auth('BARBER'))
       .send({ status: 'COMPLETED' })
       .expect(200);
     expect(
       await prisma.db.bookingEmailEvent.count({
-        where: { bookingId: id, kind: 'COMPLETED' },
+        where: { bookingId: endedId, kind: 'COMPLETED' },
       }),
     ).toBe(1);
   });

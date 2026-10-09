@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { publicReadMayRefresh } from './public-booking';
 import type { GalleryOrder, MediaAsset, Promotion, PublicMedia } from '@/lib/media-ui';
 
 const privateOptions = { retry: false, staleTime: 0, gcTime: 0, refetchOnWindowFocus: 'always' as const };
@@ -27,8 +28,10 @@ export function usePromotions(scope: string, visit: string) {
     queryFn: ({ signal }) => api.get<Promotion[]>('/media/promotions', undefined, { signal, cache: 'no-store' }) });
 }
 
-export function usePublicMedia(slug: string, enabled = true) {
-  return useQuery({ queryKey: ['public-media', slug], enabled,
+export function usePublicMedia(slug: string, enabled = true, visit = 'page') {
+  return useQuery({ queryKey: ['public-media', slug, visit], enabled,
     queryFn: ({ signal }) => api.get<PublicMedia>(`/public/${encodeURIComponent(slug)}/media`, undefined, { signal, cache: 'no-store' }),
-    retry: false, staleTime: 0, refetchInterval: 45_000, refetchOnWindowFocus: 'always' });
+    retry: false, gcTime: 0, staleTime: 0,
+    refetchInterval: query => publicReadMayRefresh(query.state.error, query.state.errorUpdatedAt) ? 45_000 : false,
+    refetchOnWindowFocus: query => publicReadMayRefresh(query.state.error, query.state.errorUpdatedAt) ? 'always' : false });
 }

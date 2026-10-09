@@ -2,10 +2,44 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { api, ApiError, API_REQUEST_TIMEOUT_MS, configureApiAuth, publicMediaUrl } from './api.ts';
 
+test('F0-A conserva el UUID del servidor en errores JSON y de gateway', async (t) => {
+  const id = '12345678-1234-4234-8234-123456789abc';
+  for (const response of [
+    Response.json({ message: 'Revisa el campo' }, { status: 400, headers: { 'X-Request-Id': id } }),
+    new Response('<html>detalle privado</html>', { status: 503, headers: { 'X-Request-Id': id } }),
+  ]) {
+    t.mock.method(globalThis, 'fetch', async () => response);
+    await assert.rejects(api.get('/public/sintetico'), (error: unknown) => {
+      assert.ok(error instanceof ApiError);
+      assert.equal('requestId' in error ? error.requestId : null, id);
+      assert.doesNotMatch(error.message, /html|privado/);
+      return true;
+    });
+    t.mock.restoreAll();
+  }
+});
+
 test('serves only signed media locators through the same-origin image path', () => {
   assert.equal(publicMediaUrl('/public/qa-test/media/payload.signature'), '/media-proxy/qa-test/payload.signature');
   assert.equal(publicMediaUrl('https://cloudinary.example/private-image'), '');
   assert.equal(publicMediaUrl('/public/qa-test/media/../other'), '');
+});
+
+test('F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP', async (t) => {
+  const id = '12345678-1234-4234-8234-123456789abc';
+  for (const [response, unexpected] of [
+    [Response.json({ message: 'La contraseña debe tener al menos ocho caracteres' }, { status: 400, headers: { 'X-Request-Id': id } }), false],
+    [new Response('', { status: 400, headers: { 'X-Request-Id': id } }), true],
+  ] as const) {
+    t.mock.method(globalThis, 'fetch', async () => response);
+    await assert.rejects(api.post('/public/sintetico', {}), (error: unknown) => {
+      assert.ok(error instanceof ApiError);
+      assert.equal(error.withRequestCode(error.message).includes('Código de soporte'), unexpected);
+      assert.equal(error.requestId, id);
+      return true;
+    });
+    t.mock.restoreAll();
+  }
 });
 
 test('preserves non-JSON HTTP errors and real Retry-After without exposing the body', async (t) => {
@@ -131,4 +165,74 @@ test('bounds a fetch that does not settle and aborts its signal', async (t) => {
   t.mock.timers.tick(API_REQUEST_TIMEOUT_MS);
   await rejected;
   assert.equal(signal?.aborted, true);
+});
+
+test('renews a rejected Clerk token once, preserving the captured tenant', async (t) => {
+  const renewals: boolean[] = [];
+  t.after(configureApiAuth(async (fresh = false) => {
+    renewals.push(fresh);
+    return { token: fresh ? 'new-synthetic' : 'old-synthetic', organizationId: 'tenant-A' };
+  }));
+  const tokens: string[] = [];
+  t.mock.method(globalThis, 'fetch', async (_url: unknown, options: RequestInit) => {
+    const headers = new Headers(options.headers);
+    assert.equal(headers.get('x-organization-id'), 'tenant-A');
+    tokens.push(headers.get('Authorization') ?? '');
+    return tokens.length === 1 ? Response.json({}, { status: 401 }) : Response.json({ ok: true });
+  });
+  assert.deepEqual(await api.get('/bookings'), { ok: true });
+  assert.deepEqual(renewals, [false, true]);
+  assert.deepEqual(tokens, ['Bearer old-synthetic', 'Bearer new-synthetic']);
+});
+
+test('a definitive authentication rejection can recover a write, but ambiguous failures never repeat it', async (t) => {
+  for (const status of [401, 503]) {
+    t.after(configureApiAuth(async () => ({ token: 'synthetic', organizationId: 'tenant-A' })));
+    let writes = 0;
+    let requests = 0;
+    t.mock.method(globalThis, 'fetch', async () => {
+      requests++;
+      if (requests === 1) return Response.json({}, { status });
+      writes++;
+      return Response.json({ ok: true });
+    });
+    if (status === 401) {
+      await api.post('/invoices/invoice/payments', { method: 'CASH' });
+      assert.equal(requests, 2);
+      assert.equal(writes, 1);
+    } else {
+      await assert.rejects(api.post('/invoices/invoice/payments', { method: 'CASH' }), ApiError);
+      assert.equal(requests, 1);
+      assert.equal(writes, 0);
+    }
+    t.mock.restoreAll();
+  }
+});
+
+test('a revoked session stops after one renewal and refreshes access without a retry loop', async (t) => {
+  let rejected = 0;
+  t.after(configureApiAuth(async () => ({ token: 'synthetic', organizationId: 'tenant-A' }), () => { rejected++; }));
+  const fetchMock = t.mock.method(globalThis, 'fetch', async () => Response.json({}, { status: 401 }));
+  await assert.rejects(api.get('/bookings'), (error: unknown) => error instanceof ApiError && error.status === 401);
+  assert.equal(fetchMock.mock.callCount(), 2);
+  assert.equal(rejected, 1);
+});
+
+test('changing scope during renewal cancels a late write before it is repeated', async (t) => {
+  let release!: (value: { token: string; organizationId: string }) => void;
+  const old = configureApiAuth(async (fresh) => fresh
+    ? new Promise((resolve) => { release = resolve; })
+    : { token: 'old', organizationId: 'tenant-A' });
+  const fetchMock = t.mock.method(globalThis, 'fetch', async () => Response.json({}, { status: 401 }));
+  const pending = api.post('/invoices/id/payments', { method: 'CASH' });
+  const rejection = assert.rejects(pending, { name: 'AbortError' });
+  for (let i = 0; !release && i < 20; i++) await Promise.resolve();
+  assert.ok(release);
+  t.after(configureApiAuth(async () => ({ token: 'new', organizationId: 'tenant-B' })));
+  await rejection;
+  release({ token: 'old-fresh', organizationId: 'tenant-A' });
+  old();
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(fetchMock.mock.callCount(), 1);
 });

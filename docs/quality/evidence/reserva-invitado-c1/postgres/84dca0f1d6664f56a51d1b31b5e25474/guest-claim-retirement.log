@@ -1,0 +1,49 @@
+FAIL src/public-booking/guest-claim-retirement.integration.spec.ts
+  ● Guest C1: retired claim cannot write to isolated PostgreSQL › guest booking is 201/PENDING with operational Client only; internal bearer=false
+
+    expected 201 "Created", got 404 "Not Found"
+
+      226 |             clientPhone: authenticated ? '+18095550202' : '+18095550201',
+      227 |           })
+    > 228 |           .expect(201);
+          |            ^
+      229 |         expect(response.body).toMatchObject({
+      230 |           booking: { status: 'PENDING', serviceId, professionalId },
+      231 |         });
+
+      at public-booking/guest-claim-retirement.integration.spec.ts:228:12
+      ----
+      at Test._assertStatus (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:309:14)
+      at ../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:152:11)
+
+  ● Guest C1: retired claim cannot write to isolated PostgreSQL › guest booking is 201/PENDING with operational Client only; internal bearer=true
+
+    expected 201 "Created", got 404 "Not Found"
+
+      226 |             clientPhone: authenticated ? '+18095550202' : '+18095550201',
+      227 |           })
+    > 228 |           .expect(201);
+          |            ^
+      229 |         expect(response.body).toMatchObject({
+      230 |           booking: { status: 'PENDING', serviceId, professionalId },
+      231 |         });
+
+      at public-booking/guest-claim-retirement.integration.spec.ts:228:12
+      ----
+      at Test._assertStatus (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:309:14)
+      at ../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../../node_modules/.pnpm/supertest@7.2.2_supports-color@8.1.1/node_modules/supertest/lib/test.js:152:11)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 2 passed, 4 total
+Snapshots:   0 total
+Time:        3.382 s, estimated 5 s
+Ran all test suites within paths "src/public-booking/guest-claim-retirement.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\reserva-invitado-c1\postgres\84dca0f1d6664f56a51d1b31b5e25474\guest-claim-retirement.json

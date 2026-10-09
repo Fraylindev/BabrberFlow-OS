@@ -1,0 +1,427 @@
+{
+  "timestampUtc": "2026-10-01T23:05:12.766758+00:00",
+  "environment": "Cutover QA",
+  "project": "prirlabbnlcuvnzuaczp",
+  "syntheticSlugs": [
+    "m1-c3-norte",
+    "m1-c3-sur"
+  ],
+  "checks": {
+    "public200": true,
+    "qaOriginAllowed": true,
+    "requestIdExposed": true,
+    "bookingDataNoStore": true,
+    "privateWithoutSession401": true,
+    "preflight204": true,
+    "foreignOriginNotAllowed": true,
+    "range31Accepted": true,
+    "datesBoundedOrderedUnique": true,
+    "rangeNoStore": true,
+    "closureNotAvailable": true,
+    "range32Rejected400": true,
+    "rangeMatchesDailySlots": true,
+    "closureDailyEmpty": true,
+    "foreignTenantServiceRejected": true,
+    "fixtureInitiallyEmpty": true,
+    "D11CollisionExactNeutral400": true,
+    "D11NoPartialWrite": true,
+    "invalidPhoneSameNeutral400": true,
+    "valid201Pending": true,
+    "postNoStore": true,
+    "sameValidContactReused201Pending": true,
+    "exactlyTwoSyntheticBookingsOneNewClient": true,
+    "noEmailDispatchOrConsent": true,
+    "migrationsRemain27": true,
+    "sharedRangeBudget30Then429": true,
+    "postBudget5Then429": true
+  },
+  "requests": [
+    {
+      "number": 1,
+      "method": "GET",
+      "handler": "booking-data",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 2,
+      "method": "GET",
+      "handler": "bookings",
+      "status": 401,
+      "requestIdUuid": true
+    },
+    {
+      "number": 3,
+      "method": "OPTIONS",
+      "handler": "bookings",
+      "status": 204,
+      "requestIdUuid": true
+    },
+    {
+      "number": 4,
+      "method": "GET",
+      "handler": "booking-data",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 5,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 6,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 400,
+      "requestIdUuid": true
+    },
+    {
+      "number": 7,
+      "method": "GET",
+      "handler": "availability",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 8,
+      "method": "GET",
+      "handler": "availability",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 9,
+      "method": "GET",
+      "handler": "availability",
+      "status": 400,
+      "requestIdUuid": true
+    },
+    {
+      "number": 10,
+      "method": "POST",
+      "handler": "bookings",
+      "status": 400,
+      "requestIdUuid": true
+    },
+    {
+      "number": 11,
+      "method": "POST",
+      "handler": "bookings",
+      "status": 400,
+      "requestIdUuid": true
+    },
+    {
+      "number": 12,
+      "method": "POST",
+      "handler": "bookings",
+      "status": 201,
+      "requestIdUuid": true
+    },
+    {
+      "number": 13,
+      "method": "POST",
+      "handler": "bookings",
+      "status": 201,
+      "requestIdUuid": true
+    },
+    {
+      "number": 14,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 15,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 16,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 17,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 18,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 19,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 20,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 21,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 22,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 23,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 24,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 25,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 26,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 27,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 28,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 29,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 30,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 31,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 32,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 33,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 34,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 35,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 36,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 37,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 38,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 39,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 40,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 41,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 200,
+      "requestIdUuid": true
+    },
+    {
+      "number": 42,
+      "method": "GET",
+      "handler": "availability-days",
+      "status": 429,
+      "requestIdUuid": true
+    },
+    {
+      "number": 43,
+      "method": "POST",
+      "handler": "bookings",
+      "status": 400,
+      "requestIdUuid": true
+    },
+    {
+      "number": 44,
+      "method": "POST",
+      "handler": "bookings",
+      "status": 429,
+      "requestIdUuid": true
+    }
+  ],
+  "bucketsCleared": false,
+  "ipSpoofed": false,
+  "contactsPrinted": false,
+  "syntheticCounts": {
+    "before": {
+      "bookings": 0,
+      "clients": 2,
+      "pending": 0,
+      "dispatchAttempts": 0,
+      "optedIn": 0,
+      "migrationCount": 27
+    },
+    "afterCollision": {
+      "bookings": 0,
+      "clients": 2,
+      "pending": 0,
+      "dispatchAttempts": 0,
+      "optedIn": 0,
+      "migrationCount": 27
+    },
+    "afterValidAndReuse": {
+      "bookings": 2,
+      "clients": 3,
+      "pending": 2,
+      "dispatchAttempts": 0,
+      "optedIn": 0,
+      "migrationCount": 27
+    }
+  },
+  "rangeRateLimit": {
+    "statuses": [
+      200,
+      400,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      429
+    ],
+    "first429Request": 31,
+    "retryAfterSeconds": 60,
+    "alternatedSyntheticSlugs": true,
+    "sameClientIp": true,
+    "expectedBudget": 30,
+    "windowSeconds": 60
+  },
+  "postRateLimit": {
+    "priorPostRequests": 4,
+    "invalidDtoStatuses": [
+      400,
+      429
+    ],
+    "noAdditionalBookings": true
+  },
+  "allControlsPassed": true
+}

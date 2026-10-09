@@ -1,0 +1,435 @@
+{
+  "fecha": "2026-10-03",
+  "base": "2bb43ff2e297662c72e0a07f3ad5e4aba9beb891",
+  "alcance": "P0 READ ONLY autorizado directamente por el propietario; sin acceso a datos productivos ni dotenv/credenciales.",
+  "project": {
+    "id": "prirlabbnlcuvnzuaczp",
+    "ref": "prirlabbnlcuvnzuaczp",
+    "organization_id": "wjzvskpjlnsbwixejmua",
+    "organization_slug": "wjzvskpjlnsbwixejmua",
+    "name": "Kortek Booking Cutover QA",
+    "region": "us-east-1",
+    "status": "ACTIVE_HEALTHY",
+    "database": {
+      "host": "db.prirlabbnlcuvnzuaczp.supabase.co",
+      "version": "17.6.1.166",
+      "postgres_engine": "17",
+      "release_channel": "ga"
+    },
+    "created_at": "2026-09-25T02:53:32.689298Z"
+  },
+  "ledgerSummary": [
+    {
+      "metadata": {
+        "database": "postgres",
+        "readerRole": "postgres",
+        "publicTables": 36,
+        "postgresVersion": "17.6",
+        "appliedMigrations": 27,
+        "rolledBackMigrations": 4,
+        "unfinishedMigrations": 0,
+        "customerStageOneApplied": 0
+      }
+    }
+  ],
+  "catalogAndCounts": [
+    {
+      "preflight": {
+        "roles": [
+          {
+            "role": "kortek_migrator",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          },
+          {
+            "role": "kortek_runtime",
+            "login": true,
+            "super": false,
+            "inherit": false,
+            "createDb": false,
+            "bypassRls": false,
+            "createRole": false,
+            "replication": false
+          }
+        ],
+        "ledger": [
+          {
+            "name": "20260719162646_initial_schema",
+            "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260720044928_add_invoice_model",
+            "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260722030552_link_professional_user",
+            "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260722042926_add_customer_role",
+            "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260723212248_microsite_and_indexes",
+            "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260724023058_global_identity_membership",
+            "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260725215619_service_client_is_active",
+            "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260727010227_audit_log_user_id",
+            "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260811180000_booking_schedule_exclusion",
+            "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260812010000_professionals_backend_a1",
+            "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260813193000_professional_individual_availability_a2",
+            "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260813200000_professional_availability_tenant_fk",
+            "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260814190000_add_user_clerk_link_a0_1",
+            "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260815120000_password_nullable",
+            "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260820220000_audit_log_pre_tenant_security_events",
+            "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260821220000_team_invitations_a0_4",
+            "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+            "finished": false,
+            "rolledBack": true
+          },
+          {
+            "name": "20260821220000_team_invitations_a0_4",
+            "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+            "finished": false,
+            "rolledBack": true
+          },
+          {
+            "name": "20260821220000_team_invitations_a0_4",
+            "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260822150000_client_user_b2c_link_a0_6_a",
+            "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+            "finished": false,
+            "rolledBack": true
+          },
+          {
+            "name": "20260822150000_client_user_b2c_link_a0_6_a",
+            "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260825220000_facturacion_a_internal_invoices",
+            "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+            "finished": false,
+            "rolledBack": true
+          },
+          {
+            "name": "20260825220000_facturacion_a_internal_invoices",
+            "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260826210000_facturacion_a_completion_service_price_guards",
+            "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260909120000_restore_invoice_integrity_checks",
+            "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260912120000_cms_editorial",
+            "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260914120000_booking_email_outbox",
+            "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260914120100_email_channel_control",
+            "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260915120000_email_template_version",
+            "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260923100000_media_promotions",
+            "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260925010000_security_rate_bucket",
+            "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+            "finished": true,
+            "rolledBack": false
+          },
+          {
+            "name": "20260927170000_business_schedule",
+            "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+            "finished": true,
+            "rolledBack": false
+          }
+        ],
+        "clients": 20,
+        "bookings": 28,
+        "memberships": [
+          {
+            "member": "postgres",
+            "parent": "kortek_migrator"
+          },
+          {
+            "member": "postgres",
+            "parent": "kortek_runtime"
+          }
+        ],
+        "phoneGroups": 0,
+        "tableOwners": [
+          {
+            "count": 36,
+            "owner": "kortek_migrator"
+          }
+        ],
+        "databaseOwner": "postgres",
+        "linkedClients": 0,
+        "bookingsWithClient": 28,
+        "linkedClientsWithBookings": 0
+      }
+    }
+  ],
+  "checks": [
+    {
+      "checks": {
+        "extensions": [
+          {
+            "name": "btree_gist",
+            "version": "1.7"
+          },
+          {
+            "name": "pg_stat_statements",
+            "version": "1.11"
+          },
+          {
+            "name": "pgcrypto",
+            "version": "1.3"
+          },
+          {
+            "name": "plpgsql",
+            "version": "1.0"
+          },
+          {
+            "name": "supabase_vault",
+            "version": "0.3.1"
+          },
+          {
+            "name": "uuid-ossp",
+            "version": "1.1"
+          }
+        ],
+        "publicBytes": 2260992,
+        "orphanClients": 0,
+        "defaultDmlEntries": 0,
+        "linksWithoutClerk": 0,
+        "clientsWithBookings": 16,
+        "runtimeClientUpdate": true,
+        "runtimeLedgerSelect": false,
+        "runtimeSchemaCreate": false,
+        "foreignClientBookings": 0,
+        "runtimeDatabaseCreate": false,
+        "organizationsOutsideDocumentedSyntheticSet": 0
+      }
+    }
+  ],
+  "qaApi": {
+    "release": "791569b110f9fd59cb10e6d248546bdae3996e14",
+    "image": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+    "role": "kortek_runtime",
+    "database": "postgres",
+    "server": "2600:1f18:441a:8901:6c70:8893:431d:256/128",
+    "dnsAAAA": "2600:1f18:441a:8901:6c70:8893:431d:256",
+    "postgresVersion": "17.6",
+    "clients": 20,
+    "bookings": 28,
+    "api": {
+      "active": "active",
+      "sub": "running",
+      "mainPid": 673295,
+      "restarts": 0
+    },
+    "worker": {
+      "active": "active",
+      "sub": "running",
+      "mainPid": 575989,
+      "restarts": 0
+    }
+  },
+  "preview": {
+    "id": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+    "projectId": "prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p",
+    "url": "kortek-booking-1854z0hvp-fraylindev.vercel.app",
+    "target": null,
+    "state": "READY",
+    "sha": "9f04dbaf9a9727a5bbd9481296acbaa1ca7628a4",
+    "branch": "ai/antigravity-qa",
+    "aliases": [
+      "qa.booking.kortek.cloud",
+      "kortek-booking-git-ai-antigravity-qa-fraylindev.vercel.app"
+    ]
+  },
+  "productionComparison": {
+    "source": "config/environments.yaml y evidencia histórica versionada; no consulta productiva",
+    "projectRef": "ilaoolpcrlmqkftirjog",
+    "effectiveQaServerMatchesQaDns": true,
+    "distinctRefs": true,
+    "currentProductionStateNotVerified": true
+  },
+  "providerReadCalls": [
+    {
+      "name": "mcp__codex_apps__supabase_get_project",
+      "args": {
+        "id": "prirlabbnlcuvnzuaczp"
+      }
+    },
+    {
+      "name": "mcp__codex_apps__vercel_list_teams",
+      "args": {}
+    },
+    {
+      "name": "mcp__codex_apps__supabase_execute_sql",
+      "args": {
+        "project_id": "prirlabbnlcuvnzuaczp",
+        "query": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n  'database', current_database(),\n  'readerRole', current_user,\n  'postgresVersion', current_setting('server_version'),\n  'appliedMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),\n  'unfinishedMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NULL AND rolled_back_at IS NULL),\n  'rolledBackMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE rolled_back_at IS NOT NULL),\n  'publicTables', (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p')),\n  'customerStageOneApplied', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE migration_name='20261003120000_customer_stage_one' AND finished_at IS NOT NULL AND rolled_back_at IS NULL)\n) AS metadata;\nCOMMIT;"
+      }
+    },
+    {
+      "name": "mcp__codex_apps__vercel_list_deployments",
+      "args": {
+        "projectId": "kortek-booking",
+        "teamId": "fraylindev"
+      }
+    },
+    {
+      "name": "mcp__codex_apps__supabase_execute_sql",
+      "args": {
+        "project_id": "prirlabbnlcuvnzuaczp",
+        "query": "-- P0 autorizado expresamente en el objetivo activo posterior del 2026-10-03: lectura viva QA; sin migracion, DML, credenciales, PII ni produccion.\nBEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n  'database', current_database(),\n  'readerRole', current_user,\n  'postgresVersion', current_setting('server_version'),\n  'appliedMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),\n  'unfinishedMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NULL AND rolled_back_at IS NULL),\n  'rolledBackMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE rolled_back_at IS NOT NULL),\n  'publicTables', (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p')),\n  'customerStageOneApplied', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE migration_name='20261003120000_customer_stage_one' AND finished_at IS NOT NULL AND rolled_back_at IS NULL)\n) AS metadata;\nCOMMIT;"
+      }
+    },
+    {
+      "name": "mcp__codex_apps__supabase_execute_sql",
+      "args": {
+        "project_id": "prirlabbnlcuvnzuaczp",
+        "query": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n  'database', current_database(),\n  'readerRole', current_user,\n  'postgresVersion', current_setting('server_version'),\n  'appliedMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),\n  'unfinishedMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE finished_at IS NULL AND rolled_back_at IS NULL),\n  'rolledBackMigrations', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE rolled_back_at IS NOT NULL),\n  'publicTables', (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p')),\n  'customerStageOneApplied', (SELECT count(*) FROM public.\"_prisma_migrations\" WHERE migration_name='20261003120000_customer_stage_one' AND finished_at IS NOT NULL AND rolled_back_at IS NULL)\n) AS metadata;\nCOMMIT;"
+      }
+    },
+    {
+      "name": "mcp__codex_apps__vercel_list_deployments",
+      "args": {
+        "projectId": "kortek-booking",
+        "teamId": "team_BBm9XjRsZkjh2iZdqZ0909Q8"
+      }
+    },
+    {
+      "name": "supabase_execute_sql",
+      "args": {
+        "project_id": "prirlabbnlcuvnzuaczp",
+        "query": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT migration_name, checksum, finished_at IS NOT NULL AS finished, rolled_back_at IS NOT NULL AS rolled_back FROM public.\"_prisma_migrations\" ORDER BY started_at;\nSELECT rolname, rolsuper, rolinherit, rolcreaterole, rolcreatedb, rolcanlogin, rolreplication, rolbypassrls FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator');\nSELECT member.rolname AS member, parent.rolname AS parent FROM pg_auth_members am JOIN pg_roles member ON member.oid=am.member JOIN pg_roles parent ON parent.oid=am.roleid WHERE member.rolname IN ('kortek_runtime','kortek_migrator') OR parent.rolname IN ('kortek_runtime','kortek_migrator');\nSELECT pg_get_userbyid(datdba) AS database_owner FROM pg_database WHERE datname=current_database();\nSELECT pg_get_userbyid(c.relowner) AS owner, count(*) AS tables FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p') GROUP BY c.relowner;\nSELECT count(*) AS clients, count(*) FILTER (WHERE \"userId\" IS NOT NULL) AS linked_clients FROM public.\"Client\";\nSELECT count(*) AS bookings, count(*) FILTER (WHERE \"clientId\" IS NOT NULL) AS bookings_with_client FROM public.\"Booking\";\nSELECT count(*) AS linked_clients_with_bookings FROM public.\"Client\" c WHERE c.\"userId\" IS NOT NULL AND EXISTS (SELECT 1 FROM public.\"Booking\" b WHERE b.\"clientId\"=c.id AND b.\"organizationId\"=c.\"organizationId\");\nSELECT count(*) AS groups_with_same_stored_phone, coalesce(sum(n),0) AS clients_in_those_groups FROM (SELECT count(*) AS n FROM public.\"Client\" c WHERE c.phone IS NOT NULL AND EXISTS (SELECT 1 FROM public.\"Booking\" b WHERE b.\"clientId\"=c.id AND b.\"organizationId\"=c.\"organizationId\") GROUP BY c.\"organizationId\", c.phone HAVING count(*)>1) g;\nCOMMIT;"
+      }
+    },
+    {
+      "name": "vercel_get_deployment",
+      "args": {
+        "idOrUrl": "dpl_HtCcxYumevH6xD7qVhaTcGkKU3XD",
+        "teamId": "team_BBm9XjRsZkjh2iZdqZ0909Q8"
+      }
+    },
+    {
+      "name": "supabase_execute_sql",
+      "args": {
+        "project_id": "prirlabbnlcuvnzuaczp",
+        "query": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n'ledger',(SELECT jsonb_agg(jsonb_build_object('name',migration_name,'checksum',checksum,'finished',finished_at IS NOT NULL,'rolledBack',rolled_back_at IS NOT NULL) ORDER BY started_at) FROM public.\"_prisma_migrations\"),\n'roles',(SELECT jsonb_agg(jsonb_build_object('role',rolname,'super',rolsuper,'inherit',rolinherit,'createRole',rolcreaterole,'createDb',rolcreatedb,'login',rolcanlogin,'replication',rolreplication,'bypassRls',rolbypassrls)) FROM pg_roles WHERE rolname IN ('kortek_runtime','kortek_migrator')),\n'memberships',(SELECT coalesce(jsonb_agg(jsonb_build_object('member',member.rolname,'parent',parent.rolname)),'[]'::jsonb) FROM pg_auth_members am JOIN pg_roles member ON member.oid=am.member JOIN pg_roles parent ON parent.oid=am.roleid WHERE member.rolname IN ('kortek_runtime','kortek_migrator') OR parent.rolname IN ('kortek_runtime','kortek_migrator')),\n'databaseOwner',(SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname=current_database()),\n'tableOwners',(SELECT jsonb_agg(jsonb_build_object('owner',owner,'count',n)) FROM (SELECT pg_get_userbyid(c.relowner) AS owner,count(*) AS n FROM pg_class c JOIN pg_namespace s ON s.oid=c.relnamespace WHERE s.nspname='public' AND c.relkind IN ('r','p') GROUP BY c.relowner) x),\n'clients',(SELECT count(*) FROM public.\"Client\"),\n'linkedClients',(SELECT count(*) FROM public.\"Client\" WHERE \"userId\" IS NOT NULL),\n'bookings',(SELECT count(*) FROM public.\"Booking\"),\n'bookingsWithClient',(SELECT count(*) FROM public.\"Booking\" WHERE \"clientId\" IS NOT NULL),\n'linkedClientsWithBookings',(SELECT count(*) FROM public.\"Client\" c WHERE c.\"userId\" IS NOT NULL AND EXISTS (SELECT 1 FROM public.\"Booking\" b WHERE b.\"clientId\"=c.id AND b.\"organizationId\"=c.\"organizationId\")),\n'phoneGroups',(SELECT count(*) FROM (SELECT c.\"organizationId\",c.phone FROM public.\"Client\" c WHERE c.phone IS NOT NULL AND EXISTS(SELECT 1 FROM public.\"Booking\" b WHERE b.\"clientId\"=c.id AND b.\"organizationId\"=c.\"organizationId\") GROUP BY c.\"organizationId\",c.phone HAVING count(*)>1) x)\n) AS preflight;\nCOMMIT;"
+      }
+    },
+    {
+      "name": "supabase_execute_sql",
+      "args": {
+        "project_id": "prirlabbnlcuvnzuaczp",
+        "query": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSET LOCAL statement_timeout='30s';\nSELECT jsonb_build_object(\n'clientsWithBookings',(SELECT count(*) FROM public.\"Client\" c WHERE EXISTS(SELECT 1 FROM public.\"Booking\" b WHERE b.\"clientId\"=c.id AND b.\"organizationId\"=c.\"organizationId\")),\n'linksWithoutClerk',(SELECT count(*) FROM public.\"Client\" c JOIN public.\"User\" u ON u.id=c.\"userId\" WHERE u.\"clerkUserId\" IS NULL),\n'foreignClientBookings',(SELECT count(*) FROM public.\"Booking\" b JOIN public.\"Client\" c ON c.id=b.\"clientId\" WHERE c.\"organizationId\"<>b.\"organizationId\"),\n'orphanClients',(SELECT count(*) FROM public.\"Client\" c LEFT JOIN public.\"Organization\" o ON o.id=c.\"organizationId\" LEFT JOIN public.\"User\" u ON u.id=c.\"userId\" WHERE o.id IS NULL OR (c.\"userId\" IS NOT NULL AND u.id IS NULL)),\n'organizationsOutsideDocumentedSyntheticSet',(SELECT count(*) FROM public.\"Organization\" WHERE slug NOT IN ('qa-horario-norte','qa-horario-sur','m1-c3-norte','m1-c3-sur')),\n'runtimeClientUpdate',has_table_privilege('kortek_runtime','public.\"Client\"','UPDATE'),\n'runtimeLedgerSelect',has_table_privilege('kortek_runtime','public.\"_prisma_migrations\"','SELECT'),\n'runtimeDatabaseCreate',has_database_privilege('kortek_runtime',current_database(),'CREATE'),\n'runtimeSchemaCreate',has_schema_privilege('kortek_runtime','public','CREATE'),\n'defaultDmlEntries',(SELECT count(*) FROM pg_default_acl a,aclexplode(a.defaclacl) acl WHERE a.defaclrole='kortek_migrator'::regrole AND a.defaclobjtype='r' AND acl.grantee IN (0,'kortek_runtime'::regrole)),\n'extensions',(SELECT jsonb_agg(jsonb_build_object('name',extname,'version',extversion) ORDER BY extname) FROM pg_extension),\n'publicBytes',(SELECT coalesce(sum(pg_total_relation_size(c.oid)),0) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p'))\n) AS checks;\nCOMMIT;"
+      }
+    }
+  ]
+}

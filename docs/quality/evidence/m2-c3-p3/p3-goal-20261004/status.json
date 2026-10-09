@@ -1,0 +1,31 @@
+{
+  "state": "OBJETIVO NO CUMPLIDO",
+  "stopReason": "Mandatory point 2: runtime gate failed after SQL migration; preferred rollback verified; no new API activation",
+  "criteria": {
+    "1": "CUMPLIDO",
+    "2": "CUMPLIDO",
+    "3": "CUMPLIDO",
+    "4": "CUMPLIDO",
+    "5": "PARCIAL / gate real no ejecutado",
+    "6": "NO CUMPLIDO / API anterior activo",
+    "7": "PARCIAL / ledger, ACL y preservacion antes del gate; falta API nuevo y gate real",
+    "8": "CUMPLIDO documentalmente al finalizar el commit local autorizado; SHA en relevo"
+  },
+  "base": "bc1d559e42928ca0deb60319b33cf98b3cd69291",
+  "freezeSecondsUntilRollbackVerified": 85.88485,
+  "ledgerLastVerified": {
+    "active": 28,
+    "failed": 0,
+    "newChecksum": "af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c"
+  },
+  "schemaPreservedAfterPreferredRollback": true,
+  "actualApiRelease": "791569b110f9fd59cb10e6d248546bdae3996e14",
+  "newArtifactInactive": true,
+  "qaBusinessWritesByAgent": false,
+  "manualLedgerEdits": false,
+  "push": false,
+  "productionAccess": false,
+  "noThirdPartyCredentialAcquired": true,
+  "ownerDecisionRequiredToResume": true,
+  "controllerQaAccessFieldInterpretation": "Supervisor state flag is not operational task evidence; freeze child report is authoritative and records actual QA operations"
+}
