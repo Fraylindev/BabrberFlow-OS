@@ -1,0 +1,159 @@
+{
+  "apps/api/src/notifications/email-worker.ts": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "1e8a9c74fed815bb3c9a09952320d9bf3d3fb1079a9d3d2a909c2ad03b01319f",
+    "relevant_lines": [
+      {
+        "line": 34,
+        "text": "    await this.housekeeping();"
+      },
+      {
+        "line": 35,
+        "text": "    const control = await this.db.emailChannelControl.findUnique({"
+      },
+      {
+        "line": 38,
+        "text": "    if (!control || control.paused) return false;"
+      },
+      {
+        "line": 48,
+        "text": "        WHERE \"status\" IN ('PENDING', 'RETRY', 'UNCERTAIN') AND \"closedAt\" IS NULL"
+      },
+      {
+        "line": 68,
+        "text": "      const channel = await tx.emailChannelControl.findUnique({"
+      },
+      {
+        "line": 71,
+        "text": "      if (!channel || channel.paused) {"
+      },
+      {
+        "line": 355,
+        "text": "          await tx.emailChannelControl.update({"
+      },
+      {
+        "line": 357,
+        "text": "            data: { paused: true, reason: 'CONFIGURATION', updatedAt: now },"
+      },
+      {
+        "line": 428,
+        "text": "  async housekeeping() {"
+      }
+    ]
+  },
+  "apps/api/src/notifications/email-worker.cli.ts": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "58187a40341853857e229899a3c47d7cc38167955a6e109ba936475192f74b02",
+    "relevant_lines": []
+  },
+  "apps/api/prisma/schema.prisma": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "5406e5fb29a0d8ab0d24c8af863231f25a2bf9ea5b75499e802ea3c0f6f358a0",
+    "relevant_lines": [
+      {
+        "line": 852,
+        "text": "model EmailChannelControl {"
+      },
+      {
+        "line": 854,
+        "text": "  paused    Boolean  @default(false)"
+      }
+    ]
+  },
+  "apps/api/prisma/migrations/20260914120100_email_channel_control/migration.sql": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+    "relevant_lines": [
+      {
+        "line": 1,
+        "text": "CREATE TABLE \"EmailChannelControl\" ("
+      },
+      {
+        "line": 3,
+        "text": "  \"paused\" BOOLEAN NOT NULL DEFAULT false,"
+      },
+      {
+        "line": 6,
+        "text": "  CONSTRAINT \"EmailChannelControl_pkey\" PRIMARY KEY (\"id\"),"
+      },
+      {
+        "line": 7,
+        "text": "  CONSTRAINT \"EmailChannelControl_channel_check\" CHECK (\"id\" = 'EMAIL')"
+      },
+      {
+        "line": 9,
+        "text": "INSERT INTO \"EmailChannelControl\" (\"id\") VALUES ('EMAIL');"
+      }
+    ]
+  },
+  "apps/api/ops/apply-runtime-grants.sql": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "8916ca378c88b4ed1d1d8c357f0e1a117a17df792d229c11a6a412f9a24037ea",
+    "relevant_lines": [
+      {
+        "line": 12,
+        "text": "  public.\"EmailChannelControl\", public.\"EmailOutbox\", public.\"MediaAsset\","
+      }
+    ]
+  },
+  "docs/features/NOTIFICACIONES_C1_CONTRATO.md": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "06ca1da58570e4ac0ce0266414506516299b2e2dd2fcef9d3e9f9877104975f9",
+    "relevant_lines": [
+      {
+        "line": 66,
+        "text": "Persistencia aditiva implementada en `schema.prisma`: `Client.emailRevision`, `BookingEmailPreference`, `BookingEmailEvent`, `EmailOutbox`, `EmailWebhookReceipt`, `EmailAbuseBucket` y `EmailChannelControl`. Migraciones 22 `20260914120000_booking_email_outbox` y 23 `20260914120100_email_channel_control`, sin backfill de envíos ni reutilización/borrado de Notification legacy. Aplicadas solo al PostgreSQL aislado C1. El ensayo con datos de las 21 migraciones previas, actualización 21 → 23 → 24, preservación de datos y backup/restore está completado y documentado en §10, incluida recuperación de intenciones despachadas. La migración 24 `20260915120000_email_template_version` conserva explícitamente la versión de plantilla."
+      },
+      {
+        "line": 201,
+        "text": "`EmailChannelControl` contiene la fila `EMAIL`; fallos de configuración pausan todos los workers. Reanudar requiere operación técnica de plataforma después de corregir configuración y revisar inciertos; no hay endpoint tenant. Desactivar canal y detener procesos evita permisos nuevos; despachos ya autorizados requieren conciliación. Webhook firmado `POST /notifications/resend/webhook`: 204 solo tras recibo durable, 401 firma inválida, 503 sin correlación/configuración o ante fallo de almacenamiento."
+      }
+    ]
+  },
+  "docs/features/NOTIFICACIONES_C3_ACTIVACION.md": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "39dedc54cb27397759b969e0954bd8c1456b64c9cb4641e4007cc889bc62081d",
+    "relevant_lines": [
+      {
+        "line": 56,
+        "text": "Cada evento entregado tiene `providerId`, `firstDispatchedAt`, `closedAt` y recibos firmados durables en la base C3. No se documentan destinataria, secretos, payloads ni identificadores externos completos. El canal EMAIL vuelve a `paused=true` después de cada ciclo unitario del worker."
+      },
+      {
+        "line": 66,
+        "text": "`.tmp/notifications-c3/.env` (ignorado por Git) contiene conexión, fixture, destinatario y credenciales temporales. Nunca imprimirlo ni versionarlo. `setup.cjs` ya ejecutado; no repetir. `api.cjs` inicia API C3 con despacho apagado. `worker-once.cjs` se usa solo para un evento vigente por vez y pausa EMAIL en `finally`. C2 conserva `.tmp/notifications-c2/api.cjs` para restaurar la API anterior al terminar."
+      },
+      {
+        "line": 78,
+        "text": "Herramientas locales de continuación: `worker-once.cjs` ejecuta un único ciclo del worker real con Resend real, verifica tenant/destinatario y vuelve a pausar EMAIL en `finally`. `status.cjs` lee reservas, outbox, recibos y pausa, sin contenido ni destinatario. La lectura vigente acredita tres intenciones `DELIVERED`, seis recibos `email.sent`/`email.delivered`, una intención antigua `CREATED` pendiente en la reserva secundaria y `paused=true`. Esa intención antigua debe quedar obsoleta por la cancelación y no debe despacharse. No volver a ejecutar pruebas que limpian tablas ni `setup.cjs` después de crear reservas."
+      }
+    ]
+  },
+  "docs/quality/STAGING_QA_2026-09-28.md": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "15a451bba137235c17489f7c21d713d2a0c0b9a074f1591328a1bb8229b17c94",
+    "relevant_lines": [
+      {
+        "line": 232,
+        "text": "cero pendientes/inciertas y faltaba la fila `EmailChannelControl('EMAIL')` que"
+      },
+      {
+        "line": 234,
+        "text": "`paused=false`, tras volver a comprobar la cola vacía y la URL de base QA."
+      }
+    ]
+  },
+  "docs/quality/BASE_PREPRODUCCION_C1_EVIDENCIA.md": {
+    "source": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "sha256": "8658435998c20cf5e25492dca2d27ade1830e55480c68a3ba43c553a94321bfb",
+    "relevant_lines": [
+      {
+        "line": 53,
+        "text": "Tras el ensayo desechable, se congelaron escrituras locales y se tomó `.tmp/base-preprod-c1/barberflow-cutover.dump`: 123460 bytes, SHA-256 `29199C97CA94FB20FC1918564D6DD81DFA3082E665C36514F880909079512586`. `pg_restore --single-transaction --exit-on-error --no-owner --no-acl` como `kortek_migrator` terminó en exit `0` sobre el proyecto productivo, con `btree_gist` preparado y omitiendo solo `CREATE SCHEMA public` preexistente. `kortek_migrator`, `kortek_runtime` y `kortek_backup` son roles separados sin atributos elevados. 31/31 conteos por tabla coincidieron con `barberflow`; entre ellos `Booking=25`, `Invoice=2`, `Payment=1`, `User=27`, `Organization=14`, `Membership=32`. `_prisma_migrations` tiene 30 entradas: 26 terminadas y cuatro revertidas históricas, igual que origen y QA. `migrate status`/`diff` y el gate SQL de grants pasaron; runtime no tiene DELETE financiero/auditoría ni acceso de escritura al ledger. El API local compilado, conectado como runtime a **producción**, respondió `200` a `/public/alpha-001/booking-data` y `/public/barberia-fraylin/booking-data`, y `404` a un slug inexistente; se apagó al finalizar. `EmailChannelControl.EMAIL` quedó `paused=true` con motivo `BASE_PREPRODUCCION_C1`, y el proceso worker tiene envío deshabilitado. Esto es corte **de base de datos real**; aún no hay hosting público para API/web ni DNS servido."
+      },
+      {
+        "line": 65,
+        "text": "El mismo VM ejecuta el worker Nest compilado como contenedor Arm sin exponer puerto, bajo usuario `opc`, `systemd` con reinicio por fallo, backoff de 15 segundos, heartbeat cada 60 segundos y credencial runtime independiente cargada por systemd. `NOTIFICATIONS_EMAIL_ENABLED=false`; el `tick()` no hace housekeeping con el canal deshabilitado. Un `SIGKILL` de prueba provocó reinicio supervisado (`NRestarts=1`) y recuperó heartbeat. El rootless Podman usó `--network host` después de que la red `pasta` fallara al reiniciar; no publica listener. La activación real de correo aún exige el gate propio de Notificaciones (dominio, Resend, webhook, reconciliación y pruebas), que no se presume satisfecho."
+      }
+    ]
+  }
+}

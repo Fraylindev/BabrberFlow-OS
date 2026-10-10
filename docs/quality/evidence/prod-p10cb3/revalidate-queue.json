@@ -1,0 +1,23 @@
+[
+  {
+    "current_user": "kortek_migrator",
+    "session_user": "kortek_migrator",
+    "read_only": "on"
+  },
+  {
+    "outbox_by_state": [
+      {
+        "status": "OMITTED",
+        "count": 5
+      }
+    ]
+  },
+  {
+    "channel": [
+      {
+        "channel": "EMAIL",
+        "paused": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "stage": "before",
+    "utc": "2026-10-10T03:13:29.733637+00:00",
+    "transaction_id": 1596,
+    "current_user": "kortek_migrator",
+    "session_user": "kortek_migrator",
+    "read_only": "off"
+  },
+  {
+    "control_before": [
+      {
+        "id": "EMAIL",
+        "paused": true,
+        "reason": "BASE_PREPRODUCCION_C1",
+        "updatedAt": "2026-09-26T01:13:04.914"
+      }
+    ]
+  },
+  {
+    "control_after": [
+      {
+        "id": "EMAIL",
+        "paused": false,
+        "reason": null,
+        "updatedAt": "2026-10-10T03:13:29.566"
+      }
+    ]
+  },
+  {
+    "outbox_by_state": [
+      {
+        "status": "OMITTED",
+        "count": 5
+      }
+    ]
+  },
+  {
+    "stage": "before_commit",
+    "utc": "2026-10-10T03:13:30.049992+00:00",
+    "transaction_id": 1596
+  }
+]

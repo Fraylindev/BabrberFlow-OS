@@ -1,0 +1,2885 @@
+{
+  "passed": true,
+  "duration_seconds": 900.79,
+  "samples": [
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.544873s",
+            "cpu_percent": "1.63%",
+            "avg_cpu": "1.63%",
+            "mem_usage": "65.09MB / 2.147GB",
+            "mem_percent": "3.03%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "835.076ms",
+            "cpu_percent": "1.87%",
+            "avg_cpu": "1.87%",
+            "mem_usage": "34.7MB / 11.43GB",
+            "mem_percent": "0.30%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:15:57.370576+00:00",
+      "elapsed_seconds": 0.76,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 1
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.554735s",
+            "cpu_percent": "1.24%",
+            "avg_cpu": "1.24%",
+            "mem_usage": "65.1MB / 2.147GB",
+            "mem_percent": "3.03%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.002499s",
+            "cpu_percent": "1.33%",
+            "avg_cpu": "1.33%",
+            "mem_usage": "35.54MB / 11.43GB",
+            "mem_percent": "0.31%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:16:28.158671+00:00",
+      "elapsed_seconds": 31.75,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 2
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.564051s",
+            "cpu_percent": "1.00%",
+            "avg_cpu": "1.00%",
+            "mem_usage": "65.1MB / 2.147GB",
+            "mem_percent": "3.03%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.157668s",
+            "cpu_percent": "1.09%",
+            "avg_cpu": "1.09%",
+            "mem_usage": "35.59MB / 11.43GB",
+            "mem_percent": "0.31%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:16:59.147914+00:00",
+      "elapsed_seconds": 62.52,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 2
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.574516s",
+            "cpu_percent": "0.84%",
+            "avg_cpu": "0.84%",
+            "mem_usage": "65.38MB / 2.147GB",
+            "mem_percent": "3.04%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.316859s",
+            "cpu_percent": "0.96%",
+            "avg_cpu": "0.96%",
+            "mem_usage": "35.62MB / 11.43GB",
+            "mem_percent": "0.31%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:17:29.918614+00:00",
+      "elapsed_seconds": 93.32,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 3
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.583565s",
+            "cpu_percent": "0.73%",
+            "avg_cpu": "0.73%",
+            "mem_usage": "65.38MB / 2.147GB",
+            "mem_percent": "3.04%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.478503s",
+            "cpu_percent": "0.88%",
+            "avg_cpu": "0.88%",
+            "mem_usage": "35.83MB / 11.43GB",
+            "mem_percent": "0.31%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:18:00.694781+00:00",
+      "elapsed_seconds": 124.09,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 3
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.593771s",
+            "cpu_percent": "0.64%",
+            "avg_cpu": "0.64%",
+            "mem_usage": "65.61MB / 2.147GB",
+            "mem_percent": "3.06%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.637767s",
+            "cpu_percent": "0.82%",
+            "avg_cpu": "0.82%",
+            "mem_usage": "36.12MB / 11.43GB",
+            "mem_percent": "0.32%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:18:31.487424+00:00",
+      "elapsed_seconds": 155.07,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 4
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.602976s",
+            "cpu_percent": "0.57%",
+            "avg_cpu": "0.57%",
+            "mem_usage": "65.63MB / 2.147GB",
+            "mem_percent": "3.06%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.800935s",
+            "cpu_percent": "0.78%",
+            "avg_cpu": "0.78%",
+            "mem_usage": "36.41MB / 11.43GB",
+            "mem_percent": "0.32%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:19:02.466250+00:00",
+      "elapsed_seconds": 185.83,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 4
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.623588s",
+            "cpu_percent": "0.52%",
+            "avg_cpu": "0.52%",
+            "mem_usage": "65.66MB / 2.147GB",
+            "mem_percent": "3.06%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "1.969046s",
+            "cpu_percent": "0.76%",
+            "avg_cpu": "0.76%",
+            "mem_usage": "37.33MB / 11.43GB",
+            "mem_percent": "0.33%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:19:33.234268+00:00",
+      "elapsed_seconds": 216.67,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 5
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.634446s",
+            "cpu_percent": "0.48%",
+            "avg_cpu": "0.48%",
+            "mem_usage": "65.73MB / 2.147GB",
+            "mem_percent": "3.06%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "2.129437s",
+            "cpu_percent": "0.73%",
+            "avg_cpu": "0.73%",
+            "mem_usage": "37.61MB / 11.43GB",
+            "mem_percent": "0.33%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:20:04.063813+00:00",
+      "elapsed_seconds": 247.46,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 5
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.647331s",
+            "cpu_percent": "0.44%",
+            "avg_cpu": "0.44%",
+            "mem_usage": "65.73MB / 2.147GB",
+            "mem_percent": "3.06%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "2.280931s",
+            "cpu_percent": "0.71%",
+            "avg_cpu": "0.71%",
+            "mem_usage": "37.83MB / 11.43GB",
+            "mem_percent": "0.33%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:20:34.865122+00:00",
+      "elapsed_seconds": 278.29,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 6
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.657305s",
+            "cpu_percent": "0.41%",
+            "avg_cpu": "0.41%",
+            "mem_usage": "65.82MB / 2.147GB",
+            "mem_percent": "3.07%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "2.457461s",
+            "cpu_percent": "0.70%",
+            "avg_cpu": "0.70%",
+            "mem_usage": "38.53MB / 11.43GB",
+            "mem_percent": "0.34%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:21:05.690235+00:00",
+      "elapsed_seconds": 309.09,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 6
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.666523s",
+            "cpu_percent": "0.38%",
+            "avg_cpu": "0.38%",
+            "mem_usage": "65.83MB / 2.147GB",
+            "mem_percent": "3.07%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "2.60801s",
+            "cpu_percent": "0.68%",
+            "avg_cpu": "0.68%",
+            "mem_usage": "38.75MB / 11.43GB",
+            "mem_percent": "0.34%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:21:36.486646+00:00",
+      "elapsed_seconds": 339.92,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 7
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.676077s",
+            "cpu_percent": "0.36%",
+            "avg_cpu": "0.36%",
+            "mem_usage": "65.95MB / 2.147GB",
+            "mem_percent": "3.07%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "2.775898s",
+            "cpu_percent": "0.67%",
+            "avg_cpu": "0.67%",
+            "mem_usage": "39.61MB / 11.43GB",
+            "mem_percent": "0.35%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "15"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:22:07.318237+00:00",
+      "elapsed_seconds": 370.74,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 7
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.684656s",
+            "cpu_percent": "0.34%",
+            "avg_cpu": "0.34%",
+            "mem_usage": "65.95MB / 2.147GB",
+            "mem_percent": "3.07%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "2.929346s",
+            "cpu_percent": "0.66%",
+            "avg_cpu": "0.66%",
+            "mem_usage": "39.27MB / 11.43GB",
+            "mem_percent": "0.34%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:22:38.135769+00:00",
+      "elapsed_seconds": 401.73,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 8
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.694047s",
+            "cpu_percent": "0.32%",
+            "avg_cpu": "0.32%",
+            "mem_usage": "65.95MB / 2.147GB",
+            "mem_percent": "3.07%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "3.138987s",
+            "cpu_percent": "0.66%",
+            "avg_cpu": "0.66%",
+            "mem_usage": "40.53MB / 11.43GB",
+            "mem_percent": "0.35%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:23:09.110247+00:00",
+      "elapsed_seconds": 432.51,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 8
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.70388s",
+            "cpu_percent": "0.31%",
+            "avg_cpu": "0.31%",
+            "mem_usage": "66.04MB / 2.147GB",
+            "mem_percent": "3.08%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "3.310272s",
+            "cpu_percent": "0.65%",
+            "avg_cpu": "0.65%",
+            "mem_usage": "41.03MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:23:39.890246+00:00",
+      "elapsed_seconds": 463.31,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 9
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.713425s",
+            "cpu_percent": "0.29%",
+            "avg_cpu": "0.29%",
+            "mem_usage": "66.05MB / 2.147GB",
+            "mem_percent": "3.08%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "3.459497s",
+            "cpu_percent": "0.64%",
+            "avg_cpu": "0.64%",
+            "mem_usage": "41.26MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:24:10.706970+00:00",
+      "elapsed_seconds": 494.11,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 9
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.734204s",
+            "cpu_percent": "0.28%",
+            "avg_cpu": "0.28%",
+            "mem_usage": "66.14MB / 2.147GB",
+            "mem_percent": "3.08%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "3.608209s",
+            "cpu_percent": "0.63%",
+            "avg_cpu": "0.63%",
+            "mem_usage": "41.47MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:24:41.512302+00:00",
+      "elapsed_seconds": 524.93,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 10
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.743413s",
+            "cpu_percent": "0.27%",
+            "avg_cpu": "0.27%",
+            "mem_usage": "66.14MB / 2.147GB",
+            "mem_percent": "3.08%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "3.760205s",
+            "cpu_percent": "0.63%",
+            "avg_cpu": "0.63%",
+            "mem_usage": "41.48MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:25:12.333647+00:00",
+      "elapsed_seconds": 556.02,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 10
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.753691s",
+            "cpu_percent": "0.26%",
+            "avg_cpu": "0.26%",
+            "mem_usage": "66.26MB / 2.147GB",
+            "mem_percent": "3.09%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "3.913624s",
+            "cpu_percent": "0.62%",
+            "avg_cpu": "0.62%",
+            "mem_usage": "41.68MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:25:43.412100+00:00",
+      "elapsed_seconds": 586.82,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 11
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.764145s",
+            "cpu_percent": "0.25%",
+            "avg_cpu": "0.25%",
+            "mem_usage": "66.52MB / 2.147GB",
+            "mem_percent": "3.10%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "4.065255s",
+            "cpu_percent": "0.61%",
+            "avg_cpu": "0.61%",
+            "mem_usage": "41.91MB / 11.43GB",
+            "mem_percent": "0.37%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:26:14.202239+00:00",
+      "elapsed_seconds": 617.8,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 11
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.77613s",
+            "cpu_percent": "0.24%",
+            "avg_cpu": "0.24%",
+            "mem_usage": "66.36MB / 2.147GB",
+            "mem_percent": "3.09%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "4.222289s",
+            "cpu_percent": "0.61%",
+            "avg_cpu": "0.61%",
+            "mem_usage": "41.57MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:26:45.198253+00:00",
+      "elapsed_seconds": 648.6,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 12
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.784774s",
+            "cpu_percent": "0.23%",
+            "avg_cpu": "0.23%",
+            "mem_usage": "66.36MB / 2.147GB",
+            "mem_percent": "3.09%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "4.392346s",
+            "cpu_percent": "0.61%",
+            "avg_cpu": "0.61%",
+            "mem_usage": "41.59MB / 11.43GB",
+            "mem_percent": "0.36%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "15"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:27:15.999655+00:00",
+      "elapsed_seconds": 679.57,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 12
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.793891s",
+            "cpu_percent": "0.22%",
+            "avg_cpu": "0.22%",
+            "mem_usage": "66.36MB / 2.147GB",
+            "mem_percent": "3.09%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "4.546097s",
+            "cpu_percent": "0.60%",
+            "avg_cpu": "0.60%",
+            "mem_usage": "41.78MB / 11.43GB",
+            "mem_percent": "0.37%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:27:46.973295+00:00",
+      "elapsed_seconds": 710.37,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 13
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.804656s",
+            "cpu_percent": "0.22%",
+            "avg_cpu": "0.22%",
+            "mem_usage": "66.49MB / 2.147GB",
+            "mem_percent": "3.10%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "4.699162s",
+            "cpu_percent": "0.60%",
+            "avg_cpu": "0.60%",
+            "mem_usage": "42.27MB / 11.43GB",
+            "mem_percent": "0.37%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:28:17.774361+00:00",
+      "elapsed_seconds": 741.45,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 13
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.813771s",
+            "cpu_percent": "0.21%",
+            "avg_cpu": "0.21%",
+            "mem_usage": "66.49MB / 2.147GB",
+            "mem_percent": "3.10%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "4.85761s",
+            "cpu_percent": "0.60%",
+            "avg_cpu": "0.60%",
+            "mem_usage": "42.82MB / 11.43GB",
+            "mem_percent": "0.37%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:28:48.849025+00:00",
+      "elapsed_seconds": 772.26,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 14
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.82348s",
+            "cpu_percent": "0.20%",
+            "avg_cpu": "0.20%",
+            "mem_usage": "66.59MB / 2.147GB",
+            "mem_percent": "3.10%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "5.009209s",
+            "cpu_percent": "0.59%",
+            "avg_cpu": "0.59%",
+            "mem_usage": "43.02MB / 11.43GB",
+            "mem_percent": "0.38%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:29:19.664164+00:00",
+      "elapsed_seconds": 803.28,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 14
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.843367s",
+            "cpu_percent": "0.20%",
+            "avg_cpu": "0.20%",
+            "mem_usage": "66.59MB / 2.147GB",
+            "mem_percent": "3.10%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "5.159614s",
+            "cpu_percent": "0.59%",
+            "avg_cpu": "0.59%",
+            "mem_usage": "43.54MB / 11.43GB",
+            "mem_percent": "0.38%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:29:50.646233+00:00",
+      "elapsed_seconds": 834.04,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 15
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.852333s",
+            "cpu_percent": "0.19%",
+            "avg_cpu": "0.19%",
+            "mem_usage": "66.59MB / 2.147GB",
+            "mem_percent": "3.10%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "5.303278s",
+            "cpu_percent": "0.58%",
+            "avg_cpu": "0.58%",
+            "mem_usage": "43.53MB / 11.43GB",
+            "mem_percent": "0.38%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:30:21.438252+00:00",
+      "elapsed_seconds": 865.0,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 15
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.862785s",
+            "cpu_percent": "0.19%",
+            "avg_cpu": "0.19%",
+            "mem_usage": "66.72MB / 2.147GB",
+            "mem_percent": "3.11%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "5.453007s",
+            "cpu_percent": "0.58%",
+            "avg_cpu": "0.58%",
+            "mem_usage": "43.74MB / 11.43GB",
+            "mem_percent": "0.38%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:30:52.396495+00:00",
+      "elapsed_seconds": 895.79,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 16
+      },
+      "passed": true
+    },
+    {
+      "resources": {
+        "kortek-api": [
+          {
+            "id": "4fbbb609e760",
+            "name": "kortek-api",
+            "cpu_time": "1.865911s",
+            "cpu_percent": "0.19%",
+            "avg_cpu": "0.19%",
+            "mem_usage": "66.72MB / 2.147GB",
+            "mem_percent": "3.11%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "13"
+          }
+        ],
+        "kortek-email-worker": [
+          {
+            "id": "4de6aa517327",
+            "name": "kortek-email-worker",
+            "cpu_time": "5.478144s",
+            "cpu_percent": "0.58%",
+            "avg_cpu": "0.58%",
+            "mem_usage": "43.74MB / 11.43GB",
+            "mem_percent": "0.38%",
+            "net_io": "0B / 0B",
+            "block_io": "0B / 0B",
+            "pids": "14"
+          }
+        ]
+      },
+      "utc": "2026-10-10T03:30:57.374267+00:00",
+      "elapsed_seconds": 900.79,
+      "services": {
+        "kortek-api": {
+          "MainPID": "1800775",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker": {
+          "MainPID": "1801004",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-api-staging": {
+          "MainPID": "1523015",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "kortek-email-worker-staging": {
+          "MainPID": "1084553",
+          "NRestarts": "0",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "errors": {
+        "kortek-api": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        },
+        "kortek-email-worker": {
+          "prisma": 0,
+          "startup": 0,
+          "connection": 0,
+          "http5xx": 0,
+          "generic_error": 0,
+          "provider_configuration": 0
+        }
+      },
+      "heartbeat_mentions": {
+        "kortek-api": 0,
+        "kortek-email-worker": 16
+      },
+      "passed": true
+    }
+  ],
+  "final": {
+    "utc": "2026-10-10T03:30:57.374267+00:00",
+    "services": {
+      "kortek-api": {
+        "MainPID": "1800775",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "kortek-email-worker": {
+        "MainPID": "1801004",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "kortek-api-staging": {
+        "MainPID": "1523015",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "kortek-email-worker-staging": {
+        "MainPID": "1084553",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "files": {
+      "/usr/local/libexec/kortek-api-run.sh": {
+        "sha256": "0a28312626216cdee50901541e374cca07b8da2e505d40a4b6954dae1cae5944",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/local/libexec/kortek-worker-run.sh": {
+        "sha256": "280ff5a101abee4bdd692735a3a97fecb041b8a6a0972ac02f04808431d91c84",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-email-worker.service": {
+        "sha256": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-api.service": {
+        "sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/kortek-api/runtime-env": {
+        "sha256": "d85fd3e351eca992db1e242a106c3fb3c6e0db90cac95084c1b7402e98a8839d",
+        "mode": "0o600",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/kortek-worker/database-url": {
+        "sha256": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+        "mode": "0o600",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/kortek-api-staging/runtime-env": {
+        "sha256": "d6a94be929feb44056e3c64020127f6543de3d356fdac09e275c0362c64a57f6",
+        "mode": "0o600",
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/local/libexec/kortek-api-staging-run.sh": {
+        "sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/local/libexec/kortek-worker-staging-run.sh": {
+        "sha256": "919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-api-staging.service": {
+        "sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-email-worker-staging.service": {
+        "sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      }
+    },
+    "containers": {
+      "kortek-api": {
+        "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+        "pid": 1800788,
+        "started": "2026-10-10T03:14:23.327370484Z",
+        "running": true,
+        "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+        "deploy": "production",
+        "env_hash": "8f33e776858eec43f3ec96db2b0c7fd246d90f4acbb18c8d3ff4669c79b208f5",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": "false",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "8d95dc5d6a73286f67a3e0709fd21aa7a9e4d056aacc904d7134f3e938b49280",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "903fb429b6dd846361c30bb7f73c098b9ec0e517ca1a8e70b455bdcc73540ea9",
+          "NOTIFICATIONS_ABUSE_SECRET": "21d9373ddf093621ae309762bb7816d9760157dfab263fe31eefd03f8f43e3de",
+          "RESEND_API_KEY": "1a1ca59ca537edd9e697248002a0ac7acfbba9e1635d21c0d0baa08148e6b33d",
+          "RESEND_WEBHOOK_SECRET": "2aa6cf2a02be96f4967bce36f36f3fb9926de4a286d159c057e36c533008b027"
+        },
+        "database_url_hash": "2e5efc173f1df97bc32f8aa317807ede3dec2676bac9426e4581f0345f07842a",
+        "env_names": [
+          "API_PUBLIC_ORIGIN",
+          "APP_RELEASE",
+          "CLERK_AUTHORIZED_PARTIES",
+          "CLERK_INVITATION_REDIRECT_URL",
+          "CLERK_PUBLISHABLE_KEY",
+          "CLERK_SECRET_KEY",
+          "CLOUDINARY_API_KEY",
+          "CLOUDINARY_API_SECRET",
+          "CLOUDINARY_CLOUD_NAME",
+          "CORS_ALLOWED_ORIGINS",
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOST",
+          "HOSTNAME",
+          "JWT_SECRET",
+          "NODE_ENV",
+          "NODE_OPTIONS",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "PORT",
+          "PUBLIC_BOOKING_CLOSED",
+          "RATE_LIMIT_SECRET",
+          "REQUIRE_INTERNAL_MFA",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "WEB_PUBLIC_ORIGIN",
+          "YARN_VERSION",
+          "container"
+        ]
+      },
+      "kortek-email-worker": {
+        "image": "bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+        "pid": 1801019,
+        "started": "2026-10-10T03:15:13.545839661Z",
+        "running": true,
+        "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+        "deploy": "production",
+        "env_hash": "4464f4ecd5e62df82aa46f8352a1f76e1045d9d35cec5792f18d74b2eda71095",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": null,
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "8d95dc5d6a73286f67a3e0709fd21aa7a9e4d056aacc904d7134f3e938b49280",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "903fb429b6dd846361c30bb7f73c098b9ec0e517ca1a8e70b455bdcc73540ea9",
+          "NOTIFICATIONS_ABUSE_SECRET": "21d9373ddf093621ae309762bb7816d9760157dfab263fe31eefd03f8f43e3de",
+          "RESEND_API_KEY": "1a1ca59ca537edd9e697248002a0ac7acfbba9e1635d21c0d0baa08148e6b33d",
+          "RESEND_WEBHOOK_SECRET": "2aa6cf2a02be96f4967bce36f36f3fb9926de4a286d159c057e36c533008b027"
+        },
+        "database_url_hash": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+        "env_names": [
+          "APP_RELEASE",
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOSTNAME",
+          "NODE_ENV",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "YARN_VERSION",
+          "container"
+        ]
+      },
+      "kortek-api-staging": {
+        "image": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+        "pid": 1523029,
+        "started": "2026-10-08T04:47:16.500690063Z",
+        "running": true,
+        "release": "b318ca591d1ca6681269a6d25e29ca106d824df9",
+        "deploy": "staging",
+        "env_hash": "5a60125dd9f6d9341e254d7982a414b8562e349e3a9a84032f2f589437ac6c05",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": "false",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "391eb421b1b339c0b165592ead461befabe5d1d6b01011866b298bfe12dca0e7",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "b6ab7baa412b1e187899da2e1b6a830e7c93fa4db63b185fd82eeddd10e76868",
+          "NOTIFICATIONS_ABUSE_SECRET": "178b228979309290599f8a37605cb60749e5ea52c44ff2d664ea3f3e21520c9d",
+          "RESEND_API_KEY": "5c45ec62b6e66d315e910b2853765b0265d54573c5155300ce0f8584736f4e89",
+          "RESEND_WEBHOOK_SECRET": "60b30cb3725d7e48e58417a6eef123b077f0d451d5d04f5355e405bb51c83875"
+        },
+        "database_url_hash": "2f73a2bd9e9f3d2448fd8973422ff447d633811100daa79a1e163fe862630ecf",
+        "env_names": [
+          "API_PUBLIC_ORIGIN",
+          "APP_RELEASE",
+          "CLERK_AUTHORIZED_PARTIES",
+          "CLERK_INVITATION_REDIRECT_URL",
+          "CLERK_PUBLISHABLE_KEY",
+          "CLERK_SECRET_KEY",
+          "CLOUDINARY_API_KEY",
+          "CLOUDINARY_API_SECRET",
+          "CLOUDINARY_CLOUD_NAME",
+          "CORS_ALLOWED_ORIGINS",
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOST",
+          "HOSTNAME",
+          "JWT_SECRET",
+          "NODE_ENV",
+          "NODE_OPTIONS",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "PORT",
+          "PUBLIC_BOOKING_CLOSED",
+          "RATE_LIMIT_SECRET",
+          "REQUIRE_INTERNAL_MFA",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "WEB_PUBLIC_ORIGIN",
+          "YARN_VERSION",
+          "container"
+        ]
+      },
+      "kortek-email-worker-staging": {
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "pid": 1084581,
+        "started": "2026-10-04T23:27:29.590750599Z",
+        "running": true,
+        "release": null,
+        "deploy": "staging",
+        "env_hash": "95437f5dd5d0940a7856fa8516b949989fd3ac29dc5bad813b9e25af987ef5e8",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": null,
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "391eb421b1b339c0b165592ead461befabe5d1d6b01011866b298bfe12dca0e7",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "b6ab7baa412b1e187899da2e1b6a830e7c93fa4db63b185fd82eeddd10e76868",
+          "NOTIFICATIONS_ABUSE_SECRET": "178b228979309290599f8a37605cb60749e5ea52c44ff2d664ea3f3e21520c9d",
+          "RESEND_API_KEY": "5c45ec62b6e66d315e910b2853765b0265d54573c5155300ce0f8584736f4e89",
+          "RESEND_WEBHOOK_SECRET": "60b30cb3725d7e48e58417a6eef123b077f0d451d5d04f5355e405bb51c83875"
+        },
+        "database_url_hash": "2f73a2bd9e9f3d2448fd8973422ff447d633811100daa79a1e163fe862630ecf",
+        "env_names": [
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOSTNAME",
+          "NODE_ENV",
+          "NODE_OPTIONS",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "YARN_VERSION",
+          "container"
+        ]
+      }
+    },
+    "api_database_url_hash": "2e5efc173f1df97bc32f8aa317807ede3dec2676bac9426e4581f0345f07842a",
+    "worker_database_url_hash": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+    "mail_names_in_runtime": [
+      "NOTIFICATIONS_EMAIL_FROM",
+      "NOTIFICATIONS_EMAIL_REPLY_TO",
+      "NOTIFICATIONS_ABUSE_SECRET",
+      "RESEND_API_KEY",
+      "RESEND_WEBHOOK_SECRET"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+[
+  {
+    "utc": "2026-10-10T03:08:08.090683+00:00",
+    "current_user": "kortek_migrator",
+    "session_user": "kortek_migrator",
+    "read_only": "on"
+  },
+  {
+    "control": [
+      {
+        "id": "EMAIL",
+        "paused": true,
+        "reason_code": "BASE_PREPRODUCCION_C1",
+        "reason_fingerprint": "26f3bc67aab9e034eac3c322fbd366c3",
+        "updatedAt": "2026-09-26T01:13:04.914"
+      }
+    ]
+  },
+  {
+    "audit": []
+  },
+  {
+    "control_columns": [
+      "id",
+      "paused",
+      "reason",
+      "updatedAt"
+    ]
+  },
+  {
+    "control_triggers": []
+  },
+  {
+    "email_tables": [
+      "BookingEmailEvent",
+      "BookingEmailPreference",
+      "EmailAbuseBucket",
+      "EmailChannelControl",
+      "EmailOutbox",
+      "EmailWebhookReceipt"
+    ]
+  }
+]

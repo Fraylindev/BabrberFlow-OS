@@ -1,0 +1,323 @@
+{
+  "stage": "worker-enable",
+  "passed": true,
+  "snapshot": {
+    "utc": "2026-10-10T03:15:21.426503+00:00",
+    "services": {
+      "kortek-api": {
+        "MainPID": "1800775",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "kortek-email-worker": {
+        "MainPID": "1801004",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "kortek-api-staging": {
+        "MainPID": "1523015",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "kortek-email-worker-staging": {
+        "MainPID": "1084553",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "files": {
+      "/usr/local/libexec/kortek-api-run.sh": {
+        "sha256": "0a28312626216cdee50901541e374cca07b8da2e505d40a4b6954dae1cae5944",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/local/libexec/kortek-worker-run.sh": {
+        "sha256": "280ff5a101abee4bdd692735a3a97fecb041b8a6a0972ac02f04808431d91c84",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-email-worker.service": {
+        "sha256": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-api.service": {
+        "sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/kortek-api/runtime-env": {
+        "sha256": "d85fd3e351eca992db1e242a106c3fb3c6e0db90cac95084c1b7402e98a8839d",
+        "mode": "0o600",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/kortek-worker/database-url": {
+        "sha256": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+        "mode": "0o600",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/kortek-api-staging/runtime-env": {
+        "sha256": "d6a94be929feb44056e3c64020127f6543de3d356fdac09e275c0362c64a57f6",
+        "mode": "0o600",
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/local/libexec/kortek-api-staging-run.sh": {
+        "sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/local/libexec/kortek-worker-staging-run.sh": {
+        "sha256": "919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-api-staging.service": {
+        "sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      },
+      "/etc/systemd/system/kortek-email-worker-staging.service": {
+        "sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+        "mode": "0o644",
+        "uid": 0,
+        "gid": 0
+      }
+    },
+    "containers": {
+      "kortek-api": {
+        "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+        "pid": 1800788,
+        "started": "2026-10-10T03:14:23.327370484Z",
+        "running": true,
+        "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+        "deploy": "production",
+        "env_hash": "8f33e776858eec43f3ec96db2b0c7fd246d90f4acbb18c8d3ff4669c79b208f5",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": "false",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "8d95dc5d6a73286f67a3e0709fd21aa7a9e4d056aacc904d7134f3e938b49280",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "903fb429b6dd846361c30bb7f73c098b9ec0e517ca1a8e70b455bdcc73540ea9",
+          "NOTIFICATIONS_ABUSE_SECRET": "21d9373ddf093621ae309762bb7816d9760157dfab263fe31eefd03f8f43e3de",
+          "RESEND_API_KEY": "1a1ca59ca537edd9e697248002a0ac7acfbba9e1635d21c0d0baa08148e6b33d",
+          "RESEND_WEBHOOK_SECRET": "2aa6cf2a02be96f4967bce36f36f3fb9926de4a286d159c057e36c533008b027"
+        },
+        "database_url_hash": "2e5efc173f1df97bc32f8aa317807ede3dec2676bac9426e4581f0345f07842a",
+        "env_names": [
+          "API_PUBLIC_ORIGIN",
+          "APP_RELEASE",
+          "CLERK_AUTHORIZED_PARTIES",
+          "CLERK_INVITATION_REDIRECT_URL",
+          "CLERK_PUBLISHABLE_KEY",
+          "CLERK_SECRET_KEY",
+          "CLOUDINARY_API_KEY",
+          "CLOUDINARY_API_SECRET",
+          "CLOUDINARY_CLOUD_NAME",
+          "CORS_ALLOWED_ORIGINS",
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOST",
+          "HOSTNAME",
+          "JWT_SECRET",
+          "NODE_ENV",
+          "NODE_OPTIONS",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "PORT",
+          "PUBLIC_BOOKING_CLOSED",
+          "RATE_LIMIT_SECRET",
+          "REQUIRE_INTERNAL_MFA",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "WEB_PUBLIC_ORIGIN",
+          "YARN_VERSION",
+          "container"
+        ]
+      },
+      "kortek-email-worker": {
+        "image": "bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+        "pid": 1801019,
+        "started": "2026-10-10T03:15:13.545839661Z",
+        "running": true,
+        "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+        "deploy": "production",
+        "env_hash": "4464f4ecd5e62df82aa46f8352a1f76e1045d9d35cec5792f18d74b2eda71095",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": null,
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "8d95dc5d6a73286f67a3e0709fd21aa7a9e4d056aacc904d7134f3e938b49280",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "903fb429b6dd846361c30bb7f73c098b9ec0e517ca1a8e70b455bdcc73540ea9",
+          "NOTIFICATIONS_ABUSE_SECRET": "21d9373ddf093621ae309762bb7816d9760157dfab263fe31eefd03f8f43e3de",
+          "RESEND_API_KEY": "1a1ca59ca537edd9e697248002a0ac7acfbba9e1635d21c0d0baa08148e6b33d",
+          "RESEND_WEBHOOK_SECRET": "2aa6cf2a02be96f4967bce36f36f3fb9926de4a286d159c057e36c533008b027"
+        },
+        "database_url_hash": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+        "env_names": [
+          "APP_RELEASE",
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOSTNAME",
+          "NODE_ENV",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "YARN_VERSION",
+          "container"
+        ]
+      },
+      "kortek-api-staging": {
+        "image": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+        "pid": 1523029,
+        "started": "2026-10-08T04:47:16.500690063Z",
+        "running": true,
+        "release": "b318ca591d1ca6681269a6d25e29ca106d824df9",
+        "deploy": "staging",
+        "env_hash": "5a60125dd9f6d9341e254d7982a414b8562e349e3a9a84032f2f589437ac6c05",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": "false",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "391eb421b1b339c0b165592ead461befabe5d1d6b01011866b298bfe12dca0e7",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "b6ab7baa412b1e187899da2e1b6a830e7c93fa4db63b185fd82eeddd10e76868",
+          "NOTIFICATIONS_ABUSE_SECRET": "178b228979309290599f8a37605cb60749e5ea52c44ff2d664ea3f3e21520c9d",
+          "RESEND_API_KEY": "5c45ec62b6e66d315e910b2853765b0265d54573c5155300ce0f8584736f4e89",
+          "RESEND_WEBHOOK_SECRET": "60b30cb3725d7e48e58417a6eef123b077f0d451d5d04f5355e405bb51c83875"
+        },
+        "database_url_hash": "2f73a2bd9e9f3d2448fd8973422ff447d633811100daa79a1e163fe862630ecf",
+        "env_names": [
+          "API_PUBLIC_ORIGIN",
+          "APP_RELEASE",
+          "CLERK_AUTHORIZED_PARTIES",
+          "CLERK_INVITATION_REDIRECT_URL",
+          "CLERK_PUBLISHABLE_KEY",
+          "CLERK_SECRET_KEY",
+          "CLOUDINARY_API_KEY",
+          "CLOUDINARY_API_SECRET",
+          "CLOUDINARY_CLOUD_NAME",
+          "CORS_ALLOWED_ORIGINS",
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOST",
+          "HOSTNAME",
+          "JWT_SECRET",
+          "NODE_ENV",
+          "NODE_OPTIONS",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "PORT",
+          "PUBLIC_BOOKING_CLOSED",
+          "RATE_LIMIT_SECRET",
+          "REQUIRE_INTERNAL_MFA",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "WEB_PUBLIC_ORIGIN",
+          "YARN_VERSION",
+          "container"
+        ]
+      },
+      "kortek-email-worker-staging": {
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "pid": 1084581,
+        "started": "2026-10-04T23:27:29.590750599Z",
+        "running": true,
+        "release": null,
+        "deploy": "staging",
+        "env_hash": "95437f5dd5d0940a7856fa8516b949989fd3ac29dc5bad813b9e25af987ef5e8",
+        "flags": {
+          "PUBLIC_BOOKING_CLOSED": null,
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+        },
+        "mail_hashes": {
+          "NOTIFICATIONS_EMAIL_FROM": "391eb421b1b339c0b165592ead461befabe5d1d6b01011866b298bfe12dca0e7",
+          "NOTIFICATIONS_EMAIL_REPLY_TO": "b6ab7baa412b1e187899da2e1b6a830e7c93fa4db63b185fd82eeddd10e76868",
+          "NOTIFICATIONS_ABUSE_SECRET": "178b228979309290599f8a37605cb60749e5ea52c44ff2d664ea3f3e21520c9d",
+          "RESEND_API_KEY": "5c45ec62b6e66d315e910b2853765b0265d54573c5155300ce0f8584736f4e89",
+          "RESEND_WEBHOOK_SECRET": "60b30cb3725d7e48e58417a6eef123b077f0d451d5d04f5355e405bb51c83875"
+        },
+        "database_url_hash": "2f73a2bd9e9f3d2448fd8973422ff447d633811100daa79a1e163fe862630ecf",
+        "env_names": [
+          "DATABASE_URL",
+          "DEPLOY_ENV",
+          "HOME",
+          "HOSTNAME",
+          "NODE_ENV",
+          "NODE_OPTIONS",
+          "NODE_VERSION",
+          "NOTIFICATIONS_ABUSE_SECRET",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+          "NOTIFICATIONS_EMAIL_ENABLED",
+          "NOTIFICATIONS_EMAIL_FROM",
+          "NOTIFICATIONS_EMAIL_REPLY_TO",
+          "PATH",
+          "RESEND_API_KEY",
+          "RESEND_WEBHOOK_SECRET",
+          "YARN_VERSION",
+          "container"
+        ]
+      }
+    },
+    "api_database_url_hash": "2e5efc173f1df97bc32f8aa317807ede3dec2676bac9426e4581f0345f07842a",
+    "worker_database_url_hash": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+    "mail_names_in_runtime": [
+      "NOTIFICATIONS_EMAIL_FROM",
+      "NOTIFICATIONS_EMAIL_REPLY_TO",
+      "NOTIFICATIONS_ABUSE_SECRET",
+      "RESEND_API_KEY",
+      "RESEND_WEBHOOK_SECRET"
+    ]
+  },
+  "events": [
+    {
+      "command": [
+        "systemctl",
+        "restart",
+        "kortek-email-worker"
+      ],
+      "utc": "2026-10-10T03:15:12.448694+00:00",
+      "local": "2026-10-09T23:15:12.448694-04:00",
+      "end_utc": "2026-10-10T03:15:13.418506+00:00",
+      "exit": 0
+    }
+  ]
+}

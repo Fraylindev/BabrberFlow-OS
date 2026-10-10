@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## P10c-B3: canal EMAIL reanudado y Fase 2 verificada — 2026-10-09
+
+**GO TÉCNICO; ENVÍO REAL NO PROBADO.** [Informe B3](docs/quality/WORKER_PRODUCCION_P10C_B3.md): pausa manual C1 anterior a B2; autorización ampliada permitió documentar y ejecutar una reanudación guardada como migrador (único UPDATE EMAIL, transacción1596, auditoría documental; sin AuditLog automático). Canal sin pausa, OMITTED=5 intactos. Solo dos flagsfalse→true, API primero/worker después, un reinicio cada uno; GET200/404/404 y15min de observación pasan. QA/main intactos; sin reservas/correos de prueba/proveedor ni otras escrituras de operador. Ratificación SÍ sin evidencia capturada de proveedor/buzón. Estado B2false que sigue debajo conservado como historia.
+
 ## P10c-B2: Fase 1 instalada; correo false por canal pausado — 2026-10-09
 
 **FASE 1 TÉCNICA VERIFICADA / FASE 2 NO EJECUTADA / NO-GO PARA ACTIVAR CORREO.** [Informe B2 y evidencia](docs/quality/WORKER_PRODUCCION_P10C_B2.md): tres blobs B1 instalados, cinco variables por stdin protegido, API P5/8e1501e y worker nuevo bf343354, DB propia y flags false. GET200/404/404, observación10min y cuatro servicios estables; QA intacta. Migrador READ ONLY: OMITTED=5, EMAIL pausado antes/después; no se cambió pausa ni se activó correo. Ratificación del propietario SÍ, sin evidencia capturada de proveedor/buzón. Respaldo root0700 disponible, sin rollback; no hubo reservas/envíos ni cambios de proveedores/base. El estado B1 sin instalar que sigue debajo queda como historia.
