@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## P10c detenido en prechecks de correo — 2026-10-09
+
+**NO-GO / INCOMPLETO.** Declaraciones del propietario SÍ; archivo local ignorado y dominio coincidente, cinco valores presentes/distintos de QA por hash. [Informe P10c](docs/quality/ACTIVACION_CORREO_PRODUCCION_P10C.md): el wrapper API no reenvía las cinco variables y el worker productivo no carga runtime-env, fija correo false y conserva imagen histórica distinta de P5. Parada en Paso0, sin copias, ediciones OCI ni reinicios; reserva pública continúa abierta, correo desactivado. Cambiar wrappers/unidad o selector del worker requiere una nueva orden. Historia P10 preservada.
+
 ## P10 reanudado: apertura aplicada — 2026-10-09
 
 **GO TÉCNICO DE RESERVA PÚBLICA ABIERTA.** Reanudación desde d6ecdd9 autorizada por el propietario, incluidos tres GET adicionales y nuevo commit documental. Únicamente PUBLIC_BOOKING_CLOSED pasó a false a las23:59:30UTC, con copia root0600 y un reinicio del API, imagen P5/APP_RELEASE efectivo8e1501e conservados. GET200/404/404 y observación15min/31muestras/900,22s pasan: active/running/NRestarts0 y sin coincidencias de arranque/Prisma/conexión/5xx. Correo permanece false por configuración incompleta; sondas no alineadas porque sus condiciones no se cumplen. [Informe P10](docs/quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md). La parada inferior se conserva como historia; no se declara paridad completa de notificaciones ni se cierran los pendientes antes de terceros.
