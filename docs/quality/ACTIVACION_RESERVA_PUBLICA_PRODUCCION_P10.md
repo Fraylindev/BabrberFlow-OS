@@ -1,4 +1,30 @@
-# P10 — Paridad con QA: activación no aplicada
+# P10 — Paridad con QA: reserva pública
+
+## Reanudación autorizada — 2026-10-09, cierre técnico
+
+**GO TÉCNICO PARA RESERVA PÚBLICA; PARIDAD TOTAL DE NOTIFICACIONES NO ALCANZADA.** Se completó la apertura y su verificación bajo las condiciones de la orden: correo y sondas quedan excluidos por 0(d)/2(c) y 0(e)/2(b). No se presenta como Go de correo ni cierre del Paso8. El propietario autorizó reanudar desde `d6ecdd9af455618cf03bdf557fc18042b3511831`, los tres GET API adicionales (cuatro en total con el intento anterior, únicamente escrituras técnicas del limitador) y un nuevo commit documental/push sin force. El checkpoint inferior se conserva como historia; su parada no describe el estado tras esta activación.
+
+Prechecks actualizados a 2026-10-09 23:58:51 UTC: exactamente un negocio elegible de pruebas declarado, slug jhonatan; ledger32/28/4/0,37 tablas; runtime-env hash42ce91a1… intacto e imagen P5; copias P7/P1 conservadas. Vercel NEXT_PUBLIC_* mantiene IDs, targets y updatedAt previos; configuración QA Preview y Production sin cambios. Chrome OCI refrescado conserva las ocho alarmas Active/no suprimidas y ausencia de alarmas de sondas públicas. Clerk SÍ ya declarado. Se mantienen las exclusiones explícitas 2(b)/2(c): no se demostró QA=true/alarmas públicas para sondas, y correo carece de cinco variables y dominio verificado. DOMAIN_VERIFIED no se convierte en true sin acreditación.
+
+El editor corregido cambia el valor booleano preservando comillas y EOL, sin modificar otras líneas. A las **2026-10-09 19:59:30.469 Santo Domingo / 23:59:30.469 UTC**, copia root0600 en `/var/backups/kortek-api/p10-20261009T235930Z/runtime-env` con hash42ce91a1… igual al original; única edición `PUBLIC_BOOKING_CLOSED: true → false`, único reinicio kortek-api exit0. Sin modificación de unidad, wrapper, imagen, secretos, URLs, límites, MFA, proveedores o negocio; no se crearon reservas ni enviaron correos de prueba.
+
+| Evidencia de integridad | SHA256 |
+| --- | --- |
+| Original y copia rollback | 42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a |
+| runtime-env tras única edición | 6798f01f28e7309b4f7cfbd8abf414e5cfbe86301888557087b79624c6018bc6 |
+| Archivo excluyendo PUBLIC_BOOKING_CLOSED, antes y después | b130dc8d1d4fe9175e443ca36d59c6f3708a3dffa60aa5acbcefa4855bbe308e |
+
+Verificación posterior exit0: active/running, NRestarts=0, imagen P5, PUBLIC_BOOKING_CLOSED=false y NOTIFICATIONS_EMAIL_ENABLED=false. Tres GET API sin retries: jhonatan200 con slug correcto/1 servicio/1 profesional; inexistente404; dental-ross no elegible404. Un GET web raíz200, HSTS max-age=63072000; CSP/X-Frame-Options/X-Content-Type-Options/Referrer-Policy ausentes. **Seis peticiones de verificación acumuladas entre ambas ejecuciones: cuatro API y dos documentos web**, sin navegador ni carga de recursos adicionales.
+
+Cuerpos examinados en memoria y descartados: sin patrones secretos ni campos privados seleccionados; se capturan únicamente campos superiores, conteos y hashes. La respuesta pública200 incluye la proyección editorial pública del negocio y profesionales que prescribe 8e1501e; no se afirma ausencia literal de todo dato identificativo público ni se guarda su contenido. Escaneo por claves/patrones acotado, no prueba exhaustiva de cualquier secreto arbitrario. No se consultan reservas, clientes o cuentas por HTTP.
+
+QA conserva runtime-env d6a94be929feb44056e3c64020127f6543de3d356fdac09e275c0362c64a57f6, imagen8ba1b6c8…, PID1523029, StartedAt2026-10-08T04:47:16.500690063Z, MainPID1523015 y NRestarts0, iguales a P7/P9. Observación exit0, **31 muestras / 900,22 segundos**, desde 2026-10-09T23:59:54.158571Z hasta 2026-10-10T00:14:54.166645Z (Santo Domingo19:59:54–20:14:54 del9oct): active/running/NRestarts0, imagenP5, cerrado=false/correo=false en todas las muestras; cero coincidencias de arranque, Prisma, conexión y HTTP5xx en Podman logs acumulados desde la activación. Cobertura por patrones y ventana observada; no ausencia histórica universal de errores. Sin rollback porque Paso3 pasó.
+
+La lectura final confirma APP_RELEASE **efectivo del contenedor**8e1501e89a132e1b01d3633b1b3f896a8cbe5800. El archivo runtime-env conserva su valor histórico APP_RELEASE=b5615869…; el selector P7 versionado usa overrides explícitos de imagen y release que prevalecen sobre el valor histórico del archivo. El comprobador inicialmente cotejó el origen equivocado y se corrigió para distinguir ambos, solo con lecturas, sin cambiar selector, release ni archivo. Hash final y hash excluyendo la única línea permanecen exactos. La apertura queda persistida en runtime-env, sin expiración ni recierre programado.
+
+Evidencias de reanudación: [SSH previo](evidence/prod-p10-resume/ssh-before.json), [elegibilidad](evidence/prod-p10-resume/eligibility.json), [ledger](evidence/prod-p10-resume/ledger.json), [proveedores](evidence/prod-p10-resume/provider-prechecks.json), [activación](evidence/prod-p10-resume/activation.json), [verificación HTTP](evidence/prod-p10-resume/verify.json), [SSH posterior](evidence/prod-p10-resume/ssh-after.json), [observación15min](evidence/prod-p10-resume/observation.json). El nuevo commit documental autorizado se limita a este informe, evidencias sanitizadas y referencias de control; el histórico inferior y sus JSON no se reescriben. Se validaron enlaces/JSON, diff completo y git diff --check; SHA final/local=remoto/status se reportan después del push. Main y QA solo se leen para cotejar sus referencias; Playbook ajeno preservado sin staging.
+
+## Checkpoint inicial — histórico, sin activación
 
 Fecha: 2026-10-09. **NO-GO / PAUSADO / INCOMPLETO.** Base local comprobada: ai/reserva-invitado-ci en `5f72b3c14af7cc9ae8be7ecee286216ef8945be4`.
 

@@ -1,0 +1,27 @@
+{
+  "source": "Vercel connector and Chrome OCI Alarm Definitions, refreshed before resumed activation",
+  "web_env": [
+    {"key":"NEXT_PUBLIC_API_URL","qa_preview":"https://api.staging.booking.kortek.cloud","production":"https://api.booking.kortek.cloud","classification":"legitimate environment difference"},
+    {"key":"NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY","qa_preview_prefix":"pk_test","production_prefix":"pk_live","classification":"public configuration, values omitted"}
+  ],
+  "web_env_metadata_changed_since_initial_precheck": false,
+  "qa_deployment": "dpl_3WyqcfwaKgpsnQzLaMmgifuB3mHg",
+  "qa_deployment_git_branch": "ai/antigravity-qa",
+  "qa_deployment_sha": "523d993cfa0c797f356c224d5cc026d6c9ad4c7b",
+  "oci_root_compartment_alarm_definitions": [
+    "kortek-prod-backup-capacity",
+    "kortek-prod-backup-stale",
+    "kortek-prod-database-capacity",
+    "kortek-prod-database-down",
+    "kortek-prod-monitor-silent",
+    "kortek-prod-operational-errors",
+    "kortek-prod-restore-stale",
+    "kortek-prod-worker-down"
+  ],
+  "all_definitions_active": true,
+  "all_definitions_not_suppressed": true,
+  "public_http_alarm_definitions_observed": 0,
+  "alarm_firing_state_checked": false,
+  "provider_changes": 0,
+  "clerk_restricted_registration": "YES, owner declaration; no independent Clerk read"
+}

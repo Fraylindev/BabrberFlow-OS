@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## P10 reanudado: apertura aplicada — 2026-10-09
+
+**GO TÉCNICO DE RESERVA ABIERTA.** [Informe y evidencia P10](quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md): única edición PUBLIC_BOOKING_CLOSED=false y un reinicio, GET200/404/404 y15min/31muestras aprobados, imagenP5 y release efectivo8e1501e intactos. Correo y sondas permanecen excluidos por sus condiciones, sin copiar secretos ni tocar proveedores; paridad completa de notificaciones pendiente. Reanudación y nuevo commit autorizados; checkpoint inferior histórico preservado.
+
 ## P10 sin activación — 2026-10-09
 
 **NO-GO / PAUSADO / INCOMPLETO.** Clerk restringido confirmado por el propietario; prechecks READ ONLY con exactamente un negocio elegible. [Informe y relevo](quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md): correo incompleto y sondas sin condiciones para alinear; editor falló en aserción de formato antes de copia/edición/reinicio. Verificación lanzada prematuramente recibió404 por cierre intacto; 15min abierta pendientes. Cero cambios operativos, únicamente efecto del limitador del GET autorizado. Único checkpoint documental; P9 conserva su Go técnico histórico.

@@ -1,0 +1,240 @@
+{
+  "utc": "2026-10-10T00:15:58.076733+00:00",
+  "prod_names": [
+    "API_PUBLIC_ORIGIN",
+    "APP_RELEASE",
+    "CLERK_AUTHORIZED_PARTIES",
+    "CLERK_INVITATION_REDIRECT_URL",
+    "CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET",
+    "CLOUDINARY_CLOUD_NAME",
+    "CORS_ALLOWED_ORIGINS",
+    "DATABASE_URL",
+    "DEPLOY_ENV",
+    "HOST",
+    "JWT_SECRET",
+    "KORTEK_API_IMAGE",
+    "NODE_ENV",
+    "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+    "NOTIFICATIONS_EMAIL_ENABLED",
+    "PORT",
+    "PUBLIC_BOOKING_CLOSED",
+    "RATE_LIMIT_SECRET",
+    "REQUIRE_INTERNAL_MFA",
+    "WEB_PUBLIC_ORIGIN"
+  ],
+  "qa_names": [
+    "API_PUBLIC_ORIGIN",
+    "APP_RELEASE",
+    "CLERK_AUTHORIZED_PARTIES",
+    "CLERK_INVITATION_REDIRECT_URL",
+    "CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET",
+    "CLOUDINARY_CLOUD_NAME",
+    "CORS_ALLOWED_ORIGINS",
+    "DATABASE_URL",
+    "DEPLOY_ENV",
+    "HOST",
+    "JWT_SECRET",
+    "KORTEK_API_IMAGE",
+    "NODE_ENV",
+    "NOTIFICATIONS_ABUSE_SECRET",
+    "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+    "NOTIFICATIONS_EMAIL_ENABLED",
+    "NOTIFICATIONS_EMAIL_FROM",
+    "NOTIFICATIONS_EMAIL_REPLY_TO",
+    "PORT",
+    "PUBLIC_BOOKING_CLOSED",
+    "RATE_LIMIT_SECRET",
+    "REQUIRE_INTERNAL_MFA",
+    "RESEND_API_KEY",
+    "RESEND_WEBHOOK_SECRET",
+    "WEB_PUBLIC_ORIGIN"
+  ],
+  "diff": [
+    {
+      "name": "API_PUBLIC_ORIGIN",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "APP_RELEASE",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLERK_AUTHORIZED_PARTIES",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLERK_INVITATION_REDIRECT_URL",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLERK_PUBLISHABLE_KEY",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLERK_SECRET_KEY",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLOUDINARY_API_KEY",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLOUDINARY_API_SECRET",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CLOUDINARY_CLOUD_NAME",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "CORS_ALLOWED_ORIGINS",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "DATABASE_URL",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "DEPLOY_ENV",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "JWT_SECRET",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "KORTEK_API_IMAGE",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "NOTIFICATIONS_ABUSE_SECRET",
+      "prod_present": false,
+      "qa_present": true
+    },
+    {
+      "name": "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+      "prod_present": true,
+      "qa_present": true,
+      "prod": "false",
+      "qa": "true"
+    },
+    {
+      "name": "NOTIFICATIONS_EMAIL_ENABLED",
+      "prod_present": true,
+      "qa_present": true,
+      "prod": "false",
+      "qa": "true"
+    },
+    {
+      "name": "NOTIFICATIONS_EMAIL_FROM",
+      "prod_present": false,
+      "qa_present": true
+    },
+    {
+      "name": "NOTIFICATIONS_EMAIL_REPLY_TO",
+      "prod_present": false,
+      "qa_present": true
+    },
+    {
+      "name": "PORT",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "RATE_LIMIT_SECRET",
+      "prod_present": true,
+      "qa_present": true
+    },
+    {
+      "name": "RESEND_API_KEY",
+      "prod_present": false,
+      "qa_present": true
+    },
+    {
+      "name": "RESEND_WEBHOOK_SECRET",
+      "prod_present": false,
+      "qa_present": true
+    },
+    {
+      "name": "WEB_PUBLIC_ORIGIN",
+      "prod_present": true,
+      "qa_present": true
+    }
+  ],
+  "public_http": {
+    "prod": null,
+    "qa": null
+  },
+  "email_presence": {
+    "RESEND_API_KEY": false,
+    "RESEND_WEBHOOK_SECRET": false,
+    "NOTIFICATIONS_ABUSE_SECRET": false,
+    "NOTIFICATIONS_EMAIL_FROM": false,
+    "NOTIFICATIONS_EMAIL_REPLY_TO": false,
+    "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": true
+  },
+  "sender_same_as_qa": false,
+  "runtime_sha256": "6798f01f28e7309b4f7cfbd8abf414e5cfbe86301888557087b79624c6018bc6",
+  "service": "NRestarts=0\nActiveState=active\nSubState=running\n",
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "prod_behavior": {
+    "NOTIFICATIONS_EMAIL_ENABLED": "false",
+    "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "false",
+    "KORTEK_PUBLIC_HTTP_ENABLED": null,
+    "REQUIRE_INTERNAL_MFA": "false",
+    "PUBLIC_BOOKING_CLOSED": "false"
+  },
+  "qa_runtime_sha256": "d6a94be929feb44056e3c64020127f6543de3d356fdac09e275c0362c64a57f6",
+  "qa_container": {
+    "image": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+    "pid": 1523029,
+    "started": "2026-10-08T04:47:16.500690063Z",
+    "running": true
+  },
+  "qa_service": "MainPID=1523015\nNRestarts=0\nActiveState=active\nSubState=running\n",
+  "without_public_booking_closed_sha256": "b130dc8d1d4fe9175e443ca36d59c6f3708a3dffa60aa5acbcefa4855bbe308e",
+  "prod_file_mode": "0o600",
+  "prod_file_uid": 0,
+  "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+  "running": true,
+  "runtime_env_release": "b5615869dcbec4bd174608f2373e73ff618fae26",
+  "rollback_p7": {
+    "runtime-env": {
+      "exists": true,
+      "sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a"
+    },
+    "kortek-api.service": {
+      "exists": true,
+      "sha256": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b"
+    },
+    "kortek-api-run.sh": {
+      "exists": true,
+      "sha256": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe"
+    }
+  },
+  "monitor_configs": {
+    "/etc/kortek-monitor/public-http-monitor.conf": {
+      "KORTEK_PUBLIC_HTTP_ENABLED": "false"
+    }
+  }
+}

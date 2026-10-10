@@ -1,0 +1,13 @@
+{
+  "backup": "/var/backups/kortek-api/p10-20261009T235930Z/runtime-env",
+  "backup_sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+  "before_sha256": "42ce91a14849c9746109e2864c4500976bb98d2d2e1a3e7713f4485a3aaff23a",
+  "after_sha256": "6798f01f28e7309b4f7cfbd8abf414e5cfbe86301888557087b79624c6018bc6",
+  "without_changed_lines_sha256": "b130dc8d1d4fe9175e443ca36d59c6f3708a3dffa60aa5acbcefa4855bbe308e",
+  "changed_names": [
+    "PUBLIC_BOOKING_CLOSED"
+  ],
+  "restart_count": 1,
+  "utc": "2026-10-09T23:59:30.469096+00:00",
+  "restart_exit": 0
+}

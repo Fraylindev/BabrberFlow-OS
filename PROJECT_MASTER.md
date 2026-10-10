@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## P10 reanudado: apertura aplicada — 2026-10-09
+
+**GO TÉCNICO DE RESERVA PÚBLICA ABIERTA.** Reanudación desde d6ecdd9 autorizada por el propietario, incluidos tres GET adicionales y nuevo commit documental. Únicamente PUBLIC_BOOKING_CLOSED pasó a false a las23:59:30UTC, con copia root0600 y un reinicio del API, imagen P5/APP_RELEASE efectivo8e1501e conservados. GET200/404/404 y observación15min/31muestras/900,22s pasan: active/running/NRestarts0 y sin coincidencias de arranque/Prisma/conexión/5xx. Correo permanece false por configuración incompleta; sondas no alineadas porque sus condiciones no se cumplen. [Informe P10](docs/quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md). La parada inferior se conserva como historia; no se declara paridad completa de notificaciones ni se cierran los pendientes antes de terceros.
+
 ## P10 sin activación — 2026-10-09
 
 **NO-GO / PAUSADO / INCOMPLETO.** Declaración Clerk SÍ recibida, un negocio elegible confirmado por migrador READ ONLY. [Informe P10](docs/quality/ACTIVACION_RESERVA_PUBLICA_PRODUCCION_P10.md): faltan variables de correo; sondas no alineables con condiciones actuales. Editor falló en formato literal antes de crear copia/editar/reiniciar. Verificación prematura recibió404 porque PUBLIC_BOOKING_CLOSED sigue true; hash original intacto, correo false, active/running/NRestarts0. Dos GET, solo efecto técnico de limitador autorizado, sin negocio ni QA modificados. Apertura/paridad y observación15min pendientes; P9 conserva su Go técnico histórico.
