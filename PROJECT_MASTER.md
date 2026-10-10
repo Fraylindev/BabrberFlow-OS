@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## M3 Calendario y reagendar: C0 aprobado — 2026-10-10
+
+**C0 APROBADO POR EL PROPIETARIO / SOLO DOCUMENTAL; SIN IMPLEMENTACIÓN.** [C0, contrato propuesto y plan de validación](docs/quality/M3_CALENDARIO_C0.md): D1–D7 FIJADAS en A y D8 FIJADA. Formateador en dos fases: M3 incluye módulo puro compartido con vectores de paridad y migración web de calendario, lista, detalle y reagendar; plantillas de correo y demás consumidores API quedan para gate propio posterior. M3 no toca plantillas ni payloads sellados. Bases de compatibilidad aportadas por el propietario registradas sin nueva evidencia operativa; despliegue futuro migraciones → API → web compatible con API anterior. M3 requiere C1 backend y aprobación antes de C2; no se autoriza implementar ni ejecutar QA. Único commit/push documental autorizado a ai/antigravity-qa desde 523d993; sin cambios de producción/QA en ejecución, bases reales, flags, variables o ai/reserva-invitado-ci. Historial inferior preservado.
+
 ## Concurrencia E2E y preparación de Chrome en CI — 2026-10-08
 
 **IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Supertest cerraba el servidor iniciado por la primera solicitud mientras otras seguían pendientes; causa probable de los resets Linux, sin reproducción nativa en Windows. La contaminación tras Promise.all se demuestra con reset inyectado y PG18.1. Las dos suites mantienen puertos por instancia, agente explícito y esperan todo el lote antes de limpiar; cifras 35/80 y aserciones intactas. Cinco repeticiones: 125/0/0; E2E completo: 272/0/1; tipos/lint y Chrome dry-run pasan. Browser smoke instala explícitamente Chrome con dependencias. Linux/runner/PG16 pendientes del CI del PR 4; sin QA ni cambios de producto, migraciones, matriz, flags o dependencias. Un commit/push solo a ai/reserva-invitado-ci. [Informe, certeza y evidencia](docs/quality/CI_CONCURRENCIA_HTTP.md).
