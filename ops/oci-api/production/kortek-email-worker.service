@@ -1,0 +1,27 @@
+[Unit]
+Description=Kortek transactional email worker (production)
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=opc
+Group=opc
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+Environment=KORTEK_WORKER_IMAGE_OVERRIDE=sha256:bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f
+Environment=KORTEK_WORKER_RELEASE_OVERRIDE=8e1501e89a132e1b01d3633b1b3f896a8cbe5800
+LoadCredential=database-url:/etc/kortek-worker/database-url
+LoadCredential=runtime-env:/etc/kortek-api/runtime-env
+ExecStart=/usr/local/libexec/kortek-worker-run.sh
+ExecStop=/usr/bin/podman stop --time 30 --ignore kortek-email-worker
+ExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-email-worker
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=45
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

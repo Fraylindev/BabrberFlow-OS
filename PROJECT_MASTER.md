@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## P10c-B1: adaptaciones nuevas probadas, sin instalación — 2026-10-09
+
+**IMPLEMENTADO / VALIDADO CON FIXTURES / EN REVISIÓN.** [Informe B1 y plan B2](docs/quality/WORKER_PRODUCCION_P10C_B1.md): nuevos archivos ops/oci-api/production, plantillas existentes intactas. API P7 idéntico menos cinco reenvíos; worker con DB propia, credencial compartida, overrides inmutables y guardas productivas. 38 casos locales pasan; systemd verify exit0 en único temporal VM0700, eliminado, sin instalar/reiniciar/secretos/DB. B2 pendiente, en dos fases false y después true, API primero/worker después. Sin acciones de runtime QA/productivo ni activación de imagen.
+
 ## P10c-A: análisis y worker construido, sin activar — 2026-10-09
 
 **COMPLETADO / EN REVISIÓN; P10c-B PENDIENTE.** [Informe y plan B](docs/quality/WORKER_PRODUCCION_P10C_A.md): fuente productiva worker desconocida exige imagen nueva; build 8e1501e exit0, ID bf343354…/tag nuevo, solo inspección. QA deriva de plantillas staging y worker F0-D; producción mantiene plantillas C1 sin correo. API requiere cinco reenvíos; worker requiere credencial de correo, siete reenvíos y selector nuevo. Servicios/archivos/flags/PID/QA intactos; reserva pública abierta, correo false. Sin activación, reinicios, proveedores ni DB. Sustituye la orden P10c original por A/B; conserva su parada histórica debajo.

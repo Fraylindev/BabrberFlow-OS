@@ -1,0 +1,200 @@
+{
+  "base": "3368787e12ad4e8c0008b9feca13b5fb882c5825",
+  "existing_ops_files": [
+    {
+      "file": "ops/oci-api/Caddyfile",
+      "git_blob_sha256": "06a63db6703b1c7bab70c0f7562450521a9d39df92fd300583d7271387815bdd",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/README.md",
+      "git_blob_sha256": "67974c0e63b23167f34e9679c13f90da3dc86d9c6d3e8ecf9cfdbe144b44196e",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/api-run.sh",
+      "git_blob_sha256": "7bfe37be39267b8015a288ac9b5cc83724590ca30ef3f01ce0317b01cc442f6f",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/api-staging-run.sh",
+      "git_blob_sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/api.Containerfile",
+      "git_blob_sha256": "0290749cda77060b0bcbc5233d200404d358c48f3af64fa45b4d8b1f9d898f4f",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/external-smoke.py",
+      "git_blob_sha256": "aa4c39c19743f0b60ed31b0342c155eeaf0cfabb68bc124ce3ea062b7da1eeef",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/kortek-api-staging.service",
+      "git_blob_sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/kortek-api.service",
+      "git_blob_sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/kortek-caddy.service",
+      "git_blob_sha256": "a637a9d4aec4e5c6b5f32845de747cec516dfc586f9b44a390e3b21fbe5d53bc",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/kortek-email-worker-staging.service",
+      "git_blob_sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/kortek-worker-staging-run.sh",
+      "git_blob_sha256": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/rootless-delegation.conf",
+      "git_blob_sha256": "596f31e7020a159951a155f1c8f50e4f987c4772c635ec5946560e86cdcec20b",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-api/test-api-selector.py",
+      "git_blob_sha256": "d11975293063d789bb30a618ffb66985774e7fc398c38432191e1e48502177f4",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/README.md",
+      "git_blob_sha256": "3dbcd554cb3e81fa157b8a8ff305eb77ab4b3a6548ba4b2d7c8efe0a888a9095",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/alarm-drill.sh",
+      "git_blob_sha256": "3eda9f1a30e734ed909211d047f61b607710d20ab50ac9012058f1c0eaee463a",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/backup.sh",
+      "git_blob_sha256": "21cdd60b21f3cc62183600463c4896464d9cd5ac7ad9d89e39e761d9e96136f1",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/collect-errors.py",
+      "git_blob_sha256": "97819ec1e4680375cce127f4c769ae2dc741b3e1a79372ab3b88fb6473f52553",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/journald-kortek-retention.conf",
+      "git_blob_sha256": "3590fa70f160df68c5cf6ecdc1222902abc32846fe933a9d4fb8dc40ee7eb471",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-backup.service",
+      "git_blob_sha256": "0df3e59be4cf22648d579f88474cbf33eab47db305a29aeba5082dbaed5b9f2e",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-backup.timer",
+      "git_blob_sha256": "00ff6db6aec70ead73111a0d2469c339211832bdd799dcb5bc02cddbc987b034",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-email-worker.service",
+      "git_blob_sha256": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-monitor.service",
+      "git_blob_sha256": "2d5a05dd76c3ec8e2e0b575fd7e8b362232a9e0a495d96a91b0904c7b7606989",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-monitor.timer",
+      "git_blob_sha256": "5dc87ddb007d7cada3e63b5a69f0032ccfb267bfcd84984542ec5ef01c5e4995",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-restore-drill.service",
+      "git_blob_sha256": "bd28b7a1242d352a911664a149ba811d30cd82b56b9ebc7b915428020fdc4b17",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/kortek-restore-drill.timer",
+      "git_blob_sha256": "3b7e80a49fa09881b80bd3819ae28a9c88473186ed1440b0d5b056160155a8b9",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/local-recovery-drill.py",
+      "git_blob_sha256": "3d59e2cd1809fa863c12c8f1d2158c707b1f4f2fd0d5c5f376a7146462e77d15",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/monitor.sh",
+      "git_blob_sha256": "5adb781e1eb4f248c9f7d247854cef23671a39e422b612cd71f463b0632e600a",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/object-inventory.py",
+      "git_blob_sha256": "d6d47b58587f4c9333fb0d9908d1fb3bae0ddddc0dfd66759441e50d7fc908ab",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/operational-errors-drill.sh",
+      "git_blob_sha256": "0f5098153a2a756a9b441e0132af33dc182999597d8c4324f002b0e1ac642d3c",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/prod-ca-2021.crt",
+      "git_blob_sha256": "700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/public-http-monitor.conf",
+      "git_blob_sha256": "7919f1b859f283765d721de46d21bd3760ea0b92dee4d69a372211084d440b85",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/public-http-probe.py",
+      "git_blob_sha256": "813da321fff5d5e6f291e9d6e1018ded9e83c65ddc09f5ab8f37254282838f3c",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/restore-drill.sh",
+      "git_blob_sha256": "cfdf9313235a52fbbc7d705dee1ee4eaa353dba5d76a3b91c8683c1c663cb90c",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/test-collect-errors.py",
+      "git_blob_sha256": "5d9dcd028d2b232c69a92f6f163ea2a4bb921545e0d251b7e76fb54cb6f305a4",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/test-object-inventory.py",
+      "git_blob_sha256": "e5df713b3113239ab3e9b583e354e38a4446b68fab8692967f5a6b14f1b5ba0a",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/test-public-http-probe.py",
+      "git_blob_sha256": "f9984ec9921f9796d7ec3594740bcec53f988e36867d11c593065a02cb6502bd",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/worker-run.sh",
+      "git_blob_sha256": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+      "worktree_lf_equivalent": true
+    },
+    {
+      "file": "ops/oci-free-backup/worker.Containerfile",
+      "git_blob_sha256": "5e5fe5c66fefbb45106fab666c54cefc145b57c7d0039e6933bf19c92b7eff2a",
+      "worktree_lf_equivalent": true
+    }
+  ],
+  "existing_ops_modified": false,
+  "playbook_sha256": "3c3f2fe57e0888ccf3e814262bc9ab965f59d5ad60db74f0f2c5fefa71924090",
+  "main_local": "01113ef0be7d8abcd74e3e7297f7989b359c76c0",
+  "qa_local": "36061fc3c978758642b5a79ed6cb0e5ff25c003f",
+  "oci_exception": "only disposable unit verification, temporary removed"
+}

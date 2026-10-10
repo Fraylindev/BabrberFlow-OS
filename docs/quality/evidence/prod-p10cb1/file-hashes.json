@@ -1,0 +1,7 @@
+{
+  "ops/oci-api/production/api-run.sh": "0a28312626216cdee50901541e374cca07b8da2e505d40a4b6954dae1cae5944",
+  "ops/oci-api/production/kortek-email-worker.service": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0",
+  "ops/oci-api/production/README.md": "f35853099a38a861ae402d3b121ac02d6241a5bc24ccdac6bf1da8126441b9ae",
+  "ops/oci-api/production/test-production-wrappers.py": "195f7fd76f6175fda139a6d1ac4938d6f9a81ef83185095f80d8b962ab836792",
+  "ops/oci-api/production/worker-run.sh": "280ff5a101abee4bdd692735a3a97fecb041b8a6a0972ac02f04808431d91c84"
+}

@@ -1,0 +1,167 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "API minus five lines equals installed P7 bytes and SHA256",
+      "passed": true
+    },
+    {
+      "case": "bash -n api-run.sh",
+      "passed": true
+    },
+    {
+      "case": "bash -n worker-run.sh",
+      "passed": true
+    },
+    {
+      "case": "unit immutable selection, both credential paths and ExecStart",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh flags=false",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh flags=false",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh flags=false",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh flags=true",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh flags=true",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh flags=true",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh flags=false poisoned source",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh flags=true poisoned source",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 1",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 2",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 3",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 4",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 5",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 6",
+      "passed": true
+    },
+    {
+      "case": "api-run.sh invalid selector 7",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 1",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 2",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 3",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 4",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 5",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 6",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 7",
+      "passed": true
+    },
+    {
+      "case": "worker-run.sh invalid selector 8",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 1",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 2",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 3",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 4",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 5",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 6",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 7",
+      "passed": true
+    },
+    {
+      "case": "worker rejects QA/invalid environment 8",
+      "passed": true
+    },
+    {
+      "case": "worker rejects empty dedicated database credential",
+      "passed": true
+    },
+    {
+      "case": "worker rejects missing dedicated database credential",
+      "passed": true
+    },
+    {
+      "case": "temporary synthetic fixtures removed",
+      "passed": true
+    }
+  ],
+  "count": 38,
+  "baseline_api_sha256": "7bfe37be39267b8015a288ac9b5cc83724590ca30ef3f01ce0317b01cc442f6f",
+  "files_sha256": {
+    "api-run.sh": "0a28312626216cdee50901541e374cca07b8da2e505d40a4b6954dae1cae5944",
+    "worker-run.sh": "280ff5a101abee4bdd692735a3a97fecb041b8a6a0972ac02f04808431d91c84",
+    "kortek-email-worker.service": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0"
+  },
+  "real_podman": false,
+  "database_access": false,
+  "remote_access": false
+}

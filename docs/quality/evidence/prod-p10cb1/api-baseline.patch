@@ -1,0 +1,14 @@
+--- installed-P7-7bfe37be
++++ ops/oci-api/production/api-run.sh
+@@ -29,6 +29,11 @@
+   -e CLERK_INVITATION_REDIRECT_URL -e PUBLIC_BOOKING_CLOSED \
+   -e REQUIRE_INTERNAL_MFA -e NOTIFICATIONS_EMAIL_ENABLED \
+   -e NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED \
++  -e NOTIFICATIONS_EMAIL_FROM \
++  -e NOTIFICATIONS_EMAIL_REPLY_TO \
++  -e NOTIFICATIONS_ABUSE_SECRET \
++  -e RESEND_API_KEY \
++  -e RESEND_WEBHOOK_SECRET \
+   -e CLOUDINARY_CLOUD_NAME -e CLOUDINARY_API_KEY -e CLOUDINARY_API_SECRET \
+   -e NODE_OPTIONS=--max-old-space-size=1536 \
+   -v /home/opc/kortek-api/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \

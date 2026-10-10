@@ -1,0 +1,26 @@
+{
+  "unit_sha256": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0",
+  "installation": false,
+  "reload": false,
+  "restart": false,
+  "credential_reads": false,
+  "temporary_mode": "0o700",
+  "systemd_version": "systemd 252 (252-67.0.2.el9_8.4)",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "temporary_removed": true,
+  "local_availability": {
+    "docker": {
+      "exit": 1,
+      "stdout": "\n",
+      "stderr": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.\n"
+    },
+    "wsl": {
+      "exit": 69,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "ssh_exit": 0
+}
