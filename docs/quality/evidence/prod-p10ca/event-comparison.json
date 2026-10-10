@@ -1,0 +1,8 @@
+{
+  "bookings_create_identical": true,
+  "bookings_create_sha256": "1aece7d1e247da41d8aa31521560865129ced3222ae8bf1a5942724639814c66",
+  "public_create_diff_sha256": "7c3ea02546f8eb322a3fa83345442df6c900072a9f0d9f555e0d98386c4bb62c",
+  "notification_module_git_diff_empty": true,
+  "source": "92f61274dcb733e0e43f14a45851c0da346430c2",
+  "target": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800"
+}

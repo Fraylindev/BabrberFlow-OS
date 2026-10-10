@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## P10c-A: análisis y worker construido, sin activar — 2026-10-09
+
+**COMPLETADO / EN REVISIÓN; P10c-B PENDIENTE.** [Informe y plan B](docs/quality/WORKER_PRODUCCION_P10C_A.md): fuente productiva worker desconocida exige imagen nueva; build 8e1501e exit0, ID bf343354…/tag nuevo, solo inspección. QA deriva de plantillas staging y worker F0-D; producción mantiene plantillas C1 sin correo. API requiere cinco reenvíos; worker requiere credencial de correo, siete reenvíos y selector nuevo. Servicios/archivos/flags/PID/QA intactos; reserva pública abierta, correo false. Sin activación, reinicios, proveedores ni DB. Sustituye la orden P10c original por A/B; conserva su parada histórica debajo.
+
 ## P10c detenido en prechecks de correo — 2026-10-09
 
 **NO-GO / INCOMPLETO.** Declaraciones del propietario SÍ; archivo local ignorado y dominio coincidente, cinco valores presentes/distintos de QA por hash. [Informe P10c](docs/quality/ACTIVACION_CORREO_PRODUCCION_P10C.md): el wrapper API no reenvía las cinco variables y el worker productivo no carga runtime-env, fija correo false y conserva imagen histórica distinta de P5. Parada en Paso0, sin copias, ediciones OCI ni reinicios; reserva pública continúa abierta, correo desactivado. Cambiar wrappers/unidad o selector del worker requiere una nueva orden. Historia P10 preservada.

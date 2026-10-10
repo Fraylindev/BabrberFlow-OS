@@ -1,0 +1,8 @@
+{
+  "exit": 0,
+  "tag": "localhost/kortek-worker:p10ca-8e1501e-20261009",
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "remote_context": "/home/opc/kortek-build-p10ca-8e1501e-20261009",
+  "archive_sha256": "2e248e4ac2c908a911c90ae5e7aee8bcca804fe52573ed27e40d456a919b103e",
+  "log_sha256": "d3956bb5c177b7f2240857de007d998a79c87858878e5e707c2c7115281f90b7"
+}

@@ -1,0 +1,15 @@
+{
+  "production_source_sha": null,
+  "production_classification": "exige imagen nueva por procedencia desconocida",
+  "qa_source_sha": "92f61274dcb733e0e43f14a45851c0da346430c2",
+  "qa_source_evidence": "tag vivo y registro versionado CORRECTIVO_F0D.md con mismo image ID; no label ni APP_RELEASE",
+  "qa_classification": "con cambios compatibles",
+  "notification_module_diff_empty": true,
+  "notification_models_identical": true,
+  "scope": [
+    "apps/api/src/notifications",
+    "public-booking.service.ts#createBooking",
+    "bookings.service.ts#create",
+    "prisma/schema.prisma#notification-models"
+  ]
+}

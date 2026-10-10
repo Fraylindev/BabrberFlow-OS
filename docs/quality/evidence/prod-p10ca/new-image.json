@@ -1,0 +1,27 @@
+{
+  "Id": "bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+  "Created": "2026-10-10T02:02:31.627102635Z",
+  "Size": 1778978246,
+  "Architecture": "arm64",
+  "RepoTags": [
+    "localhost/kortek-worker:p10ca-8e1501e-20261009"
+  ],
+  "Labels": {
+    "io.buildah.version": "1.43.1",
+    "org.opencontainers.image.revision": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800"
+  },
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "env_names": [
+    "APP_RELEASE",
+    "NODE_VERSION",
+    "PATH",
+    "YARN_VERSION"
+  ],
+  "cmd": [
+    "node",
+    "dist/notifications/email-worker.cli.js"
+  ],
+  "user": "node",
+  "worker_entrypoint_present": true,
+  "schema_sha256": "b8f4dc32085bac898ff9ef40e9794d1d40b61a68b33c4d84946d9ffad4296f30"
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "installed": "/etc/systemd/system/kortek-api.service",
+    "versioned": "ops/oci-api/kortek-api.service",
+    "installed_sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+    "versioned_sha256": "7212bddcbdce426bd6017c102dc34272653d97608256088be48f5475e1f3f17b",
+    "identical": false
+  },
+  {
+    "installed": "/etc/systemd/system/kortek-api-staging.service",
+    "versioned": "ops/oci-api/kortek-api-staging.service",
+    "installed_sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+    "versioned_sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+    "identical": true
+  },
+  {
+    "installed": "/etc/systemd/system/kortek-email-worker.service",
+    "versioned": "ops/oci-free-backup/kortek-email-worker.service",
+    "installed_sha256": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+    "versioned_sha256": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+    "identical": true
+  },
+  {
+    "installed": "/etc/systemd/system/kortek-email-worker-staging.service",
+    "versioned": "ops/oci-api/kortek-email-worker-staging.service",
+    "installed_sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+    "versioned_sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+    "identical": true
+  },
+  {
+    "installed": "/usr/local/libexec/kortek-api-run.sh",
+    "versioned": "ops/oci-api/api-run.sh",
+    "installed_sha256": "7bfe37be39267b8015a288ac9b5cc83724590ca30ef3f01ce0317b01cc442f6f",
+    "versioned_sha256": "336f773a2516f5f788cc0470130f2af5ed38da7c6870396b5fed973eef7d7dfe",
+    "identical": false
+  },
+  {
+    "installed": "/usr/local/libexec/kortek-api-staging-run.sh",
+    "versioned": "ops/oci-api/api-staging-run.sh",
+    "installed_sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+    "versioned_sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+    "identical": true
+  },
+  {
+    "installed": "/usr/local/libexec/kortek-worker-run.sh",
+    "versioned": "ops/oci-free-backup/worker-run.sh",
+    "installed_sha256": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+    "versioned_sha256": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+    "identical": true
+  },
+  {
+    "installed": "/usr/local/libexec/kortek-worker-staging-run.sh",
+    "versioned": "ops/oci-api/kortek-worker-staging-run.sh",
+    "installed_sha256": "919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6",
+    "versioned_sha256": "5ffe5f37541b1830d799c696052bc733fea05a61f1f91229d5d9777988b7333d",
+    "identical": false
+  }
+]

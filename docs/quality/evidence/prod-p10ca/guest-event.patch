@@ -1,0 +1,56 @@
+--- 92f61274dcb733e0e43f14a45851c0da346430c2:apps/api/src/public-booking/public-booking.service.ts#createBooking
++++ 8e1501e89a132e1b01d3633b1b3f896a8cbe5800:apps/api/src/public-booking/public-booking.service.ts#createBooking
+@@ -3,15 +3,17 @@
+     dto: CreatePublicBookingDto,
+   ): Promise<PublicBookingResponseDto> {
+     const organization = await this.resolveOrganization(slug);
+-    if (dto.createAccount && !dto.clientEmail) {
+-      throw new BadRequestException(
+-        'Se necesita un correo para crear la cuenta',
+-      );
++    let normalizedPhone: string | null;
++    try {
++      normalizedPhone = normalizeClientPhone(dto.clientPhone);
++    } catch (error) {
++      if (error instanceof BadRequestException) {
++        throw new BadRequestException(PUBLIC_CONTACT_REJECTION_MESSAGE);
++      }
++      throw error;
+     }
+-
+-    const normalizedPhone = normalizeClientPhone(dto.clientPhone);
+     if (!normalizedPhone) {
+-      throw new BadRequestException('Se necesita un teléfono válido');
++      throw new BadRequestException(PUBLIC_CONTACT_REJECTION_MESSAGE);
+     }
+     const normalized = {
+       name: normalizeClientName(dto.clientName),
+@@ -58,19 +60,6 @@
+       result.clientResult.action,
+     );
+ 
+-    let accountCreated = false;
+-    let accountCreationError: string | null = null;
+-    if (dto.createAccount && normalized.email && dto.password) {
+-      const account = await this.tryCreateCustomerAccount(
+-        organization.id,
+-        normalized.name,
+-        normalized.email,
+-        dto.password,
+-      );
+-      accountCreated = account.created;
+-      accountCreationError = account.error;
+-    }
+-
+     return {
+       booking: {
+         id: result.booking.id,
+@@ -80,8 +69,6 @@
+         endTime: result.booking.endTime,
+         status: result.booking.status,
+       },
+-      accountCreated,
+-      accountCreationError,
+     };
+   }
+ 

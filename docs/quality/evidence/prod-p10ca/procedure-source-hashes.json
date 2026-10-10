@@ -1,0 +1,10 @@
+{
+  "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+  "files": {
+    "ops/oci-api/README.md": "a3988fbd27dcdea4511aa6b022ff980e127a22da98d18188dfc2b2f3cbe26c81",
+    "ops/oci-api/api.Containerfile": "0290749cda77060b0bcbc5233d200404d358c48f3af64fa45b4d8b1f9d898f4f",
+    "ops/oci-free-backup/README.md": "3dbcd554cb3e81fa157b8a8ff305eb77ab4b3a6548ba4b2d7c8efe0a888a9095",
+    "ops/oci-free-backup/worker.Containerfile": "5e5fe5c66fefbb45106fab666c54cefc145b57c7d0039e6933bf19c92b7eff2a"
+  },
+  "automated_installer_found": false
+}

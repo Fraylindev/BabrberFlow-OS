@@ -1,0 +1,680 @@
+{
+  "utc": "2026-10-10T02:01:17.270029+00:00",
+  "services": {
+    "kortek-api": {
+      "MainPID": "1776096",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-api.service",
+      "DropInPaths": ""
+    },
+    "kortek-email-worker": {
+      "MainPID": "6618",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-email-worker.service",
+      "DropInPaths": ""
+    },
+    "kortek-api-staging": {
+      "MainPID": "1523015",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-api-staging.service",
+      "DropInPaths": ""
+    },
+    "kortek-email-worker-staging": {
+      "MainPID": "1084553",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-email-worker-staging.service",
+      "DropInPaths": ""
+    }
+  },
+  "files": {
+    "/etc/kortek-api-staging/runtime-env": {
+      "sha256": "d6a94be929feb44056e3c64020127f6543de3d356fdac09e275c0362c64a57f6",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o600",
+      "names": [
+        "API_PUBLIC_ORIGIN",
+        "APP_RELEASE",
+        "CLERK_AUTHORIZED_PARTIES",
+        "CLERK_INVITATION_REDIRECT_URL",
+        "CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CLOUDINARY_API_KEY",
+        "CLOUDINARY_API_SECRET",
+        "CLOUDINARY_CLOUD_NAME",
+        "CORS_ALLOWED_ORIGINS",
+        "DATABASE_URL",
+        "DEPLOY_ENV",
+        "HOST",
+        "JWT_SECRET",
+        "KORTEK_API_IMAGE",
+        "NODE_ENV",
+        "NOTIFICATIONS_ABUSE_SECRET",
+        "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+        "NOTIFICATIONS_EMAIL_ENABLED",
+        "NOTIFICATIONS_EMAIL_FROM",
+        "NOTIFICATIONS_EMAIL_REPLY_TO",
+        "PORT",
+        "PUBLIC_BOOKING_CLOSED",
+        "RATE_LIMIT_SECRET",
+        "REQUIRE_INTERNAL_MFA",
+        "RESEND_API_KEY",
+        "RESEND_WEBHOOK_SECRET",
+        "WEB_PUBLIC_ORIGIN"
+      ]
+    },
+    "/etc/kortek-api/runtime-env": {
+      "sha256": "6798f01f28e7309b4f7cfbd8abf414e5cfbe86301888557087b79624c6018bc6",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o600",
+      "names": [
+        "API_PUBLIC_ORIGIN",
+        "APP_RELEASE",
+        "CLERK_AUTHORIZED_PARTIES",
+        "CLERK_INVITATION_REDIRECT_URL",
+        "CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY",
+        "CLOUDINARY_API_KEY",
+        "CLOUDINARY_API_SECRET",
+        "CLOUDINARY_CLOUD_NAME",
+        "CORS_ALLOWED_ORIGINS",
+        "DATABASE_URL",
+        "DEPLOY_ENV",
+        "HOST",
+        "JWT_SECRET",
+        "KORTEK_API_IMAGE",
+        "NODE_ENV",
+        "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED",
+        "NOTIFICATIONS_EMAIL_ENABLED",
+        "PORT",
+        "PUBLIC_BOOKING_CLOSED",
+        "RATE_LIMIT_SECRET",
+        "REQUIRE_INTERNAL_MFA",
+        "WEB_PUBLIC_ORIGIN"
+      ]
+    },
+    "/etc/kortek-worker/database-url": {
+      "sha256": "4f4e71b985c7783935a1348f129b3c2deba081e6fff2ef37f761d934b8f39f05",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o600",
+      "names": [
+        "DATABASE_URL"
+      ]
+    },
+    "/etc/systemd/system/kortek-api-staging.service": {
+      "sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o644",
+      "content": "[Unit]\nDescription=Kortek Booking staging API (Cutover QA)\nWants=network-online.target\nAfter=network-online.target\nStartLimitIntervalSec=300\nStartLimitBurst=5\n\n[Service]\nType=simple\nUser=opc\nGroup=opc\nEnvironment=XDG_RUNTIME_DIR=/run/user/1000\nEnvironment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus\nLoadCredential=runtime-env:/etc/kortek-api-staging/runtime-env\nExecStart=/usr/local/libexec/kortek-api-staging-run.sh\nExecStop=/usr/bin/podman stop --time 30 --ignore kortek-api-staging\nExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-api-staging\nRestart=on-failure\nRestartSec=15\nTimeoutStopSec=45\nPrivateTmp=true\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    "/etc/systemd/system/kortek-api.service": {
+      "sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o644",
+      "content": "[Unit]\nDescription=Kortek Booking production API\nWants=network-online.target\nAfter=network-online.target\nStartLimitIntervalSec=300\nStartLimitBurst=5\n\n[Service]\nType=simple\nUser=opc\nGroup=opc\nEnvironment=XDG_RUNTIME_DIR=/run/user/1000\nEnvironment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus\nEnvironment=KORTEK_API_IMAGE_OVERRIDE=sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775\nEnvironment=APP_RELEASE_OVERRIDE=8e1501e89a132e1b01d3633b1b3f896a8cbe5800\nLoadCredential=runtime-env:/etc/kortek-api/runtime-env\nExecStart=/usr/local/libexec/kortek-api-run.sh\nExecStop=/usr/bin/podman stop --time 30 --ignore kortek-api\nExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-api\nRestart=on-failure\nRestartSec=15\nTimeoutStopSec=45\nPrivateTmp=true\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    "/etc/systemd/system/kortek-email-worker-staging.service": {
+      "sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o644",
+      "content": "[Unit]\nDescription=Kortek transactional email worker (Cutover QA only)\nWants=network-online.target\nAfter=network-online.target\nStartLimitIntervalSec=300\nStartLimitBurst=5\n\n[Service]\nType=simple\nUser=opc\nGroup=opc\nEnvironment=XDG_RUNTIME_DIR=/run/user/1000\nEnvironment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus\nLoadCredential=runtime-env:/etc/kortek-api-staging/runtime-env\nExecStart=/usr/local/libexec/kortek-worker-staging-run.sh\nExecStop=/usr/bin/podman stop --time 30 --ignore kortek-email-worker-staging\nExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-email-worker-staging\nRestart=on-failure\nRestartSec=15\nTimeoutStopSec=45\nPrivateTmp=true\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    "/etc/systemd/system/kortek-email-worker.service": {
+      "sha256": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o644",
+      "content": "[Unit]\nDescription=Kortek transactional email worker (channel disabled)\nWants=network-online.target\nAfter=network-online.target\nStartLimitIntervalSec=300\nStartLimitBurst=5\n\n[Service]\nType=simple\nUser=opc\nGroup=opc\nEnvironment=XDG_RUNTIME_DIR=/run/user/1000\nEnvironment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus\nLoadCredential=database-url:/etc/kortek-worker/database-url\nExecStart=/usr/local/libexec/kortek-worker-run.sh\nExecStop=/usr/bin/podman stop --time 30 --ignore kortek-email-worker\nExecStopPost=/usr/bin/podman stop --time 30 --ignore kortek-email-worker\nRestart=on-failure\nRestartSec=15\nTimeoutStopSec=45\nPrivateTmp=true\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    "/usr/local/libexec/kortek-api-run.sh": {
+      "sha256": "7bfe37be39267b8015a288ac9b5cc83724590ca30ef3f01ce0317b01cc442f6f",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "content": "#!/usr/bin/env bash\nset -Eeuo pipefail\n# Only the owner-approved P5 pair may override the credential's selectors.\nselector_requested=${KORTEK_API_IMAGE_OVERRIDE+x}${APP_RELEASE_OVERRIDE+x}\nimage_override=${KORTEK_API_IMAGE_OVERRIDE-}\nrelease_override=${APP_RELEASE_OVERRIDE-}\ncredentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials required}\ntest -r \"$credentials_dir/runtime-env\"\n# Root-owned credential file, never a repository dotenv or a log/argument.\nset -a\nsource \"$credentials_dir/runtime-env\"\nset +a\nif [[ -n \"$selector_requested\" ]]; then\n  if [[ \"$image_override\" != 'sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775' ||\n        \"$release_override\" != '8e1501e89a132e1b01d3633b1b3f896a8cbe5800' ]]; then\n    printf '%s\\n' 'KORTEK_API_SELECTOR_INVALID' >&2\n    exit 64\n  fi\n  export KORTEK_API_IMAGE=\"$image_override\" APP_RELEASE=\"$release_override\"\nfi\nexec podman run --rm --replace --name kortek-api \\\n  --network host --read-only --cap-drop ALL --security-opt no-new-privileges \\\n  --cpus 1.5 --memory 2g --memory-swap 2g --pids-limit 128 \\\n  --tmpfs /tmp:rw,noexec,nosuid,size=64m \\\n  -e NODE_ENV -e DEPLOY_ENV -e APP_RELEASE -e HOST -e PORT \\\n  -e DATABASE_URL -e JWT_SECRET -e RATE_LIMIT_SECRET \\\n  -e WEB_PUBLIC_ORIGIN -e API_PUBLIC_ORIGIN -e CORS_ALLOWED_ORIGINS \\\n  -e CLERK_SECRET_KEY -e CLERK_PUBLISHABLE_KEY -e CLERK_AUTHORIZED_PARTIES \\\n  -e CLERK_INVITATION_REDIRECT_URL -e PUBLIC_BOOKING_CLOSED \\\n  -e REQUIRE_INTERNAL_MFA -e NOTIFICATIONS_EMAIL_ENABLED \\\n  -e NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED \\\n  -e CLOUDINARY_CLOUD_NAME -e CLOUDINARY_API_KEY -e CLOUDINARY_API_SECRET \\\n  -e NODE_OPTIONS=--max-old-space-size=1536 \\\n  -v /home/opc/kortek-api/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \\\n  \"${KORTEK_API_IMAGE:?immutable image required}\"\n"
+    },
+    "/usr/local/libexec/kortek-api-staging-run.sh": {
+      "sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "content": "#!/usr/bin/env bash\nset -Eeuo pipefail\n\ncredentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials required}\ntest -r \"$credentials_dir/runtime-env\"\nset -a\nsource \"$credentials_dir/runtime-env\"\nset +a\n\n# Keep staging on the QA database, test Clerk instance and loopback listener.\n[[ ${NODE_ENV:-} == production ]]\n[[ ${DEPLOY_ENV:-} == staging ]]\n[[ ${HOST:-} == 127.0.0.1 && ${PORT:-} == 3001 ]]\n[[ ${DATABASE_URL:-} =~ ^postgresql://kortek_runtime\\.prirlabbnlcuvnzuaczp: ]]\n[[ ${CLERK_SECRET_KEY:-} == sk_test_* ]]\n[[ ${CLERK_PUBLISHABLE_KEY:-} == pk_test_* ]]\n[[ ${WEB_PUBLIC_ORIGIN:-} == https://qa.booking.kortek.cloud ]]\n[[ ${API_PUBLIC_ORIGIN:-} == https://api.staging.booking.kortek.cloud ]]\n[[ ${CORS_ALLOWED_ORIGINS:-} == https://qa.booking.kortek.cloud ]]\n[[ ${CLERK_AUTHORIZED_PARTIES:-} == https://qa.booking.kortek.cloud ]]\n[[ ${PUBLIC_BOOKING_CLOSED:-} == false ]]\n[[ ${NOTIFICATIONS_EMAIL_ENABLED:-} == true ]]\n[[ ${NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED:-} == true ]]\n\nexec podman run --rm --replace --name kortek-api-staging \\\n  --network host --read-only --cap-drop ALL --security-opt no-new-privileges \\\n  --cpus 0.5 --memory 1g --memory-swap 1g --pids-limit 96 \\\n  --tmpfs /tmp:rw,noexec,nosuid,size=64m \\\n  -e NODE_ENV -e DEPLOY_ENV -e APP_RELEASE -e HOST -e PORT \\\n  -e DATABASE_URL -e JWT_SECRET -e RATE_LIMIT_SECRET \\\n  -e WEB_PUBLIC_ORIGIN -e API_PUBLIC_ORIGIN -e CORS_ALLOWED_ORIGINS \\\n  -e CLERK_SECRET_KEY -e CLERK_PUBLISHABLE_KEY -e CLERK_AUTHORIZED_PARTIES \\\n  -e CLERK_INVITATION_REDIRECT_URL -e PUBLIC_BOOKING_CLOSED \\\n  -e REQUIRE_INTERNAL_MFA -e NOTIFICATIONS_EMAIL_ENABLED \\\n  -e NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED \\\n  -e NOTIFICATIONS_EMAIL_FROM -e NOTIFICATIONS_EMAIL_REPLY_TO \\\n  -e NOTIFICATIONS_ABUSE_SECRET -e RESEND_API_KEY -e RESEND_WEBHOOK_SECRET \\\n  -e CLOUDINARY_CLOUD_NAME -e CLOUDINARY_API_KEY -e CLOUDINARY_API_SECRET \\\n  -e NODE_OPTIONS=--max-old-space-size=768 \\\n  -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \\\n  \"${KORTEK_API_IMAGE:?immutable image required}\"\n"
+    },
+    "/usr/local/libexec/kortek-worker-run.sh": {
+      "sha256": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "content": "#!/usr/bin/env bash\nset -Eeuo pipefail\n\ncredentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials are required}\ntest -r \"$credentials_dir/database-url\"\nexport DATABASE_URL\nDATABASE_URL=$(cat \"$credentials_dir/database-url\")\n\nexec podman run --rm --replace --name kortek-email-worker \\\n  --network host \\\n  --read-only --tmpfs /tmp:rw,noexec,nosuid,size=64m \\\n  -e DATABASE_URL \\\n  -e NOTIFICATIONS_EMAIL_ENABLED=false \\\n  -e NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED=false \\\n  -v /home/opc/kortek-worker/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \\\n  localhost/kortek-worker:c1\n"
+    },
+    "/usr/local/libexec/kortek-worker-staging-run.sh": {
+      "sha256": "919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "content": "#!/usr/bin/env bash\nset -Eeuo pipefail\n\ncredentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials required}\ntest -r \"$credentials_dir/runtime-env\"\nset -a\nsource \"$credentials_dir/runtime-env\"\nset +a\n\n# Fail closed if this unit is ever pointed at production credentials.\n[[ ${NODE_ENV:-} == production && ${DEPLOY_ENV:-} == staging ]]\n[[ ${DATABASE_URL:-} =~ ^postgresql://kortek_runtime\\.prirlabbnlcuvnzuaczp: ]]\n[[ ${WEB_PUBLIC_ORIGIN:-} == https://qa.booking.kortek.cloud ]]\n[[ ${API_PUBLIC_ORIGIN:-} == https://api.staging.booking.kortek.cloud ]]\n[[ ${NOTIFICATIONS_EMAIL_ENABLED:-} == true ]]\n[[ ${NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED:-} == true ]]\n[[ -n ${RESEND_API_KEY:-} && -n ${RESEND_WEBHOOK_SECRET:-} ]]\n[[ -n ${NOTIFICATIONS_EMAIL_FROM:-} && -n ${NOTIFICATIONS_EMAIL_REPLY_TO:-} ]]\n[[ ${#NOTIFICATIONS_ABUSE_SECRET} -ge 32 ]]\n\nexec podman run --rm --replace --name kortek-email-worker-staging \\\n  --network host --read-only --cap-drop ALL --security-opt no-new-privileges \\\n  --cpus 0.25 --memory 384m --memory-swap 384m --pids-limit 64 \\\n  --tmpfs /tmp:rw,noexec,nosuid,size=64m \\\n  -e NODE_ENV -e DEPLOY_ENV -e DATABASE_URL \\\n  -e NOTIFICATIONS_EMAIL_ENABLED -e NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED \\\n  -e NOTIFICATIONS_EMAIL_FROM -e NOTIFICATIONS_EMAIL_REPLY_TO \\\n  -e NOTIFICATIONS_ABUSE_SECRET -e RESEND_API_KEY -e RESEND_WEBHOOK_SECRET \\\n  -e NODE_OPTIONS=--max-old-space-size=256 \\\n  -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \\\n  --entrypoint node \\\n  \"sha256:7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1\" \\\n  dist/notifications/email-worker.cli.js\n"
+    }
+  },
+  "containers": {
+    "kortek-api": {
+      "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+      "pid": 1776110,
+      "started": "2026-10-09T23:59:30.894357329Z",
+      "running": true,
+      "env_sha256": "090302b59022193f49a9b0f7a3b5ca4983af4519a4747a16f171132bb4662a6b",
+      "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+      "flags": {
+        "PUBLIC_BOOKING_CLOSED": "false",
+        "NOTIFICATIONS_EMAIL_ENABLED": "false",
+        "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "false"
+      }
+    },
+    "kortek-email-worker": {
+      "image": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+      "pid": 6654,
+      "started": "2026-09-27T04:15:24.544231174Z",
+      "running": true,
+      "env_sha256": "f10446d2d5e6cd550bf44628329ac78e24a6dca971dc7ec4e45f074107ca279d",
+      "release": null,
+      "flags": {
+        "PUBLIC_BOOKING_CLOSED": null,
+        "NOTIFICATIONS_EMAIL_ENABLED": "false",
+        "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "false"
+      }
+    },
+    "kortek-api-staging": {
+      "image": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+      "pid": 1523029,
+      "started": "2026-10-08T04:47:16.500690063Z",
+      "running": true,
+      "env_sha256": "5a60125dd9f6d9341e254d7982a414b8562e349e3a9a84032f2f589437ac6c05",
+      "release": "b318ca591d1ca6681269a6d25e29ca106d824df9",
+      "flags": {
+        "PUBLIC_BOOKING_CLOSED": "false",
+        "NOTIFICATIONS_EMAIL_ENABLED": "true",
+        "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+      }
+    },
+    "kortek-email-worker-staging": {
+      "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+      "pid": 1084581,
+      "started": "2026-10-04T23:27:29.590750599Z",
+      "running": true,
+      "env_sha256": "95437f5dd5d0940a7856fa8516b949989fd3ac29dc5bad813b9e25af987ef5e8",
+      "release": null,
+      "flags": {
+        "PUBLIC_BOOKING_CLOSED": null,
+        "NOTIFICATIONS_EMAIL_ENABLED": "true",
+        "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true"
+      }
+    }
+  },
+  "images": {
+    "kortek-email-worker": {
+      "id": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+      "created": "2026-09-26T00:59:31.809237039Z",
+      "tags": [
+        "localhost/kortek-worker:c1"
+      ],
+      "labels": {
+        "io.buildah.version": "1.43.1"
+      },
+      "release": null,
+      "env_names": [
+        "NODE_VERSION",
+        "PATH",
+        "YARN_VERSION"
+      ],
+      "cmd": [
+        "node",
+        "dist/notifications/email-worker.cli.js"
+      ],
+      "history": [
+        {
+          "id": "f7ae8699147e2f10e031a2d73dbc09f8bb3b8dc7270c1e19c6028a02abf48535",
+          "created": "2026-09-26T00:59:31.809894083Z",
+          "CreatedBy": "/bin/sh -c #(nop) CMD [\"node\", \"dist/notifications/email-worker.cli.js\"]",
+          "tags": [
+            "localhost/kortek-worker:c1"
+          ],
+          "size": 0,
+          "Created": "2026-09-26T00:59:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-26T00:59:31.658448783Z",
+          "CreatedBy": "/bin/sh -c #(nop) USER node",
+          "tags": [
+            "localhost/kortek-worker:c1"
+          ],
+          "size": 0,
+          "Created": "2026-09-26T00:59:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-26T00:59:31.507450165Z",
+          "CreatedBy": "/bin/sh -c #(nop) WORKDIR /srv/kortek/apps/api",
+          "tags": [
+            "localhost/kortek-worker:c1"
+          ],
+          "size": 0,
+          "Created": "2026-09-26T00:59:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-26T00:59:30.885807821Z",
+          "CreatedBy": "/bin/sh -c pnpm --filter api exec prisma generate  && pnpm --filter api build",
+          "tags": [
+            "localhost/kortek-worker:c1"
+          ],
+          "size": 107912704,
+          "Created": "2026-09-26T00:59:30Z"
+        },
+        {
+          "id": "fc2e079d0e08a7810100169b85ac989617e279e152d546d747ba742207a5c075",
+          "created": "2026-09-26T00:59:07.637979005Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:8cbec48ab3d090e7fc3d2500160f73b9b6b0f8603b6efcb5ff5da0d15806a53f in apps/api/nest-cli.json      ",
+          "size": 4096,
+          "Created": "2026-09-26T00:59:07Z"
+        },
+        {
+          "id": "d7418c67e8d9b2d7f556a7ad235c2b8323c64d5a52f84ba1d12293f6da9ec8b5",
+          "created": "2026-09-26T00:59:07.38083558Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:196f7d64ee5f1c335f2daa515295a3ba84203efacbee83aacee1c3be438d380e in apps/api/tsconfig.build.json      ",
+          "size": 4096,
+          "Created": "2026-09-26T00:59:07Z"
+        },
+        {
+          "id": "bd45e51ce0ca237f20219f2e4ececff7f6ee33152e7156526a33f8dd3e32d073",
+          "created": "2026-09-26T00:59:07.112323322Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:8fe0e02a4e8484471bd16583b6f6a348a0b3eeeb626dd9baac82c60ff1ae0946 in apps/api/tsconfig.json      ",
+          "size": 4608,
+          "Created": "2026-09-26T00:59:07Z"
+        },
+        {
+          "id": "7a8ba7345d1989203bf48d09198de5db3425e8a43085a9a756a9a272be83e209",
+          "created": "2026-09-26T00:59:06.798100968Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY dir:33c7759e44c8602969f886bf04e773cce3966f1fd9211091e13df102f097e059 in apps/api/src      ",
+          "size": 1058304,
+          "Created": "2026-09-26T00:59:06Z"
+        },
+        {
+          "id": "31ef9901d0e214ee004c5ab7ba258dfc24e2d4d70c081346d2acdb22e58bf292",
+          "created": "2026-09-26T00:59:06.442600906Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY dir:992175950d19b0348517beb4aaebfc7ee6a49f0fcba5afab995d541e537bc6a0 in apps/api/prisma      ",
+          "size": 112640,
+          "Created": "2026-09-26T00:59:06Z"
+        },
+        {
+          "id": "70736893f951630f695da71c98c77419450708bb8f917f666d5d262adadcdbe0",
+          "created": "2026-09-26T00:58:16.072471632Z",
+          "CreatedBy": "/bin/sh -c pnpm install --filter api --frozen-lockfile",
+          "size": 1343121408,
+          "Created": "2026-09-26T00:58:16Z"
+        },
+        {
+          "id": "50a1a31d58f50f242255072dfbba542fb2e877aed5123fc7f0acfc06a4ab6f49",
+          "created": "2026-09-26T00:56:51.793033362Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:0622b44a4dbb2d80ded4eef4f71611f7df3b18d2fb515ad165d1787eaf0fa9a6 in apps/api/package.json      ",
+          "size": 6656,
+          "Created": "2026-09-26T00:56:51Z"
+        },
+        {
+          "id": "407dd04cefa8e646c8a7d1741220602ff4ab6a7d82ae6e6e90217443efd9b291",
+          "created": "2026-09-26T00:56:51.536933185Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY multi:922c992d8851fb6bef3c45b5b50422f8f7d1abf895638a865277aec700f42c44 in ./      ",
+          "size": 395264,
+          "Created": "2026-09-26T00:56:51Z"
+        },
+        {
+          "id": "5b2818536bbccfce88a56d9f5efe61b160bc15a8d73815dd8a28a48372cb575f",
+          "created": "2026-09-26T00:56:51.225305607Z",
+          "CreatedBy": "/bin/sh -c #(nop) WORKDIR /srv/kortek",
+          "size": 0,
+          "Created": "2026-09-26T00:56:51Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-26T00:56:50.793055649Z",
+          "CreatedBy": "/bin/sh -c corepack enable && corepack prepare pnpm@11.18.0 --activate",
+          "size": 37597184,
+          "Created": "2026-09-26T00:56:50Z"
+        },
+        {
+          "id": "99214cb37795906830e01b867cfcc33d0bad82a232d847e66fca4cbe5d617721",
+          "created": "2026-09-26T00:56:48.420410409Z",
+          "CreatedBy": "/bin/sh -c apt-get update  && apt-get install -y --no-install-recommends ca-certificates openssl  && rm -rf /var/lib/apt/lists/*",
+          "size": 9680384,
+          "comment": "FROM docker.io/library/node:22-bookworm-slim",
+          "Created": "2026-09-26T00:56:48Z"
+        },
+        {
+          "id": "78175922b1739c305f3832562c569a07cbc0005b39db6b97a4a3ac328b9fae94",
+          "created": "2026-09-23T21:10:43.569113316Z",
+          "CreatedBy": "CMD [\"node\"]",
+          "tags": [
+            "docker.io/library/node:22-bookworm-slim"
+          ],
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:43.569113316Z",
+          "CreatedBy": "ENTRYPOINT [\"docker-entrypoint.sh\"]",
+          "tags": [
+            "docker.io/library/node:22-bookworm-slim"
+          ],
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:43.569113316Z",
+          "CreatedBy": "COPY docker-entrypoint.sh /usr/local/bin/ # buildkit",
+          "tags": [
+            "docker.io/library/node:22-bookworm-slim"
+          ],
+          "size": 3584,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:43.546626261Z",
+          "CreatedBy": "RUN /bin/sh -c set -ex   && savedAptMark=\"$(apt-mark showmanual)\"   && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr --no-install-recommends   && rm -rf /var/lib/apt/lists/*   && export GNUPGHOME=\"$(mktemp -d)\"   && for key in     6A010C5166006599AA17F08146C2130DFD2497F5   ; do     { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ||     { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ;   done   && curl -fsSLO --compressed \"https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz\"   && curl -fsSLO --compressed \"https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc\"   && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz   && gpgconf --kill all   && rm -rf \"$GNUPGHOME\"   && mkdir -p /opt   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz   && apt-mark auto '.*' > /dev/null   && { [ -z \"$savedAptMark\" ] || apt-mark manual $savedAptMark > /dev/null; }   && find /usr/local -type f -executable -exec ldd '{}' ';'     | awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); print so }'     | sort -u     | xargs -r dpkg-query --search     | cut -d: -f1     | sort -u     | xargs -r apt-mark manual   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false   && yarn --version   && rm -rf /tmp/* # buildkit",
+          "size": 7217664,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:31.386494991Z",
+          "CreatedBy": "ENV YARN_VERSION=1.22.22",
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:31.386494991Z",
+          "CreatedBy": "RUN /bin/sh -c ARCH= OPENSSL_ARCH= && dpkgArch=\"$(dpkg --print-architecture)\"     && case \"${dpkgArch##*-}\" in       amd64) ARCH='x64' OPENSSL_ARCH='linux-x86_64';;       ppc64el) ARCH='ppc64le' OPENSSL_ARCH='linux-ppc64le';;       arm64) ARCH='arm64' OPENSSL_ARCH='linux-aarch64';;       armhf) ARCH='armv7l' OPENSSL_ARCH='linux-armv4';;       *) echo \"unsupported architecture\"; exit 1 ;;     esac     && set -ex     && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr xz-utils libatomic1 --no-install-recommends     && rm -rf /var/lib/apt/lists/*     && export GNUPGHOME=\"$(mktemp -d)\"     && for key in       5BE8A3F6C8A5C01D106C0AD820B1A390B168D356       DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7       CC68F5A3106FF448322E48ED27F5E38D5B0A215F       890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C       108F52B48DB57BB0CC439B2997B01419BD92F80A       655F3B5C1FB3FA8D1A0CA6BDE4A7D232B936D2FD       A363A499291CBBC940DD62E41F10027AF002F8B0     ; do       { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ||       { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ;     done     && curl -fsSLO --compressed \"https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz\"     && curl -fsSLO --compressed \"https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc\"     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc     && gpgconf --kill all     && rm -rf \"$GNUPGHOME\"     && grep \" node-v$NODE_VERSION-linux-$ARCH.tar.xz\\$\" SHASUMS256.txt | sha256sum -c -     && tar -xJf \"node-v$NODE_VERSION-linux-$ARCH.tar.xz\" -C /usr/local --strip-components=1 --no-same-owner     && rm \"node-v$NODE_VERSION-linux-$ARCH.tar.xz\" SHASUMS256.txt.asc SHASUMS256.txt     && find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name \"$OPENSSL_ARCH\" -exec rm -rf {} \\;     && apt-mark auto '.*' > /dev/null     && find /usr/local -type f -executable -exec ldd '{}' ';'       | awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); print so }'       | sort -u       | xargs -r dpkg-query --search       | cut -d: -f1       | sort -u       | xargs -r apt-mark manual     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false     && ln -s /usr/local/bin/node /usr/local/bin/nodejs     && node --version     && npm --version     && rm -rf /tmp/* # buildkit",
+          "size": 144506368,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:31.386494991Z",
+          "CreatedBy": "ENV NODE_VERSION=22.23.3",
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:12.498399915Z",
+          "CreatedBy": "RUN /bin/sh -c groupadd --gid 1000 node   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node # buildkit",
+          "size": 21504,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:12Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-18T00:00:00Z",
+          "CreatedBy": "# debian.sh --arch 'arm64' out/ 'bookworm' '@1789689600'",
+          "size": 100239360,
+          "comment": "debuerreotype 0.17",
+          "Created": "2026-09-18T00:00:00Z"
+        }
+      ]
+    },
+    "kortek-email-worker-staging": {
+      "id": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+      "created": "2026-10-01T05:44:09.549668977Z",
+      "tags": [
+        "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+      ],
+      "labels": {
+        "io.buildah.version": "1.43.1"
+      },
+      "release": null,
+      "env_names": [
+        "NODE_VERSION",
+        "PATH",
+        "YARN_VERSION"
+      ],
+      "cmd": [
+        "node",
+        "dist/main.js"
+      ],
+      "history": [
+        {
+          "id": "89fa13f1d56acb86a364dad0385a78a0ce5be270a36adbe05534e217cfb3d85b",
+          "created": "2026-10-01T05:44:09.550241179Z",
+          "CreatedBy": "/bin/sh -c #(nop) CMD [\"node\", \"dist/main.js\"]",
+          "tags": [
+            "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+          ],
+          "size": 0,
+          "Created": "2026-10-01T05:44:09Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-10-01T05:44:09.392664379Z",
+          "CreatedBy": "/bin/sh -c #(nop) USER node",
+          "tags": [
+            "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+          ],
+          "size": 0,
+          "Created": "2026-10-01T05:44:09Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-10-01T05:44:09.240632912Z",
+          "CreatedBy": "/bin/sh -c #(nop) WORKDIR /srv/kortek/apps/api",
+          "tags": [
+            "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+          ],
+          "size": 0,
+          "Created": "2026-10-01T05:44:09Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-10-01T05:44:08.702616346Z",
+          "CreatedBy": "/bin/sh -c pnpm --filter api exec prisma generate && pnpm --filter api build",
+          "tags": [
+            "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+          ],
+          "size": 108487680,
+          "Created": "2026-10-01T05:44:08Z"
+        },
+        {
+          "id": "658c5bbf9a0041568ec205146e1d9817da8baf6e8ab98e92806918f169b61965",
+          "created": "2026-10-01T05:43:52.491804726Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:2a32afde9658e51d75028a9bad8a7bfbd118e64aad7bf956c116e0a469c7a4ea in apps/api/ops/production-startup-drill.cjs      ",
+          "size": 8192,
+          "Created": "2026-10-01T05:43:52Z"
+        },
+        {
+          "id": "dda8601c48fda375af36b9e2e90978da0e613c5432fd4280841e9685f159ef88",
+          "created": "2026-10-01T05:43:52.24151049Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:8cbec48ab3d090e7fc3d2500160f73b9b6b0f8603b6efcb5ff5da0d15806a53f in apps/api/nest-cli.json      ",
+          "size": 4096,
+          "Created": "2026-10-01T05:43:52Z"
+        },
+        {
+          "id": "49f5e163bf65410f5ef087617978f5a06c6fe7ff0e33611adc2065e7ec4a9cdc",
+          "created": "2026-10-01T05:43:52.00137064Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:196f7d64ee5f1c335f2daa515295a3ba84203efacbee83aacee1c3be438d380e in apps/api/tsconfig.build.json      ",
+          "size": 4096,
+          "Created": "2026-10-01T05:43:52Z"
+        },
+        {
+          "id": "92b8731717e29c08b39e55c02da8b575a172fa034a79700b0cf7f59c389d6269",
+          "created": "2026-10-01T05:43:51.752005767Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:8fe0e02a4e8484471bd16583b6f6a348a0b3eeeb626dd9baac82c60ff1ae0946 in apps/api/tsconfig.json      ",
+          "size": 4608,
+          "Created": "2026-10-01T05:43:51Z"
+        },
+        {
+          "id": "457006e05d4b3f35a311cb6a38a9d9176f7b564312dde90b2921035bbab446be",
+          "created": "2026-10-01T05:43:51.470116171Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY dir:93c5e3dfed65e4b241250f6b22058d34342e08366793fb71620f736c35d1f549 in apps/api/src      ",
+          "size": 1219072,
+          "Created": "2026-10-01T05:43:51Z"
+        },
+        {
+          "id": "c4b5ec8a4f7c7d921cb34bc5fecf967594bb8af5a277743aa12de6bc4722ea08",
+          "created": "2026-09-30T21:38:27.382428252Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY dir:9713607f57a3e991322566336783ef8fadc608656c22eb394aa26db0ff3b97a4 in apps/api/prisma      ",
+          "size": 124416,
+          "Created": "2026-09-30T21:38:27Z"
+        },
+        {
+          "id": "991ff532351ee6e35fc49bc2e725d97fcb6effd18ef1c1dd860ad50954d0fc5a",
+          "created": "2026-09-27T04:16:33.733466088Z",
+          "CreatedBy": "/bin/sh -c pnpm install --filter api --frozen-lockfile",
+          "size": 1331067904,
+          "Created": "2026-09-27T04:16:33Z"
+        },
+        {
+          "id": "2b39110f17743a8ae50aa5ebb4fdd4d03e9066fc4b8655f70f0e8245254ba18b",
+          "created": "2026-09-27T04:14:12.211384823Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY file:1c8952041ed03dc813be3cf67b0d90dd31894bbd5b286524409273f754484599 in apps/api/package.json      ",
+          "size": 6656,
+          "Created": "2026-09-27T04:14:12Z"
+        },
+        {
+          "id": "2549db3f6769235105f41b8e3bf250f30f580041954d076cf516ffb101bc2b98",
+          "created": "2026-09-27T04:14:11.925897573Z",
+          "CreatedBy": "/bin/sh -c #(nop) COPY multi:580a0c99043af3416cbc33cc9e520e5a2b3580d15fc4b620a671bc0c0e7b9d0d in ./      ",
+          "size": 406528,
+          "Created": "2026-09-27T04:14:11Z"
+        },
+        {
+          "id": "5b2818536bbccfce88a56d9f5efe61b160bc15a8d73815dd8a28a48372cb575f",
+          "created": "2026-09-26T00:56:51.225305607Z",
+          "CreatedBy": "/bin/sh -c #(nop) WORKDIR /srv/kortek",
+          "size": 0,
+          "Created": "2026-09-26T00:56:51Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-26T00:56:50.793055649Z",
+          "CreatedBy": "/bin/sh -c corepack enable && corepack prepare pnpm@11.18.0 --activate",
+          "size": 37597184,
+          "Created": "2026-09-26T00:56:50Z"
+        },
+        {
+          "id": "99214cb37795906830e01b867cfcc33d0bad82a232d847e66fca4cbe5d617721",
+          "created": "2026-09-26T00:56:48.420410409Z",
+          "CreatedBy": "/bin/sh -c apt-get update  && apt-get install -y --no-install-recommends ca-certificates openssl  && rm -rf /var/lib/apt/lists/*",
+          "size": 9680384,
+          "comment": "FROM docker.io/library/node:22-bookworm-slim",
+          "Created": "2026-09-26T00:56:48Z"
+        },
+        {
+          "id": "78175922b1739c305f3832562c569a07cbc0005b39db6b97a4a3ac328b9fae94",
+          "created": "2026-09-23T21:10:43.569113316Z",
+          "CreatedBy": "CMD [\"node\"]",
+          "tags": [
+            "docker.io/library/node:22-bookworm-slim"
+          ],
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:43.569113316Z",
+          "CreatedBy": "ENTRYPOINT [\"docker-entrypoint.sh\"]",
+          "tags": [
+            "docker.io/library/node:22-bookworm-slim"
+          ],
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:43.569113316Z",
+          "CreatedBy": "COPY docker-entrypoint.sh /usr/local/bin/ # buildkit",
+          "tags": [
+            "docker.io/library/node:22-bookworm-slim"
+          ],
+          "size": 3584,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:43.546626261Z",
+          "CreatedBy": "RUN /bin/sh -c set -ex   && savedAptMark=\"$(apt-mark showmanual)\"   && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr --no-install-recommends   && rm -rf /var/lib/apt/lists/*   && export GNUPGHOME=\"$(mktemp -d)\"   && for key in     6A010C5166006599AA17F08146C2130DFD2497F5   ; do     { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ||     { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ;   done   && curl -fsSLO --compressed \"https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz\"   && curl -fsSLO --compressed \"https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc\"   && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz   && gpgconf --kill all   && rm -rf \"$GNUPGHOME\"   && mkdir -p /opt   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz   && apt-mark auto '.*' > /dev/null   && { [ -z \"$savedAptMark\" ] || apt-mark manual $savedAptMark > /dev/null; }   && find /usr/local -type f -executable -exec ldd '{}' ';'     | awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); print so }'     | sort -u     | xargs -r dpkg-query --search     | cut -d: -f1     | sort -u     | xargs -r apt-mark manual   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false   && yarn --version   && rm -rf /tmp/* # buildkit",
+          "size": 7217664,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:43Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:31.386494991Z",
+          "CreatedBy": "ENV YARN_VERSION=1.22.22",
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:31.386494991Z",
+          "CreatedBy": "RUN /bin/sh -c ARCH= OPENSSL_ARCH= && dpkgArch=\"$(dpkg --print-architecture)\"     && case \"${dpkgArch##*-}\" in       amd64) ARCH='x64' OPENSSL_ARCH='linux-x86_64';;       ppc64el) ARCH='ppc64le' OPENSSL_ARCH='linux-ppc64le';;       arm64) ARCH='arm64' OPENSSL_ARCH='linux-aarch64';;       armhf) ARCH='armv7l' OPENSSL_ARCH='linux-armv4';;       *) echo \"unsupported architecture\"; exit 1 ;;     esac     && set -ex     && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr xz-utils libatomic1 --no-install-recommends     && rm -rf /var/lib/apt/lists/*     && export GNUPGHOME=\"$(mktemp -d)\"     && for key in       5BE8A3F6C8A5C01D106C0AD820B1A390B168D356       DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7       CC68F5A3106FF448322E48ED27F5E38D5B0A215F       890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C       108F52B48DB57BB0CC439B2997B01419BD92F80A       655F3B5C1FB3FA8D1A0CA6BDE4A7D232B936D2FD       A363A499291CBBC940DD62E41F10027AF002F8B0     ; do       { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ||       { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys \"$key\" && gpg --batch --fingerprint \"$key\"; } ;     done     && curl -fsSLO --compressed \"https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz\"     && curl -fsSLO --compressed \"https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc\"     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc     && gpgconf --kill all     && rm -rf \"$GNUPGHOME\"     && grep \" node-v$NODE_VERSION-linux-$ARCH.tar.xz\\$\" SHASUMS256.txt | sha256sum -c -     && tar -xJf \"node-v$NODE_VERSION-linux-$ARCH.tar.xz\" -C /usr/local --strip-components=1 --no-same-owner     && rm \"node-v$NODE_VERSION-linux-$ARCH.tar.xz\" SHASUMS256.txt.asc SHASUMS256.txt     && find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name \"$OPENSSL_ARCH\" -exec rm -rf {} \\;     && apt-mark auto '.*' > /dev/null     && find /usr/local -type f -executable -exec ldd '{}' ';'       | awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); print so }'       | sort -u       | xargs -r dpkg-query --search       | cut -d: -f1       | sort -u       | xargs -r apt-mark manual     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false     && ln -s /usr/local/bin/node /usr/local/bin/nodejs     && node --version     && npm --version     && rm -rf /tmp/* # buildkit",
+          "size": 144506368,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:31.386494991Z",
+          "CreatedBy": "ENV NODE_VERSION=22.23.3",
+          "size": 0,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:31Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-23T21:10:12.498399915Z",
+          "CreatedBy": "RUN /bin/sh -c groupadd --gid 1000 node   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node # buildkit",
+          "size": 21504,
+          "comment": "buildkit.dockerfile.v0",
+          "Created": "2026-09-23T21:10:12Z"
+        },
+        {
+          "id": "<missing>",
+          "created": "2026-09-18T00:00:00Z",
+          "CreatedBy": "# debian.sh --arch 'arm64' out/ 'bookworm' '@1789689600'",
+          "size": 100239360,
+          "comment": "debuerreotype 0.17",
+          "Created": "2026-09-18T00:00:00Z"
+        }
+      ]
+    }
+  },
+  "resources": {
+    "disk_free_bytes": 9367924736,
+    "memory_available_bytes": 9455132672
+  }
+}

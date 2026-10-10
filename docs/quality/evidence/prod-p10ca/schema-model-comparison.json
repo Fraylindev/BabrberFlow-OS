@@ -1,0 +1,44 @@
+[
+  {
+    "model": "Notification",
+    "old_sha256": "111624919b81b14d5443df9770a0a35553fbf4356fedbca577f091f360914191",
+    "new_sha256": "111624919b81b14d5443df9770a0a35553fbf4356fedbca577f091f360914191",
+    "identical": true
+  },
+  {
+    "model": "BookingEmailPreference",
+    "old_sha256": "623b7d10dec329a4813a6c9fc2dbe5309e953f91fbb6c87be632f8c241ad6e70",
+    "new_sha256": "623b7d10dec329a4813a6c9fc2dbe5309e953f91fbb6c87be632f8c241ad6e70",
+    "identical": true
+  },
+  {
+    "model": "BookingEmailEvent",
+    "old_sha256": "878426b50d32b78e8d8fff7b91dcc6c5e464ef4df0da5c0b61ac29cd68e89275",
+    "new_sha256": "878426b50d32b78e8d8fff7b91dcc6c5e464ef4df0da5c0b61ac29cd68e89275",
+    "identical": true
+  },
+  {
+    "model": "EmailOutbox",
+    "old_sha256": "1d4d2cf3df8eae37db795487af926309dd8dabd033047a2c7d3c722a609ecc2d",
+    "new_sha256": "1d4d2cf3df8eae37db795487af926309dd8dabd033047a2c7d3c722a609ecc2d",
+    "identical": true
+  },
+  {
+    "model": "EmailWebhookReceipt",
+    "old_sha256": "b927acbafd891b9e6b7ac48e34e42554c61fabce365e5f8661d4e8325dddfe99",
+    "new_sha256": "b927acbafd891b9e6b7ac48e34e42554c61fabce365e5f8661d4e8325dddfe99",
+    "identical": true
+  },
+  {
+    "model": "EmailAbuseBucket",
+    "old_sha256": "03e0958908010bb213d75195b0aeba4a7810f804ebb1f063f10078348038d733",
+    "new_sha256": "03e0958908010bb213d75195b0aeba4a7810f804ebb1f063f10078348038d733",
+    "identical": true
+  },
+  {
+    "model": "EmailChannelControl",
+    "old_sha256": "981409314a0f6a684409c537eddc89e0dc4c9d7d88ce19d44bf38d2177dc8ea4",
+    "new_sha256": "981409314a0f6a684409c537eddc89e0dc4c9d7d88ce19d44bf38d2177dc8ea4",
+    "identical": true
+  }
+]

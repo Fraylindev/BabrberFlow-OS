@@ -1,0 +1,46 @@
+--- 8e1501e89a132e1b01d3633b1b3f896a8cbe5800:ops/oci-api/kortek-api.service
++++ /etc/systemd/system/kortek-api.service
+@@ -11,6 +11,8 @@
+ Group=opc
+ Environment=XDG_RUNTIME_DIR=/run/user/1000
+ Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
++Environment=KORTEK_API_IMAGE_OVERRIDE=sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775
++Environment=APP_RELEASE_OVERRIDE=8e1501e89a132e1b01d3633b1b3f896a8cbe5800
+ LoadCredential=runtime-env:/etc/kortek-api/runtime-env
+ ExecStart=/usr/local/libexec/kortek-api-run.sh
+ ExecStop=/usr/bin/podman stop --time 30 --ignore kortek-api
+--- 8e1501e89a132e1b01d3633b1b3f896a8cbe5800:ops/oci-api/api-run.sh
++++ /usr/local/libexec/kortek-api-run.sh
+@@ -1,11 +1,23 @@
+ #!/usr/bin/env bash
+ set -Eeuo pipefail
++# Only the owner-approved P5 pair may override the credential's selectors.
++selector_requested=${KORTEK_API_IMAGE_OVERRIDE+x}${APP_RELEASE_OVERRIDE+x}
++image_override=${KORTEK_API_IMAGE_OVERRIDE-}
++release_override=${APP_RELEASE_OVERRIDE-}
+ credentials_dir=${CREDENTIALS_DIRECTORY:?systemd credentials required}
+ test -r "$credentials_dir/runtime-env"
+ # Root-owned credential file, never a repository dotenv or a log/argument.
+ set -a
+ source "$credentials_dir/runtime-env"
+ set +a
++if [[ -n "$selector_requested" ]]; then
++  if [[ "$image_override" != 'sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775' ||
++        "$release_override" != '8e1501e89a132e1b01d3633b1b3f896a8cbe5800' ]]; then
++    printf '%s\n' 'KORTEK_API_SELECTOR_INVALID' >&2
++    exit 64
++  fi
++  export KORTEK_API_IMAGE="$image_override" APP_RELEASE="$release_override"
++fi
+ exec podman run --rm --replace --name kortek-api \
+   --network host --read-only --cap-drop ALL --security-opt no-new-privileges \
+   --cpus 1.5 --memory 2g --memory-swap 2g --pids-limit 128 \
+--- 8e1501e89a132e1b01d3633b1b3f896a8cbe5800:ops/oci-api/kortek-worker-staging-run.sh
++++ /usr/local/libexec/kortek-worker-staging-run.sh
+@@ -29,5 +29,5 @@
+   -e NODE_OPTIONS=--max-old-space-size=256 \
+   -v /home/opc/kortek-api-staging/supabase-ca.crt:/srv/kortek/apps/api/prisma/supabase-ca.crt:ro,z \
+   --entrypoint node \
+-  "${KORTEK_API_IMAGE:?immutable staging image required}" \
++  "sha256:7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1" \
+   dist/notifications/email-worker.cli.js
