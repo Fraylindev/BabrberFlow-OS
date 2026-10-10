@@ -1,0 +1,17 @@
+{
+  "owner_ratification": true,
+  "owner_declaration": "sin evidencia capturada de proveedor/buzon",
+  "local_ignored": true,
+  "mail_value_hashes": {
+    "NOTIFICATIONS_EMAIL_FROM": "8d95dc5d6a73286f67a3e0709fd21aa7a9e4d056aacc904d7134f3e938b49280",
+    "NOTIFICATIONS_EMAIL_REPLY_TO": "903fb429b6dd846361c30bb7f73c098b9ec0e517ca1a8e70b455bdcc73540ea9",
+    "NOTIFICATIONS_ABUSE_SECRET": "21d9373ddf093621ae309762bb7816d9760157dfab263fe31eefd03f8f43e3de",
+    "RESEND_API_KEY": "1a1ca59ca537edd9e697248002a0ac7acfbba9e1635d21c0d0baa08148e6b33d",
+    "RESEND_WEBHOOK_SECRET": "2aa6cf2a02be96f4967bce36f36f3fb9926de4a286d159c057e36c533008b027"
+  },
+  "blobs": {
+    "api-run.sh": "0a28312626216cdee50901541e374cca07b8da2e505d40a4b6954dae1cae5944",
+    "worker-run.sh": "280ff5a101abee4bdd692735a3a97fecb041b8a6a0972ac02f04808431d91c84",
+    "kortek-email-worker.service": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0"
+  }
+}

@@ -1,5 +1,9 @@
 # Documentación de Kortek Booking
 
+## P10c-B2: Fase 1 instalada; correo false por canal pausado — 2026-10-09
+
+**FASE 1 TÉCNICA VERIFICADA / FASE 2 NO EJECUTADA / NO-GO PARA ACTIVAR CORREO.** [Informe B2 y evidencia](quality/WORKER_PRODUCCION_P10C_B2.md): tres blobs B1 instalados, cinco variables por stdin protegido, API P5/8e1501e y worker nuevo bf343354, DB propia y flags false. GET200/404/404, observación10min y cuatro servicios estables; QA intacta. Migrador READ ONLY: OMITTED=5, EMAIL pausado antes/después; no se cambió pausa ni se activó correo. Ratificación del propietario SÍ, sin evidencia capturada de proveedor/buzón. Respaldo root0700 disponible, sin rollback; no hubo reservas/envíos ni cambios de proveedores/base. El estado B1 sin instalar que sigue debajo queda como historia.
+
 ## P10c-B1: adaptaciones nuevas probadas, sin instalación — 2026-10-09
 
 **IMPLEMENTADO / VALIDADO CON FIXTURES / EN REVISIÓN.** [Informe B1 y plan B2](quality/WORKER_PRODUCCION_P10C_B1.md): nuevos archivos ops/oci-api/production, plantillas existentes intactas. API P7 idéntico menos cinco reenvíos; worker con DB propia, credencial compartida, overrides inmutables y guardas productivas. 38 casos locales pasan; systemd verify exit0 en único temporal VM0700, eliminado, sin instalar/reiniciar/secretos/DB. B2 pendiente, en dos fases false y después true, API primero/worker después. Sin acciones de runtime QA/productivo ni activación de imagen.

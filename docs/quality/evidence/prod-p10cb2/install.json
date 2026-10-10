@@ -1,0 +1,81 @@
+{
+  "stage": "install",
+  "passed": true,
+  "backup": "/var/backups/kortek-api/p10cb2-20261010T024503Z",
+  "backup_hashes": {
+    "api-run.sh": "7bfe37be39267b8015a288ac9b5cc83724590ca30ef3f01ce0317b01cc442f6f",
+    "worker-run.sh": "c1737c618d268897f3a355c11ac86564ba419f12f7a556a0084a94ce9233338b",
+    "kortek-email-worker.service": "01b1fc2d63b459b482bf16333afcd0de89275c238ca01956b51503ccb20acbf1",
+    "runtime-env": "6798f01f28e7309b4f7cfbd8abf414e5cfbe86301888557087b79624c6018bc6"
+  },
+  "append": {
+    "original_prefix_preserved": true,
+    "added_names": [
+      "NOTIFICATIONS_EMAIL_FROM",
+      "NOTIFICATIONS_EMAIL_REPLY_TO",
+      "NOTIFICATIONS_ABUSE_SECRET",
+      "RESEND_API_KEY",
+      "RESEND_WEBHOOK_SECRET"
+    ],
+    "added_lines": 5,
+    "sha256": "f2243fcf0f47df66fcacfc2586df6ca3eb7bcfa8130e163ec2884ac604baef4b",
+    "mode": "0o600"
+  },
+  "api": {
+    "MainPID": "1794989",
+    "NRestarts": "0",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "api_container": {
+    "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+    "release": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "flags": {
+      "PUBLIC_BOOKING_CLOSED": "false",
+      "NOTIFICATIONS_EMAIL_ENABLED": "false",
+      "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "false"
+    },
+    "mail_hashes": {
+      "NOTIFICATIONS_EMAIL_FROM": "8d95dc5d6a73286f67a3e0709fd21aa7a9e4d056aacc904d7134f3e938b49280",
+      "NOTIFICATIONS_EMAIL_REPLY_TO": "903fb429b6dd846361c30bb7f73c098b9ec0e517ca1a8e70b455bdcc73540ea9",
+      "NOTIFICATIONS_ABUSE_SECRET": "21d9373ddf093621ae309762bb7816d9760157dfab263fe31eefd03f8f43e3de",
+      "RESEND_API_KEY": "1a1ca59ca537edd9e697248002a0ac7acfbba9e1635d21c0d0baa08148e6b33d",
+      "RESEND_WEBHOOK_SECRET": "2aa6cf2a02be96f4967bce36f36f3fb9926de4a286d159c057e36c533008b027"
+    },
+    "database_url_hash": "2e5efc173f1df97bc32f8aa317807ede3dec2676bac9426e4581f0345f07842a"
+  },
+  "events": [
+    {
+      "command": [
+        "systemctl",
+        "stop",
+        "kortek-email-worker"
+      ],
+      "utc": "2026-10-10T02:45:03.538005+00:00",
+      "local": "2026-10-09T22:45:03.538005-04:00",
+      "end_utc": "2026-10-10T02:45:04.705971+00:00",
+      "exit": 0
+    },
+    {
+      "command": [
+        "systemctl",
+        "daemon-reload"
+      ],
+      "utc": "2026-10-10T02:45:04.712238+00:00",
+      "local": "2026-10-09T22:45:04.712238-04:00",
+      "end_utc": "2026-10-10T02:45:05.028655+00:00",
+      "exit": 0
+    },
+    {
+      "command": [
+        "systemctl",
+        "restart",
+        "kortek-api"
+      ],
+      "utc": "2026-10-10T02:45:05.028715+00:00",
+      "local": "2026-10-09T22:45:05.028715-04:00",
+      "end_utc": "2026-10-10T02:45:05.346701+00:00",
+      "exit": 0
+    }
+  ]
+}
