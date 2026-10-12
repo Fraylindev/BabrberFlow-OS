@@ -1,0 +1,204 @@
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:25 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:25 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:25 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed status=429 code=rate_limit[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:25 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_accepted[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:33 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:25 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_revoked[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:25 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation failed with an unknown error[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: claims_mismatch[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: Error[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk no disponible: Error[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 37984  - [39m11/10/2026, 4:36:39 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+PASS src/bookings/calendar.integration.spec.ts (29.339 s)
+  ● Console
+
+    console.log
+      {"legacyWritersAccepted":2,"eventCount":2,"retainedLastWriterRisk":true}
+
+      at Object.<anonymous> (bookings/calendar.integration.spec.ts:493:13)
+
+    console.log
+      {"sameInstantHttp":[400,400],"revisionUnchanged":true,"bookingUnchanged":true,"events":0,"outboxDelta":0}
+
+      at Object.<anonymous> (bookings/calendar.integration.spec.ts:567:13)
+
+    console.log
+      {"budget":"read","limit":60,"hits":[{"accepted":32,"blocked":8,"retries":[60,60,60,60,60,60,60,60],"elapsed":259},{"accepted":28,"blocked":12,"retries":[60,60,60,60,60,60,60,60,60,60,60,60],"elapsed":401}]}
+
+      at bookings/calendar.integration.spec.ts:770:15
+
+    console.log
+      {"budget":"availability","limit":30,"hits":[{"accepted":19,"blocked":1,"retries":[60],"elapsed":298},{"accepted":11,"blocked":9,"retries":[60,60,60,60,60,60,60,60,60],"elapsed":374}]}
+
+      at bookings/calendar.integration.spec.ts:770:15
+
+    console.log
+      {"budget":"write","limit":10,"hits":[{"accepted":1,"blocked":9,"retries":[60,60,60,60,60,60,60,60,60],"elapsed":330},{"accepted":9,"blocked":1,"retries":[60],"elapsed":283}]}
+
+      at bookings/calendar.integration.spec.ts:770:15
+
+    console.log
+      {"selectorDays":31,"elapsedMs":395.84419999999955,"transactionBudgetMs":15000}
+
+      at Object.<anonymous> (bookings/calendar.integration.spec.ts:918:13)
+
+    console.log
+      {"syntheticBookings":20000,"syntheticProfessionals":50,"plans":[{"scoped":false,"plan":[{"QUERY PLAN":[{"Plan":{"Node Type":"Limit","Parallel Aware":false,"Async Capable":false,"Startup Cost":2334.98,"Total Cost":2335.48,"Plan Rows":201,"Plan Width":146,"Actual Startup Time":5.259,"Actual Total Time":5.276,"Actual Rows":168,"Actual Loops":1,"Disabled":false,"Shared Hit Blocks":1266,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Sort","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Startup Cost":2334.98,"Total Cost":2347.47,"Plan Rows":4997,"Plan Width":146,"Actual Startup Time":5.258,"Actual Total Time":5.267,"Actual Rows":168,"Actual Loops":1,"Disabled":false,"Sort Key":["b.\"startTime\"","b.id"],"Sort Method":"quicksort","Sort Space Used":68,"Sort Space Type":"Memory","Shared Hit Blocks":1266,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Hash Join","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Join Type":"Inner","Startup Cost":260.21,"Total Cost":2118.83,"Plan Rows":4997,"Plan Width":146,"Actual Startup Time":3.627,"Actual Total Time":5.212,"Actual Rows":168,"Actual Loops":1,"Disabled":false,"Inner Unique":true,"Hash Cond":"(b.\"serviceId\" = s.id)","Shared Hit Blocks":1266,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Hash Join","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Join Type":"Inner","Startup Cost":241.66,"Total Cost":2087.02,"Plan Rows":4997,"Plan Width":151,"Actual Startup Time":3.56,"Actual Total Time":5.109,"Actual Rows":168,"Actual Loops":1,"Disabled":false,"Inner Unique":true,"Hash Cond":"(b.\"professionalId\" = p.id)","Shared Hit Blocks":1263,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Nested Loop","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Join Type":"Inner","Startup Cost":231.44,"Total Cost":2063.44,"Plan Rows":4997,"Plan Width":163,"Actual Startup Time":3.485,"Actual Total Time":4.994,"Actual Rows":168,"Actual Loops":1,"Disabled":false,"Inner Unique":true,"Shared Hit Blocks":1258,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Bitmap Heap Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Booking","Alias":"b","Startup Cost":231.16,"Total Cost":1875.29,"Plan Rows":4997,"Plan Width":176,"Actual Startup Time":1.704,"Actual Total Time":3.142,"Actual Rows":168,"Actual Loops":1,"Disabled":false,"Recheck Cond":"(\"organizationId\" = 'f52490ad-f52d-474b-9248-61c6b2422fbf'::text)","Rows Removed by Index Recheck":0,"Filter":"((\"startTime\" < '2031-01-08 04:00:00'::timestamp without time zone) AND (\"endTime\" > '2031-01-01 04:00:00'::timestamp without time zone))","Rows Removed by Filter":19833,"Exact Heap Blocks":646,"Lossy Heap Blocks":0,"Shared Hit Blocks":665,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Bitmap Index Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Index Name":"Booking_organizationId_status_createdAt_idx","Startup Cost":0,"Total Cost":229.91,"Plan Rows":19950,"Plan Width":0,"Actual Startup Time":0.461,"Actual Total Time":0.461,"Actual Rows":20001,"Actual Loops":1,"Disabled":false,"Index Cond":"(\"organizationId\" = 'f52490ad-f52d-474b-9248-61c6b2422fbf'::text)","Index Searches":1,"Shared Hit Blocks":19,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]},{"Node Type":"Memoize","Parent Relationship":"Inner","Parallel Aware":false,"Async Capable":false,"Startup Cost":0.28,"Total Cost":0.77,"Plan Rows":1,"Plan Width":61,"Actual Startup Time":0.011,"Actual Total Time":0.011,"Actual Rows":1,"Actual Loops":168,"Disabled":false,"Cache Key":"b.\"clientId\"","Cache Mode":"logical","Cache Hits":167,"Cache Misses":1,"Cache Evictions":0,"Cache Overflows":0,"Peak Memory Usage":1,"Shared Hit Blocks":593,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Index Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Scan Direction":"Forward","Index Name":"Client_pkey","Relation Name":"Client","Alias":"c","Startup Cost":0.27,"Total Cost":0.76,"Plan Rows":1,"Plan Width":61,"Actual Startup Time":1.767,"Actual Total Time":1.767,"Actual Rows":1,"Actual Loops":1,"Disabled":false,"Index Cond":"(id = b.\"clientId\")","Rows Removed by Index Recheck":0,"Index Searches":1,"Shared Hit Blocks":593,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]}]},{"Node Type":"Hash","Parent Relationship":"Inner","Parallel Aware":false,"Async Capable":false,"Startup Cost":7.32,"Total Cost":7.32,"Plan Rows":232,"Plan Width":62,"Actual Startup Time":0.068,"Actual Total Time":0.068,"Actual Rows":217,"Actual Loops":1,"Disabled":false,"Hash Buckets":1024,"Original Hash Buckets":1024,"Hash Batches":1,"Original Hash Batches":1,"Peak Memory Usage":28,"Shared Hit Blocks":5,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Seq Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Professional","Alias":"p","Startup Cost":0,"Total Cost":7.32,"Plan Rows":232,"Plan Width":62,"Actual Startup Time":0.008,"Actual Total Time":0.029,"Actual Rows":217,"Actual Loops":1,"Disabled":false,"Shared Hit Blocks":5,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]}]},{"Node Type":"Hash","Parent Relationship":"Inner","Parallel Aware":false,"Async Capable":false,"Startup Cost":13.8,"Total Cost":13.8,"Plan Rows":380,"Plan Width":64,"Actual Startup Time":0.061,"Actual Total Time":0.061,"Actual Rows":118,"Actual Loops":1,"Disabled":false,"Hash Buckets":1024,"Original Hash Buckets":1024,"Hash Batches":1,"Original Hash Batches":1,"Peak Memory Usage":19,"Shared Hit Blocks":3,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Seq Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Service","Alias":"s","Startup Cost":0,"Total Cost":13.8,"Plan Rows":380,"Plan Width":64,"Actual Startup Time":0.021,"Actual Total Time":0.037,"Actual Rows":118,"Actual Loops":1,"Disabled":false,"Shared Hit Blocks":3,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]}]}]}]},"Planning":{"Shared Hit Blocks":174,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0},"Planning Time":4.683,"Triggers":[],"Execution Time":5.424}]}]},{"scoped":true,"plan":[{"QUERY PLAN":[{"Plan":{"Node Type":"Limit","Parallel Aware":false,"Async Capable":false,"Startup Cost":2122.42,"Total Cost":2122.55,"Plan Rows":49,"Plan Width":146,"Actual Startup Time":3.27,"Actual Total Time":3.273,"Actual Rows":3,"Actual Loops":1,"Disabled":false,"Shared Hit Blocks":676,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Sort","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Startup Cost":2122.42,"Total Cost":2122.55,"Plan Rows":49,"Plan Width":146,"Actual Startup Time":3.269,"Actual Total Time":3.272,"Actual Rows":3,"Actual Loops":1,"Disabled":false,"Sort Key":["b.\"startTime\"","b.id"],"Sort Method":"quicksort","Sort Space Used":25,"Sort Space Type":"Memory","Shared Hit Blocks":676,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Hash Join","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Join Type":"Inner","Startup Cost":249.09,"Total Cost":2121.05,"Plan Rows":49,"Plan Width":146,"Actual Startup Time":1.812,"Actual Total Time":3.265,"Actual Rows":3,"Actual Loops":1,"Disabled":false,"Inner Unique":true,"Hash Cond":"(b.\"serviceId\" = s.id)","Shared Hit Blocks":676,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Nested Loop","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Join Type":"Inner","Startup Cost":230.54,"Total Cost":2102.37,"Plan Rows":49,"Plan Width":151,"Actual Startup Time":1.762,"Actual Total Time":3.212,"Actual Rows":3,"Actual Loops":1,"Disabled":false,"Inner Unique":false,"Shared Hit Blocks":673,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Seq Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Professional","Alias":"p","Startup Cost":0,"Total Cost":7.9,"Plan Rows":1,"Plan Width":62,"Actual Startup Time":0.024,"Actual Total Time":0.029,"Actual Rows":1,"Actual Loops":1,"Disabled":false,"Filter":"(id = 'fae29e3a-e1bd-43fe-9a26-d8a9008b4645'::text)","Rows Removed by Filter":216,"Shared Hit Blocks":5,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0},{"Node Type":"Nested Loop","Parent Relationship":"Inner","Parallel Aware":false,"Async Capable":false,"Join Type":"Inner","Startup Cost":230.54,"Total Cost":2093.98,"Plan Rows":49,"Plan Width":163,"Actual Startup Time":1.737,"Actual Total Time":3.181,"Actual Rows":3,"Actual Loops":1,"Disabled":false,"Inner Unique":true,"Shared Hit Blocks":668,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Bitmap Heap Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Booking","Alias":"b","Startup Cost":229.93,"Total Cost":1923.93,"Plan Rows":49,"Plan Width":176,"Actual Startup Time":1.711,"Actual Total Time":3.152,"Actual Rows":3,"Actual Loops":1,"Disabled":false,"Recheck Cond":"(\"organizationId\" = 'f52490ad-f52d-474b-9248-61c6b2422fbf'::text)","Rows Removed by Index Recheck":0,"Filter":"((\"startTime\" < '2031-01-08 04:00:00'::timestamp without time zone) AND (\"endTime\" > '2031-01-01 04:00:00'::timestamp without time zone) AND (\"professionalId\" = 'fae29e3a-e1bd-43fe-9a26-d8a9008b4645'::text))","Rows Removed by Filter":19998,"Exact Heap Blocks":646,"Lossy Heap Blocks":0,"Shared Hit Blocks":665,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Bitmap Index Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Index Name":"Booking_organizationId_status_createdAt_idx","Startup Cost":0,"Total Cost":229.91,"Plan Rows":19950,"Plan Width":0,"Actual Startup Time":0.446,"Actual Total Time":0.446,"Actual Rows":20001,"Actual Loops":1,"Disabled":false,"Index Cond":"(\"organizationId\" = 'f52490ad-f52d-474b-9248-61c6b2422fbf'::text)","Index Searches":1,"Shared Hit Blocks":19,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]},{"Node Type":"Memoize","Parent Relationship":"Inner","Parallel Aware":false,"Async Capable":false,"Startup Cost":0.61,"Total Cost":4.62,"Plan Rows":1,"Plan Width":61,"Actual Startup Time":0.008,"Actual Total Time":0.008,"Actual Rows":1,"Actual Loops":3,"Disabled":false,"Cache Key":"b.\"clientId\"","Cache Mode":"logical","Cache Hits":2,"Cache Misses":1,"Cache Evictions":0,"Cache Overflows":0,"Peak Memory Usage":1,"Shared Hit Blocks":3,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Bitmap Heap Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Client","Alias":"c","Startup Cost":0.6,"Total Cost":4.61,"Plan Rows":1,"Plan Width":61,"Actual Startup Time":0.02,"Actual Total Time":0.02,"Actual Rows":1,"Actual Loops":1,"Disabled":false,"Recheck Cond":"(id = b.\"clientId\")","Rows Removed by Index Recheck":0,"Exact Heap Blocks":1,"Lossy Heap Blocks":0,"Shared Hit Blocks":3,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Bitmap Index Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Index Name":"Client_pkey","Startup Cost":0,"Total Cost":0.6,"Plan Rows":1,"Plan Width":0,"Actual Startup Time":0.005,"Actual Total Time":0.005,"Actual Rows":1,"Actual Loops":1,"Disabled":false,"Index Cond":"(id = b.\"clientId\")","Index Searches":1,"Shared Hit Blocks":2,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]}]}]}]},{"Node Type":"Hash","Parent Relationship":"Inner","Parallel Aware":false,"Async Capable":false,"Startup Cost":13.8,"Total Cost":13.8,"Plan Rows":380,"Plan Width":64,"Actual Startup Time":0.046,"Actual Total Time":0.046,"Actual Rows":118,"Actual Loops":1,"Disabled":false,"Hash Buckets":1024,"Original Hash Buckets":1024,"Hash Batches":1,"Original Hash Batches":1,"Peak Memory Usage":19,"Shared Hit Blocks":3,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0,"Plans":[{"Node Type":"Seq Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Relation Name":"Service","Alias":"s","Startup Cost":0,"Total Cost":13.8,"Plan Rows":380,"Plan Width":64,"Actual Startup Time":0.012,"Actual Total Time":0.026,"Actual Rows":118,"Actual Loops":1,"Disabled":false,"Shared Hit Blocks":3,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0}]}]}]}]},"Planning":{"Shared Hit Blocks":8,"Shared Read Blocks":0,"Shared Dirtied Blocks":0,"Shared Written Blocks":0,"Local Hit Blocks":0,"Local Read Blocks":0,"Local Dirtied Blocks":0,"Local Written Blocks":0,"Temp Read Blocks":0,"Temp Written Blocks":0},"Planning Time":0.447,"Triggers":[],"Execution Time":3.315}]}]}],"calendarTimes":[22.40899999999965,23.591199999998935,23.842500000002474,24.397000000000844,26.27270000000135,26.399399999998423,29.029900000001362,29.913300000000163,32.93989999999758,34.99880000000121],"p95":34.99880000000121,"proposedThresholdMs":100}
+
+      at Object.<anonymous> (bookings/calendar.integration.spec.ts:962:13)
+
+PASS src/bookings/calendar-compatibility.integration.spec.ts (8.475 s)
+  ● Console
+
+    console.log
+      {"base":"8e1501e","phase":"1 API/web anteriores esquema base","api":"8e1501e","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"8e1501e","phase":"2 API/web anteriores esquema C1 (sin DDL)","api":"8e1501e","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"8e1501e","phase":"3 API nueva web anterior","api":"C1","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"8e1501e","phase":"4 API/web nuevas (web sin cambios)","api":"C1","web":"C1 (sin cambios)","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"8e1501e","phase":"5 rollback API/web anteriores","api":"8e1501e","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"b318ca5","phase":"1 API/web anteriores esquema base","api":"b318ca5","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"b318ca5","phase":"2 API/web anteriores esquema C1 (sin DDL)","api":"b318ca5","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"b318ca5","phase":"3 API nueva web anterior","api":"C1","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"b318ca5","phase":"4 API/web nuevas (web sin cambios)","api":"C1","web":"C1 (sin cambios)","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+    console.log
+      {"base":"b318ca5","phase":"5 rollback API/web anteriores","api":"b318ca5","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+PASS src/business-schedule/business-schedule.integration.spec.ts
+  ● Console
+
+    console.info
+      C1 controlled load: 8 concurrent writes, 602ms total
+
+      at Object.<anonymous> (business-schedule/business-schedule.integration.spec.ts:842:13)
+
+PASS src/auth/auth.service.spec.ts
+PASS src/bookings/booking-concurrency.integration.spec.ts
+PASS src/public-booking/guest-claim-retirement.integration.spec.ts
+PASS src/public-booking/guest-retirement.spec.ts
+PASS src/bookings/calendar-collision.integration.spec.ts
+  ● Console
+
+    console.log
+      {"first":"2026-10-11T20:36:23.144Z","second":"2026-10-11T20:36:23.144Z","collision":true,"before":"1","after":"3"}
+
+      at Object.<anonymous> (bookings/calendar-collision.integration.spec.ts:58:13)
+
+PASS src/public-booking/whatsapp-contract.spec.ts
+PASS src/auth/team-invitations.service.spec.ts
+PASS src/public-booking/public-booking.service.spec.ts
+PASS src/clients/clients.controller.spec.ts
+PASS src/professionals/professionals.controller.spec.ts
+PASS src/bookings/calendar.service.spec.ts
+PASS src/bookings/bookings.controller.spec.ts
+PASS src/professionals/dto/professionals.dto.spec.ts
+PASS src/services/dto/services.dto.spec.ts
+PASS src/auth/clerk-me.controller.spec.ts
+PASS src/auth/guards/b2b-auth.guard.spec.ts
+PASS src/cms/cms.dto.spec.ts
+PASS src/cms/cms.service.spec.ts
+PASS src/analytics/dashboard-summary.service.spec.ts
+PASS src/auth/clerk-onboarding.controller.spec.ts
+PASS src/invoices/invoices.controller.spec.ts
+PASS src/public-booking/public-booking-days.spec.ts
+PASS src/organizations/organizations.controller.spec.ts
+PASS src/prisma/prisma.service.spec.ts
+PASS src/services/services.service.spec.ts
+PASS src/bookings/bookings.service.spec.ts
+PASS src/business-schedule/business-schedule.policy.spec.ts
+PASS src/common/http-telemetry.spec.ts
+PASS src/auth/team-invitations.controller.spec.ts
+PASS src/common/proxy-trust.spec.ts
+PASS src/auth/guards/roles.guard.spec.ts
+PASS src/invoices/invoices.service.spec.ts
+PASS src/notifications/notification-policy.spec.ts
+PASS src/app.controller.spec.ts
+PASS src/auth/clerk-bootstrap.controller.spec.ts
+[31m[Nest] 37984  - [39m11/10/2026, 4:36:37 p. m. [31m  ERROR[39m [38;5;3m[ClerkAuthGuard] [39m[31mError inesperado en ClerkAuthGuard: Error[39m
+PASS src/auth/guards/clerk-auth.guard.spec.ts
+PASS src/media/media-cloudinary.spec.ts
+PASS src/security/postgres-throttler.storage.spec.ts
+PASS src/auth/clerk-user-link.integration.spec.ts
+PASS src/auth/clerk-onboarding.service.spec.ts
+PASS src/auth/clerk/clerk-session-verifier.service.spec.ts
+PASS src/cms/cms.projection.spec.ts
+PASS src/auth/clerk-bootstrap.service.spec.ts
+PASS src/notifications/resend.adapter.spec.ts
+PASS src/media/media-image.spec.ts
+PASS src/organizations/organizations.service.spec.ts
+PASS src/analytics/analytics.service.spec.ts
+PASS src/professionals/professionals.service.spec.ts
+PASS src/auth/internal-mfa-policy.spec.ts
+PASS src/auth/strategies/jwt.strategy.spec.ts
+PASS src/clients/clients.service.spec.ts
+PASS src/clients/dto/clients-dto.spec.ts
+PASS src/common/find-owned-or-throw.util.spec.ts
+[31m[Nest] 37984  - [39m11/10/2026, 4:36:42 p. m. [31m  ERROR[39m [38;5;3m[ClerkOnboardingGuard] [39m[31mError inesperado en ClerkOnboardingGuard: Error[39m
+PASS src/auth/guards/clerk-onboarding.guard.spec.ts
+PASS src/professionals/professional-availability.service.spec.ts
+PASS src/auth/organization-slug.spec.ts
+PASS src/auth/team.service.spec.ts
+PASS src/common/production-config.spec.ts
+PASS src/media/media-policy.spec.ts
+PASS src/common/assert-isolated-database-url.spec.ts
+PASS src/auth/clerk/clerk-auth.config.spec.ts
+PASS src/professionals/professional-availability.util.spec.ts
+PASS src/prisma/database-integrity.spec.ts
+PASS src/common/prisma-error.util.spec.ts
+PASS src/public-booking/availability.util.spec.ts
+PASS src/auth/clerk/to-web-request.spec.ts
+PASS src/auth/team-invitation-redirect.spec.ts
+
+Test Suites: 70 passed, 70 total
+Tests:       920 passed, 920 total
+Snapshots:   0 total
+Time:        72.137 s, estimated 110 s
+Ran all test suites.
+Test results written to: ..\..\docs\quality\evidence\m3-calendario-c1\postgres\d8e52b185fee461c83cc96195d8439a3\full-api.json

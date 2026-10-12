@@ -1,0 +1,215 @@
+{
+  "date": "2026-10-11",
+  "api": "Unmodified dist/main.js bootstrap AppModule, real Guards/Prisma/transaction/budgets",
+  "web": "C2 production CalendarScreen, client, QueryClient and CSS; standalone bundle, local identity context only",
+  "auth": "real locally signed JWT, real DB Membership revalidation; no Clerk/provider",
+  "transportMocks": false,
+  "apiOrigin": "http://127.0.0.1:61449",
+  "browserOrigin": "http://127.0.0.1:61771",
+  "passed": 13,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "persisted-flow-375",
+      "passed": true,
+      "requestCount": 9,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "tokensCopiedExactly": true,
+      "sameInstantDisabled": true,
+      "minimumProjectionVerified": true,
+      "slotInstantCopiedExactly": true,
+      "slotReads": 2,
+      "persisted": true,
+      "eventCount": 1
+    },
+    {
+      "name": "persisted-flow-1440",
+      "passed": true,
+      "requestCount": 9,
+      "overflow": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "tokensCopiedExactly": true,
+      "sameInstantDisabled": true,
+      "minimumProjectionVerified": true,
+      "slotInstantCopiedExactly": true,
+      "slotReads": 2,
+      "persisted": true,
+      "eventCount": 1
+    },
+    {
+      "name": "role-ADMIN",
+      "passed": true,
+      "requestCount": 6,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "backendRoleEnforced": true
+    },
+    {
+      "name": "role-RECEPTIONIST",
+      "passed": true,
+      "requestCount": 6,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "backendRoleEnforced": true
+    },
+    {
+      "name": "role-BARBER",
+      "passed": true,
+      "requestCount": 5,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "backendRoleEnforced": true
+    },
+    {
+      "name": "cursor-pages-and-real-409",
+      "passed": true,
+      "requestCount": 11,
+      "overflow": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "cursorCopiedExactly": true,
+      "uniqueRows": 106,
+      "conflictAfterRealOtherOperator": true,
+      "resetWithoutCursor": true
+    },
+    {
+      "name": "stale-command-409-origin-intact",
+      "passed": true,
+      "requestCount": 9,
+      "overflow": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "winnerPreserved": true,
+      "loserEventCount": 0
+    },
+    {
+      "name": "availability-budget-real-429",
+      "passed": true,
+      "requestCount": 35,
+      "overflow": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+      ],
+      "allowed": 30,
+      "rejected31st": true,
+      "backendRetryAfter": 60,
+      "retryAfterCorsExposed": false,
+      "clientUsesConservativeFallback60": true,
+      "automaticRetries": 0
+    },
+    {
+      "name": "tenants-roles-visit-A-B-A-and-404",
+      "passed": true,
+      "requestCount": 13,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "distinctRealTenantRequests": true,
+      "newVisitReads": true,
+      "uniform404": true,
+      "anonymous401": true
+    },
+    {
+      "name": "day-week-and-real-filters",
+      "passed": true,
+      "requestCount": 8,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "allFiltersUsedRealHTTP": true
+    },
+    {
+      "name": "late-real-read-identity-switch",
+      "passed": true,
+      "requestCount": 10,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "delayedRealResponseSha256": "dfc763e203236391a17f0bba94fb76032ffef088603acac5fa5468eaf052e7b3",
+      "responseBodyAltered": false,
+      "visitAtoBtoA": true,
+      "oldSuccessDidNotLeak": true,
+      "persistedWriteIsNotCancelled": false
+    },
+    {
+      "name": "late-real-write-identity-switch",
+      "passed": true,
+      "requestCount": 13,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [],
+      "delayedRealResponseSha256": "06b74e133f81a6797de2b5eff43f4d53b1047321bc3863cd4fa9b884ce2b9cda",
+      "responseBodyAltered": false,
+      "visitAtoBtoA": true,
+      "oldSuccessDidNotLeak": true,
+      "persistedWriteIsNotCancelled": true
+    },
+    {
+      "name": "real-db-permission-failure-503",
+      "passed": true,
+      "requestCount": 4,
+      "overflow": {
+        "width": 375,
+        "scroll": 375
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "actualPostgresPermissionFailure": true,
+      "fakeResponse": false
+    }
+  ],
+  "failures": [],
+  "requests": 138,
+  "browserClosed": true,
+  "apiClosed": true,
+  "noExternalDestinations": true
+}

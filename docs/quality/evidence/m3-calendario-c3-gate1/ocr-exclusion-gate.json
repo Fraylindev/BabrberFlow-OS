@@ -1,0 +1,42 @@
+[
+  {
+    "command": "node apps/api/test/m3-ocr-publication-gate.cjs --worktree",
+    "exitCode": 0,
+    "expected": 0,
+    "result": {
+      "candidate": "--worktree",
+      "exclusions": 15,
+      "rejected": 0,
+      "paths": [],
+      "historyRewritten": false
+    }
+  },
+  {
+    "command": "node apps/api/test/m3-ocr-publication-gate.cjs da77c88",
+    "exitCode": 1,
+    "expected": 1,
+    "result": {
+      "candidate": "da77c88",
+      "exclusions": 15,
+      "rejected": 15,
+      "paths": [
+        "docs/features/evidence/notifications-c2/public-consent-mobile.png",
+        "docs/quality/evidence/m1-c2/calendario-1280.png",
+        "docs/quality/evidence/m1-c2/calendario-320.png",
+        "docs/quality/evidence/m1-c2/calendario-375.png",
+        "docs/quality/evidence/m1-c2/calendario-390.png",
+        "docs/quality/evidence/m1-c3/calendario-qa.jpg",
+        "docs/quality/evidence/m1-polish/exito-375.png",
+        "docs/quality/evidence/m2-c2/profile-390.png",
+        "docs/quality/evidence/m2-c2/profile-errors-390.png",
+        "docs/quality/evidence/m2-c2/review-mi-perfil-reflow-200.png",
+        "docs/quality/evidence/reserva-invitado-c2/browser/contact-1280.png",
+        "docs/quality/evidence/reserva-invitado-c2/browser/contact-320.png",
+        "docs/quality/evidence/reserva-invitado-c2/browser/contact-375.png",
+        "docs/quality/evidence/reserva-invitado-c2/browser/contact-390.png",
+        "docs/quality/evidence/reserva-invitado-c2/browser/contact-768.png"
+      ],
+      "historyRewritten": false
+    }
+  }
+]

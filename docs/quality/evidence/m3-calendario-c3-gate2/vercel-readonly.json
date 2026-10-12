@@ -1,0 +1,269 @@
+{
+  "project": {
+    "id": "prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p",
+    "name": "kortek-booking",
+    "framework": "nextjs",
+    "accountId": "team_BBm9XjRsZkjh2iZdqZ0909Q8",
+    "createdAt": 1790461893933,
+    "updatedAt": 1791567846100,
+    "nodeVersion": "24.x",
+    "live": false,
+    "latestDeployment": {
+      "id": "dpl_4q1Ap9c6XAnsPv8BXM9j87fBWqDJ",
+      "url": "kortek-booking-7k9qskryq-fraylindev.vercel.app",
+      "createdAt": 1791664937614,
+      "readyState": "READY",
+      "target": null
+    },
+    "domains": [
+      "kortek-booking-fraylindev.vercel.app",
+      "kortek-booking-git-main-fraylindev.vercel.app"
+    ],
+    "passwordProtection": {
+      "enabled": false,
+      "deploymentType": null
+    },
+    "ssoProtection": {
+      "enabled": false,
+      "deploymentType": null
+    }
+  },
+  "QA": {
+    "id": "dpl_4q1Ap9c6XAnsPv8BXM9j87fBWqDJ",
+    "name": "kortek-booking",
+    "url": "kortek-booking-7k9qskryq-fraylindev.vercel.app",
+    "type": "LAMBDAS",
+    "state": "READY",
+    "createdAt": 1791664937614,
+    "project": {
+      "id": "prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p",
+      "name": "kortek-booking",
+      "framework": "nextjs"
+    },
+    "meta": {
+      "githubCommitRef": "ai/antigravity-qa",
+      "githubCommitSha": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+      "githubCommitMessage": "docs: aprobar C0 M3 calendario y fijar D1-D8",
+      "githubRepo": "BabrberFlow-OS",
+      "githubOrg": "Fraylindev"
+    },
+    "alias": [
+      "qa.booking.kortek.cloud",
+      "kortek-booking-git-ai-antigravity-qa-fraylindev.vercel.app"
+    ],
+    "target": null,
+    "regions": [
+      "iad1"
+    ],
+    "buildingAt": 1791664939309,
+    "ready": 1791664950131,
+    "readyState": "READY",
+    "source": "git",
+    "aliasError": null
+  },
+  "production": {
+    "id": "dpl_A5G1gZA8q2KFrDLg6UFsceL3mmQu",
+    "name": "kortek-booking",
+    "url": "kortek-booking-j9iaoob82-fraylindev.vercel.app",
+    "type": "LAMBDAS",
+    "state": "READY",
+    "createdAt": 1791518874151,
+    "project": {
+      "id": "prj_Bb980XG9fFTCSeP5MHOL5eTK9F1p",
+      "name": "kortek-booking",
+      "framework": "nextjs"
+    },
+    "meta": {
+      "githubCommitRef": "main",
+      "githubCommitSha": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+      "githubCommitMessage": "Merge pull request #5 from Fraylindev/ai/antigravity-qa\n\nqa: integración de rama ai/antigravity-qa no asignacion dominio vercel",
+      "githubRepo": "BabrberFlow-OS",
+      "githubOrg": "Fraylindev"
+    },
+    "alias": [
+      "kortek-booking-fraylindev.vercel.app",
+      "kortek-booking-git-main-fraylindev.vercel.app"
+    ],
+    "target": "production",
+    "regions": [
+      "iad1"
+    ],
+    "buildingAt": 1791518875351,
+    "ready": 1791518922255,
+    "readyState": "READY",
+    "source": "git",
+    "aliasError": null
+  },
+  "recent": [
+    {
+      "id": "dpl_4q1Ap9c6XAnsPv8BXM9j87fBWqDJ",
+      "name": "kortek-booking",
+      "url": "kortek-booking-7k9qskryq-fraylindev.vercel.app",
+      "created": 1791664937614,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/antigravity-qa",
+        "githubCommitSha": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+        "githubCommitMessage": "docs: aprobar C0 M3 calendario y fijar D1-D8",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/4q1Ap9c6XAnsPv8BXM9j87fBWqDJ",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_DK5aw3ex7vHuhFztsEE3iW9zrqX5",
+      "name": "kortek-booking",
+      "url": "kortek-booking-gb1sd0pp9-fraylindev.vercel.app",
+      "created": 1791603169443,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "de3a062aba70157da5fbf1b569a73aecb0d04087",
+        "githubCommitMessage": "docs: registrar reanudacion EMAIL y fase 2 P10c-B3",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/DK5aw3ex7vHuhFztsEE3iW9zrqX5",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_F8BiMQii6R6aeVK5uwpMyRtRv9V1",
+      "name": "kortek-booking",
+      "url": "kortek-booking-16ri6okt4-fraylindev.vercel.app",
+      "created": 1791601129872,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "ae89e40b0aec12efa2a32f9f7f29cefb337e280c",
+        "githubCommitMessage": "docs: registrar P10c-B2 fase 1 y canal EMAIL pausado",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/F8BiMQii6R6aeVK5uwpMyRtRv9V1",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_HDWpge5nGrHUrc4e56cCpd1QZtK5",
+      "name": "kortek-booking",
+      "url": "kortek-booking-2bvo0shok-fraylindev.vercel.app",
+      "created": 1791599042350,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "4cc5ad239eae1ea1c43a632004cd3977544b789d",
+        "githubCommitMessage": "ops: versionar y probar adaptaciones productivas P10c-B1",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/HDWpge5nGrHUrc4e56cCpd1QZtK5",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_7bHPQS4k79vwCyy96mXeQ5r7aMF9",
+      "name": "kortek-booking",
+      "url": "kortek-booking-k55quatz1-fraylindev.vercel.app",
+      "created": 1791598192706,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "3368787e12ad4e8c0008b9feca13b5fb882c5825",
+        "githubCommitMessage": "docs: analizar wrappers y construir worker P10c-A sin activar",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/7bHPQS4k79vwCyy96mXeQ5r7aMF9",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_83rH4y9XJpfivy2GqwkSHQmgVbhN",
+      "name": "kortek-booking",
+      "url": "kortek-booking-4p69n1ydf-fraylindev.vercel.app",
+      "created": 1791597003897,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "37a01ba7f4e9421e145d8625366a82105987a9cc",
+        "githubCommitMessage": "docs: registrar parada P10c en prechecks de correo",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/83rH4y9XJpfivy2GqwkSHQmgVbhN",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_G3WeziHXZQi6HEpThn8DwuLKrTSb",
+      "name": "kortek-booking",
+      "url": "kortek-booking-5hxbd846o-fraylindev.vercel.app",
+      "created": 1791591554414,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "8f8ce6679788a2847030242b8bbb2abd121bf35c",
+        "githubCommitMessage": "docs: cerrar reanudacion P10 con reserva publica activa",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/G3WeziHXZQi6HEpThn8DwuLKrTSb",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_FGUgUUecY9fJqWvVTUcv9Vob4QUG",
+      "name": "kortek-booking",
+      "url": "kortek-booking-88eeotsv3-fraylindev.vercel.app",
+      "created": 1791590199980,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "d6ecdd9af455618cf03bdf557fc18042b3511831",
+        "githubCommitMessage": "docs: registrar P10 incompleto sin activacion",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/FGUgUUecY9fJqWvVTUcv9Vob4QUG",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_7A6iq84igfmGpYPcm7bBNd9YV31K",
+      "name": "kortek-booking",
+      "url": "kortek-booking-2xrlwkat5-fraylindev.vercel.app",
+      "created": 1791575302279,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "5f72b3c14af7cc9ae8be7ecee286216ef8945be4",
+        "githubCommitMessage": "docs: cerrar P9 con baseline declarado y Go tecnico",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/7A6iq84igfmGpYPcm7bBNd9YV31K",
+      "isRollbackCandidate": false
+    },
+    {
+      "id": "dpl_HyNaq9B9nCM2zDmMb5RQdUZBQfJu",
+      "name": "kortek-booking",
+      "url": "kortek-booking-7rzfvjpkc-fraylindev.vercel.app",
+      "created": 1791570568353,
+      "state": "READY",
+      "target": null,
+      "meta": {
+        "githubCommitRef": "ai/reserva-invitado-ci",
+        "githubCommitSha": "3b3dafd40b15bca2bb83c6e18e9c836153fa589e",
+        "githubCommitMessage": "docs: verificar pareja P9 y registrar discrepancia de censo",
+        "githubRepo": "BabrberFlow-OS",
+        "githubOrg": "Fraylindev"
+      },
+      "inspectorUrl": "https://vercel.com/fraylindev/kortek-booking/HyNaq9B9nCM2zDmMb5RQdUZBQfJu",
+      "isRollbackCandidate": false
+    }
+  ]
+}

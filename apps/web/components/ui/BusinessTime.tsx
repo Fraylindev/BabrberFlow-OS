@@ -1,7 +1,7 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import { formatBusinessTime } from '@/lib/business-time';
+import { formatBusinessTime } from '@/lib/calendar';
 
 // All visible dates share one minute clock, refreshed on return to the tab.
 const listeners = new Set<() => void>();

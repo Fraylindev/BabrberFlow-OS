@@ -1,0 +1,311 @@
+{
+  "evidenceRun": "docs/quality/evidence/m3-calendario-c1/postgres/d8e52b185fee461c83cc96195d8439a3",
+  "postgres": "18.1",
+  "base": "baba8b56b524e4b64bcf8342d9008c4c796402bc",
+  "collision": {
+    "first": "2026-10-11T20:34:00.987Z",
+    "second": "2026-10-11T20:34:00.987Z",
+    "collision": true,
+    "before": "1",
+    "after": "3"
+  },
+  "budgets": [
+    {
+      "budget": "read",
+      "limit": 60,
+      "hits": [
+        {
+          "accepted": 32,
+          "blocked": 8,
+          "retries": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "elapsed": 319
+        },
+        {
+          "accepted": 28,
+          "blocked": 12,
+          "retries": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "elapsed": 390
+        }
+      ]
+    },
+    {
+      "budget": "availability",
+      "limit": 30,
+      "hits": [
+        {
+          "accepted": 19,
+          "blocked": 1,
+          "retries": [
+            60
+          ],
+          "elapsed": 297
+        },
+        {
+          "accepted": 11,
+          "blocked": 9,
+          "retries": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "elapsed": 421
+        }
+      ]
+    },
+    {
+      "budget": "write",
+      "limit": 10,
+      "hits": [
+        {
+          "accepted": 9,
+          "blocked": 1,
+          "retries": [
+            60
+          ],
+          "elapsed": 221
+        },
+        {
+          "accepted": 1,
+          "blocked": 9,
+          "retries": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "elapsed": 377
+        }
+      ]
+    }
+  ],
+  "selector": {
+    "selectorDays": 31,
+    "elapsedMs": 419.4884999999995,
+    "transactionBudgetMs": 15000
+  },
+  "explain": [
+    {
+      "scoped": false,
+      "executionMs": 5.431,
+      "sharedHit": 1240
+    },
+    {
+      "scoped": true,
+      "executionMs": 2.963,
+      "sharedHit": 653
+    }
+  ],
+  "performance": {
+    "syntheticBookings": 20000,
+    "syntheticProfessionals": 50,
+    "calendarTimes": [
+      24.328999999997905,
+      25.236599999996542,
+      25.30870000000141,
+      25.722500000003492,
+      26.581399999995483,
+      27.35410000000411,
+      27.494800000000396,
+      29.73530000000028,
+      30.058499999999185,
+      42.91399999999703
+    ],
+    "p95": 42.91399999999703,
+    "proposedThresholdMs": 100
+  },
+  "compatibility": [
+    {
+      "base": "8e1501e",
+      "phase": "1 API/web anteriores esquema base",
+      "api": "8e1501e",
+      "web": "8e1501e",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": false,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "8e1501e",
+      "phase": "2 API/web anteriores esquema C1 (sin DDL)",
+      "api": "8e1501e",
+      "web": "8e1501e",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": false,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "8e1501e",
+      "phase": "3 API nueva web anterior",
+      "api": "C1",
+      "web": "8e1501e",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": true,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "8e1501e",
+      "phase": "4 API/web nuevas (web sin cambios)",
+      "api": "C1",
+      "web": "C1 (sin cambios)",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": true,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "8e1501e",
+      "phase": "5 rollback API/web anteriores",
+      "api": "8e1501e",
+      "web": "8e1501e",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": true,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "b318ca5",
+      "phase": "1 API/web anteriores esquema base",
+      "api": "b318ca5",
+      "web": "523d993",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": false,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "b318ca5",
+      "phase": "2 API/web anteriores esquema C1 (sin DDL)",
+      "api": "b318ca5",
+      "web": "523d993",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": false,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "b318ca5",
+      "phase": "3 API nueva web anterior",
+      "api": "C1",
+      "web": "523d993",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": true,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "b318ca5",
+      "phase": "4 API/web nuevas (web sin cambios)",
+      "api": "C1",
+      "web": "C1 (sin cambios)",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": true,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    },
+    {
+      "base": "b318ca5",
+      "phase": "5 rollback API/web anteriores",
+      "api": "b318ca5",
+      "web": "523d993",
+      "schema": "C0 = C1 (sin DDL)",
+      "guest": true,
+      "availability": true,
+      "legacy": true,
+      "state": true,
+      "outbox": true,
+      "preserved": true,
+      "webClientSha256": "1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"
+    }
+  ],
+  "fullApi": {
+    "passed": 920,
+    "failed": 0,
+    "pending": 0,
+    "exitCode": 0
+  },
+  "publicRegression": {
+    "passed": 17,
+    "failed": 0,
+    "pending": 0,
+    "total": 17,
+    "exitCode": 0
+  },
+  "cleanup": true,
+  "exitCode": 0,
+  "legacy": {
+    "legacyWritersAccepted": 2,
+    "eventCount": 2,
+    "retainedLastWriterRisk": true
+  }
+}

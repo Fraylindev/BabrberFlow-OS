@@ -30,6 +30,10 @@ Los identificadores nuevos de imagen/deployment fueron aportados abreviados; no 
 
 Este registro posterior sustituye como estado vigente las menciones anteriores de C3 pendiente/detenido, candidato solo local y falta de activación QA. Los informes, evidencia y checkpoints fechados anteriores se conservan íntegros como historia; no prueban la ejecución manual declarada ahora.
 
+## Enmienda M3 a la limpieza de migración 28 — 2026-10-11
+
+M3 C1 usa ahora Booking_customer_revision, customer_booking_revision() y Client.customerBookingRevision como dependencia funcional de revisión/paginación. La alternativa histórica de compensar toda la migración28 queda condicionada: no retirar ni deshabilitar estos objetos mientras M3 dependa de ellos, ni reiniciar el contador. El retiro B2C no elimina esta dependencia. [Plan de limpieza actualizado, inventario y gates](../quality/MIGRACION_28_PLAN_LIMPIEZA.md). Solo documentación por la revisión C1; no SQL, limpieza ni acceso real autorizados. Los párrafos inferiores conservan su contexto histórico y se interpretan con esta enmienda.
+
 ## Pendientes ordenados por riesgo — sin ejecución autorizada
 
 1. **Rotación de la clave de desarrollo de Clerk.** Planificar la rotación de la clave de desarrollo señalada por el propietario, identificar consumidores y coordinar sustitución y validación sin copiar valores secretos a Git ni documentación. Requiere autorización separada; este cierre no rota claves.

@@ -63,7 +63,7 @@ Sesiones Clerk **reales de prueba**, cuatro identidades sintéticas existentes y
 
 Limitación de entrada: `/login` local no llegó a devolver documento en tres intentos de 30 s. Clerk público/BAPI devolvieron 200 en sondas acotadas; el SDK local devolvió `signed-out/dev-browser-missing`. No se atribuye la causa a un fallo concreto. Para el QA autenticado se inició sesión por el SDK Clerk real desde la página pública, completando Device Trust de prueba y esperando bootstrap 200 antes de cada recorrido. No se desactivó la verificación ni se cambió middleware/autenticación. Esa evidencia prueba sesión/rol/alta/lectura; **no acredita la pantalla `/login` ni el recorrido visual del panel privado** en este entorno.
 
-Capturas públicas sintéticas: [320](evidence/m1-c2/calendario-320.png), [375](evidence/m1-c2/calendario-375.png), [390](evidence/m1-c2/calendario-390.png), [1280](evidence/m1-c2/calendario-1280.png), [éxito Norte](evidence/m1-c2/exito-norte.png), [éxito Sur](evidence/m1-c2/exito-sur.png) y [zoom 200 %](evidence/m1-c2/zoom-200.png). No hay capturas de formulario poblado, login o datos privados.
+Capturas públicas sintéticas: [Evidencia visual excluida de publicación: OCR no determinado.], [Evidencia visual excluida de publicación: OCR no determinado.], [Evidencia visual excluida de publicación: OCR no determinado.], [Evidencia visual excluida de publicación: OCR no determinado.], [éxito Norte](evidence/m1-c2/exito-norte.png), [éxito Sur](evidence/m1-c2/exito-sur.png) y [zoom 200 %](evidence/m1-c2/zoom-200.png). No hay capturas de formulario poblado, login o datos privados.
 
 ## Comandos y resultados
 

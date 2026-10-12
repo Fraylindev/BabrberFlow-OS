@@ -1,0 +1,31 @@
+  console.log
+    {"first":"2026-10-11T20:33:57.085Z","second":"2026-10-11T20:33:57.085Z","collision":true,"before":"0","after":"0"}
+
+      at Object.<anonymous> (bookings/calendar-collision.integration.spec.ts:58:13)
+
+FAIL src/bookings/calendar-collision.integration.spec.ts
+  M3 timestamp collision / existing persisted revision
+    × consecutive Prisma writes may share updatedAt; trigger revision advances even across ABA (255 ms)
+
+  ● M3 timestamp collision / existing persisted revision › consecutive Prisma writes may share updatedAt; trigger revision advances even across ABA
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2n
+    Received: 0n
+
+    [0m [90m 67 |[39m     )[33m;[39m
+     [90m 68 |[39m     expect(writes[[35m0[39m][33m.[39mupdatedAt)[33m.[39mtoEqual(writes[[35m1[39m][33m.[39mupdatedAt)[33m;[39m
+    [31m[1m>[22m[39m[90m 69 |[39m     expect(after[33m.[39mcustomerBookingRevision)[33m.[39mtoBe(
+     [90m    |[39m                                           [31m[1m^[22m[39m
+     [90m 70 |[39m       before[33m.[39mcustomerBookingRevision [33m+[39m [35m2[39mn[33m,[39m
+     [90m 71 |[39m     )[33m;[39m
+     [90m 72 |[39m     expect(writes[[35m1[39m][33m.[39mstatus)[33m.[39mtoBe(booking[33m.[39mstatus)[33m;[39m[0m
+
+      at Object.<anonymous> (bookings/calendar-collision.integration.spec.ts:69:43)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        5.182 s
+Ran all test suites within paths "src/bookings/calendar-collision.integration.spec.ts".

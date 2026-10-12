@@ -1,0 +1,18 @@
+PASS src/bookings/booking-concurrency.integration.spec.ts
+  Booking PostgreSQL concurrency guarantee
+    √ accepts only one of two overlapping concurrent inserts (614 ms)
+    √ serializes archive against internal creation (158 ms)
+    √ serializes archive against creation inside the public transaction (51 ms)
+    √ serializes archive against rescheduling into the future (41 ms)
+    √ serializes archive against reactivating a cancelled future booking (43 ms)
+    √ serializes weekly schedule replacement against booking creation (165 ms)
+    √ enforces tenant ownership for availability rows at PostgreSQL level (65 ms)
+    √ serializes an active block against rescheduling into its range (60 ms)
+    √ serializes an active block against reactivating a cancelled booking (47 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        3.674 s
+Ran all test suites within paths "src/bookings/booking-concurrency.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\m3-calendario-c1\postgres\d8e52b185fee461c83cc96195d8439a3\booking-concurrency.json

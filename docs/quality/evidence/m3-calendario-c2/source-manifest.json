@@ -1,0 +1,62 @@
+{
+  "base": "da77c88a0234b640be8cab0ab11c0afd204f59e4",
+  "apiTree": "0584cf5f527eca4d7d73615591350726f34d8bed",
+  "sources": [
+    {
+      "path": "apps/web/app/dashboard/bookings/page.tsx",
+      "sha256LF": "34d6fd4a4fd8e432980a531d58a394ea162ddd790c280dd2708477437bd7d6a0"
+    },
+    {
+      "path": "apps/web/app/dashboard/calendar/page.tsx",
+      "sha256LF": "d4319ab2e038fac99be4e877e60755207fe7aaa6a19b48deb17617e186a30c10"
+    },
+    {
+      "path": "apps/web/components/booking/BookingActions.tsx",
+      "sha256LF": "9532dd5b7a7c3b24713f7e61f654f06c23d5d90b71854f0fc5263c475aeae7d9"
+    },
+    {
+      "path": "apps/web/components/calendar/Calendar.test.tsx",
+      "sha256LF": "6ee13533c649598e944cfd2754522dc351700a3a069c1e5b5f036e659161e562"
+    },
+    {
+      "path": "apps/web/components/calendar/CalendarDetail.tsx",
+      "sha256LF": "30743e81c470966d9ee4cfc5d907b6df742511ca2bfdb1c23673dfbb544def5c"
+    },
+    {
+      "path": "apps/web/components/calendar/CalendarFailure.tsx",
+      "sha256LF": "39dbdb105d1be02e45c563ada3a9e6bcc5b1f8fdfe36de82033f7a8b60b9c97f"
+    },
+    {
+      "path": "apps/web/components/calendar/CalendarScreen.tsx",
+      "sha256LF": "dc44f3e74fcc225c45039522c62c2915c62dd9980e2073cea006ce4016c0a188"
+    },
+    {
+      "path": "apps/web/components/calendar/CalendarTime.tsx",
+      "sha256LF": "5bfa2ae96839b8aed03fb99a43eefde046ebee58f00b3a19a202aecb6fccda2d"
+    },
+    {
+      "path": "apps/web/components/dashboard/nav-items.ts",
+      "sha256LF": "1a050b5ecb2b65726dd81f55afb9a25606e56e51948069cfce4908d5404a70c7"
+    },
+    {
+      "path": "apps/web/components/ui/BusinessTime.tsx",
+      "sha256LF": "54b215907b969f80eb5e88c0b30368a90c4cb8a32256f075508c779edd9b8a57"
+    },
+    {
+      "path": "apps/web/lib/calendar.test.ts",
+      "sha256LF": "787f4df2a83cda68818e2fdc0af218651be41f1d5a7e494de7b434e0ce967531"
+    },
+    {
+      "path": "apps/web/lib/calendar.ts",
+      "sha256LF": "bb2d164a3b0240f265b53b319055a8a1c3b1f42eedfc83bd3bb461e383ade704"
+    },
+    {
+      "path": "apps/web/scripts/m3-c2-browser.mjs",
+      "sha256LF": "cf4a59d04f870d2305e841bf407815d8cc65c835062c08026969e5dfa08d6d4d"
+    },
+    {
+      "path": "apps/web/scripts/m3-c2-validation.mjs",
+      "sha256LF": "6f34d6451de7501305fb1a8104da6b6845c238ac68174a00e16013114265dabb"
+    }
+  ]
+}

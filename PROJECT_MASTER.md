@@ -1,5 +1,24 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## M3 C3 gate1 local — 2026-10-11
+
+**SOLO GATE1 AUTORIZADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Web C2 contra API C1 completo y PostgreSQL desechable:13 escenarios/138 solicitudes reales, tokens/cursor,409/429/roles/aislamiento/respuestas tardías/503; entorno de identidad local sin Clerk. Tipos/lint/pruebas/builds exit0.15 imágenes OCR inciertas excluidas del árbol candidato, gate por ruta/blob obligatorio para cualquier ref publicable. Hallazgo: Retry-After no expuesto por CORS; fallback60s, correctivo requiere autorización propia. [Cierre, evidencia y límites](docs/quality/M3_CALENDARIO_C3_GATE1_CIERRE.md). Un SHA local, sin push, QA/proveedores/bases reales ni gates2–6. Historia inferior preservada.
+
+
+## M3 C2 frontend — 2026-10-11
+
+**C1 APROBADO (da77c88) / C2 IMPLEMENTADO Y VALIDADO LOCALMENTE / EN REVISIÓN.** Agenda día/semana, filtros, cursor con reinicio409, detalle mínimo y selector de días/slots con tokens recibidos, aislamiento por visita y fechas del módulo puro compartido. Web: tipos, lint, tests y build exit0; evidencia de Chrome real con transporte local controlado en cuatro anchos. [Cierre y límites](docs/quality/M3_CALENDARIO_C2_CIERRE.md). Checkpoint local autorizado; sin push ni backend. QA API aún sin C1: no publicar web sola. C3 pendiente de autorización, incluyendo reagendado real QA y worker consumiendo el evento. Las entradas inferiores son historia preservada.
+
+
+## M3 C1 — aprobación con condiciones y checkpoint local, 2026-10-11
+
+El propietario aprueba C1 con condiciones: verificar mismo instante sin revisión/evento/outbox, dependencia funcional del trigger de migración28 y control negativo, y anotar reagendado real QA con consumo del worker para C3. [Condiciones y evidencia](docs/quality/M3_CALENDARIO_C1_CIERRE.md#13-revisión-aprobada-con-condiciones--2026-10-11); [plan de limpieza de migración28](docs/quality/MIGRACION_28_PLAN_LIMPIEZA.md). Commit local de checkpoint autorizado, sin push. C2 explícitamente cerrado; C3 pendiente, sin ejecutar QA ni proveedores. El estado inferior corresponde a la entrega anterior preservada.
+
+
+## M3 Calendario y reagendar: C1 backend — 2026-10-11
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN; SIN APROBACIÓN FINAL.** [Cierre C1 y evidencia](docs/quality/M3_CALENDARIO_C1_CIERRE.md): cinco rutas autenticadas, proyección mínima, revisión aditiva sobre contador existente, disponibilidad interna, carreras y abuso en PostgreSQL desechable. Sin migración ni índices; ambas APIs anteriores ensayadas en el mismo esquema, cinco parejas por base. D8 fase 1 entrega solo módulo puro y paridad API/web; pantallas y consumo pendiente C2. Públicos, GET/PATCH legacy, plantillas y payloads sellados preservados. La autorización C1 sustituye la prohibición histórica de implementar C0 únicamente para este alcance. No abre C2, QA desplegada, proveedores ni producción. Sin staging, commit o push; aprobación explícita del backend necesaria antes de frontend. Historia inferior preservada.
+
 ## M3 Calendario y reagendar: C0 aprobado — 2026-10-10
 
 **C0 APROBADO POR EL PROPIETARIO / SOLO DOCUMENTAL; SIN IMPLEMENTACIÓN.** [C0, contrato propuesto y plan de validación](docs/quality/M3_CALENDARIO_C0.md): D1–D7 FIJADAS en A y D8 FIJADA. Formateador en dos fases: M3 incluye módulo puro compartido con vectores de paridad y migración web de calendario, lista, detalle y reagendar; plantillas de correo y demás consumidores API quedan para gate propio posterior. M3 no toca plantillas ni payloads sellados. Bases de compatibilidad aportadas por el propietario registradas sin nueva evidencia operativa; despliegue futuro migraciones → API → web compatible con API anterior. M3 requiere C1 backend y aprobación antes de C2; no se autoriza implementar ni ejecutar QA. Único commit/push documental autorizado a ai/antigravity-qa desde 523d993; sin cambios de producción/QA en ejecución, bases reales, flags, variables o ai/reserva-invitado-ci. Historial inferior preservado.

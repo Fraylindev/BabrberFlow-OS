@@ -54,6 +54,9 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Reject excluded OCR images in candidate tree
+        run: node apps/api/test/m3-ocr-publication-gate.cjs HEAD
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 

@@ -1,0 +1,12 @@
+{
+  "syntheticOnly": true,
+  "noDotenv": true,
+  "results": [
+    {
+      "label": "web-lint",
+      "command": "pnpm --config.verify-deps-before-run=false --filter web lint",
+      "exitCode": 0,
+      "elapsedMs": 19961
+    }
+  ]
+}

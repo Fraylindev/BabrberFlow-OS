@@ -7,8 +7,8 @@ import {
   ReceiptIcon,
   TeamIcon,
   SettingsIcon,
-} from "./NavIcons";
-import type { UserRole } from "@/lib/api";
+} from './NavIcons';
+import type { UserRole } from '@/lib/api';
 
 export interface NavItem {
   href: string;
@@ -27,36 +27,58 @@ export interface NavGroup {
 // que la navegación se sienta desordenada.
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "General",
-    items: [{ href: "/dashboard", label: "Resumen", icon: HomeIcon, roles: null }],
+    label: 'General',
+    items: [{ href: '/dashboard', label: 'Resumen', icon: HomeIcon, roles: null }],
   },
   {
-    label: "Operación diaria",
+    label: 'Operación diaria',
     items: [
-      { href: "/dashboard/bookings", label: "Reservas", icon: CalendarIcon, roles: null },
-      { href: "/dashboard/clients", label: "Clientes", icon: UsersIcon, roles: null },
+      {
+        href: '/dashboard/calendar',
+        label: 'Agenda',
+        labelByRole: { BARBER: 'Mi agenda' },
+        icon: CalendarIcon,
+        roles: null,
+      },
+      { href: '/dashboard/bookings', label: 'Reservas', icon: CalendarIcon, roles: null },
+      { href: '/dashboard/clients', label: 'Clientes', icon: UsersIcon, roles: null },
     ],
   },
   {
-    label: "Negocio",
+    label: 'Negocio',
     items: [
-      { href: "/dashboard/professionals", label: "Profesionales", icon: ScissorsIcon, roles: null },
-      { href: "/dashboard/services", label: "Servicios", icon: TagIcon, roles: null },
+      { href: '/dashboard/professionals', label: 'Profesionales', icon: ScissorsIcon, roles: null },
+      { href: '/dashboard/services', label: 'Servicios', icon: TagIcon, roles: null },
       {
-        href: "/dashboard/invoices",
-        label: "Facturación",
+        href: '/dashboard/invoices',
+        label: 'Facturación',
         icon: ReceiptIcon,
-        roles: ["OWNER", "ADMIN", "RECEPTIONIST", "BARBER"],
+        roles: ['OWNER', 'ADMIN', 'RECEPTIONIST', 'BARBER'],
       },
     ],
   },
   {
-    label: "Organización",
+    label: 'Organización',
     items: [
-      { href: "/dashboard/team", label: "Equipo", icon: TeamIcon, roles: ["OWNER", "ADMIN"] },
-      { href: "/dashboard/notifications", label: "Notificaciones", icon: ReceiptIcon, roles: ["OWNER", "ADMIN"] },
-      { href: "/dashboard/media", label: "Medios y promociones", icon: TagIcon, roles: ["OWNER", "ADMIN"] },
-      { href: "/dashboard/settings", label: "Configuración", icon: SettingsIcon, roles: ["OWNER", "ADMIN", "RECEPTIONIST", "BARBER"] },
+      { href: '/dashboard/team', label: 'Equipo', icon: TeamIcon, roles: ['OWNER', 'ADMIN'] },
+      {
+        href: '/dashboard/notifications',
+        label: 'Notificaciones',
+        icon: ReceiptIcon,
+        roles: ['OWNER', 'ADMIN'],
+      },
+      {
+        href: '/dashboard/media',
+        label: 'Medios y promociones',
+        icon: TagIcon,
+        roles: ['OWNER', 'ADMIN'],
+      },
+      {
+        href: '/dashboard/settings',
+        label: 'Configuración',
+        icon: SettingsIcon,
+        roles: ['OWNER', 'ADMIN', 'RECEPTIONIST', 'BARBER'],
+      },
     ],
   },
 ];

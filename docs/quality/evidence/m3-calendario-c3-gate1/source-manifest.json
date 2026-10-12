@@ -1,0 +1,77 @@
+{
+  "base": "9225ce8c9542656c7b1d8ab3d4c2a95a7cab0fa7",
+  "freshApiBuildExit": 0,
+  "sources": [
+    {
+      "path": "apps/api/src/main.ts",
+      "sha256CanonicalLF": "3b8761e3248b8a961621fc7b7efcfd4169cfe2cdc5a3c9617d2bceedb706c772",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/api/src/app.module.ts",
+      "sha256CanonicalLF": "62d24aee42a4ed5c656f21782c0390110c642e66e8087a9805b000b269edc493",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.service.ts",
+      "sha256CanonicalLF": "2867196d2e28180df8557e45ac789e0e84613583888c905a6c9e0bba4549bbcd",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.controller.ts",
+      "sha256CanonicalLF": "c336eb1bb49b8f1d2f1a2d053368ade9febe8518e5a3523a41458b9c215b5069",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/api/src/bookings/calendar-budget.guard.ts",
+      "sha256CanonicalLF": "6513b86a4a020923150604a90414e056369b0e5172e55c1c1000fc800efe4a05",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/api/src/auth/guards/b2b-auth.guard.ts",
+      "sha256CanonicalLF": "122c7edd6168ea8b9c3b6118e57b1bc00204a1bf378e9e042dafae75d9558dc9",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/web/components/calendar/CalendarScreen.tsx",
+      "sha256CanonicalLF": "dc44f3e74fcc225c45039522c62c2915c62dd9980e2073cea006ce4016c0a188",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/web/components/calendar/CalendarDetail.tsx",
+      "sha256CanonicalLF": "30743e81c470966d9ee4cfc5d907b6df742511ca2bfdb1c23673dfbb544def5c",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/web/lib/api.ts",
+      "sha256CanonicalLF": "7e7f85ba23720f18dfc4878722e464ab43f3e0fea19e09e1ba422f43c3893c3a",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/web/lib/calendar.ts",
+      "sha256CanonicalLF": "bb2d164a3b0240f265b53b319055a8a1c3b1f42eedfc83bd3bb461e383ade704",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/web/lib/business-time.ts",
+      "sha256CanonicalLF": "7b3573867b6f78aa24e435e6f25bc85d7f16ec40a23b79d62567a8ace7ba54ca",
+      "matches9225ce8": true
+    },
+    {
+      "path": "apps/api/dist/main.js",
+      "sha256": "34a84c17b8b2204e2442237d8284d62d8aee363aac3432c169fe9f56578bf1b3"
+    },
+    {
+      "path": "apps/api/dist/bookings/calendar.service.js",
+      "sha256": "a0e56317da680dd98ab5478243a7e02ffddbf3693db2512777c60ef4899c8090"
+    },
+    {
+      "path": "apps/web/scripts/m3-c3-gate1-browser.mjs",
+      "sha256": "6fc0bde6caffd241586fe4fb25fd6f03f8714b24e0bf0739c410f32bb630b888"
+    },
+    {
+      "path": "apps/api/test/m3-c3-gate1-run.cjs",
+      "sha256": "a91615a7f314717b463b64a40205d054bba445047be264e95ef25fc82bf8cdfb"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "refs": {
+    "origin/ai/antigravity-qa": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+    "origin/main": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+    "ai/reserva-invitado-ci": "de3a062aba70157da5fbf1b569a73aecb0d04087",
+    "origin/ai/reserva-invitado-ci": "de3a062aba70157da5fbf1b569a73aecb0d04087"
+  },
+  "productionDirectoryTree": "25e9a673c4f27d53358b767cebe7043939872ae8",
+  "candidateSource": "8187600ef0ab8eafcaec5d39f1c620382ed60b11",
+  "productionDirectoryIn8187600": false,
+  "productionDirectoryPreservedOn": "ai/reserva-invitado-ci",
+  "integrationNotPerformed": true,
+  "futurePlan": [
+    "Partir de candidata M3 y aplicar los cinco archivos de ops/oci-api/production desde de3a062 mediante commit propio aprobado.",
+    "Conciliar por archivo ops/oci-api/api-run.sh, kortek-api.service, README.md y test-api-selector.py; conservar selectores y reenvío de correo productivos.",
+    "Mantener aislamiento staging/production, comparar hashes de wrappers instalados y probar fixtures antes de autorizar publicación.",
+    "No promover web primero: migraciones si aplican, API C1, después web C2 del mismo SHA aprobado."
+  ]
+}

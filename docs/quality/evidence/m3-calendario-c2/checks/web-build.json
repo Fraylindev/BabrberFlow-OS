@@ -1,0 +1,12 @@
+{
+  "syntheticOnly": true,
+  "noDotenv": true,
+  "results": [
+    {
+      "label": "web-build",
+      "command": "pnpm --config.verify-deps-before-run=false --filter web build --webpack",
+      "exitCode": 0,
+      "elapsedMs": 27643
+    }
+  ]
+}

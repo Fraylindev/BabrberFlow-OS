@@ -1,0 +1,46 @@
+{
+  "final": "0beee6446732469fb684f65d4dd34009",
+  "previousAttempts": [
+    {
+      "id": "4f209e0cdd3c41a6bfb75dc20a97ffff",
+      "exitCode": 1,
+      "cleanup": true,
+      "passed": 5,
+      "failed": 1,
+      "failureCases": [
+        "cursor-pages-and-real-409"
+      ]
+    },
+    {
+      "id": "654a330e30cc47b695cdb3b347ba1526",
+      "exitCode": 0,
+      "cleanup": true,
+      "passed": 9,
+      "failed": 0,
+      "failureCases": []
+    },
+    {
+      "id": "be86a6f4331f42078e0d89dd42944aad",
+      "exitCode": 1,
+      "cleanup": true,
+      "passed": 0,
+      "failed": 1,
+      "failureCases": [
+        "bootstrap"
+      ]
+    },
+    {
+      "id": "cbd7c0a086ba4c97aab51baeb6f5ea0e",
+      "exitCode": 1,
+      "cleanup": true,
+      "passed": 12,
+      "failed": 1,
+      "failureCases": [
+        "real-db-permission-failure-503"
+      ]
+    }
+  ],
+  "archiveOutsideRepository": true,
+  "noRetriesOrSkippedAssertions": true,
+  "explanation": "Readiness was corrected from nonexistent root to protected401; observer timing was synchronized; the503 expectation was aligned with actual copy. Extended cases prompted new full runs."
+}

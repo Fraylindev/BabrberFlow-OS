@@ -38,7 +38,7 @@ interface BookingActionsProps {
   isIssuing: boolean;
   layout: 'mobile' | 'table';
   onStatusChange: (status: BookingStatus) => void;
-  onReschedule: () => void;
+  onReschedule?: () => void;
   onIssueInvoice: () => void;
   onViewInvoices: () => void;
   onNotifications?: () => void;
@@ -281,7 +281,7 @@ export function BookingActions({
 
   const primaryAction = actions[0];
   const secondaryActions: ContextAction[] = [
-    ...(canReschedule ? [{ label: 'Reprogramar', onSelect: onReschedule }] : []),
+    ...(canReschedule && onReschedule ? [{ label: 'Reprogramar', onSelect: onReschedule }] : []),
     ...actions.slice(1).map((action) => ({
       label: action.label,
       danger: action.to === 'CANCELLED',

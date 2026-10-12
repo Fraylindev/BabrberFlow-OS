@@ -1,0 +1,28 @@
+{
+  "before": "2026-10-12T01:02:12.848198+00:00",
+  "after": "2026-10-12T01:27:17.527929+00:00",
+  "services": {
+    "qaApi": {
+      "samePID": true,
+      "sameImage": true,
+      "sameFlags": true
+    },
+    "qaWorker": {
+      "samePID": true,
+      "sameImage": true,
+      "sameFlags": true
+    },
+    "productionApi": {
+      "samePID": true,
+      "sameImage": true,
+      "sameFlags": true
+    },
+    "productionWorker": {
+      "samePID": true,
+      "sameImage": true,
+      "sameFlags": true
+    }
+  },
+  "sameWrappersAndUnits": true,
+  "noMutationIssued": true
+}

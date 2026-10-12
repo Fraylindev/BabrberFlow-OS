@@ -66,6 +66,8 @@ Antes de editar se buscaron importaciones y usos en `apps/api/src` y `apps/api/t
 
 ## Migraciones y estado operativo
 
+**Enmienda M3, 2026-10-11:** Booking_customer_revision, su función y Client.customerBookingRevision ya tienen uso funcional interno en M3 D5; no son inactivos por el retiro B2C. Conservar habilitados durante cualquier limpieza selectiva. [Plan actualizado de migración28](../quality/MIGRACION_28_PLAN_LIMPIEZA.md). No se ejecuta una limpieza ni se modifica el SQL histórico.
+
 **Cero migraciones propuestas o ejecutadas.** Schema, ledger completo (incluida migración 28), rollback SQL y ops permanecen intactos. CustomerOperation y customer* quedan inactivos desde el runtime B2C retirado; los triggers conservados pueden seguir actualizando revisiones por compatibilidad al escribir Booking. No se desactiva ni altera esa garantía histórica.
 
 No se consulta ni modifica ninguna base habitual/QA/productiva ni proveedor. Docker daemon no disponible (`docker version --format '{{.Server.Version}}'`, exit 1); no se arranca. No se ejecuta integración PostgreSQL ni migrate deploy. El ledger aplicable deberá revisarse antes de una futura publicación; no asumir que QA tiene migración 28 ni aplicarla/eliminarla por inferencia.

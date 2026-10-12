@@ -1,0 +1,22 @@
+$ jest "--runInBand" "--runTestsByPath" "src/bookings/calendar.service.spec.ts"
+PASS src/bookings/calendar.service.spec.ts
+  M3 pure contract
+    √ rejects invalid calendar range 2026-02-30 2026-03-01 (27 ms)
+    √ rejects invalid calendar range 2026-10-10 2026-10-10 (1 ms)
+    √ rejects invalid calendar range 2026-10-10 2026-10-18 (1 ms)
+    √ rejects invalid calendar range 2026-10-11 2026-10-10 (1 ms)
+    √ counts civil days across year boundary (1 ms)
+    √ selector inclusive 31 / 32 days (1 ms)
+    √ rejects unknown fields and absent revision/zone (5 ms)
+    √ shared pure formatter preserves existing web vectors including unusual days (133 ms)
+    √ failed read is 503 with no SQL details, never empty success (4 ms)
+    √ logs only a safe error type for failed reads (1 ms)
+    √ logs only a safe error type for failed reads (1 ms)
+    √ logs only a safe error type for failed reads (1 ms)
+    √ preserves expected HTTP failures without logging them (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       13 passed, 13 total
+Snapshots:   0 total
+Time:        3.522 s
+Ran all test suites within paths "src/bookings/calendar.service.spec.ts".

@@ -1,0 +1,32 @@
+[
+  {
+    "environment": "QA",
+    "migration": "20260720044928_add_invoice_model",
+    "ledgerChecksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+    "localChecksum": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+    "matchingByteVariant": [
+      "CRLF"
+    ],
+    "matchingGitBlobRefs": []
+  },
+  {
+    "environment": "QA",
+    "migration": "20261003120000_customer_stage_one",
+    "ledgerChecksum": "af7d78386c24d3ba31fe4c58de783b6d5c6e1fba018674e7989c1bdc560c592c",
+    "localChecksum": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+    "matchingByteVariant": [
+      "CRLF"
+    ],
+    "matchingGitBlobRefs": []
+  },
+  {
+    "environment": "production",
+    "migration": "20260720044928_add_invoice_model",
+    "ledgerChecksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+    "localChecksum": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+    "matchingByteVariant": [
+      "CRLF"
+    ],
+    "matchingGitBlobRefs": []
+  }
+]

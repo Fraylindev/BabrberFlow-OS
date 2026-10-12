@@ -1,0 +1,15 @@
+{
+  "triggerAbsent": true,
+  "exitCode": 1,
+  "failed": 1,
+  "pending": 0,
+  "failure": "revision expected 2n but received 0n",
+  "expectedFailure": true,
+  "collision": {
+    "first": "2026-10-11T20:33:57.085Z",
+    "second": "2026-10-11T20:33:57.085Z",
+    "collision": true,
+    "before": "0",
+    "after": "0"
+  }
+}

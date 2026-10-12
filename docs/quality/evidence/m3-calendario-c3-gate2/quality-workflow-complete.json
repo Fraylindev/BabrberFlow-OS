@@ -1,0 +1,5 @@
+{
+  "diff": "diff --git a/.github/workflows/quality.yml b/.github/workflows/quality.yml\nindex c9333c0..8e8bfab 100644\n--- a/.github/workflows/quality.yml\n+++ b/.github/workflows/quality.yml\n@@ -54,6 +54,9 @@ jobs:\n           node-version: 22\n           cache: pnpm\n \n+      - name: Reject excluded OCR images in candidate tree\n+        run: node apps/api/test/m3-ocr-publication-gate.cjs HEAD\n+\n       - name: Install dependencies\n         run: pnpm install --frozen-lockfile\n \n",
+  "sourceCommit": "8187600ef0ab8eafcaec5d39f1c620382ed60b11",
+  "exactCompleteDiff": true
+}

@@ -1,0 +1,15 @@
+{
+  "observedUTC": "2026-10-12T01:34:53.194069+00:00",
+  "method": "DOM de sesión autenticada Vercel, solo lectura; sin Save",
+  "rootDirectory": "apps/web",
+  "includeFilesOutsideRootDirectory": true,
+  "skipUnaffectedDeployments": true,
+  "buildCommandOverride": false,
+  "installCommandOverride": false,
+  "framework": "Next.js",
+  "nodeVersion": "24.x",
+  "deploymentChecksConfigured": false,
+  "currentPreviewHasM3Import": false,
+  "currentPreviewBuildCacheHit": true,
+  "remoteCandidateBuildObserved": false
+}

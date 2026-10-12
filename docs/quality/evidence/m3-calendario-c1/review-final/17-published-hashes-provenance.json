@@ -1,0 +1,342 @@
+[
+  {
+    "hash": "d88372f49a6e690d224d2c289e86b6e3ed65362e759efd878bf42014d159943b",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": false,
+    "interpretation": "No: marcador de tipo de un ejemplo de contrato; no contraseña real.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "30f884ac7562f565f1743af153ee58fc472dda45",
+        "path": "BACKEND_CHANGES.md",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "30f884ac7562f565f1743af153ee58fc472dda45",
+        "path": "BACKEND_CHANGES.md",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "ef787d96ea63d89bda257e506a5850039be9e116c82316c162e55dc9a01dfe36",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": false,
+    "interpretation": "No: correo operativo documentado; publicación no elimina su naturaleza de contacto.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "986f2ed082fe72f7fa6a092b14c1dce461af72bd",
+        "path": "CHANGELOG.md",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "f419a87e79a8d1077a33e975ea856e7a8c85a1f0",
+        "path": "CHANGELOG.md",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "3376be1096079dcf8ae80fe35814f3e951b013fd8fac5795c4aa37f3ca1d82cb",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: conexión local de ensayo del runner guest-postgres-run.cjs; no conexión QA/producción.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "62d54aeedadc8c245204e2e4fa2b5d8a59389f51",
+        "path": "apps/api/test/guest-postgres-run.cjs",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "62d54aeedadc8c245204e2e4fa2b5d8a59389f51",
+        "path": "apps/api/test/guest-postgres-run.cjs",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "643b79e8deafb3a3df792b3109d1ca8a499c89f97f4c867ec9153fd874729ec4",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: conexión local de ensayo del runner guest-postgres-run.cjs; no conexión QA/producción.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "62d54aeedadc8c245204e2e4fa2b5d8a59389f51",
+        "path": "apps/api/test/guest-postgres-run.cjs",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "62d54aeedadc8c245204e2e4fa2b5d8a59389f51",
+        "path": "apps/api/test/guest-postgres-run.cjs",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "7cf35c23c24ef1564cc7b823872da2df20922b68469e6800ccf3841b86e1184c",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "62baec51ee47cda9137c596e8b175f1a48b37d1d",
+        "path": "apps/api/src/cms/cms.dto.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "62baec51ee47cda9137c596e8b175f1a48b37d1d",
+        "path": "apps/api/src/cms/cms.dto.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "08168cd80dfd534ab0f10af10f1303fe00af2d43ab5c1432360d137f8197e17a",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "81728290f46673ee242f6140401262e966e81e8e",
+        "path": "apps/api/src/auth/team.service.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "81728290f46673ee242f6140401262e966e81e8e",
+        "path": "apps/api/src/auth/team.service.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "e8f39b3e1382367d6d41ab34dc270d4e7533f978c9e9a775dfe2185b2f96b96c",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "e487c406666debcbfe408a5c7ed05a345067341d",
+        "path": "apps/api/src/notifications/notification-policy.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "e487c406666debcbfe408a5c7ed05a345067341d",
+        "path": "apps/api/src/notifications/notification-policy.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "5b71ed5f946240dc76f3b7c24bdcbbc3528284ec5f4519249fb702686f0df5b8",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "e487c406666debcbfe408a5c7ed05a345067341d",
+        "path": "apps/api/src/notifications/notification-policy.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "e487c406666debcbfe408a5c7ed05a345067341d",
+        "path": "apps/api/src/notifications/notification-policy.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "6b5c8d618815b5e6ca68dd7a04b2b16552d50d2012c3e6d922ae38074127cc73",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "e2b5d7d1892280e686bb1830c52cb6c0b3a21ea4a3ed8b08c34ae7f29c23b5ba",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "f7faa8d2b759b8e4a6f0577503650137cf17a7f2e8408fc7f7bdb3c556dfdcf0",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "f57fa2badbd77ae5ffca77f28c7cd1e0844fdafa9b4a45312dc979c4fe2e140c",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "e67c8def62e708911573f2db1f98ecc083ef36f9dc1f2cbd3c17474f55c44ec7",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "d25354f658256d3988a0a1f07ae2dbfa64c0141b3eaa5650fd268b3fdd903b7d",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "1f6c1f35fba8e0f461ef40adaec3cbda883f6a5bcfa5fddef2df80af49fc0832",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: dato del fixture de la suite .spec.ts indicada; su uso en prueba no demuestra propiedad del dominio.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7b6c3587bc0d162b24605418090d82d16c111294",
+        "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "98da678a16ef95388f9921a9686cdf4cf655e6b5fac76c1ed81f55613d507228",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": true,
+    "interpretation": "Sí: URL del caso negativo cms.dto.spec.ts; el título Jest interpolado se conserva en full-api.json.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "4ddff046d36d78cf414b6724cac87d62f9344df0",
+        "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/full-api.json",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "4ddff046d36d78cf414b6724cac87d62f9344df0",
+        "path": "docs/quality/evidence/reserva-invitado-c1/postgres/e6f8eed515574078ae501d662ba742f0/full-api.json",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  },
+  {
+    "hash": "7aef13f8c0831da45285af94abd2517c5281886c0cb652ceb9117d9df9ef2ba7",
+    "classification": "ya publicado en el historial de origin/ai/antigravity-qa o main",
+    "fixture": false,
+    "interpretation": "No es un token fixture: falso positivo de una frase del título de guest-retirement.spec.ts, reproducida en evidencia; no header de autenticación.",
+    "remoteProofs": {
+      "origin/ai/antigravity-qa": {
+        "blob": "7209cbcee22c10ec41ff56c4d3b471f155d6827f",
+        "path": "docs/quality/evidence/reserva-invitado-c1/consistencia-rutas.json",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      },
+      "origin/main": {
+        "blob": "7209cbcee22c10ec41ff56c4d3b471f155d6827f",
+        "path": "docs/quality/evidence/reserva-invitado-c1/consistencia-rutas.json",
+        "exactMatchedText": true,
+        "canonicalLiteral": true
+      }
+    }
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-11",
+  "head": "baba8b56b524e4b64bcf8342d9008c4c796402bc",
+  "diffCheckExit": 0,
+  "closureBrokenLinks": [],
+  "postgresRuns": [
+    "d8e52b185fee461c83cc96195d8439a3"
+  ],
+  "apiTests": {
+    "passed": 920,
+    "failed": 0,
+    "pending": 0,
+    "exitCode": 0
+  },
+  "publicM1": {
+    "passed": 17,
+    "failed": 0,
+    "pending": 0,
+    "total": 17,
+    "exitCode": 0
+  },
+  "webBarberRegression": {
+    "command": "pnpm --config.verify-deps-before-run=false --filter web exec vitest run components/booking/F0B.test.tsx",
+    "passed": 11,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "gitStatusCounts": {
+    " M": 9,
+    " D": 193,
+    "??": 2
+  },
+  "staged": false,
+  "newCommit": false,
+  "push": false,
+  "commitAuthorized": true,
+  "C3": "plan only; own authorization required",
+  "runtimeHashesDistinct": {
+    "QA": true,
+    "production": true
+  },
+  "OCRAll47Classified": true
+}

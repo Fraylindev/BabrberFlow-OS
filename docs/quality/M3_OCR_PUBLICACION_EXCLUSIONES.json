@@ -1,0 +1,95 @@
+{
+  "policy": "Bloquear cualquier candidato de publicación cuyo árbol incluya estos paths o blobs; no reescribir historial anterior ya publicado. Aplicar gate a cada ref candidata antes de push.",
+  "paths": [
+    {
+      "path": "docs/features/evidence/notifications-c2/public-consent-mobile.png",
+      "blob": "ad74687080157e74faacb2779e494a574a874c0e",
+      "candidate": 3,
+      "candidateHash": "480dbae1609e58cb281170531fb2c160154bffc07b7478ab47fe2d195cd18cd3"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c2/calendario-1280.png",
+      "blob": "376170cddd312060fe62a4cfc2961cd617f00f79",
+      "candidate": 21,
+      "candidateHash": "37c4502b41dfc9ca55d9b7bd5731ef08c21c9aeaa0fa9ff22ccea61d47083b8f"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c2/calendario-320.png",
+      "blob": "d23ec26caa6e29dffa73b7ac7d12a0fd223f7ffb",
+      "candidate": 23,
+      "candidateHash": "8099081c699bb43549f005adc18433f50d573ab3303161ac389dd745db3ec8f6"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c2/calendario-375.png",
+      "blob": "3a40e2a45f79c23fe8f37566f9ca82c03478feb5",
+      "candidate": 27,
+      "candidateHash": "37c4502b41dfc9ca55d9b7bd5731ef08c21c9aeaa0fa9ff22ccea61d47083b8f"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c2/calendario-390.png",
+      "blob": "421547035a10c681b5ca68ead18a4e33192a8986",
+      "candidate": 31,
+      "candidateHash": "37c4502b41dfc9ca55d9b7bd5731ef08c21c9aeaa0fa9ff22ccea61d47083b8f"
+    },
+    {
+      "path": "docs/quality/evidence/m1-c3/calendario-qa.jpg",
+      "blob": "a611d8c8dc4c0f63934925437356bc7b6abde88e",
+      "candidate": 32,
+      "candidateHash": "8099081c699bb43549f005adc18433f50d573ab3303161ac389dd745db3ec8f6"
+    },
+    {
+      "path": "docs/quality/evidence/m1-polish/exito-375.png",
+      "blob": "761a02e6040b23eac9b0e2deef0c0f85a475a492",
+      "candidate": 33,
+      "candidateHash": "3d3590826d19eecaf17ca5a05d045d86f9c539ee33e1ec45cf118bf8bf52f133"
+    },
+    {
+      "path": "docs/quality/evidence/m2-c2/profile-390.png",
+      "blob": "891cd3041f8db1de6ae8a39f46e6327b67608e16",
+      "candidate": 38,
+      "candidateHash": "c9f0cb48107c69c6785947ac423a43de7fdaea02a80b08954a2f28289223830b"
+    },
+    {
+      "path": "docs/quality/evidence/m2-c2/profile-errors-390.png",
+      "blob": "c0589cf7de915dcc9c295082377a6ba27a6b5863",
+      "candidate": 40,
+      "candidateHash": "c9f0cb48107c69c6785947ac423a43de7fdaea02a80b08954a2f28289223830b"
+    },
+    {
+      "path": "docs/quality/evidence/m2-c2/review-mi-perfil-reflow-200.png",
+      "blob": "2c9033d268121fafc65314aa830ee429aef80066",
+      "candidate": 42,
+      "candidateHash": "c9f0cb48107c69c6785947ac423a43de7fdaea02a80b08954a2f28289223830b"
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-1280.png",
+      "blob": "bd7d004fd38a44e24c3b87cf34de0c4132738416",
+      "candidate": 43,
+      "candidateHash": "8a448a77c4eb0ccd810e5e0027b75fc5de07e4b03b85ae4357a15d99007ae76e"
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-320.png",
+      "blob": "b265d5a4d5e00741008291c658679cfc5ad67778",
+      "candidate": 44,
+      "candidateHash": "8a448a77c4eb0ccd810e5e0027b75fc5de07e4b03b85ae4357a15d99007ae76e"
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-375.png",
+      "blob": "b3ea9c6f93f1f1a6a8344b73793c1b38db5957c5",
+      "candidate": 45,
+      "candidateHash": "8a448a77c4eb0ccd810e5e0027b75fc5de07e4b03b85ae4357a15d99007ae76e"
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-390.png",
+      "blob": "c14915a07c4fe79735718d68900c092d56071230",
+      "candidate": 46,
+      "candidateHash": "8a448a77c4eb0ccd810e5e0027b75fc5de07e4b03b85ae4357a15d99007ae76e"
+    },
+    {
+      "path": "docs/quality/evidence/reserva-invitado-c2/browser/contact-768.png",
+      "blob": "21ff0ef05fe5ffad8b4ee18be311bb031fb345bb",
+      "candidate": 47,
+      "candidateHash": "8a448a77c4eb0ccd810e5e0027b75fc5de07e4b03b85ae4357a15d99007ae76e"
+    }
+  ]
+}

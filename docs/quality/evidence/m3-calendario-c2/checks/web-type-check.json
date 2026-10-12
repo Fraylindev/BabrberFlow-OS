@@ -1,0 +1,12 @@
+{
+  "syntheticOnly": true,
+  "noDotenv": true,
+  "results": [
+    {
+      "label": "web-type-check",
+      "command": "pnpm --config.verify-deps-before-run=false --filter web type-check:clean",
+      "exitCode": 0,
+      "elapsedMs": 7638
+    }
+  ]
+}

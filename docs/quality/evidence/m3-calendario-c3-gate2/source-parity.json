@@ -1,0 +1,7 @@
+{
+  "qaWebC0ToLiveProductDiff": [],
+  "qaApiToLiveWebProductDiff": [
+    "apps/api/test/postgres-throttler-retry.e2e-spec.ts",
+    "apps/api/test/public-booking-m1.e2e-spec.ts"
+  ]
+}

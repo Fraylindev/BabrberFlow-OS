@@ -1,0 +1,45 @@
+[
+  {
+    "file": "BACKEND_CHANGES.md",
+    "sourceCommit": "da77c88",
+    "line": 892,
+    "values": {
+      "email": {
+        "length": 6,
+        "characterType": "ASCII letters a-z, lowercase",
+        "exampleTypeMarker": true
+      },
+      "password": {
+        "length": 6,
+        "characterType": "ASCII letters a-z, lowercase",
+        "exampleTypeMarker": true
+      },
+      "organizationId": {
+        "length": 4,
+        "characterType": "ASCII letters a-z, lowercase",
+        "exampleTypeMarker": true
+      }
+    },
+    "operational": false,
+    "meaning": "example of register/login contract, not operational credential"
+  },
+  {
+    "file": "BACKEND_CHANGES.md",
+    "sourceCommit": "da77c88",
+    "line": 896,
+    "values": {
+      "email": {
+        "length": 6,
+        "characterType": "ASCII letters a-z, lowercase",
+        "exampleTypeMarker": true
+      },
+      "password": {
+        "length": 6,
+        "characterType": "ASCII letters a-z, lowercase",
+        "exampleTypeMarker": true
+      }
+    },
+    "operational": false,
+    "meaning": "example of register/login contract, not operational credential"
+  }
+]

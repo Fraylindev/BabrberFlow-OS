@@ -1,0 +1,53 @@
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "guest_c1_d8e52b185fee461c83cc96195d8439a3_test", schema "public" at "127.0.0.1:49701"
+
+28 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+  console.log
+    M1_BUDGET {"professionals":1,"duration":30,"blocks":0,"samplesMs":[68,54,54],"queries":19,"cpuMs":156}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+  console.log
+    M1_BUDGET {"professionals":10,"duration":60,"blocks":0,"samplesMs":[59,61,56],"queries":19,"cpuMs":172}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+  console.log
+    M1_BUDGET {"professionals":40,"duration":15,"blocks":1240,"samplesMs":[234,214,202],"queries":19,"cpuMs":673}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+  console.log
+    M1_BUDGET {"professionals":40,"duration":360,"blocks":1240,"samplesMs":[167,172,173],"queries":19,"cpuMs":515}
+
+      at Object.<anonymous> (public-booking-m1.e2e-spec.ts:665:15)
+
+PASS test/public-booking-m1.e2e-spec.ts (8.163 s)
+  M1 C1 — HTTP, PostgreSQL aislado, coherencia y abuso
+    √ rango inclusivo 31 días, proyección mínima y no-store; selección específica o cualquiera (287 ms)
+    √ DTO cierra queries y fechas imposibles; límite 31 es civil, no segundos (82 ms)
+    √ IDs ajenos e inexistentes indistinguibles; headers no sustituyen negocio y B conserva sus huecos (180 ms)
+    √ cierres parciales/completos, turno individual, bloques ACTIVE/CANCELLED y duración completa (156 ms)
+    √ ocupación de PENDING/CONFIRMED/COMPLETED/NO_SHOW resta, CANCELLED no; cualquiera conserva otro candidato (76 ms)
+    √ zona real/DST: rangos de 23/25 horas y media hora coinciden con el motor diario (189 ms)
+    √ legacy fiel mantiene slots; corrupción confirmada da 503 y retiro/ausencia 404 iguales (194 ms)
+    √ snapshot real: cierre concurrente no produce un mes mezclado; consulta posterior lo ve (163 ms)
+    √ lectura pública igual para cinco roles; configuración privada conserva permisos autoritativos (419 ms)
+    √ fotos existentes: solo publicadas/elegibles, metadata pública, revocación y tenant en entrega (183 ms)
+    √ M1_BUDGET: mide 31 días con catálogo/bloques/duración variables, sin límite fijado por intuición (1905 ms)
+    √ 30/min compartido: inválidas, dos instancias, cambio de slug, spoof IP y recreación no reinician presupuesto (303 ms)
+    √ 35 solicitudes concurrentes a dos instancias: exactamente 30 admitidas y cinco 429 (98 ms)
+    √ contador compartido caído: 503 seguro antes de calcular, nunca disponibilidad vacía (26 ms)
+    √ D11: error genérico idéntico con/sin coincidencia; mantiene rechazo atómico y éxito PENDING separado (126 ms)
+    √ D11: violación real de email único recibe el mismo 400 y revierte Client/Booking (85 ms)
+    √ D11: contacto nuevo y reutilizable conservan 201/PENDING y proyección sin indicador de existencia (115 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       17 passed, 17 total
+Snapshots:   0 total
+Time:        8.285 s, estimated 10 s
+Ran all test suites within paths "test/public-booking-m1.e2e-spec.ts".
+Test results written to: ..\..\docs\quality\evidence\m3-calendario-c1\postgres\d8e52b185fee461c83cc96195d8439a3\public-m1-e2e.json

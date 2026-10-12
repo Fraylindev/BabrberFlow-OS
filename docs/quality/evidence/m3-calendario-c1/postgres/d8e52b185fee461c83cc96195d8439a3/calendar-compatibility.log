@@ -1,0 +1,61 @@
+  console.log
+    {"base":"8e1501e","phase":"1 API/web anteriores esquema base","api":"8e1501e","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"8e1501e","phase":"2 API/web anteriores esquema C1 (sin DDL)","api":"8e1501e","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"8e1501e","phase":"3 API nueva web anterior","api":"C1","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"8e1501e","phase":"4 API/web nuevas (web sin cambios)","api":"C1","web":"C1 (sin cambios)","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"8e1501e","phase":"5 rollback API/web anteriores","api":"8e1501e","web":"8e1501e","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"b318ca5","phase":"1 API/web anteriores esquema base","api":"b318ca5","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"b318ca5","phase":"2 API/web anteriores esquema C1 (sin DDL)","api":"b318ca5","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":false,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"b318ca5","phase":"3 API nueva web anterior","api":"C1","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"b318ca5","phase":"4 API/web nuevas (web sin cambios)","api":"C1","web":"C1 (sin cambios)","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+  console.log
+    {"base":"b318ca5","phase":"5 rollback API/web anteriores","api":"b318ca5","web":"523d993","schema":"C0 = C1 (sin DDL)","guest":true,"availability":true,"legacy":true,"state":true,"outbox":true,"preserved":true,"webClientSha256":"1d60636df0ab20736b7ac6cc4fa60bffc9628fddf8b0b90d23c2b3f2500b970e"}
+
+      at bookings/calendar-compatibility.integration.spec.ts:329:23
+
+PASS src/bookings/calendar-compatibility.integration.spec.ts (18.148 s)
+  M3 five deployment pairs, two exact source baselines, same disposable schema
+    √ 8e1501e five pairs retain guest/availability/legacy/state/outbox/runtime (4747 ms)
+    √ b318ca5 five pairs retain guest/availability/legacy/state/outbox/runtime (3814 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        18.668 s
+Ran all test suites within paths "src/bookings/calendar-compatibility.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\m3-calendario-c1\postgres\d8e52b185fee461c83cc96195d8439a3\calendar-compatibility.json

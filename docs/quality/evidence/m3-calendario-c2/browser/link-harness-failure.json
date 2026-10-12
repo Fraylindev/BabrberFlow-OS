@@ -1,0 +1,263 @@
+{
+  "browser": "Chrome real headless",
+  "transport": "Controlled C1 contract fixture; no live API/QA/provider",
+  "timezone": "Asia/Tokyo",
+  "base": "da77c88",
+  "results": [
+    {
+      "name": "flow-320",
+      "width": 320,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "flow-375",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "flow-768",
+      "width": 768,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "flow-1440",
+      "width": 1440,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "role-ADMIN",
+      "width": 375,
+      "role": "ADMIN",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "role-RECEPTIONIST",
+      "width": 375,
+      "role": "RECEPTIONIST",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "role-BARBER",
+      "width": 375,
+      "role": "BARBER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "pages-409",
+      "width": 1440,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "filters-day-week",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-400",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-401",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-403",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-404",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-409",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-429",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "write-error-503",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "scope-ABA-late-write",
+      "width": 375,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    },
+    {
+      "name": "late-read-after-navigation",
+      "width": 1440,
+      "role": "OWNER",
+      "passed": false,
+      "requests": [],
+      "consoleIssues": [
+        "process is not defined"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "name": "flow-320",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "flow-375",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "flow-768",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "flow-1440",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "role-ADMIN",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "role-RECEPTIONIST",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "role-BARBER",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Mi agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Mi agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Mi agenda', exact: true })\n"
+    },
+    {
+      "name": "pages-409",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "filters-day-week",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-400",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-401",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-403",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-404",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-409",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-429",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "write-error-503",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "scope-ABA-late-write",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    },
+    {
+      "name": "late-read-after-navigation",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Agenda', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Agenda', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: 'Agenda', exact: true })\n"
+    }
+  ],
+  "closed": true
+}

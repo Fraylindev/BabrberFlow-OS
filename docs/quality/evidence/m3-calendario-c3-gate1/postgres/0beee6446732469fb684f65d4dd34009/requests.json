@@ -1,0 +1,2985 @@
+[
+  {
+    "sequence": 1,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 2,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 3,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "2478cd716bc936fca3d82b38842d38ee132a7ed14404e4c0317e5189e8f7ea9b"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 4,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "revisionSha256": "e72d46c63c521ad4cc230312c778ae3b56465f766471f6a255b3072679c5bfe0",
+      "updatedAt": "2026-10-11T23:45:32.728Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 5,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "revisionSha256": "e72d46c63c521ad4cc230312c778ae3b56465f766471f6a255b3072679c5bfe0",
+      "updatedAt": "2026-10-11T23:45:32.728Z",
+      "dayCount": 31
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 6,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "revisionSha256": "e72d46c63c521ad4cc230312c778ae3b56465f766471f6a255b3072679c5bfe0",
+      "updatedAt": "2026-10-11T23:45:32.728Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 7,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-03"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "revisionSha256": "e72d46c63c521ad4cc230312c778ae3b56465f766471f6a255b3072679c5bfe0",
+      "updatedAt": "2026-10-11T23:45:32.728Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 8,
+    "source": "browser-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "revisionSha256": "34fa21e47286465e2d100af6b569e6ac4e28fe639ca096ecc528bcb8e9d4d95d",
+      "updatedAt": "2026-10-11T23:45:36.042Z"
+    },
+    "command": {
+      "startTime": "2099-01-02T14:30:00.000Z",
+      "expectedUpdatedAt": "2026-10-11T23:45:32.728Z",
+      "expectedRevisionSha256": "e72d46c63c521ad4cc230312c778ae3b56465f766471f6a255b3072679c5bfe0",
+      "fields": [
+        "startTime",
+        "expectedUpdatedAt",
+        "expectedRevision"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 9,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b961dce0d161a22bfcfa74431928e1d911cb1b7a6df61411d0caa0ecad938d9f",
+    "sessionTokenSha256": "70c71f271ea9c487958d3e77bf2cc06a83f743c5a57bd66526ccdeaa1040ad46",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "2478cd716bc936fca3d82b38842d38ee132a7ed14404e4c0317e5189e8f7ea9b"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 10,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 11,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 12,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "742c140eaf81eec474ed47f6e1a9dc5c45100a2e21bb8e29516c7d1b2a1a6508"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 13,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "48702c47ff70893549f9d3fa3b658bda7a640491426289fc6c9651cf999aba5c",
+      "updatedAt": "2026-10-11T23:45:36.508Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 14,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "48702c47ff70893549f9d3fa3b658bda7a640491426289fc6c9651cf999aba5c",
+      "updatedAt": "2026-10-11T23:45:36.508Z",
+      "dayCount": 31
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 15,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "48702c47ff70893549f9d3fa3b658bda7a640491426289fc6c9651cf999aba5c",
+      "updatedAt": "2026-10-11T23:45:36.508Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 16,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-03"
+    },
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "48702c47ff70893549f9d3fa3b658bda7a640491426289fc6c9651cf999aba5c",
+      "updatedAt": "2026-10-11T23:45:36.508Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 17,
+    "source": "browser-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "212cf914b4a057b0cfb4178da9bedcb728469afab2af103b92d77126b5ed3c91",
+      "updatedAt": "2026-10-11T23:45:39.066Z"
+    },
+    "command": {
+      "startTime": "2099-01-02T14:30:00.000Z",
+      "expectedUpdatedAt": "2026-10-11T23:45:36.508Z",
+      "expectedRevisionSha256": "48702c47ff70893549f9d3fa3b658bda7a640491426289fc6c9651cf999aba5c",
+      "fields": [
+        "startTime",
+        "expectedUpdatedAt",
+        "expectedRevision"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 18,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "d5f0f23a071a193dfd85fd11c5566975008986c2ca870eef5ca019f68e235f55",
+    "sessionTokenSha256": "dee9aef4a8012b44f95ebd719397b9433cb8db73ad98f79a539369b8481022c5",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "742c140eaf81eec474ed47f6e1a9dc5c45100a2e21bb8e29516c7d1b2a1a6508"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 19,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "ADMIN",
+    "organizationSha256": "432503ab0bce3b2fc86bdb5a68629b92153e37b640548ee7822bfd151cb8dfa8",
+    "sessionTokenSha256": "4a0c644030d334e4990898c5682f6c50b296758abc72b9e49134b1db7a0a2089",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 20,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "ADMIN",
+    "organizationSha256": "432503ab0bce3b2fc86bdb5a68629b92153e37b640548ee7822bfd151cb8dfa8",
+    "sessionTokenSha256": "4a0c644030d334e4990898c5682f6c50b296758abc72b9e49134b1db7a0a2089",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 21,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "ADMIN",
+    "organizationSha256": "432503ab0bce3b2fc86bdb5a68629b92153e37b640548ee7822bfd151cb8dfa8",
+    "sessionTokenSha256": "4a0c644030d334e4990898c5682f6c50b296758abc72b9e49134b1db7a0a2089",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "b1bc28faccb7cefac9e6663d1350dbbfcd1a91274c0427b72bed23b3a30f5708"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 22,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "ADMIN",
+    "organizationSha256": "432503ab0bce3b2fc86bdb5a68629b92153e37b640548ee7822bfd151cb8dfa8",
+    "sessionTokenSha256": "4a0c644030d334e4990898c5682f6c50b296758abc72b9e49134b1db7a0a2089",
+    "status": 200,
+    "response": {
+      "revisionSha256": "f740ba99c96829f573f2f54e7a7b0c0e346785b9e8fe09de8fff283031f6a580",
+      "updatedAt": "2026-10-11T23:45:39.234Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 23,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "ADMIN",
+    "organizationSha256": "432503ab0bce3b2fc86bdb5a68629b92153e37b640548ee7822bfd151cb8dfa8",
+    "sessionTokenSha256": "4a0c644030d334e4990898c5682f6c50b296758abc72b9e49134b1db7a0a2089",
+    "status": 200,
+    "response": {
+      "revisionSha256": "f740ba99c96829f573f2f54e7a7b0c0e346785b9e8fe09de8fff283031f6a580",
+      "updatedAt": "2026-10-11T23:45:39.234Z",
+      "dayCount": 31
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 24,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "ADMIN",
+    "organizationSha256": "432503ab0bce3b2fc86bdb5a68629b92153e37b640548ee7822bfd151cb8dfa8",
+    "sessionTokenSha256": "4a0c644030d334e4990898c5682f6c50b296758abc72b9e49134b1db7a0a2089",
+    "status": 200,
+    "response": {
+      "revisionSha256": "f740ba99c96829f573f2f54e7a7b0c0e346785b9e8fe09de8fff283031f6a580",
+      "updatedAt": "2026-10-11T23:45:39.234Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 25,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "RECEPTIONIST",
+    "organizationSha256": "6e91f10c22c97fa85861f024b8dcc89b445f73dfd938570d4a306fd8c9fbfac6",
+    "sessionTokenSha256": "1aded064dc4c70c7a649af714fc0372156b96bd8ef3c0a24e868ff9cb318c70f",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 26,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "RECEPTIONIST",
+    "organizationSha256": "6e91f10c22c97fa85861f024b8dcc89b445f73dfd938570d4a306fd8c9fbfac6",
+    "sessionTokenSha256": "1aded064dc4c70c7a649af714fc0372156b96bd8ef3c0a24e868ff9cb318c70f",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "c1e592c608e1d27aa75027ead4bbefb321876833a75297611b99fd4ad39cc814"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 27,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "RECEPTIONIST",
+    "organizationSha256": "6e91f10c22c97fa85861f024b8dcc89b445f73dfd938570d4a306fd8c9fbfac6",
+    "sessionTokenSha256": "1aded064dc4c70c7a649af714fc0372156b96bd8ef3c0a24e868ff9cb318c70f",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 28,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "RECEPTIONIST",
+    "organizationSha256": "6e91f10c22c97fa85861f024b8dcc89b445f73dfd938570d4a306fd8c9fbfac6",
+    "sessionTokenSha256": "1aded064dc4c70c7a649af714fc0372156b96bd8ef3c0a24e868ff9cb318c70f",
+    "status": 200,
+    "response": {
+      "revisionSha256": "7145a379d8c57c9f1d1721edb253c857eb020fa320f0bc03c2fc9f8a2117f30a",
+      "updatedAt": "2026-10-11T23:45:40.986Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 29,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "RECEPTIONIST",
+    "organizationSha256": "6e91f10c22c97fa85861f024b8dcc89b445f73dfd938570d4a306fd8c9fbfac6",
+    "sessionTokenSha256": "1aded064dc4c70c7a649af714fc0372156b96bd8ef3c0a24e868ff9cb318c70f",
+    "status": 200,
+    "response": {
+      "revisionSha256": "7145a379d8c57c9f1d1721edb253c857eb020fa320f0bc03c2fc9f8a2117f30a",
+      "updatedAt": "2026-10-11T23:45:40.986Z",
+      "dayCount": 31
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 30,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "RECEPTIONIST",
+    "organizationSha256": "6e91f10c22c97fa85861f024b8dcc89b445f73dfd938570d4a306fd8c9fbfac6",
+    "sessionTokenSha256": "1aded064dc4c70c7a649af714fc0372156b96bd8ef3c0a24e868ff9cb318c70f",
+    "status": 200,
+    "response": {
+      "revisionSha256": "7145a379d8c57c9f1d1721edb253c857eb020fa320f0bc03c2fc9f8a2117f30a",
+      "updatedAt": "2026-10-11T23:45:40.986Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 31,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "BARBER",
+    "organizationSha256": "13b4413d5586c62f055a07f203354350b929cad9600df3dd686f800147d0d6ec",
+    "sessionTokenSha256": "b708c8f09478c06fc63ec81faa42da106e23fb0ec7aebbebc3e4f55f9fc78aae",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 32,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "BARBER",
+    "organizationSha256": "13b4413d5586c62f055a07f203354350b929cad9600df3dd686f800147d0d6ec",
+    "sessionTokenSha256": "b708c8f09478c06fc63ec81faa42da106e23fb0ec7aebbebc3e4f55f9fc78aae",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "fdb384cf2154d4a7702a97dfc5b89c1f6ea295208fe30ebfd747d03f3e91ecde"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 33,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "BARBER",
+    "organizationSha256": "13b4413d5586c62f055a07f203354350b929cad9600df3dd686f800147d0d6ec",
+    "sessionTokenSha256": "b708c8f09478c06fc63ec81faa42da106e23fb0ec7aebbebc3e4f55f9fc78aae",
+    "status": 200,
+    "response": {
+      "revisionSha256": "8ae2eaafd85337422fd6418a15fe8685d47138ab2a68fb13fdd810023808ffc7",
+      "updatedAt": "2026-10-11T23:45:43.123Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 34,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "BARBER",
+    "organizationSha256": "13b4413d5586c62f055a07f203354350b929cad9600df3dd686f800147d0d6ec",
+    "sessionTokenSha256": "b708c8f09478c06fc63ec81faa42da106e23fb0ec7aebbebc3e4f55f9fc78aae",
+    "status": 403,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 35,
+    "source": "operator-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "BARBER",
+    "organizationSha256": "13b4413d5586c62f055a07f203354350b929cad9600df3dd686f800147d0d6ec",
+    "sessionTokenSha256": "b708c8f09478c06fc63ec81faa42da106e23fb0ec7aebbebc3e4f55f9fc78aae",
+    "status": 403,
+    "response": {},
+    "command": {
+      "startTime": "2099-01-02T14:30:00Z",
+      "expectedRevisionSha256": null,
+      "fields": [
+        "startTime"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 36,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 37,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 38,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {
+      "nextCursorSha256": "7dcad19a1c23e2c4d19ce82843e467ae4e88978bfde32d7c23729ced1e5cb724",
+      "count": 100,
+      "itemIdHashes": [
+        "9d29ed1af1216126aadbd834283404b3b818b34c071d702593255ae44f8d0247",
+        "794808bee144628f257a2e2d581fc2ddd5e0dd0e1e6f302575dd87964b1fc24c",
+        "c2184d1eaffd498231e84f78f612494bd41457e7439bef2cdf67c963c5018858",
+        "e4a5b924ac401a559952ffc7c220df2cf0511f8bb96ce57f50c2a2da2c4bdbae",
+        "889f6331018f466727f02606dbff33d441f0f3e58887f985041e2902dd1ab204",
+        "81468e1ac1fbbaf323c92509f41888b0de3f6b044cf67530f9c63cb869be00ec",
+        "ae5580746503f92ca66ec63a429f1269c1b9904ce97be68b02c6c08de43c0bb2",
+        "eb5ae7bca4613281dd982e92d64efe13e1a0331e6310db94d11c56e4d4c554a9",
+        "2f3cbb550ee22fff5d68ebd75075e54c648ae1bebe6bf47fb390e5745033a4bc",
+        "ab1c90aae188d12833e582ce7c910d9ad78d4126d994fb2389376a27a9dcae91",
+        "bbc810f3b629983575d36ccf1f7e2cb344d3eab1731c4315807f927eff0f2372",
+        "9203e282aa519a7b04dc428ba194cc9e5f8f355dd628e070a9256277ead04529",
+        "f645b69c44f3b7b96c2a1c07cc3fec8ce13a6c7f60fd02826026fa543c77a931",
+        "fd17e23aa185343240ce6c867d478171c76b6ed19e89b0222537a5726d0459b1",
+        "d401bca42af7e7a38524c7904afa3d8543d9c45d8b4549a198b4851d8d161718",
+        "7a1e549b0c3f33fad2c1b20060ac0a8cf586cc62211ca6367276ae10d1198ac6",
+        "3db876cb5c42c48e5016051ffa006f4f296cbcc9ba0ea11636aee0c2b93a5460",
+        "1736f3776d2804b8a5b34d3d3d9c08c8ce10643685934f9d4b43b08e5c16d777",
+        "d000e59d3718fb535097eb13a10732bc15edff2477ebaefb7a072807fdbdd31e",
+        "fa500e2945412978b22e1d11201f73036e67eedc48afd102a09a3a42a050da81",
+        "676b7a55859efbe5c20859fddbc19ee84d248e993fff79e05c0aec83e7e5d33a",
+        "f887fbfe79dcd88900204703d4f5b969c0566d866ddfe148b16cb366683418a4",
+        "22d1fa95502519664e333cd5420b255acf346f58a8e852a250b7f11652054047",
+        "6b7b0db219157d58bbca5697d0050f6803d2a7802e3ae50a684f98931d8905db",
+        "a0cab78c499199ff399f702b86461ffeb7152672deaa6b3bcff904381470bd2a",
+        "f9a521c83fd45fcc91c2c15ad5151504648b464c844cb7d970ffc2a5d07ca8ae",
+        "42b8efb390aea7336989a7e615f19ef68f09b1cb407d5c7b75971c36392b198c",
+        "3e5ccbae3e17539be855d5fe8f099531a594c0b13b683a9631b9e26071b25027",
+        "bc74c9fa5805411acfb875f92d70ae7b8f49fa7adcf8a07da48cbc74a7a1acd9",
+        "ac65279d10825ec070109658175d51aadddd4e4271682b33ad69bc72d09d103e",
+        "48286959502a328b81dcbe2fc798de62e0c5aa019ab483ff54a3fc65f35ce14b",
+        "5d0ca0989d60aca6cfd5e4e049e2e43037e23b1e16eaa047ff243316492cc9ab",
+        "36232b60b1377ae6953a634efaf144a62414383eaa5653a7fe08ded1bdddd278",
+        "082f62e8d57d63d36f0d9dc4bb26f83299be8c4a290cce8eab643fe6b1d50aef",
+        "17187b7da0cd2d709dfc4b6f3ed420364f09238825d6fb9800aece1303e1036e",
+        "e37a5e0d411de88b701db7ae5a4acdace7c721d336850034ca384c5d78208d86",
+        "435fbbfce1858e159889622bd57665c0b48cb9473bc4a9f22a493599ce1133b8",
+        "b4a369c614b7cd0f55511ef99c89db3520f2255b62f025f43dc4c3194bc0af75",
+        "4aef0f027879bb8f0beb5b091e6a87230967b05da3ff359c497ffd2651ecc862",
+        "5f59525c51a6b97e5a95a44e9ae0162d8d65f4efaa9fac7cdc4c1ea581d4e1c6",
+        "91c3ef7e9c5d05acea2aaf7787ffbe1e7349e3ba5afc62f88567355bc5f1dac8",
+        "298139406e7a934804377bb73154ee383099e099f3d9a946bd3ab3ac14377e0d",
+        "5cad3d4b9d6eff1d9956df4644a3be2f547ade3e7b8c3a4400910a981bbb0a47",
+        "fab302aebe4c312b0723bba26a91edb8719027fb0240fa7baef7ce3e3faef710",
+        "b825c97fe35ac814e1c0a87b78cbfa089793da3b7506549eace44fade09a155c",
+        "09c9dd6d55ece97cf8a40520b5613fd2da1cfbcdbf4a87ea3b0726933226f0d2",
+        "c8cba46cd7c2c3d6ff1d87157a0d654a7d274b65f9f47496c60ef7d493af1cb6",
+        "9d435f7efc528981efa94cc9a9f7471bef0324f9aaf3ba77c96998561ece44fc",
+        "6cdc5b4d57115f01c692864512d2671f0dfc025ea701fe2f6fb4799e8da4ebe0",
+        "6c4365eff42af32c362835582f510821e4206f78c75e4464e958150f71406ece",
+        "b54c33c1a065f29a2f48844a42c3d7c582da27dc0c87ece15cc09a15fc841fda",
+        "95ac086ef17030b3c119e569c1950918141120cfb33c21cd74495a5ce09e99e6",
+        "30b53c836cf9ecef45611992dbd58070582e0db379745f65bca0e5ec21475082",
+        "0e7301f7557d5d239c4277b2cc902f2134d476eac7d7cdef64d6b710959da1f6",
+        "26f2fefc92d38da450c01fb565c05019cfd5f2814437f321eae7cd6244048d32",
+        "96f7259bbb32df469280ca365cd1042a794fd5d39d001125974d7602d7a22acd",
+        "c23ab6dafabeca7379f38c39cbd899028d9bb4eb624729aeaed05bc4bbc29fda",
+        "716543c6277882c2da39a9e9292ed78a550bd2838c588985962d4b80b1bcbc42",
+        "50df42083c01a8766c33d2464e06365f532b4b1cdb32a35aab4dcbe01467aca1",
+        "3f9572fbff6af0f5d31d3083cd9dbc0be82d652b65d56d12f9dbca638a1c1316",
+        "e66b3de1a26dd29439f10324c0918a46f4cb17857a0cc0f7e56aaa494a4866cb",
+        "827ed484b570934987f7ee1b77101ba888dd84336a5c5d45212be31da1c1fc46",
+        "f5648058d1cb7c6b2b7d352ca87abc38455f985bb384121fe2d8c47a49f479cb",
+        "0cb4a9c6208030dce9beb52224723448286847645351b9f2e5b84629ecc32ad5",
+        "b43120dbcfc4197535018a6790e64629a822379e7735ac801a96202efda56050",
+        "54d9b590f21546409e1eee195fcd06acd871535852053055e3f6e453f83b5b75",
+        "43d68780432b94278e84e62c3272374fc1e3090fada2d11e7f5364b23b581db6",
+        "9bfa11340e9c87ba2bbf26e9d3f5bb593a2e4eced4a02f1a57f11586d50a4d87",
+        "ac3c21627c14f211f772984a91257724a096f3bd755b7df968e3d68ef57e7150",
+        "a2161f09b233d60bc7a016460ff389b6ffa8fd0efac5dd639c8f81f631f00fea",
+        "b891773a5fea64a90495b8f222a6a29e54757b09d047465539bc56f1f32078b3",
+        "b8983a3e91f408d891097efee202dab7a6c09ecc9a90c3c08a47540846c6d434",
+        "af3c85b40f4553d7b668a3783c6e2edff4e05c97af7321c51810339083b6a872",
+        "04072d8db96355aa75d6af41f1f63460740a9d3c74d62e27aeeb938c9841069e",
+        "d3bec366138cfa8e29556af7239c9f38387cc4f4088abff37ed951fc8c49743e",
+        "b553dfd690ecdc7447285f3472ac5c510d9b06e995579e7b5e5f01003c9bda1e",
+        "0f61b3aedeacba39692ff400eb19e98c21ce5a754c0114b5e9829162cf4f0e5b",
+        "136c37700b57f38fd00119ed4f6178231edac3c6b7b17dbd02fdbce1173afba6",
+        "0f161e2e9d37949974a8faf7ef6854aed9656e8a789dc9b89408286645b76b64",
+        "ac79aafffa141c767eeb3d4920f8afd052884750f62182c4e2847e952a04ad70",
+        "15e0b968f582c4294ad63d0413243a66fd663c2c485408d64d811938a04fe4f0",
+        "4ca43a14457ddc08d6f89cea5dc06156ca5dabd73577576239fb084426b5acb9",
+        "4a240a6e6c2bb21bbcc8ff244689f0aee9f07e75ec788842f042a61b4db3aad3",
+        "e6d7e6f613ad254786212a15751cd479e61f6dba151397c278251c6e75e554fa",
+        "e8ab6eba49080123484284471ad6c83ca30abd87c54b0ae1b5bbd27e865edbf0",
+        "15c298b8bf8c31d7f268d3db3a3d6cd846602139fd2817305325cfee3755df97",
+        "22e99e9b320c1a3243565396f71e55c640f4fc75f651f9edbd4e68afc1e9760f",
+        "2aeb4dc36f2353f714d49602a7054df7c94dbc7a501632d74fa7493c1281552b",
+        "587d814ec6afdb3231505e590dd1e97bb8a4223f4151af619e7127cb2b27d4fd",
+        "0cf19d7264af5a8c1f29fba65cb18a3a2253773ab520f58475eb91edfcc341c5",
+        "f3fb0e0a3ca7246d49d5e8cb9beb07ef8c5ebe08b0ddbb01cab13b0afb7600c5",
+        "e5a6b5c88c577f9155221c95f275432aa08d9883315166be2fc16a8cff189b9a",
+        "ed1254a85a9c2ff6f0078e783132cab13d098a42be89b67b9374416cf061ca90",
+        "7d721ec1444a2cf0265e1f0ceacf96f0ec4f43c7230d3b76bf53a459f3723023",
+        "e21e9f0217dcd78c26bb4e8d2ab5f4007b6972210febd8e509b83a4d3b2a1e1e",
+        "47fe52db35dd55e96417494aec544d95d4a8cd48253735b9d7ed072b944cba8b",
+        "2f65e8379930af66eae04f31f410f5c8a163cca1bfd5f130bbf6fe15f9c24be4",
+        "aad27625808173675b1564eac481edc9a36026c57693c663f056e5f3d0feb328",
+        "a119b1da8ff4b3c118ddf5b0a6f40a4977a39c7267eda36a54c73f85d56a6319",
+        "efb2e46418e1b9fbc57f0fd743c7297d7095d7df16e3dea7fc66dafc161663a2"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 39,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100",
+      "cursor": {
+        "sha256": "7dcad19a1c23e2c4d19ce82843e467ae4e88978bfde32d7c23729ced1e5cb724",
+        "length": 408
+      }
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {
+      "count": 6,
+      "itemIdHashes": [
+        "d13cbf423fbfce2733d6cd6d33474a13338fb3a477e84f2d4376efb69decf64a",
+        "36ca53e3896eecbfa77a147a06231963e0bbf4a68e935cdabe41095c21ff907b",
+        "261fb3b245bf25d4e508309d154ef0a7d67bc2740e0f744de8a18142000b572a",
+        "b2340f1110ec749ceeeeac41011344afda8b73b61a9a5977b1c87896472c328e",
+        "4ffaf33766c3513d9f0e52eff240130f380e811e8d6a81d5fa31a54e7d8c91b1",
+        "4e4b122f246287e554a47a57606ccd972dff94ee7f7810c878446f7a932f57c1"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 40,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 41,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 42,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {
+      "nextCursorSha256": "7dcad19a1c23e2c4d19ce82843e467ae4e88978bfde32d7c23729ced1e5cb724",
+      "count": 100,
+      "itemIdHashes": [
+        "9d29ed1af1216126aadbd834283404b3b818b34c071d702593255ae44f8d0247",
+        "794808bee144628f257a2e2d581fc2ddd5e0dd0e1e6f302575dd87964b1fc24c",
+        "c2184d1eaffd498231e84f78f612494bd41457e7439bef2cdf67c963c5018858",
+        "e4a5b924ac401a559952ffc7c220df2cf0511f8bb96ce57f50c2a2da2c4bdbae",
+        "889f6331018f466727f02606dbff33d441f0f3e58887f985041e2902dd1ab204",
+        "81468e1ac1fbbaf323c92509f41888b0de3f6b044cf67530f9c63cb869be00ec",
+        "ae5580746503f92ca66ec63a429f1269c1b9904ce97be68b02c6c08de43c0bb2",
+        "eb5ae7bca4613281dd982e92d64efe13e1a0331e6310db94d11c56e4d4c554a9",
+        "2f3cbb550ee22fff5d68ebd75075e54c648ae1bebe6bf47fb390e5745033a4bc",
+        "ab1c90aae188d12833e582ce7c910d9ad78d4126d994fb2389376a27a9dcae91",
+        "bbc810f3b629983575d36ccf1f7e2cb344d3eab1731c4315807f927eff0f2372",
+        "9203e282aa519a7b04dc428ba194cc9e5f8f355dd628e070a9256277ead04529",
+        "f645b69c44f3b7b96c2a1c07cc3fec8ce13a6c7f60fd02826026fa543c77a931",
+        "fd17e23aa185343240ce6c867d478171c76b6ed19e89b0222537a5726d0459b1",
+        "d401bca42af7e7a38524c7904afa3d8543d9c45d8b4549a198b4851d8d161718",
+        "7a1e549b0c3f33fad2c1b20060ac0a8cf586cc62211ca6367276ae10d1198ac6",
+        "3db876cb5c42c48e5016051ffa006f4f296cbcc9ba0ea11636aee0c2b93a5460",
+        "1736f3776d2804b8a5b34d3d3d9c08c8ce10643685934f9d4b43b08e5c16d777",
+        "d000e59d3718fb535097eb13a10732bc15edff2477ebaefb7a072807fdbdd31e",
+        "fa500e2945412978b22e1d11201f73036e67eedc48afd102a09a3a42a050da81",
+        "676b7a55859efbe5c20859fddbc19ee84d248e993fff79e05c0aec83e7e5d33a",
+        "f887fbfe79dcd88900204703d4f5b969c0566d866ddfe148b16cb366683418a4",
+        "22d1fa95502519664e333cd5420b255acf346f58a8e852a250b7f11652054047",
+        "6b7b0db219157d58bbca5697d0050f6803d2a7802e3ae50a684f98931d8905db",
+        "a0cab78c499199ff399f702b86461ffeb7152672deaa6b3bcff904381470bd2a",
+        "f9a521c83fd45fcc91c2c15ad5151504648b464c844cb7d970ffc2a5d07ca8ae",
+        "42b8efb390aea7336989a7e615f19ef68f09b1cb407d5c7b75971c36392b198c",
+        "3e5ccbae3e17539be855d5fe8f099531a594c0b13b683a9631b9e26071b25027",
+        "bc74c9fa5805411acfb875f92d70ae7b8f49fa7adcf8a07da48cbc74a7a1acd9",
+        "ac65279d10825ec070109658175d51aadddd4e4271682b33ad69bc72d09d103e",
+        "48286959502a328b81dcbe2fc798de62e0c5aa019ab483ff54a3fc65f35ce14b",
+        "5d0ca0989d60aca6cfd5e4e049e2e43037e23b1e16eaa047ff243316492cc9ab",
+        "36232b60b1377ae6953a634efaf144a62414383eaa5653a7fe08ded1bdddd278",
+        "082f62e8d57d63d36f0d9dc4bb26f83299be8c4a290cce8eab643fe6b1d50aef",
+        "17187b7da0cd2d709dfc4b6f3ed420364f09238825d6fb9800aece1303e1036e",
+        "e37a5e0d411de88b701db7ae5a4acdace7c721d336850034ca384c5d78208d86",
+        "435fbbfce1858e159889622bd57665c0b48cb9473bc4a9f22a493599ce1133b8",
+        "b4a369c614b7cd0f55511ef99c89db3520f2255b62f025f43dc4c3194bc0af75",
+        "4aef0f027879bb8f0beb5b091e6a87230967b05da3ff359c497ffd2651ecc862",
+        "5f59525c51a6b97e5a95a44e9ae0162d8d65f4efaa9fac7cdc4c1ea581d4e1c6",
+        "91c3ef7e9c5d05acea2aaf7787ffbe1e7349e3ba5afc62f88567355bc5f1dac8",
+        "298139406e7a934804377bb73154ee383099e099f3d9a946bd3ab3ac14377e0d",
+        "5cad3d4b9d6eff1d9956df4644a3be2f547ade3e7b8c3a4400910a981bbb0a47",
+        "fab302aebe4c312b0723bba26a91edb8719027fb0240fa7baef7ce3e3faef710",
+        "b825c97fe35ac814e1c0a87b78cbfa089793da3b7506549eace44fade09a155c",
+        "09c9dd6d55ece97cf8a40520b5613fd2da1cfbcdbf4a87ea3b0726933226f0d2",
+        "c8cba46cd7c2c3d6ff1d87157a0d654a7d274b65f9f47496c60ef7d493af1cb6",
+        "9d435f7efc528981efa94cc9a9f7471bef0324f9aaf3ba77c96998561ece44fc",
+        "6cdc5b4d57115f01c692864512d2671f0dfc025ea701fe2f6fb4799e8da4ebe0",
+        "6c4365eff42af32c362835582f510821e4206f78c75e4464e958150f71406ece",
+        "b54c33c1a065f29a2f48844a42c3d7c582da27dc0c87ece15cc09a15fc841fda",
+        "95ac086ef17030b3c119e569c1950918141120cfb33c21cd74495a5ce09e99e6",
+        "30b53c836cf9ecef45611992dbd58070582e0db379745f65bca0e5ec21475082",
+        "0e7301f7557d5d239c4277b2cc902f2134d476eac7d7cdef64d6b710959da1f6",
+        "26f2fefc92d38da450c01fb565c05019cfd5f2814437f321eae7cd6244048d32",
+        "96f7259bbb32df469280ca365cd1042a794fd5d39d001125974d7602d7a22acd",
+        "c23ab6dafabeca7379f38c39cbd899028d9bb4eb624729aeaed05bc4bbc29fda",
+        "716543c6277882c2da39a9e9292ed78a550bd2838c588985962d4b80b1bcbc42",
+        "50df42083c01a8766c33d2464e06365f532b4b1cdb32a35aab4dcbe01467aca1",
+        "3f9572fbff6af0f5d31d3083cd9dbc0be82d652b65d56d12f9dbca638a1c1316",
+        "e66b3de1a26dd29439f10324c0918a46f4cb17857a0cc0f7e56aaa494a4866cb",
+        "827ed484b570934987f7ee1b77101ba888dd84336a5c5d45212be31da1c1fc46",
+        "f5648058d1cb7c6b2b7d352ca87abc38455f985bb384121fe2d8c47a49f479cb",
+        "0cb4a9c6208030dce9beb52224723448286847645351b9f2e5b84629ecc32ad5",
+        "b43120dbcfc4197535018a6790e64629a822379e7735ac801a96202efda56050",
+        "54d9b590f21546409e1eee195fcd06acd871535852053055e3f6e453f83b5b75",
+        "43d68780432b94278e84e62c3272374fc1e3090fada2d11e7f5364b23b581db6",
+        "9bfa11340e9c87ba2bbf26e9d3f5bb593a2e4eced4a02f1a57f11586d50a4d87",
+        "ac3c21627c14f211f772984a91257724a096f3bd755b7df968e3d68ef57e7150",
+        "a2161f09b233d60bc7a016460ff389b6ffa8fd0efac5dd639c8f81f631f00fea",
+        "b891773a5fea64a90495b8f222a6a29e54757b09d047465539bc56f1f32078b3",
+        "b8983a3e91f408d891097efee202dab7a6c09ecc9a90c3c08a47540846c6d434",
+        "af3c85b40f4553d7b668a3783c6e2edff4e05c97af7321c51810339083b6a872",
+        "04072d8db96355aa75d6af41f1f63460740a9d3c74d62e27aeeb938c9841069e",
+        "d3bec366138cfa8e29556af7239c9f38387cc4f4088abff37ed951fc8c49743e",
+        "b553dfd690ecdc7447285f3472ac5c510d9b06e995579e7b5e5f01003c9bda1e",
+        "0f61b3aedeacba39692ff400eb19e98c21ce5a754c0114b5e9829162cf4f0e5b",
+        "136c37700b57f38fd00119ed4f6178231edac3c6b7b17dbd02fdbce1173afba6",
+        "0f161e2e9d37949974a8faf7ef6854aed9656e8a789dc9b89408286645b76b64",
+        "ac79aafffa141c767eeb3d4920f8afd052884750f62182c4e2847e952a04ad70",
+        "15e0b968f582c4294ad63d0413243a66fd663c2c485408d64d811938a04fe4f0",
+        "4ca43a14457ddc08d6f89cea5dc06156ca5dabd73577576239fb084426b5acb9",
+        "4a240a6e6c2bb21bbcc8ff244689f0aee9f07e75ec788842f042a61b4db3aad3",
+        "e6d7e6f613ad254786212a15751cd479e61f6dba151397c278251c6e75e554fa",
+        "e8ab6eba49080123484284471ad6c83ca30abd87c54b0ae1b5bbd27e865edbf0",
+        "15c298b8bf8c31d7f268d3db3a3d6cd846602139fd2817305325cfee3755df97",
+        "22e99e9b320c1a3243565396f71e55c640f4fc75f651f9edbd4e68afc1e9760f",
+        "2aeb4dc36f2353f714d49602a7054df7c94dbc7a501632d74fa7493c1281552b",
+        "587d814ec6afdb3231505e590dd1e97bb8a4223f4151af619e7127cb2b27d4fd",
+        "0cf19d7264af5a8c1f29fba65cb18a3a2253773ab520f58475eb91edfcc341c5",
+        "f3fb0e0a3ca7246d49d5e8cb9beb07ef8c5ebe08b0ddbb01cab13b0afb7600c5",
+        "e5a6b5c88c577f9155221c95f275432aa08d9883315166be2fc16a8cff189b9a",
+        "ed1254a85a9c2ff6f0078e783132cab13d098a42be89b67b9374416cf061ca90",
+        "7d721ec1444a2cf0265e1f0ceacf96f0ec4f43c7230d3b76bf53a459f3723023",
+        "e21e9f0217dcd78c26bb4e8d2ab5f4007b6972210febd8e509b83a4d3b2a1e1e",
+        "47fe52db35dd55e96417494aec544d95d4a8cd48253735b9d7ed072b944cba8b",
+        "2f65e8379930af66eae04f31f410f5c8a163cca1bfd5f130bbf6fe15f9c24be4",
+        "aad27625808173675b1564eac481edc9a36026c57693c663f056e5f3d0feb328",
+        "a119b1da8ff4b3c118ddf5b0a6f40a4977a39c7267eda36a54c73f85d56a6319",
+        "efb2e46418e1b9fbc57f0fd743c7297d7095d7df16e3dea7fc66dafc161663a2"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 43,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "ADMIN",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "7d233e99ea803c265dda9dfec82d8e2b864da178b24841f27ebe489fea2c0457",
+    "status": 200,
+    "response": {
+      "revisionSha256": "3f2b075a0598cc3e6ab2c9c0cfa40eea82228e42028cdb40eaea42a4cfa4d526",
+      "updatedAt": "2026-10-11T23:45:44.302Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 44,
+    "source": "operator-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "ADMIN",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "7d233e99ea803c265dda9dfec82d8e2b864da178b24841f27ebe489fea2c0457",
+    "status": 200,
+    "response": {
+      "revisionSha256": "739597bccdf46c0b3ba043a558d6d9fdba1516f6708387b2b0eaa15d0956ce4c",
+      "updatedAt": "2026-10-11T23:45:46.483Z"
+    },
+    "command": {
+      "startTime": "2099-01-03T14:30:00Z",
+      "expectedUpdatedAt": "2026-10-11T23:45:44.302Z",
+      "expectedRevisionSha256": "3f2b075a0598cc3e6ab2c9c0cfa40eea82228e42028cdb40eaea42a4cfa4d526",
+      "fields": [
+        "startTime",
+        "expectedUpdatedAt",
+        "expectedRevision"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 45,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100",
+      "cursor": {
+        "sha256": "7dcad19a1c23e2c4d19ce82843e467ae4e88978bfde32d7c23729ced1e5cb724",
+        "length": 408
+      }
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 409,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 46,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "018195761588bc2bcdb2d401eee88371a74ed9a2722fd475cc3df896825f0736",
+    "sessionTokenSha256": "9a00c1159e5bfa8ce029e583703b4b57191a8f9934e1030e1edd2193f51938eb",
+    "status": 200,
+    "response": {
+      "nextCursorSha256": "3728ab4654c64ebfa3347f0861d1e57d1db1e7e998e902d16ef96255b421c768",
+      "count": 100,
+      "itemIdHashes": [
+        "794808bee144628f257a2e2d581fc2ddd5e0dd0e1e6f302575dd87964b1fc24c",
+        "c2184d1eaffd498231e84f78f612494bd41457e7439bef2cdf67c963c5018858",
+        "e4a5b924ac401a559952ffc7c220df2cf0511f8bb96ce57f50c2a2da2c4bdbae",
+        "889f6331018f466727f02606dbff33d441f0f3e58887f985041e2902dd1ab204",
+        "81468e1ac1fbbaf323c92509f41888b0de3f6b044cf67530f9c63cb869be00ec",
+        "ae5580746503f92ca66ec63a429f1269c1b9904ce97be68b02c6c08de43c0bb2",
+        "eb5ae7bca4613281dd982e92d64efe13e1a0331e6310db94d11c56e4d4c554a9",
+        "2f3cbb550ee22fff5d68ebd75075e54c648ae1bebe6bf47fb390e5745033a4bc",
+        "ab1c90aae188d12833e582ce7c910d9ad78d4126d994fb2389376a27a9dcae91",
+        "bbc810f3b629983575d36ccf1f7e2cb344d3eab1731c4315807f927eff0f2372",
+        "9203e282aa519a7b04dc428ba194cc9e5f8f355dd628e070a9256277ead04529",
+        "f645b69c44f3b7b96c2a1c07cc3fec8ce13a6c7f60fd02826026fa543c77a931",
+        "fd17e23aa185343240ce6c867d478171c76b6ed19e89b0222537a5726d0459b1",
+        "d401bca42af7e7a38524c7904afa3d8543d9c45d8b4549a198b4851d8d161718",
+        "7a1e549b0c3f33fad2c1b20060ac0a8cf586cc62211ca6367276ae10d1198ac6",
+        "3db876cb5c42c48e5016051ffa006f4f296cbcc9ba0ea11636aee0c2b93a5460",
+        "1736f3776d2804b8a5b34d3d3d9c08c8ce10643685934f9d4b43b08e5c16d777",
+        "d000e59d3718fb535097eb13a10732bc15edff2477ebaefb7a072807fdbdd31e",
+        "fa500e2945412978b22e1d11201f73036e67eedc48afd102a09a3a42a050da81",
+        "676b7a55859efbe5c20859fddbc19ee84d248e993fff79e05c0aec83e7e5d33a",
+        "f887fbfe79dcd88900204703d4f5b969c0566d866ddfe148b16cb366683418a4",
+        "22d1fa95502519664e333cd5420b255acf346f58a8e852a250b7f11652054047",
+        "6b7b0db219157d58bbca5697d0050f6803d2a7802e3ae50a684f98931d8905db",
+        "a0cab78c499199ff399f702b86461ffeb7152672deaa6b3bcff904381470bd2a",
+        "f9a521c83fd45fcc91c2c15ad5151504648b464c844cb7d970ffc2a5d07ca8ae",
+        "42b8efb390aea7336989a7e615f19ef68f09b1cb407d5c7b75971c36392b198c",
+        "3e5ccbae3e17539be855d5fe8f099531a594c0b13b683a9631b9e26071b25027",
+        "bc74c9fa5805411acfb875f92d70ae7b8f49fa7adcf8a07da48cbc74a7a1acd9",
+        "ac65279d10825ec070109658175d51aadddd4e4271682b33ad69bc72d09d103e",
+        "48286959502a328b81dcbe2fc798de62e0c5aa019ab483ff54a3fc65f35ce14b",
+        "5d0ca0989d60aca6cfd5e4e049e2e43037e23b1e16eaa047ff243316492cc9ab",
+        "36232b60b1377ae6953a634efaf144a62414383eaa5653a7fe08ded1bdddd278",
+        "082f62e8d57d63d36f0d9dc4bb26f83299be8c4a290cce8eab643fe6b1d50aef",
+        "17187b7da0cd2d709dfc4b6f3ed420364f09238825d6fb9800aece1303e1036e",
+        "e37a5e0d411de88b701db7ae5a4acdace7c721d336850034ca384c5d78208d86",
+        "435fbbfce1858e159889622bd57665c0b48cb9473bc4a9f22a493599ce1133b8",
+        "b4a369c614b7cd0f55511ef99c89db3520f2255b62f025f43dc4c3194bc0af75",
+        "4aef0f027879bb8f0beb5b091e6a87230967b05da3ff359c497ffd2651ecc862",
+        "5f59525c51a6b97e5a95a44e9ae0162d8d65f4efaa9fac7cdc4c1ea581d4e1c6",
+        "91c3ef7e9c5d05acea2aaf7787ffbe1e7349e3ba5afc62f88567355bc5f1dac8",
+        "298139406e7a934804377bb73154ee383099e099f3d9a946bd3ab3ac14377e0d",
+        "5cad3d4b9d6eff1d9956df4644a3be2f547ade3e7b8c3a4400910a981bbb0a47",
+        "fab302aebe4c312b0723bba26a91edb8719027fb0240fa7baef7ce3e3faef710",
+        "b825c97fe35ac814e1c0a87b78cbfa089793da3b7506549eace44fade09a155c",
+        "09c9dd6d55ece97cf8a40520b5613fd2da1cfbcdbf4a87ea3b0726933226f0d2",
+        "c8cba46cd7c2c3d6ff1d87157a0d654a7d274b65f9f47496c60ef7d493af1cb6",
+        "9d435f7efc528981efa94cc9a9f7471bef0324f9aaf3ba77c96998561ece44fc",
+        "6cdc5b4d57115f01c692864512d2671f0dfc025ea701fe2f6fb4799e8da4ebe0",
+        "6c4365eff42af32c362835582f510821e4206f78c75e4464e958150f71406ece",
+        "9d29ed1af1216126aadbd834283404b3b818b34c071d702593255ae44f8d0247",
+        "b54c33c1a065f29a2f48844a42c3d7c582da27dc0c87ece15cc09a15fc841fda",
+        "95ac086ef17030b3c119e569c1950918141120cfb33c21cd74495a5ce09e99e6",
+        "30b53c836cf9ecef45611992dbd58070582e0db379745f65bca0e5ec21475082",
+        "0e7301f7557d5d239c4277b2cc902f2134d476eac7d7cdef64d6b710959da1f6",
+        "26f2fefc92d38da450c01fb565c05019cfd5f2814437f321eae7cd6244048d32",
+        "96f7259bbb32df469280ca365cd1042a794fd5d39d001125974d7602d7a22acd",
+        "c23ab6dafabeca7379f38c39cbd899028d9bb4eb624729aeaed05bc4bbc29fda",
+        "716543c6277882c2da39a9e9292ed78a550bd2838c588985962d4b80b1bcbc42",
+        "50df42083c01a8766c33d2464e06365f532b4b1cdb32a35aab4dcbe01467aca1",
+        "3f9572fbff6af0f5d31d3083cd9dbc0be82d652b65d56d12f9dbca638a1c1316",
+        "e66b3de1a26dd29439f10324c0918a46f4cb17857a0cc0f7e56aaa494a4866cb",
+        "827ed484b570934987f7ee1b77101ba888dd84336a5c5d45212be31da1c1fc46",
+        "f5648058d1cb7c6b2b7d352ca87abc38455f985bb384121fe2d8c47a49f479cb",
+        "0cb4a9c6208030dce9beb52224723448286847645351b9f2e5b84629ecc32ad5",
+        "b43120dbcfc4197535018a6790e64629a822379e7735ac801a96202efda56050",
+        "54d9b590f21546409e1eee195fcd06acd871535852053055e3f6e453f83b5b75",
+        "43d68780432b94278e84e62c3272374fc1e3090fada2d11e7f5364b23b581db6",
+        "9bfa11340e9c87ba2bbf26e9d3f5bb593a2e4eced4a02f1a57f11586d50a4d87",
+        "ac3c21627c14f211f772984a91257724a096f3bd755b7df968e3d68ef57e7150",
+        "a2161f09b233d60bc7a016460ff389b6ffa8fd0efac5dd639c8f81f631f00fea",
+        "b891773a5fea64a90495b8f222a6a29e54757b09d047465539bc56f1f32078b3",
+        "b8983a3e91f408d891097efee202dab7a6c09ecc9a90c3c08a47540846c6d434",
+        "af3c85b40f4553d7b668a3783c6e2edff4e05c97af7321c51810339083b6a872",
+        "04072d8db96355aa75d6af41f1f63460740a9d3c74d62e27aeeb938c9841069e",
+        "d3bec366138cfa8e29556af7239c9f38387cc4f4088abff37ed951fc8c49743e",
+        "b553dfd690ecdc7447285f3472ac5c510d9b06e995579e7b5e5f01003c9bda1e",
+        "0f61b3aedeacba39692ff400eb19e98c21ce5a754c0114b5e9829162cf4f0e5b",
+        "136c37700b57f38fd00119ed4f6178231edac3c6b7b17dbd02fdbce1173afba6",
+        "0f161e2e9d37949974a8faf7ef6854aed9656e8a789dc9b89408286645b76b64",
+        "ac79aafffa141c767eeb3d4920f8afd052884750f62182c4e2847e952a04ad70",
+        "15e0b968f582c4294ad63d0413243a66fd663c2c485408d64d811938a04fe4f0",
+        "4ca43a14457ddc08d6f89cea5dc06156ca5dabd73577576239fb084426b5acb9",
+        "4a240a6e6c2bb21bbcc8ff244689f0aee9f07e75ec788842f042a61b4db3aad3",
+        "e6d7e6f613ad254786212a15751cd479e61f6dba151397c278251c6e75e554fa",
+        "e8ab6eba49080123484284471ad6c83ca30abd87c54b0ae1b5bbd27e865edbf0",
+        "15c298b8bf8c31d7f268d3db3a3d6cd846602139fd2817305325cfee3755df97",
+        "22e99e9b320c1a3243565396f71e55c640f4fc75f651f9edbd4e68afc1e9760f",
+        "2aeb4dc36f2353f714d49602a7054df7c94dbc7a501632d74fa7493c1281552b",
+        "587d814ec6afdb3231505e590dd1e97bb8a4223f4151af619e7127cb2b27d4fd",
+        "0cf19d7264af5a8c1f29fba65cb18a3a2253773ab520f58475eb91edfcc341c5",
+        "f3fb0e0a3ca7246d49d5e8cb9beb07ef8c5ebe08b0ddbb01cab13b0afb7600c5",
+        "e5a6b5c88c577f9155221c95f275432aa08d9883315166be2fc16a8cff189b9a",
+        "ed1254a85a9c2ff6f0078e783132cab13d098a42be89b67b9374416cf061ca90",
+        "7d721ec1444a2cf0265e1f0ceacf96f0ec4f43c7230d3b76bf53a459f3723023",
+        "e21e9f0217dcd78c26bb4e8d2ab5f4007b6972210febd8e509b83a4d3b2a1e1e",
+        "47fe52db35dd55e96417494aec544d95d4a8cd48253735b9d7ed072b944cba8b",
+        "2f65e8379930af66eae04f31f410f5c8a163cca1bfd5f130bbf6fe15f9c24be4",
+        "aad27625808173675b1564eac481edc9a36026c57693c663f056e5f3d0feb328",
+        "a119b1da8ff4b3c118ddf5b0a6f40a4977a39c7267eda36a54c73f85d56a6319",
+        "efb2e46418e1b9fbc57f0fd743c7297d7095d7df16e3dea7fc66dafc161663a2"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 47,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 48,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 49,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "2dd43ef0ae32067f5f4710778b41f5bd867bcd32a34d1757451fffbc03c191c8"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 50,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 200,
+    "response": {
+      "revisionSha256": "34a64ae03f49d3c392033194e73b2470621b66ddb54f787515f80adb048a06b0",
+      "updatedAt": "2026-10-11T23:45:46.890Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 51,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 200,
+    "response": {
+      "revisionSha256": "34a64ae03f49d3c392033194e73b2470621b66ddb54f787515f80adb048a06b0",
+      "updatedAt": "2026-10-11T23:45:46.890Z",
+      "dayCount": 31
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 52,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 200,
+    "response": {
+      "revisionSha256": "34a64ae03f49d3c392033194e73b2470621b66ddb54f787515f80adb048a06b0",
+      "updatedAt": "2026-10-11T23:45:46.890Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 53,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "ADMIN",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "fedb4c0ddf43142d7b00cadf9e5f5d8bb302cb9ed74638a68487fcd2f263e70b",
+    "status": 200,
+    "response": {
+      "revisionSha256": "34a64ae03f49d3c392033194e73b2470621b66ddb54f787515f80adb048a06b0",
+      "updatedAt": "2026-10-11T23:45:46.890Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 54,
+    "source": "operator-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "ADMIN",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "fedb4c0ddf43142d7b00cadf9e5f5d8bb302cb9ed74638a68487fcd2f263e70b",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da8d6e42853acdcad7e33d9fa9a0bf484a5d9e11f2e88f6e053a6d4bf16166ef",
+      "updatedAt": "2026-10-11T23:45:48.614Z"
+    },
+    "command": {
+      "startTime": "2099-01-03T14:30:00Z",
+      "expectedUpdatedAt": "2026-10-11T23:45:46.890Z",
+      "expectedRevisionSha256": "34a64ae03f49d3c392033194e73b2470621b66ddb54f787515f80adb048a06b0",
+      "fields": [
+        "startTime",
+        "expectedUpdatedAt",
+        "expectedRevision"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 55,
+    "source": "browser-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "b6ee7cdc87b5dbd8eb93256720a535fd5c8451e6f78df53ff3ea9bf34d199e65",
+    "sessionTokenSha256": "c0c7421fd3254ff9152cf110e8f5f63d45e0c2c5e07e9ab04b5543a2c36b6abe",
+    "status": 409,
+    "response": {},
+    "command": {
+      "startTime": "2099-01-02T14:30:00.000Z",
+      "expectedUpdatedAt": "2026-10-11T23:45:46.890Z",
+      "expectedRevisionSha256": "34a64ae03f49d3c392033194e73b2470621b66ddb54f787515f80adb048a06b0",
+      "fields": [
+        "startTime",
+        "expectedUpdatedAt",
+        "expectedRevision"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 56,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 57,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 58,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "2a69fad51f05626f059905a97ca0bf24528aa77319f5b30cf40a10b995440695"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 59,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 60,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 61,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 62,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 63,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 64,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 65,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 66,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 67,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 68,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 69,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 70,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 71,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 72,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 73,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 74,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 75,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 76,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 77,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 78,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 79,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 80,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 81,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 82,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 83,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 84,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 85,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 86,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 87,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 88,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 89,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 200,
+    "response": {
+      "revisionSha256": "da78537de4780b0aecb33adc84d4a3e1774e915d2157e410c2ac1de8a959cb3b",
+      "updatedAt": "2026-10-11T23:45:48.817Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 90,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "OWNER",
+    "organizationSha256": "572ed81daaac9ca153393c3863f4795ac24f968a807a35e3108f35a66515c9d6",
+    "sessionTokenSha256": "13d1df47c7527841450d0101922177fc176259d920fb6bf388085bde5702ab8c",
+    "status": 429,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": "60"
+  },
+  {
+    "sequence": 91,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 92,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 93,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "5082fac2d652418f808092f4699a97b4cf748f364efc3289b0ea2b187f110a04"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 94,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "e64ed4d901eb5a91133c82ba717615ef0cc4635cc6d269f7a82fcdfab47cf73b",
+    "sessionTokenSha256": "3e9c1fe5e8c428168f0ae6fb0c3b67c257b141284807406a271ad48ab229859c",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 95,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "e64ed4d901eb5a91133c82ba717615ef0cc4635cc6d269f7a82fcdfab47cf73b",
+    "sessionTokenSha256": "3e9c1fe5e8c428168f0ae6fb0c3b67c257b141284807406a271ad48ab229859c",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 96,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "e64ed4d901eb5a91133c82ba717615ef0cc4635cc6d269f7a82fcdfab47cf73b",
+    "sessionTokenSha256": "3e9c1fe5e8c428168f0ae6fb0c3b67c257b141284807406a271ad48ab229859c",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "396c1aed9a25d05fb050139ebc12fc64475facebfbf7a6d91f3fc366ecaf20dd"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 97,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 98,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 99,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "5082fac2d652418f808092f4699a97b4cf748f364efc3289b0ea2b187f110a04"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 100,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 404,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 101,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 404,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 102,
+    "source": "operator-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-02"
+    },
+    "role": "ANONYMOUS",
+    "organizationSha256": null,
+    "sessionTokenSha256": null,
+    "status": 401,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 103,
+    "source": "operator-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "f1214d773db2adf66579bf096cbf8264dca947ccc05e990c32b36ff5332ad8a6",
+    "sessionTokenSha256": "afdc97d1c87fb56dfd35847d225844fde06ad5df1e14638192dcbffaf205080f",
+    "status": 400,
+    "response": {},
+    "command": {
+      "startTime": "2099-01-02T14:30:00Z",
+      "expectedRevisionSha256": null,
+      "fields": [
+        "startTime"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 104,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 105,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 106,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "8b8f2f5b26b65c7d038a0e728547d3632aa956a190d78196ad099c0771765eb6"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 107,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100",
+      "status": "CONFIRMED"
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {
+      "count": 0,
+      "itemIdHashes": []
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 108,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100",
+      "status": "PENDING"
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "8b8f2f5b26b65c7d038a0e728547d3632aa956a190d78196ad099c0771765eb6"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 109,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-02",
+      "limit": "100",
+      "status": "PENDING"
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {
+      "count": 0,
+      "itemIdHashes": []
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 110,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2099-01-02",
+      "to": "2099-01-03",
+      "limit": "100",
+      "status": "PENDING"
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "8b8f2f5b26b65c7d038a0e728547d3632aa956a190d78196ad099c0771765eb6"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 111,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2099-01-02",
+      "to": "2099-01-03",
+      "limit": "100",
+      "status": "PENDING",
+      "professionalId": {
+        "sha256": "2c8979bfc14f7eb88b801a5ac9386e134f0240046b8957f1d960616ed92cef58"
+      }
+    },
+    "role": "OWNER",
+    "organizationSha256": "12503a2f4a42151dc417380d7d25cd454a065d498b15846a6ebe6d9516ef0dc4",
+    "sessionTokenSha256": "b0d099a1ae6fe086ce333edaea8e90e70c75af99c128cf2a6fb1f7dddaba5b26",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "8b8f2f5b26b65c7d038a0e728547d3632aa956a190d78196ad099c0771765eb6"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 112,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 113,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 114,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "6c2081154a1f73d68028009b54f1a340de1648ef5666afb27d989fa75a5b0863"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 115,
+    "source": "browser-delayed-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100",
+      "status": "PENDING"
+    },
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "6c2081154a1f73d68028009b54f1a340de1648ef5666afb27d989fa75a5b0863"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 116,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "38fd2910092e1a8a77ce71e09ec85532f4e2f54bbb1cca4653adc5b7f273ee55",
+    "sessionTokenSha256": "9378e8c1ec2931ee17c02499846af1a589643d8a66586613b76f805ac0a55832",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 117,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "38fd2910092e1a8a77ce71e09ec85532f4e2f54bbb1cca4653adc5b7f273ee55",
+    "sessionTokenSha256": "9378e8c1ec2931ee17c02499846af1a589643d8a66586613b76f805ac0a55832",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 118,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "38fd2910092e1a8a77ce71e09ec85532f4e2f54bbb1cca4653adc5b7f273ee55",
+    "sessionTokenSha256": "9378e8c1ec2931ee17c02499846af1a589643d8a66586613b76f805ac0a55832",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "7d2da6bb356a50c4ba79a23d45fe938921e937a76143302e89ab0471cc9a2931"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 119,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 120,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 121,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "6e5c87d46c3ec9f58d8039721ad639873f8854992c4557b4fd144b2554f8a190",
+    "sessionTokenSha256": "6d083125b7cd698bbb01e1778b939bcba26bdfb3eafd648747f39485249c4a78",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "6c2081154a1f73d68028009b54f1a340de1648ef5666afb27d989fa75a5b0863"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 122,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 123,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 124,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "9909aeabd4475fb62ac2777d2f11c3add0f2720948f9560b13973df4e69bb064"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 125,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "834cf64b50536f62f45e08ca6ac5db34724d4590e18c32abbbc6847e2501baf0",
+      "updatedAt": "2026-10-11T23:45:55.416Z"
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 126,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability-days",
+    "params": {
+      "from": "2099-01-01",
+      "to": "2099-01-31"
+    },
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "834cf64b50536f62f45e08ca6ac5db34724d4590e18c32abbbc6847e2501baf0",
+      "updatedAt": "2026-10-11T23:45:55.416Z",
+      "dayCount": 31
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 127,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/[fixture-id]/reschedule-availability",
+    "params": {
+      "date": "2099-01-02"
+    },
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "834cf64b50536f62f45e08ca6ac5db34724d4590e18c32abbbc6847e2501baf0",
+      "updatedAt": "2026-10-11T23:45:55.416Z",
+      "slotCount": 21
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 128,
+    "source": "browser-delayed-real-http",
+    "method": "PATCH",
+    "path": "/bookings/[fixture-id]/reschedule",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {
+      "revisionSha256": "541d719df4f293295abad8ffe6c7dfb7d7ab5dfcd1b21ce7fc99e5420b0d138c",
+      "updatedAt": "2026-10-11T23:45:57.537Z"
+    },
+    "command": {
+      "startTime": "2099-01-02T14:30:00.000Z",
+      "expectedUpdatedAt": "2026-10-11T23:45:55.416Z",
+      "expectedRevisionSha256": "834cf64b50536f62f45e08ca6ac5db34724d4590e18c32abbbc6847e2501baf0",
+      "fields": [
+        "startTime",
+        "expectedUpdatedAt",
+        "expectedRevision"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 129,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "4df5801fee6fb184a7fe62da42c53b8c339ffcbb91d8b196990594fd4d821426",
+    "sessionTokenSha256": "1d0585025b89f3847714cdf9fbfa2dde8caea9fb110ad68d9169fdcec323a965",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 130,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "4df5801fee6fb184a7fe62da42c53b8c339ffcbb91d8b196990594fd4d821426",
+    "sessionTokenSha256": "1d0585025b89f3847714cdf9fbfa2dde8caea9fb110ad68d9169fdcec323a965",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 131,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "4df5801fee6fb184a7fe62da42c53b8c339ffcbb91d8b196990594fd4d821426",
+    "sessionTokenSha256": "1d0585025b89f3847714cdf9fbfa2dde8caea9fb110ad68d9169fdcec323a965",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "428b847d5203bac6e1336e5aecee53414f7d74253f75a66a1caa58f6bf95ada7"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 132,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 133,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 134,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "fecb58f58bbc24edad809ff1d9b9ff0a7005d50527c330ffa2614ffd7c2863b3",
+    "sessionTokenSha256": "6cdc3081adfb24bc51816d0f20fcde08c6eb14b63395f47095506692feb4f1e5",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "9909aeabd4475fb62ac2777d2f11c3add0f2720948f9560b13973df4e69bb064"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 135,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/organizations/mine",
+    "params": {},
+    "role": "OWNER",
+    "organizationSha256": "afa46d76a8c5b453851faa53fb5d31493c1a258eaa47dc95455421f352166c38",
+    "sessionTokenSha256": "4658068373699b91ab26815c64d60fec90bfa4350f9c299f9f72746fcbdb1ab6",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 136,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/professionals",
+    "params": {
+      "page": "1",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "afa46d76a8c5b453851faa53fb5d31493c1a258eaa47dc95455421f352166c38",
+    "sessionTokenSha256": "4658068373699b91ab26815c64d60fec90bfa4350f9c299f9f72746fcbdb1ab6",
+    "status": 200,
+    "response": {},
+    "cacheControl": null,
+    "retryAfter": null
+  },
+  {
+    "sequence": 137,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100"
+    },
+    "role": "OWNER",
+    "organizationSha256": "afa46d76a8c5b453851faa53fb5d31493c1a258eaa47dc95455421f352166c38",
+    "sessionTokenSha256": "4658068373699b91ab26815c64d60fec90bfa4350f9c299f9f72746fcbdb1ab6",
+    "status": 200,
+    "response": {
+      "count": 1,
+      "itemIdHashes": [
+        "319ae8013c447286a1b86a9191e78c2486933fabcb620c8088abf731baed7613"
+      ]
+    },
+    "cacheControl": "no-store",
+    "retryAfter": null
+  },
+  {
+    "sequence": 138,
+    "source": "browser-real-http",
+    "method": "GET",
+    "path": "/bookings/calendar",
+    "params": {
+      "from": "2098-12-29",
+      "to": "2099-01-05",
+      "limit": "100",
+      "status": "CONFIRMED"
+    },
+    "role": "OWNER",
+    "organizationSha256": "afa46d76a8c5b453851faa53fb5d31493c1a258eaa47dc95455421f352166c38",
+    "sessionTokenSha256": "4658068373699b91ab26815c64d60fec90bfa4350f9c299f9f72746fcbdb1ab6",
+    "status": 503,
+    "response": {},
+    "cacheControl": "no-store",
+    "retryAfter": null
+  }
+]

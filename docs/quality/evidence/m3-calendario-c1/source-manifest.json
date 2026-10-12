@@ -1,0 +1,576 @@
+{
+  "base": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+  "normalization": "CRLF to LF",
+  "modifiedAndNew": [
+    {
+      "path": "apps/api/src/bookings/calendar-budget.guard.ts",
+      "sha256": "6513b86a4a020923150604a90414e056369b0e5172e55c1c1000fc800efe4a05"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar-collision.integration.spec.ts",
+      "sha256": "07a05d0e870fb67dd84573e5f5d8edd8353c05f32f5f13d30c2136311c78e1c7"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar-compatibility.integration.spec.ts",
+      "sha256": "180a51e7b1c2318b0dbad0f62828e27812c9f5f2a60a9258533ebd77382b596e"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.controller.ts",
+      "sha256": "c336eb1bb49b8f1d2f1a2d053368ade9febe8518e5a3523a41458b9c215b5069"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.integration.spec.ts",
+      "sha256": "f58f495f84fb1ebf8ad3ffff5292e06867c9869cf507ec72074297a5103921fc"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.service.spec.ts",
+      "sha256": "18cfe78622d4cb4e296389f70f930f76073a7707af90ece1a2740210fefbee19"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.service.ts",
+      "sha256": "2867196d2e28180df8557e45ac789e0e84613583888c905a6c9e0bba4549bbcd"
+    },
+    {
+      "path": "apps/api/src/bookings/dto/calendar.dto.ts",
+      "sha256": "786bd3395f70b052de33e285909392ca95d3d3504a8690a625f3b542a72b36ae"
+    },
+    {
+      "path": "apps/api/src/common/business-time.presentation.ts",
+      "sha256": "7be2927eeb5f7de890cb9aed7613e41922da0a895bbdd3937e9830c74890ea0f"
+    },
+    {
+      "path": "apps/api/test/m3-compat-prepare.cjs",
+      "sha256": "a986d44b59acdcc60d135b06b4b74b3f847483e741b3bf03c1d578761701c826"
+    },
+    {
+      "path": "apps/api/test/m3-postgres-run.cjs",
+      "sha256": "43f8e73b3a381652ab598632822a04d98ec65ff9e7a8016213282ecb76e8dec4"
+    },
+    {
+      "path": "apps/api/test/m3-rate-child.cjs",
+      "sha256": "54025687433fefe5aa8b287f0640a4f952235a5826815c1a5e771961ad583e28"
+    },
+    {
+      "path": "apps/api/test/m3-validation-run.cjs",
+      "sha256": "b8328329e837783e0d2ee186f9f59793a29155bc9bf7c1c0ae6f0c4e58f84809"
+    },
+    {
+      "path": "apps/web/lib/business-time-parity.test.ts",
+      "sha256": "c823cbf3793a731916a45e27be7f525f35e8f7eb73da33371ae2f098d9f1c1c5"
+    },
+    {
+      "path": "docs/quality/M3_CALENDARIO_C1_CIERRE.md",
+      "sha256": "060e6ee00bea5990e7aac7b8abd521024a1b266c3707ee769e0da743dd55c26b"
+    },
+    {
+      "path": "docs/quality/MIGRACION_28_PLAN_LIMPIEZA.md",
+      "sha256": "cd2fbd5c0a9ad217eda00d346d54d4ba3f0825762242de82efbfd6411f8ca9d3"
+    },
+    {
+      "path": "BACKEND_CHANGES.md",
+      "sha256": "42a08ee4e4425576531d178811464c1c4eec694de96118d3d5f66c22645d01d9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "982da4f158330e8ecdf85b87289f907862ef1cb8efe085d122a7ae491240e138"
+    },
+    {
+      "path": "PROJECT_MASTER.md",
+      "sha256": "d994e76f7896183885369e3394af5a2436efae6525641c3032a944e9d8bd39fd"
+    },
+    {
+      "path": "apps/api/src/bookings/bookings.module.ts",
+      "sha256": "34ea73f86f78465908349deb5e2a8648b05b45ab6d167a06c2a80af140eb4178"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "718b750a2aa6dedb0efb83d416c99f1e7c610758ad3296c959f3958f1d463116"
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_C0_C1.md",
+      "sha256": "300dd04e20ef292443374d7efbbbc9e5de57c20d4d4984541b0e8dd69197f7c7"
+    },
+    {
+      "path": "docs/features/RESERVA_INVITADO_C3_CIERRE_QA.md",
+      "sha256": "c19008880482d1caaee9af4314825df42001b6cd8bf9cd93d0e23c4477eeff9c"
+    }
+  ],
+  "protectedSources": [
+    {
+      "path": "apps/api/ops/README.md",
+      "sha256CanonicalLF": "3fbb389526e9c9feb6d309c3a5c683bb6e9ed71558fe8d827e1cacbd7ad825a1",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/apply-runtime-grants.sql",
+      "sha256CanonicalLF": "8916ca378c88b4ed1d1d8c357f0e1a117a17df792d229c11a6a412f9a24037ea",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/business-schedule-backfill.sql",
+      "sha256CanonicalLF": "e4991b2c481d4cb7ab9fef02f43b86190af5953d18c710debd7f2152f9e017ff",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/clerk-production-session-smoke.cjs",
+      "sha256CanonicalLF": "9a101d48872266698d77950519b0d9252e0cc631f7c6b37000351b08a1340a46",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/count-public-rows.sql",
+      "sha256CanonicalLF": "0ff80011de74af7509d077493a7bf17b92df298f5d6caa90f335e2a6eef3a45b",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/customer-stage-one-runtime-grants.sql",
+      "sha256CanonicalLF": "293e73419caaa9d5b9e0f95b8027414ae20b903ffdf4c80fcd437ea1dbd71cdc",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/finish-supabase-grants.sql",
+      "sha256CanonicalLF": "5a8ec8b3b9f1521c58c4d8b10a02b8cde4261afad3f6fb13b2dded9e8aaa37f9",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/grant-supabase-backup.sql",
+      "sha256CanonicalLF": "ae8ccf5cee28eeb4918aef1ba71ce7879c5b3a979497a7e3609585617c18080b",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/inspect-rollback-drill.sql",
+      "sha256CanonicalLF": "f64206679c98ad8fb33f2f58bcce4205da2fd9232a300ad9f3a9069cd720094c",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/inventory-identity-cutover.sql",
+      "sha256CanonicalLF": "6ff416185248150d87993a6d9297aeda4b0ae27c01b626134e957b75d78d7a0a",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/inventory-legacy-role.sql",
+      "sha256CanonicalLF": "68186877cfaa6cb5e0ba964af579ebd6fc661785991e8785ccc607cbecba8f5d",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/lock-legacy-role.sql",
+      "sha256CanonicalLF": "d633b7700a1fe3822bab2931ed210f697c8649b6fec0d8dc5793c8c0c00c95a2",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/production-startup-drill.cjs",
+      "sha256CanonicalLF": "8e773d829d8daf24f0fd25bca19c9529b19029520b9b9b0896dd4941a6adb4f5",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/provision-database-roles.sql",
+      "sha256CanonicalLF": "d90b743d9d1da57bffbf387654b711c0ebec80beea35f2dc680a0475d5d8bde0",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/provision-supabase-backup.sql",
+      "sha256CanonicalLF": "84dcbbd3890568cd00d698c6da99cd59c2ac3aee261b1c51133014877a220c67",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/provision-supabase-roles.sql",
+      "sha256CanonicalLF": "5716083ed69d7c2c1d1978bbebc63890659a6a43c27fa9b6a1f4a093a7c98730",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/rate-limit-http-drill.cjs",
+      "sha256CanonicalLF": "a2fc6bad46911684ec90089c62f85fb0935b6e81bd3598868cfd5266887774ca",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/rollback-drill-fixture.sql",
+      "sha256CanonicalLF": "446f3938f1dd0c97275fbd32a9f6171d65c53a09ed55944f6e6ffc2ea2b8b94f",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/rollback-http-drill.cjs",
+      "sha256CanonicalLF": "6c82add547b68c78e826f011bb5a53e23270eb1d4b0c8d9a207f5850799ad874",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/verify-backup-snapshot.sql",
+      "sha256CanonicalLF": "586f4fa6c3383a885047773f7d03ac92b3674087c1b10109e8406799db2ca16c",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/verify-clerk-production.cjs",
+      "sha256CanonicalLF": "e078bac167e7e5523171a0b96f05ace8b1d4fbe97b4069768d437ce5300c32d9",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/ops/verify-runtime-role.sql",
+      "sha256CanonicalLF": "2f0b87a2147ce1f0fe4f25c7fd4b4c08b6ec97c061814fe1b5fad61c37f5456d",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/package.json",
+      "sha256CanonicalLF": "6885f28d5b65f8a50d5e26064a04ba114d62ee4218a2ca3f7eb878cc1f84d6ea",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260719162646_initial_schema/migration.sql",
+      "sha256CanonicalLF": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260720044928_add_invoice_model/migration.sql",
+      "sha256CanonicalLF": "39f522178c044b3ae135d6faaa9961c35f57ce83aa09632c390607f9e13f984b",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260722030552_link_professional_user/migration.sql",
+      "sha256CanonicalLF": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260722042926_add_customer_role/migration.sql",
+      "sha256CanonicalLF": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260723212248_microsite_and_indexes/migration.sql",
+      "sha256CanonicalLF": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260724023058_global_identity_membership/migration.sql",
+      "sha256CanonicalLF": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260725215619_service_client_is_active/migration.sql",
+      "sha256CanonicalLF": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260727010227_audit_log_user_id/migration.sql",
+      "sha256CanonicalLF": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260811180000_booking_schedule_exclusion/migration.sql",
+      "sha256CanonicalLF": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260812010000_professionals_backend_a1/migration.sql",
+      "sha256CanonicalLF": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260813193000_professional_individual_availability_a2/migration.sql",
+      "sha256CanonicalLF": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260813200000_professional_availability_tenant_fk/migration.sql",
+      "sha256CanonicalLF": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260814190000_add_user_clerk_link_a0_1/migration.sql",
+      "sha256CanonicalLF": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260815120000_password_nullable/migration.sql",
+      "sha256CanonicalLF": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260820220000_audit_log_pre_tenant_security_events/migration.sql",
+      "sha256CanonicalLF": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260821220000_team_invitations_a0_4/migration.sql",
+      "sha256CanonicalLF": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260822150000_client_user_b2c_link_a0_6_a/migration.sql",
+      "sha256CanonicalLF": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260825220000_facturacion_a_internal_invoices/migration.sql",
+      "sha256CanonicalLF": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260826210000_facturacion_a_completion_service_price_guards/migration.sql",
+      "sha256CanonicalLF": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260909120000_restore_invoice_integrity_checks/migration.sql",
+      "sha256CanonicalLF": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260912120000_cms_editorial/migration.sql",
+      "sha256CanonicalLF": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260914120000_booking_email_outbox/migration.sql",
+      "sha256CanonicalLF": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260914120100_email_channel_control/migration.sql",
+      "sha256CanonicalLF": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260915120000_email_template_version/migration.sql",
+      "sha256CanonicalLF": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260923100000_media_promotions/migration.sql",
+      "sha256CanonicalLF": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260925010000_security_rate_bucket/migration.sql",
+      "sha256CanonicalLF": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20260927170000_business_schedule/migration.sql",
+      "sha256CanonicalLF": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/20261003120000_customer_stage_one/migration.sql",
+      "sha256CanonicalLF": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/migrations/migration_lock.toml",
+      "sha256CanonicalLF": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/rollback/customer-stage-one.disposable.sql",
+      "sha256CanonicalLF": "b00aaad976c14b8b132fe6ff9f9f6f20a8f373d043fca9d4c4d2d65dcfc49786",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/prisma/schema.prisma",
+      "sha256CanonicalLF": "5406e5fb29a0d8ab0d24c8af863231f25a2bf9ea5b75499e802ea3c0f6f358a0",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/bookings/bookings.controller.ts",
+      "sha256CanonicalLF": "a14623e0fbbb6d27775e3b220eca739c913894fda0fbfe6ee7eccbde68973772",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/bookings/bookings.service.ts",
+      "sha256CanonicalLF": "f7c83f5a8364a632264b9a70fc1260ac124d03289c83783e97162b9c67e8b8fd",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/email-preference.dto.ts",
+      "sha256CanonicalLF": "615c6ded932f0c27f01b1df1e1e2f977c32e6e24df37f112269696e8ccc6626e",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/email-webhook.controller.ts",
+      "sha256CanonicalLF": "a6656cc5aa76734bc627772deb3c11d47b4fa9068beb94db26c064cbf79a0267",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/email-worker.cli.ts",
+      "sha256CanonicalLF": "58187a40341853857e229899a3c47d7cc38167955a6e109ba936475192f74b02",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/email-worker.ts",
+      "sha256CanonicalLF": "1e8a9c74fed815bb3c9a09952320d9bf3d3fb1079a9d3d2a909c2ad03b01319f",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notification-policy.spec.ts",
+      "sha256CanonicalLF": "643f71ac3e7146864dc97866aee94f6659bf8dc68d50f177e49f5e6a67ae8ada",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notification-policy.ts",
+      "sha256CanonicalLF": "376c2e7ae748dd38e288e2c014b21970cf907d7f17201b268453c5bc963619bb",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notification-producer.ts",
+      "sha256CanonicalLF": "c138f12da4a9364c5de05fddf2ab34fcf5ba9e66b739c7ab5b981d3562c00a32",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notification-templates.ts",
+      "sha256CanonicalLF": "2c404b6fcc327b48baae734c31a2ac09199a699dea0bb838ac92aac4f7fc628c",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notifications-error.interceptor.ts",
+      "sha256CanonicalLF": "f67471b78afdeda664bcb137331fe551f2af98037d57322431c5e1235ef6c770",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notifications.controller.ts",
+      "sha256CanonicalLF": "5d43e69c6da7b2a843732e542938e1c6478607e2c39eed584334d260d6003ff4",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notifications.module.ts",
+      "sha256CanonicalLF": "932be2d8473e4032d083776e9b9efb230c9db1d62838c8496cabed00ad1fd053",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/notifications.service.ts",
+      "sha256CanonicalLF": "1371b4f1dde670d1b43027912aada666cab83241f52b420601e7272270f00935",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/resend.adapter.spec.ts",
+      "sha256CanonicalLF": "62a7308ab607a156575ee7dc1e98cc1b6d9879d391aab4ff96bd4f1afb6e46d9",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/notifications/resend.adapter.ts",
+      "sha256CanonicalLF": "ba2e77a7b1457246dd7c0cffb77ffc9804938c558a79f820ad5a936bed8cddd3",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/professionals/professional-availability.service.ts",
+      "sha256CanonicalLF": "fe35aa8fe7c3d9deca3572f7abc6c315aa23e24abeeddd1a40f7a645e0933bf0",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/availability.util.spec.ts",
+      "sha256CanonicalLF": "cf3d51642d6ad180640c9f7a2a3f51397e3e40a9b3a01d3d76d5bc6385bae01e",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/availability.util.ts",
+      "sha256CanonicalLF": "d36607b6d1df55e749e69e2fe7e6435ded67e91d76654c4d109662fa0ad9d9c0",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/create-public-booking.dto.ts",
+      "sha256CanonicalLF": "7831ba86d4148354b4fa937130d5497b59fd01c7c8abddf76a39be8a24fef347",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/get-availability-days-query.dto.ts",
+      "sha256CanonicalLF": "ab83d8b429ebe6440266cf3c16781e3cb18bb337a4039fb293155edcdee07993",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/get-availability-query.dto.ts",
+      "sha256CanonicalLF": "900f3719a003b7d2ff8576cbeda014a791d611c97344132043d90248c046d0f2",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/dto/public-booking-response.dto.ts",
+      "sha256CanonicalLF": "159b4d9900678571b5c056dd8d10893a65bece9033062daa3e6f29736a75965d",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/guest-claim-retirement.integration.spec.ts",
+      "sha256CanonicalLF": "d10e219ecc08deb15b3a6d55fecade31244e821997bfc340573aaaf6f6796709",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/guest-retirement.spec.ts",
+      "sha256CanonicalLF": "18adf793e503e4dbe371e0decfe85afbc29484cfa8b3e80bf15c9f68ae4c9bed",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking-days.spec.ts",
+      "sha256CanonicalLF": "816db8e684b57d3269ab70527b9234208c0c2419d6dbd7c2ea64a3b5dbd995e5",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.controller.ts",
+      "sha256CanonicalLF": "997d77d413471542433f49566b2a57ae05abc36ad5230655195349d83f36c954",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.module.ts",
+      "sha256CanonicalLF": "21b353c870f1a8607718936aed80a99bc48cc5535b02dd29abd531034e230f87",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.spec.ts",
+      "sha256CanonicalLF": "742683499664316b5f091458ee7231d8ce74d0817c34aa9d92abac03628f82c4",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/public-booking.service.ts",
+      "sha256CanonicalLF": "089e42462e0981017c9b6b048f03d2ff7ad982f1d9b93342793cf2c9973af6c6",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/api/src/public-booking/whatsapp-contract.spec.ts",
+      "sha256CanonicalLF": "3e5ef8f286c0c440dc2886099175440dc04d8e00d65fa3cd9cdc7a6b3263eba3",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/web/lib/api.ts",
+      "sha256CanonicalLF": "7e7f85ba23720f18dfc4878722e464ab43f3e0fea19e09e1ba422f43c3893c3a",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/web/lib/business-time.ts",
+      "sha256CanonicalLF": "7b3573867b6f78aa24e435e6f25bc85d7f16ec40a23b79d62567a8ace7ba54ca",
+      "matchesBase": true
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256CanonicalLF": "68f58c22714df2767ca0c28cdfe36c07d742ec451ed8f7d7bea6a9ac96bbdcfe",
+      "matchesBase": true
+    },
+    {
+      "path": "package.json",
+      "sha256CanonicalLF": "d25a58a1917a4605105f675890150705d8286e57f98f04516de504368178bde0",
+      "matchesBase": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256CanonicalLF": "735d6142c8955d10b511c93ac8bbbdf67e7f48542434eba566951b76389d4d19",
+      "matchesBase": true
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256CanonicalLF": "976b5f5d38a8c5505b6735870a6ad209d278b2773e281004519d068e2b108daf",
+      "matchesBase": true
+    }
+  ],
+  "schemaSha256": "5406e5fb29a0d8ab0d24c8af863231f25a2bf9ea5b75499e802ea3c0f6f358a0",
+  "reviewBase": "baba8b56b524e4b64bcf8342d9008c4c796402bc",
+  "sourceCorrection": "safe error type logger and privacy regressions",
+  "reviewSourceFiles": [
+    {
+      "path": "apps/api/src/bookings/calendar.service.ts",
+      "sha256": "2867196d2e28180df8557e45ac789e0e84613583888c905a6c9e0bba4549bbcd"
+    },
+    {
+      "path": "apps/api/src/bookings/calendar.service.spec.ts",
+      "sha256": "18cfe78622d4cb4e296389f70f930f76073a7707af90ece1a2740210fefbee19"
+    },
+    {
+      "path": "docs/quality/M3_CALENDARIO_C1_CIERRE.md",
+      "sha256": "57b1145e68280e9320dcc7fa3b468b002b04b66e4c8eba1291050bd5130afd35"
+    },
+    {
+      "path": "docs/quality/CLASIFICACION_M3_REVISION.md",
+      "sha256": "0b4a943d0221c0508c9b75855ee694ae9305566fd2c5cfdd9c381303a5143dcc"
+    }
+  ]
+}

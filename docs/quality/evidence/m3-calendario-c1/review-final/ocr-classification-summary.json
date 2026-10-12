@@ -1,0 +1,15 @@
+{
+  "count": 47,
+  "allIndividuallyClassified": true,
+  "uniqueCandidateNumbers": 47,
+  "classifications": {
+    "ya publicado en el historial de origin/ai/antigravity-qa o main": 47
+  },
+  "interpretations": {
+    "sintético reservado": 5,
+    "candidato telefónico: real/no determinado": 10,
+    "falso positivo probable: fecha/números de interfaz": 27,
+    "secuencia numérica OCR: real/no determinado": 5
+  },
+  "rawValuesIncluded": false
+}

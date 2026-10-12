@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-11",
+  "conditionsFulfilled": true,
+  "evidenceRun": "docs/quality/evidence/m3-calendario-c1/postgres/d8e52b185fee461c83cc96195d8439a3",
+  "sameInstant": {
+    "sameInstantHttp": [
+      400,
+      400
+    ],
+    "revisionUnchanged": true,
+    "bookingUnchanged": true,
+    "events": 0,
+    "outboxDelta": 0
+  },
+  "triggerNegativeControl": {
+    "triggerAbsent": true,
+    "exitCode": 1,
+    "failed": 1,
+    "pending": 0,
+    "failure": "revision expected 2n but received 0n",
+    "expectedFailure": true,
+    "collision": {
+      "first": "2026-10-11T20:33:57.085Z",
+      "second": "2026-10-11T20:33:57.085Z",
+      "collision": true,
+      "before": "0",
+      "after": "0"
+    }
+  },
+  "triggerRestoredEnabled": true,
+  "positiveSuites": [
+    {
+      "suite": "src/bookings/calendar-collision.integration.spec.ts",
+      "expected": 1,
+      "passed": 1,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "src/bookings/calendar.integration.spec.ts",
+      "expected": 27,
+      "passed": 27,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "src/bookings/calendar-compatibility.integration.spec.ts",
+      "expected": 2,
+      "passed": 2,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "src/bookings/booking-concurrency.integration.spec.ts",
+      "expected": 9,
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "src/business-schedule/business-schedule.integration.spec.ts",
+      "expected": 26,
+      "passed": 26,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0
+    }
+  ],
+  "fullApi": {
+    "passed": 920,
+    "failed": 0,
+    "pending": 0,
+    "exitCode": 0
+  },
+  "publicM1": {
+    "passed": 17,
+    "failed": 0,
+    "pending": 0,
+    "total": 17,
+    "exitCode": 0
+  },
+  "checks": [
+    {
+      "label": "api-type-check",
+      "command": "pnpm --config.verify-deps-before-run=false --filter api type-check",
+      "exitCode": 0,
+      "elapsedMs": 16239
+    },
+    {
+      "label": "api-lint",
+      "command": "pnpm --config.verify-deps-before-run=false --filter api lint",
+      "exitCode": 0,
+      "elapsedMs": 66204
+    },
+    {
+      "label": "api-build",
+      "command": "pnpm --config.verify-deps-before-run=false --filter api build",
+      "exitCode": 0,
+      "elapsedMs": 19440
+    }
+  ],
+  "productSourceUnchangedSinceInitialValidation": false,
+  "cleanup": true,
+  "runnerExitCode": 0,
+  "C2": "CERRADO",
+  "C3": "Pendiente reagendado real QA con worker consumiendo evento, sin ejecuciÃ³n autorizada",
+  "commit": "No nuevo commit solicitado; cambios locales sin push",
+  "sourceCorrection": "CalendarService.read(): safe error type logger, 4 regression cases"
+}

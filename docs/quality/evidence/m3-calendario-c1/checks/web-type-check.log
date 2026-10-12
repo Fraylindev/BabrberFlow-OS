@@ -1,0 +1,4 @@
+Generated Next.js types cleaned under C:\Users\Fraylin\.codex\worktrees\m3-calendario-c0\Kortek-Booking\apps\web\
+Generating route types...
+✓ Types generated successfully
+$ node scripts/clean-generated-types.mjs && next typegen && tsc --noEmit

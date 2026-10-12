@@ -1,5 +1,34 @@
 # BACKEND_CHANGES.md
 
+## M3 C1 — aprobación con condiciones y checkpoint local, 2026-10-11
+
+El propietario aprueba C1 con condiciones: verificar mismo instante sin revisión/evento/outbox, dependencia funcional del trigger de migración28 y control negativo, y anotar reagendado real QA con consumo del worker para C3. [Condiciones y evidencia](docs/quality/M3_CALENDARIO_C1_CIERRE.md#13-revisión-aprobada-con-condiciones--2026-10-11); [plan de limpieza de migración28](docs/quality/MIGRACION_28_PLAN_LIMPIEZA.md). Commit local de checkpoint autorizado, sin push. C2 explícitamente cerrado; C3 pendiente, sin ejecutar QA ni proveedores. El estado inferior corresponde a la entrega anterior preservada.
+
+
+## M3 C1 Calendario y reagendar — 2026-10-11
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** C0 aprobado; entrega C1 sin publicación ni frontend. [Cierre, pruebas y límites](docs/quality/M3_CALENDARIO_C1_CIERRE.md). El contrato siguiente es el implementado; requiere aprobación explícita del backend antes de C2.
+
+Todas las rutas usan autenticación B2B y Membership vigente, tenant del contexto, DTO estricto y Cache-Control: no-store también en errores. OWNER/ADMIN/RECEPTIONIST leen y reagendan; BARBER solo lee citas del profesional vinculado, sin vínculo devuelve lista vacía y detalle 404. BARBER no puede consultar disponibilidad para reagendar ni mutar. Recurso ajeno/inexistente: mismo 404 y mensaje Reserva no disponible. No se amplían rutas públicas ni GET /bookings, PATCH /bookings/:id o PATCH de estado legacy.
+
+| Ruta nueva | Entrada | Salida |
+| --- | --- | --- |
+| GET /bookings/calendar | from/to YYYY-MM-DD, to exclusivo, 1–7 días civiles; status/professionalId opcionales; limit 100 por defecto, máximo 200; cursor opcional | timeZone, from, to, rangeStart, rangeEnd, generatedAt, items, nextCursor; intersección startTime < rangeEnd y endTime > rangeStart; orden startTime/id |
+| GET /bookings/:id | UUID | id, startTime, endTime, status, updatedAt, revision, client:{name}, professional:{id,name}, service:{id,name} |
+| GET /bookings/:id/reschedule-availability-days | from/to inclusivos, desde hoy del negocio, máximo 31 días civiles | bookingId, updatedAt, revision, timeZone, from, to, availableDates |
+| GET /bookings/:id/reschedule-availability | date YYYY-MM-DD | bookingId, updatedAt, revision, timeZone, date, slots:[{startTime,endTime}] |
+| PATCH /bookings/:id/reschedule | startTime ISO con Z/offset, expectedUpdatedAt y expectedRevision obligatorios | id, professionalId, serviceId, startTime, endTime, status, updatedAt, revision |
+
+items usa la misma proyección mínima que detalle. Sin contacto, clientId, notas, factura, pago ni importe. El cliente usa la zona retornada y el instante ISO autoritativo; no reconstruye UTC desde una etiqueta. La duración procede del servicio actual. Solo PENDING/CONFIRMED; no reasigna profesional, servicio, cliente, estado ni preferencias. El comando exige una hora distinta y futura, profesional ACTIVE, servicio activo, horario y zona confirmados, duración completa disponible. Privacidad/publicación CMS no condicionan la operación interna. Cadencia normal 30 minutos más reloj contextual de la cita con segundos/milisegundos; la exclusión de esa cita existe únicamente después de autorización B2B. No se acepta un parámetro público de exclusión.
+
+D5: updatedAt colisionó en dos escrituras Prisma consecutivas y un ABA. expectedRevision es opaco, formato m3. seguido de 64 hex, devuelto por lecturas y comando; SHA-256 de IDs internos, tiempos, estado, updatedAt y Client.customerBookingRevision. Ese BIGINT y su trigger Booking_customer_revision ya existen y ambos APIs anteriores lo incrementan; se reutilizan sin migración ni cambios a escritores legacy. Se relee después del AFTER trigger. Cambios en otras citas del mismo Client pueden invalidar conservadoramente la revisión. No restaura cuenta B2C. Nunca derivar el token en web.
+
+El cursor HMAC está ligado a actor, tenant, rol, profesional, zona, filtros, rango y límite. Cambio de la proyección entre páginas devuelve 409; reiniciar desde primera página. No es una fotografía retenida. Cursor inválido/de otro contexto: 400. No contiene contactos. Las lecturas usan RepeatableRead; fallo de lectura devuelve 503 seguro, nunca éxito vacío por error.
+
+Mutation toma los locks existentes Organization → Client → Booking → Professional, relee revisión y disponibilidad, actualiza cita y registra evento/outbox existente en la misma transacción. Exclusión PostgreSQL preservada. Perdedor: ninguna escritura/evento y origen intacto; 409 por precondición, estado, profesional, política o hueco. DTO/rango/hora inválidos: 400; sesión inválida/revocada: 401; rol no permitido: 403; presupuesto excedido: 429 con Retry-After. Mensajes seguros, sin constraints/SQL. La ruta legacy conserva su ventana de último escritor: dos operadores pueden tener éxito y producir dos eventos; un escritor legacy posterior puede sobrescribir M3. C1 no modifica esa ruta.
+
+D6: presupuestos propuestos por actor+tenant, compartidos en PostgreSQL entre procesos: lectura calendario/detalle 60/min; días/slots conjuntamente 30/min; comando 10/min, bloqueo 60 s, Retry-After calculado por storage existente. Solicitudes inválidas autenticadas consumen presupuesto; públicos conservan límites propios. D7: sin DDL ni nuevos índices tras EXPLAIN sintético; matriz runtime existente verificada intacta. D8 fase 1: módulo puro apps/api/src/common/business-time.presentation.ts y vectores API/web; consumo de pantallas pendiente C2, correo pendiente gate propio. notification-templates y payloads sellados intactos.
+
 ## C2 reserva invitada — validado localmente / en revisión, 2026-10-07
 
 Autorización posterior de C2 local: retirado el portal B2C exclusivo, navegación, proveedor, hooks, páginas y paso de cuenta. `POST /public/:slug/bookings` responde sólo `{booking}` después de migrar los consumidores ejecutables conocidos de `accountCreated`/`accountCreationError`; quedan únicamente assertions negativas e historia. Client operativo y roles internos/Clerk preservados. 871 pruebas API (0 omitidas), 37 integraciones anteriores + 4 HTTP PostgreSQL y 288 pruebas web aprobadas; tipos/lint/build de ambas apps pasan. Nueve escenarios locales Chrome de flujo, foco/teclado/campos/overflow/consola aprobados, con transporte y Clerk controlados; no equivalen a QA/proveedor/dispositivo físico. C2 implementado y validado localmente, en revisión del propietario; **C3 NO EJECUTADO**. Sin commit/push/PR/despliegue, cambios de QA/producción, Prisma/migraciones ni P4b. Los checkpoints inferiores conservan sus estados fechados; las menciones C2 pendiente y campos deprecated quedaron superadas por este registro.

@@ -1,0 +1,1539 @@
+{
+  "browser": "Chrome real headless",
+  "transport": "Controlled C1 contract fixture; no live API/QA/provider",
+  "timezone": "Asia/Tokyo",
+  "base": "da77c88",
+  "results": [
+    {
+      "name": "flow-320",
+      "width": 320,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-14"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 320,
+        "viewport": 320,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "flow-375",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-14"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "flow-768",
+      "width": 768,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-14"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 768,
+        "viewport": 768,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "flow-1440",
+      "width": 1440,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-14"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 1440,
+        "viewport": 1440,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "role-ADMIN",
+      "width": 375,
+      "role": "ADMIN",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "role-RECEPTIONIST",
+      "width": 375,
+      "role": "RECEPTIONIST",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "role-BARBER",
+      "width": 375,
+      "role": "BARBER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "pages-409",
+      "width": 1440,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100",
+            "cursor": "opaque-fixture-cursor"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 1440,
+        "viewport": 1440,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ]
+    },
+    {
+      "name": "filters-day-week",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-13",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-13",
+            "limit": "100",
+            "status": "CONFIRMED"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-13",
+            "limit": "100",
+            "status": "CONFIRMED",
+            "professionalId": "professional"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-13",
+            "to": "2026-10-14",
+            "limit": "100",
+            "status": "CONFIRMED",
+            "professionalId": "professional"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "write-error-400",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ]
+    },
+    {
+      "name": "write-error-401",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ]
+    },
+    {
+      "name": "write-error-403",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ]
+    },
+    {
+      "name": "write-error-404",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "name": "write-error-409",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ]
+    },
+    {
+      "name": "write-error-429",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+      ]
+    },
+    {
+      "name": "write-error-503",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": [
+          {
+            "width": 349,
+            "client": 349
+          }
+        ]
+      },
+      "consoleIssues": [],
+      "expectedNetwork": [
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ]
+    },
+    {
+      "name": "scope-ABA-late-write",
+      "width": 375,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability-days",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-11-11"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/one/reschedule-availability",
+          "params": {
+            "date": "2026-10-13"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/bookings/one/reschedule",
+          "params": {},
+          "tenant": "A",
+          "body": {
+            "startTime": "2026-10-13T14:30:00.000Z",
+            "expectedUpdatedAt": "2026-10-10T10:00:00.123Z",
+            "expectedRevision": "m3.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "B",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "B",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 375,
+        "viewport": 375,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    },
+    {
+      "name": "late-read-after-navigation",
+      "width": 1440,
+      "role": "OWNER",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-19",
+            "to": "2026-10-26",
+            "limit": "100"
+          },
+          "tenant": "A",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/organizations/mine",
+          "params": {},
+          "tenant": "B",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/bookings/calendar",
+          "params": {
+            "from": "2026-10-12",
+            "to": "2026-10-19",
+            "limit": "100"
+          },
+          "tenant": "B",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/professionals",
+          "params": {
+            "page": "1",
+            "limit": "100"
+          },
+          "tenant": "B",
+          "body": null
+        }
+      ],
+      "overflow": {
+        "document": 1440,
+        "viewport": 1440,
+        "dialogs": []
+      },
+      "consoleIssues": [],
+      "expectedNetwork": []
+    }
+  ],
+  "failures": [],
+  "closed": true
+}

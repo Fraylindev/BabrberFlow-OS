@@ -1,0 +1,40 @@
+  console.info
+    C1 controlled load: 8 concurrent writes, 435ms total
+
+      at Object.<anonymous> (business-schedule/business-schedule.integration.spec.ts:842:13)
+
+PASS src/business-schedule/business-schedule.integration.spec.ts (5.217 s)
+  C1 schedule: real isolated PostgreSQL/runtime
+    √ detects a damaged trigger and rolls the isolated probe back (22 ms)
+    √ detects a damaged function and rolls the isolated probe back (10 ms)
+    √ SQL NULL legacy is unconfirmed with faithful fallback; new tenants are closed (487 ms)
+    √ normalizes adjacent global spans and supports midnight without crossing it (104 ms)
+    √ rejects a whole change for PENDING in progress and beyond 366 days (103 ms)
+    √ rejects a whole change for CONFIRMED in progress and beyond 366 days (69 ms)
+    √ A2 protects in-progress bookings and retains all shifts after global changes (58 ms)
+    √ cancelled does not protect while completed/no-show keep occupancy/history (52 ms)
+    √ overlapping closures form a union; cancellation does not cancel another or future hires (112 ms)
+    √ full multiday and partial closures reject impossible dates/ambiguous clocks (84 ms)
+    √ public slots preserve H5, privacy, cadence, custom intersection and eligibility (343 ms)
+    √ minimal staff projection omits closure reasons; managers/zone permissions and tenant IDs are enforced (113 ms)
+    √ D9 freezes zone with history even without future bookings (47 ms)
+    √ D9 freezes zone with block even without future bookings (48 ms)
+    √ D9 freezes zone with closure even without future bookings (62 ms)
+    √ D9 freezes zone with sealed-promotion even without future bookings (48 ms)
+    √ two editors cannot overwrite a revision (55 ms)
+    √ serializes narrowing against internal without impossible commitments (187 ms)
+    √ serializes narrowing against public without impossible commitments (173 ms)
+    √ serializes narrowing against reschedule without impossible commitments (159 ms)
+    √ serializes narrowing against reactivate without impossible commitments (135 ms)
+    √ serializes narrowing against individual without impossible commitments (211 ms)
+    √ serializes initial zone against first booking; all resulting instants remain unchanged (275 ms)
+    √ waiting on tenant A does not block writes to tenant B (53 ms)
+    √ a durable history failure rolls back every row; audit adapter failure is fail-open (73 ms)
+    √ burst writes to one tenant serialize and retain all eligible bookings (484 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        5.696 s
+Ran all test suites within paths "src/business-schedule/business-schedule.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\m3-calendario-c1\postgres\d8e52b185fee461c83cc96195d8439a3\business-schedule.json

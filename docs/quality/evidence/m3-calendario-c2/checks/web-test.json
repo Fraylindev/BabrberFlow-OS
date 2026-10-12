@@ -1,0 +1,12 @@
+{
+  "syntheticOnly": true,
+  "noDotenv": true,
+  "results": [
+    {
+      "label": "web-test",
+      "command": "pnpm --config.verify-deps-before-run=false --filter web test",
+      "exitCode": 0,
+      "elapsedMs": 40834
+    }
+  ]
+}

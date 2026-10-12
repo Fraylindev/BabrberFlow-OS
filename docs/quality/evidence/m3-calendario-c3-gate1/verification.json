@@ -1,0 +1,28 @@
+{
+  "base": "9225ce8c9542656c7b1d8ab3d4c2a95a7cab0fa7",
+  "traceRequests": 138,
+  "serverRequests": 139,
+  "readiness401Excluded": 1,
+  "serverStatusesMatchTrace": true,
+  "recordedStatuses": {
+    "200": 128,
+    "403": 2,
+    "409": 2,
+    "429": 1,
+    "404": 2,
+    "401": 1,
+    "400": 1,
+    "503": 1
+  },
+  "finalOnly": true,
+  "apiWebSourceUnchanged": true,
+  "providersUsed": false,
+  "realDatabasesUsed": false,
+  "QAUsed": false,
+  "push": false,
+  "visualCapturesReviewed": [
+    "selector-375.png",
+    "flow-1440.png"
+  ],
+  "scope": "C3 gate1 only; standalone production UI components + real full API; no Clerk AuthProvider/Next route runtime"
+}

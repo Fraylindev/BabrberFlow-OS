@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState, FormEvent, type ReactNode } from 'react';
+import { CalendarDetail } from '@/components/calendar/CalendarDetail';
 import { BusinessTime } from '@/components/ui/BusinessTime';
 import { useRouter } from 'next/navigation';
 import { canReadBookingEmails, EMAIL_NOTICE_VERSION } from '@/lib/notification-ui';
@@ -9,13 +10,11 @@ import {
   Booking,
   BookingFilters,
   BookingStatus,
-  RescheduleBookingInput,
 } from '@/lib/api';
 import {
   useBookingsQuery,
   useCreateBooking,
   useUpdateBookingStatus,
-  useRescheduleBooking,
 } from '@/lib/queries/bookings';
 import { useProfessionalsQuery } from '@/lib/queries/professionals';
 import { useServicesQuery } from '@/lib/queries/services';
@@ -27,7 +26,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { SelectField } from '@/components/ui/Field';
 import { BusinessDateTimeField } from '@/components/booking/BusinessDateTimeField';
-import { businessDayRange, businessLocalToIso, businessLocalInput } from '@/lib/business-time';
+import { businessDayRange, businessLocalToIso } from '@/lib/business-time';
 import { scheduleError } from '@/lib/business-schedule';
 import { bookingStatusError } from '@/lib/booking-status-error';
 import { ErrorText } from '@/components/ui/ErrorText';
@@ -425,7 +424,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                   isIssuing={issuingId === b.id}
                   layout="mobile"
                   onStatusChange={(status) => handleStatusChange(b.id, status)}
-                  onReschedule={() => setRescheduleTarget(b)}
+                  onReschedule={['PENDING','CONFIRMED'].includes(b.status) ? () => setRescheduleTarget(b) : undefined}
                   onIssueInvoice={() => handleIssueInvoice(b.id)}
                   onViewInvoices={() => router.push('/dashboard/invoices')}
                   onNotifications={canReadBookingEmails(user?.role) ? () => router.push(`/dashboard/bookings/${b.id}/notifications`) : undefined}
@@ -513,7 +512,7 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
                         isIssuing={issuingId === b.id}
                         layout="table"
                         onStatusChange={(status) => handleStatusChange(b.id, status)}
-                        onReschedule={() => setRescheduleTarget(b)}
+                        onReschedule={['PENDING','CONFIRMED'].includes(b.status) ? () => setRescheduleTarget(b) : undefined}
                         onIssueInvoice={() => handleIssueInvoice(b.id)}
                         onViewInvoices={() => router.push('/dashboard/invoices')}
                         onNotifications={canReadBookingEmails(user?.role) ? () => router.push(`/dashboard/bookings/${b.id}/notifications`) : undefined}
@@ -549,11 +548,14 @@ function BookingsWorkspace({ timeZone }: { timeZone: string }) {
 
       {/* ── Modal: reprogramar reserva ───────────────────────────────────── */}
       {rescheduleTarget && (
-        <RescheduleBookingModal
-          timeZone={timeZone}
-          booking={rescheduleTarget}
+        <CalendarDetail
+          initialEdit
+          zone={timeZone}
+          user={user!}
+          id={rescheduleTarget.id}
           onClose={() => setRescheduleTarget(null)}
-          onRescheduled={() => {
+          onMoved={() => {
+            void bookingsQuery.refetch();
             setRescheduleTarget(null);
             toast('Reserva reprogramada.', 'success');
           }}
@@ -824,265 +826,6 @@ function CreateBookingModal({
               }
             >
               {createBooking.isPending ? 'Guardando…' : 'Reservar'}
-            </Button>
-          </div>
-        </form>
-      )}
-    </Modal>
-  );
-}
-
-// ─── Modal: reprogramar reserva ───────────────────────────────────────────────
-function RescheduleBookingModal({
-  timeZone,
-  booking,
-  onClose,
-  onRescheduled,
-}: {
-  timeZone: string;
-  booking: Booking;
-  onClose: () => void;
-  onRescheduled: () => void;
-}) {
-  const {
-    data: professionals = [],
-    isLoading: loadingProfessionals,
-    isError: professionalsError,
-    refetch: refetchProfessionals,
-  } = useProfessionalsQuery();
-  const {
-    data: services = [],
-    isLoading: loadingServices,
-    isError: servicesError,
-    refetch: refetchServices,
-  } = useServicesQuery();
-  const reschedule = useRescheduleBooking();
-
-  const [professionalId, setProfessionalId] = useState(booking.professionalId);
-  const [serviceId, setServiceId] = useState(booking.serviceId);
-  const originalLocal = businessLocalInput(booking.startTime, timeZone);
-  const [startTime, setStartTime] = useState(originalLocal);
-  const rescheduleVisit = useRef({ active: false });
-  useLayoutEffect(() => {
-    const current = { active: true };
-    rescheduleVisit.current = current;
-    return () => { current.active = false; };
-  }, []);
-  const [error, setError] = useState<string | null>(null);
-
-  const loading = loadingProfessionals || loadingServices;
-  const optionsError = professionalsError || servicesError;
-  const activeProfessionals = professionals.filter(
-    (professional) => professional.isActive !== false,
-  );
-  const activeServices = services.filter((service) => service.isActive !== false);
-  const missingOptions = activeProfessionals.length === 0 || activeServices.length === 0;
-  const hasChanges =
-    professionalId !== booking.professionalId ||
-    serviceId !== booking.serviceId ||
-    startTime !== originalLocal;
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-
-    const currentVisit = rescheduleVisit.current;
-    if (reschedule.isPending) return;
-    const body: RescheduleBookingInput = {};
-    if (professionalId !== booking.professionalId) body.professionalId = professionalId;
-    if (serviceId !== booking.serviceId) body.serviceId = serviceId;
-
-    // Solo enviamos startTime si fue modificado
-    if (startTime !== originalLocal) {
-      const instant = businessLocalToIso(startTime, timeZone);
-      if (!instant) { setError('Esa hora no existe o se repite en el negocio. Elige otra fecha u hora.'); return; }
-      const selectedDate = new Date(instant);
-      if (selectedDate <= new Date()) {
-        setError('La nueva fecha y hora debe ser posterior al momento actual.');
-        return;
-      }
-      body.startTime = selectedDate.toISOString();
-    }
-
-    if (Object.keys(body).length === 0) {
-      setError('No realizaste ningún cambio.');
-      return;
-    }
-
-    try {
-      await reschedule.mutateAsync({ id: booking.id, ...body });
-      if (currentVisit.active) onRescheduled();
-    } catch (err) {
-      if (currentVisit.active) setError(scheduleError(err));
-    }
-  }
-
-  return (
-    <Modal title="Reprogramar reserva" tone="light" size="lg" onClose={onClose}>
-      {loading ? (
-        <div className="flex flex-col gap-3" aria-label="Cargando datos de reprogramación">
-          {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-32 animate-pulse rounded-xl bg-[var(--dash-surface-raised)]"
-            />
-          ))}
-        </div>
-      ) : optionsError ? (
-        <div className="rounded-xl border border-[var(--dash-danger)]/25 bg-[var(--dash-danger-bg)] p-4">
-          <p className="text-sm font-semibold text-[var(--dash-danger)]">
-            No pudimos cargar profesionales y servicios.
-          </p>
-          <Button
-            tone="light"
-            variant="secondary"
-            className="mt-3"
-            onClick={() => {
-              void Promise.all([refetchProfessionals(), refetchServices()]);
-            }}
-          >
-            Reintentar
-          </Button>
-        </div>
-      ) : missingOptions ? (
-        <div className="rounded-xl border border-[var(--dash-accent)]/25 bg-[var(--dash-accent-soft)] p-4">
-          <p className="text-sm font-semibold text-[var(--dash-text)]">
-            No hay profesionales y servicios activos suficientes para reprogramar.
-          </p>
-          <p className="mt-1 text-sm text-[var(--dash-text-muted)]">
-            Activa al menos un profesional y un servicio antes de cambiar esta reserva.
-          </p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <section className="overflow-hidden rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-sm">
-            <div className="flex items-center justify-between gap-3 border-b border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-4 py-3">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                  Reserva actual
-                </p>
-                <p className="mt-0.5 text-sm font-semibold text-[var(--dash-text)]">
-                  <BusinessTime value={booking.startTime} zone={timeZone} />
-                </p>
-              </div>
-              <Badge status={booking.status} tone="light" />
-            </div>
-            <dl className="grid grid-cols-1 gap-px bg-[var(--dash-border)] sm:grid-cols-3">
-              <div className="min-w-0 bg-[var(--dash-surface)] px-4 py-3">
-                <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                  Cliente
-                </dt>
-                <dd className="mt-1 truncate text-sm font-medium text-[var(--dash-text)]">
-                  {booking.client?.name ?? 'Cliente no disponible'}
-                </dd>
-              </div>
-              <div className="min-w-0 bg-[var(--dash-surface)] px-4 py-3">
-                <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                  Profesional
-                </dt>
-                <dd className="mt-1 truncate text-sm font-medium text-[var(--dash-text)]">
-                  {booking.professional?.name ?? 'Profesional no disponible'}
-                </dd>
-              </div>
-              <div className="min-w-0 bg-[var(--dash-surface)] px-4 py-3">
-                <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-muted)]">
-                  Servicio
-                </dt>
-                <dd className="mt-1 truncate text-sm font-medium text-[var(--dash-text)]">
-                  {booking.service?.name ?? 'Servicio no disponible'}
-                </dd>
-                {booking.service?.duration && (
-                  <dd className="text-xs text-[var(--dash-text-muted)]">
-                    {booking.service.duration} min
-                  </dd>
-                )}
-              </div>
-            </dl>
-          </section>
-
-          <BookingFormSection
-            step={1}
-            title="Nueva programación"
-            description="Modifica solo los datos que necesites cambiar."
-          >
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <SelectField
-                label="Profesional"
-                id="reschedule-professionalId"
-                name="professionalId"
-                tone="light"
-                value={professionalId}
-                onChange={(e) => setProfessionalId(e.target.value)}
-                required
-              >
-                {!activeProfessionals.some(
-                  (professional) => professional.id === professionalId,
-                ) && (
-                  <option value={professionalId} disabled>
-                    Profesional actual no disponible
-                  </option>
-                )}
-                {activeProfessionals.map((professional) => (
-                  <option key={professional.id} value={professional.id}>
-                    {professional.name}
-                  </option>
-                ))}
-              </SelectField>
-
-              <SelectField
-                label="Servicio"
-                id="reschedule-serviceId"
-                name="serviceId"
-                tone="light"
-                value={serviceId}
-                onChange={(e) => setServiceId(e.target.value)}
-                required
-              >
-                {!activeServices.some((service) => service.id === serviceId) && (
-                  <option value={serviceId} disabled>
-                    Servicio actual no disponible
-                  </option>
-                )}
-                {activeServices.map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.name} · {service.duration} min
-                  </option>
-                ))}
-              </SelectField>
-            </div>
-
-            <div className="mt-4 border-t border-[var(--dash-border)] pt-4">
-              <BusinessDateTimeField
-                label="Nueva fecha y hora"
-                id="reschedule-startTime"
-                name="startTime"
-                value={startTime}
-                onChange={setStartTime}
-                required
-              />
-            </div>
-          </BookingFormSection>
-
-          {error && (
-            <p
-              role="alert"
-              className="rounded-lg bg-[var(--dash-danger-bg)] px-3 py-2.5 text-sm text-[var(--dash-danger)]"
-            >
-              {error}
-            </p>
-          )}
-
-          <div className="flex flex-col-reverse gap-2 border-t border-[var(--dash-border)] pt-4 sm:flex-row sm:justify-end">
-            <Button tone="light" variant="ghost" type="button" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button
-              tone="light"
-              type="submit"
-              className="min-h-11"
-              disabled={reschedule.isPending || !hasChanges}
-            >
-              {reschedule.isPending ? 'Guardando…' : 'Guardar cambios'}
             </Button>
           </div>
         </form>

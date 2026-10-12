@@ -1,0 +1,16 @@
+{
+  "branch": "ai/antigravity-qa",
+  "base": "da77c88a0234b640be8cab0ab11c0afd204f59e4",
+  "remoteTracking": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+  "backendChanged": [],
+  "primaryHead": "de3a062aba70157da5fbf1b569a73aecb0d04087",
+  "primaryBranch": "ai/reserva-invitado-ci",
+  "foreignPlaybookPreserved": true,
+  "push": false,
+  "liveDatabase": false,
+  "qa": false,
+  "production": false,
+  "browserTransport": "localhost controlled C1 contract",
+  "browserPassed": 18,
+  "browserFailed": 0
+}

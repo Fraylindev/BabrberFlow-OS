@@ -1,0 +1,15 @@
+  console.log
+    {"first":"2026-10-11T20:34:00.987Z","second":"2026-10-11T20:34:00.987Z","collision":true,"before":"1","after":"3"}
+
+      at Object.<anonymous> (bookings/calendar-collision.integration.spec.ts:58:13)
+
+PASS src/bookings/calendar-collision.integration.spec.ts
+  M3 timestamp collision / existing persisted revision
+    √ consecutive Prisma writes may share updatedAt; trigger revision advances even across ABA (302 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        1.725 s, estimated 3 s
+Ran all test suites within paths "src/bookings/calendar-collision.integration.spec.ts".
+Test results written to: ..\..\docs\quality\evidence\m3-calendario-c1\postgres\d8e52b185fee461c83cc96195d8439a3\calendar-collision.json

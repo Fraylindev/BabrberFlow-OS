@@ -1,0 +1,1 @@
+CREATE TRIGGER "Booking_customer_revision" AFTER INSERT OR DELETE OR UPDATE ON public."Booking" FOR EACH ROW EXECUTE FUNCTION customer_booking_revision()

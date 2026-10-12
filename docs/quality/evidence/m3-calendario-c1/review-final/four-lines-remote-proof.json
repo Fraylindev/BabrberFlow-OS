@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-11",
+  "source": "da77c88",
+  "comparisons": [
+    {
+      "file": "BACKEND_CHANGES.md",
+      "line": 892,
+      "lineSha256": "c41aeee44668443d19b48f74d97bf664ff2e760eb3812eeb9d529c547791c8de",
+      "redacted": "{ \"email\": \"[MARCADOR REDACTADO]\", \"password\": \"[MARCADOR REDACTADO]\", \"organizationId\": \"[MARCADOR REDACTADO]\" }",
+      "proofs": [
+        {
+          "ref": "origin/ai/antigravity-qa",
+          "tip": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+          "commit": "75618daa3bae83e10aa49e4f01d0b80d76cb1c1e",
+          "blob": "30f884ac7562f565f1743af153ee58fc472dda45",
+          "line": 863,
+          "exactLineMatch": true
+        },
+        {
+          "ref": "origin/main",
+          "tip": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+          "commit": "75618daa3bae83e10aa49e4f01d0b80d76cb1c1e",
+          "blob": "30f884ac7562f565f1743af153ee58fc472dda45",
+          "line": 863,
+          "exactLineMatch": true
+        }
+      ]
+    },
+    {
+      "file": "BACKEND_CHANGES.md",
+      "line": 896,
+      "lineSha256": "7446b8dc7224740aba5cec624b879687d6014b20cbf48b9392b83ecb3a67d03c",
+      "redacted": "{ \"email\": \"[MARCADOR REDACTADO]\", \"password\": \"[MARCADOR REDACTADO]\" }",
+      "proofs": [
+        {
+          "ref": "origin/ai/antigravity-qa",
+          "tip": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+          "commit": "75618daa3bae83e10aa49e4f01d0b80d76cb1c1e",
+          "blob": "30f884ac7562f565f1743af153ee58fc472dda45",
+          "line": 867,
+          "exactLineMatch": true
+        },
+        {
+          "ref": "origin/main",
+          "tip": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+          "commit": "75618daa3bae83e10aa49e4f01d0b80d76cb1c1e",
+          "blob": "30f884ac7562f565f1743af153ee58fc472dda45",
+          "line": 867,
+          "exactLineMatch": true
+        }
+      ]
+    },
+    {
+      "file": "CHANGELOG.md",
+      "line": 255,
+      "lineSha256": "af0cc334807bb6abb886f73df5b384c677734068b9b364e508dfe7e9c7cb0205",
+      "redacted": "- El propietario ordenó cerrar C1 con D2 aceptado como excepción documentada tras confirmar la custodia GPG externa; confirmó «Guardada externamente». Recepción de alarmas en `[CORREO REDACTADO]` también confirmada. C1 queda **CERRADO / APROBADO** para su alcance previo a activación.",
+      "proofs": [
+        {
+          "ref": "origin/ai/antigravity-qa",
+          "tip": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+          "commit": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+          "blob": "986f2ed082fe72f7fa6a092b14c1dce461af72bd",
+          "line": 246,
+          "exactLineMatch": true
+        },
+        {
+          "ref": "origin/main",
+          "tip": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+          "commit": "523d993cfa0c797f356c224d5cc026d6c9ad4c7b",
+          "blob": "f419a87e79a8d1077a33e975ea856e7a8c85a1f0",
+          "line": 242,
+          "exactLineMatch": true
+        }
+      ]
+    },
+    {
+      "file": "CHANGELOG.md",
+      "line": 292,
+      "lineSha256": "1dce539e0fcaeddbca62e5d94ede648c3d5cd9c00aa440e5f3a32c1b3add3a76",
+      "redacted": "- El timer diario produjo un dump que se restauró otra vez con éxito. OCI Notifications confirmó `[CORREO REDACTADO]`; el ensayo de caída registró `Firing` a las 06:01 UTC y `Ok` a las 06:05 UTC. Monitor por minuto y alarma de cuota DB a 400 MB. Recepción de email pendiente de confirmación.",
+      "proofs": [
+        {
+          "ref": "origin/ai/antigravity-qa",
+          "tip": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+          "commit": "202f90199fc21a12e058059ad8fc95dfcf33b4ed",
+          "blob": "986f2ed082fe72f7fa6a092b14c1dce461af72bd",
+          "line": 283,
+          "exactLineMatch": true
+        },
+        {
+          "ref": "origin/main",
+          "tip": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+          "commit": "523d993cfa0c797f356c224d5cc026d6c9ad4c7b",
+          "blob": "f419a87e79a8d1077a33e975ea856e7a8c85a1f0",
+          "line": 279,
+          "exactLineMatch": true
+        }
+      ]
+    }
+  ]
+}

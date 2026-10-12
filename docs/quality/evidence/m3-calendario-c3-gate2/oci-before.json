@@ -1,0 +1,545 @@
+{
+  "observedUTC": "2026-10-12T01:02:12.848198+00:00",
+  "services": {
+    "qaApi": {
+      "MainPID": "1523015",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-api-staging.service",
+      "container": {
+        "name": "kortek-api-staging",
+        "image": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+        "imageName": "sha256:8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+        "running": true,
+        "startedAt": "2026-10-08T04:47:16.500690063Z",
+        "entrypoint": [
+          "docker-entrypoint.sh"
+        ],
+        "commandSha256": "fb30587d03e62d2852f6364da57985fb99c0623332df44a3b68305d0167621d9"
+      },
+      "image": {
+        "Id": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+        "Digest": "sha256:ba5e194591f35b5befc793b621b1bcce20df0006be81948ba2e84cd0771ea03c",
+        "RepoDigests": [
+          "localhost/kortek-guest@sha256:ba5e194591f35b5befc793b621b1bcce20df0006be81948ba2e84cd0771ea03c"
+        ],
+        "RepoTags": [
+          "localhost/kortek-guest:b318ca591d1ca6681269a6d25e29ca106d824df9"
+        ],
+        "Created": "2026-10-08T03:33:53.979657527Z",
+        "Architecture": "arm64",
+        "revision": "b318ca591d1ca6681269a6d25e29ca106d824df9"
+      },
+      "effective": {
+        "flags": {
+          "NODE_ENV": "production",
+          "DEPLOY_ENV": "staging",
+          "APP_RELEASE": "b318ca591d1ca6681269a6d25e29ca106d824df9",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true",
+          "EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_DRY_RUN": null
+        },
+        "present": {
+          "RESEND_API_KEY": true,
+          "RESEND_WEBHOOK_SECRET": true,
+          "NOTIFICATIONS_EMAIL_FROM": true,
+          "NOTIFICATIONS_EMAIL_REPLY_TO": true,
+          "DATABASE_URL": true
+        },
+        "project": "prirlabbnlcuvnzuaczp",
+        "code": [
+          {
+            "path": "dist/main.js",
+            "sha256": "34a84c17b8b2204e2442237d8284d62d8aee363aac3432c169fe9f56578bf1b3",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/email-worker.cli.js",
+            "sha256": "6c24b8e777f5f92acdf62d6c9196b024286ae49de0f95c38da95b62f90038e4c",
+            "hasWorkerTick": true,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/email-worker.js",
+            "sha256": "012e3db0bd4ea3792d7d5f360b00902bfd305b4b1cfe5d80947af83c949fb875",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/resend.adapter.js",
+            "sha256": "878d875e5554dbabdbcf9c26c95a541e8fbace3d2c7dd0ab88a1418e71db9beb",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": true,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/notification-producer.js",
+            "sha256": "c6734943516f33454fd63b1aef7ce513836ca1fc8e77694c9ded9c64c44d8105",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          }
+        ]
+      }
+    },
+    "qaWorker": {
+      "MainPID": "1084553",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-email-worker-staging.service",
+      "container": {
+        "name": "kortek-email-worker-staging",
+        "image": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "imageName": "sha256:7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "running": true,
+        "startedAt": "2026-10-04T23:27:29.590750599Z",
+        "entrypoint": [
+          "node"
+        ],
+        "commandSha256": "39550a79072cb28a1d74c4e3aad332c4df5409cacb7e8eb3b1f34d7e69118ff3"
+      },
+      "image": {
+        "Id": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+        "Digest": "sha256:3a32fc08b6271c9d561583ec56d0d26c3879daceab6d44d116dadc7065c31946",
+        "RepoDigests": [
+          "localhost/kortek-api-staging@sha256:3a32fc08b6271c9d561583ec56d0d26c3879daceab6d44d116dadc7065c31946"
+        ],
+        "RepoTags": [
+          "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+        ],
+        "Created": "2026-10-01T05:44:09.549668977Z",
+        "Architecture": "arm64",
+        "revision": null
+      },
+      "effective": {
+        "flags": {
+          "NODE_ENV": "production",
+          "DEPLOY_ENV": "staging",
+          "APP_RELEASE": null,
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true",
+          "EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_DRY_RUN": null
+        },
+        "present": {
+          "RESEND_API_KEY": true,
+          "RESEND_WEBHOOK_SECRET": true,
+          "NOTIFICATIONS_EMAIL_FROM": true,
+          "NOTIFICATIONS_EMAIL_REPLY_TO": true,
+          "DATABASE_URL": true
+        },
+        "project": "prirlabbnlcuvnzuaczp",
+        "code": [
+          {
+            "path": "dist/main.js",
+            "sha256": "34a84c17b8b2204e2442237d8284d62d8aee363aac3432c169fe9f56578bf1b3",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/email-worker.cli.js",
+            "sha256": "6c24b8e777f5f92acdf62d6c9196b024286ae49de0f95c38da95b62f90038e4c",
+            "hasWorkerTick": true,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/email-worker.js",
+            "sha256": "012e3db0bd4ea3792d7d5f360b00902bfd305b4b1cfe5d80947af83c949fb875",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/resend.adapter.js",
+            "sha256": "878d875e5554dbabdbcf9c26c95a541e8fbace3d2c7dd0ab88a1418e71db9beb",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": true,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/notification-producer.js",
+            "sha256": "c6734943516f33454fd63b1aef7ce513836ca1fc8e77694c9ded9c64c44d8105",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          }
+        ]
+      }
+    },
+    "productionApi": {
+      "MainPID": "1800775",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-api.service",
+      "container": {
+        "name": "kortek-api",
+        "image": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+        "imageName": "sha256:1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+        "running": true,
+        "startedAt": "2026-10-10T03:14:23.327370484Z",
+        "entrypoint": [
+          "docker-entrypoint.sh"
+        ],
+        "commandSha256": "fb30587d03e62d2852f6364da57985fb99c0623332df44a3b68305d0167621d9"
+      },
+      "image": {
+        "Id": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+        "Digest": "sha256:fdd923c117f6569d0cf8846a3efaa1c212be48e77d1edbe5ea824345665fed0f",
+        "RepoDigests": [
+          "localhost/kortek-api@sha256:fdd923c117f6569d0cf8846a3efaa1c212be48e77d1edbe5ea824345665fed0f"
+        ],
+        "RepoTags": [
+          "localhost/kortek-api:p5-8e1501e-20261009"
+        ],
+        "Created": "2026-10-09T06:08:18.152218264Z",
+        "Architecture": "arm64",
+        "revision": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800"
+      },
+      "effective": {
+        "flags": {
+          "NODE_ENV": "production",
+          "DEPLOY_ENV": "production",
+          "APP_RELEASE": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true",
+          "EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_DRY_RUN": null
+        },
+        "present": {
+          "RESEND_API_KEY": true,
+          "RESEND_WEBHOOK_SECRET": true,
+          "NOTIFICATIONS_EMAIL_FROM": true,
+          "NOTIFICATIONS_EMAIL_REPLY_TO": true,
+          "DATABASE_URL": true
+        },
+        "project": "ilaoolpcrlmqkftirjog",
+        "code": [
+          {
+            "path": "dist/main.js",
+            "sha256": "34a84c17b8b2204e2442237d8284d62d8aee363aac3432c169fe9f56578bf1b3",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/email-worker.cli.js",
+            "sha256": "6c24b8e777f5f92acdf62d6c9196b024286ae49de0f95c38da95b62f90038e4c",
+            "hasWorkerTick": true,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/email-worker.js",
+            "sha256": "012e3db0bd4ea3792d7d5f360b00902bfd305b4b1cfe5d80947af83c949fb875",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/resend.adapter.js",
+            "sha256": "878d875e5554dbabdbcf9c26c95a541e8fbace3d2c7dd0ab88a1418e71db9beb",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": true,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/notification-producer.js",
+            "sha256": "c6734943516f33454fd63b1aef7ce513836ca1fc8e77694c9ded9c64c44d8105",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          }
+        ]
+      }
+    },
+    "productionWorker": {
+      "MainPID": "1801004",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/kortek-email-worker.service",
+      "container": {
+        "name": "kortek-email-worker",
+        "image": "bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+        "imageName": "sha256:bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+        "running": true,
+        "startedAt": "2026-10-10T03:15:13.545839661Z",
+        "entrypoint": [
+          "docker-entrypoint.sh"
+        ],
+        "commandSha256": "a0af59eebc6651f159eddedc76de725682ab6091030548c302a1eeb9bedc0916"
+      },
+      "image": {
+        "Id": "bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+        "Digest": "sha256:49e45d76f766ad7b8a75bf8e93aef499f8db544a3663e18c032e02710dffe7bb",
+        "RepoDigests": [
+          "localhost/kortek-worker@sha256:49e45d76f766ad7b8a75bf8e93aef499f8db544a3663e18c032e02710dffe7bb"
+        ],
+        "RepoTags": [
+          "localhost/kortek-worker:p10ca-8e1501e-20261009"
+        ],
+        "Created": "2026-10-10T02:02:31.627102635Z",
+        "Architecture": "arm64",
+        "revision": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800"
+      },
+      "effective": {
+        "flags": {
+          "NODE_ENV": "production",
+          "DEPLOY_ENV": "production",
+          "APP_RELEASE": "8e1501e89a132e1b01d3633b1b3f896a8cbe5800",
+          "NOTIFICATIONS_EMAIL_ENABLED": "true",
+          "NOTIFICATIONS_EMAIL_DOMAIN_VERIFIED": "true",
+          "EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_WORKER_ENABLED": null,
+          "NOTIFICATIONS_EMAIL_DRY_RUN": null
+        },
+        "present": {
+          "RESEND_API_KEY": true,
+          "RESEND_WEBHOOK_SECRET": true,
+          "NOTIFICATIONS_EMAIL_FROM": true,
+          "NOTIFICATIONS_EMAIL_REPLY_TO": true,
+          "DATABASE_URL": true
+        },
+        "project": "ilaoolpcrlmqkftirjog",
+        "code": [
+          {
+            "path": "dist/main.js",
+            "sha256": "34a84c17b8b2204e2442237d8284d62d8aee363aac3432c169fe9f56578bf1b3",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/email-worker.cli.js",
+            "sha256": "6c24b8e777f5f92acdf62d6c9196b024286ae49de0f95c38da95b62f90038e4c",
+            "hasWorkerTick": true,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/email-worker.js",
+            "sha256": "012e3db0bd4ea3792d7d5f360b00902bfd305b4b1cfe5d80947af83c949fb875",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          },
+          {
+            "path": "dist/notifications/resend.adapter.js",
+            "sha256": "878d875e5554dbabdbcf9c26c95a541e8fbace3d2c7dd0ab88a1418e71db9beb",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": true,
+            "usesEnabledSwitch": true
+          },
+          {
+            "path": "dist/notifications/notification-producer.js",
+            "sha256": "c6734943516f33454fd63b1aef7ce513836ca1fc8e77694c9ded9c64c44d8105",
+            "hasWorkerTick": false,
+            "hasAdapterFetch": false,
+            "hasResendEndpoint": false,
+            "usesEnabledSwitch": false
+          }
+        ]
+      }
+    }
+  },
+  "localImageInventory": [
+    {
+      "Id": "bf343354991622b55de47655d749a558c19397ff940badc0831f15774a3da23f",
+      "RepoTags": null,
+      "Digest": "sha256:49e45d76f766ad7b8a75bf8e93aef499f8db544a3663e18c032e02710dffe7bb",
+      "Created": 1791597751,
+      "Names": [
+        "localhost/kortek-worker:p10ca-8e1501e-20261009"
+      ]
+    },
+    {
+      "Id": "1ad03d2e040cbe7c38faef2afca15ad0b6d11481f5258e425aed541ef57fe775",
+      "RepoTags": null,
+      "Digest": "sha256:fdd923c117f6569d0cf8846a3efaa1c212be48e77d1edbe5ea824345665fed0f",
+      "Created": 1791526098,
+      "Names": [
+        "localhost/kortek-api:p5-8e1501e-20261009"
+      ]
+    },
+    {
+      "Id": "8ba1b6c8a45391433998deeae1111d2d96c6cbf84932a7e9972cb6cf90e95eec",
+      "RepoTags": null,
+      "Digest": "sha256:ba5e194591f35b5befc793b621b1bcce20df0006be81948ba2e84cd0771ea03c",
+      "Created": 1791430433,
+      "Names": [
+        "localhost/kortek-guest:b318ca591d1ca6681269a6d25e29ca106d824df9"
+      ]
+    },
+    {
+      "Id": "807bcb442a69e74198b224d1e60c9ae8d678043a6c7d070e90ace80935d8a261",
+      "RepoTags": null,
+      "Digest": "sha256:bd294744d685f962f634ca24f8b66c124f1b37d8fc91a8128e42854a73e2ca14",
+      "Created": 1791154146,
+      "Names": null
+    },
+    {
+      "Id": "701329f1cfe7b45f5b6d0cfe62daeae0edf6e1c00518158cb8555a815c224031",
+      "RepoTags": null,
+      "Digest": "sha256:3a2a366f21d43f84311f3ca99a5ed4964959c0e42a7a677274c0159d1058a3fc",
+      "Created": 1790895606,
+      "Names": [
+        "localhost/kortek-api-staging:791569b110f9fd59cb10e6d248546bdae3996e14"
+      ]
+    },
+    {
+      "Id": "7eafd5c9232ac9f8bfb2f6d1ab5eb4fa7ca37cc369bf92751616c90e29c76fa1",
+      "RepoTags": null,
+      "Digest": "sha256:3a32fc08b6271c9d561583ec56d0d26c3879daceab6d44d116dadc7065c31946",
+      "Created": 1790833449,
+      "Names": [
+        "localhost/kortek-api-staging:92f61274dcb733e0e43f14a45851c0da346430c2"
+      ]
+    },
+    {
+      "Id": "1ef5e81d42801498e2903e423b770ed7f1d8e22e65e7f0fdf7db9a9ef8660911",
+      "RepoTags": null,
+      "Digest": "sha256:68757edd0e2b9fa5020086bec9db26a6461a6f9ba6c8ad8d96a56115afe27892",
+      "Created": 1790821633,
+      "Names": [
+        "localhost/kortek-api-staging:666516f2ebf56e9620a0da3bfebe9c0496b4de7f"
+      ]
+    },
+    {
+      "Id": "24e38719c51109dd50ceb8e056628bf81469a7d32a13fd2f35b96662f69701bd",
+      "RepoTags": null,
+      "Digest": "sha256:2a515ee5ab35f516e52e1dfe40881e1ee3ea2889023233c3fa677e114eb4a020",
+      "Created": 1790804325,
+      "Names": [
+        "localhost/kortek-api-staging:33de07a828c95f2087cd67b92bfb331a1a22e922"
+      ]
+    },
+    {
+      "Id": "c9501c7ae3845f95081af884552b44cb5d1a5d8d52d5061ba24a87615c3e6cb9",
+      "RepoTags": null,
+      "Digest": "sha256:cf482dd48e35f8edab4dc7114587820189ab513ab2207206f11a507c4de01e0b",
+      "Created": 1790565824,
+      "Names": [
+        "localhost/kortek-api-staging:b0357af6"
+      ]
+    },
+    {
+      "Id": "8caacd8548a61d94807c0b865229a731df594f63f609ca9ab57df99283dceca2",
+      "RepoTags": null,
+      "Digest": "sha256:40f6aad4409f41bee7d72201098231d1a89bf2cbc802a74b300ed8aa76daa696",
+      "Created": 1790482669,
+      "Names": [
+        "localhost/kortek-api:b5615869dcbec4bd174608f2373e73ff618fae26"
+      ]
+    },
+    {
+      "Id": "166af6ac2586ca622b06a69b17ad30af9da1802e64ed285bcfce25f578a5007f",
+      "RepoTags": null,
+      "Digest": "sha256:b1480c347a5a4772229002b8b55e270fd4d5e640113c7436e55710c8230c2e17",
+      "Created": 1790384371,
+      "Names": [
+        "localhost/kortek-worker:c1"
+      ]
+    },
+    {
+      "Id": "78175922b1739c305f3832562c569a07cbc0005b39db6b97a4a3ac328b9fae94",
+      "RepoTags": null,
+      "Digest": "sha256:43ac6c60b8f89723f746e8a92ce91abd5017e627ce1ddfe4238355d3a30b772c",
+      "Created": 1790197843,
+      "Names": [
+        "docker.io/library/node:22-bookworm-slim"
+      ]
+    },
+    {
+      "Id": "97432f980da100ebd3e419711efee84e1e97a966d62c035286a07f239ddb4d9c",
+      "RepoTags": null,
+      "Digest": "sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f",
+      "Created": 1789778339,
+      "Names": [
+        "docker.io/library/postgres:17"
+      ]
+    }
+  ],
+  "wrapperAndUnitFiles": [
+    {
+      "path": "/usr/local/libexec/kortek-api-run.sh",
+      "sha256": "0a28312626216cdee50901541e374cca07b8da2e505d40a4b6954dae1cae5944",
+      "size": 1969,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/usr/local/libexec/kortek-api-staging-run.sh",
+      "sha256": "118d2c83c4b800f9e63d72c365d486f47b6f4aaf491ec8221be84305ff27cbf8",
+      "size": 2065,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/usr/local/libexec/kortek-worker-run.sh",
+      "sha256": "280ff5a101abee4bdd692735a3a97fecb041b8a6a0972ac02f04808431d91c84",
+      "size": 1767,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/usr/local/libexec/kortek-worker-staging-run.sh",
+      "sha256": "919d73ca08e6485f34a456d88a01e2406537c2c34ac7722e3564f84c06f99ad6",
+      "size": 1644,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/etc/systemd/system/kortek-api.service",
+      "sha256": "333f948911c06cfcbac45efc98a204894ab4d75aaaca56cb0b05b8f6bb3fa94f",
+      "size": 815,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/etc/systemd/system/kortek-api-staging.service",
+      "sha256": "91ce7997af89f16927acae71c6030c60765ab16c43022cfb64e0b143ac6c3a90",
+      "size": 673,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/etc/systemd/system/kortek-email-worker.service",
+      "sha256": "e23c8c2a01ddf75373bf8427ee6fb172863f87daf05dce9d268911c5072993a0",
+      "size": 926,
+      "emailDisabledLiteral": false
+    },
+    {
+      "path": "/etc/systemd/system/kortek-email-worker-staging.service",
+      "sha256": "a06049b34039fa7cc8afac0186501543250d44aaf282c07fbeb9b7e5d05bb70f",
+      "size": 706,
+      "emailDisabledLiteral": false
+    }
+  ],
+  "readOnlyCommands": true
+}

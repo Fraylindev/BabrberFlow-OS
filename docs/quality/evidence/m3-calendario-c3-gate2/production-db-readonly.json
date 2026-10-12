@@ -1,0 +1,263 @@
+{
+  "events": 10,
+  "ledger": [
+    {
+      "steps": 1,
+      "checksum": "41f1ccae6bf124fe938bd09ddc0b08c8beb0c90ab4d6e4d7cf1904594f24e69d",
+      "migration": "20260719162646_initial_schema",
+      "finishedAt": "2026-07-20T23:44:07.669391+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "3c1f4f533f24f2b73159e1f9ddbe933684126a4b2ee6a5734c11158d3f88d62a",
+      "migration": "20260720044928_add_invoice_model",
+      "finishedAt": "2026-07-20T23:44:07.694054+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "2dd002ec11b3c0269b9e6736ed977aef6df560186eee6a7313aaf545c2f3342b",
+      "migration": "20260722030552_link_professional_user",
+      "finishedAt": "2026-07-22T04:48:35.03684+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "e7343e6fd81c75261d6a0c38c9956a51085167fe861a4919b12e1d821642778a",
+      "migration": "20260722042926_add_customer_role",
+      "finishedAt": "2026-07-22T04:54:54.909626+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "d2fc8094c39a0774c04505aad9da305dd1945d90ce6898e6976760d00723a0dd",
+      "migration": "20260723212248_microsite_and_indexes",
+      "finishedAt": "2026-07-23T22:30:37.473378+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "0533682b05cba2883310d34c8b93ca2160d3039ec280bed3d059122909a42389",
+      "migration": "20260724023058_global_identity_membership",
+      "finishedAt": "2026-07-25T00:37:14.693657+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "fe19a3ec761ac4fe52d8adc1fe0226b42d455a46cf59f849b3e71c5b51810c1c",
+      "migration": "20260725215619_service_client_is_active",
+      "finishedAt": "2026-07-25T22:04:13.054756+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "31d83d1c8a1cceba3bb48b5d364cfe583443561b3b9fb7d325b987c812043f67",
+      "migration": "20260727010227_audit_log_user_id",
+      "finishedAt": "2026-07-28T00:51:21.988191+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "d7d686300ab10713f4ebb53dfb25bb14eaa7f54719d58c15dcd5895941de0e21",
+      "migration": "20260811180000_booking_schedule_exclusion",
+      "finishedAt": "2026-08-12T02:27:03.816195+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "ae24ca615d8dffde0e7612489710d50e452f15ac82e90ea576e6fb15d158a3c3",
+      "migration": "20260812010000_professionals_backend_a1",
+      "finishedAt": "2026-08-12T03:30:25.982579+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "234e3aa41e8abc635c18fa8a8ac9666bf40260de260ea314e32165ba16f05b33",
+      "migration": "20260813193000_professional_individual_availability_a2",
+      "finishedAt": "2026-08-14T00:48:05.068889+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "3dfd76565644c7d6f7629c8af881f1e6ceb1b2456e942831a7b3b7698ff0c896",
+      "migration": "20260813200000_professional_availability_tenant_fk",
+      "finishedAt": "2026-08-14T00:53:32.175983+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "9e0f711c0ba44fefb765fbff8e3f706c4ee709cf1458f3abc7d5d4d2603e37a7",
+      "migration": "20260814190000_add_user_clerk_link_a0_1",
+      "finishedAt": "2026-08-15T03:50:49.578893+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "ac3f8822a1b8a4efa454363dc5be0822741920410f949ad69a2fa4c2e66dad22",
+      "migration": "20260815120000_password_nullable",
+      "finishedAt": "2026-08-27T03:01:49.256457+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "133e8af194cb2913006922e21d1fe6a8b0d7348f3837dedd4bfedb04d5f50b67",
+      "migration": "20260820220000_audit_log_pre_tenant_security_events",
+      "finishedAt": "2026-08-27T03:01:49.274781+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 0,
+      "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "migration": "20260821220000_team_invitations_a0_4",
+      "finishedAt": null,
+      "rolledBackAt": "2026-08-29T04:01:24.067755+00:00"
+    },
+    {
+      "steps": 0,
+      "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "migration": "20260821220000_team_invitations_a0_4",
+      "finishedAt": "2026-08-29T04:01:55.821459+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 0,
+      "checksum": "830f59d93e2394f2edf95040a2e123f5d229a195e80fffe9a1fbe67feb6494ef",
+      "migration": "20260821220000_team_invitations_a0_4",
+      "finishedAt": null,
+      "rolledBackAt": "2026-08-29T04:01:55.817073+00:00"
+    },
+    {
+      "steps": 0,
+      "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "migration": "20260822150000_client_user_b2c_link_a0_6_a",
+      "finishedAt": null,
+      "rolledBackAt": "2026-08-29T04:02:14.071718+00:00"
+    },
+    {
+      "steps": 0,
+      "checksum": "f6f6d20f3c9f2eb4d9d177d9d3054ab69259935a95c90f82957e7706eca73ab4",
+      "migration": "20260822150000_client_user_b2c_link_a0_6_a",
+      "finishedAt": "2026-08-29T04:02:14.075698+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 0,
+      "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "migration": "20260825220000_facturacion_a_internal_invoices",
+      "finishedAt": null,
+      "rolledBackAt": "2026-08-29T04:03:47.448623+00:00"
+    },
+    {
+      "steps": 0,
+      "checksum": "a940b4ad5edf20151ff4270ef40fa649dc84819f91db5407b3e07d4304b945ca",
+      "migration": "20260825220000_facturacion_a_internal_invoices",
+      "finishedAt": "2026-08-29T04:03:47.452688+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "39df8de2bedaa2293d3a76decd9519d84e1e1d2a18cc34aa370446c274dc2131",
+      "migration": "20260826210000_facturacion_a_completion_service_price_guards",
+      "finishedAt": "2026-08-29T04:03:50.509769+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "2001a8a6fa73e6b3e5fb941ec062464ab6557575868a844332aee9a0cc7930ee",
+      "migration": "20260909120000_restore_invoice_integrity_checks",
+      "finishedAt": "2026-09-09T23:47:34.988799+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "4dbab04773969f2ef52e4b38b709555d5beca01da7134cdf95bf64cf61c23653",
+      "migration": "20260912120000_cms_editorial",
+      "finishedAt": "2026-09-13T04:05:00.196425+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "dcd1023287e2efbf099ad5bab0fc622ffe4985aa6a64089383cc8e1968fce561",
+      "migration": "20260914120000_booking_email_outbox",
+      "finishedAt": "2026-09-24T21:25:12.653225+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "37fa5e3b6727ade3c40742c19f42b5501070e72f60f98222180b9666aa9043af",
+      "migration": "20260914120100_email_channel_control",
+      "finishedAt": "2026-09-24T21:25:12.71853+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "3d7228df9250f337165c89b9d15e0c66d4b281700224328a4aec3f51aa1f1e65",
+      "migration": "20260915120000_email_template_version",
+      "finishedAt": "2026-09-24T21:25:12.760644+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "c3c3abdfdf3f846e63f8e3d4e6b5843f0fc473d1778717e2cdec95102e4949a2",
+      "migration": "20260923100000_media_promotions",
+      "finishedAt": "2026-09-24T21:25:13.053889+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "8a72da00a27dfc06dc6710441c55709a109b7e236da4a7df5f00217d553c2d7d",
+      "migration": "20260925010000_security_rate_bucket",
+      "finishedAt": "2026-09-25T03:48:47.09562+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "82890d487a40d0c25edfd77019df6454f101f6222aa5235b3ea6f8a958272d82",
+      "migration": "20260927170000_business_schedule",
+      "finishedAt": "2026-10-09T05:45:36.947148+00:00",
+      "rolledBackAt": null
+    },
+    {
+      "steps": 1,
+      "checksum": "6e1d854f285f4a4a691377d6654d0a4df80f29ca5c3ad375b352ae96894d6dee",
+      "migration": "20261003120000_customer_stage_one",
+      "finishedAt": "2026-10-09T05:45:37.352087+00:00",
+      "rolledBackAt": null
+    }
+  ],
+  "outbox": [
+    {
+      "count": 2,
+      "status": "DELIVERED",
+      "dispatched": 2,
+      "provider_id_present": 2
+    },
+    {
+      "count": 5,
+      "status": "OMITTED",
+      "dispatched": 0,
+      "provider_id_present": 0
+    }
+  ],
+  "reader": "postgres",
+  "channel": {
+    "id": "EMAIL",
+    "paused": false,
+    "updatedAt": "2026-10-10T03:13:29.566",
+    "reasonPresent": false
+  },
+  "trigger": [
+    {
+      "name": "Booking_customer_revision",
+      "owner": "kortek_migrator",
+      "enabled": "O",
+      "function": "customer_booking_revision",
+      "securityDefiner": false
+    }
+  ],
+  "database": "postgres",
+  "observedUTC": "2026-10-12T01:06:07.779303+00:00",
+  "transactionReadOnly": "on",
+  "revisionCounterExists": true
+}

@@ -1,0 +1,9 @@
+{
+  "scope": "M3 C2 frontend and closure",
+  "diffCheckExit": 0,
+  "explicitPaths": true,
+  "backendUnchanged": true,
+  "dependenciesUnchanged": true,
+  "noPush": true,
+  "review": "Source, logs, initial and final browser evidence reviewed; approval remains owner gate"
+}
