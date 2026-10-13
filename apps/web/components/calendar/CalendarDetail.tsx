@@ -6,7 +6,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AuthUser } from '@/lib/api';
 import { ApiError } from '@/lib/api';
 import {
-  addBusinessDays,
   businessDate,
   calendarApi,
   calendarError,
@@ -15,11 +14,11 @@ import {
   calendarStatus,
   canMoveCalendar,
   formatCalendarDate,
-  formatBusinessTime,
 } from '@/lib/calendar';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { CalendarTime } from './CalendarTime';
+import { CalendarMonth, monthEnd } from './CalendarMonth';
 export function CalendarDetail({
   id,
   user,
@@ -65,7 +64,7 @@ export function CalendarDetail({
     [error, setError] = useState<unknown>(null),
     [mustReview, setMustReview] = useState(false);
   const [firstDay, setFirstDay] = useState(() => businessDate(new Date(), zone));
-  const lastDay = addBusinessDays(firstDay, 30)!;
+  const lastDay = monthEnd(firstDay);
   const [waitUntil, setWaitUntil] = useState(0),
     [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -156,7 +155,12 @@ export function CalendarDetail({
   }
   const failure = error ?? detail.error ?? (editing ? (days.error ?? slots.error) : null);
   return (
-    <Modal title="Detalle de la reserva" tone="light" size="lg" onClose={onClose}>
+    <Modal
+      title={editing ? 'Reprogramar reserva' : 'Detalle de la reserva'}
+      tone="light"
+      size="lg"
+      onClose={onClose}
+    >
       <div className="space-y-4 text-[var(--dash-text)]">
         {detail.isPending && <p role="status">Cargando la reserva…</p>}
         {failure && (
@@ -186,37 +190,59 @@ export function CalendarDetail({
           !detail.error &&
           !(failure instanceof ApiError && [401, 403, 404].includes(failure.status)) && (
             <>
-              <dl className="grid gap-3 rounded-xl border border-[var(--dash-border)] p-4 sm:grid-cols-2">
-                <div>
-                  <dt className="text-sm text-[var(--dash-text-muted)]">Cliente</dt>
-                  <dd className="break-words font-semibold">{detail.data.client.name}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-[var(--dash-text-muted)]">Estado</dt>
-                  <dd>{calendarStatus[detail.data.status]}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-[var(--dash-text-muted)]">Profesional</dt>
-                  <dd>{detail.data.professional.name}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-[var(--dash-text-muted)]">Servicio</dt>
-                  <dd>{detail.data.service.name}</dd>
-                </div>
-                <div className="sm:col-span-2">
-                  <dt className="text-sm text-[var(--dash-text-muted)]">
-                    Horario actual · hora del negocio
-                  </dt>
-                  <dd>
+              {editing ? (
+                <section
+                  aria-label="Reserva actual"
+                  className="space-y-2 rounded-xl border border-[var(--dash-border)] p-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold">Reserva actual</h3>
+                    <span className="text-sm">{calendarStatus[detail.data.status]}</span>
+                  </div>
+                  <p>
                     <CalendarTime value={detail.data.startTime} zone={zone} />
                     {' – '}
                     <CalendarTime value={detail.data.endTime} zone={zone} clock />
-                  </dd>
-                </div>
-              </dl>
+                  </p>
+                  <p className="break-words text-sm text-[var(--dash-text-muted)]">
+                    {detail.data.client.name} · {detail.data.professional.name} ·{' '}
+                    {detail.data.service.name}
+                  </p>
+                  <p className="text-xs text-[var(--dash-text-muted)]">Hora del negocio</p>
+                </section>
+              ) : (
+                <dl className="grid gap-3 rounded-xl border border-[var(--dash-border)] p-4 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-sm text-[var(--dash-text-muted)]">Cliente</dt>
+                    <dd className="break-words font-semibold">{detail.data.client.name}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-[var(--dash-text-muted)]">Estado</dt>
+                    <dd>{calendarStatus[detail.data.status]}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-[var(--dash-text-muted)]">Profesional</dt>
+                    <dd>{detail.data.professional.name}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-[var(--dash-text-muted)]">Servicio</dt>
+                    <dd>{detail.data.service.name}</dd>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <dt className="text-sm text-[var(--dash-text-muted)]">
+                      Horario actual · hora del negocio
+                    </dt>
+                    <dd>
+                      <CalendarTime value={detail.data.startTime} zone={zone} />
+                      {' – '}
+                      <CalendarTime value={detail.data.endTime} zone={zone} clock />
+                    </dd>
+                  </div>
+                </dl>
+              )}
               {allowed && !editing && (
                 <Button tone="light" onClick={() => setEditing(true)}>
-                  Reagendar
+                  Reprogramar
                 </Button>
               )}
               {!allowed && (
@@ -232,57 +258,30 @@ export function CalendarDetail({
                     Elige otra fecha y una hora disponible. Se mantienen el profesional y el
                     servicio.
                   </p>
-                  <div className="flex flex-wrap items-end gap-3">
-                    <label className="text-sm">
-                      Consultar desde
-                      <input
-                        className="mt-1 block rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-2 text-base"
-                        type="date"
-                        value={firstDay}
-                        min={businessDate(new Date(), zone)}
-                        onChange={(e) => {
-                          if (e.target.value && addBusinessDays(e.target.value, 30)) {
-                            setFirstDay(e.target.value);
-                            setDate('');
-                            setSelected('');
-                          }
-                        }}
-                        disabled={saving || waiting}
-                      />
-                    </label>
-                    <span className="text-sm">Hasta {formatCalendarDate(lastDay)}</span>
-                  </div>
                   {days.isPending && <p role="status">Buscando días disponibles…</p>}
-                  {days.data && (
-                    <div
-                      className="grid grid-cols-3 gap-2 sm:grid-cols-5"
-                      aria-label="Días disponibles"
-                    >
-                      {days.data.availableDates.map((value) => (
-                        <button
-                          key={value}
-                          type="button"
-                          className="rounded-lg border border-[var(--dash-border)] p-2 text-sm aria-pressed:bg-[var(--dash-accent-soft)] focus-visible:outline-2"
-                          aria-label={
-                            formatBusinessTime(value, undefined, { kind: 'date', relative: false })
-                              .fullText
-                          }
-                          aria-pressed={date === value}
-                          disabled={saving || waiting}
-                          onClick={() => {
-                            setDate(value);
-                            setSelected('');
-                          }}
-                        >
-                          {formatCalendarDate(value)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <CalendarMonth
+                    firstDay={firstDay}
+                    today={businessDate(new Date(), zone)}
+                    availableDates={days.data?.availableDates ?? []}
+                    selectedDate={date}
+                    disabled={saving || waiting}
+                    pending={days.isPending || !!days.error}
+                    onMonth={(value) => {
+                      setFirstDay(
+                        value < businessDate(new Date(), zone)
+                          ? businessDate(new Date(), zone)
+                          : value,
+                      );
+                      setDate('');
+                      setSelected('');
+                    }}
+                    onDate={(value) => {
+                      setDate(value);
+                      setSelected('');
+                    }}
+                  />
                   {days.data && !days.data.availableDates.length && (
-                    <p role="status">
-                      No hay días disponibles en este rango. Consulta otras fechas.
-                    </p>
+                    <p role="status">No hay días disponibles en este mes. Consulta otro mes.</p>
                   )}
                   {date && (
                     <div className="space-y-3">

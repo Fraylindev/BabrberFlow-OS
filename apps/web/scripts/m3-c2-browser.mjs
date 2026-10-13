@@ -15,7 +15,7 @@ const { build } = viteRequire('esbuild'),
   postcss = createRequire(require.resolve('@tailwindcss/postcss'))('postcss'),
   tailwind = require('@tailwindcss/postcss'),
   { chromium, expect } = require('@playwright/test');
-const out = path.join(root, 'docs/quality/evidence/m3-calendario-c2/browser');
+const out = process.env.M3_BROWSER_OUTPUT || path.join(root, 'docs/quality/evidence/m3-calendario-c2/browser');
 mkdirSync(out, { recursive: true });
 const styles = await postcss([tailwind({ base: web })]).process(
   readFileSync(path.join(web, 'app/globals.css'), 'utf8'),
@@ -269,16 +269,28 @@ async function scenario(name, width, role, run) {
 }
 async function choose({ page }) {
   await page.getByText('Synthetic A one', { exact: true }).click();
-  await page.getByRole('button', { name: 'Reagendar', exact: true }).click();
+  await page.getByRole('button', { name: 'Reprogramar', exact: true }).click();
   await page.getByRole('button', { name: '13 de octubre de 2026' }).click();
   await page.getByRole('button', { name: '10:30 a. m.', exact: true }).click();
 }
 try {
   browser = await chromium.launch({ channel: 'chrome', headless: true });
+  await scenario('today-mobile', 375, 'OWNER', async ({ page, requests }) => {
+    await page.getByRole('button', { name: 'Periodo anterior' }).click();
+    await expect.poll(() => requests.filter(r => r.path === '/bookings/calendar').at(-1)?.params.from).toBe('2026-10-05');
+    await page.getByRole('button', { name: 'Hoy', exact: true }).click();
+    await expect.poll(() => requests.filter(r => r.path === '/bookings/calendar').at(-1)?.params.from).toBe('2026-10-12');
+    const count = requests.filter(r => r.path === '/bookings/calendar').length;
+    await page.getByRole('button', { name: 'Hoy', exact: true }).click();
+    await expect.poll(() => requests.filter(r => r.path === '/bookings/calendar').length).toBe(count + 1);
+    await expect(page.getByRole('button', { name: 'Semana', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  });
   for (const width of [320, 375, 768, 1440])
     await scenario('flow-' + width, width, 'OWNER', async (ctx) => {
       const { page, requests } = ctx;
       await choose(ctx);
+      await expect(page.getByLabel('Calendario de reprogramación', { exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: '11 de octubre de 2026, sin horarios disponibles' })).toBeDisabled();
       assert.equal(requests.filter((r) => r.path.endsWith('/reschedule-availability')).length, 1);
       await page.getByRole('button', { name: '14 de octubre de 2026' }).click();
       await expect(page.getByRole('button', { name: '10:30 a. m.' })).toBeVisible();
@@ -305,13 +317,13 @@ try {
       await ctx.page.getByText('Synthetic A one', { exact: true }).click();
       await expect(ctx.page.getByRole('dialog')).toBeVisible();
       if (role === 'BARBER') {
-        assert.equal(await ctx.page.getByRole('button', { name: 'Reagendar' }).count(), 0);
+        assert.equal(await ctx.page.getByRole('button', { name: 'Reprogramar' }).count(), 0);
         assert.equal(
           ctx.requests.filter((r) => r.path === '/professionals' || r.path.includes('availability'))
             .length,
           0,
         );
-      } else await expect(ctx.page.getByRole('button', { name: 'Reagendar' })).toBeVisible();
+      } else await expect(ctx.page.getByRole('button', { name: 'Reprogramar' })).toBeVisible();
       await ctx.page.getByRole('button', { name: 'Cerrar detalle', exact: true }).focus();
       await ctx.page.keyboard.press('Tab');
       assert.equal(

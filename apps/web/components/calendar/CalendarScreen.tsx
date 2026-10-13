@@ -56,7 +56,11 @@ function CalendarVisit({ user }: { user: AuthUser }) {
   if (org.error || !org.data?.timeZone)
     return (
       <Card tone="light" className="space-y-3 p-4">
-        <CalendarFailure key={org.errorUpdatedAt} error={org.error} onRetry={() => void org.refetch()} />
+        <CalendarFailure
+          key={org.errorUpdatedAt}
+          error={org.error}
+          onRetry={() => void org.refetch()}
+        />
       </Card>
     );
   return <CalendarAgenda user={user} zone={org.data.timeZone} prefix={prefix} />;
@@ -135,6 +139,16 @@ function CalendarAgenda({
     setNotice('');
     void client.resetQueries({ queryKey: pageKey, exact: true });
   }
+  function goToToday() {
+    const today = businessDate(new Date(), zone);
+    const todayWeekday = new Date(today + 'T00:00:00Z').getUTCDay();
+    const todayFrom =
+      mode === 'day' ? today : addBusinessDays(today, todayWeekday === 0 ? -6 : 1 - todayWeekday)!;
+    setAnchor(today);
+    setSelected(null);
+    setNotice('');
+    if (todayFrom === from) void client.resetQueries({ queryKey: pageKey, exact: true });
+  }
   return (
     <div className="space-y-5">
       <PageHeader
@@ -162,8 +176,9 @@ function CalendarAgenda({
           </Button>
           <Button
             tone="light"
-            variant="ghost"
-            onClick={() => setAnchor(businessDate(new Date(), zone))}
+            variant="secondary"
+            title="Volver a hoy y actualizar la agenda"
+            onClick={goToToday}
           >
             Hoy
           </Button>

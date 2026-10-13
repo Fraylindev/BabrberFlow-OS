@@ -1,5 +1,10 @@
 # Documentación de Kortek Booking
 
+## M3 — correctivo UI y relevo cloud, 2026-10-13
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Hoy vuelve al período actual del negocio y refresca desde la primera página; selector mensual compartido por Reservas y Agenda, con slots C1. Tipos/lint/tests/build web exit 0 y 19 escenarios Chrome pasan. Rama nueva codex/m3-calendario-cloud-20261013 autorizada para sincronización y relevo, con despliegue automático excluido solo para ella. QA conserva 56e2e12; no backend, público, roles nuevos, bases reales, worker ni proveedores. Gates3a/3b aceptados y gate3c publicado antes; el propietario declara reagendados manuales satisfactorios, sin prueba del correo/worker. Gate4 no iniciado. [Cambios, evidencia, límites y relevo](quality/M3_CALENDARIO_CONTINUIDAD_NUBE.md). Las entradas inferiores conservan su fecha y estado histórico.
+
+
 ## M3 C3 gate1 local — 2026-10-11
 
 **SOLO GATE1 AUTORIZADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Web C2 contra API C1 completo y PostgreSQL desechable:13 escenarios/138 solicitudes reales, tokens/cursor,409/429/roles/aislamiento/respuestas tardías/503; entorno de identidad local sin Clerk. Tipos/lint/pruebas/builds exit0.15 imágenes OCR inciertas excluidas del árbol candidato, gate por ruta/blob obligatorio para cualquier ref publicable. Hallazgo: Retry-After no expuesto por CORS; fallback60s, correctivo requiere autorización propia. [Cierre, evidencia y límites](quality/M3_CALENDARIO_C3_GATE1_CIERRE.md). Un SHA local, sin push, QA/proveedores/bases reales ni gates2–6. Historia inferior preservada.

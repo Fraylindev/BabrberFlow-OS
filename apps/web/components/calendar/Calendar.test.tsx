@@ -29,6 +29,8 @@ let client: QueryClient;
 const mount = (node: React.ReactNode) =>
   render(<QueryClientProvider client={client}>{node}</QueryClientProvider>);
 beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(new Date('2099-01-01T12:00:00Z'));
   client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   auth.user = { id: 'actor', name: 'Synthetic', organizationId: 'A', role: 'OWNER' };
   vi.spyOn(api, 'get').mockResolvedValue({ timeZone: 'America/Santo_Domingo' });
@@ -66,8 +68,111 @@ afterEach(() => {
   cleanup();
   client.clear();
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 describe('M3 frontend contract and visit lifecycle', () => {
+  it('el calendario mensual deshabilita días sin slots y pide solo el mes consultado', async () => {
+    mount(
+      <CalendarDetail
+        id="one"
+        user={auth.user}
+        zone="America/Santo_Domingo"
+        onClose={() => {}}
+        onMoved={() => {}}
+        initialEdit
+      />,
+    );
+    const available = await screen.findByRole('button', { name: '2 de enero de 2099' });
+    expect(available).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: '4 de enero de 2099, sin horarios disponibles' }),
+    ).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Mes anterior' })).toBeDisabled();
+    expect(calendarApi.days).toHaveBeenLastCalledWith(
+      'one',
+      '2099-01-01',
+      '2099-01-31',
+      expect.any(AbortSignal),
+    );
+    fireEvent.click(available);
+    await screen.findByRole('button', { name: '10:30 a. m.' });
+    fireEvent.click(screen.getByRole('button', { name: 'Mes siguiente' }));
+    await waitFor(() =>
+      expect(calendarApi.days).toHaveBeenLastCalledWith(
+        'one',
+        '2099-02-01',
+        '2099-02-28',
+        expect.any(AbortSignal),
+      ),
+    );
+    expect(screen.queryByRole('button', { name: '10:30 a. m.' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirmar nuevo horario' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Mes anterior' }));
+    await screen.findByRole('button', { name: '2 de enero de 2099' });
+    expect(calendarApi.days).toHaveBeenCalledTimes(2);
+  });
+  it('Hoy vuelve a la fecha del negocio sin cambiar vista ni filtros y sin cargar el periodo anterior', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-13T02:30:00Z'));
+    mount(<CalendarScreen />);
+    await screen.findByRole('button', { name: 'Hoy' });
+    await waitFor(() => expect(calendarApi.page).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: 'Día' }));
+    await waitFor(() =>
+      expect(calendarApi.page).toHaveBeenLastCalledWith(
+        expect.objectContaining({ from: '2026-10-12', to: '2026-10-13' }),
+        expect.any(AbortSignal),
+      ),
+    );
+    fireEvent.change(screen.getByRole('combobox', { name: 'Estado' }), {
+      target: { value: 'CONFIRMED' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Periodo anterior' }));
+    await waitFor(() =>
+      expect(calendarApi.page).toHaveBeenLastCalledWith(
+        expect.objectContaining({ from: '2026-10-11', status: 'CONFIRMED' }),
+        expect.any(AbortSignal),
+      ),
+    );
+    vi.mocked(calendarApi.page).mockClear();
+    fireEvent.click(screen.getByRole('button', { name: 'Hoy' }));
+    await waitFor(() => expect(calendarApi.page).toHaveBeenCalledOnce());
+    expect(calendarApi.page).toHaveBeenLastCalledWith(
+      expect.objectContaining({ from: '2026-10-12', to: '2026-10-13', status: 'CONFIRMED' }),
+      expect.any(AbortSignal),
+    );
+    expect(screen.getByRole('button', { name: 'Día' })).toHaveAttribute('aria-pressed', 'true');
+  });
+  it('Hoy actualiza la semana actual empezando por la primera página, también tras un cursor', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-13T02:30:00Z'));
+    vi.mocked(calendarApi.page).mockImplementation(async (params) => ({
+      timeZone: 'America/Santo_Domingo',
+      from: params.from,
+      to: params.to,
+      rangeStart: '2026-10-12T04:00:00Z',
+      rangeEnd: '2026-10-19T04:00:00Z',
+      generatedAt: '2026-10-13T02:30:00Z',
+      items: [],
+      nextCursor: params.cursor ? null : 'next-page',
+    }));
+    mount(<CalendarScreen />);
+    await screen.findByRole('button', { name: 'Hoy' });
+    await waitFor(() => expect(calendarApi.page).toHaveBeenCalled());
+    const more = await screen.findByRole('button', { name: /Cargar más/ });
+    fireEvent.click(more);
+    await waitFor(() =>
+      expect(calendarApi.page).toHaveBeenLastCalledWith(
+        expect.objectContaining({ cursor: 'next-page' }),
+        expect.any(AbortSignal),
+      ),
+    );
+    vi.mocked(calendarApi.page).mockClear();
+    fireEvent.click(screen.getByRole('button', { name: 'Hoy' }));
+    await waitFor(() => expect(calendarApi.page).toHaveBeenCalledOnce());
+    expect(vi.mocked(calendarApi.page).mock.calls[0][0]).not.toHaveProperty('cursor');
+    expect(screen.getByRole('button', { name: 'Semana' })).toHaveAttribute('aria-pressed', 'true');
+  });
   it('loads slots only by selected date, caches return, sends both exact tokens and ISO once', async () => {
     const moved = vi
       .spyOn(calendarApi, 'move')
@@ -116,7 +221,7 @@ describe('M3 frontend contract and visit lifecycle', () => {
       />,
     );
     await screen.findByText('Synthetic A');
-    expect(screen.queryByRole('button', { name: 'Reagendar' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Reprogramar' })).not.toBeInTheDocument();
     expect(calendarApi.days).not.toHaveBeenCalled();
   });
   it('revision mismatch prevents confirmation and asks for a fresh read', async () => {

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## M3 — Hoy, selector mensual y relevo cloud, 2026-10-13
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Hoy conserva vista/filtros y vuelve al período actual del negocio; en el período actual refresca desde la primera página. Selector mensual compartido por Reservas y Agenda, con horas del API y tokens originales. Tipos, lint, 168 unitarias, 138 componentes y build web exit 0; Chrome real: 19 escenarios en 320/375/768/1440 px con transporte controlado. Rama nueva `codex/m3-calendario-cloud-20261013` para sincronización y relevo, excluida del despliegue automático de Vercel. QA/main preservadas, backend intacto; no bases reales, worker/proveedores ni gate4. [Evidencia, límites e instrucciones cloud](docs/quality/M3_CALENDARIO_CONTINUIDAD_NUBE.md). La declaración manual del propietario no demuestra entrega de correo; requiere su gate propio. Las entradas inferiores son históricas.
+
+
 ## M3 C3 gate1 local — 2026-10-11
 
 **SOLO GATE1 AUTORIZADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Web C2 contra API C1 completo y PostgreSQL desechable:13 escenarios/138 solicitudes reales, tokens/cursor,409/429/roles/aislamiento/respuestas tardías/503; entorno de identidad local sin Clerk. Tipos/lint/pruebas/builds exit0.15 imágenes OCR inciertas excluidas del árbol candidato, gate por ruta/blob obligatorio para cualquier ref publicable. Hallazgo: Retry-After no expuesto por CORS; fallback60s, correctivo requiere autorización propia. [Cierre, evidencia y límites](docs/quality/M3_CALENDARIO_C3_GATE1_CIERRE.md). Un SHA local, sin push, QA/proveedores/bases reales ni gates2–6. Historia inferior preservada.

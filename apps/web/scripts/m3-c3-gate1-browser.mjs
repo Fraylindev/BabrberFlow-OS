@@ -178,7 +178,7 @@ async function open(f, width = 1440, extra = {}) {
 }
 async function select(ctx, f, day = '2 de enero de 2099') {
   await ctx.page.getByText(f.client.name, { exact: true }).click();
-  await ctx.page.getByRole('button', { name: 'Reagendar', exact: true }).click();
+  await ctx.page.getByRole('button', { name: 'Reprogramar', exact: true }).click();
   await ctx.page.getByRole('button', { name: day, exact: true }).click();
   await ctx.page.getByRole('button', { name: '10:30 a. m.', exact: true }).click();
 }
@@ -240,12 +240,12 @@ try {
       await ctx.page.getByText(f.client.name, { exact: true }).click();
       await expect(ctx.page.getByRole('dialog')).toBeVisible();
       if (role === 'BARBER') {
-        await expect(ctx.page.getByRole('button', { name: 'Reagendar', exact: true })).toHaveCount(0);
+        await expect(ctx.page.getByRole('button', { name: 'Reprogramar', exact: true })).toHaveCount(0);
         assert.equal(ctx.observed.filter(x => x.url.pathname === '/professionals' || x.url.pathname.includes('availability')).length, 0);
         assert.equal((await call(f.session, '/bookings/' + f.booking.id + '/reschedule-availability?date=2099-01-02')).status, 403);
         assert.equal((await call(f.session, '/bookings/' + f.booking.id + '/reschedule', 'PATCH', { startTime: '2099-01-02T14:30:00Z' })).status, 403);
       } else {
-        await ctx.page.getByRole('button', { name: 'Reagendar', exact: true }).click();
+        await ctx.page.getByRole('button', { name: 'Reprogramar', exact: true }).click();
         await ctx.page.getByRole('button', { name: '2 de enero de 2099', exact: true }).click();
         await expect(ctx.page.getByRole('button', { name: '10:30 a. m.', exact: true })).toBeVisible();
       }
@@ -295,7 +295,7 @@ try {
     try {
       for (let i = 0; i < 30; i++) assert.equal((await call(f.session, '/bookings/' + f.booking.id + '/reschedule-availability?date=2099-01-02')).status, 200);
       await ctx.page.getByText(f.client.name, { exact: true }).click();
-      await ctx.page.getByRole('button', { name: 'Reagendar', exact: true }).click();
+      await ctx.page.getByRole('button', { name: 'Reprogramar', exact: true }).click();
       await expect(ctx.page.getByRole('alert')).toContainText('Espera');
       await expect(ctx.page.getByRole('button', { name: 'Revisar reserva', exact: true })).toBeDisabled();
       const denied = ctx.observed.find(x => x.status === 429);assert(denied);
