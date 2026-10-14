@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## M3 — cierre gate 4, reprogramación QA y correo, 2026-10-13
+
+El propietario autoriza el cierre del gate 4 y su publicación exclusivamente documental. [Evidencia antes/después y límites](docs/quality/M3_GATE4_CIERRE.md): una reprogramación por selector mensual QA, 27→28 oct 9:30–11:30; una reserva modificada, un evento RESCHEDULED y un outbox DELIVERED con un intento y un destinatario. Sin diferencias en otros negocios dentro de las 30 tablas comparadas. Recepción y horario correcto declarados por el propietario; lectura directa de Resend limitada por 401, sin cambios de acceso. No se cierra C3/M3 ni se abre otro gate. Permanecen reasignación de profesional/servicio, PATCH legacy, Retry-After en CORS y procedencia del worker como pendientes productivos. Sin cambios de API, migraciones, worker, configuración o producción; esta publicación no autoriza desplegar.
+
 ## M3 — Hoy, selector mensual y relevo cloud, 2026-10-13
 
 **IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Hoy conserva vista/filtros y vuelve al período actual del negocio; en el período actual refresca desde la primera página. Selector mensual compartido por Reservas y Agenda, con horas del API y tokens originales. Tipos, lint, 168 unitarias, 138 componentes y build web exit 0; Chrome real: 19 escenarios en 320/375/768/1440 px con transporte controlado. Rama nueva `codex/m3-calendario-cloud-20261013` para sincronización y relevo, excluida del despliegue automático de Vercel. QA/main preservadas, backend intacto; no bases reales, worker/proveedores ni gate4. [Evidencia, límites e instrucciones cloud](docs/quality/M3_CALENDARIO_CONTINUIDAD_NUBE.md). La declaración manual del propietario no demuestra entrega de correo; requiere su gate propio. Las entradas inferiores son históricas.

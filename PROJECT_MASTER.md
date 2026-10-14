@@ -1,5 +1,9 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## M3 — cierre del gate 4 autorizado por el propietario, 2026-10-13
+
+**GATE 4 CERRADO POR AUTORIZACIÓN ESCRITA DEL PROPIETARIO.** [Informe y límites](docs/quality/M3_GATE4_CIERRE.md): una reprogramación web QA del 27 al 28 de octubre, 9:30–11:30, con profesional/servicio/estado conservados; una reserva entre 36 cambió, sin diferencias en otros negocios dentro de 30 tablas observadas. Un evento RESCHEDULED, un outbox y un intento, DELIVERED en la aplicación; destinatario único y fecha/asunto coherentes. Recepción y horario correcto confirmados por declaración del propietario. GET directo a Resend respondió 401 y no se remedió. Web 2e084ec/API QA 56e2e12; worker intacto, procedencia aún no acreditada. Cierre acotado del gate 4: no cierra C3/M3 ni autoriza producción u otro gate. Pendientes productivos: reasignación de profesional/servicio en Reservas, PATCH legacy, Retry-After en CORS y procedencia del worker. Solo publicación documental de tres rutas autorizada; sin despliegues. Las entradas inferiores conservan su contexto histórico.
+
 ## M3 — correctivo UI y relevo cloud, 2026-10-13
 
 **IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Hoy vuelve al período actual del negocio y refresca desde la primera página; selector mensual compartido por Reservas y Agenda, con slots C1. Tipos/lint/tests/build web exit 0 y 19 escenarios Chrome pasan. Rama nueva codex/m3-calendario-cloud-20261013 autorizada para sincronización y relevo, con despliegue automático excluido solo para ella. QA conserva 56e2e12; no backend, público, roles nuevos, bases reales, worker ni proveedores. Gates3a/3b aceptados y gate3c publicado antes; el propietario declara reagendados manuales satisfactorios, sin prueba del correo/worker. Gate4 no iniciado. [Cambios, evidencia, límites y relevo](docs/quality/M3_CALENDARIO_CONTINUIDAD_NUBE.md). Las entradas inferiores conservan su fecha y estado histórico.
