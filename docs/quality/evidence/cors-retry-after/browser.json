@@ -1,0 +1,48 @@
+{
+  "transport": "localhost-only; production CORS function and bundled real web HTTP client; synthetic 429, no database/auth provider",
+  "rows": [
+    {
+      "scenario": "allowed-17",
+      "passed": true,
+      "result": {
+        "status": 429,
+        "seconds": 17
+      }
+    },
+    {
+      "scenario": "allowed-900",
+      "passed": true,
+      "result": {
+        "status": 429,
+        "seconds": 300
+      }
+    },
+    {
+      "scenario": "allowed-null",
+      "passed": true,
+      "result": {
+        "status": 429,
+        "seconds": 60
+      }
+    },
+    {
+      "scenario": "allowed-1.5",
+      "passed": true,
+      "result": {
+        "status": 429,
+        "seconds": 60
+      }
+    },
+    {
+      "scenario": "browser-can-read-header",
+      "passed": true
+    },
+    {
+      "scenario": "denied-origin-browser-blocked",
+      "passed": true,
+      "result": {
+        "networkRejected": true
+      }
+    }
+  ]
+}

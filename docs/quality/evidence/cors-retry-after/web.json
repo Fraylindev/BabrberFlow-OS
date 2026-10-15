@@ -1,0 +1,32 @@
+[
+  {
+    "label": "web-targeted",
+    "command": "pnpm --config.verify-deps-before-run=false --filter web exec vitest run components/calendar/CalendarFailure.test.tsx",
+    "exitCode": 0,
+    "elapsedMs": 9301
+  },
+  {
+    "label": "web-type-check",
+    "command": "pnpm --config.verify-deps-before-run=false --filter web type-check:clean",
+    "exitCode": 0,
+    "elapsedMs": 15533
+  },
+  {
+    "label": "web-lint",
+    "command": "pnpm --config.verify-deps-before-run=false --filter web lint",
+    "exitCode": 0,
+    "elapsedMs": 41608
+  },
+  {
+    "label": "web-test",
+    "command": "pnpm --config.verify-deps-before-run=false --filter web test",
+    "exitCode": 0,
+    "elapsedMs": 35590
+  },
+  {
+    "label": "web-build",
+    "command": "pnpm --config.verify-deps-before-run=false --filter web build --webpack",
+    "exitCode": 0,
+    "elapsedMs": 39054
+  }
+]

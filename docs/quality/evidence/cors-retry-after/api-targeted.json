@@ -1,0 +1,8 @@
+[
+  {
+    "label": "api-targeted",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api test --runInBand common/cors.config.spec.ts bookings/calendar-budget.guard.spec.ts",
+    "exitCode": 0,
+    "elapsedMs": 14476
+  }
+]

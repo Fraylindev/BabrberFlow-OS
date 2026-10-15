@@ -1,5 +1,11 @@
 # BACKEND_CHANGES.md
 
+## 2026-10-13 — M3, correctivo CORS Retry-After local
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA.** La configuración usada por bootstrap se extrae a common/cors.config.ts para probar su middleware real. Access-Control-Expose-Headers conserva X-Total-Count, X-Page, X-Limit, X-Total-Pages y X-Request-Id y añade únicamente Retry-After. Orígenes, credenciales, métodos y headers de solicitud conservan su comportamiento. CalendarBudgetGuard y ThrottlerGuard/default ya emiten Retry-After en 429; no se modifican. El 429 externo de Clerk en invitaciones sigue comunicando retryAfterSeconds en JSON, sin header HTTP. Sin endpoints, DTOs, límites, Prisma o migraciones nuevos. [Informe y gate futuro](docs/quality/CORRECTIVO_CORS_RETRY_AFTER.md).
+
+Aprobación posterior 2026-10-14: commit/push y autodeploy web QA autorizados; API y runtime excluidos. Saneamiento de documentos/evidencia antes del commit. Resultado remoto pendiente de verificar tras el push.
+
 ## M3 C1 — aprobación con condiciones y checkpoint local, 2026-10-11
 
 El propietario aprueba C1 con condiciones: verificar mismo instante sin revisión/evento/outbox, dependencia funcional del trigger de migración28 y control negativo, y anotar reagendado real QA con consumo del worker para C3. [Condiciones y evidencia](docs/quality/M3_CALENDARIO_C1_CIERRE.md#13-revisión-aprobada-con-condiciones--2026-10-11); [plan de limpieza de migración28](docs/quality/MIGRACION_28_PLAN_LIMPIEZA.md). Commit local de checkpoint autorizado, sin push. C2 explícitamente cerrado; C3 pendiente, sin ejecutar QA ni proveedores. El estado inferior corresponde a la entrega anterior preservada.

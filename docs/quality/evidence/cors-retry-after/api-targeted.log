@@ -1,0 +1,9 @@
+$ jest "--runInBand" "common/cors.config.spec.ts" "bookings/calendar-budget.guard.spec.ts"
+PASS src/bookings/calendar-budget.guard.spec.ts
+PASS src/common/cors.config.spec.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        6.018 s
+Ran all test suites matching common/cors.config.spec.ts|bookings/calendar-budget.guard.spec.ts.

@@ -236,3 +236,48 @@ test('changing scope during renewal cancels a late write before it is repeated',
   await Promise.resolve();
   assert.equal(fetchMock.mock.callCount(), 1);
 });
+
+test('M3 reads integer and HTTP-date Retry-After on rescheduling without repeating the write', async (t) => {
+  t.after(configureApiAuth(async () => ({ token: null, organizationId: null })));
+  const now = Date.UTC(2026, 9, 14, 12);
+  t.mock.method(Date, 'now', () => now);
+  for (const [header, expected] of [
+    ['17', 17], ['0', 0], ['900', 300], [' 17 ', 17],
+    ['Wednesday, 14-Oct-26 12:00:17 GMT', 17], ['Wed Oct 14 12:00:17 2026', 17],
+    [new Date(now + 17_000).toUTCString(), 17],
+    [new Date(now + 900_000).toUTCString(), 300],
+    [new Date(now - 1000).toUTCString(), 0],
+  ] as const) {
+    const fetchMock = t.mock.method(globalThis, 'fetch', async () =>
+      Response.json({ message: 'Demasiados intentos.' }, {
+        status: 429, headers: { 'Retry-After': header },
+      }),
+    );
+    await assert.rejects(api.patch('/bookings/synthetic/reschedule', {}), (error: unknown) => {
+      assert.ok(error instanceof ApiError);
+      assert.equal(error.retryAfterSeconds, expected);
+      assert.equal(error.message, 'Demasiados intentos.');
+      return true;
+    });
+    assert.equal(fetchMock.mock.callCount(), 1);
+    fetchMock.mock.restore();
+  }
+});
+
+test('M3 keeps the 60 second consumer fallback for absent or invalid Retry-After', async (t) => {
+  t.after(configureApiAuth(async () => ({ token: null, organizationId: null })));
+  for (const header of [null, '', 'invalid', '-1', '1.5', '2026-10-14', 'Tue, 14 Oct 2026 12:00:17 GMT', 'Wed, 31 Feb 2027 12:00:00 GMT', '9'.repeat(400)]) {
+    const fetchMock = t.mock.method(globalThis, 'fetch', async () =>
+      Response.json({ message: 'Demasiados intentos.' }, {
+        status: 429, headers: header === null ? {} : { 'Retry-After': header },
+      }),
+    );
+    await assert.rejects(api.patch('/bookings/synthetic/reschedule', {}), (error: unknown) => {
+      assert.ok(error instanceof ApiError);
+      assert.equal(error.retryAfterSeconds, null);
+      assert.equal(error.retryAfterSeconds ?? 60, 60);
+      return true;
+    });
+    fetchMock.mock.restore();
+  }
+});

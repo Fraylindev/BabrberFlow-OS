@@ -1,0 +1,148 @@
+TAP version 13
+# (node:29748) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F0-A conserva el UUID del servidor en errores JSON y de gateway
+ok 1 - F0-A conserva el UUID del servidor en errores JSON y de gateway
+  ---
+  duration_ms: 40.5293
+  type: 'test'
+  ...
+# Subtest: serves only signed media locators through the same-origin image path
+ok 2 - serves only signed media locators through the same-origin image path
+  ---
+  duration_ms: 0.4733
+  type: 'test'
+  ...
+# Subtest: F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP
+ok 3 - F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP
+  ---
+  duration_ms: 1.9125
+  type: 'test'
+  ...
+# Subtest: preserves non-JSON HTTP errors and real Retry-After without exposing the body
+ok 4 - preserves non-JSON HTTP errors and real Retry-After without exposing the body
+  ---
+  duration_ms: 2.3655
+  type: 'test'
+  ...
+# Subtest: does not misrepresent a malformed successful response as empty data
+ok 5 - does not misrepresent a malformed successful response as empty data
+  ---
+  duration_ms: 0.7392
+  type: 'test'
+  ...
+# Subtest: keeps JSON validation, body retry delay and pagination headers
+ok 6 - keeps JSON validation, body retry delay and pagination headers
+  ---
+  duration_ms: 3.1188
+  type: 'test'
+  ...
+# Subtest: cancels before sending a mutation when identity or tenant changes during token resolution
+ok 7 - cancels before sending a mutation when identity or tenant changes during token resolution
+  ---
+  duration_ms: 3.0554
+  type: 'test'
+  ...
+# Subtest: aborts a request and ignores late content after an explicit caller cancellation
+ok 8 - aborts a request and ignores late content after an explicit caller cancellation
+  ---
+  duration_ms: 1.1423
+  type: 'test'
+  ...
+# Subtest: bounds token lookup and never sends a late mutation after the deadline
+ok 9 - bounds token lookup and never sends a late mutation after the deadline
+  ---
+  duration_ms: 2.3298
+  type: 'test'
+  ...
+# Subtest: bounds a fetch that does not settle and aborts its signal
+ok 10 - bounds a fetch that does not settle and aborts its signal
+  ---
+  duration_ms: 0.6007
+  type: 'test'
+  ...
+# Subtest: renews a rejected Clerk token once, preserving the captured tenant
+ok 11 - renews a rejected Clerk token once, preserving the captured tenant
+  ---
+  duration_ms: 1.7893
+  type: 'test'
+  ...
+# Subtest: a definitive authentication rejection can recover a write, but ambiguous failures never repeat it
+ok 12 - a definitive authentication rejection can recover a write, but ambiguous failures never repeat it
+  ---
+  duration_ms: 2.0355
+  type: 'test'
+  ...
+# Subtest: a revoked session stops after one renewal and refreshes access without a retry loop
+ok 13 - a revoked session stops after one renewal and refreshes access without a retry loop
+  ---
+  duration_ms: 3.4156
+  type: 'test'
+  ...
+# Subtest: changing scope during renewal cancels a late write before it is repeated
+ok 14 - changing scope during renewal cancels a late write before it is repeated
+  ---
+  duration_ms: 1.074
+  type: 'test'
+  ...
+# Subtest: M3 reads integer and HTTP-date Retry-After on rescheduling without repeating the write
+not ok 15 - M3 reads integer and HTTP-date Retry-After on rescheduling without repeating the write
+  ---
+  duration_ms: 4.8672
+  type: 'test'
+  location: '<workspace>\\apps\\web\\lib\\api.test.ts:240:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    900 !== 300
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 300
+  actual: 900
+  operator: 'strictEqual'
+  stack: |-
+    Object.<anonymous> (file:///<workspace>/apps/web/lib/api.test.ts:257:14)
+    expectedException (node:assert:576:17)
+    expectsError (node:assert:701:21)
+    Function.rejects (node:assert:767:3)
+    async TestContext.<anonymous> (file:///<workspace>/apps/web/lib/api.test.ts:255:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: M3 keeps the 60 second consumer fallback for absent or invalid Retry-After
+not ok 16 - M3 keeps the 60 second consumer fallback for absent or invalid Retry-After
+  ---
+  duration_ms: 2.924
+  type: 'test'
+  location: '<workspace>\\apps\\web\\lib\\api.test.ts:266:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    Object.<anonymous> (file:///<workspace>/apps/web/lib/api.test.ts:276:14)
+    expectedException (node:assert:576:17)
+    expectsError (node:assert:701:21)
+    Function.rejects (node:assert:767:3)
+    async TestContext.<anonymous> (file:///<workspace>/apps/web/lib/api.test.ts:274:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 14
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 310.2186

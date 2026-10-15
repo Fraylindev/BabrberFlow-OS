@@ -1,5 +1,11 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## M3 — correctivo CORS Retry-After, 2026-10-13
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA.** Gate propio autorizado sobre 2896d24, rama aislada codex/m3-cors-retry-after-20261014. API conserva los cinco headers expuestos y añade exclusivamente Retry-After; web valida segundos enteros/fecha HTTP, limita el valor del header a 300 s y mantiene fallback M3 de 60 s. Contratos, textos y límites de tasa intactos. [Informe y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER.md). El gate de despliegue QA requiere AUTORIZO DESPLIEGUE A QA; no se concede ni ejecuta aquí. Los cierres anteriores conservan su alcance.
+
+Aprobación posterior 2026-10-14: commit/push y autodeploy web QA autorizados; API y runtime excluidos. Saneamiento de documentos/evidencia antes del commit. Resultado remoto pendiente de verificar tras el push.
+
 ## M3 — cierre del gate 4 autorizado por el propietario, 2026-10-13
 
 **GATE 4 CERRADO POR AUTORIZACIÓN ESCRITA DEL PROPIETARIO.** [Informe y límites](docs/quality/M3_GATE4_CIERRE.md): una reprogramación web QA del 27 al 28 de octubre, 9:30–11:30, con profesional/servicio/estado conservados; una reserva entre 36 cambió, sin diferencias en otros negocios dentro de 30 tablas observadas. Un evento RESCHEDULED, un outbox y un intento, DELIVERED en la aplicación; destinatario único y fecha/asunto coherentes. Recepción y horario correcto confirmados por declaración del propietario. GET directo a Resend respondió 401 y no se remedió. Web 2e084ec/API QA 56e2e12; worker intacto, procedencia aún no acreditada. Cierre acotado del gate 4: no cierra C3/M3 ni autoriza producción u otro gate. Pendientes productivos: reasignación de profesional/servicio en Reservas, PATCH legacy, Retry-After en CORS y procedencia del worker. Solo publicación documental de tres rutas autorizada; sin despliegues. Las entradas inferiores conservan su contexto histórico.

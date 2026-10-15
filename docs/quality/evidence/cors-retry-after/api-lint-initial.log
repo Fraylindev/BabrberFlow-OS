@@ -1,0 +1,12 @@
+
+<workspace>\apps\api\src\bookings\calendar-budget.guard.spec.ts
+  33:27  error  A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`  @typescript-eslint/unbound-method
+
+✖ 1 problem (1 error, 0 warnings)
+
+<workspace>\apps\api:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] api@0.0.1 lint: `eslint "{src,apps,libs,test}/**/*.ts"`
+Exit status 1
+$ eslint "{src,apps,libs,test}/**/*.ts"

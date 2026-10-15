@@ -1,0 +1,143 @@
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:34 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:34 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:34 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed status=429 code=rate_limit[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:34 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_accepted[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:42 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:34 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_revoked[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:34 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation failed with an unknown error[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: claims_mismatch[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: Error[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk no disponible: Error[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 2192  - [39m13/10/2026, 11:17:50 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+<workspace>\apps\api:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] api@0.0.1 test: `jest "--runInBand"`
+Exit status 1
+$ jest "--runInBand"
+FAIL src/bookings/calendar.integration.spec.ts
+  ● Test suite failed to run
+
+    PrismaClientConstructorValidationError: Invalid value undefined for datasource "db" provided to PrismaClient constructor.
+    It should have this form: { url: "CONNECTION_STRING" }
+    Read more at https://pris.ly/d/client-constructor
+
+    [0m [90m 32 |[39m run([32m'M3 real disposable PostgreSQL'[39m[33m,[39m () [33m=>[39m {
+     [90m 33 |[39m   [36mconst[39m db [33m=[39m [36mnew[39m [33mPrismaClient[39m()[33m;[39m
+    [31m[1m>[22m[39m[90m 34 |[39m   [36mconst[39m runtime [33m=[39m [36mnew[39m [33mPrismaClient[39m({
+     [90m    |[39m                   [31m[1m^[22m[39m
+     [90m 35 |[39m     datasources[33m:[39m {
+     [90m 36 |[39m       db[33m:[39m {
+     [90m 37 |[39m         url[33m:[39m process[33m.[39menv[33m.[39m[33mC1_RUNTIME_DATABASE_URL[39m [33m?[39m[33m?[39m process[33m.[39menv[33m.[39m[33mDATABASE_URL[39m[33m,[39m[0m
+
+      at Object.datasources (../../../node_modules/.pnpm/@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e/node_modules/@prisma/client/src/runtime/utils/validatePrismaClientOptions.ts:75:19)
+      at au (../../../node_modules/.pnpm/@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e/node_modules/@prisma/client/src/runtime/utils/validatePrismaClientOptions.ts:269:19)
+      at new validatePrismaClientOptions (../../../node_modules/.pnpm/@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:269:9)
+      at bookings/calendar.integration.spec.ts:34:19
+      at Object.<anonymous> (bookings/calendar.integration.spec.ts:32:1)
+
+PASS src/bookings/bookings.service.spec.ts
+PASS src/auth/team-invitations.service.spec.ts
+PASS src/public-booking/public-booking.service.spec.ts
+PASS src/professionals/professionals.service.spec.ts
+PASS src/auth/clerk-onboarding.service.spec.ts
+PASS src/auth/auth.service.spec.ts
+PASS src/invoices/invoices.service.spec.ts
+PASS src/notifications/notification-policy.spec.ts
+PASS src/public-booking/whatsapp-contract.spec.ts
+PASS src/notifications/resend.adapter.spec.ts
+PASS src/professionals/professional-availability.service.spec.ts
+PASS src/business-schedule/business-schedule.policy.spec.ts
+PASS src/services/services.service.spec.ts
+PASS src/organizations/organizations.service.spec.ts
+PASS src/auth/clerk/clerk-session-verifier.service.spec.ts
+PASS src/clients/clients.service.spec.ts
+PASS src/public-booking/public-booking-days.spec.ts
+PASS src/professionals/dto/professionals.dto.spec.ts
+PASS src/public-booking/guest-retirement.spec.ts
+PASS src/professionals/professionals.controller.spec.ts
+[31m[Nest] 2192  - [39m13/10/2026, 11:17:54 p. m. [31m  ERROR[39m [38;5;3m[ClerkAuthGuard] [39m[31mError inesperado en ClerkAuthGuard: Error[39m
+PASS src/auth/guards/clerk-auth.guard.spec.ts
+PASS src/cms/cms.service.spec.ts
+PASS src/analytics/dashboard-summary.service.spec.ts
+PASS src/bookings/calendar.service.spec.ts
+PASS src/auth/clerk/clerk-auth.config.spec.ts
+PASS src/clients/clients.controller.spec.ts
+PASS src/common/assert-isolated-database-url.spec.ts
+PASS src/auth/guards/b2b-auth.guard.spec.ts
+PASS src/common/production-config.spec.ts
+PASS src/prisma/database-integrity.spec.ts
+PASS src/auth/team.service.spec.ts
+PASS src/bookings/bookings.controller.spec.ts
+PASS src/services/dto/services.dto.spec.ts
+PASS src/auth/clerk-onboarding.controller.spec.ts
+PASS src/analytics/analytics.service.spec.ts
+PASS src/cms/cms.dto.spec.ts
+PASS src/media/media-policy.spec.ts
+PASS src/invoices/invoices.controller.spec.ts
+PASS src/professionals/professional-availability.util.spec.ts
+PASS src/common/http-telemetry.spec.ts
+PASS src/auth/clerk-bootstrap.service.spec.ts
+PASS src/security/postgres-throttler.storage.spec.ts
+[31m[Nest] 2192  - [39m13/10/2026, 11:18:00 p. m. [31m  ERROR[39m [38;5;3m[ClerkOnboardingGuard] [39m[31mError inesperado en ClerkOnboardingGuard: Error[39m
+PASS src/auth/guards/clerk-onboarding.guard.spec.ts
+PASS src/public-booking/availability.util.spec.ts
+PASS src/media/media-image.spec.ts
+PASS src/auth/guards/roles.guard.spec.ts
+PASS src/common/proxy-trust.spec.ts
+PASS src/common/find-owned-or-throw.util.spec.ts
+PASS src/auth/strategies/jwt.strategy.spec.ts
+PASS src/auth/clerk-bootstrap.controller.spec.ts
+PASS src/cms/cms.projection.spec.ts
+PASS src/clients/dto/clients-dto.spec.ts
+PASS src/common/prisma-error.util.spec.ts
+PASS src/auth/clerk/to-web-request.spec.ts
+PASS src/auth/internal-mfa-policy.spec.ts
+PASS src/auth/organization-slug.spec.ts
+PASS src/organizations/organizations.controller.spec.ts
+PASS src/auth/clerk-me.controller.spec.ts
+PASS src/media/media-cloudinary.spec.ts
+PASS src/auth/team-invitation-redirect.spec.ts
+PASS src/auth/team-invitations.controller.spec.ts
+PASS src/app.controller.spec.ts
+PASS src/prisma/prisma.service.spec.ts
+PASS src/bookings/calendar-budget.guard.spec.ts
+PASS src/common/cors.config.spec.ts
+
+Summary of all failing tests
+FAIL bookings/calendar.integration.spec.ts
+  ● Test suite failed to run
+
+    PrismaClientConstructorValidationError: Invalid value undefined for datasource "db" provided to PrismaClient constructor.
+    It should have this form: { url: "CONNECTION_STRING" }
+    Read more at https://pris.ly/d/client-constructor
+
+    [0m [90m 32 |[39m run([32m'M3 real disposable PostgreSQL'[39m[33m,[39m () [33m=>[39m {
+     [90m 33 |[39m   [36mconst[39m db [33m=[39m [36mnew[39m [33mPrismaClient[39m()[33m;[39m
+    [31m[1m>[22m[39m[90m 34 |[39m   [36mconst[39m runtime [33m=[39m [36mnew[39m [33mPrismaClient[39m({
+     [90m    |[39m                   [31m[1m^[22m[39m
+     [90m 35 |[39m     datasources[33m:[39m {
+     [90m 36 |[39m       db[33m:[39m {
+     [90m 37 |[39m         url[33m:[39m process[33m.[39menv[33m.[39m[33mC1_RUNTIME_DATABASE_URL[39m [33m?[39m[33m?[39m process[33m.[39menv[33m.[39m[33mDATABASE_URL[39m[33m,[39m[0m
+
+      at Object.datasources (../../../node_modules/.pnpm/@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e/node_modules/@prisma/client/src/runtime/utils/validatePrismaClientOptions.ts:75:19)
+      at au (../../../node_modules/.pnpm/@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e/node_modules/@prisma/client/src/runtime/utils/validatePrismaClientOptions.ts:269:19)
+      at new validatePrismaClientOptions (../../../node_modules/.pnpm/@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:269:9)
+      at bookings/calendar.integration.spec.ts:34:19
+      at Object.<anonymous> (bookings/calendar.integration.spec.ts:32:1)
+
+
+Test Suites: 1 failed, 6 skipped, 65 passed, 66 of 72 total
+Tests:       44 skipped, 859 passed, 903 total
+Snapshots:   0 total
+Time:        36.022 s
+Ran all test suites.

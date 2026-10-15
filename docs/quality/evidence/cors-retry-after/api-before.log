@@ -1,0 +1,36 @@
+$ jest "--runInBand" "common/cors.config.spec.ts"
+FAIL src/common/cors.config.spec.ts (19.007 s)
+  ● production CORS configuration › exposes Retry-After on 429 and preserves exactly the five existing headers
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 0
+
+    @@ -2,7 +2,6 @@
+        "X-Total-Count",
+        "X-Page",
+        "X-Limit",
+        "X-Total-Pages",
+        "X-Request-Id",
+    -   "Retry-After",
+      ]
+
+      46 |     expect(response.headers['access-control-allow-origin']).toBe('https://web.example');
+      47 |     expect(response.headers['access-control-allow-credentials']).toBe('true');
+    > 48 |     expect(response.headers['access-control-expose-headers'].split(',')).toEqual([
+         |                                                                          ^
+      49 |       ...existing,
+      50 |       'Retry-After',
+      51 |     ]);
+
+      at Object.<anonymous> (common/cors.config.spec.ts:48:74)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 passed, 4 total
+Snapshots:   0 total
+Time:        21.988 s
+Ran all test suites matching common/cors.config.spec.ts.
+<workspace>\apps\api:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] api@0.0.1 test: `jest "--runInBand" "common/cors.config.spec.ts"`
+Exit status 1

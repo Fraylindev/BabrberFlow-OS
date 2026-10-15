@@ -1,5 +1,11 @@
 # Documentación de Kortek Booking
 
+## M3 — correctivo CORS Retry-After, 2026-10-13
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA.** Gate propio desde 2896d24 en codex/m3-cors-retry-after-20261014: se añade solo Retry-After a los cinco headers CORS existentes; web acepta segundos enteros/fecha HTTP con tope 300 s y conserva fallback M3 de 60 s y compatibilidad JSON de invitaciones. Sin cambios de textos, límites, permisos ni runtime. [Informe y plan del gate posterior](quality/CORRECTIVO_CORS_RETRY_AFTER.md). No cierra C3/M3 ni autoriza despliegue.
+
+Aprobación posterior 2026-10-14: commit/push y autodeploy web QA autorizados; API y runtime excluidos. Saneamiento de documentos/evidencia antes del commit. Resultado remoto pendiente de verificar tras el push.
+
 ## M3 — correctivo UI y relevo cloud, 2026-10-13
 
 **IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN.** Hoy vuelve al período actual del negocio y refresca desde la primera página; selector mensual compartido por Reservas y Agenda, con slots C1. Tipos/lint/tests/build web exit 0 y 19 escenarios Chrome pasan. Rama nueva codex/m3-calendario-cloud-20261013 autorizada para sincronización y relevo, con despliegue automático excluido solo para ella. QA conserva 56e2e12; no backend, público, roles nuevos, bases reales, worker ni proveedores. Gates3a/3b aceptados y gate3c publicado antes; el propietario declara reagendados manuales satisfactorios, sin prueba del correo/worker. Gate4 no iniciado. [Cambios, evidencia, límites y relevo](quality/M3_CALENDARIO_CONTINUIDAD_NUBE.md). Las entradas inferiores conservan su fecha y estado histórico.

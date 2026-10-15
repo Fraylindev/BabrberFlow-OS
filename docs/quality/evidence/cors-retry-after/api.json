@@ -1,0 +1,32 @@
+[
+  {
+    "label": "api-targeted",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api test --runInBand common/cors.config.spec.ts bookings/calendar-budget.guard.spec.ts",
+    "exitCode": 0,
+    "elapsedMs": 5144
+  },
+  {
+    "label": "api-type-check",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api type-check",
+    "exitCode": 0,
+    "elapsedMs": 11305
+  },
+  {
+    "label": "api-lint",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api lint",
+    "exitCode": 0,
+    "elapsedMs": 26419
+  },
+  {
+    "label": "api-test",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api test --runInBand",
+    "exitCode": 0,
+    "elapsedMs": 29824
+  },
+  {
+    "label": "api-build",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api build",
+    "exitCode": 0,
+    "elapsedMs": 11668
+  }
+]

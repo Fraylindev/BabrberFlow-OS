@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { globalValidationPipeOptions } from './common/validation.config';
 import { validateProductionConfig } from './common/production-config';
 import { configureProxyTrust } from './common/proxy-trust';
+import { configureCors } from './common/cors.config';
 import {
   createHttpTelemetry,
   SafeHttpExceptionFilter,
@@ -32,21 +33,7 @@ async function bootstrap() {
   // configurada, cae a los orígenes de desarrollo local conocidos — para
   // no romper `pnpm dev` de nadie, pero sin dejar production abierto por
   // accidente si alguien olvida configurar la variable.
-  const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
-    ? process.env.CORS_ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-    : ['http://localhost:3000', 'http://localhost:3001'];
-
-  app.enableCors({
-    origin: allowedOrigins,
-    credentials: true,
-    exposedHeaders: [
-      'X-Total-Count',
-      'X-Page',
-      'X-Limit',
-      'X-Total-Pages',
-      'X-Request-Id',
-    ],
-  });
+  configureCors(app);
 
   // Sin esto, Nest no reenvía SIGTERM/SIGINT a los hooks de ciclo de vida
   // de los módulos — PrismaService.onModuleDestroy() (que llama a

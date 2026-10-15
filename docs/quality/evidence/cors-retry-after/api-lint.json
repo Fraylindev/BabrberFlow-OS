@@ -1,0 +1,8 @@
+[
+  {
+    "label": "api-lint",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api lint",
+    "exitCode": 0,
+    "elapsedMs": 65891
+  }
+]

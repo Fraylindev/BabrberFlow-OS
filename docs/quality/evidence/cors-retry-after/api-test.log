@@ -1,0 +1,96 @@
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed status=429 code=rate_limit[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_accepted[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:35 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk create invitation failed with an unknown error[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation reached terminal state status=422 code=invitation_already_revoked[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [33m   WARN[39m [38;5;3m[TeamInvitationsService] [39m[33mClerk revoke invitation failed with an unknown error[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authentication_state[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: claims_mismatch[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session rejected: authoritative_session[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: Error[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk no disponible: Error[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+[33m[Nest] 12556  - [39m13/10/2026, 11:28:28 p. m. [33m   WARN[39m [38;5;3m[ClerkSessionVerifierService] [39m[33mClerk session verification failed: ClerkAPIResponseError[39m
+$ jest "--runInBand"
+PASS src/auth/auth.service.spec.ts
+PASS src/public-booking/guest-retirement.spec.ts
+PASS src/bookings/calendar-budget.guard.spec.ts
+PASS src/public-booking/whatsapp-contract.spec.ts
+PASS src/bookings/calendar.service.spec.ts
+PASS src/auth/team-invitations.controller.spec.ts
+PASS src/cms/cms.service.spec.ts
+PASS src/business-schedule/business-schedule.policy.spec.ts
+PASS src/bookings/bookings.controller.spec.ts
+PASS src/cms/cms.dto.spec.ts
+PASS src/professionals/dto/professionals.dto.spec.ts
+PASS src/invoices/invoices.controller.spec.ts
+PASS src/public-booking/public-booking.service.spec.ts
+PASS src/bookings/bookings.service.spec.ts
+PASS src/common/cors.config.spec.ts
+PASS src/auth/clerk-me.controller.spec.ts
+PASS src/organizations/organizations.controller.spec.ts
+PASS src/clients/clients.controller.spec.ts
+PASS src/common/proxy-trust.spec.ts
+PASS src/auth/guards/b2b-auth.guard.spec.ts
+PASS src/common/http-telemetry.spec.ts
+PASS src/professionals/professionals.controller.spec.ts
+PASS src/services/services.service.spec.ts
+PASS src/public-booking/public-booking-days.spec.ts
+PASS src/analytics/dashboard-summary.service.spec.ts
+PASS src/auth/clerk-onboarding.controller.spec.ts
+[31m[Nest] 12556  - [39m13/10/2026, 11:28:27 p. m. [31m  ERROR[39m [38;5;3m[ClerkAuthGuard] [39m[31mError inesperado en ClerkAuthGuard: Error[39m
+PASS src/auth/guards/clerk-auth.guard.spec.ts
+PASS src/auth/team-invitations.service.spec.ts
+PASS src/services/dto/services.dto.spec.ts
+PASS src/media/media-cloudinary.spec.ts
+PASS src/auth/clerk-bootstrap.controller.spec.ts
+PASS src/auth/clerk/clerk-session-verifier.service.spec.ts
+PASS src/auth/guards/roles.guard.spec.ts
+PASS src/invoices/invoices.service.spec.ts
+PASS src/notifications/notification-policy.spec.ts
+PASS src/auth/clerk-onboarding.service.spec.ts
+[31m[Nest] 12556  - [39m13/10/2026, 11:28:29 p. m. [31m  ERROR[39m [38;5;3m[ClerkOnboardingGuard] [39m[31mError inesperado en ClerkOnboardingGuard: Error[39m
+PASS src/auth/guards/clerk-onboarding.guard.spec.ts
+PASS src/prisma/prisma.service.spec.ts
+PASS src/app.controller.spec.ts
+PASS src/auth/strategies/jwt.strategy.spec.ts
+PASS src/professionals/professional-availability.service.spec.ts
+PASS src/notifications/resend.adapter.spec.ts
+PASS src/organizations/organizations.service.spec.ts
+PASS src/cms/cms.projection.spec.ts
+PASS src/media/media-image.spec.ts
+PASS src/common/find-owned-or-throw.util.spec.ts
+PASS src/professionals/professionals.service.spec.ts
+PASS src/analytics/analytics.service.spec.ts
+PASS src/auth/clerk-bootstrap.service.spec.ts
+PASS src/auth/internal-mfa-policy.spec.ts
+PASS src/security/postgres-throttler.storage.spec.ts
+PASS src/clients/clients.service.spec.ts
+PASS src/clients/dto/clients-dto.spec.ts
+PASS src/auth/team.service.spec.ts
+PASS src/auth/organization-slug.spec.ts
+PASS src/common/production-config.spec.ts
+PASS src/media/media-policy.spec.ts
+PASS src/common/assert-isolated-database-url.spec.ts
+PASS src/auth/clerk/clerk-auth.config.spec.ts
+PASS src/professionals/professional-availability.util.spec.ts
+PASS src/prisma/database-integrity.spec.ts
+PASS src/public-booking/availability.util.spec.ts
+PASS src/common/prisma-error.util.spec.ts
+PASS src/auth/clerk/to-web-request.spec.ts
+PASS src/auth/team-invitation-redirect.spec.ts
+
+Test Suites: 7 skipped, 65 passed, 65 of 72 total
+Tests:       71 skipped, 859 passed, 930 total
+Snapshots:   0 total
+Time:        27.275 s, estimated 45 s
+Ran all test suites.

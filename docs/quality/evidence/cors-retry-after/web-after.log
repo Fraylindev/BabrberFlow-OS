@@ -1,0 +1,108 @@
+TAP version 13
+# (node:19912) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F0-A conserva el UUID del servidor en errores JSON y de gateway
+ok 1 - F0-A conserva el UUID del servidor en errores JSON y de gateway
+  ---
+  duration_ms: 47.8293
+  type: 'test'
+  ...
+# Subtest: serves only signed media locators through the same-origin image path
+ok 2 - serves only signed media locators through the same-origin image path
+  ---
+  duration_ms: 0.3994
+  type: 'test'
+  ...
+# Subtest: F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP
+ok 3 - F0-A distingue una validación clara del fallback sin causa en la respuesta HTTP
+  ---
+  duration_ms: 1.9023
+  type: 'test'
+  ...
+# Subtest: preserves non-JSON HTTP errors and real Retry-After without exposing the body
+ok 4 - preserves non-JSON HTTP errors and real Retry-After without exposing the body
+  ---
+  duration_ms: 2.7504
+  type: 'test'
+  ...
+# Subtest: does not misrepresent a malformed successful response as empty data
+ok 5 - does not misrepresent a malformed successful response as empty data
+  ---
+  duration_ms: 0.9556
+  type: 'test'
+  ...
+# Subtest: keeps JSON validation, body retry delay and pagination headers
+ok 6 - keeps JSON validation, body retry delay and pagination headers
+  ---
+  duration_ms: 3.1726
+  type: 'test'
+  ...
+# Subtest: cancels before sending a mutation when identity or tenant changes during token resolution
+ok 7 - cancels before sending a mutation when identity or tenant changes during token resolution
+  ---
+  duration_ms: 3.5407
+  type: 'test'
+  ...
+# Subtest: aborts a request and ignores late content after an explicit caller cancellation
+ok 8 - aborts a request and ignores late content after an explicit caller cancellation
+  ---
+  duration_ms: 1.2935
+  type: 'test'
+  ...
+# Subtest: bounds token lookup and never sends a late mutation after the deadline
+ok 9 - bounds token lookup and never sends a late mutation after the deadline
+  ---
+  duration_ms: 2.1408
+  type: 'test'
+  ...
+# Subtest: bounds a fetch that does not settle and aborts its signal
+ok 10 - bounds a fetch that does not settle and aborts its signal
+  ---
+  duration_ms: 0.7157
+  type: 'test'
+  ...
+# Subtest: renews a rejected Clerk token once, preserving the captured tenant
+ok 11 - renews a rejected Clerk token once, preserving the captured tenant
+  ---
+  duration_ms: 2.1494
+  type: 'test'
+  ...
+# Subtest: a definitive authentication rejection can recover a write, but ambiguous failures never repeat it
+ok 12 - a definitive authentication rejection can recover a write, but ambiguous failures never repeat it
+  ---
+  duration_ms: 1.9309
+  type: 'test'
+  ...
+# Subtest: a revoked session stops after one renewal and refreshes access without a retry loop
+ok 13 - a revoked session stops after one renewal and refreshes access without a retry loop
+  ---
+  duration_ms: 3.055
+  type: 'test'
+  ...
+# Subtest: changing scope during renewal cancels a late write before it is repeated
+ok 14 - changing scope during renewal cancels a late write before it is repeated
+  ---
+  duration_ms: 1.3369
+  type: 'test'
+  ...
+# Subtest: M3 reads integer and HTTP-date Retry-After on rescheduling without repeating the write
+ok 15 - M3 reads integer and HTTP-date Retry-After on rescheduling without repeating the write
+  ---
+  duration_ms: 7.9824
+  type: 'test'
+  ...
+# Subtest: M3 keeps the 60 second consumer fallback for absent or invalid Retry-After
+ok 16 - M3 keeps the 60 second consumer fallback for absent or invalid Retry-After
+  ---
+  duration_ms: 4.6811
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 359.2978

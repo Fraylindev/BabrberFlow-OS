@@ -14,6 +14,34 @@ export function publicMediaUrl(path: string): string {
 }
 export const API_REQUEST_TIMEOUT_MS = 30_000;
 
+// Bound only the client wait; the server rate limits remain authoritative.
+const MAX_RETRY_AFTER_SECONDS = 300;
+function parseRetryAfter(value: string | null): number | null {
+  if (!value) return null;
+  const header = value.trim();
+  if (/^\d+$/.test(header)) {
+    const seconds = Number(header);
+    return Number.isFinite(seconds) ? Math.min(MAX_RETRY_AFTER_SECONDS, seconds) : null;
+  }
+  // HTTP-date: IMF-fixdate and the two obsolete formats accepted by HTTP clients.
+  const imf = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/;
+  const rfc850 = /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (\d{2})-([A-Z][a-z]{2})-(\d{2}) (\d{2}:\d{2}:\d{2}) GMT$/;
+  const asctime = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) ([A-Z][a-z]{2}) ( [1-9]|\d{2}) (\d{2}:\d{2}:\d{2}) (\d{4})$/;
+  const obsolete = rfc850.exec(header);
+  const ascii = asctime.exec(header);
+  if (!imf.test(header) && !obsolete && !ascii) return null;
+  const timestamp = Date.parse(ascii ? header + ' GMT' : header);
+  if (!Number.isFinite(timestamp)) return null;
+  const date = new Date(timestamp);
+  const canonical = obsolete
+    ? `${obsolete[1].slice(0, 3)}, ${obsolete[2]} ${obsolete[3]} ${date.getUTCFullYear()} ${obsolete[5]} GMT`
+    : ascii
+      ? `${ascii[1]}, ${ascii[3].trim().padStart(2, '0')} ${ascii[2]} ${ascii[5]} ${ascii[4]} GMT`
+      : header;
+  // Reject impossible dates and mismatched weekdays instead of accepting Date.parse rollover.
+  if (date.toUTCString() !== canonical) return null;
+  return Math.min(MAX_RETRY_AFTER_SECONDS, Math.max(0, Math.ceil((timestamp - Date.now()) / 1000)));
+}
 export class ApiError extends Error {
   status: number;
   retryAfterSeconds: number | null;
@@ -149,16 +177,10 @@ async function requestWithHeaders<T>(
                   body.message.every((item) => typeof item === 'string')
                 ? body.message.join('. ')
                 : 'No pudimos completar la solicitud. Vuelve a intentarlo.';
-        const retryAfterHeader = res.headers.get('Retry-After');
-        const retryAfterSeconds =
-          retryAfterHeader && /^\d+(?:\.\d+)?$/.test(retryAfterHeader)
-            ? Math.max(0, Math.ceil(Number(retryAfterHeader)))
-            : retryAfterHeader && Number.isFinite(Date.parse(retryAfterHeader))
-              ? Math.max(0, Math.ceil((Date.parse(retryAfterHeader) - Date.now()) / 1000))
-              : typeof body.retryAfterSeconds === 'number' &&
-                  Number.isFinite(body.retryAfterSeconds)
-                ? Math.max(0, Math.ceil(body.retryAfterSeconds))
-                : null;
+        const retryAfterSeconds = parseRetryAfter(res.headers.get('Retry-After')) ??
+          (typeof body.retryAfterSeconds === 'number' && Number.isFinite(body.retryAfterSeconds)
+            ? Math.max(0, Math.ceil(body.retryAfterSeconds))
+            : null);
         throw new ApiError(res.status, message.replace(/\bBARBER\b/g, 'Profesional'), retryAfterSeconds, requestId);
       }
 

@@ -1,0 +1,8 @@
+[
+  {
+    "label": "api-test",
+    "command": "pnpm --config.verify-deps-before-run=false --filter api test --runInBand",
+    "exitCode": 0,
+    "elapsedMs": 65978
+  }
+]

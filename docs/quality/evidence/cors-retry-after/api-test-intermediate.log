@@ -1,0 +1,20 @@
+<workspace>\apps\api:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] api@0.0.1 test: `jest "--runInBand"`
+Exit status 1
+$ jest "--runInBand"
+PASS src/auth/auth.service.spec.ts
+PASS src/public-booking/guest-retirement.spec.ts
+PASS src/public-booking/whatsapp-contract.spec.ts
+PASS src/bookings/calendar.service.spec.ts
+PASS src/auth/team-invitations.controller.spec.ts
+<workspace>\apps\api\src\bookings\calendar-budget.guard.ts:35
+            throw new common_1.HttpException('Demasiados intentos. Espera un momento y vuelve a probar.', 429);
+                  ^
+
+[HttpException: Demasiados intentos. Espera un momento y vuelve a probar.] {
+  response: 'Demasiados intentos. Espera un momento y vuelve a probar.',
+  status: 429,
+  options: undefined
+}
+
+Node.js v22.22.3
