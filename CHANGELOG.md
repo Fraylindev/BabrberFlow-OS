@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-10-16 — CI-RUNNER-PIN: runners de Quality y backup fijados a ubuntu-24.04; pasos, Node, pnpm y actions intactos. Implementado / en revisión; Quality remoto y autodeploy web pendientes de verificar.
+
 ## 2026-10-16 — Cierre aprobado del despliegue API QA con Retry-After en CORS
 
 El propietario aprueba el correctivo y su despliegue QA: API `32f3b367a12c5f9cabcf805a0cf9989644c05a21`, digest `sha256:dfcd609c4ec767e55ef13150bf20dfac23b48059edf2c48891a0bcf8005c4fe6`; se expone solo Retry-After además de los cinco headers anteriores. [Informe de build, despliegue, verificaciones y rollback](docs/quality/CORRECTIVO_CORS_RETRY_AFTER_DESPLIEGUE_QA.md). El propietario confirma contador y recuperación en Agenda en QA; no equivale a evidencia automatizada adicional ni prueba completa de C3/M3.
