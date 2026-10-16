@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-10-16 — Cierre aprobado del despliegue API QA con Retry-After en CORS
+
+El propietario aprueba el correctivo y su despliegue QA: API `32f3b367a12c5f9cabcf805a0cf9989644c05a21`, digest `sha256:dfcd609c4ec767e55ef13150bf20dfac23b48059edf2c48891a0bcf8005c4fe6`; se expone solo Retry-After además de los cinco headers anteriores. [Informe de build, despliegue, verificaciones y rollback](docs/quality/CORRECTIVO_CORS_RETRY_AFTER_DESPLIEGUE_QA.md). El propietario confirma contador y recuperación en Agenda en QA; no equivale a evidencia automatizada adicional ni prueba completa de C3/M3.
+
+La consulta automática cada 15 s ante errores transitorios, incluido 429, es comportamiento previo y observación para un correctivo aparte. Antes de producción quedan separar credenciales API/worker, acreditar procedencia de la imagen del worker QA, resolver PATCH legacy y reasignación de profesional/servicio, y cubrir ops/oci-api/oci.env de M3 con .gitignore; el archivo no está versionado ni figura en el historial local alcanzable consultado. No se corrige ninguno de estos pendientes en este cierre.
+
+Autorización solo documental sobre tres rutas, con commit/push fast-forward a QA y posible autodeploy web. Sin nuevas operaciones sobre API, VM, worker, datos o producción. Resultados de Quality y despliegue web de esta publicación pendientes de comprobar tras el push.
+
 ## 2026-10-13 — Correctivo M3 CORS Retry-After, publicación QA autorizada
 
 Gate propio en worktree aislado sobre 2896d24: añadir únicamente Retry-After a los cinco headers CORS existentes; validar entero/fecha HTTP con tope 300 s y mantener fallback M3 de 60 s y compatibilidad JSON de invitaciones. Pruebas de CORS, guards, cliente HTTP, contador y Chrome local; [evidencia y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER.md). Implementado/validado localmente/en revisión; sin commit, push, despliegue o cambios de runtime.

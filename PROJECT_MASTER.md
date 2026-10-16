@@ -1,5 +1,13 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## M3 — cierre aprobado del despliegue API QA con Retry-After, 2026-10-16
+
+**APROBADO POR EL PROPIETARIO / DESPLEGADO Y VALIDADO EN QA CON ALCANCE ACOTADO.** API QA ejecuta `32f3b367a12c5f9cabcf805a0cf9989644c05a21`, digest `sha256:dfcd609c4ec767e55ef13150bf20dfac23b48059edf2c48891a0bcf8005c4fe6`. CORS conserva los cinco headers expuestos y añade solo Retry-After. Build desde export Git limpio y startup drill pasan; release/staging, NRestarts=0, CORS positivo/negativo y smoke HTTP verificados. Respaldo e imagen anterior retenidos, rollback comprobado en lectura; worker y producción preservados. [Informe, evidencia, rollback y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER_DESPLIEGUE_QA.md).
+
+El propietario confirma prueba en QA con contador y recuperación en Agenda. Es declaración del propietario, sin nueva prueba automatizada ni captura aportada. La reconsulta automática cada 15 s ante errores transitorios, incluido 429, es comportamiento previo: queda como observación para un correctivo separado y no se modifica ni se declara resuelta aquí.
+
+Antes de producción siguen pendientes separar credenciales de API/worker; acreditar la procedencia completa de la imagen del worker QA; resolver PATCH legacy y la reasignación de profesional/servicio; y proteger ops/oci-api/oci.env del worktree M3, que no está cubierto por .gitignore (no versionado ni presente en el historial local alcanzable consultado). Este cierre no autoriza producción ni cierra C3/M3 completo. Publicación autorizada exclusivamente de este documento, CHANGELOG.md y el informe; Quality y autodeploy web de esta publicación se comprobarán tras el push. Las entradas inferiores conservan su contexto histórico.
+
 ## M3 — correctivo CORS Retry-After, 2026-10-13
 
 **IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA.** Gate propio autorizado sobre 2896d24, rama aislada codex/m3-cors-retry-after-20261014. API conserva los cinco headers expuestos y añade exclusivamente Retry-After; web valida segundos enteros/fecha HTTP, limita el valor del header a 300 s y mantiene fallback M3 de 60 s. Contratos, textos y límites de tasa intactos. [Informe y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER.md). El gate de despliegue QA requiere AUTORIZO DESPLIEGUE A QA; no se concede ni ejecuta aquí. Los cierres anteriores conservan su alcance.
