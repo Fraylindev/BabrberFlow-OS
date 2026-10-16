@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-10-16 — GITIGNORE-OCI-ENV: se ignora únicamente /ops/oci-api/oci.env, sin afectar plantillas; auditoría de nombres en índice e historial local alcanzable sin archivos .env versionados. Implementado / en revisión.
+
 - 2026-10-16 — CI-RUNNER-PIN: runners de Quality y backup fijados a ubuntu-24.04; pasos, Node, pnpm y actions intactos. Implementado / en revisión; Quality remoto y autodeploy web pendientes de verificar.
 
 ## 2026-10-16 — Cierre aprobado del despliegue API QA con Retry-After en CORS

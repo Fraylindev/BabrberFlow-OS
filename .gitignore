@@ -1,6 +1,7 @@
 node_modules
 .env
 .env.*
+/ops/oci-api/oci.env
 .next
 dist
 .turbo
