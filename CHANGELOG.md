@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Integración local M3/restore y cifrado SSH — 2026-10-16
+
+**INTEGRADO LOCALMENTE / EN REVISIÓN; SIN PUSH NI DESPLIEGUE.** Checkpoint restore e058eaa conservado e integración de los cuatro commits hasta 38be55a, con ambas entradas documentales preservadas. Regla versionada oci.env incorporada; archivo custodiado fuera del repo. Llave SSH ya cifrada, pública idéntica y recuperación offline verificada; sin rotación ni acceso remoto. [Evidencia, herramientas locales y límites](docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md#continuación-autónoma-2026-10-16-integración-y-cifrado-ssh). La custodia externa y los gates operativos del restore siguen pendientes; no cierra C3/M3. Las entradas inferiores conservan sus estados históricos.
+
+
 - 2026-10-16 — GITIGNORE-OCI-ENV: se ignora únicamente /ops/oci-api/oci.env, sin afectar plantillas; auditoría de nombres en índice e historial local alcanzable sin archivos .env versionados. Implementado / en revisión.
 
 - 2026-10-16 — CI-RUNNER-PIN: runners de Quality y backup fijados a ubuntu-24.04; pasos, Node, pnpm y actions intactos. Implementado / en revisión; Quality remoto y autodeploy web pendientes de verificar.
@@ -17,6 +22,12 @@ Autorización solo documental sobre tres rutas, con commit/push fast-forward a Q
 Gate propio en worktree aislado sobre 2896d24: añadir únicamente Retry-After a los cinco headers CORS existentes; validar entero/fecha HTTP con tope 300 s y mantener fallback M3 de 60 s y compatibilidad JSON de invitaciones. Pruebas de CORS, guards, cliente HTTP, contador y Chrome local; [evidencia y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER.md). Implementado/validado localmente/en revisión; sin commit, push, despliegue o cambios de runtime.
 
 Aprobación posterior 2026-10-14: commit/push y autodeploy web QA autorizados; API y runtime excluidos. Saneamiento de documentos/evidencia antes del commit. Resultado remoto pendiente de verificar tras el push.
+
+## Restore semanal — correctivo local, 2026-10-15
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN; SIN INSTALACIÓN.** [Evidencia y límites](docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md): reproducidos falsos rechazos por Booking=0 y esquema de 37 tablas; causa del fallo histórico sin atribución. TOC/tablas mínimas/ledger, diagnóstico saneado y marcador de éxito atómico. Ensayo PostgreSQL 18.1 desechable; PG17/Podman/GPG real pendientes. Correos OCI FIRING y OK vacío no prueban recuperación. El informe registra el intento involuntario de CLI OCI durante el primer arnés y su corrección de aislamiento. Sin escrituras remotas, cambios de timers/alarmas/infraestructura ni publicación remota; no cierra el restore operativo o el backup vencido. Historia inferior preservada.
+
+Seguimiento 2026-10-16: checkpoint local de conservación autorizado, sin push ni aprobación final; `oci.env` custodiado con DPAPI y exclusión local compartida, identidad SSH trasladada fuera del repo con ACL limitada, sin rotación remota. [Rutas, helpers históricos que requieren adaptación y límites](docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md#seguimiento-2026-10-16-checkpoint-local-y-custodia).
 
 ## M3 — cierre gate 4, reprogramación QA y correo, 2026-10-13
 

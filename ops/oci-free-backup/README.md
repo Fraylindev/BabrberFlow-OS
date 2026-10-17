@@ -1,5 +1,12 @@
 # Servicios gratuitos de continuidad — Kortek Booking
 
+## Correctivo versionado local — 2026-10-15
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN, sin instalar.** [Informe y límites](../../docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md): el código ahora acepta cero reservas y compara tablas con TOC más base mínima, valida ledger terminado y conserva resultado saneado separado del marcador de éxito. El restore real local se ensayó en PG18.1 sintético; no acredita PG17/Podman OCI ni recuperación de las alarmas recientes. Su causa histórica sigue sin atribuir. El informe documenta el intento involuntario de CLI OCI del primer arnés. No se autoriza ejecutar servicios ni cambiar programación/infraestructura; las operaciones y pruebas reales que siguen son historia o recetas sujetas a autorización separada.
+
+Prueba sin cuentas OCI ni datos reales: `python -B ops/oci-free-backup/test-restore-drill.py --pg-bin <directorio bin PostgreSQL>`, desde la raíz. Sin --pg-bin se omite explícitamente la integración real. La suite excluye el CLI OCI real de su PATH y exige dobles locales antes de ejecutar el script.
+
+
 Estado C1: VM Oracle Always Free `kortek-free-services` en Ashburn (`150.136.7.19`), bucket privado `kortek-booking-encrypted-backups` en `idujavz2hijf`, proyecto Supabase Free productivo `ilaoolpcrlmqkftirjog`. No son un despliegue público de API/web. EMAIL permanece pausado.
 
 Actualización 2026-09-27: API publicada bajo autorización posterior en esta misma VM, ahora 2 OCPU/12 GB, con Podman rootless/Caddy y solo TCP 80/443 públicos. Worker y los tres timers siguen activos. La declaración anterior de API no publicada y las referencias inferiores al firewall describen C1 histórico. [Operación API](../oci-api/README.md) y [evidencia externa](../../docs/quality/API_OCI_DESPLIEGUE.md). Sondas conjuntas web/API siguen desactivadas; EMAIL sigue pausado.
@@ -31,7 +38,7 @@ demostraron reutilización de caché sin otro listado; monitor ingirió con éxi
 | Unidad systemd | Periodicidad | Función |
 | --- | --- | --- |
 | `kortek-backup.service` / `.timer` | Diario 05:17 UTC, variación hasta 5 min | `pg_dump` PG17 por TLS verificado, cifrado GPG AES256 en flujo, TOC/SHA256, subida privada, comprobación de longitud. |
-| `kortek-restore-drill.service` / `.timer` | Domingo 06:30 UTC | Descarga el último objeto cifrado, valida checksum, restaura en PG17 aislado y comprueba 31 tablas, migraciones y reservas. |
+| `kortek-restore-drill.service` / `.timer` | Domingo 06:30 UTC | Descarga el último objeto cifrado, valida checksum y restaura en PG17 aislado. Fuente corregida: compara tablas/TOC y base mínima, ledger terminado y cuenta reservas admitiendo cero; instalación no realizada. |
 | `kortek-monitor.service` / `.timer` | Cada minuto | Publica métricas agregadas `kortek_booking` en OCI; no publica filas, correos, teléfonos ni secretos. |
 | `kortek-email-worker.service` | Continuo, reinicio por fallo a los 15 s | Worker Nest/Prisma bajo `opc`, contenedor rootless con FS de solo lectura y sin puerto público. El envío sigue deshabilitado. |
 

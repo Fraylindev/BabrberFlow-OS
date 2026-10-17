@@ -1,5 +1,10 @@
 # PROJECT_MASTER.md — Verdad vigente de Kortek Booking
 
+## Integración local M3/restore y cifrado SSH — 2026-10-16
+
+**INTEGRADO LOCALMENTE / EN REVISIÓN; SIN PUSH NI DESPLIEGUE.** Checkpoint restore e058eaa conservado e integración de los cuatro commits hasta 38be55a, con ambas entradas documentales preservadas. Regla versionada oci.env incorporada; archivo custodiado fuera del repo. Llave SSH ya cifrada, pública idéntica y recuperación offline verificada; sin rotación ni acceso remoto. [Evidencia, herramientas locales y límites](docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md#continuación-autónoma-2026-10-16-integración-y-cifrado-ssh). La custodia externa y los gates operativos del restore siguen pendientes; no cierra C3/M3. Las entradas inferiores conservan sus estados históricos.
+
+
 ## M3 — cierre aprobado del despliegue API QA con Retry-After, 2026-10-16
 
 **APROBADO POR EL PROPIETARIO / DESPLEGADO Y VALIDADO EN QA CON ALCANCE ACOTADO.** API QA ejecuta `32f3b367a12c5f9cabcf805a0cf9989644c05a21`, digest `sha256:dfcd609c4ec767e55ef13150bf20dfac23b48059edf2c48891a0bcf8005c4fe6`. CORS conserva los cinco headers expuestos y añade solo Retry-After. Build desde export Git limpio y startup drill pasan; release/staging, NRestarts=0, CORS positivo/negativo y smoke HTTP verificados. Respaldo e imagen anterior retenidos, rollback comprobado en lectura; worker y producción preservados. [Informe, evidencia, rollback y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER_DESPLIEGUE_QA.md).
@@ -13,6 +18,12 @@ Antes de producción siguen pendientes separar credenciales de API/worker; acred
 **IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN / PUBLICACIÓN QA AUTORIZADA.** Gate propio autorizado sobre 2896d24, rama aislada codex/m3-cors-retry-after-20261014. API conserva los cinco headers expuestos y añade exclusivamente Retry-After; web valida segundos enteros/fecha HTTP, limita el valor del header a 300 s y mantiene fallback M3 de 60 s. Contratos, textos y límites de tasa intactos. [Informe y límites](docs/quality/CORRECTIVO_CORS_RETRY_AFTER.md). El gate de despliegue QA requiere AUTORIZO DESPLIEGUE A QA; no se concede ni ejecuta aquí. Los cierres anteriores conservan su alcance.
 
 Aprobación posterior 2026-10-14: commit/push y autodeploy web QA autorizados; API y runtime excluidos. Saneamiento de documentos/evidencia antes del commit. Resultado remoto pendiente de verificar tras el push.
+
+## Restore semanal — correctivo local, 2026-10-15
+
+**IMPLEMENTADO / VALIDADO LOCALMENTE / EN REVISIÓN; SIN INSTALACIÓN.** [Evidencia y límites](docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md): reproducidos falsos rechazos por Booking=0 y esquema de 37 tablas; causa del fallo histórico sin atribución. TOC/tablas mínimas/ledger, diagnóstico saneado y marcador de éxito atómico. Ensayo PostgreSQL 18.1 desechable; PG17/Podman/GPG real pendientes. Correos OCI FIRING y OK vacío no prueban recuperación. El informe registra el intento involuntario de CLI OCI durante el primer arnés y su corrección de aislamiento. Sin escrituras remotas, cambios de timers/alarmas/infraestructura ni publicación remota; no cierra el restore operativo o el backup vencido. Historia inferior preservada.
+
+Seguimiento 2026-10-16: checkpoint local de conservación autorizado, sin push ni aprobación final; `oci.env` custodiado con DPAPI y exclusión local compartida, identidad SSH trasladada fuera del repo con ACL limitada, sin rotación remota. [Rutas, helpers históricos que requieren adaptación y límites](docs/quality/RESTORE_SEMANAL_CORRECTIVO_LOCAL.md#seguimiento-2026-10-16-checkpoint-local-y-custodia).
 
 ## M3 — cierre del gate 4 autorizado por el propietario, 2026-10-13
 
